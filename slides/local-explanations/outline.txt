@@ -1,38 +1,59 @@
-Local explanations – Outline: 
+Topic 6: Local Explanations [Susanne]
 
-    • Local explainers:
-        ◦ LIME
-            ▪ Intro 
-              Already in slides
-              https://www.kdd.org/kdd2016/papers/files/rfp0573-ribeiroA.pdf
-            ▪ Example
-              Already in slides
-            ▪ Problems
-              Already in slides 
-              https://compstat-lmu.github.io/iml_methods_limitations/lime-sample.html 
-              https://compstat-lmu.github.io/iml_methods_limitations/lime-neighbor.html 
-              https://arxiv.org/abs/1911.02508
-              https://arxiv.org/pdf/1806.08049.pdf%5D 
-        ◦ Extensions of LIME 
-          https://arxiv.org/pdf/2004.12277.pdf (featureDependency Sampling and Nonlinear Approximation) → only for text & image data /: 
-          https://arxiv.org/pdf/2006.12302.pdf (train GAN to sample more realistic observations in neighborhood) → too advanced? 
-        ◦ https://core.ac.uk/download/pdf/304672994.pdf (quadratic instead of linear relationship of prediciton and features) 
-    • Counterfactual Explanations
-      Core Sources: Wachter et al. (https://arxiv.org/pdf/1711.00399.pdf), Freiesleben (https://arxiv.org/pdf/2009.05487.pdf), Dandl et al. (https://arxiv.org/pdf/2004.11165.pdf), Verma et al. (https://arxiv.org/pdf/2010.10596.pdf) 
-        ◦ Intro, e.g., credit application for illustration →Fraunhofer Slides:  https://docs.google.com/presentation/d/1a9IlNBVQbREfCBGN8ZCbbA--YakZoSvj7XaE6ASpLa8/edit?usp=sharing 
-        ◦ Aim & Role (Advantages, why do we need them?) 
-        ◦ Philosophical basis 
-        ◦ Popular definitions 
-        ◦ Rashomon Effect → Freiesleben
-        ◦ Popular methods: 
-            ▪ simple: what-if tool → pro & cons
-            ▪ model-specific: ? 
-            ▪ model-agnostic: MOC → pro & cons
- 	→ Have a look on review paper! 
-        ◦ Example → which method to choose? 
-        ◦ Problems: 
-            ▪ Contrastive explanations vs. counterfactual explanations → role of causality (short!) https://towardsdatascience.com/counterfactual-vs-contrastive-explanations-in-artificial-intelligence-e67a9cfc7e4e 
-            ▪ Which explanation to choose? → user-dependable, what is a good explanation? How to measure interpretability? 
-    • Adversarial Examples (short!) 
-        ◦ Examples 
-        ◦ Differences to Counterfactual Explanations 
+    1. Motivation: [7-8] [Timo, Susanne]
+            1. Why needed?: Right to explanation in GDPR, improving model understanding, explain like a human would do, simplify complex problem
+→ Concrete examples (credit application) [2]
+	    2. Questions:Why did the ML model decide y for input x? How decides the ML model for cases similar to x? What would the ML model have decided if x differed in P? How to trick the ML model. [1]
+	    3. Properties: local, mostly model-agnostic, often targets laypersons (psychological factors), all kinds of data (tabular, images, audio, text, etc.), widely applied for Deep Learning models, social impact (focus on fairness and transparency), [3]
+	    4. Other local explanation methods: anchors, relation to shapley, ice curves [2]
+
+
+    2. Lime: [11] [Susanne]
+        1. Examples from literature (Husky in snow) [1]
+        2. Mathematical Perspective [3-4]
+            1. Definition, model-decisions (model-class, local-environment, distance notion), extensions to LIME
+            2. Extensions: quadratic instead of linear model, trees 
+https://core.ac.uk/download/pdf/304672994.pdf 
+	    3. use case? [3]
+	    4. Pitfalls: locality?faithfulness to original model, attacking LIME, Instability, Superpixels? Substituting black-box by another? [3]
+	Literature: 
+	        https://www.kdd.org/kdd2016/papers/files/rfp0573-ribeiroA.pdf
+    	• pitfalls
+       	      https://compstat-lmu.github.io/iml_methods_limitations/lime-sample.html 
+              https://compstat-lmu.github.io/iml_methods_limitations/lime-neighbor.html 
+              https://arxiv.org/abs/1911.02508 
+              https://arxiv.org/pdf/1806.08049.pdf%5D 
+    	• extensions
+	      https://arxiv.org/pdf/2004.12277.pdf  (featureDependency Sampling and Nonlinear Approximation) → only for text & image data /:
+              https://arxiv.org/pdf/2006.12302.pdf  (train GAN to sample more realistic observations in neighborhood) → too advanced?
+    
+
+    3. Counterfactual Explanations [13-15] [Timo, Susanne]
+	    1. Examples: Loan-application, CEs for MNIST [2-3]
+	    2. Aim & Role (feasibility, contestability, understanding) [1]
+	    3. Philosophical Basis: [1-2]
+		1. Causality, Lewisian CEs, Pearl CEs, Contrastive and counterfactual, background in Psychology research
+	    4. Mathematical Perspective: [2]
+		1. Definition, Objectives, model-decisions (distance to desired output, distance to original input, model-access)
+		2. How many CEs, trade-offs closeness
+	    5. Overview of methods (especially, Multi-objective CEs, Algorithmic Recourse) [3]
+	    6. use-case? (Multi-objective CEs) [1-2]
+	    7. Pitfalls: closeness, illusion of model understanding (justification but no explanation), Rashomon effect, attacking CEs, confusing model explanation with process explanation (e.g. causal dependencies, fixed model at time t, wrong input by user) [2]
+		Literature: 
+		Wachter et al. (https://arxiv.org/pdf/1711.00399.pdf)
+		Freiesleben (https://arxiv.org/pdf/2009.05487.pdf)
+		Dandl et al. (https://arxiv.org/pdf/2004.11165.pdf)
+		Verma et al. (https://arxiv.org/pdf/2010.10596.pdf)
+
+
+    4. Adversarial examples [16] [Timo]
+        1. loan application, Stop sign, toaster, turtle, [3-4]
+        2. Mathematical Perspective: [2]
+            1. Definition
+            2. Differences to CEs: misclassified and less focused on locality, human perceptibility in distance metrics, attacking the model and the real-world, 
+        3. Methods: Surrogate model solutions (transferability), evolutionary, white-box gradient methods, extensions. [3-4]
+        4. Defenses against AEs.[1-2]
+        5. use-case? [1-2]
+        6. Explanations for the occurrence of AEs, AEs and (optical) illusions [1]
+        7. Pitfalls: specific to use-cases [1]
+
