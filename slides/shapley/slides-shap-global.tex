@@ -112,11 +112,11 @@
 
 %\usetheme{lmu-lecture}
 % \newcommand{\titlefigure}{figure/sample-dgp-2d.pdf}
-\newcommand{\learninggoals}{%
-\item Understand attribution in cooperative games
-\item Understand Shapley values concept
-\item Learn about applications of Shapley values
-  }
+\newcommand{\learninggoals}{
+\item Understand structure of tabular data in ML 
+\item Understand difference between target and features 
+\item Understand difference between labeled and unlabeled data 
+\item Know concept of data-generating process}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -133,74 +133,42 @@
 
 \begin{document}
 
-\lecturechapter{Shapley Values}
+\lecturechapter{Shapley Values Aggregation}
 \lecture{Interpretable Machine Learning}
 
-\begin{vbframe}{Cooperative Games}
-\begin{itemize}
-  \item In cooperative games, a set of players $P$ with $P = \{1, \hdots, p\}$ forms a coalition $S \subseteq P$. 
-  \item A value function $v(S)$ describes the payout (or gain) achieved by the coalition $S$. 
-  \item As some players contribute more than others, we are interested in the distribution of the payout among the players. 
-  \item Problem: How to fairly distribute values among players?
-\end{itemize}
-
-\end{vbframe}
-
-\begin{vbframe}{Axioms for Fair Attributions}
-  We can posit these axioms for what a fair distribution would look like:
-  \begin{itemize}
-      \item Efficiency
-      \item Symmetry
-      \item Dummy
-      \item Additivity
-  \end{itemize}
-How can we attribute outcomes so that these axioms are fulfilled?
-\end{vbframe}
-
-
-\begin{vbframe}{Shapley Values}
- 
-  Shapley Values are a way to solve the attribution problem and pose a unique solution given the axioms of efficiency, symmetry, dummy and additivity.
-\begin{itemize}
-  \item The \textbf{Shapley value} assigns a value to each player according to the marginal contribution of each player in all possible coalitions.
-  \item TODO: Formula
-\end{itemize}
-
-
-\end{vbframe}
-
-  \frame{
-\frametitle{Shapley Values - Illustration}
-The Shapley value of the feature $x_2$ is the marginal contribution (prediction change) when $x_2$ enters an abitrary coalition. \\
-\only<1>{Here, $x_2$ enters the coalition secondly, resulting in a prediction change of $24-12 = 12$. Overall, the coalition increases the prediction by 36.}
-\only<2>{We produce all possible orders of feature coalitions and measure the prediction change if feature $x_2$ enters the coalition.}
-\begin{center}
-  \only<1>{
-    \includegraphics[page=1, width=0.8\textwidth]{figure_man/shapley_feature_effect}
-  }
-  \only<2>{
-    \includegraphics[page=2, width=0.8\textwidth]{figure_man/shapley_feature_effect}
-  }
-\end{center}
-
-}
-      
-
-\begin{vbframe}{Applications of Shapley Value}
+\begin{vbframe}{Shapley Values Aggregations}
 
   \begin{itemize}
-      \item Economics
-      \item TODO
-      \item ...
-      \item Various applications in ML:
-       \begin{itemize}
-          \item Loss decomposition for features
-          \item TODO
-          \item Explain predictions 
-       \end{itemize}
+    \item Shapley Values are local explanations.
+    \item When computed for many observations, can be aggregated to global explanations.
+      \begin{itemize}
+        \item Feature Importance
+        \item Summary plots
+        \item dependence plots
+        \item Interactions plots
+        \item clustered Shapley values
+      \end{itemize}
   \end{itemize}
-
 \end{vbframe}
+
+\begin{vbframe}{Feature Importance}
+\end{vbframe}
+
+\begin{vbframe}{Summary Plot}
+\end{vbframe}
+
+\begin{vbframe}{Dependence Plot}
+\end{vbframe}
+
+\begin{vbframe}{Interaction Plots}
+\end{vbframe}
+
+\begin{vbframe}{Clustered Shapley values}
+\end{vbframe}
+
+
+
+
 
 \endlecture
 \end{document}
