@@ -110,9 +110,9 @@
 %\usetheme{lmu-lecture}
 \newcommand{\titlefigure}{figure_man/bike-sharing-dataset01.png}
 \newcommand{\learninggoals}{
-\item Learn about visualizations of global feature effects
-\item Understand the steps involved in constructing ICE and PD plots
-\item Understand how to interpret ICE curves and PD plots}
+\item Understand PD plots and their relation to ICE plots
+\item Understand how to interpret ICE curves and PD plots
+}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -132,150 +132,8 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-\lecturechapter{Individual Conditional Expectation (ICE) \& Partial Dependence (PD) plots}
+\lecturechapter{Partial Dependence (PD) plot}
 \lecture{Interpretable Machine Learning}
-
-
-\begin{vbframe}{Visualizing Feature Effects}
-\begin{center}
-\includegraphics[width=\textwidth]{figure_man/feature-effects.pdf}
-\end{center}
-
-BLA
-\end{vbframe}
-
-\begin{vbframe}{Individual Conditional Expectation (ICE)}
-
-%Consider an index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
-Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
-
-\lz
-
-Individual conditional expectation (ICE) curves visualize how the model prediction of individual observations $\xi$
-change by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed.
-$$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S, \xi_C)$$
-
-\framebreak
-
-In practice, $\xv_S$ consists of one or two features.
-
-\vspace{-0.2cm}
-\begin{center}
-\includegraphics[width=0.7\textwidth]{figure_man/ICE01.png}
-\end{center}
-\vspace{-0.3cm}
-\scriptsize{\textbf{Figure:} ICE Curves of the last 10 observations of the bike sharing dataset. Each line displays the change in prediction for a single observation due to varying the feature temperature.\par}
-
-\vspace{0.3cm}
-\tiny{Goldstein, A., Kapelner, A., Bleich, J., and Pitkin, E. (2013). Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation, 1-22. https://doi.org/10.1080/10618600.2014.907095 \par}
-\normalsize
-
-\framebreak
-
-Steps to create an ICE curve of an observation regarding a single feature $x_S$ according to the \textbf{SIPA} framework:
-
-\begin{enumerate}
-\item \textbf{Sampling:} Choose grid points along $x_S$.
-\item For each grid point:
-  \begin{itemize}
-    \item \textbf{Intervention:} Replace the original feature value $x_S$ with the current grid value.
-    \item \textbf{Prediction:} Get the model prediction with replaced feature value $x_S$.
-  \end{itemize}
-\item \textbf{Aggregation:} none.
-\item \textbf{Visualization:} Draw a curve per observation with the grid points on the x-axis and the prediction on the y-axis.
-\end{enumerate}
-
-\vspace{0.3cm}
-\tiny{Scholbeck, C. A., Molnar, C., Heumann, C., Bischl, B., and Casalicchio, G. (2019). Sampling, Intervention, Prediction, Aggregation: A Generalized Framework for Model Agnostic Interpretations. ECML PKDD 2019. (pp. 205-216). \par}
-\normalsize
-
-\framebreak
-
-\begin{center}
-\includegraphics[page=1, width=0.6\textwidth]{figure_man/ice_pd_plot_demo}
-\end{center}
-
-\textbf{Sampling:} Choose grid points along $x_1  $ that will be used to intervene the data (here: all unique values $1, 2$ and $3$).
-
-\framebreak
-
-\begin{center}
-\includegraphics[page=2, width=0.6\textwidth]{figure_man/ice_pd_plot_demo}
-\end{center}
-
-\textbf{Intervention:} Replace all observed values in $x_1$ for each observation with the previously sampled grid points.
-
-\framebreak
-
-\begin{center}
-\includegraphics[page=3, width=0.6\textwidth]{figure_man/ice_pd_plot_demo}
-\end{center}
-\vspace{-0.5cm}
-\textbf{Prediction:} Make predictions and plot $\fh_{1}^{(i)}(x_1)$ vs. $x_1$, where $$\fh_{1}^{(i)}(x_1) = \fh(x_1, \xi_{2, 3}).$$
-
-\framebreak
-\begin{onlyenv}<1>
-  \vspace{1cm}
-    \begin{columns}[T]
-    \begin{column}{0.5\textwidth}
-  \centering
-  \includegraphics[page=5, width=\textwidth]{figure_man/ice_pd_plot_demo}
-  \end{column}
- \begin{column}{0.5\textwidth}
-  \vspace{0.3cm}
-
-\begin{center}
-\includegraphics[width=1\textwidth]{figure_man/ICE02.png}
-\end{center}
-
-\end{column}
-\end{columns}
-\end{onlyenv}
-
-\textbf{Visualization:} ICE curve for observation $i=1$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
-
-\framebreak
-\begin{onlyenv}<1>
-  \vspace{1cm}
-    \begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\centering
-\includegraphics[page=6, width=\textwidth]{figure_man/ice_pd_plot_demo}
-  \end{column}
- \begin{column}{0.5\textwidth}
-\vspace{0.3cm}
-
-\begin{center}
-\includegraphics[width=1\textwidth]{figure_man/ICE03.png}
-\end{center}
-
-\end{column}
-\end{columns}
-\end{onlyenv}
-\textbf{Visualization:} ICE curve for observation $i=2$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
-
-\framebreak
-
-\begin{onlyenv}<1>
-  \vspace{1cm}
-    \begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\centering
-\includegraphics[page=7, width=\textwidth]{figure_man/ice_pd_plot_demo}
-\end{column}
-\begin{column}{0.5\textwidth}
-\vspace{0.3cm}
-
-\begin{center}
-\includegraphics[width=1\textwidth]{figure_man/ICE04.png}
-\end{center}
-
-\end{column}
-\end{columns}
-\end{onlyenv}
-
-\textbf{Visualization:} ICE curve for observation $i=3$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
-\end{vbframe}
 
 
 \begin{vbframe}{Partial Dependence}
@@ -286,8 +144,9 @@ $$\E_{\xv_C} \left( \fh(\xv_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(\xv_
 For a single $x_S$ it is estimated by the point-wise average of the ICE curves:
 $$PD_S := \fh_{S}(x_S) = \frac{1}{n} \sum_{i=1}^n \fh(x_S, \xv_C^{(i)})$$
 
-Within the SIPA framework the partial dependence builds the \textbf{Aggregation} step.
+Within the SIPA framework, the partial dependence builds the \textbf{Aggregation} step.
 
+\footnote[frame]{Scholbeck, C. A., Molnar, C., Heumann, C., Bischl, B., and Casalicchio, G. (2019). Sampling, Intervention, Prediction, Aggregation: A Generalized Framework for Model Agnostic Interpretations. ECML PKDD 2019. (pp. 205-216).}
 \end{vbframe}
 
 \frame{
@@ -302,7 +161,7 @@ Within the SIPA framework the partial dependence builds the \textbf{Aggregation}
 \begin{column}{0.5\textwidth}
 
 \begin{center}
-\includegraphics[width=1\textwidth]{figure_man/ICE05.png}
+\includegraphics[page=1, width=\textwidth]{figure_man/PD}
 \end{center}
 
 }
@@ -314,7 +173,7 @@ Within the SIPA framework the partial dependence builds the \textbf{Aggregation}
 \begin{column}{0.5\textwidth}
 
 \begin{center}
-\includegraphics[width=1\textwidth]{figure_man/ICE06.png}
+\includegraphics[page=2, width=\textwidth]{figure_man/PD}
 \end{center}
 
 }
@@ -325,7 +184,7 @@ Within the SIPA framework the partial dependence builds the \textbf{Aggregation}
 \begin{column}{0.5\textwidth}
 
 \begin{center}
-\includegraphics[width=1\textwidth]{figure_man/ICE07.png}
+\includegraphics[page=3, width=\textwidth]{figure_man/PD}
 \end{center}
 
 }
