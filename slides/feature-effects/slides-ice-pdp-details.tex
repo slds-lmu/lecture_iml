@@ -1,0 +1,261 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+  %Define standard arrow tip
+  >=stealth',
+  %Define style for boxes
+  punkt/.style={
+    rectangle,
+    rounded corners,
+    draw=black, very thick,
+    text width=6.5em,
+    minimum height=2em,
+    text centered},
+  % Define arrow style
+  pil/.style={
+    ->,
+    thick,
+    shorten <=2pt,
+    shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+\newcommand{\titlefigure}{figure_man/bike-sharing-dataset01.png}
+\newcommand{\learninggoals}{
+\item Understand c-ICE curves to identify the heterogeneity in the model
+\item Understand the usefullness of ICE curves and d-ICE curves in case of interaction effects
+\item Understand the extrapolation issue}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Interpretable Machine Learning}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\begin{document}
+
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\lecturechapter{Issues and Extensions of ICE and PD Plots}
+\lecture{Interpretable Machine Learning}
+
+
+\frame{
+\frametitle{Centered ICE Plot (c-ICE)}
+
+Aim: When ICE curves start at different intercept and are stacked, it is difficult to identify heterogenous predictions.
+
+Solution: c-ICE
+}
+
+
+\begin{vbframe}{Interactions}
+\begin{itemize}
+\item
+  For PD plots, the averaging of ICE curves might \textbf{obfuscate}
+  heterogeneous effects and interactions. \newline \(\Rightarrow\)
+  Ideally plot ICE curves and PD plots together.
+\end{itemize}
+
+\begin{center}\includegraphics[width=0.65\textwidth]{figure_man/xor.pdf} \end{center}
+%
+% \framebreak
+%
+% \begin{itemize}
+% \item
+%   For PD plots, the averaging of ICE curves might \textbf{obfuscate}
+%   heterogeneous effects and interactions. \newline \(\Rightarrow\)
+%   Ideally plot ICE curves and PD plots together.
+% \item
+%   \textbf{Extrapolation:} Interprete curves for highly correlated
+%   features and in feature regions with few observations with care.
+% \item
+%   Accumulated Local Effects (ALE) plots are a novel alternative to the PD plots developed by Apley (2020) that do not suffer from
+%   extrapolation in case of correlated features.
+% \end{itemize}
+%
+% \vspace{80pt}
+% \tiny{
+% Apley, D. W., \& Zhu, J. (2020). Visualizing the effects of predictor variables in black box supervised learning models. Journal of the Royal Statistical Society: Series B, 82(4), 1059-1086. \par}
+\end{vbframe}
+
+
+\frame{
+\frametitle{Derivative ICE Plot (d-ICE)}
+
+Aim: Interactions
+
+}
+
+
+
+\begin{vbframe}{Extrapolation}
+
+There are two sources of extrapolation:
+\lz
+\begin{enumerate}
+  \item If the model predicts in regions where it was not trained. Predictions in such regions are a bad approximation to the real underlying relationship between input and target space.
+  \lz
+  \item Averaging ICE curves at specific grid points refers to Monte Carlo integration w.r.t. a   uniform distribution and ignores how likely the data points are.
+  It might be better to integrate w.r.t. the (empirical) data distribution.
+\end{enumerate}
+\lz
+$\Rightarrow$ Biased estimates, especially in case of correlated features.
+
+\framebreak
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/extrapolation01.png}
+\end{center}
+
+\begin{itemize}
+\item The features $x_1$ and $x_2$ are strongly correlated.
+\item \textcolor{red}{Red:} Observed points of the original data.
+\item \textcolor{green}{Green:} Grid points used to calculate the ICE and PD curves.
+\end{itemize}
+$\Rightarrow$ unrealistic combination of feature values are used.
+
+\framebreak
+
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/extrapolation02.png}
+\end{center}
+
+\begin{itemize}
+\item The features $x_1$ and $x_2$ are strongly correlated.
+\item \textcolor{red}{Red:} Observed points of the original data.
+\item \textcolor{green}{Green:} Grid points used to calculate the ICE and PD curves.
+\item Example: PD plot at $x_1=1.9$ averages predictions over the whole marginal distribution of feature $x_2$.
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Comments}
+\begin{itemize}
+  \item For PD plots, the averaging of ICE curves might obfuscate heterogeneous effects and interactions. \\
+  $\Rightarrow$ Ideally plot ICE curves and PD plots together.
+% \end{itemize}
+%  \vspace{-0.3cm}
+%
+%
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{figure_man/comments.png}
+% \end{center}
+%
+% \vspace{-0.5cm}
+% \framebreak
+%
+% \begin{itemize}
+% \lz
+\item Extrapolation: interprete curves for highly correlated features and in feature regions with few observations with care.
+%\lz
+\item Accumulated Local Effects (ALE) plots are a novel alternative to PD plots developed by Apley (2016) that do not suffer from extrapolation in case of correlated features.
+\end{itemize}
+
+\vspace{2cm}
+\vfill\tiny
+Apley (2016).
+Visualizing the effects of predictor variables in black box supervised learning models.
+arXiv preprint arXiv:1612.08468.
+
+\end{vbframe}
+
+
+\endlecture
+\end{document}

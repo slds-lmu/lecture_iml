@@ -1,0 +1,407 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+  %Define standard arrow tip
+  >=stealth',
+  %Define style for boxes
+  punkt/.style={
+    rectangle,
+    rounded corners,
+    draw=black, very thick,
+    text width=6.5em,
+    minimum height=2em,
+    text centered},
+  % Define arrow style
+  pil/.style={
+    ->,
+    thick,
+    shorten <=2pt,
+    shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+\newcommand{\titlefigure}{figure_man/bike-sharing-dataset01.png}
+\newcommand{\learninggoals}{
+\item Learn about visualizations of global feature effects
+\item Understand the steps involved in constructing ICE and PD plots
+\item Understand how to interpret ICE curves and PD plots}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Interpretable Machine Learning}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\begin{document}
+
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\lecturechapter{Individual Conditional Expectation (ICE) \& Partial Dependence (PD) plots}
+\lecture{Interpretable Machine Learning}
+
+
+\begin{vbframe}{Visualizing Feature Effects}
+\begin{center}
+\includegraphics[width=\textwidth]{figure_man/feature-effects.pdf}
+\end{center}
+
+BLA
+\end{vbframe}
+
+\begin{vbframe}{Individual Conditional Expectation (ICE)}
+
+%Consider an index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
+Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
+
+\lz
+
+Individual conditional expectation (ICE) curves visualize how the model prediction of individual observations $\xi$
+change by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed.
+$$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S, \xi_C)$$
+
+\framebreak
+
+In practice, $\xv_S$ consists of one or two features.
+
+\vspace{-0.2cm}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/ICE01.png}
+\end{center}
+\vspace{-0.3cm}
+\scriptsize{\textbf{Figure:} ICE Curves of the last 10 observations of the bike sharing dataset. Each line displays the change in prediction for a single observation due to varying the feature temperature.\par}
+
+\vspace{0.3cm}
+\tiny{Goldstein, A., Kapelner, A., Bleich, J., and Pitkin, E. (2013). Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation, 1-22. https://doi.org/10.1080/10618600.2014.907095 \par}
+\normalsize
+
+\framebreak
+
+Steps to create an ICE curve of an observation regarding a single feature $x_S$ according to the \textbf{SIPA} framework:
+
+\begin{enumerate}
+\item \textbf{Sampling:} Choose grid points along $x_S$.
+\item For each grid point:
+  \begin{itemize}
+    \item \textbf{Intervention:} Replace the original feature value $x_S$ with the current grid value.
+    \item \textbf{Prediction:} Get the model prediction with replaced feature value $x_S$.
+  \end{itemize}
+\item \textbf{Aggregation:} none.
+\item \textbf{Visualization:} Draw a curve per observation with the grid points on the x-axis and the prediction on the y-axis.
+\end{enumerate}
+
+\vspace{0.3cm}
+\tiny{Scholbeck, C. A., Molnar, C., Heumann, C., Bischl, B., and Casalicchio, G. (2019). Sampling, Intervention, Prediction, Aggregation: A Generalized Framework for Model Agnostic Interpretations. ECML PKDD 2019. (pp. 205-216). \par}
+\normalsize
+
+\framebreak
+
+\begin{center}
+\includegraphics[page=1, width=0.6\textwidth]{figure_man/ice_pd_plot_demo}
+\end{center}
+
+\textbf{Sampling:} Choose grid points along $x_1  $ that will be used to intervene the data (here: all unique values $1, 2$ and $3$).
+
+\framebreak
+
+\begin{center}
+\includegraphics[page=2, width=0.6\textwidth]{figure_man/ice_pd_plot_demo}
+\end{center}
+
+\textbf{Intervention:} Replace all observed values in $x_1$ for each observation with the previously sampled grid points.
+
+\framebreak
+
+\begin{center}
+\includegraphics[page=3, width=0.6\textwidth]{figure_man/ice_pd_plot_demo}
+\end{center}
+\vspace{-0.5cm}
+\textbf{Prediction:} Make predictions and plot $\fh_{1}^{(i)}(x_1)$ vs. $x_1$, where $$\fh_{1}^{(i)}(x_1) = \fh(x_1, \xi_{2, 3}).$$
+
+\framebreak
+\begin{onlyenv}<1>
+  \vspace{1cm}
+    \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+  \centering
+  \includegraphics[page=5, width=\textwidth]{figure_man/ice_pd_plot_demo}
+  \end{column}
+ \begin{column}{0.5\textwidth}
+  \vspace{0.3cm}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE02.png}
+\end{center}
+
+\end{column}
+\end{columns}
+\end{onlyenv}
+
+\textbf{Visualization:} ICE curve for observation $i=1$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
+
+\framebreak
+\begin{onlyenv}<1>
+  \vspace{1cm}
+    \begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[page=6, width=\textwidth]{figure_man/ice_pd_plot_demo}
+  \end{column}
+ \begin{column}{0.5\textwidth}
+\vspace{0.3cm}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE03.png}
+\end{center}
+
+\end{column}
+\end{columns}
+\end{onlyenv}
+\textbf{Visualization:} ICE curve for observation $i=2$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
+
+\framebreak
+
+\begin{onlyenv}<1>
+  \vspace{1cm}
+    \begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[page=7, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\end{column}
+\begin{column}{0.5\textwidth}
+\vspace{0.3cm}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE04.png}
+\end{center}
+
+\end{column}
+\end{columns}
+\end{onlyenv}
+
+\textbf{Visualization:} ICE curve for observation $i=3$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
+\end{vbframe}
+
+
+\begin{vbframe}{Partial Dependence}
+
+The partial dependence (PD) plot is the expectation of the ICE curves w.r.t. the marginal distribution of complementary features $\xv_C$,
+$$\E_{\xv_C} \left( \fh(\xv_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(\xv_S, \xv_C) \, d\mathcal{P}(\xv_C)$$
+
+For a single $x_S$ it is estimated by the point-wise average of the ICE curves:
+$$PD_S := \fh_{S}(x_S) = \frac{1}{n} \sum_{i=1}^n \fh(x_S, \xv_C^{(i)})$$
+
+Within the SIPA framework the partial dependence builds the \textbf{Aggregation} step.
+
+\end{vbframe}
+
+\frame{
+\frametitle{Partial Dependence}
+\begin{onlyenv}
+    \begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\centering
+\only<1>{
+\includegraphics[page=8, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\end{column}
+\begin{column}{0.5\textwidth}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE05.png}
+\end{center}
+
+}
+
+
+\only<2>{
+\includegraphics[page=9, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\end{column}
+\begin{column}{0.5\textwidth}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE06.png}
+\end{center}
+
+}
+
+\only<3>{
+\includegraphics[page=10, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\end{column}
+\begin{column}{0.5\textwidth}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE07.png}
+\end{center}
+
+}
+
+
+\end{column}
+\end{columns}
+\end{onlyenv}
+
+\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves:
+$$PD_1 = \fh_{1}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+}
+
+
+\frame{
+\frametitle{Interpretation: PD and ICE}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/bike-sharing-dataset01.png}
+\end{center}
+
+\begin{onlyenv}
+\only<1>{
+\begin{itemize}
+\item
+  \textbf{ICE curve:} Visualize how the prediction of an
+  \textbf{individual observation} changes if the feature value is
+  changed.\\
+  \(\Rightarrow\) ICE is a local interpretation method (black curves).
+\item
+  \textbf{PD plot:} Visualizes the \textbf{average effect of a feature},
+  i.e., how the expected model prediction changes if the feature value is changed.\\
+  \(\Rightarrow\) PD plot is a global interpretation method (yellow curve).
+\end{itemize}
+}
+
+\only<2>{
+Insights from the Bike Sharing Dataset:
+\begin{itemize}
+  \item Higher temperature $\Rightarrow$ higher number of bike rentals.
+  \item Temperatures of more than $27^\circ$C decreases bike rentals.
+  \item The effect is very homogeneous across all observations.
+  \item Averaging ICE curves yields the PD plot (yellow curve).
+\end{itemize}
+}
+\end{onlyenv}
+}
+
+
+\frame{
+\frametitle{Categorical Features}
+
+Same concept, different way to convey the information (boxplots)
+}
+
+
+\begin{vbframe}{2D Partial Dependence}
+
+Same concept, but two features are replaced
+
+\framebreak
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/bike-sharing-dataset02.png}
+\end{center}
+
+\begin{itemize}
+ \item Humidity and temperature interact with each other.
+ \item The number of bike rentals is especially high when humidity is below 75 percent and temperature is between 15 $^{\circ}$C and 27 $^{\circ}$C
+\end{itemize}
+
+
+\framebreak
+
+add datapoints to previous figure and mention convex hull (see pdp package)
+
+\end{vbframe}
+
+\endlecture
+\end{document}
