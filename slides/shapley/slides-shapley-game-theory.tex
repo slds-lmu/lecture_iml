@@ -111,10 +111,12 @@
 \input{../../latex-math/basic-math.tex}
 
 %\usetheme{lmu-lecture}
-% \newcommand{\titlefigure}{figure/sample-dgp-2d.pdf}
+\newcommand{\titlefigure}{figure_man/earnings.png}
+% License of titlefigure: free pixabay license
+% https://pixabay.com/de/vectors/ergebnis-geld-gesch%C3%A4ft-gehalt-5567652/
 \newcommand{\learninggoals}{%
 \item Understand attribution in cooperative games
-\item Understand Shapley values concept
+\item Understand the concept of Shapley values
 \item Learn about applications of Shapley values
   }
 \usepackage{../../style/lmu-lecture}
@@ -140,21 +142,27 @@
 \begin{itemize}
   \item In cooperative games, a set of players $P$ with $P = \{1, \hdots, p\}$ forms a coalition $S \subseteq P$. 
   \item A value function $v(S)$ describes the payout (or gain) achieved by the coalition $S$. 
-  \item As some players contribute more than others, we are interested in the distribution of the payout among the players. 
+  \item As some players contribute more than others, we are interested in the distribution of the payout among the players.
+  \item We call the payout per player $\phi_j(v)$, $j \in P$.
   \item Problem: How to fairly distribute values among players?
 \end{itemize}
-
 \end{vbframe}
 
-\begin{vbframe}{Axioms for Fair Attributions}
+
+\begin{vbframe}{What Would Be a Fair Attribution?}
   We can posit these axioms for what a fair distribution would look like:
   \begin{itemize}
-      \item Efficiency
-      \item Symmetry
-      \item Dummy
-      \item Additivity
+    \item \textbf{Efficiency}: Player contributions add up to total payout (with all players).
+      $\sum\nolimits_{j=1}^p\phi_j = v(P)$
+    \item \textbf{Symmetry}: Two players who contribute the same get the same payout: \\
+      $v(S\cup\{j\}) = v(S\cup\{k\})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_{j}=\phi_{k}$
+    \item \textbf{Dummy / Null Player}: The payout is zero for players who don't contribute to the value of any coalition: \\
+      $val(S\cup\{j\})=val(S)$ for all $S \subseteq P$ then $\phi_j=0$
+    \item \textbf{Additivity}: For a game with combined payouts ($v1$ and $v2$), the payout is the sum of payouts: $\phi_j(v1) + \phi_{j}(v2)$
   \end{itemize}
-How can we attribute outcomes so that these axioms are fulfilled?
+
+  Is there a formula for payouts which adheres to all these axioms?
+
 \end{vbframe}
 
 
@@ -163,9 +171,12 @@ How can we attribute outcomes so that these axioms are fulfilled?
   Shapley Values are a way to solve the attribution problem and pose a unique solution given the axioms of efficiency, symmetry, dummy and additivity.
 \begin{itemize}
   \item The \textbf{Shapley value} assigns a value to each player according to the marginal contribution of each player in all possible coalitions.
-  \item TODO: Formula
+  \item $\phi_j(v) = \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(S \cup \{j\}) - v(S))$
+  \item Shapley values are the \textit{only} solution for the attribution with the specified axioms.
+  \item Proposed by Lloyd Shapley in 1951 for cooperative game theory.
 \end{itemize}
 
+\tiny{ Shapley, Lloyd S. (August 21, 1951). "Notes on the n-Person Game -- II: The Value of an n-Person Game" (PDF). Santa Monica, Calif.: RAND Corporation.}
 
 \end{vbframe}
 
@@ -189,14 +200,14 @@ The Shapley value of the feature $x_2$ is the marginal contribution (prediction 
 \begin{vbframe}{Applications of Shapley Value}
 
   \begin{itemize}
-      \item Economics
-      \item TODO
-      \item ...
-      \item Various applications in ML:
+      \item Game theory
+      \item Economics (e.g., cost allocation) % https://www.jstor.org/stable/2951524
+      \item Marketing (e.g., channel attribution) % http://datafeedtoolbox.com/attribution-theory-the-two-best-models-for-algorithmic-marketing-attribution-implemented-in-apache-spark-and-r/
+      \item Machine Learning:
        \begin{itemize}
-          \item Loss decomposition for features
-          \item TODO
-          \item Explain predictions 
+         \item Feature selection: Attribution of loss to individual features
+         \item Quantify value of data: Loss decomposition among data instances % http://proceedings.mlr.press/v97/ghorbani19c/ghorbani19c.pdf
+         \item \textbf{Explain individual predictions}
        \end{itemize}
   \end{itemize}
 
