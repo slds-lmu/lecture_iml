@@ -1,0 +1,326 @@
+
+\input{../../style/preamble4tex}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\begin{document}
+
+\lecturechapter{13}{Accumulated Local Effects}
+\lecture{Fortgeschrittene Computerintensive Methoden}
+
+\begin{vbframe}{Accumulated Local Effects}
+
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/accu01.png}
+\end{center}
+
+Remember, for strongly correlated features $x_1$ and $x_2$, the computation of a partial dependence (PD) plot involves \textbf{averaging predictions} of artificial data instances that are unlikely in reality.
+This leads to biased estimates.
+
+\framebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+  \item Accumulated Local Effects (ALE) are a novel method developed by Apley (2016).
+  \item ALEs are an alternative to PD that does not suffer from extrapolation when features are correlated.
+  \item PD and ALE reduce the complex prediction function $\hat{f}$ to a function that depends on only one (or two) features.
+  \item They both do that by averaging the effects of the other features.
+  \item We can seen the main differences of PD vs. ALE if we look on their formulas.
+  \item Before,  we explain the main idea of ALE.
+\end{itemize}
+\vspace{1cm}
+{\tiny{Apley, Daniel W. "Visualizing the Effects of Predictor Variables in Black Box Supervised Learning Models " ArXiv e-prints (Dec 2016)}\par}
+\end{vbframe}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{vbframe}{Derivative and Subsequent Integral}
+Idea: To remove unwanted effects of other features, we take the partial derivative of the prediction function with respect to a feature and integrate it with respect to the same feature. \\
+\lz
+Example:
+\begin{itemize}
+\item Consider an additive prediction function: $\fh(x_1, x_2) = 2x_1 + 2x_2 - 4x_1 x_2$
+\lz
+\item Partial derivative of $\fh$ with respect to $x_1$: $\frac{\partial \fh(x_1, x_2)}{\partial x_1} = 2 - 4x_2$
+\lz
+\item Integral of the partial derivative:  $\int_{z_0}^{x} \frac{\partial \fh(x_1, x_2)}{\partial x_1} dx_1 = \left[2x_1 - 4x_1 x_2\right]_{z_0}^{x}$
+\lz
+\item We removed the main effect of $x_2$ which was our goal.
+\end{itemize}
+\end{vbframe}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{First Order ALE}
+Let $z_0$ denote the minimum of observed values of feature $\xv_S$, i.e., $z_0 = min(\xv_S)$. All complementary features are denoted by $\xv_C$. The uncentered first order ALE $\tilde{f}_{S, ALE}(x)$ at point $x$ is defined as:
+$$
+\begin{aligned}
+\tilde{f}_{S, ALE}(x) &= \int_{z_{0}}^{x} \mathbb{E}_{\xv_C \vert x_S} \left[\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right] dz_S \\
+&= \int_{z_{0}}^{x} \left[ \int_{-\infty}^{\infty}  \frac{\partial \fh(z_S, \xv_C)}{\partial z_S} d\mathcal{P}(\xv_C | z_S) \,   \right] dz_S
+\end{aligned}
+$$
+
+A constant, i.e., the average of the uncentered ALE curve is substracted such that the centered ALE curve $\fh_{S, ALE}(x)$ has a mean of zero with respect to the marginal distribution of $x_S$:
+
+$$
+\begin{aligned}
+f_{S, ALE}(x) = \tilde{f}_{S, ALE}(x) - \underbrace{\int_{-\infty}^{\infty}\tilde{f}_{S, ALE}(x_S) \, d\mathcal{P}(x_S)}_{:= const}
+\end{aligned}
+$$
+
+\end{vbframe}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame{
+  \frametitle{PD vs. ALE}
+    \textbf{PD:}
+    $
+    \begin{aligned}
+      \hspace{2cm} \E_{\xv_C} \left( \fh(x_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_C) \, d\mathcal{P}(\xv_C)
+    \end{aligned}
+    $ \\
+    \textbf{ALE:}
+    $
+    \begin{aligned}
+      \only<1>{\hspace{1cm}
+      \int_{z_{0}}^{x} \mathbb{E}_{\xv_C \vert x_S} \left[\textcolor{purple}{\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}} \textcolor{blue}{\bigg \vert x_S = z_S} \right] dz_S\\
+        = \int_{z_{0}}^{x} \left[ \int_{-\infty}^{\infty}  \textcolor{purple}{\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}} d \textcolor{blue}{\mathcal{P}(\xv_C | z_S) } \,   \right] dz_S}
+    \only<2>{\hspace{1cm}
+    \textcolor{blue}{\int_{z_{0}}^{x}} \mathbb{E}_{\xv_C \vert x_S} \left[\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right] \textcolor{blue}{dz_S}\\
+  = \textcolor{blue}{\int_{z_{0}}^{x}} \left[ \int_{-\infty}^{\infty}\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} d \mathcal{P}(\xv_C | z_S)  \,   \right]}
+  \end{aligned}
+    $
+    \lz
+    \begin{itemize}
+
+    \only<1>{\item Difference 1: PD averages predictions over the marginal distribution while ALE averages the \textcolor{purple}{change} of predictions (defined as the gradient) over the \textcolor{blue}{conditional} distribution.}
+    \only<2>{\item Difference 2: ALE has an additional \textcolor{blue}{integral over $z_S$}. Instead of directly averaging the predictions, the ALE method calculates the prediction differences conditional on features S and integrates the derivative over features $S$ to estimate the effect. The derivative (or interval difference) isolates the effect of the feature of interest and blocks the effect of correlated features.}
+    \end{itemize}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{ALE Estimation}
+
+\begin{itemize}
+  \item Not all models come with a gradient, e.g. random forests.
+  \item In order to estimate the first order ALE we have to approximate the partial derivative of the prediction function. We do so by computing finite differences of predictions within a set of $K$ intervals for the value range of observed feature values $\xv_S$:
+  $$
+  \begin{aligned}
+  x \in [min(\xv_S), max(\xv_S)] \iff &x \in [z_{0, S}, z_{1, S}] \\
+  \lor &x \in \; ]z_{1, S}, z_{2, S}] \\
+  &\dots \\
+  \lor &x \in \; ]z_{K-1, S}, z_{K, S}]
+  \end{aligned}
+  $$
+  \item A simple way of creating $K$ intervals for the value range of $\xv_S$ is to use the values of a quantile distribution with $K-1$ quantiles as interval boundaries (not counting the 0\% and 100\% quantiles).
+\end{itemize}
+
+\end{vbframe}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{2-D Illustration}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/2D01.png}
+\end{center}
+
+Compared to PD, ALE avoids averaging predictions of unlikely data instances and blocks the effect of other correlated features. We divide the feature into intervals (vertical lines). For the data instances in an interval, we calculate the \textbf{difference in the prediction} when we replace the feature with the upper and lower limit of the interval (blue lines/points). These differences are later accumulated and centered, resulting in the ALE curve.
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/2D01.png}
+\end{center}
+
+
+ \begin{itemize}
+  \item Now let us define it more formalized.
+  \item  Consider the $i$-th observation $\xi = (x_S^{(i)}, \xi_C)$. The observation's feature value $x_S^{(i)}$ is located within the $k$-th interval of $\xv_S$, i.e., $x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]$. We substitute $x_S^{(i)}$ by the right and left interval boundaries while $\xi_C$ is kept constant. The finite difference corresponds to $\fh(z_{k, S}, \xi_C) - \fh(z_{k-1, S}, \xi_C)$.
+\end{itemize}
+
+
+\framebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/2D01.png}
+\end{center}
+
+
+ \begin{itemize}
+  \item For each interval, we estimate the local effect by averaging all observation-wise finite differences. This replaces the inner integral, i.e., the integral with respect to the conditional distribution of $\xv_C$ on $\xv_S$.
+  \item Summing up the local effects of all intervals up to the point of interest replaces the outer integral.
+\end{itemize}
+
+\end{vbframe}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{vbframe}{3-D Illustration}
+
+Consider the following data generating process:
+
+$$
+\begin{gathered}
+u_1, u_2 =  \{-10, -9.9, -9.8, \dots, 9.8, 9.9, 10\} \\
+n_1, n_2 \stackrel{iid}{\sim}  N(0, 1) \\
+\varepsilon \stackrel{iid}{\sim} N(0, 3) \\
+\\
+x_1 = u_1 + n_1 \\
+x_2 = u_2 + n_2 \\
+y = 100  \left[ \frac{\partial^2 \left[ \frac{1}{1 + exp(-x_1)} \right] }{\partial x_1 \partial x_1} \right] + 2 x_2 + \varepsilon
+\end{gathered}
+$$
+
+\framebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figure_man/3D01.png}
+\end{center}
+
+3D visualization of the data, the predictions made by the predictive model (blue net) and 10 intervals for the value range of $x_1$.
+
+\framebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/3D02.png}
+\end{center}
+
+Zooming in on the interval $x_1 \in [4.198, 6.249]$.
+
+\framebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/3D03.png}
+\end{center}
+
+
+We substitute each observation`s $x_1$ value by the right and left interval boundaries, predict and take the difference.
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figure_man/3D04.png}
+\end{center}
+
+For each observation, we receive a change in prediction when traversing the interval from the left to the right boundary.
+
+\end{vbframe}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{3-D Illustration}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figure_man/3D05.png}
+\end{center}
+
+We integrate over the conditional distribution of $x_2$ on $x_1$ by averaging all observation-wise finite differences inside each interval.
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/3D06.png}
+\end{center}
+
+
+We repeat the same procedure for every interval. The first order ALE corresponds to adding up all average interval-wise finite differences and substracting the centering constant.
+
+\end{vbframe}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{ALE Estimation: Formula}
+
+Let $k_S(x)$ denote the interval index a feature value $x \in \xv_S$ falls in. $n_S(k)$ denotes the number of observations inside the $k$-th interval of $\xv_S$. The estimated uncentered first order ALE $\hat{\tilde{f}}_{S, ALE}(x)$ at point $x$ corresponds to:
+$$
+\begin{aligned}
+\hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_C) -\fh(z_{k-1, S}, \xi_C)\right]
+\end{aligned}
+$$
+
+In order to receive the centered ALE estimate $\hat{f}_{S, ALE}(x)$ at point $x$, we substract the average of the estimated uncentered ALE curve:
+
+$$
+\begin{aligned}
+\hat{f}_{S, ALE}(x) = \hat{\tilde{f}}_{S, ALE}(x) - \frac{1}{n}\sum_{i = 1}^n \hat{\tilde{f}}_{S, ALE}(x_S^{(i)})
+\end{aligned}
+$$
+
+\end{vbframe}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{ALE Estimation: Algorithm}
+
+\begin{enumerate}
+	\item \textbf{Sampling:} Create $K$ intervals for the value range of $\xv_S$.
+	 \lz
+	\item For each interval $k \in 1, \dots, k_S(x)$:
+	  \begin{itemize}
+	  \item Select the subset of observations inside the $k$-th interval.
+	  \item \textbf{Intervention:} For each observation inside $k$-th interval: compute observation-wise finite difference.
+	  \item \textbf{Prediction:} Average all observation-wise finite differences inside $k$-th interval to interval-wise local effect.
+	  \end{itemize}
+	  \lz
+  \item \textbf{Aggregation:} Sum up all interval-wise local effects up to the point of interest $x$ for an uncentered ALE estimate.
+  \lz
+  \item Center the uncentered ALE estimate.
+\end{enumerate}
+
+\end{vbframe}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{Extrapolation and the ALE}
+\begin{itemize}
+
+\item Remember that there are two sources of extrapolation: (1) the model predicts in regions where it was not trained, and (2) the Monte Carlo integral corresponds to an integration w.r.t. a uniform distribution, instead of the data distribution.
+\item Assuming that all interval boundaries are sufficiently close to the corresponding observed values, ALEs are robust to both sources of extrapolation.
+  \begin{itemize}
+    \item First, the trained model does not predict in regions where it was not trained.
+    \item Second, we integrate with respect to the conditional distribution of $\xv_C$ on $x_S$ instead of the marginal distribution of $\xv_C$, by only averaging the finite differences inside a single interval.
+  \end{itemize}
+\end{itemize}
+\end{vbframe}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{vbframe}{Bike Sharing Dataset: First Order ALE}
+
+The PD (left) often looks very similar to the (centered) first order ALE (right) but on a different scale. In the case of correlated features, the ALE is a better option due to the PD's extrapolation issues.
+
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/first-order.png}
+\end{center}
+
+
+\end{vbframe}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{Bike Sharing Dataset: Second Order ALE}
+
+It is possible to estimate ALEs of higher order, e.g., second order ALEs. As opposed to the bivariate PD, the second order ALE corresponds to an estimate of the interaction between two features only, i.e., first order effects have been substracted.
+
+\vspace{0.1cm}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/second-order.png}
+\end{center}
+
+\end{vbframe}
+
+
+\endlecture
+\end{document}

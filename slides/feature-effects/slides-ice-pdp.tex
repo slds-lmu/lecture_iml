@@ -1,0 +1,304 @@
+
+
+\input{../../style/preamble4tex}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\begin{document}
+
+\lecturechapter{13}{ICE Curve and Partial Dependence Plot}
+\lecture{Fortgeschrittene Computerintensive Methoden}
+
+
+
+\begin{vbframe}{Individual Conditional Expectation (ICE)}
+The individual conditional expectation (ICE) plots visualize how the model prediction of individual observations $\xi$
+change by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed (with $C = S^\complement$).
+$$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S, \xi_C)$$
+
+In practice, $\xv_S$ consists of one or two features.
+
+\vspace{-0.2cm}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/ICE01.png}
+\end{center}
+
+\vspace{-0.3cm}
+{\scriptsize{\textbf{Figure:} ICE Curves of the last 10 observations of the bike sharing dataset. Each line displays the change in prediction for a single observation due to varying temperature.}\par}
+
+\vspace{0.4cm}
+\tiny{Goldstein, A., Kapelner, A., Bleich, J., and Pitkin, E. (2013). Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation, 1-22. https://doi.org/10.1080/10618600.2014.907095 \par}
+\normalsize
+
+
+\framebreak
+
+Steps to create an ICE plot for a single feature $x_S$ according to the SIPA framework:
+
+\begin{enumerate}
+\item \textbf{Sampling:} Choose grid points along $x_S$.
+\item For each grid point:
+  \begin{itemize}
+    \item \textbf{Intervention:} Replace the feature value $x_S$ with the current grid value.
+    \item \textbf{Prediction:} Get the model prediction with replaced feature value $x_S$.
+  \end{itemize}
+\item Draw a curve per observation with the grid points on the x-axis and the prediction on the y-axis.
+\end{enumerate}
+
+\framebreak
+
+\begin{center}
+\includegraphics[page=1, width=0.6\textwidth]{figure_man/ice_pd_plot_demo}
+\end{center}
+
+\begin{itemize}
+\item[1.] \textbf{Sampling:} Choose grid points along $x_1  $ that will be used to intervene the data (here: all unique values $1, 2$ and $3$).
+\end{itemize}
+
+\framebreak
+
+\begin{center}
+\includegraphics[page=2, width=0.6\textwidth]{figure_man/ice_pd_plot_demo}
+\end{center}
+
+\begin{itemize}
+\item \textbf{Intervention:} Replace all observed values in $x_1$ for each observation with the previously sampled grid points.
+\end{itemize}
+
+\framebreak
+
+\begin{center}
+\includegraphics[page=3, width=0.6\textwidth]{figure_man/ice_pd_plot_demo}
+\end{center}
+\vspace{-0.5cm}
+\begin{itemize}
+\item \textbf{Prediction:} Make predictions and plot $\fh_{1}^{(i)}(x_1)$ vs. $x_1$, where $$\fh_{1}^{(i)}(x_1) = \fh(x_1, \xi_{2, 3}).$$
+\end{itemize}
+
+\framebreak
+\begin{onlyenv}<1>
+  \vspace{1cm}
+    \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+  \centering
+  \includegraphics[page=5, width=\textwidth]{figure_man/ice_pd_plot_demo}
+  \end{column}
+ \begin{column}{0.5\textwidth}
+  \vspace{0.3cm}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE02.png}
+\end{center}
+
+\end{column}
+\end{columns}
+\end{onlyenv}
+
+ICE curve for observation $i=1$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
+
+\framebreak
+\begin{onlyenv}<1>
+  \vspace{1cm}
+    \begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[page=6, width=\textwidth]{figure_man/ice_pd_plot_demo}
+  \end{column}
+ \begin{column}{0.5\textwidth}
+\vspace{0.3cm}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE03.png}
+\end{center}
+
+\end{column}
+\end{columns}
+\end{onlyenv}
+ICE curve for observation $i=2$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
+
+\framebreak
+
+\begin{onlyenv}<1>
+  \vspace{1cm}
+    \begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[page=7, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\end{column}
+\begin{column}{0.5\textwidth}
+\vspace{0.3cm}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE04.png}
+\end{center}
+
+\end{column}
+\end{columns}
+\end{onlyenv}
+
+ICE curve for observation $i=3$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
+\end{vbframe}
+
+
+\begin{vbframe}{Partial Dependence}
+
+The partial dependence (PD) plot is the expectation of the ICE curves w.r.t. the marginal distribution of complementary features $\xv_C$,
+$$\E_{\xv_C} \left( \fh(\xv_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(\xv_S, \xv_C) \, d\mathcal{P}(\xv_C)$$
+
+For a single $x_S$ it is estimated by the point-wise average of the ICE curves:
+$$PD_S := \fh_{S}(x_S) = \frac{1}{n} \sum_{i=1}^n \fh(x_S, \xv_C^{(i)})$$
+
+Within the SIPA framework the partial dependence builds the \textbf{Aggregation} step.
+
+\end{vbframe}
+
+\frame{
+\frametitle{Partial Dependence}
+\begin{onlyenv}
+    \begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\centering
+\only<1>{
+\includegraphics[page=8, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\end{column}
+\begin{column}{0.5\textwidth}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE05.png}
+\end{center}
+
+}
+
+
+\only<2>{
+\includegraphics[page=9, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\end{column}
+\begin{column}{0.5\textwidth}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE06.png}
+\end{center}
+
+}
+
+\only<3>{
+\includegraphics[page=10, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\end{column}
+\begin{column}{0.5\textwidth}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/ICE07.png}
+\end{center}
+
+}
+
+
+\end{column}
+\end{columns}
+\end{onlyenv}
+
+\begin{itemize}
+\item[2.] \textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves:
+$$PD_1 = \fh_{1}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+\end{itemize}
+}
+
+\begin{vbframe}{Bike Sharing Dataset}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/bike-sharing-dataset01.png}
+\end{center}
+
+\begin{itemize}
+  \item Higher temperature $\Rightarrow$ higher number of bike rentals.
+  \item Temperatures of more than $27^\circ$C decreases bike rentals.
+  \item The effect is very homogeneous across all observations.
+  \item Averaging ICE curves yields a PD plot (yellow curve).
+\end{itemize}
+
+\framebreak
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/bike-sharing-dataset02.png}
+\end{center}
+
+\begin{itemize}
+ \item Humidity and temperature interact with each other.
+ \item The number of bike rentals is especially high when humidity is below 75 percent and temperature is between 15 $^{\circ}$C and 27 $^{\circ}$C
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Extrapolation}
+
+There are two sources of extrapolation:
+\lz
+\begin{enumerate}
+  \item If the model predicts in regions where it was not trained. Predictions in such regions are a bad approximation to the real underlying relationship between input and target space.
+  \lz
+  \item Averaging ICE curves at specific grid points refers to Monte Carlo integration w.r.t. a   uniform distribution and ignores how likely the data points are.
+  It might be better to integrate w.r.t. the (empirical) data distribution.
+\end{enumerate}
+\lz
+$\Rightarrow$ Biased estimates, especially in case of correlated features.
+
+\framebreak
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/extrapolation01.png}
+\end{center}
+
+\begin{itemize}
+\item The features $x_1$ and $x_2$ are strongly correlated.
+\item \textcolor{red}{Red:} Observed points of the original data.
+\item \textcolor{green}{Green:} Grid points used to calculate the ICE and PD curves.
+\end{itemize}
+$\Rightarrow$ unrealistic combination of feature values are used.
+
+\framebreak
+
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/extrapolation02.png}
+\end{center}
+
+\begin{itemize}
+\item The features $x_1$ and $x_2$ are strongly correlated.
+\item \textcolor{red}{Red:} Observed points of the original data.
+\item \textcolor{green}{Green:} Grid points used to calculate the ICE and PD curves.
+\item Example: PD plot at $x_1=1.9$ averages predictions over the whole marginal distribution of feature $x_2$.
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Comments}
+\begin{itemize}
+  \item For PD plots, the averaging of ICE curves might obfuscate heterogeneous effects and interactions. \\
+  $\Rightarrow$ Ideally plot ICE curves and PD plots together.
+\end{itemize}
+ \vspace{-0.3cm}
+
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/comments.png}
+\end{center}
+
+\vspace{-0.5cm}
+\framebreak
+
+\begin{itemize}
+\lz
+\item Extrapolation: interprete curves for highly correlated features and in feature regions with few observations with care.
+\lz
+\item Accumulated Local Effects (ALE) plots are a novel alternative to PD plots developed by Apley (2016) that do not suffer from extrapolation in case of correlated features.
+\end{itemize}
+
+\vspace{2cm}
+\vfill\tiny
+Apley (2016).
+Visualizing the effects of predictor variables in black box supervised learning models.
+arXiv preprint arXiv:1612.08468.
+
+\end{vbframe}
+
+
+\endlecture
+\end{document}
