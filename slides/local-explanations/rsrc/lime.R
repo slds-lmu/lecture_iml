@@ -13,6 +13,7 @@ library(foreach)
 # library(doRNG)
 library(doParallel)
 library(grDevices)
+library(proxy)
 
 # make_split <- function(data, share, seed = 100) {
 #   set.seed(seed)
@@ -28,11 +29,11 @@ y <- 2 * (sin(0.04* x ^ 2) + 0.1 * x) + 2
 data <- data.frame(x = x, y = y)
 
 fig0 <- ggplot(data, aes(x = x, y = y)) + 
-  geom_smooth(se = FALSE, col = "black") + 
+  # geom_smooth(se = FALSE, col = "black") + 
   geom_ribbon(aes(ymin = 0,ymax = predict(loess(y ~ x))),
-    alpha = 0.3,fill = 'lightgray') + 
+    alpha = 0.6,fill = 'lightgray') + 
   geom_ribbon(aes(ymin = predict(loess(y ~ x)), ymax = 8),
-    alpha = 0.3,fill = 'black') + 
+    alpha = 0.8,fill = 'darkgray') + 
   theme_bw() + ylim(c(0, 8)) +
   ylab("x2") + xlab("x1") 
 fig0
@@ -54,16 +55,26 @@ ggsave("../figure/lime3.pdf", plot = fig0, width = 4, height = 3)
 
 xorig <- c(2.8, 3.5)
 euclidean <- function(x) sqrt(sum((xorig - x)^2))
+kernel <- function(x, kernel.width = 0.1) {
+    d = dist(rbind(x, xorig), method = "euclidean")
+    sqrt(exp(-(d^2) / (kernel.width^2)))
+  }
 
-size <- rank(-apply(data_train, 1, euclidean))
-range01 <- function(x){0.5*(x-min(x))/(max(x)-min(x))}
-size <- range01(size)
+size <- apply(data_train, 1, kernel, kernel.width = 1)
+# range01 <- function(x){0.5*(x-min(x))/(max(x)-min(x))}
+# size <- range01(size)
 
 # add weights
-fig0 <- fig0 + geom_point(aes(x = x1train, y = x2train, size = size, col = size)) +
-  theme(legend.title = element_blank(), legend.position = "none") + 
-  geom_abline(intercept = 2, slope = 2, color="red", 
-    linetype="dashed", size=1.5)
-fig0 
+fig0 <- fig0 + geom_point(aes(x = x1train, y = x2train, size = size), col = "blue") + 
+  theme(legend.title = element_blank(), legend.position = "none")
+fig0
 ggsave("../figure/lime4.pdf", plot = fig0, width = 4, height = 3)
+
+# add linear model 
+fig0 <- fig0 + geom_abline(intercept = 1.85, slope = 0.58, color="red", 
+    linetype="dashed", size=1.51) +
+  geom_point(aes(x = x1train, y = x2train), col = "blue") +
+  theme(legend.title = element_blank(), legend.position = "none")
+fig0 
+ggsave("../figure/lime5.pdf", plot = fig0, width = 4, height = 3)
 

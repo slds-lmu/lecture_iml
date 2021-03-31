@@ -152,7 +152,8 @@
 
 \begin{vbframe}{LIME}
 \begin{itemize}
-		\item  Local Interpretable Model-agnostic Explanations (LIME) explain \textbf{individual} predictions of \textbf{any} black-box model by approximating the model \textbf{locally} with an interpretable models.
+		\item Local Interpretable Model-agnostic Explanations (LIME) assume that even if a machine learning model is very complex, the local prediction can be described with a simpler model.
+		\item  Therefore, LIME explains \textbf{individual} predictions of \textbf{any} black-box model by approximating the model \textbf{locally} with an interpretable models.
 		\item These approximations are called local surrogate models. Typically, they are linear models or trees.
 		\item They should answer why a machine learning model predicted $Y$ for input $\xv$.
 		\item Since they can be applied to any black-box model they are model-agnostic.  
@@ -186,15 +187,13 @@ We can measure the complexity of a model $g$ using $\Omega(g)$. \\
  			 \item We can rephrase that in an optimization task: the closer $\zv$ is to $\xv$, the closer $g(\xv)$ should be to $f(\zv)$.  
  			\item For this definition we need two distance measures:
  			\begin{enumerate}
- 				\item $d(\zv, \xv)$ to measure how close instance $\zv$ is to $\xv$. \label{first}
+ 				\item $\neigh(\zv)$ to measure how close instance $\zv$ is to $\xv$. \label{first}
  				\item $d_{g, f}(\zv)$to measure how close the predictions of $f(\zv)$ and $g(\zv)$ are. \label{second}
  			\end{enumerate}
- 			\item For the former, we can use a proximity measure $\neigh$. The nearer $\zv$ is to $\xv$ the higher should be $\neigh(\zv)$. A common proximity measure between two points $\xv$ and $\zv$ is the exponential kernel defined on some distance function $D$
- 			$$\pi_x(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$$ 
- 			with $\sigma$ as the kernel width.  
- 			\item $d$ could be for example the L2-distance.
- 			\item For the latter, we can use the squared loss $$d_{g,f}(\zv) = (g(\zv) - f(\zv))^2$$  
- 			\item Given some points $\zv \in Z$ we can measure local fidelity now in terms of a weighted loss
+ 			%\item For the former, we can use a proximity measure $\neigh$. The nearer $\zv$ is to $\xv$ the higher should be $\neigh(\zv)$. 
+ 	
+ 			%\item For the latter, we can use the squared loss $$d_{g,f}(\zv) = (g(\zv) - f(\zv))^2$$  
+ 			\item Given points $\zv \in Z$, we can measure local fidelity of $g$ with respect to $f$ now in terms of a weighted loss
  			$$L(f, g, \neigh) = \sum_{z \in Z} \neigh(\zv) d_{g,f}(\zv)$$
 % 			\item Example: $L(f, g, \neigh)$ could be for example a locally weighted square loss. 
 % 			A common proximity measure between two points $\xv$ and $\zv$ is the exponential kernel 
@@ -217,54 +216,61 @@ We can measure the complexity of a model $g$ using $\Omega(g)$. \\
 		$$ \argmin_{g \in \Gspace} L(f, g, \neigh) + \Omega(g)$$
 		\item In practice, LIME only optimizes $L(f, g, \neigh)$ (model-fidelity). 	
 		\item The complexity is determined by users beforehand by restricting the class $\Gspace$, for example, by only considering linear models with a specific number of coefficients. 
-		\framebreak 
 		\item Since we want a \textbf{model-agnostic} explainer, we need to optimize $L(f, g, \neigh)$ without making any assumptions about $f$. 
-		\item 	Given $\xv$ whose prediction we want to explain and model class $\Gspace$, we learn $g$ by the following: 
-			\vspace{1cm}
+		\item Therefore, we learn $g$ only approximately with the following algorithm.  
+		\end{itemize}
+\end{vbframe} 
+
+\begin{vbframe}{LIME Algorithm}
+		For the algorithm, we need a pre-trained model $f$, $\xv$ whose prediction we want to explain and model class $\Gspace$.\\ \vspace{0.5cm}
+		We illustrate the steps of the algorithm with a classification example: 
+		\begin{itemize}
+			\item The light/dark gray background represents the prediction surface of classifier $f: \R^2 \to \{0, 1\}$.
+			\item The yellow point displays $\xv$ we are interested in. 
+			\item $\Gspace$ is restricted to the class of logistic regression models 
+		\end{itemize}
 		\begin{center}
-			\includegraphics[width=0.5\textwidth]{figure/lime2}
+			\includegraphics[width=0.4\textwidth]{figure/lime2}
 		\end{center}
-	\end{itemize}
 	
 		\begin{enumerate}
 		\framebreak 
-		\item Perturb your dataset and get black box predictions $\zv \in Z$ for these new points.
-		\vspace{1cm}
+		\item Sample new instances $\zv \in Z$. 
+		\item Retrieve predictions $f(\zv)$ for the perturbed points $\zv \in Z$. \\[0.2cm]
+		
+		\hspace{-0.7cm} Strategies for sampling: 
+		\begin{itemize}
+			\item Randomly sample new instances. 
+			\item Perturb the training dataset.
+			\item Draw samples from the estimated univariate distribution of each feature.
+			\item Create an equidistant grid over the supported feature range.  
+		\end{itemize}
 		\begin{center}
-			\includegraphics[width=0.5\textwidth]{figure/lime3}
+			\includegraphics[width=0.4\textwidth]{figure/lime3}
 		\end{center}
 		
 		\framebreak
-		\item Weight the new samples by their proximity $\neigh(\zv)$.
-			\vspace{1cm}
+		\item Weight $\zv \in Z$ by their proximity $\neigh(\zv)$.
+		\\[0.2cm]
+		\end{enumerate}
+		 A common proximity measure between two points $\xv$ and $\zv$ is the exponential kernel defined on some distance function $D$
+		 $$\pi_x(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$$ 
+		 with $\sigma$ as the kernel width. $d$ could be for example the Euclidean distance (numeric features) or the Gower distance (mixed features).
 		\begin{center}
-			\includegraphics[width=0.5\textwidth]{figure/lime4}
+			\includegraphics[width=0.4\textwidth]{figure/lime4}
 		\end{center}
 		
 		\framebreak
-		\item Train a weighted, sparse, interpretable model on this new dataset (e.g. LASSO) with the obtained predictions as the target.
-		
+		\begin{enumerate}
+			\setcounter{enumi}{3}
+		\item Train a weighted, interpretable model $g$ on $Z$ with the obtained predictions as the target.
+		\item Return the interpretable model $g$ as the explainer. \\[0.3cm]
+			\end{enumerate}
+		Popular interpretable models: linear/logistic regression models, LASSO, classification/regression trees, decision rules
 					\vspace{1cm}
 		\begin{center}
-			\includegraphics[width=0.5\textwidth]{figure/lime5}
+			\includegraphics[width=0.4\textwidth]{figure/lime5}
 		\end{center}
-		
-		\framebreak
-		\item Explain the prediction by interpreting the local model. 
-		\end{enumerate}
-\framebreak
-
-
-\begin{center}
- \includegraphics[width=0.5\textwidth]{figure/lime}
-\end{center}
-\begin{itemize}
-  \item The blue/pink background represents the complex decision function $\fh$.
-  \item The red bold cross is our instance of interest $\xv$.
-  \item Other crosses and points represent the sampled instances. The size of the symbols corrresponds to the proximity to $\xv$.
-  \item The dashed line corresponds to the learned model used as a local explanation.
-\end{itemize}
-{\tiny{Ribeiro, M. T., (2016, August). Why should i trust you?: Explaining the predictions of any classifier}}
 \end{vbframe}
 
 \begin{vbframe}{Bike Sharing Dataset}
@@ -283,12 +289,61 @@ Warmer temperature has a positive effect on the prediction,
 while the year 2011 has a large negative effect as well as the springtime.
 \end{vbframe}
 
-\begin{vbframe}{Remarks}
+\begin{vbframe}{LIME for Text Data}
+	So far, we focused on tabular data but LIME could also be applied to text data: 
+	\begin{itemize}
+		\item Each instance is represented as a binary vector indicating the presence or absence of a word.
+		\item Starting from the original text, new samples $\zv$ are created by randomly removing words from the original text. 
+	\end{itemize}
+	
+	\begin{figure}
+		\begin{center}
+			%\captionsetup{font = scriptsize, labelfont = {bf, scriptsize}}
+			\includegraphics[width=0.9\textwidth]{figure/lime_movier}
+		\end{center}
+	\end{figure}
+	
+	
+	\scriptsize{\textbf{Figure:} LIME for two instances of a labeled movie review dataset. One half is labeled as positive reviews (\textcolor{orange}{1}), 
+		the other halfs as negative reviews (\textcolor{blue}{0}). Words like ``worst`` or ``waste`` indicate a negative review while words like ``best`` or ``great`` indicate a positive review.}
+	
+	\vspace{0.3cm}
+	{\tiny{Shen, Ian, (2019, March). Explain sentiment prediction with LIME.
+			\url{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}}\par}
+	
+	\end{vbframe}
+	
+	\begin{vbframe}{LIME for image data}
+	LIME also works for image data:  
+	\begin{itemize}
+		\item Each instance is represented as a binary vector indicating the presence or absence of superpixels. 
+		\item Superpixels are interconnected pixels with similar colors. They are used because a single pixel would probably not change a prediction by much.
+		\item Starting from the original image, new samples $\zv$ are created by randomly turning ``superpixels" off or on (i.e., color them with any color). 
+	\end{itemize}
+	\vspace{-0.3cm}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{figure/lime-images}
+	\end{center}
+	\vspace{-0.3cm}
+	\tiny{Ribeiro, M. T., (2016, August). Why should i trust you?: Explaining the predictions of any classifier. Retrieved from \url{https://github.com/marcotcr/lime}\par}
+\end{vbframe}
+
+
+\begin{vbframe}{Pitfalls}
   \begin{itemize}
+  	\item LIME is one of the best known interpretable machine learning methods but several papers caution to be careful in their use. 
+  	\item Problems can occur in several places. These are discussed in more detail below. 
+  \end{itemize}
+	\textbf{Pitfall 1: Sampling}
+	\begin{itemize}
       \item LIME creates new samples by perturbing each feature individually. For numerical features, samples are drawn from a normal distribution with mean and standard deviation based on the observed feature values.   
       \item LIME samples are not taken around the instance of interest $\xv$, but from the training data's mass center.
-      \item Any interpretable model (e.g. LASSO, decision tree) can be used as a local model. 
-      \item LIME assumes that even if a machine learning model is very complex, the local prediction can be described with a simpler model.
+      \item These sampling mechanisms ignore the correlation between features. 
+      \item This can lead to unlikely data points which can then be used to learn local explanation models. 
+    \end{itemize}
+\framebreak
+	\textbf{Pitfall 2: Locality}
+	\begin{itemize} 
      \item It is difficult to define locality (= how samples are weighted locally). It has a huge influence on the local model, but there is no automatic procedure for choosing the neighbourhood. 
      \item Current implementations use an exponential smoothing kernel to define the neighborhood. 
      Until now there is not a good way to find a good kernel and kernel width. 
@@ -298,7 +353,7 @@ while the year 2011 has a large negative effect as well as the springtime.
 
 
 \frame{
-  \frametitle{Remarks}
+  \frametitle{Pitfalls}
   \begin{onlyenv}
   \begin{columns}
   \begin{column}{0.5\textwidth}
@@ -326,71 +381,42 @@ while the year 2011 has a large negative effect as well as the springtime.
 \tiny{Molnar, C, (2019). Interpretable machine learning. A Guide for Making Black Box Models Explainable. \url{https://christophm.github.io/interpretable-ml-book/.}\par}
 }
 
-\begin{vbframe}{LIME for Images and Text}
-LIME for images and texts differs from LIME for tabular data. \\[0.2cm]
-Text classification: 
+\begin{vbframe}{Pitfalls}
+\textbf{Pitfall 3: Faithfulness}
 \begin{itemize}
-    \item Each instance is represented as a binary vector indicating the presence or absence of a word.
-  \item Starting from the original text, new texts are created by randomly removing words from the original text. 
+	\item There exists a trade-off between local fidelity vs. sparsity 
+	\item If the local fidelity of our interpretable model is low, we do not receive reliable explanations.
+	\item On the other hand, high fidelity is only possible with a more complex model bearing the risk to substitute a black-box by another.
+	\item It should also be noted that identifying \textbf{locally} faithful explanations that are interpretable is less of a challenge than identifying \textbf{globally} faithful explanations. 
+	\item Yet, global fidelity implies local fidelity but not vice versa. 
 \end{itemize}
 
-\begin{figure}
-\begin{center}
-%\captionsetup{font = scriptsize, labelfont = {bf, scriptsize}}
- \includegraphics[width=0.9\textwidth]{figure/lime_movier}
-\end{center}
-\end{figure}
-
-
- \scriptsize{\textbf{Figure:} LIME for two instances of a labeled movie review dataset. One half is labeled as positive reviews (\textcolor{orange}{1}), 
-the other halfs as negative reviews (\textcolor{blue}{0}).Words like ``worst`` or ``waste`` indicate a negative review while words like ``best`` or ``great`` indicate a positive review.}
-
-\vspace{0.3cm}
-{\tiny{Shen, Ian, (2019, March). Explain sentiment prediction with LIME.
-\url{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}}\par}
-
-\framebreak
-
-\normalsize
-LIME for images and texts differs from LIME for tabular data. \\[0.2cm]
-Image classification: 
-  \begin{itemize}
-  \item Variations of the images are created by segmenting the image into $"$superpixels$"$ and turning superpixels off or on. 
-  \item Superpixels are interconnected pixels with similar colors. They are used because a single pixel would probably not change a prediction by much.
-  \item A binary vector indicates the presence or absence of these superpixels.
+\textbf{Pitfall 4: Possibility to hide biases}
+\begin{itemize}
+	\item Slack et al. (2020) showed that data scientist could manipulate their model to hide biases. 
+	\item They make use of the fact that sampled instances to build the surrogate model are out of the input data distribution if we do not account for feature dependencies. 
+	\item They built a classifier that detects whether a given data point is an out-of-distribution sample or not. 
+	\item If the sample is out-of-distribution (usually samples for the surrogate models), an unbiased predictor is used, otherwise a biased on. 
+	\item Since the surrogate model is trained on samples whose target values are derived from an unbiased predictor, the explanations do not detect any bias although the original predictor is biased. 
 \end{itemize}
-\vspace{-0.3cm}
-\begin{center}
- \includegraphics[width=0.8\textwidth]{figure/lime-images}
-\end{center}
-\vspace{-0.3cm}
-\tiny{Ribeiro, M. T., (2016, August). Why should i trust you?: Explaining the predictions of any classifier. Retrieved from \url{https://github.com/marcotcr/lime}\par}
+
+\textbf{Pitfall 5: Robustness}
+\begin{itemize}
+	\item Another really big problem is the instability of the explanations. 
+	\item Explanations of two very close points could vary greatly. 
+	\item But also if $\xv$ is fixed and only new sampled data sets $Z$ are used, the resulting explanations could differ.  
+\end{itemize}
+
+\textbf{Pitfall 6: Definition of superpixels}
+\begin{itemize}
+	\item Another source of instability concerns the definition of superpixels for image data. 
+	\item Multiple definitions of superpixels exist and these definitions influence both the shape and size. 
+	\item The definition of superpixel has a large influence on the explanations. 
+	\item Furthermore, if superpixel are only slightly changed (adversarial attack), the definitions could still differ greatly.  
+\end{itemize}
+
 \end{vbframe}
 
-
-\begin{vbframe}{Example}
-	\begin{itemize}
-		\item We trained a model to predict if an image shows a wolf or a husky. 
-		\item Below the predictions on six test images are given. 
-		\item Do you trust our predictor? 
-	\end{itemize}
-	\begin{center}
-		\includegraphics[width=0.45\textwidth]{figure/lime-wolfhusky.png}\\
-		\includegraphics[width=0.45\textwidth]{figure/lime-wolfhusky2.png}\\
-		{\tiny \textbf{Source:} \href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{www.facweb.iitkgp.ac.in}}
-	\end{center}
-\end{vbframe}
-
-\begin{vbframe}{Example}
-	\begin{itemize}
-		\item We can use local interpretable model-agnostic explanations (LIME) to highlight the parts of an image which led to the prediction.
-		\item We can see that our predictor is actually a snow detector. 
-	\end{itemize}
-	\begin{center}
-		\includegraphics[width=0.75\textwidth]{figure/lime-wolfhusky3.png}\\
-		{\tiny \textbf{Source:} \href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{www.facweb.iitkgp.ac.in}}
-	\end{center}
-\end{vbframe}
 
 \endlecture
 \end{document}
