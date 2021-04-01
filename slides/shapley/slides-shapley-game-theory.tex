@@ -196,6 +196,19 @@ The Shapley value of the feature $x_2$ is the marginal contribution (prediction 
 
 }
       
+\begin{vbframe}{Definition via permutation}
+ Shapley values can also be defined via permutations of players:
+\begin{itemize}
+  \item Let $\pi(P)$ be all possible orderings of players, for example for players a,b,c: $\pi(P) = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$.
+  \item Then: $\phi_j(v) = \frac{1}{|P|!} \sum_{O \in \pi(P)} (v(Pre(O,j) \cup \{j\}) - v(Pre(O,j)))$
+  \item $Pre(O,j)$ are the players that are before player $j$ in the ordering $O$. For example if $O = (b,a,c)$ and $j=a$, then $Pre(O,j) = \{b\}$
+  \item Both Shapley formulations are equivalent, since the number of orderings which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$.
+  \item Relevance of the permutation definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
+\end{itemize}
+
+\tiny{}
+
+\end{vbframe}
 
 \begin{vbframe}{Applications of Shapley Value}
 

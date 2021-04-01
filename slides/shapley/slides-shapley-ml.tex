@@ -111,10 +111,10 @@
 \input{../../latex-math/basic-math.tex}
 
 %\usetheme{lmu-lecture}
-% \newcommand{\titlefigure}{figure/sample-dgp-2d.pdf}
+\newcommand{\titlefigure}{figure_man/shapley_valuefct.png}
 \newcommand{\learninggoals}{
 \item Understand prediction as cooperative game
-\item Understand Shapley value computation for prediction explanation 
+\item Understand specifics of Shapley value computation for prediction explanation 
 }
 \usepackage{../../style/lmu-lecture}
 
@@ -132,24 +132,24 @@
 
 \begin{document}
 
-\lecturechapter{Shapley Values for Predictions}
+\lecturechapter{Shapley Values for Local Explanations}
 \lecture{Interpretable Machine Learning}
 
 \begin{vbframe}{Shapley Values}
-In Machine Learning, we can use Shapley values to explain individual predictions of specific observations: 
+We can use Shapley values to explain individual predictions of a machine learning model $\fh$: 
 \begin{itemize}
   \item Players $\hat{=}$ features.
   \item Features collaborate to make a prediction.
-  \item The payout of coalition $S$ for observation $\xv$ is 
+  \item The value function / payout of coalition $S$ for observation $\xv$ is 
   $$v(\xv_S) =  \fh_{S} (\xv_S) - \E (\fh(\xv))$$ 
   i.e., the difference of the marginal prediction of $\xv_S$ and the average prediction.
-  \item We have already seen how the marginal prediction can be calculated: ICE curves. 
+\item The marginal prediction is $\fh_{S}(\xv_S) = \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
+  \item We have already seen the marginal prediction in action in the PDP.
 \end{itemize}
 \begin{center}
 \vspace{-0.3cm}
 \includegraphics[width=0.8\textwidth]{figure_man/shapley_valuefct}
 \end{center}
-\framebreak
 
 \begin{itemize}
  \item Shapley values tell us what the payout of each feature is, i.e., how each feature contributes to the overall prediction of a specific observation.  
@@ -164,11 +164,14 @@ In Machine Learning, we can use Shapley values to explain individual predictions
 \begin{vbframe}{Shapley Value - Definition}
 \begin{itemize}
   \item The Shapley value of a feature $j$ is defined as:\\ 
-  For $m = 1, \dots, M$ exhaustively select coalition $S_m \subseteq P \land S_m \backslash j$  and calculate
-$$ \hat{\phi_{j}}(\xv) = \frac{1}{M} \sum_{m=1}^{M} \underbrace{v(\xv_{S_m \cup \{j \} }) - v(\xv_{S_m})}_{\text{marginal contribution of feature $j$}} $$
-\lz
+  For $m = 1, \dots, M$ exhaustively select coalition $S_m \subseteq P \setminus j$  and calculate
+    $$ \hat{\phi_{j}}(\xv) = \frac{1}{M} \sum_{m=1}^{M} \underbrace{\fh_{S_m \cup \{j \}}(\xv_{S_m \cup \{j \} }) - \fh_{S_m}(\xv_{S_m})}_{\text{marginal contribution of feature $j$}} $$
+    \item The term $\E (\fh(\xv))$ drops due to the difference.
+    \item TODO: Show or state equivalence to other formula from original paper (with the weights)
+      \framebreak
   \item Interpretation of Shapley value $\hat{\phi_{j}}(\xv)$ for feature $j$ and observation $\xv$: 
   The feature value $\xv_{j}$ contributed $\hat{\phi_{j}}(\xv)$ towards the prediction $\fh(x)$ compared to the average prediction for the dataset.
+   \item Contributions can be negative.
 \end{itemize}
 \lz
 \tiny
@@ -182,13 +185,14 @@ Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Ex
 \begin{vbframe}{Revisited: Axioms for Fair Attributions}
   We take the general axioms for Shapley Values and apply it to predictions:
   \begin{itemize}
-    \item \textbf{Efficiency}: Player contributions add up to total payout.
+    \item \textbf{Efficiency}: Feature contributions add up to the (centered) prediction.
       $\sum\nolimits_{j=1}^p\phi_j=\hat{f}(x)-E_X(\hat{f}(X))$
-    \item \textbf{Symmetry}: Two players who contribute the same get the same payout: \\
-      $v(S\cup\{j\}) = v(S\cup\{j\})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_{j}=\phi_{k}$
-    \item \textbf{Dummy / Null Player}: Shapley value of a player who does not contribute to any coalition is zero: \\
-      $val(S\cup\{j\})=val(S)$ for all $S \subseteq P$ then $\phi_j=0$
-    \item \textbf{Additivity}: 
+    \item \textbf{Symmetry}: Two feature that contribute the same to the prediction get the same payout: \\
+      $\fh_{S\cup\{j\}}(\xv_{S\cup\{j\}}) = \fh_{S\cup\{k\}}(x_{S\cup\{k\}})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_{j}=\phi_{k}$
+    \item \textbf{Dummy / Null Player}: Shapley value of a feature that does not influence the prediction is zero: \\
+      $\fh_{S\cup\{j\}}(S\cup\{j\})=\fh_{S}(S)$ for all $S \subseteq P$ then $\phi_j=0$
+    \item \textbf{Additivity}:  For a prediction with combined payouts (v1 and v2), the
+      payout is the sum of payouts: $\phi_j(v1) + \phi_j(v2)$.
   \end{itemize}
 How can we attribute outcomes so that these axioms are fulfilled?
 \end{vbframe}
@@ -203,6 +207,8 @@ How can we attribute outcomes so that these axioms are fulfilled?
       \item Second solution: Sample from data to replace "missing" features
       \item Note: Solution only approximate. The more samples the better
       \item Note: When features are dependent, replacement is  problematic
+      \item TODO: Formula
+      \item TODO: Explain formula
   \end{itemize}      
 
 \end{vbframe}
