@@ -33,7 +33,7 @@ fig0 <- ggplot(data, aes(x = x, y = y)) +
   geom_ribbon(aes(ymin = 0,ymax = predict(loess(y ~ x))),
     alpha = 0.6,fill = 'lightgray') + 
   geom_ribbon(aes(ymin = predict(loess(y ~ x)), ymax = 8),
-    alpha = 0.8,fill = 'darkgray') + 
+    alpha = 0.9,fill = 'darkgray') + 
   theme_bw() + ylim(c(0, 8)) +
   ylab("x2") + xlab("x1") 
 fig0
