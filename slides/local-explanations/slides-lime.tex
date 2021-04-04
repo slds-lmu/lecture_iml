@@ -109,9 +109,12 @@
 \input{../../style/common.tex}
 
 %\usetheme{lmu-lecture}
-% \newcommand{\titlefigure}{figure/sample-dgp-2d.pdf}
+\newcommand{\titlefigure}{figure/lime5}
 \newcommand{\learninggoals}{
-	\item }
+	\item Understand motivation for LIME
+	\item Develop a mathematical intuition
+	\item See various applications
+	\item Know its pitfalls}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -246,16 +249,18 @@ We can measure the complexity of a model $g$ using $\Omega(g)$. \\
 			\item Create an equidistant grid over the supported feature range.  
 		\end{itemize}
 		\begin{center}
-			\includegraphics[width=0.4\textwidth]{figure/lime3}
+			\includegraphics[width=0.4\textwidth]{figure/lime3} \hspace{0.1cm}
+			\includegraphics[width=0.4\textwidth]{figure/lime3a}
 		\end{center}
 		
 		\framebreak
 		\item Weight $\zv \in Z$ by their proximity $\neigh(\zv)$.
 		\\[0.2cm]
 		\end{enumerate}
-		 A common proximity measure between two points $\xv$ and $\zv$ is the exponential kernel defined on some distance function $D$
+		 A common proximity measure between two points $\xv$ and $\zv$ is the exponential kernel defined on some distance function $d$
 		 $$\pi_x(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$$ 
 		 with $\sigma$ as the kernel width. $d$ could be for example the Euclidean distance (numeric features) or the Gower distance (mixed features).
+		 \textcolor{red}{Why kernel?}
 		\begin{center}
 			\includegraphics[width=0.4\textwidth]{figure/lime4}
 		\end{center}
@@ -293,7 +298,8 @@ while the year 2011 has a large negative effect as well as the springtime.
 	So far, we focused on tabular data but LIME could also be applied to text data: 
 	\begin{itemize}
 		\item Each instance is represented as a binary vector indicating the presence or absence of a word.
-		\item Starting from the original text, new samples $\zv$ are created by randomly removing words from the original text. 
+		\item Starting from the original text, new samples $\zv$ are created by randomly removing words from the original text.
+		\item An exponential kernel with cosine distance could be used as a proximity measure. 
 	\end{itemize}
 	
 	\begin{figure}
@@ -307,7 +313,6 @@ while the year 2011 has a large negative effect as well as the springtime.
 	\scriptsize{\textbf{Figure:} LIME for two instances of a labeled movie review dataset. One half is labeled as positive reviews (\textcolor{orange}{1}), 
 		the other halfs as negative reviews (\textcolor{blue}{0}). Words like ``worst`` or ``waste`` indicate a negative review while words like ``best`` or ``great`` indicate a positive review.}
 	
-	\vspace{0.3cm}
 	{\tiny{Shen, Ian, (2019, March). Explain sentiment prediction with LIME.
 			\url{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}}\par}
 	
@@ -318,7 +323,8 @@ while the year 2011 has a large negative effect as well as the springtime.
 	\begin{itemize}
 		\item Each instance is represented as a binary vector indicating the presence or absence of superpixels. 
 		\item Superpixels are interconnected pixels with similar colors. They are used because a single pixel would probably not change a prediction by much.
-		\item Starting from the original image, new samples $\zv$ are created by randomly turning ``superpixels" off or on (i.e., color them with any color). 
+		\item Starting from the original image, new samples $\zv$ are created by randomly turning ``superpixels" off or on (uniformly coloring). 
+		\item An exponential kernel with L2 distance could be used as a proximity measure.
 	\end{itemize}
 	\vspace{-0.3cm}
 	\begin{center}
@@ -336,15 +342,13 @@ while the year 2011 has a large negative effect as well as the springtime.
   \end{itemize}
 	\textbf{Pitfall 1: Sampling}
 	\begin{itemize}
-      \item LIME creates new samples by perturbing each feature individually. For numerical features, samples are drawn from a normal distribution with mean and standard deviation based on the observed feature values.   
-      \item LIME samples are not taken around the instance of interest $\xv$, but from the training data's mass center.
-      \item These sampling mechanisms ignore the correlation between features. 
+	  \item The most common sampling strategies for $\zv \in Z$ do not take the correlation between features into account. 
       \item This can lead to unlikely data points which can then be used to learn local explanation models. 
     \end{itemize}
 \framebreak
 	\textbf{Pitfall 2: Locality}
 	\begin{itemize} 
-     \item It is difficult to define locality (= how samples are weighted locally). It has a huge influence on the local model, but there is no automatic procedure for choosing the neighbourhood. 
+     \item It is difficult to define locality (= how samples are weighted locally). It has a huge influence on the local model, but there is no automatic procedure for choosing the neighborhood. 
      \item Current implementations use an exponential smoothing kernel to define the neighborhood. 
      Until now there is not a good way to find a good kernel and kernel width. 
      \item A small kernel width means that an instance must be very close to influence the local model, a larger kernel width means that instances that are farther away also influence the model. 
@@ -382,7 +386,22 @@ while the year 2011 has a large negative effect as well as the springtime.
 }
 
 \begin{vbframe}{Pitfalls}
-\textbf{Pitfall 3: Faithfulness}
+
+\textbf{Pitfall 3: Local vs. global features}
+\begin{itemize}
+	\item There exist two types of features: Features with a \textbf{global} influence that influence the global shape of the black-box model and features with a \textbf{local} influence that impact predictions for a small area of the whole features space. 
+	\item Im most LIME implementations, new instances are sampled from the whole input space and are not taken around the instance of interest $\xv$.
+	\item Laugel et al. (2018) showed that this tends to hide the features with a local influence for the benefit of features with a global influence in classification problems. 
+	\item They propose to sample new instances $\zv$ precisely around the decision boundary closest from point $\xv$.
+\end{itemize}
+{\tiny Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.}
+ \begin{center}
+	\includegraphics[width=1\textwidth]{figure/lime_bordersample}
+	{\tiny Source: \href{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}{ICML WHI 2018: Defining Locality for Surrogates in Post-hoc Interpretability}}
+\end{center}
+\framebreak
+
+\textbf{Pitfall 4: Faithfulness}
 \begin{itemize}
 	\item There exists a trade-off between local fidelity vs. sparsity 
 	\item If the local fidelity of our interpretable model is low, we do not receive reliable explanations.
@@ -391,7 +410,7 @@ while the year 2011 has a large negative effect as well as the springtime.
 	\item Yet, global fidelity implies local fidelity but not vice versa. 
 \end{itemize}
 
-\textbf{Pitfall 4: Possibility to hide biases}
+\textbf{Pitfall 5: Possibility to hide biases}
 \begin{itemize}
 	\item Slack et al. (2020) showed that data scientist could manipulate their model to hide biases. 
 	\item They make use of the fact that sampled instances to build the surrogate model are out of the input data distribution if we do not account for feature dependencies. 
@@ -400,21 +419,34 @@ while the year 2011 has a large negative effect as well as the springtime.
 	\item Since the surrogate model is trained on samples whose target values are derived from an unbiased predictor, the explanations do not detect any bias although the original predictor is biased. 
 \end{itemize}
 
-\textbf{Pitfall 5: Robustness}
+\textbf{Pitfall 6: Robustness}
 \begin{itemize}
 	\item Another really big problem is the instability of the explanations. 
 	\item Explanations of two very close points could vary greatly. 
 	\item But also if $\xv$ is fixed and only new sampled data sets $Z$ are used, the resulting explanations could differ.  
 \end{itemize}
 
-\textbf{Pitfall 6: Definition of superpixels}
+\textbf{Pitfall 7: Definition of superpixels}
 \begin{itemize}
 	\item Another source of instability concerns the definition of superpixels for image data. 
 	\item Multiple definitions of superpixels exist and these definitions influence both the shape and size. 
 	\item The definition of superpixel has a large influence on the explanations. 
 	\item Furthermore, if superpixel are only slightly changed (adversarial attack), the definitions could still differ greatly.  
 \end{itemize}
+\vspace{0.5cm}
+\textbf{Conclusion: LIME should only be used with great caution.}
 
+\end{vbframe}
+
+\begin{vbframe}{Literature}
+	\begin{itemize}
+		\small
+		\item Marco Tulio Ribeiro, Sameer Singh, and Carlos Guestrin. 2016. "Why Should I Trust You?": Explaining the Predictions of Any Classifier. In Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '16). Association for Computing Machinery, New York, NY, USA, 1135–1144. 
+		\item Dylan Slack, Sophie Hilgard, Emily Jia, Sameer Singh, and Himabindu Lakkaraju. 2020. Fooling LIME and SHAP: Adversarial Attacks on Post hoc Explanation Methods. In Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society (AIES '20). Association for Computing Machinery, New York, NY, USA, 180–186. 
+		\item Alvarez-Melis, D., \& Jaakkola, T. (2018). On the Robustness of Interpretability Methods. ArXiv, abs/1806.08049.
+		\item Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.
+	\end{itemize}
+	
 \end{vbframe}
 
 
