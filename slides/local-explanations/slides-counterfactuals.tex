@@ -169,7 +169,7 @@
 %	Input: Desired target, original data point, predictor, observed data\\[0.1cm]
 %	Output: Data points which minimize  
 %	\begin{enumerate}
-%		\item Distance of prediction to desired prediction $|f(x) - Y'|$
+%		\item Distance of prediction to desired prediction $|\fh(x) - Y'|$
 %		\item Number of feature changes $\sum_{j = 1}^p I_{x_j \neq x^*_j}$
 %		\item Distance to original data point $d(x, x^*)$ (Gower)
 %		\item Distance to observed data points $d(x, X^{obs})$
@@ -217,17 +217,17 @@
 	\vspace{0.3cm}
 	A \textbf{valid} counterfactual $\xv'$ is a datapoint: 
 	\begin{enumerate}
-		\item whose prediction $f(\xv')$ is equal to the desired prediction $y'$. 
+		\item whose prediction $\fh(\xv')$ is equal to the desired prediction $y'$. 
 		\item that is close to the original datapoint $\xv$.
 	\end{enumerate}
 	Wachter et al. (2017) reformulated these requirements into an optimization problem: 
 	\begin{equation}
-		\argmin_{\xv'} \max_{\lambda} \lambda o_1(f(\xv'), y') + o_2(\xv', \xv).
+		\argmin_{\xv'} \max_{\lambda} \lambda o_1(\fh(\xv'), y') + o_2(\xv', \xv).
 		\label{eq:wachter}
 	\end{equation}
 	\begin{itemize}
 		\item $\lambda$ balances the two objectives.
-		\item $o_1$ could be, for example, the squared distance $$o_1(f(\xv'), y') = (f(\xv') - y')^2.$$
+		\item $o_1$ could be, for example, the squared distance $$o_1(\fh(\xv'), y') = (\fh(\xv') - y')^2.$$
 		\item $o_2$ could be the Gower distance that is suitable for mixed features: 
 		$$o_2(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(\xv'_j, \xv_j)\in [0, 1]$$
 		The value of $\delta_G$ depends on the feature type:
@@ -257,15 +257,17 @@
 	\end{itemize}	
 	Overall, we could update Eq.~(\ref{eq:wachter}) to be: 
 	\begin{equation}
-		\argmin_{\xv'} \max_{\lambda_1} \lambda_1 o_1(f(\xv'), y') + \lambda_2 o_2(\xv', \xv) + \lambda_3 o_3(\xv', \xv) + \lambda_4 o_4(\xv', \Xspace).
+		\argmin_{\xv'} \max_{\lambda_1} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv) + \lambda_3 o_3(\xv', \xv) + \lambda_4 o_4(\xv', \Xspace).
 	\end{equation}
 	
 	\begin{center}
 		\includegraphics[width=0.5\textwidth]{figure/counterfactuals_obj}
 	\end{center}
-{\small Two possible paths for a datapoint \textcolor{blue}{$\xv$},
+
+\scriptsize{\textbf{Figure:} Two possible paths for a datapoint \textcolor{blue}{$\xv$},
 	originally classified in the negative class. The two counterfactuals (\textcolor{red}{CF1} and \textcolor{green}{CF2}) are valid. Note that the red path $A$ for CF1 is the shortest, whereas the
 	green path $B$ for CF2 adheres closely to the manifold of the training data, but is longer.}
+
 \end{vbframe}
 
 \begin{vbframe}{Remarks}
@@ -280,24 +282,60 @@
 \begin{vbframe}{Overview of Methods}
 	Multiple methods exist to calculate counterfactuals but these differ greatly in 
 	\begin{itemize}
+		\item Targets: Most methods can only explain predictions of a classification models and only a few cover regression models. 
+		\item Feature space: Some methods could only handle numerical features, some could only categorical features if their are converted. Only a few could process both types. 
 		\item Objectives: Some methods do not take into account all objectives, some methods have additional objectives. 
 		\item Model access level: Methods could require access to the complete model internals, access to gradients or only to prediction functions. 
 		\item Optimization tool: Most methods use gradient-based algorithms (only work for differential models) or gradient-free algorithms (Nelder-Mead, genetic algorithm). 
 		\item Number of counterfactuals: Most methods could only return a single counterfactual per run, only a few return multiple counterfactuals.
-		\item Feature space: Some methods could only handle numerical features, some could only categorical features if their are converted. Only a few could process both types. 
 	\end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Method: Multi-Objective Counterfactual Explanations}
 	\begin{itemize}
-		\item Minimizing Eq.~(\ref{eq:wachter}) is difficult since we need to specify $\lambda_1$, $\lambda_2$, $\lambda_3$ and $\lambda_4$ beforehand. 
-		\item Instead of collapsing all necessary objectives into a single one we could instead optimize them simultaneously with a multi-objective genetic algorithm. 
+		\item Minimizing Eq.~(\ref{eq:wachter}) is difficult since $\lambda_1$, $\lambda_2$, $\lambda_3$ and $\lambda_4$ need to be specified beforehand. 
+		\item Instead of collapsing all four objectives into a single one by we could instead optimize them simultaneously with a multi-objective genetic algorithm. 
 		\item This approach is called Multi-Objective Counterfactual Explanations (MOC) and was developed by Dandl et al. in 2020. 
-		\item They used the non-dominated sorting genetic algorithm (see CIM1 for details). 
+		\item They adjusted the non-dominated sorting genetic algorithm NSGA-II (see CIM1 for details) to produce a set of diverse counterfactuals for mixed discrete and continuous feature spaces.
 	\end{itemize}
+
+	\tiny{Dandl S., Molnar C., Binder M., Bischl B. (2020) Multi-Objective Counterfactual Explanations. In: Bäck T. et al. (eds) Parallel Problem Solving from Nature – PPSN XVI. PPSN 2020. Lecture Notes in Computer Science, vol 12269. Springer, Cham.}
+	 
 \end{vbframe}
 
-\begin{vbframe}{Example: ???}
+\begin{vbframe}{Example: Bike Sharing Dataset}
+	\begin{itemize}
+		\item Model: Random Forest with 500 trees
+		\item $\xv$ is the first data point of the dataset with $\fh(\xv) = 1767.93$ rental bikes. 
+		\item Our desired goal is to increase the count of total rental bikes to $y' = [3000, \infty[$
+		\item MOC (with default parameters) found 56 counterfactuals after 200 iterations that met the target.
+		\item Most counterfactuals proposed to decrease the humidity (94.6 \%) and more than half to increase the temperature (55.4\%). 
+		\item Some counterfactuals proposed additional changes to the year (2012 instead of 2011) and month (December instead of Januar).
+		\framebreak 
+		\item We can visualize feature changes with a parallel plot. 
+		\item For humidity and temperature, we can additionally show a 2-dim surface plot. 
+	\end{itemize}
+	\vspace{-0.5cm}
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+			\begin{center}
+				\includegraphics[width=1\textwidth]{figure/counterfactuals_bike_sp}
+			\end{center}
+		
+			\scriptsize{\textbf{Figure:} Response surface plot. 
+				The white dot is $\xv$, black dots are $\xv'$. The histograms display the marginal distribution of the training data $\Xspace$.} 
+				
+		\end{column}
+		\begin{column}{0.5\textwidth}  
+			\begin{center}
+				\includegraphics[width=1\textwidth]{figure/counterfactuals_bike_para}
+			\end{center}
+		
+		\scriptsize{\textbf{Figure:} Parallel plot. 
+			The grey lines show the feature values of the counterfactuals $\xv'$, the blue line corresponds to the values of $\xv$. Features without proposed changes are omitted. The bold numbers give minima and minima of numeric features while character strings indicate categories of character features.} 
+		
+		\end{column}
+	\end{columns}
 \end{vbframe}
 
 \begin{vbframe}{Pitfalls}
