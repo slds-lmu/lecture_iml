@@ -157,6 +157,7 @@
 	\begin{itemize}
 		\item Why was the credit rejected? 
 		\item Is it a fair decision? 
+		\item How should $\xv$ be changed so that the credit is accepted?  
 	\end{itemize}
 	
 	\framebreak
@@ -180,26 +181,120 @@
 \begin{vbframe}{Aims \& Roles}
 	Counterfactuals...
 	\begin{itemize}
-		\item give reasons why desired prediction was not reached
-		\item give guidance how to reach desired prediction in the future
-		\item provide grounds to object against unfair decisions
-		\item help to detect pointwise non-robustness and biases
+		\itemsep1.5em
+		\item give guidance how to reach the desired prediction in the future.\\
+		Example:  ``become more skilled and reduce credit amount"
+		\item give reasons why desired prediction was not reached. \\
+		Example:  ``you are not skilled enough and the credit amount is too high"
+		\item provide grounds to object against unfair decisions. \\
+		Example:  ``why are less skilled persons less likely to get a loan?"
+		\item help to detect pointwise non-robustness and biases of a trained model. \\
+		Example:  ``job skills should not matter" 
 	\end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Philosophical Basis}
+	\begin{itemize}
+		\item Counterfactuals Explanations are statements of how the world would have to be different for a desirable outcome to occur. 
+		\item It can also be seen as a counterfactual sentence that is true: 
+		\begin{equation}
+			\textnormal{``If $S$ was true $Q$ would have been true."}
+			\label{eq:sent}
+		\end{equation}
+		\item In machine learning, $S$ is true describes a change in features while $Q$ is true describes a change in the outcome. 
+		\item What makes counterfactual statements true is hotly debated in philosophy. 
+		\item Solutions in ML build on the work of Lewis (1973): Equation~(\ref{eq:sent}) is true, if in all worlds most similar to the actual world where $S$ is true, $Q$ is also true. 
+		\item The notion of similarity between worlds remains a highly discussed open question. 
+	\end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Mathematical Perspective}
+	Terminology: 
+	\begin{itemize}
+		\item $\xv$ as original/factual datapoint whose prediction we want to explain
+		\item $y' \in \Yspace$ as desired outcome 
+	\end{itemize}
+	\vspace{0.3cm}
+	A \textbf{valid} counterfactual $\xv'$ is a datapoint: 
+	\begin{enumerate}
+		\item whose prediction $f(\xv')$ is equal to the desired prediction $y'$. 
+		\item that is close to the original datapoint $\xv$.
+	\end{enumerate}
+	Wachter et al. (2017) reformulated these requirements into an optimization problem: 
+	\begin{equation}
+		\argmin_{\xv'} \max_{\lambda} \lambda o_1(f(\xv'), y') + o_2(\xv', \xv).
+		\label{eq:wachter}
+	\end{equation}
+	\begin{itemize}
+		\item $\lambda$ balances the two objectives.
+		\item $o_1$ could be, for example, the squared distance $$o_1(f(\xv'), y') = (f(\xv') - y')^2.$$
+		\item $o_2$ could be the Gower distance that is suitable for mixed features: 
+		$$o_2(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(\xv'_j, \xv_j)\in [0, 1]$$
+		The value of $\delta_G$ depends on the feature type:
+		\begin{equation*}
+		\delta_G(x_j, x^*_j) = 
+		\begin{cases}
+		\frac{1}{\widehat{R}_j}|x_j- x^*_j| & \text{if $x_j$ is numerical} \\
+		\mathbb{I}_{x_j \neq x_j^*} & \text{if $x_j$ is categorical}
+		\end{cases}
+		\end{equation*}
+		with $\widehat{R}_j$ as the value range of feature $j$, extracted from the observed dataset. 
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Further Objectives}
+	The notion of validity formed the basis, but over the years other objectives had been added. \\
+	\textbf{Sparsity:}
+	\begin{itemize}
+		\item $o_2$ does not necessarily take into account how many features have been changed. 
+		\item Therefore, a third objective $$o_3(\xv', \xv) = \sum_{j = 1}^p \mathbb{I}_{x'_j \neq x_j}$$ that counts the number of feature changes is necessary. 
+	\end{itemize}
+	\textbf{Plausibility:}
+	\begin{itemize}
+		\item It is also desirable to generate counterfactuals that are realistic in the sense that they originate from the distribution of $\Xspace$ or adhere to the data manifold. 
+		\item Estimating a joint distribution over the training data is a complex problem, especially for mixed feature spaces. As a proxy, we could desire that $\xv'$ is close to the training data $\Xspace$. $o_4$ could then be the Gower distance of $\xv'$ to the nearest data point of the training dataset $\xv^{[1]}$. 
+		$$o_4(\xv, \Xspace) =  \frac{1}{p} \sum_{j = 1}^{p}  \delta_G(x_j, x^{[1]}_j).$$
+	\end{itemize}	
+	Overall, we could update Eq.~(\ref{eq:wachter}) to be: 
+	\begin{equation}
+		\argmin_{\xv'} \max_{\lambda_1} \lambda_1 o_1(f(\xv'), y') + \lambda_2 o_2(\xv', \xv) + \lambda_3 o_3(\xv', \xv) + \lambda_4 o_4(\xv', \Xspace).
+	\end{equation}
+	
+	\begin{center}
+		\includegraphics[width=0.5\textwidth]{figure/counterfactuals_obj}
+	\end{center}
+{\small Two possible paths for a datapoint \textcolor{blue}{$\xv$},
+	originally classified in the negative class. The two counterfactuals (\textcolor{red}{CF1} and \textcolor{green}{CF2}) are valid. Note that the red path $A$ for CF1 is the shortest, whereas the
+	green path $B$ for CF2 adheres closely to the manifold of the training data, but is longer.}
+\end{vbframe}
+
+\begin{vbframe}{Remarks}
+	\begin{itemize}
+		\item Rashomon Effect: Multiple counterfactual with changes to different features could lead to a desired counterfactual prediction. Therefore, it is valuable to receive a set of counterfactuals rather than a single counterfactual. 
+		\item Actionability: We could further strengthen above's plausibility criterion by requiring counterfactuals that do not change immutable features (e.g., race, city of birth, sex). We could therefore search for counterfactuals only among a defined feasible set of counterfactuals. 
+		\item This could be even further strengthened by requiring counterfactuals that maintain any known causal relations. In the real world, if one feature is changed it affects also other features. E.g., better skills lead to better salary, but also a higher age due to the necessary training. 
+	\end{itemize}
+	
 \end{vbframe}
 
 \begin{vbframe}{Overview of Methods}
-\end{vbframe}
-
-\begin{vbframe}{Method: What-If}
+	Multiple methods exist to calculate counterfactuals but these differ greatly in 
+	\begin{itemize}
+		\item Objectives: Some methods do not take into account all objectives, some methods have additional objectives. 
+		\item Model access level: Methods could require access to the complete model internals, access to gradients or only to prediction functions. 
+		\item Optimization tool: Most methods use gradient-based algorithms (only work for differential models) or gradient-free algorithms (Nelder-Mead, genetic algorithm). 
+		\item Number of counterfactuals: Most methods could only return a single counterfactual per run, only a few return multiple counterfactuals.
+		\item Feature space: Some methods could only handle numerical features, some could only categorical features if their are converted. Only a few could process both types. 
+	\end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Method: Multi-Objective Counterfactual Explanations}
+	\begin{itemize}
+		\item Minimizing Eq.~(\ref{eq:wachter}) is difficult since we need to specify $\lambda_1$, $\lambda_2$, $\lambda_3$ and $\lambda_4$ beforehand. 
+		\item Instead of collapsing all necessary objectives into a single one we could instead optimize them simultaneously with a multi-objective genetic algorithm. 
+		\item This approach is called Multi-Objective Counterfactual Explanations (MOC) and was developed by Dandl et al. in 2020. 
+		\item They used the non-dominated sorting genetic algorithm (see CIM1 for details). 
+	\end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Example: ???}
