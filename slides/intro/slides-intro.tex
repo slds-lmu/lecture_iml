@@ -22,6 +22,7 @@
 \newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
 \newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
 \newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\newcommand{\predvar}{Var\left[\hat{f}(x)\right]}
 \let\hlipl\hlkwb
 
 \usepackage{framed}
@@ -294,18 +295,89 @@ Local interpretability methods explain single predictions or a group of similar 
 
 \begin{vbframe}{Recap: Interpretable Models}
 
+
+\textbf{Linear models (LM) and generalized linear models (GLM):}
+
+The specification of model parameters makes LMs and GLMs intrinsically interpretable.
+
 \begin{itemize}
-\item Linear models (LM) and generalized linear models (GLM):
-\item Generalized additive models (GAM):
-\item Model-based boosting (MBoost):
-\item Ruled based ML:
+
+\item \textbf{LM:}
+$$
+\mathbb{E}_Y(y \vert x) = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \epsilon
+$$
+
+\item \textbf{GLM:}
+$$
+g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p
+$$
 \end{itemize}
+
+
+\textbf{Generalized additive models (GAM):} Add flexibility by replacing linear term by more general functional form, but retain interpretability by keeping the pre-specified additive predictor.
+
+$$
+g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 h(x_1) + \dots + \beta_p h(x_p)
+$$
+
+\end{vbframe}
+
+\begin{vbframe}{Recap: Interpretable Models}
+
+
+\textbf{Model-based Boosting:}
+
+
+
+\begin{itemize}
+\item Model-based boosting is intrinsically interpretable.
+
+\item 
+Idea: Combine boosting with interpretable base learners (e.g., an LM). As a result, the prediction is a weighted sum of interpretable terms.
+
+\item
+Consider two linear base learners $b_j(x, \Theta)$ and $b_j(x, \Theta^{\star})$ with the same type, but distinct parameter vectors $\Theta$ and $\Theta^{\star}$. It is possible to combine them in a base learner of the same type:
+
+$$
+b_j(x, \Theta) + b_j(x, \Theta^{\star}) = b_j(x, \Theta + \Theta^{\star})
+$$
+
+\item In each iteration, all base learners are fitted to the so-called pseudo residuals in the current iteration that act as a kind of error of the actual model. A new base learner is then selected by choosing the base learner with the smallest empirical risk.
+\end{itemize}
+
+
+
+\end{vbframe}
+
+\begin{vbframe}{Recap: Interpretable Models}
+
+
+\textbf{Rule-based ML:}
+
+
+Decision rules follow a general structure: IF the conditions are met THEN make a certain prediction. A single decision rule or a combination of several rules can be used to make predictions.
+
+\vspace{0.5cm}
+There are many ways to learn rules from data, e.g.,:
+\begin{itemize}
+\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
+\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.
+\item Bayesian Rule Lists combine pre-mined frequent patterns into a decision list using Bayesian statistics. Using pre-mined patterns is a common approach used by many rule learning algorithms.
+\end{itemize}
+
 \end{vbframe}
 
 \begin{vbframe}{Marginal Effects}
-The default way to interpret LMs and GLMs with non-linear feature effects is the marginal effect.
+
 \begin{itemize}
-\item A
+\item In LMs with interactions, higher order terms, or GLMs, the feature term cannot be interpreted as a direct effect on the predicted outcome.
+\item The default way to interpret LMs and GLMs with non-linear feature effects is the marginal effect.
+\item Either, we take the derivative of the prediction function w.r.t. a feature, or we evaluate changes in prediction due to an intervention in the data, e.g., by increasing a feature value by one unit:
+\begin{align*}
+ME_j(x) &= \frac{\partial f(x)}{\partial x_j} \\
+ME_j(x, h_j) &= f(x_1, \dots, x_j + h_j, \dots, x_p) - f(x)
+\end{align*}
+\item Marginal effects can also be used as a model-agnostic technique to interpret any ML model.
 \end{itemize}
 
 \end{vbframe}
@@ -313,6 +385,56 @@ The default way to interpret LMs and GLMs with non-linear feature effects is the
 
 \begin{vbframe}{Additive Decomposition of a Prediction Function}
 
+\begin{itemize}
+\item
+Every function can be decomposed into a sum of components of increasing order:
+\begin{align*}
+\hat{f}(x) &= g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \\
+&\phantom{{}={}} + \;\dots\; + g_{\{1,\ldots,p\}}(x_1, \ldots,x_p)
+\end{align*}
+\item The features need to be independent to make the decomposition unique.
+\item Different techniques to estimate an additive decomposition exist, e.g., its recursive estimation via the partial dependence (PD) or accumulated local effects (ALE).
+\item The PD on a subset of features $X_S$ is the minimum L2 loss approximation of the prediction function given $X_S$, denoted by $\mathbb{E}_{X_{-S}}\left[\widehat{f}(x) \; \vert \; X_S \right]$, where $X_{-S}$ is the subset of remaining features.
+
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Additive Decomposition of a Prediction Function}
+
+Consider a recursive estimation via the PD:
+\begin{align*}
+ g_{\{0\}} &= \mathbb{E}_X\left[\widehat{f}(x)\right] \\
+ g_{\{1\}}(x_1) &= \mathbb{E}_{X_{-1}}\left[\widehat{f}(x) \; \vert  \; X_1 \right] - g_{\{0\}} \\
+ g_{\{2\}}(x_2) &= \mathbb{E}_{X_{-2}}\left[\widehat{f}(x) \; \vert  \; X_2 \right] - g_{\{0\}} \\
+ g_{\{1, 2\}}(x_1, x_2) &= \mathbb{E}_{X_{-\{1,2\}}}\left[\widehat{f}(x) \; \vert \; X_1, X_2 \right] - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
+ &\vdots \\
+ g_{\{1, \dots, p\}}(x) &= \widehat{f}(x) - \dots - g_{\{1, 2\}}(x_1, x_2) \\
+ &\phantom{{}={}} - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
+\end{align*}
+
+\end{vbframe}
+
+\begin{vbframe}{Functional ANOVA}
+\begin{itemize}
+\item
+After $\hat{f}$ has been decomposed, we may conduct a functional analysis of variance (functional ANOVA / FANOVA)
+\begin{align*}
+Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \right. \\
+&\phantom{{}={}} \left. + \;\dots\; + g_{\{1,\ldots,p\}}(x) \right]
+\end{align*}
+\item If the features are independent, the variance can be additively decomposed:
+\begin{align*}
+Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}}\right] + Var\left[g_{\{1\}}(x_1)\right] + Var\left[g_{\{2\}}(x_2)\right] \\
+&\phantom{{}={}} + Var\left[g_{\{1, 2\}}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\{1,\ldots,p\}}(x)\right] 
+\end{align*}
+\item Dividing by the prediction variance results in the fraction of variance explained by each term:
+\begin{align*}
+1 &= \frac{Var\left[g_{\{0\}}\right]}{\predvar} + \frac{Var\left[g_{\{1\}}(x_1)\right]}{\predvar} + \frac{Var\left[g_{\{2\}}(x_2)\right]}{\predvar} \\
+&\phantom{{}={}} + \frac{Var\left[g_{\{1, 2\}}(x_1, x_2)\right]}{\predvar} + \;\dots\; + \frac{Var\left[g_{\{1,\ldots,p\}}(x)\right]}{\predvar} 
+\end{align*}
+\item The fraction of variance explained by a set of terms $S = \{1, \dots, s\}$ is referred to as the Sobol index of $S$.
+\item The FANOVA decomposition stems from SA and dates back as far as the 1940s. It has been an active area of research ever since, specifically the generalization to dependent features, where neither the decomposition is unique, nor the Sobol indices sum up to 1.
+\end{itemize}
 
 \end{vbframe}
 
