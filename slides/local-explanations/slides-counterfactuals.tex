@@ -149,7 +149,7 @@
 \begin{vbframe}{Example: Credit Risk Application} 
 	\begin{itemize}
 		\item $\textbf{x}$: customer and credit information
-		\item $Y$: Grant or reject credit
+		\item $y$: Grant or reject credit
 	\end{itemize}
 	\begin{center}\includegraphics[width=0.65\linewidth, page=1]{figure/counterfactuals_credit.pdf} \end{center}
 	
@@ -169,7 +169,7 @@
 %	Input: Desired target, original data point, predictor, observed data\\[0.1cm]
 %	Output: Data points which minimize  
 %	\begin{enumerate}
-%		\item Distance of prediction to desired prediction $|\fh(x) - Y'|$
+%		\item Distance of prediction to desired prediction $|\fh(x) - y'|$
 %		\item Number of feature changes $\sum_{j = 1}^p I_{x_j \neq x^*_j}$
 %		\item Distance to original data point $d(x, x^*)$ (Gower)
 %		\item Distance to observed data points $d(x, X^{obs})$
@@ -253,7 +253,9 @@
 	The notion of validity formed the basis, but over the years other objectives had been added. \\
 	\textbf{Sparsity:}
 	\begin{itemize}
-		\item $o_2$ does not necessarily take into account how many features have been changed. 
+		\item Since users find it easier to understand shorter explanations, counterfactuals should only change a small number of features.  
+		\item $o_2$ does not necessarily take the number of changed features into account. 
+		\item There could be a trade-off between the number of features changed and the total amount of change made to obtain a certain prediction. 
 		\item Therefore, a third objective that considers the number of feature changes is necessary, for example the L0-norm $$o_3(\xv', \xv) = \sum_{j = 1}^p \mathbb{I}_{x'_j \neq x_j}.$$ 
 	\end{itemize}
 	\textbf{Plausibility:}
@@ -282,7 +284,7 @@
 
 \begin{vbframe}{Remarks}
 	\begin{itemize}
-		\item Rashomon Effect: Multiple counterfactual with changes to different features could lead to a desired counterfactual prediction. Therefore, it is valuable to receive a set of counterfactuals rather than a single counterfactual. 
+		\item Rashomon Effect: Multiple counterfactual with changes to different features could lead to a desired counterfactual prediction. Therefore, it is valuable to receive a set of diverse counterfactuals rather than a single counterfactual. 
 		\item Actionability: We could further strengthen above's plausibility criterion by requiring counterfactuals that do not change immutable features (e.g., race, city of birth, sex). Therefore, we could  search for counterfactuals only among a defined feasible set of counterfactuals $\mathcal{A}$. 
 		\item Causality: We could also restrict the search to counterfactuals that maintain any known causal relations. In the real world, if one feature is changed it affects also other features. E.g., better skills lead to better salary, but also a higher age due to the necessary training. 
 	\end{itemize}
@@ -303,10 +305,11 @@
 
 \begin{vbframe}{Method: Multi-Objective Counterfactual Explanations}
 	\begin{itemize}
-		\item Minimizing Eq.~(\ref{eq:wachter}) is difficult since $\lambda_1$, $\lambda_2$, $\lambda_3$ and $\lambda_4$ need to be specified beforehand. 
+		\item Minimizing Eq.~(\ref{eq:wachter}) is difficult since $\lambda_1$, $\lambda_2$, $\lambda_3$ and $\lambda_4$ need to be specified a-priori. 
 		\item Instead of collapsing all four objectives into a single objective by a weighted sum, we could optimize them simultaneously with a multi-objective genetic algorithm. 
 		\item This approach is called Multi-Objective Counterfactual Explanations (MOC) and was developed by Dandl et al. in 2020. 
 		\item They adjusted the non-dominated sorting genetic algorithm NSGA-II (see CIM1 for details) to produce a set of diverse counterfactuals for mixed discrete and continuous feature spaces.
+		\item The algorithm returns a set of counterfactuals that represents different trade-offs between the objectives and are constructed to be diverse in feature space.
 	\end{itemize}
 
 	\tiny{Dandl S., Molnar C., Binder M., Bischl B. (2020) Multi-Objective Counterfactual Explanations. In: Bäck T. et al. (eds) Parallel Problem Solving from Nature – PPSN XVI. PPSN 2020. Lecture Notes in Computer Science, vol 12269. Springer, Cham.}
