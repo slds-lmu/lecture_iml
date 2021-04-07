@@ -177,6 +177,13 @@
 	
 \end{vbframe}
 
+\begin{vbframe}{Counterfactual Explanations}
+	\begin{itemize}
+		\item Counterfactuals are close neighbors of a data point we are interested in, but their predictions are sufficiently close or equal to a (usually quite different) desired outcome. 
+		\item Therefore, they explain single predictions by revealing what minimal changes to the input are necessary to receive a different response. 
+		\item During this chapter, their application to tabular data are explained, although their could be applied to image and text data, as well. 
+	\end{itemize}
+\end{vbframe}
 
 \begin{vbframe}{Aims \& Roles}
 	Counterfactuals...
@@ -198,7 +205,7 @@
 		\item Counterfactuals Explanations are statements of how the world would have to be different for a desirable outcome to occur. 
 		\item It can also be seen as a counterfactual sentence that is true: 
 		\begin{equation}
-			\textnormal{``If $S$ was true $Q$ would have been true."}
+			\textnormal{``If $S$ was true, $Q$ would have been true."}
 			\label{eq:sent}
 		\end{equation}
 		\item In machine learning, $S$ is true describes a change in features while $Q$ is true describes a change in the outcome. 
@@ -227,7 +234,7 @@
 	\end{equation}
 	\begin{itemize}
 		\item $\lambda$ balances the two objectives.
-		\item $o_1$ could be, for example, the squared distance $$o_1(\fh(\xv'), y') = (\fh(\xv') - y')^2.$$
+		\item $o_1$ could be, for example, L1-distance $o_1(\fh(\xv'), y') = |\fh(\xv')-y'|$
 		\item $o_2$ could be the Gower distance that is suitable for mixed features: 
 		$$o_2(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(\xv'_j, \xv_j)\in [0, 1]$$
 		The value of $\delta_G$ depends on the feature type:
@@ -238,7 +245,7 @@
 		\mathbb{I}_{x_j \neq x_j^*} & \text{if $x_j$ is categorical}
 		\end{cases}
 		\end{equation*}
-		with $\widehat{R}_j$ as the value range of feature $j$, extracted from the observed dataset. 
+		with $\widehat{R}_j$ as the value range of feature $j$, which is extracted from the training dataset. 
 	\end{itemize}
 \end{vbframe}
 
@@ -247,17 +254,17 @@
 	\textbf{Sparsity:}
 	\begin{itemize}
 		\item $o_2$ does not necessarily take into account how many features have been changed. 
-		\item Therefore, a third objective $$o_3(\xv', \xv) = \sum_{j = 1}^p \mathbb{I}_{x'_j \neq x_j}$$ that counts the number of feature changes is necessary. 
+		\item Therefore, a third objective that considers the number of feature changes is necessary, for example the L0-norm $$o_3(\xv', \xv) = \sum_{j = 1}^p \mathbb{I}_{x'_j \neq x_j}.$$ 
 	\end{itemize}
 	\textbf{Plausibility:}
 	\begin{itemize}
 		\item It is also desirable to generate counterfactuals that are realistic in the sense that they originate from the distribution of $\Xspace$ or adhere to the data manifold. 
-		\item Estimating a joint distribution over the training data is a complex problem, especially for mixed feature spaces. As a proxy, we could desire that $\xv'$ is close to the training data $\Xspace$. $o_4$ could then be the Gower distance of $\xv'$ to the nearest data point of the training dataset $\xv^{[1]}$. 
-		$$o_4(\xv, \Xspace) =  \frac{1}{p} \sum_{j = 1}^{p}  \delta_G(x_j, x^{[1]}_j).$$
+		\item Estimating a joint distribution over the training data is a complex problem, especially for mixed feature spaces. As a proxy, we could desire that $\xv'$ is close to the training data $\Xmat$. For example, $o_4$ could then be the Gower distance of $\xv'$ to the nearest data point of the training dataset $\xv^{[1]}$. 
+		$$o_4(\xv, \Xmat) =  \frac{1}{p} \sum_{j = 1}^{p}  \delta_G(x_j, x^{[1]}_j).$$
 	\end{itemize}	
 	Overall, we could update Eq.~(\ref{eq:wachter}) to be: 
 	\begin{equation}
-		\argmin_{\xv'} \max_{\lambda_1} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv) + \lambda_3 o_3(\xv', \xv) + \lambda_4 o_4(\xv', \Xspace).
+		\argmin_{\xv'} \max_{\lambda_1} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv) + \lambda_3 o_3(\xv', \xv) + \lambda_4 o_4(\xv', \Xmat).
 	\end{equation}
 	
 	\begin{center}
@@ -267,14 +274,17 @@
 \scriptsize{\textbf{Figure:} Two possible paths for a datapoint \textcolor{blue}{$\xv$},
 	originally classified in the negative class. The two counterfactuals (\textcolor{red}{CF1} and \textcolor{green}{CF2}) are valid. Note that the red path $A$ for CF1 is the shortest, whereas the
 	green path $B$ for CF2 adheres closely to the manifold of the training data, but is longer.}
+\vspace{0.3cm}
+
+\tiny{Source: Verma et al. (2020). \href{https://arxiv.org/pdf/2010.10596.pdf}{Counterfactual Explanations for Machine Learning: A Review.}}
 
 \end{vbframe}
 
 \begin{vbframe}{Remarks}
 	\begin{itemize}
 		\item Rashomon Effect: Multiple counterfactual with changes to different features could lead to a desired counterfactual prediction. Therefore, it is valuable to receive a set of counterfactuals rather than a single counterfactual. 
-		\item Actionability: We could further strengthen above's plausibility criterion by requiring counterfactuals that do not change immutable features (e.g., race, city of birth, sex). We could therefore search for counterfactuals only among a defined feasible set of counterfactuals. 
-		\item This could be even further strengthened by requiring counterfactuals that maintain any known causal relations. In the real world, if one feature is changed it affects also other features. E.g., better skills lead to better salary, but also a higher age due to the necessary training. 
+		\item Actionability: We could further strengthen above's plausibility criterion by requiring counterfactuals that do not change immutable features (e.g., race, city of birth, sex). Therefore, we could  search for counterfactuals only among a defined feasible set of counterfactuals $\mathcal{A}$. 
+		\item Causality: We could also restrict the search to counterfactuals that maintain any known causal relations. In the real world, if one feature is changed it affects also other features. E.g., better skills lead to better salary, but also a higher age due to the necessary training. 
 	\end{itemize}
 	
 \end{vbframe}
@@ -282,11 +292,11 @@
 \begin{vbframe}{Overview of Methods}
 	Multiple methods exist to calculate counterfactuals but these differ greatly in 
 	\begin{itemize}
-		\item Targets: Most methods can only explain predictions of a classification models and only a few cover regression models. 
-		\item Feature space: Some methods could only handle numerical features, some could only categorical features if their are converted. Only a few could process both types. 
+		\item Targets: Most methods can only explain predictions of classification models and only a few cover regression models. 
+		\item Feature space: Some methods could only handle numerical features, only a few could process discrete and continuous feature spaces. 
 		\item Objectives: Some methods do not take into account all objectives, some methods have additional objectives. 
-		\item Model access level: Methods could require access to the complete model internals, access to gradients or only to prediction functions. 
-		\item Optimization tool: Most methods use gradient-based algorithms (only work for differential models) or gradient-free algorithms (Nelder-Mead, genetic algorithm). 
+		\item Model access level: Methods could require access to complete model internals, access to gradients or only to prediction functions. Therefore, both model-agnostic and model-specific methods exist. 
+		\item Optimization tool: Most methods use gradient-based algorithms (which only work for differential models) or gradient-free algorithms (Nelder-Mead, genetic algorithm). 
 		\item Number of counterfactuals: Most methods could only return a single counterfactual per run, only a few return multiple counterfactuals.
 	\end{itemize}
 \end{vbframe}
@@ -294,7 +304,7 @@
 \begin{vbframe}{Method: Multi-Objective Counterfactual Explanations}
 	\begin{itemize}
 		\item Minimizing Eq.~(\ref{eq:wachter}) is difficult since $\lambda_1$, $\lambda_2$, $\lambda_3$ and $\lambda_4$ need to be specified beforehand. 
-		\item Instead of collapsing all four objectives into a single one by we could instead optimize them simultaneously with a multi-objective genetic algorithm. 
+		\item Instead of collapsing all four objectives into a single objective by a weighted sum, we could optimize them simultaneously with a multi-objective genetic algorithm. 
 		\item This approach is called Multi-Objective Counterfactual Explanations (MOC) and was developed by Dandl et al. in 2020. 
 		\item They adjusted the non-dominated sorting genetic algorithm NSGA-II (see CIM1 for details) to produce a set of diverse counterfactuals for mixed discrete and continuous feature spaces.
 	\end{itemize}
@@ -323,7 +333,7 @@
 			\end{center}
 		
 			\scriptsize{\textbf{Figure:} Response surface plot. 
-				The white dot is $\xv$, black dots are $\xv'$. The histograms display the marginal distribution of the training data $\Xspace$.} 
+				The white dot is $\xv$, black dots are $\xv'$. The histograms display the marginal distribution of the training data $\Xmat$.} 
 				
 		\end{column}
 		\begin{column}{0.5\textwidth}  
