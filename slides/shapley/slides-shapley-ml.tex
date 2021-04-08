@@ -113,8 +113,8 @@
 %\usetheme{lmu-lecture}
 \newcommand{\titlefigure}{figure_man/shapley_valuefct.png}
 \newcommand{\learninggoals}{
-\item Understand prediction as cooperative game
-\item Understand specifics of Shapley value computation for prediction explanation 
+\item See prediction as cooperative game
+\item Learn about Shapley value to explain individual model predictions
 }
 \usepackage{../../style/lmu-lecture}
 
@@ -138,13 +138,14 @@
 \begin{vbframe}{Shapley Values}
 We can use Shapley values to explain individual predictions of a machine learning model $\fh$: 
 \begin{itemize}
-  \item Players $\hat{=}$ features.
-  \item Features collaborate to make a prediction.
+  \item Players $\hat{=}$ feature values of i-the observation $x^{(i)}_j, j \in \pset$.
+  \item Features collaborate to make a prediction $\fh(\xi)$.
   \item The value function / payout of coalition $S$ for observation $\xv$ is 
   $$v(\xv_S) =  \fh_{S} (\xv_S) - \E (\fh(\xv))$$ 
   i.e., the difference of the marginal prediction of $\xv_S$ and the average prediction.
 \item The marginal prediction is $\fh_{S}(\xv_S) = \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
   \item We have already seen the marginal prediction in action in the PDP.
+ \item By using the marginal prediction, we have defined what it means for features to be \enquote{missing} for the prediction: We remove it by averaging over its distribution.
 \end{itemize}
 \begin{center}
 \vspace{-0.3cm}
@@ -167,8 +168,6 @@ We can use Shapley values to explain individual predictions of a machine learnin
   For $m = 1, \dots, M$ exhaustively select coalition $S_m \subseteq P \setminus j$  and calculate
     $$ \hat{\phi_{j}}(\xv) = \frac{1}{M} \sum_{m=1}^{M} \underbrace{\fh_{S_m \cup \{j \}}(\xv_{S_m \cup \{j \} }) - \fh_{S_m}(\xv_{S_m})}_{\text{marginal contribution of feature $j$}} $$
     \item The term $\E (\fh(\xv))$ drops due to the difference.
-    \item TODO: Show or state equivalence to other formula from original paper (with the weights)
-      \framebreak
   \item Interpretation of Shapley value $\hat{\phi_{j}}(\xv)$ for feature $j$ and observation $\xv$: 
   The feature value $\xv_{j}$ contributed $\hat{\phi_{j}}(\xv)$ towards the prediction $\fh(x)$ compared to the average prediction for the dataset.
    \item Contributions can be negative.
@@ -199,18 +198,31 @@ How can we attribute outcomes so that these axioms are fulfilled?
 
 
 
-\begin{vbframe}{Estimation}
-
+\begin{vbframe}{Estimation: A practical problem}
   \begin{itemize}
-      \item Two problems: too many coalitions, and ML model needs all features for prediction
-      \item First solution: Sample coalitions
-      \item Second solution: Sample from data to replace "missing" features
-      \item Note: Solution only approximate. The more samples the better
-      \item Note: When features are dependent, replacement is  problematic
-      \item TODO: Formula
-      \item TODO: Explain formula
+      \item Feature space is often high-dimensional.
+      \item High-dimensionality is problematic for the (exact) Shapley value computation: For only 10 features, there are already $10! \approx 3.6$ million possible orderings of features.
+      \item We have a similar problem with the estimation of the marginal prediction: Averaging over the entire dataset for each (sampled) coalition would be very expensive.
+      \item The solution to both problems is sampling. We calculate the Shapley value over $M$ samples. For each sample, we sample one ordering of features and one data point to replace missing features.
+      \item $M$ is a tradeoff between accuracy of the Shapley value and computational costs. The higher $M$, the closer we get to the true Shapley values, but the more costly the computation becomes.  
   \end{itemize}      
+\end{vbframe}
 
+\begin{vbframe}{Estimation Algorithm}
+ 
+\begin{center}
+\includegraphics[width=0.85\textwidth]{figure_man/shapley-algorithm1.png}
+\end{center}
+  \tiny{Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Explaining prediction models and individual predictions with feature contributions.$"$}
+\framebreak
+
+
+\begin{center}
+\includegraphics[width=0.85\textwidth]{figure_man/shapley-algorithm2.png}
+\end{center}
+
+\tiny{Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Explaining prediction models and individual predictions with feature contributions.$"$}
+ 
 \end{vbframe}
 
 \begin{vbframe}{Bike Sharing Dataset}

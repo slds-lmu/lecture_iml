@@ -115,10 +115,9 @@
 % License of titlefigure: free pixabay license
 % https://pixabay.com/de/vectors/ergebnis-geld-gesch%C3%A4ft-gehalt-5567652/
 \newcommand{\learninggoals}{%
-\item Understand attribution in cooperative games
-\item Understand the concept of Shapley values
-\item Learn about applications of Shapley values
-  }
+\item Understand fair attribution in cooperative games
+\item Learn about Shapley values
+}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -150,30 +149,31 @@
 
 
 \begin{vbframe}{What Would Be a Fair Attribution?}
-  We can posit these axioms for what a fair distribution would look like:
+  One possibility to define \textbf{fair} attribution are the following axioms:
   \begin{itemize}
-    \item \textbf{Efficiency}: Player contributions add up to total payout (with all players).
+    \item \textbf{Efficiency}: Player contributions add up to total payout of the game.
       $\sum\nolimits_{j=1}^p\phi_j = v(P)$
-    \item \textbf{Symmetry}: Two players who contribute the same get the same payout: \\
+    \item \textbf{Symmetry}: Players who contribute the same to any coalition get the same payout: \\
       $v(S\cup\{j\}) = v(S\cup\{k\})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_{j}=\phi_{k}$
     \item \textbf{Dummy / Null Player}: The payout is zero for players who don't contribute to the value of any coalition: \\
       $val(S\cup\{j\})=val(S)$ for all $S \subseteq P$ then $\phi_j=0$
     \item \textbf{Additivity}: For a game with combined payouts ($v1$ and $v2$), the payout is the sum of payouts: $\phi_j(v1) + \phi_{j}(v2)$
   \end{itemize}
 
-  Is there a formula for payouts which adheres to all these axioms?
+  Is there an attribution formula that adheres to all these axioms?
 
 \end{vbframe}
 
 
 \begin{vbframe}{Shapley Values}
  
-  Shapley Values are a way to solve the attribution problem and pose a unique solution given the axioms of efficiency, symmetry, dummy and additivity.
+  Shapley Values solve the attribution problem and provide a unique solution given axioms of efficiency, symmetry, dummy and additivity.
 \begin{itemize}
   \item The \textbf{Shapley value} assigns a value to each player according to the marginal contribution of each player in all possible coalitions.
   \item $\phi_j(v) = \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(S \cup \{j\}) - v(S))$
+  \item In other words: To compute the payout for a player, we average for all possible coalitions how much the player would increase the value of the team (=marginal contribution).
   \item Shapley values are the \textit{only} solution for the attribution with the specified axioms.
-  \item Proposed by Lloyd Shapley in 1951 for cooperative game theory.
+  \item Shapley values were proposed by Lloyd Shapley in 1951 for cooperative game theory.
 \end{itemize}
 
 \tiny{ Shapley, Lloyd S. (August 21, 1951). "Notes on the n-Person Game -- II: The Value of an n-Person Game" (PDF). Santa Monica, Calif.: RAND Corporation.}
@@ -182,9 +182,9 @@
 
   \frame{
 \frametitle{Shapley Values - Illustration}
-The Shapley value of the feature $x_2$ is the marginal contribution (prediction change) when $x_2$ enters an abitrary coalition. \\
-\only<1>{Here, $x_2$ enters the coalition secondly, resulting in a prediction change of $24-12 = 12$. Overall, the coalition increases the prediction by 36.}
-\only<2>{We produce all possible orders of feature coalitions and measure the prediction change if feature $x_2$ enters the coalition.}
+The Shapley value of a player $j=2$ is the marginal contribution to the value function  when player $2$ enters an abitrary coalition. \\
+\only<1>{Here, player $2$ enters the coalition after player $1$, resulting in a prediction change of $24-12 = 12$. Overall, the coalition increases the prediction by 36.}
+\only<2>{We produce all possible orders of player coalitions and measure the prediction change if player $2$ enters the coalition.}
 \begin{center}
   \only<1>{
     \includegraphics[page=1, width=0.8\textwidth]{figure_man/shapley_feature_effect}
@@ -214,16 +214,25 @@ The Shapley value of the feature $x_2$ is the marginal contribution (prediction 
 
   \begin{itemize}
       \item Game theory
-      \item Economics (e.g., cost allocation) % https://www.jstor.org/stable/2951524
-      \item Marketing (e.g., channel attribution) % http://datafeedtoolbox.com/attribution-theory-the-two-best-models-for-algorithmic-marketing-attribution-implemented-in-apache-spark-and-r/
-      \item Machine Learning:
+      \item Economics (e.g., cost allocation) 
+      \item Marketing (e.g., social network analysis to discover influencers) 
+      \item ...
+      \item Machine learning
        \begin{itemize}
          \item Feature selection: Attribution of loss to individual features
-         \item Quantify value of data: Loss decomposition among data instances % http://proceedings.mlr.press/v97/ghorbani19c/ghorbani19c.pdf
+         \item Quantify value of data: Loss decomposition among data instances 
          \item \textbf{Explain individual predictions}
        \end{itemize}
   \end{itemize}
 
+  % Economics
+  \tiny{Moulin, Hervé. "An application of the Shapley value to fair division with money." Econometrica: Journal of the Econometric Society (1992): 1331-1349.}
+% Network analysis
+  \tiny{Narayanam, Ramasuri, and Yadati Narahari. "A shapley value-based approach to discover influential nodes in social networks." IEEE Transactions on Automation Science and Engineering 8.1 (2010): 130-147.}
+  % Feature Selection
+  \tiny{Cohen, Shay B., Eytan Ruppin, and Gideon Dror. "Feature Selection Based on the Shapley Value." IJCAI. Vol. 5. 2005.}
+  % Value of data
+  \tiny{Ghorbani, Amirata, and James Zou. "Data shapley: Equitable valuation of data for machine learning." International Conference on Machine Learning. PMLR, 2019.}
 \end{vbframe}
 
 \endlecture
