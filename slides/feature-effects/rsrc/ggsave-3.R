@@ -5,7 +5,7 @@ library(partykit)
 library(vcd)
 library(iml)
 library(gridExtra)
-
+library(ggplot2)
 
 set.seed(123)
 load("bike.RData")
@@ -19,11 +19,11 @@ pred.bike = Predictor$new(mod, data = bike)
 # Helpers
 shadowtext = function(x, y = NULL, labels, col = 'black', bg = 'white',
                       theta = seq(0, 2*pi, length.out = 50), r = 0.1, ... ) {
-  
+
   xy = xy.coords(x,y)
   xo = r*strwidth('A')
   yo = r*strheight('A')
-  
+
   # draw background text with small shift in x and y in background colour
   for (i in theta) {
     text(xy$x + cos(i)*xo, xy$y + sin(i)*yo, labels, col = bg, ... )
@@ -46,7 +46,7 @@ plotImportanceDemo = function(x, dL, split, i = 1, ylab = expression(Delta~L), m
   axis(1, at = c(1, 2, 3), padj = -0.5, cex.axis = 0.8, col.axis = "gray40")
   axis(2, at = seq(0, 1, by = 0.2), las = 2, hadj = 0.75,
        labels = prettyNum(seq(0, 1, by = 0.2)), padj = 0.5, cex.axis = 0.8, col.axis = "gray40")
-  
+
   for (d in split[1:i]) {
     lines(d$x, d$dL, lty = d$pch + 1, lwd = 2, col = col)
     points(d$x, d$dL, pch = 19, col = col)
@@ -95,7 +95,7 @@ pdp.2feature = FeatureEffect$new(pred.bike, feature = c("temp", "hum"), method =
 pdp.2feature$plot() + scale_x_continuous('Temperature', limits = c(0, NA)) +  scale_y_continuous('Humidity', limits = c(0, NA))
 
 ###########################################################
-
+pdf(file = "../figure_man/ICE.pdf", width = 5, height = 4)
 par(mar = c(3,3.5,0.25,0.25))
 pch.sym = paste0("i=", c("1","2","3"))
 p = pch.sym[pch]
@@ -133,8 +133,10 @@ lines(d$x, d$dL, lty = d$pch + 1, lwd = 2, col = col)
 points(d$x, d$dL, pch = 19, col = col)
 shadowtext(d$x, d$dL - 0.025,
            labels = paste0("i=", d$pch), pos = 3, col = col)
+dev.off()
 #####################################################
 
+pdf(file = "../figure_man/PD.pdf", width = 5, height = 4)
 par(mar = c(3,3.5,0.25,0.25))
 plotImportanceDemo(x, dL, ylab = expression(hat(f)[S]), main = "",
                    split = split, i = 3, col = "gray")
@@ -144,7 +146,7 @@ i = 1
 d = splitx[[i]]
 col = "red"
 points(d$x, d$dL, pch = 19, col = col)
-shadowtext(d$x, d$dL - 0.025, 
+shadowtext(d$x, d$dL - 0.025,
            labels = paste0("i=", d$pch), pos = 3, col = col)
 lines(X.aggr$x[i], X.aggr$dL[i], type = "b", lwd = 3, col = col)
 
@@ -156,7 +158,7 @@ plotImportanceDemo(x, dL, ylab = expression(hat(f)[S]), main = "",
 
 d = splitx[[2]]
 points(d$x, d$dL, pch = 19, col = col)
-shadowtext(d$x, d$dL - 0.025, 
+shadowtext(d$x, d$dL - 0.025,
            labels = paste0("i=", d$pch), pos = 3, col = col)
 lines(X.aggr$x[1:2], X.aggr$dL[1:2], type = "b", lwd = 3, col = col)
 ######################################################
@@ -167,10 +169,10 @@ plotImportanceDemo(x, dL, ylab = expression(hat(f)[S]), main = "",
 
 d = splitx[[3]]
 points(d$x, d$dL, pch = 19, col = col)
-shadowtext(d$x, d$dL - 0.025, 
+shadowtext(d$x, d$dL - 0.025,
            labels = paste0("i=", d$pch), pos = 3, col = col)
 lines(X.aggr$x, X.aggr$dL, type = "b", lwd = 3, col = col)
-
+dev.off()
 #######################################################
 
 pdp = Partial$new(pred.bike, "temp", ice = TRUE, aggregation = "pdp")
@@ -194,7 +196,7 @@ df_permuted = data.frame(expand.grid(x1, x2))
 names(df_permuted) = c("x1", "x2")
 
 dens = density(x2)
-d = data.frame(x = dens$x, y = dens$y) 
+d = data.frame(x = dens$x, y = dens$y)
 
 p1 = ggplot() +
   geom_point(data = df_observed, aes(x1, x2),

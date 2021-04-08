@@ -108,12 +108,11 @@
 \input{../../style/common.tex}
 
 %\usetheme{lmu-lecture}
-% \newcommand{\titlefigure}{figure/sample-dgp-2d.pdf}
+ \newcommand{\titlefigure}{figure/lime.png}
 \newcommand{\learninggoals}{
-\item Understand structure of tabular data in ML 
-\item Understand difference between target and features 
-\item Understand difference between labeled and unlabeled data 
-\item Know concept of data-generating process}
+\item Understand motivation for local explanations 
+\item Develop an intuition for possible use-cases
+\item Know characteristics of local explanation methods}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -140,36 +139,106 @@
 
 % Defines macros and environments
 
-\input{../../latex-math/basic-math.tex}
-\input{../../latex-math/basic-ml.tex}
+%\input{../../latex-math/basic-math.tex}
+%\input{../../latex-math/basic-ml.tex}
 
 \lecturechapter{Introduction}
 \lecture{Interpretable Machine Learning}
 
 % ------------------------------------------------------------------------------
 
-\begin{vbframe}{Iris data set}
-Introduced by the statistician Ronald Fisher and one
-of the most frequently used toy examples.
-\begin{itemize}
-\item Classify iris subspecies based on flower measurements.
-\item 150 iris flowers: 50 versicolor, 50 virginica, 50 setosa.
-\item Sepal length / width and petal length / width in [cm].
-\end{itemize}
-
-\begin{center}
-% \includegraphics[width=0.9\textwidth]{figure_man/iris_species.png} 
-
-\tiny
-Source: \url{https://rpubs.com/vidhividhi/irisdataeda}
-\normalsize
-\end{center}
-
-Word of warning: "iris" is a small, clean, low-dimensional data set,
-which is very easy to classify; this is not necessarily true in the wild. 
-
+\begin{vbframe}{Methodological Motivation}
+Except for Shapley Values, we focused so far mostly on global explanation methods that explain global model behaviour (e.g. PDP, PFI, ALE, etc.). However, there are also many methods that explain the \emph{local} behaviour of a model.
+	\begin{itemize}
+		\item Some local methods provide insight into the driving factors for a \emph{particular decision}. Others, help to understand the model's decision making in a \emph{local environment} of the input space.
+		\item Local Methods can address questions such as: 
+		\begin{itemize}
+		    \item \emph{Why} did the model decide $y$ for input $\xv$?
+		    \item \emph{How} decides the model for cases similar to $\xv$?
+		    \item \emph{What} would the ML model have decided if $\xv$ differed in $\P$?
+		    \item  \emph{Where} does the model fail?
+		\end{itemize}  
+	\end{itemize}
 \end{vbframe}
 
+\begin{vbframe}{Social Motivation}
+All these questions can indeed be relevant for the ML modeler. However, unlike in global methods that require expert ML understanding or even domain knowledge, many local methods aim to provide explanations also for laypersons. 
+	\begin{itemize}
+		\item Explanations for laypersons must be tailored for the \emph{explainee} (the person receiving the explanation).
+		\item Thus, such explanations should be case-specific, easy for humans to understand, and faithful to the explained mechanism.
+		\item In particular if algorithms make decisions in \emph{socially/safety critical domains}, end-users have justified interest in receiving explanations.
+		\item Local Explanations can not only increase \emph{user trust}, but also help to detect \emph{critical biases} in algorithmic decision-making.
+		\item European citizens have the legally binding \emph{right to explanation} as given in the General Data Protection Regulation (GDPR).
+
+	\end{itemize}
+\end{vbframe}
+
+
+\begin{vbframe}{GDPR: The Right to Explanation}
+    ``The data subject should have the right not to be subject to a decision, which may include a measure, evaluating personal aspects relating to him or her which is based solely on automated processing and which produces legal effects concerning him or her or similarly significantly affects him or her, such as automatic refusal of an online credit application or e-recruiting practices without any human intervention.
+
+$\cdots$
+
+In any case, such processing should be subject to suitable safeguards, which should include specific information to the data subject and the \textbf{right} to obtain human intervention, to express his or her point of view, \textbf{to obtain an explanation of the decision reached after such assessment and to challenge the decision}.
+'' (Recital 71)
+\end{vbframe}
+
+
+\begin{vbframe}{Example: Husky or Wolf?}
+	\begin{itemize}
+		\item We trained a model to predict if an image shows a wolf or a husky. 
+		\item Below the predictions on six test images are given. 
+		\item Do you trust our predictor? 
+	\end{itemize}
+	\begin{center}
+		\includegraphics[width=0.45\textwidth]{figure/lime-wolfhusky.png}\\
+		\includegraphics[width=0.45\textwidth]{figure/lime-wolfhusky2.png}\\
+		{\tiny \textbf{Source:} \href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{www.facweb.iitkgp.ac.in}}
+	\end{center}
+
+	\framebreak
+	
+	\begin{itemize}
+		\item We can use local explanations (in this case LIME) to highlight the parts of an image which led to the prediction.
+		\item We can see that our predictor is actually a snow detector. 
+	\end{itemize}
+	\begin{center}
+		\includegraphics[width=0.75\textwidth]{figure/lime-wolfhusky3.png}\\
+		{\tiny \textbf{Source:} \href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{www.facweb.iitkgp.ac.in}}
+	\end{center}
+\end{vbframe}
+
+\begin{vbframe}{Example: Loan Application}
+Assume you are applying at a bank's online portal for a loan and your application gets immediately rejected without reasons.
+	\begin{center}
+		\includegraphics[width=0.4\textwidth]{figure/IntroJudge.png}\\
+		{\tiny \textbf{Source:} \href{https://www.elte.hu/content/trendfordulo-az-mi-fejlesztesekben.t.19025}{https://www.elte.hu}}
+	\end{center}
+	If the bank would use local explanation methods, it could e.g. provide a counterfactual explanation:
+	\begin{itemize}
+	    \item[] If you were older than 21, your loan application would have been accepted.
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Example: Stop or Right-of-Way?}
+Assume you work in a car-company and are about to use an image-classifier for autonomous driving. Then, you show your model the following image and its $99\%$ sure it describes a right-of-way sign.
+	\begin{center}
+		\includegraphics[width=0.4\textwidth]{figure/IntroStop.jpg}\\
+		{\tiny \textbf{Source:} [Eykholt et. al]}
+	\end{center}
+	Would you entrust other peoples lives into the hands of this software?
+\end{vbframe}
+
+\begin{vbframe}{Characteristics}
+	\begin{itemize}
+		\item \textbf{Explanation Scope:} Specific prediction, local environment
+		\item \textbf{Model-classes:} Mostly model-agnostic in definition but model-specific for computational reasons. Very popular also for deep learning models.
+		\item \textbf{Audience:} Mostly laypersons, but also ML modellers.
+		\item Data-Types: Many, including tabular, image, text, audio-data.
+		\item \textbf{Methods:} e.g. Counterfactual Explanations, SHAP, Local interpretable model-agnostic explanations (LIME), Adversarial examples, Ceteris-paribus (single ICE curve), Anchors. 
+		\item \textbf{Special:} Due to audience, strong interactions with Social Sciences. Also, strong connections to Cognitive Science and Neurosciences due to data-types.
+	\end{itemize}
+\end{vbframe}
 
 \endlecture
 \end{document}

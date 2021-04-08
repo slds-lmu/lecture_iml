@@ -1,0 +1,384 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+  %Define standard arrow tip
+  >=stealth',
+  %Define style for boxes
+  punkt/.style={
+    rectangle,
+    rounded corners,
+    draw=black, very thick,
+    text width=6.5em,
+    minimum height=2em,
+    text centered},
+  % Define arrow style
+  pil/.style={
+    ->,
+    thick,
+    shorten <=2pt,
+    shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+ \newcommand{\titlefigure}{figure/counterfactuals_heat.png}
+\newcommand{\learninggoals}{
+\item ...}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Local Explanations}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_i2ml/}{compstat-lmu.github.io/lecture\_i2ml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\begin{document}
+
+	
+% Set style/preamble.Rnw as parent.
+
+% Load all R packages and set up knitr
+
+% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+% parent file
+% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+
+% Defines macros and environments
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\lecturechapter{Counterfactual Explanations}
+\lecture{Interpretable Machine Learning}
+
+% ------------------------------------------------------------------------------
+
+\begin{vbframe}{Example: Credit Risk Application} 
+	\begin{itemize}
+		\item $\textbf{x}$: customer and credit information
+		\item $y$: Grant or reject credit
+	\end{itemize}
+	\begin{center}\includegraphics[width=0.65\linewidth, page=1]{figure/counterfactuals_credit.pdf} \end{center}
+	
+	Questions: 
+	\begin{itemize}
+		\item Why was the credit rejected? 
+		\item Is it a fair decision? 
+		\item How should $\xv$ be changed so that the credit is accepted?  
+	\end{itemize}
+	
+	\framebreak
+	Counterfactual Explanations provide answers in the form of "What-If"-scenarios. 
+	\begin{center}\includegraphics[width=0.65\linewidth, page=2]{figure/counterfactuals_credit.pdf} \end{center}
+	
+	``If the person becomes more skilled and the credit amount is reduced to \$8000, his credit will be granted."  \\[0.2cm]
+%	 \begin{center}\includegraphics[width=1\linewidth, page=3]{figure/counterfactuals_credit.pdf} \end{center}
+%	Input: Desired target, original data point, predictor, observed data\\[0.1cm]
+%	Output: Data points which minimize  
+%	\begin{enumerate}
+%		\item Distance of prediction to desired prediction $|\fh(x) - y'|$
+%		\item Number of feature changes $\sum_{j = 1}^p I_{x_j \neq x^*_j}$
+%		\item Distance to original data point $d(x, x^*)$ (Gower)
+%		\item Distance to observed data points $d(x, X^{obs})$
+%	\end{enumerate}
+	
+\end{vbframe}
+
+\begin{vbframe}{Counterfactual Explanations}
+	\begin{itemize}
+		\item Counterfactuals are close neighbors of a data point we are interested in, but their predictions are sufficiently close or equal to a (usually quite different) desired outcome. 
+		\item Therefore, they explain single predictions by revealing what minimal changes to the input are sufficient to receive a different response. 
+		\item During this chapter, their application to tabular data are explained, although their could be applied to image and text data, as well. 
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Aims \& Roles}
+	Counterfactuals...
+	\begin{itemize}
+		\itemsep1.5em
+		\item give guidance how to reach the desired prediction in the future.\\
+		Example:  ``become more skilled and reduce credit amount"
+		\item give reasons why desired prediction was not reached. \\
+		Example:  ``you are not skilled enough and the credit amount is too high"
+		\item provide grounds to object against unfair decisions. \\
+		Example:  ``why are women less likely to get a loan?"
+		\item help to detect pointwise non-robustness and biases of a trained model. \\
+		Example:  ``gender should not matter" 
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Philosophical Basis}
+	\begin{itemize}
+		\item Counterfactuals Explanations are statements of how the world would have to be different for a desirable outcome to occur. 
+		\item It can also be seen as a counterfactual sentence that is true: 
+		\begin{equation}
+			\textnormal{``If $S$ was true, $Q$ would have been true."}
+			\label{eq:sent}
+		\end{equation}
+		\item In machine learning, $S$ is true describes a change in features while $Q$ is true describes a change in the outcome. 
+		\item What makes counterfactual statements true is hotly debated in philosophy. 
+		\item Solutions in ML build on the work of Lewis (1973): Equation~(\ref{eq:sent}) is true, if in all worlds most similar to the actual world where $S$ is true, $Q$ is also true. 
+		\item The notion of similarity between worlds remains a highly discussed open question. 
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Mathematical Perspective}
+	Terminology: 
+	\begin{itemize}
+		\item $\xv$ as original/factual datapoint whose prediction we want to explain
+		\item $y' \in \Yspace$ as desired outcome 
+	\end{itemize}
+	\vspace{0.3cm}
+	A \textbf{valid} counterfactual $\xv'$ is a datapoint: 
+	\begin{enumerate}
+		\item whose prediction $\fh(\xv')$ is equal to the desired prediction $y'$. 
+		\item that is close to the original datapoint $\xv$.
+	\end{enumerate}
+	Wachter et al. (2017) reformulated these requirements into an optimization problem: 
+	\begin{equation}
+		\argmin_{\xv'} \max_{\lambda} \lambda o_1(\fh(\xv'), y') + o_2(\xv', \xv).
+		\label{eq:wachter}
+	\end{equation}
+	\begin{itemize}
+		\item $\lambda$ balances the two objectives.
+		\item $o_1$ could be, for example, L1-distance $o_1(\fh(\xv'), y') = |\fh(\xv')-y'|$
+		\item $o_2$ could be the Gower distance that is suitable for mixed features: 
+		$$o_2(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(\xv'_j, \xv_j)\in [0, 1]$$
+		The value of $\delta_G$ depends on the feature type:
+		\begin{equation*}
+		\delta_G(x_j, x^*_j) = 
+		\begin{cases}
+		\frac{1}{\widehat{R}_j}|x_j- x^*_j| & \text{if $x_j$ is numerical} \\
+		\mathbb{I}_{x_j \neq x_j^*} & \text{if $x_j$ is categorical}
+		\end{cases}
+		\end{equation*}
+		with $\widehat{R}_j$ as the value range of feature $j$, which is extracted from the training dataset. 
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Further Objectives}
+	The notion of validity formed the basis, but over the years other objectives had been added. \\
+	\textbf{Sparsity:}
+	\begin{itemize}
+		\item Since users find it easier to understand shorter explanations, counterfactuals should only change a small number of features.  
+		\item $o_2$ does not necessarily take the number of changed features into account. 
+		\item There could be a trade-off between the number of features changed and the total amount of change made to obtain a certain prediction. 
+		\item Therefore, a third objective that considers the number of feature changes is necessary, for example the L0-norm $$o_3(\xv', \xv) = \sum_{j = 1}^p \mathbb{I}_{x'_j \neq x_j}.$$ 
+	\end{itemize}
+	\textbf{Plausibility:}
+	\begin{itemize}
+		\item It is also desirable to generate counterfactuals that are realistic in the sense that they originate from the distribution of $\Xspace$ or adhere to the data manifold. 
+		\item Estimating a joint distribution over the training data is a complex problem, especially for mixed feature spaces. As a proxy, we could desire that $\xv'$ is close to the training data $\Xmat$. For example, $o_4$ could then be the Gower distance of $\xv'$ to the nearest data point of the training dataset $\xv^{[1]}$. 
+		$$o_4(\xv, \Xmat) =  \frac{1}{p} \sum_{j = 1}^{p}  \delta_G(x_j, x^{[1]}_j).$$
+	\end{itemize}	
+	Overall, we could update Eq.~(\ref{eq:wachter}) to be: 
+	\begin{equation}
+		\argmin_{\xv'} \max_{\lambda_1} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv) + \lambda_3 o_3(\xv', \xv) + \lambda_4 o_4(\xv', \Xmat).
+	\end{equation}
+	
+	\begin{center}
+		\includegraphics[width=0.5\textwidth]{figure/counterfactuals_obj}
+	\end{center}
+
+\scriptsize{\textbf{Figure:} Two possible paths for a datapoint \textcolor{blue}{$\xv$},
+	originally classified in the negative class. The two counterfactuals (\textcolor{red}{CF1} and \textcolor{green}{CF2}) are valid. Note that the red path $A$ for CF1 is the shortest, whereas the
+	green path $B$ for CF2 adheres closely to the manifold of the training data, but is longer.}
+\vspace{0.3cm}
+
+\tiny{Source: Verma et al. (2020). \href{https://arxiv.org/pdf/2010.10596.pdf}{Counterfactual Explanations for Machine Learning: A Review.}}
+
+\end{vbframe}
+
+\begin{vbframe}{Remarks}
+	\begin{itemize}
+		\item Rashomon Effect: Multiple counterfactual with changes to different features could lead to a desired counterfactual prediction. Therefore, it is valuable to receive a set of diverse counterfactuals rather than a single counterfactual. 
+		\item Actionability: We could further strengthen above's plausibility criterion by requiring counterfactuals that do not change immutable features (e.g., race, city of birth, sex). Therefore, we could  search for counterfactuals only among a defined feasible set of counterfactuals $\mathcal{A}$. 
+		\item Causality: We could also restrict the search to counterfactuals that maintain any known causal relations. In the real world, if one feature is changed it affects also other features. E.g., better skills lead to better salary, but also a higher age due to the necessary training. 
+	\end{itemize}
+	
+\end{vbframe}
+
+\begin{vbframe}{Overview of Methods}
+	Multiple methods exist to calculate counterfactuals but these differ greatly in 
+	\begin{itemize}
+		\item Targets: Most methods can only explain predictions of classification models and only a few cover regression models. 
+		\item Feature space: Some methods could only handle numerical features, only a few could process discrete and continuous feature spaces. 
+		\item Objectives: Some methods do not take into account all objectives, some methods have additional objectives. 
+		\item Model access level: Methods could require access to complete model internals, access to gradients or only to prediction functions. Therefore, both model-agnostic and model-specific methods exist. 
+		\item Optimization tool: Most methods use gradient-based algorithms (which only work for differential models) or gradient-free algorithms (Nelder-Mead, genetic algorithm). 
+		\item Number of counterfactuals: Most methods could only return a single counterfactual per run, only a few return multiple counterfactuals.
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Method: Multi-Objective Counterfactual Explanations}
+	\begin{itemize}
+		\item Minimizing Eq.~(\ref{eq:wachter}) is difficult since $\lambda_1$, $\lambda_2$, $\lambda_3$ and $\lambda_4$ need to be specified a-priori. 
+		\item Instead of collapsing all four objectives into a single objective by a weighted sum, we could optimize them simultaneously with a multi-objective genetic algorithm. 
+		\item This approach is called Multi-Objective Counterfactual Explanations (MOC) and was developed by Dandl et al. in 2020. 
+		\item They adjusted the non-dominated sorting genetic algorithm NSGA-II (see CIM1 for details) to produce a set of diverse counterfactuals for mixed discrete and continuous feature spaces.
+		\item The algorithm returns a set of counterfactuals that represents different trade-offs between the objectives and are constructed to be diverse in feature space.
+	\end{itemize}
+
+	\tiny{Dandl S., Molnar C., Binder M., Bischl B. (2020) Multi-Objective Counterfactual Explanations. In: Bäck T. et al. (eds) Parallel Problem Solving from Nature – PPSN XVI. PPSN 2020. Lecture Notes in Computer Science, vol 12269. Springer, Cham.}
+	 
+\end{vbframe}
+
+\begin{vbframe}{Example: Bike Sharing Dataset}
+	\begin{itemize}
+		\item Model: Random Forest with 500 trees
+		\item $\xv$ is the first data point of the dataset with $\fh(\xv) = 1767.93$ rental bikes. 
+		\item Our desired goal is to increase the count of total rental bikes to $y' = [3000, \infty[$
+		\item MOC (with default parameters) found 56 counterfactuals after 200 iterations that met the target.
+		\item Most counterfactuals proposed to decrease the humidity (94.6 \%) and more than half to increase the temperature (55.4\%). 
+		\item Some counterfactuals proposed additional changes to the year (2012 instead of 2011) and month (December instead of Januar).
+		\framebreak 
+		\item We can visualize feature changes with a parallel plot. 
+		\item For humidity and temperature, we can additionally show a 2-dim surface plot. 
+	\end{itemize}
+	\vspace{-0.5cm}
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+			\begin{center}
+				\includegraphics[width=1\textwidth]{figure/counterfactuals_bike_sp}
+			\end{center}
+		
+			\scriptsize{\textbf{Figure:} Response surface plot. 
+				The white dot is $\xv$, black dots are $\xv'$. The histograms display the marginal distribution of the training data $\Xmat$.} 
+				
+		\end{column}
+		\begin{column}{0.5\textwidth}  
+			\begin{center}
+				\includegraphics[width=1\textwidth]{figure/counterfactuals_bike_para}
+			\end{center}
+		
+		\scriptsize{\textbf{Figure:} Parallel plot. 
+			The grey lines show the feature values of the counterfactuals $\xv'$, the blue line corresponds to the values of $\xv$. Features without proposed changes are omitted. The bold numbers give minima and minima of numeric features while character strings indicate categories of character features.} 
+		
+		\end{column}
+	\end{columns}
+\end{vbframe}
+
+\begin{vbframe}{Pitfalls}
+	\textbf{Pitfall 1:} Definition of closeness
+	\begin{itemize}
+		\item 
+	\end{itemize}
+	\textbf{Pitfall 2:} Illusion of model understanding
+	\begin{itemize}
+		\item 
+	\end{itemize}
+	\textbf{Pitfall 3:} Rashomon Effect
+	\begin{itemize}
+		\item Due to the Rashomon Effect, multiple counterfactual explanations could be found for an instance. 
+		\item If all counterfactuals are reported the user could be overwhelmed. Instead of a comprehensible explanations for a prediction, users received an even more complex explanations.
+		\item Another option is to only report the ``best" ones. But this requires a notion for ``superiority".  
+		\item Furthermore, users might not be interested in the ``best" but most ``diverse" counterfactuals.
+		\item The best option might be to report all counterfactuals but let the user decide which one to select, e.g., based on their previous knowledge. 
+	\end{itemize}
+	\textbf{Pitfall 4:} Attacking CEs
+	\begin{itemize}
+		\item 
+	\end{itemize}
+	\textbf{Pitfall 5:} Confusing model explanation with real data process explanations
+	\begin{itemize}
+		\item Causal dependencies
+		\item Fixed model at time $t$ 
+		\item Wrong input by user
+	\end{itemize}
+\end{vbframe}
+	
+\endlecture
+\end{document}
