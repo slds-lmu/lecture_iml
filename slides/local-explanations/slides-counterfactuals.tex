@@ -110,7 +110,9 @@
 %\usetheme{lmu-lecture}
  \newcommand{\titlefigure}{figure/counterfactuals_heat.png}
 \newcommand{\learninggoals}{
-\item ...}
+\item Understand the motivation behind CEs
+\item Know how to generate CEs
+\item Know problems and limitations of CEs}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -146,6 +148,16 @@
 
 % ------------------------------------------------------------------------------
 
+\begin{vbframe}{Counterfactual Explanations}
+	\begin{itemize}
+	    \item \emph{Counterfactual Explanations} (CEs) explain particular decisions of an ML model by presenting an alternative input that is predicted to a desired outcome.
+		\item These alternatives are called \emph{counterfactuals} and represent close neighbors of a data point we are interested in, but belonging to the \emph{desired outcome class}. 
+		\item CEs explain single predictions by revealing what minimal changes to the input are sufficient to receive a different response.
+		\item The targeted audience of CEs are often end-users not ML engineers.
+%		\item While we focus here exclusively on their application to tabular data, they can also be applied to image and text data. 
+	\end{itemize}
+\end{vbframe}
+
 \begin{vbframe}{Example: Credit Risk Application} 
 	\begin{itemize}
 		\item $\textbf{x}$: customer and credit information
@@ -164,7 +176,7 @@
 	Counterfactual Explanations provide answers in the form of "What-If"-scenarios. 
 	\begin{center}\includegraphics[width=0.65\linewidth, page=2]{figure/counterfactuals_credit.pdf} \end{center}
 	
-	``If the person becomes more skilled and the credit amount is reduced to \$8000, his credit will be granted."  \\[0.2cm]
+	``If the person was more skilled and the credit amount had been reduced to \$8000, her credit would have been granted."  \\[0.2cm]
 %	 \begin{center}\includegraphics[width=1\linewidth, page=3]{figure/counterfactuals_credit.pdf} \end{center}
 %	Input: Desired target, original data point, predictor, observed data\\[0.1cm]
 %	Output: Data points which minimize  
@@ -177,41 +189,51 @@
 	
 \end{vbframe}
 
-\begin{vbframe}{Counterfactual Explanations}
-	\begin{itemize}
-		\item Counterfactuals are close neighbors of a data point we are interested in, but their predictions are sufficiently close or equal to a (usually quite different) desired outcome. 
-		\item Therefore, they explain single predictions by revealing what minimal changes to the input are sufficient to receive a different response. 
-		\item During this chapter, their application to tabular data are explained, although their could be applied to image and text data, as well. 
-	\end{itemize}
-\end{vbframe}
+
 
 \begin{vbframe}{Aims \& Roles}
-	Counterfactuals...
+	CE can serve various purposes, the user can decide what to learn from them. Consider the following example:\newline
+	``If the person was one year older and the credit amount were increased to \$12.000, her credit would have been granted."  \\[0.2cm]
 	\begin{itemize}
 		\itemsep1.5em
-		\item give guidance how to reach the desired prediction in the future.\\
-		Example:  ``become more skilled and reduce credit amount"
-		\item give reasons why desired prediction was not reached. \\
-		Example:  ``you are not skilled enough and the credit amount is too high"
-		\item provide grounds to object against unfair decisions. \\
-		Example:  ``why are women less likely to get a loan?"
-		\item help to detect pointwise non-robustness and biases of a trained model. \\
-		Example:  ``gender should not matter" 
+		\item \textbf{Guidance for future actions:} \textit{Ok, I'll apply again next year for the higher amount.}
+		\item \textbf{Provide Reasons:} \textit{Interesting, I did not know that age plays a role in loan applications.}
+		\item \textbf{Provide grounds to contest the decision:} \textit{How dare you, I do not want to be discriminated for my age in an application.}
+		\item \textbf{Detect Model Biases:} \textit{Oh, there is a bug, an increase in amount should not increase approval rates.}
 	\end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Philosophical Basis}
+\begin{vbframe}{Philosophical Basis: CEs \& Lewis}
+Interestingly, CEs have a long-standing tradition in Philosophy and, in fact the IML discussion of CEs is based on the work of Lewis (1973). A \emph{Counterfactual Conditional} is a statement of the form:	
+\begin{equation}
+		\textnormal{``If $S$ was the case, $Q$ would have been the case."}
+		\label{eq:sent}
+\end{equation}
 	\begin{itemize}
-		\item Counterfactuals Explanations are statements of how the world would have to be different for a desirable outcome to occur. 
-		\item It can also be seen as a counterfactual sentence that is true: 
-		\begin{equation}
-			\textnormal{``If $S$ was true, $Q$ would have been true."}
-			\label{eq:sent}
-		\end{equation}
-		\item In machine learning, $S$ is true describes a change in features while $Q$ is true describes a change in the outcome. 
-		\item What makes counterfactual statements true is hotly debated in philosophy. 
-		\item Solutions in ML build on the work of Lewis (1973): Equation~(\ref{eq:sent}) is true, if in all worlds most similar to the actual world where $S$ is true, $Q$ is also true. 
-		\item The notion of similarity between worlds remains a highly discussed open question. 
+		\item $S$ must relate to an event in the past that did in fact not occur.
+		\item In that sense counterfactuals run \emph{contrary} to the \emph{facts}.
+		\item How can Equation~(\ref{eq:sent}) be true if $S$ is actually false? According to Lewis's (1973), Equation~(\ref{eq:sent}) is true, if in all worlds most similar to the actual world where $S$ is the case, $Q$ is the case. 
+		\item A world is similar to another if the laws are maximally preserved and only a few facts from the actual world are changed.
+		\item Lewis's proposal is hotly debated in philosophy, particularly his notion of similarity between worlds remains controversial. 
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Philosophical Basis: CEs and Causality}
+CEs have mainly been studied to give an account of causal dependence. According to Lewis:\newline
+``$Q$ causally depends on $S$ iff, if $S$ were not the case $Q$ would not have been the case.''
+	\begin{itemize}
+		\item Causal dependence underlies the explanatory power CEs offer. Good CEs point to the critical causal factors that made the algorithm decide against $Q$ and thereby reveal information about the underlying mechanism.
+		\item This is also the reason why counterfactuals must be maximally close to initial inputs, otherwise changes are only sufficient but some of them might be unnecessary.
+		\item Current research on causality is based on Pearl's (2009) causal graphs. Instead of defining causality in terms of counterfactuals, Pearl's approach turns the story around and necessitates a representation of causal mechanisms to define CEs. 
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Philosophical Basis: CEs as Contrastive}
+CEs are or can be easily translated into contrastive explanations and often vice versa. Contrastive explanations are answers to a question of the form ``why did Q' occur instead of Q?''.
+	\begin{itemize}
+	    \item  Contrastive Explanations answer these questions by \emph{contrasting} the actual scenario with a different scenario $S$ in which $Q$ had occurred.
+		\item According to psychologists [Miller (2019)], Contrastive Explanations are the gold standard of explanations in human-to-human interaction.
+		\item A CE becomes contrastive if its antecedent $S$ is presented in contrast to the actual scenario.
 	\end{itemize}
 \end{vbframe}
 
@@ -225,7 +247,7 @@
 	A \textbf{valid} counterfactual $\xv'$ is a datapoint: 
 	\begin{enumerate}
 		\item whose prediction $\fh(\xv')$ is equal to the desired prediction $y'$. 
-		\item that is close to the original datapoint $\xv$.
+		\item that is maximally close to the original datapoint $\xv$.
 	\end{enumerate}
 	Wachter et al. (2017) reformulated these requirements into an optimization problem: 
 	\begin{equation}
@@ -234,6 +256,8 @@
 	\end{equation}
 	\begin{itemize}
 		\item $\lambda$ balances the two objectives.
+		\item $o_1$ and $o_2$ are distances, their choice is critical.
+		\framebreak
 		\item $o_1$ could be, for example, L1-distance $o_1(\fh(\xv'), y') = |\fh(\xv')-y'|$
 		\item $o_2$ could be the Gower distance that is suitable for mixed features: 
 		$$o_2(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(\xv'_j, \xv_j)\in [0, 1]$$
@@ -250,17 +274,20 @@
 \end{vbframe}
 
 \begin{vbframe}{Further Objectives}
-	The notion of validity formed the basis, but over the years other objectives had been added. \\
+	While validity is a necessary condition for counterfactuals, additional constraints can improve the explanation quality of the corresponding CEs. Popular constraints include sparsity and plausibility.
+	
 	\textbf{Sparsity:}
 	\begin{itemize}
-		\item Since users find it easier to understand shorter explanations, counterfactuals should only change a small number of features.  
-		\item $o_2$ does not necessarily take the number of changed features into account. 
-		\item There could be a trade-off between the number of features changed and the total amount of change made to obtain a certain prediction. 
-		\item Therefore, a third objective that considers the number of feature changes is necessary, for example the L0-norm $$o_3(\xv', \xv) = \sum_{j = 1}^p \mathbb{I}_{x'_j \neq x_j}.$$ 
+		\item End-users often prefer short over long explanations. For CEs this means that the changes made to obtain counterfactuals must be \emph{sparse}. 
+		\item The distance $o_2$ can but does not necessarily take the number of changed features into account. Prominent examples that do so are the L0- and the L1-norm.
+%		\item There could be a trade-off between the number of features changed and the total amount of change made to obtain a certain prediction. 
+        \item We can also account for sparsity by adding an extra term to our objective that counts the number of changed features via the L0-norm $$o_3(\xv', \xv) = \sum_{j = 1}^p \mathbb{I}_{x'_j \neq x_j}.$$ 
 	\end{itemize}
+	\framebreak
 	\textbf{Plausibility:}
 	\begin{itemize}
-		\item It is also desirable to generate counterfactuals that are realistic in the sense that they originate from the distribution of $\Xspace$ or adhere to the data manifold. 
+	    \item CEs should suggest alternatives that are plausible. E.g. it is a bad idea to suggest a loan applicant to raise her income and get unemployed at the same time. 
+	    \item Thus, it is desirable to generate counterfactuals that are realistic in the sense that they originate from the distribution of $\Xspace$ or adhere to the data manifold. 
 		\item Estimating a joint distribution over the training data is a complex problem, especially for mixed feature spaces. As a proxy, we could desire that $\xv'$ is close to the training data $\Xmat$. For example, $o_4$ could then be the Gower distance of $\xv'$ to the nearest data point of the training dataset $\xv^{[1]}$. 
 		$$o_4(\xv, \Xmat) =  \frac{1}{p} \sum_{j = 1}^{p}  \delta_G(x_j, x^{[1]}_j).$$
 	\end{itemize}	
@@ -282,24 +309,40 @@
 
 \end{vbframe}
 
-\begin{vbframe}{Remarks}
+\begin{vbframe}{Remarks: The Rashomon Effect}
+The solution to the optimization problem might not be unique, there can be many equally close inputs that obtain the desired classification. Correspondingly, there can be many different equally good explanations for the same decision. This is called the \emph{Rashomon Effect}.
 	\begin{itemize}
-		\item Rashomon Effect: Multiple counterfactual with changes to different features could lead to a desired counterfactual prediction. Therefore, it is valuable to receive a set of diverse counterfactuals rather than a single counterfactual. 
-		\item Actionability: We could further strengthen above's plausibility criterion by requiring counterfactuals that do not change immutable features (e.g., race, city of birth, sex). Therefore, we could  search for counterfactuals only among a defined feasible set of counterfactuals $\mathcal{A}$. 
-		\item Causality: We could also restrict the search to counterfactuals that maintain any known causal relations. In the real world, if one feature is changed it affects also other features. E.g., better skills lead to better salary, but also a higher age due to the necessary training. 
+		\item We could present all CEs for a given case, however, time is limited and so is the human processing capacity.
+		\item Another solution is to focus on one or few CEs, however, by which criterion should they be selected?
+		\item Worse, as the model is generally non-linear, incompatible CEs can arise e.g. suggesting either an increase or decrease in credit duration, which confuses the explainee.
+		\item How to deal with the Rashomon Effect is considered an open problem in IML.
 	\end{itemize}
-	
+\end{vbframe}
+
+\begin{vbframe}{Remarks: Model or Real-World}
+Most CEs provide explanations of model-predictions. However, to end-users, these explanations appear to explain the process in which the model is employed. Unfortunately, the transfer from the model to the real-world is generally not permitted.
+	\begin{itemize}
+	\item Consider, e.g., a CE that proposes to increase the feature age by 5 to obtain the loan. A loan applicant takes this information and applies 5 years later for the loan. 
+	\item However, by then, many of her properties have changed not only the age since they are causally dependent on age like income or the job status.
+	\item Also, the algorithm can change and CEs are not applicable anymore.
+	\item Even worse, the user might have typos in the application and in fact no changes are necessary to obtain the loan.
+	\item Karimi et al.(2020) avoid some of these shortcomings by considering causal dependencies between variables.
+%		\item Actionability: We could further strengthen above's plausibility criterion by requiring counterfactuals that do not change immutable features (e.g., race, city of birth, sex). Therefore, we could  search for counterfactuals only among a defined feasible set of counterfactuals $\mathcal{A}$. 
+%		\item Causality: We could also restrict the search to counterfactuals that maintain any known causal relations. In the real world, if one feature is changed it affects also other features. E.g., better skills lead to better salary, but also a higher age due to the necessary training. 
+	\end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Overview of Methods}
-	Multiple methods exist to calculate counterfactuals but these differ greatly in 
+	Currently, multiple methods exist to calculate counterfactuals. They differ greatly in 
 	\begin{itemize}
-		\item Targets: Most methods can only explain predictions of classification models and only a few cover regression models. 
-		\item Feature space: Some methods could only handle numerical features, only a few could process discrete and continuous feature spaces. 
-		\item Objectives: Some methods do not take into account all objectives, some methods have additional objectives. 
-		\item Model access level: Methods could require access to complete model internals, access to gradients or only to prediction functions. Therefore, both model-agnostic and model-specific methods exist. 
-		\item Optimization tool: Most methods use gradient-based algorithms (which only work for differential models) or gradient-free algorithms (Nelder-Mead, genetic algorithm). 
-		\item Number of counterfactuals: Most methods could only return a single counterfactual per run, only a few return multiple counterfactuals.
+		\item \textbf{Targets:} Most methods focus on classification models, only few cover regression models. So far, all remain in the supervised learning paradigm.
+		\item \textbf{Data Types:} Mainly for tabular data, few methods focus on visual/text data, none for audio data.
+		\item \textbf{Feature space:} Some methods can only handle numerical features, few can process discrete and continuous feature spaces. 
+		\item \textbf{Objectives:} Many methods focus on action guidance, plausibility and sparsity, few on other objectives like fairness or individual preferences.
+		\framebreak
+		\item \textbf{Model access:} Methods could require access to complete model internals, access to gradients or only to prediction functions. Therefore, both model-agnostic and model-specific methods exist.
+		\item \textbf{Optimization tool:} Gradient-based algorithms (only for differential models), mixed-integer programming (only linear) or gradient-free algorithms e.g. Nelder-Mead, genetic algorithm. 
+		\item \textbf{Rashomon Effect:} Many methods return a single counterfactual per run, some multiple counterfactuals, others prioritize CEs or let the user choose.
 	\end{itemize}
 \end{vbframe}
 
@@ -351,34 +394,39 @@
 	\end{columns}
 \end{vbframe}
 
-\begin{vbframe}{Pitfalls}
-	\textbf{Pitfall 1:} Definition of closeness
-	\begin{itemize}
-		\item 
-	\end{itemize}
-	\textbf{Pitfall 2:} Illusion of model understanding
-	\begin{itemize}
-		\item 
-	\end{itemize}
-	\textbf{Pitfall 3:} Rashomon Effect
-	\begin{itemize}
-		\item Due to the Rashomon Effect, multiple counterfactual explanations could be found for an instance. 
-		\item If all counterfactuals are reported the user could be overwhelmed. Instead of a comprehensible explanations for a prediction, users received an even more complex explanations.
-		\item Another option is to only report the ``best" ones. But this requires a notion for ``superiority".  
-		\item Furthermore, users might not be interested in the ``best" but most ``diverse" counterfactuals.
-		\item The best option might be to report all counterfactuals but let the user decide which one to select, e.g., based on their previous knowledge. 
-	\end{itemize}
-	\textbf{Pitfall 4:} Attacking CEs
-	\begin{itemize}
-		\item 
-	\end{itemize}
-	\textbf{Pitfall 5:} Confusing model explanation with real data process explanations
-	\begin{itemize}
-		\item Causal dependencies
-		\item Fixed model at time $t$ 
-		\item Wrong input by user
-	\end{itemize}
+\begin{vbframe}{Problems, Pitfalls, \& Limitations}
+\begin{itemize}
+    \item \textbf{Illusion of model understanding:} 
+    CEs explain ML decisions by pointing to few specific alternatives. This reduces complexity, but is limited in explanatory power. Psychologists showed that even though the perceived model-understanding of end-users increases, the objective model-understanding remains unchanged.
+    
+    \item \textbf{Finding the right metric:} Similarity is the crucial concept for finding good CEs. However, our concept of similarity is context and domain dependent. E.g. while L1 can be a reasonable notion for tabular data, it is counterintuitive for image data. Sparsity is often desirable for end-users but not for data scientists searching for biases in the model.
+    
+    \item \textbf{Confusing Model and Real-World:} As pointed out before, explanations of the model do not easily transfer to the process in which a model is applied. This information should be conveyed to the end-user.
+    
+    \framebreak
+    \item \textbf{Disclosing too much information:} CEs can reveal too much information about the model and help potential attackers.
+    \item \textbf{Rashomon Effect:} One, few, all? Which CEs should be shown to the end-user? There is no universal solutions, the right way depends on the end-users temporal resources and knowledge. 
+    \item \textbf{Actionability vs Fairness:} Some authors suggest to focus only on the actionability of CEs. However, this counteract functions like contestability. E.g. if ethnicity is not permuted in a CE since it is not actionable this could lead to hiding racial biases in the model.
+    \item \textbf{Attacking CEs:} Researchers can create models with great performance, which generate arbitrary explanations specified by the ML developer. Thus, the question is how faithful CEs are to the models underlying mechanism.
+\end{itemize}
+%	\textbf{Pitfall 3:} Rashomon Effect
+%	\begin{itemize}
+%		\item Due to the Rashomon Effect, multiple counterfactual explanations could be found for an instance. 
+%		\item If all counterfactuals are reported the user could be overwhelmed. Instead of a comprehensible explanations for a prediction, users received an even more complex explanations.
+%		\item Another option is to only report the ``best" ones. But this requires a notion for ``superiority".  
+%		\item Furthermore, users might not be interested in the ``best" but most ``diverse" counterfactuals.
+%		\item The best option might be to report all counterfactuals but let the user decide which one to select, e.g., based on their previous knowledge. 
+%	\end{itemize}
+%	\textbf{Pitfall 4:} 
+%	\begin{itemize}
+%		\item 
+%	\end{itemize}
+%	\textbf{Pitfall 5:} Confusing model explanation with real data process explanations
+%	\begin{itemize}
+%		\item Causal dependencies
+%		\item Fixed model at time $t$ 
+%		\item Wrong input by user
+%	\end{itemize}
 \end{vbframe}
-	
 \endlecture
 \end{document}
