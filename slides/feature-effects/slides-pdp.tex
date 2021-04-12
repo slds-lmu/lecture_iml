@@ -146,13 +146,14 @@ $$PD_S := \fh_{S}(x_S) = \frac{1}{n} \sum_{i=1}^n \fh(x_S, \xv_C^{(i)})$$
 
 Within the SIPA framework, the partial dependence builds the \textbf{Aggregation} step.
 
+\footnote[frame]{Friedman, Jerome H. (2001). Greedy Function Approximation: A Gradient Boosting Machine. Annals of Statistics: 1189-1232.}
 \footnote[frame]{Scholbeck, C. A., Molnar, C., Heumann, C., Bischl, B., and Casalicchio, G. (2019). Sampling, Intervention, Prediction, Aggregation: A Generalized Framework for Model Agnostic Interpretations. ECML PKDD 2019. (pp. 205-216).}
 \end{vbframe}
 
 \frame{
 \frametitle{Partial Dependence}
-\begin{onlyenv}
-    \begin{columns}[T]
+%\begin{onlyenv}
+\begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \centering
 \only<1>{
@@ -163,9 +164,7 @@ Within the SIPA framework, the partial dependence builds the \textbf{Aggregation
 \begin{center}
 \includegraphics[page=1, width=\textwidth]{figure_man/PD}
 \end{center}
-
 }
-
 
 \only<2>{
 \includegraphics[page=9, width=\textwidth]{figure_man/ice_pd_plot_demo}
@@ -175,7 +174,6 @@ Within the SIPA framework, the partial dependence builds the \textbf{Aggregation
 \begin{center}
 \includegraphics[page=2, width=\textwidth]{figure_man/PD}
 \end{center}
-
 }
 
 \only<3>{
@@ -186,16 +184,23 @@ Within the SIPA framework, the partial dependence builds the \textbf{Aggregation
 \begin{center}
 \includegraphics[page=3, width=\textwidth]{figure_man/PD}
 \end{center}
-
 }
-
-
 \end{column}
 \end{columns}
-\end{onlyenv}
+%\end{onlyenv}
 
-\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves:
+\only<1>{
+\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves at \fcolorbox{red}{white}{$x_S = x_1 = 1$}:
 $$PD_1 = \fh_{1}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+}
+\only<2>{
+\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves at \fcolorbox{red}{white}{$x_S = x_1 = 2$}:
+$$PD_1 = \fh_{1}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+}
+\only<3>{
+\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves at \fcolorbox{red}{white}{$x_S = x_1 = 3$}:
+$$PD_1 = \fh_{1}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+}
 }
 
 

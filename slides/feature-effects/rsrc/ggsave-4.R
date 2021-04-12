@@ -1,11 +1,11 @@
-
+library(ggplot2)
 library(knitr)
 library(mlr)
 library(partykit)
 library(vcd)
 library(iml)
 library(gridExtra)
-
+library(ggpubr)
 
 set_parent("../style/preamble.Rnw")
 
@@ -27,7 +27,7 @@ df_permuted = data.frame(expand.grid(x1, x2))
 names(df_permuted) = c("x1", "x2")
 
 dens = density(x2)
-d = data.frame(x = dens$x, y = dens$y) 
+d = data.frame(x = dens$x, y = dens$y)
 
 p1 = ggplot() +
   geom_point(data = df_observed, aes(x1, x2),
@@ -41,7 +41,74 @@ p2 = ggplot() +
              shape = 3, color = "red", size = 2, stroke = 2) +
   theme_bw() + ylim(range(d$x))
 
-grid.arrange(p1, p2, ncol = 2, respect = TRUE)
+dens2 = density(df_observed$x2)
+p2 + geom_path(data = data.frame(x = dens2$x, y = dens2$y),
+  aes(x = -5*y - 3, y = x)) +
+  geom_line(data = NULL, aes(x = c(-3,-3), y = range(dens2$x)))
+
+p = grid.arrange(p1, p2, ncol = 2, respect = TRUE)
+ggsave("../figure_man/pd_grid.pdf", p, width = 8, height = 4)
+
+
+######################################################
+
+set.seed(1)
+library(mvtnorm)
+#x1 = runif(1000, -5, 5)
+#x2 = x1 + rnorm(1000, 0, 1)
+sig = matrix(c(1,0.9,0.9,1), byrow = TRUE, ncol = 2)
+df_observed = as.data.frame(rmvnorm(500, sigma = sig))
+df_observed$y = - 1*df_observed$V1 + 2*df_observed$V2 + rnorm(500)
+
+cor(df_observed$V1, df_observed$V2)
+
+mod = lm(y ~ V1 + V2, data = df_observed)
+
+mplot = function(data, feature, target, eps) {
+  x = data[, feature]
+  y = data[, target]
+  x.lower = x - eps
+  x.upper = x + eps
+  m = n = numeric(length(x))
+  for(i in 1:length(x)) {
+   ind = x > x.lower[i] & x < x.upper[i]
+   m[i] = mean(y[ind])
+   n[i] = sum(ind)
+  }
+  return(data.frame(x = x, mplot = m, n = n))
+}
+
+pred = Predictor$new(mod, data = df_observed, y = df_observed$y)
+pdp = FeatureEffect$new(pred, feature = "V1", method = "pdp")
+mpl = mplot(df_observed, "V1", target = "y", eps = 0.5)
+p1 = ggplot(data = df_observed, aes(V1, V2)) +
+  geom_point() +
+  stat_cor(method = "pearson", aes(label = gsub("R", "Cor(x[1],x[2])", ..r.label..))) +
+  #stat_cor(aes(label = ..r.label..)) +
+  labs(x = expression(x[1]), y = expression(x[2])) +
+  theme_minimal()
+p2 = ggplot() +
+  stat_function(data = NULL, fun = function(x) -1*x, mapping = aes(col = "function f(x) = -x")) +
+  geom_line(data = pdp$results, aes(V1, .value, col = "PD plot")) +
+  geom_line(data = mpl, aes(x, mplot, col = "M-plot")) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  labs(colour = "Method", x = expression(x[1]), y = expression("Marginal Effect "~hat(f)[1](x[1]))) +
+  #scale_colour_manual(values = c("black", "red", "blue"),
+  #  labels=c("PD plot", "M-plot", "f(x) = -0.1x")) +
+  theme_minimal() + theme(legend.position="bottom")
+p = grid.arrange(p1, p2, ncol = 2, respect = TRUE)
+ggsave("../figure_man/pd_vs_mplot.pdf", p, width = 8, height = 4)
+# pdp = FeatureEffect$new(pred, feature = "x2", method = "pdp")
+# mpl = mplot(df_observed, "x2", eps = 0.1)
+# p2 = pdp$plot() +
+#   geom_line(data = mpl, aes(x, mplot), col = 2, lwd = 2) +
+#   stat_function(data = NULL, fun = function(x) x, col = 3, lty = 2, lwd = 2) +
+#   geom_hline(yintercept = 0) +
+#   geom_vline(xintercept = 0) +
+#   theme_minimal()
+#
+#
 
 ###################################################
 
@@ -109,7 +176,7 @@ p = scatter3D(x1, x2, y, ticktype = "detailed",
               xaxs = "i", yaxs = "i")
 
 addHyperplane = function(x.value) {
-  
+
   x2.min = x2lim[1]
   x2.max = x2lim[2]
   horizontal.line = data.frame(x1 = c(x.value, x.value), x2 = c(x2.min, x2.max), y = c(max(y), max(y)))
