@@ -209,7 +209,7 @@ How can we attribute outcomes so that these axioms are fulfilled?
 \end{vbframe}
 
 \begin{vbframe}{Estimation Algorithm}
- 
+ DRAFT
 \begin{center}
 \includegraphics[width=0.85\textwidth]{figure_man/shapley-algorithm1.png}
 \end{center}
@@ -218,11 +218,25 @@ How can we attribute outcomes so that these axioms are fulfilled?
 
 
 \begin{center}
+  DRAFT
 \includegraphics[width=0.85\textwidth]{figure_man/shapley-algorithm2.png}
 \end{center}
 
 \tiny{Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Explaining prediction models and individual predictions with feature contributions.$"$}
  
+\end{vbframe}
+
+\begin{vbframe}{Estimation trick}
+  DRAFT
+  The Shapley value can be estimated more efficiently when certain coalitions are always included in the computation, instead of relying on chance to sample them.
+  \begin{itemize}
+    \item The coalition with $S = \empty$ (i.e., $|S| = 0$) and $S = \{1, \ldots, p\} \setminus j$ have the highest weights in the Shapley value computation. By including them on purpose, the Shapley value becomes more stable with fewer samples. Sample weights have to be adapted for the sampled coalations afterwards.
+    \item Intuition: Adding a feature to the empty coalition gives information about the first order effect of the feature, which is the effect without any interactions. Adding the feature value to the otherwise complete set of feature values gives us the information about ALL interaction effects with other features.
+    \item Similarly, we can proceed with all coalitions of $|S| = 1$ and $|S| = p - 2$, which are $2 \cdot(p - 1)$ coalitions.
+    \item TODO: Report weights for $\empty$, but also for $S| = 1$
+    \item TODO: Formula how to adapt the weights have to be adapted.
+    \item TODO: Figure with geomline x:|S| and y: weight in Shapley computation.
+  \end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Bike Sharing Dataset}
