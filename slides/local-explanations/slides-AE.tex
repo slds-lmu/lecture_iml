@@ -383,9 +383,16 @@ There are several ways to protect your network against such attacks. We distingu
 \end{vbframe}
 
 \begin{vbframe}{Regularization Against AEs}
-The use of regularization techniques against AEs is motivated by most hypotheses that explain AEs. One particularly interesting example is:
+The use of regularization techniques against AEs is motivated by most hypotheses that explain AEs. As an example we look at a technique based on the FGSM and the linearity hypotheses.
 \begin{itemize}
-    \item bsp
+    \item Goodfellow et al. suggest to specfiy the cost function s.t.
+    \begin{equation*}
+        \tilde{J}(\theta,x,y):=\alpha J(\theta,x,y)+(1-\alpha) J(\theta,x+\epsilon\cdot\text{sign}(\nabla_x J(\theta,x,y)),y)
+    \end{equation*}
+    with $\alpha=0.5$.
+    \item This increased the model-robustness against FGSM generated AEs.
+    \item However, model are not only still prone to other AEs but also to many FGSM-AEs.
+    \item Applying such regularization terms can increase test-error.
 \end{itemize}
 \end{vbframe}
 
