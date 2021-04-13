@@ -22,6 +22,11 @@
 \newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
 \newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
 \newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+% TODO: Move to latex-math
+\newcommand{\xij}{x_j^{(i)}}
+
+
 \let\hlipl\hlkwb
 
 \usepackage{framed}
@@ -136,14 +141,14 @@
 \lecture{Interpretable Machine Learning}
 
 \begin{vbframe}{Shapley Values}
-We can use Shapley values to explain individual predictions of a machine learning model $\fh$: 
+We can use Shapley values to explain individual predictions of a machine learning model $\fh$:
 \begin{itemize}
   \item Players $\hat{=}$ feature values of i-the observation $\xij, j \in \pset$.
   \item Features collaborate to produce a prediction $\fh(\xi_1, \xi_2, \ldots, \xi_p)$.
-  \item The value function / payout of coalition $S$ for observation $\xv$ is 
-  $$v(\xv_S) =  \fh_{S} (\xv_S) - \E (\fh(\xv))$$ 
+  \item The value function / payout of coalition $S$ for observation $\xv$ is
+  $$v(\xv_S) =  \fh_{S} (\xv_S) - \E (\fh(\xv))$$
   i.e., the difference of the marginal prediction of $\xv_S$ and the average prediction.
-\item Reason for $ - \E(\fh(\xv))$ is that 
+\item Reason for $ - \E(\fh(\xv))$ is that
 \item The marginal prediction is $\fh_{S}(\xv_S) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
 \item We have already seen the marginal prediction in action in the PDP.
 \item By using the marginal prediction, we have defined what it means for features to be \enquote{missing} for the prediction: We remove it by integrating over its distribution.
@@ -154,7 +159,7 @@ We can use Shapley values to explain individual predictions of a machine learnin
 \end{center}
 
 \begin{itemize}
- \item Shapley values tell us what the payout of each feature is, i.e., how each feature contributes to the overall prediction of a specific observation.  
+ \item Shapley values tell us what the payout of each feature is, i.e., how each feature contributes to the overall prediction of a specific observation.
     \item The Shapley value is the average marginal contribution of a feature towards the prediction \textbf{across all possible feature coalitions}.
     \item The sum of Shapley values over all features yields the difference between the average prediction of all data points (baseline) and the selected individual prediction.
   \end{itemize}
@@ -165,11 +170,11 @@ We can use Shapley values to explain individual predictions of a machine learnin
 
 \begin{vbframe}{Shapley Value - Definition}
 \begin{itemize}
-  \item The Shapley value of a feature $j$ is defined as:\\ 
+  \item The Shapley value of a feature $j$ is defined as:\\
   For $m = 1, \dots, M$ exhaustively select coalition $S_m \subseteq P \setminus j$  and calculate
     $$ \hat{\phi_{j}}(\xv) = \frac{1}{M} \sum_{m=1}^{M} \underbrace{\fh_{S_m \cup \{j \}}(\xv_{S_m \cup \{j \} }) - \fh_{S_m}(\xv_{S_m})}_{\text{marginal contribution of feature $j$}} $$
     \item The term $\E (\fh(\xv))$ drops due to the difference.
-  \item Interpretation of Shapley value $\hat{\phi_{j}}(\xv)$ for feature $j$ and observation $\xv$: 
+  \item Interpretation of Shapley value $\hat{\phi_{j}}(\xv)$ for feature $j$ and observation $\xv$:
   The feature value $\xv_{j}$ contributed $\hat{\phi_{j}}(\xv)$ towards the prediction $\fh(x)$ compared to the average prediction for the dataset.
    \item Contributions can be negative.
 \end{itemize}
@@ -205,8 +210,8 @@ How can we attribute outcomes so that these axioms are fulfilled?
       \item High-dimensionality is problematic for the (exact) Shapley value computation: For only 10 features, there are already $10! \approx 3.6$ million possible orderings of features.
       \item We have a similar problem with the estimation of the marginal prediction: Averaging over the entire dataset for each (sampled) coalition would be very expensive.
       \item The solution to both problems is sampling. We calculate the Shapley value over $M$ samples. For each sample, we sample one ordering of features and one data point to replace missing features.
-      \item $M$ is a tradeoff between accuracy of the Shapley value and computational costs. The higher $M$, the closer we get to the true Shapley values, but the more costly the computation becomes.  
-  \end{itemize}      
+      \item $M$ is a tradeoff between accuracy of the Shapley value and computational costs. The higher $M$, the closer we get to the true Shapley values, but the more costly the computation becomes.
+  \end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Estimation Algorithm}
@@ -224,11 +229,12 @@ How can we attribute outcomes so that these axioms are fulfilled?
 \end{center}
 
 \tiny{Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Explaining prediction models and individual predictions with feature contributions.$"$}
- 
+
 \end{vbframe}
 
 \begin{vbframe}{Estimation trick}
-  DRAFT
+
+
   The Shapley value can be estimated more efficiently when certain coalitions are always included in the computation, instead of relying on chance to sample them.
   \begin{itemize}
     \item The coalition with $S = \empty$ (i.e., $|S| = 0$) and $S = \{1, \ldots, p\} \setminus j$ have the highest weights in the Shapley value computation. By including them on purpose, the Shapley value becomes more stable with fewer samples. Sample weights have to be adapted for the sampled coalations afterwards.
@@ -239,11 +245,16 @@ How can we attribute outcomes so that these axioms are fulfilled?
         \item There are $5! = 120$ orderings in total.
         \item In $(5 - 1)! = 24$ orderings, we added feature value $\xij$ to the empty set.
         \item In 24 orderings, we added the feature value to the otherwise full feature set.
-        \item That means with just two sets, we can already get $\frac{48}{120} = 0.4$ of the contributions to the Shapley value. 
+        \item That means with just two sets, we can already get $\frac{48}{120} = 0.4$ of the contributions to the Shapley value.
       \end{itemize}
-    \item Similarly, we could proceed with all coalitions of $S = \emptyset$ ($|S| = 1$) and $S = P \setminus j$ ($|S| = p - 1$) 
+    \item Similarly, we could proceed with all coalitions of $S = \emptyset$ ($|S| = 1$) and $S = P \setminus j$ ($|S| = p - 1$)
     \item When some coalitions are added \enquote{manually}, and the rest are sampled, we have to adapt the weights: Let $w$ be the weight of the \enquote{manually} sampled coalitions, $\phi_j^1$ the Shapley value with only the manual contributions and $\phi_j^2$ the Shapley value with the sampled coalitions, then the Shapley value is: $w \cdot \phi_j^1 + (1 - w) \phi_j^2$.
   \end{itemize}
+
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{figure/shapley-weights}
+  \end{center}
+
 \end{vbframe}
 
 \begin{vbframe}{Bike Sharing Dataset}

@@ -19,9 +19,9 @@ coal_size = function(s, p){
 plt_data = data.frame(s = 0:(p - 1))
 plt_data$weight = sapply(plt_data$s, function(x) coal_size(x, p))
 
-ggplot(plt_data) + 
+ggplot(plt_data) +
   geom_line(aes(x = s, y = weight)) +
   scale_x_continuous("Coalition size |S|", breaks = 0:p) +
-  scale_y_continuous("Shapley weight: |S|!(|P| - |S| - 1)/|P|!", breaks = 0:p)
-ggsave(file = "shapley-weights.pdf", height = 4, width = 4)
+  scale_y_continuous("Shapley weight: |S|!(|P| - |S| - 1)/|P|!")
+ggsave(file = "shapley-weights.pdf", height = 3, width = 4)
 
