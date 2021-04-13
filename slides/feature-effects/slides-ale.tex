@@ -1,47 +1,234 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
 
-\input{../../style/preamble4tex}
-\input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+  %Define standard arrow tip
+  >=stealth',
+  %Define style for boxes
+  punkt/.style={
+    rectangle,
+    rounded corners,
+    draw=black, very thick,
+    text width=6.5em,
+    minimum height=2em,
+    text centered},
+  % Define arrow style
+  pil/.style={
+    ->,
+    thick,
+    shorten <=2pt,
+    shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+\newcommand{\titlefigure}{figure_man/bike-sharing-dataset01.png}
+\newcommand{\learninggoals}{
+\item Understand ALE plots
+}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Interpretable Machine Learning}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
 
 \begin{document}
 
-\lecturechapter{13}{Accumulated Local Effects}
-\lecture{Fortgeschrittene Computerintensive Methoden}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\lecturechapter{Accumulated Local Effect (ALE) plot}
+\lecture{Interpretable Machine Learning}
+
+\frame{
+\frametitle{Motivation}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/pd_grid}
+\end{center}
+
+\only<1>{
+\textbf{Recall:} In case of strongly correlated features $x_1$ and $x_2$, partial dependence (PD) plots \textbf{average predictions} of artificial data instances that are unlikely in reality (green).
+This can lead to biased estimates.
+
+\textbf{Question:} Can we avoid the extrapolation issue by averaging only over points in the neighborhood of a specific point $x_1$? %, i.e., using the conditional distribution at
+}
+
+\only<2>{
+
+\textbf{Answer:} Yes, we could. Marginal plots (M plots) do this by averaging (i.e., marginalizing) over the conditional distribution $\P(\xv_2|x_1)$.
+
+\textbf{But:} M plots introduce the omitted-variable bias (OVB) issue, i.e., an
+M plot always includes the marginal effect of other dependent features.\\
+$\Rightarrow$ M plots are useless to assess the main effect of a feature in case of dependent features.
+
+%M plots average over the conditional distribution $x_2|x_1$. However, the M plot of $x_1$ also includes the marginal effect of other dependent features $\Rightarrow$ We don't want this.
+}
+}
+% do not include the marginal effect of the considered feature but
+% mixture of its marginal effect and the marginal effects of all dependent features
+
+\frame{
+\frametitle{Motivation: PD vs. M plot}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/PD_M.jpg}\\
+\tiny{Source: Figure taken from Apley et al. (2020)}
+\end{center}
+
+\begin{enumerate}
+\item[a)] PD plot $\fh_{1, PD}(x_1) = \hat{\E}_{\xv_2} \left( \fh(x_1, \xv_2) \right) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_2^{(i)})$
+\item[b)] M plot $\fh_{1, M}(x_1) = \hat{\E}_{\xv_2|\xv_1} \left( \fh(x_1, \xv_2) \middle| \xv_1\right) = \frac{1}{|N(x_1)|} \sum\limits_{i \in N(x_1)} \fh(x_1, \xv_2^{(i)})$, where $N(x_1) = \{i: x_1^{(i)} \in [x_1 - \epsilon, x_1 + \epsilon]\}$ is an index set referring to observations in an appropriate neighborhood of feature value $x_1$.
+\end{enumerate}
+
+\footnote[frame]{Apley, Daniel W., and Jingyu Zhu (2020). Visualizing the Effects of Predictor Variables in Black Box Supervised Learning Models. Journal of the Royal Statistical Society: Series B (Statistical Methodology) 82.4: 1059-1086.}
+}
 
 
-\begin{vbframe}{TODO}
+\frame{
+\frametitle{Motivation: PD vs. M plot}
+%\vspace*{-\topsep}
+%\vspace*{-3\lineskip}
 
-\begin{itemize}
-\item M-plot vs. PD-Plot
-\item Why M-plots are still bad
-\item Remove 3-D illustration
-\end{itemize}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/pd_vs_mplot}
+\end{center}
 
-\end{vbframe}
+\textbf{Illustration:}
+We fitted a linear model on a simulated dataset with 500 i.i.d. observations, features $x_1, x_2 \sim N(0,1)$ with $Cor(x_1, x_2) = 0.9$ and $$y = -x_1 + 2 \cdot x_2 + \epsilon, \; \epsilon \sim N(0,1).$$
+
+\textbf{Results:} The M plot of $x_1$ is a mixture of the marginal effect of $x_1$ and the marginal effect of all other dependent features (here: $x_2$).
+}
 
 \begin{vbframe}{Accumulated Local Effects}
 
+Accumulated Local Effect (ALE) plots were developed to overcome the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent (Apley, 2020).
 
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figure_man/accu01.png}
-\end{center}
+\lz
 
-Remember, for strongly correlated features $x_1$ and $x_2$, the computation of a partial dependence (PD) plot involves \textbf{averaging predictions} of artificial data instances that are unlikely in reality.
-This leads to biased estimates.
+ALE plots are based on
+\begin{enumerate}
+\item estimating the local effect $\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}$ of $x_S$ at $(x_S = z_S, \xv_C)$,
+\item averaging the local effects across all values of $\xv_C$, i.e., over the conditional distribution $\P(\xv_C|x_S)$ similar to M plots.\\
+$\Rightarrow$ Avoids the extraploation issue.
+\item accumulating/integrating the averaged local effects over all values of $z_S$ up to a specific value $x$ $\Rightarrow$ Avoids the OVB issue.
+\end{enumerate}
 
 \framebreak
 
+Let $z_0$ denote the minimum of observed values of feature $\xv_S$, i.e., $z_0 = min(\xv_S)$. All complementary features are denoted by $\xv_C$.
+The uncentered first order ALE $\tilde{f}_{S, ALE}(x)$ at point $x$ is defined as:
+$$
+\begin{aligned}
+\tilde{f}_{S, ALE}(x) &= \int_{z_{0}}^{x} \E_{\xv_C \vert x_S} \left(\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right) dz_S. \\
+&= \int_{z_{0}}^{x} \int_{-\infty}^{\infty}  \frac{\partial \fh(z_S, \xv_C)}{\partial z_S} d\P(\xv_C | z_S) \, dz_S.
+\end{aligned}
+$$
+
+%The constant $c_1$ will be chosen so that the ALE plot is centered vertically.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{itemize}
-  \item Accumulated Local Effects (ALE) are a novel method developed by Apley (2016).
-  \item ALEs are an alternative to PD that do not suffer from extrapolation when features are correlated.
-  \item PD and ALE reduce the complex prediction function $\hat{f}$ to a function that depends on only one (or two) features.
+%\begin{itemize}
+  %\item Accumulated Local Effect (ALE) plots were developed by Apley (2020) to overcome the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent.
+  %. \item ALEs are an alternative to PD that do not suffer from extrapolation
+  %\item PD and ALE reduce the complex prediction function $\hat{f}$ to a function that depends on only one (or two) features.
   %\item They both do that by averaging the effects of the other features.
   %\item We can see the main differences of PD vs. ALE if we look on their formulas.
   %\item Before, we explain the main idea of ALE.
-\end{itemize}
-\vspace{1cm}
-{\tiny{Apley, Daniel W. "Visualizing the Effects of Predictor Variables in Black Box Supervised Learning Models " ArXiv e-prints (Dec 2016)}\par}
+%\end{itemize}
 \end{vbframe}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,8 +253,8 @@ Example:
 Let $z_0$ denote the minimum of observed values of feature $\xv_S$, i.e., $z_0 = min(\xv_S)$. All complementary features are denoted by $\xv_C$. The uncentered first order ALE $\tilde{f}_{S, ALE}(x)$ at point $x$ is defined as:
 $$
 \begin{aligned}
-\tilde{f}_{S, ALE}(x) &= \int_{z_{0}}^{x} \mathbb{E}_{\xv_C \vert x_S} \left[\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right] dz_S \\
-&= \int_{z_{0}}^{x} \left[ \int_{-\infty}^{\infty}  \frac{\partial \fh(z_S, \xv_C)}{\partial z_S} d\mathcal{P}(\xv_C | z_S) \,   \right] dz_S
+\tilde{f}_{S, ALE}(x) &= \int_{z_{0}}^{x} \E_{\xv_C \vert x_S} \left[\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right] dz_S \\
+&= \int_{z_{0}}^{x} \left[ \int_{-\infty}^{\infty}  \frac{\partial \fh(z_S, \xv_C)}{\partial z_S} d\P(\xv_C | z_S) \,   \right] dz_S
 \end{aligned}
 $$
 
@@ -75,7 +262,7 @@ A constant, i.e., the average of the uncentered ALE curve is substracted such th
 
 $$
 \begin{aligned}
-f_{S, ALE}(x) = \tilde{f}_{S, ALE}(x) - \underbrace{\int_{-\infty}^{\infty}\tilde{f}_{S, ALE}(x_S) \, d\mathcal{P}(x_S)}_{:= const}
+f_{S, ALE}(x) = \tilde{f}_{S, ALE}(x) - \underbrace{\int_{-\infty}^{\infty}\tilde{f}_{S, ALE}(x_S) \, d\P(x_S)}_{:= const}
 \end{aligned}
 $$
 
@@ -88,18 +275,18 @@ $$
     \textbf{PD:}
     $
     \begin{aligned}
-      \hspace{2cm} \E_{\xv_C} \left( \fh(x_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_C) \, d\mathcal{P}(\xv_C)
+      \hspace{2cm} \E_{\xv_C} \left( \fh(x_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_C) \, d\P(\xv_C)
     \end{aligned}
     $ \\
     \textbf{ALE:}
     $
     \begin{aligned}
       \only<1>{\hspace{1cm}
-      \int_{z_{0}}^{x} \mathbb{E}_{\xv_C \vert x_S} \left[\textcolor{purple}{\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}} \textcolor{blue}{\bigg \vert x_S = z_S} \right] dz_S\\
-        = \int_{z_{0}}^{x} \left[ \int_{-\infty}^{\infty}  \textcolor{purple}{\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}} d \textcolor{blue}{\mathcal{P}(\xv_C | z_S) } \,   \right] dz_S}
+      \int_{z_{0}}^{x} \E_{\xv_C \vert x_S} \left[\textcolor{purple}{\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}} \textcolor{blue}{\bigg \vert x_S = z_S} \right] dz_S\\
+        = \int_{z_{0}}^{x} \left[ \int_{-\infty}^{\infty}  \textcolor{purple}{\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}} d \textcolor{blue}{\P(\xv_C | z_S) } \,   \right] dz_S}
     \only<2>{\hspace{1cm}
-    \textcolor{blue}{\int_{z_{0}}^{x}} \mathbb{E}_{\xv_C \vert x_S} \left[\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right] \textcolor{blue}{dz_S}\\
-  = \textcolor{blue}{\int_{z_{0}}^{x}} \left[ \int_{-\infty}^{\infty}\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} d \mathcal{P}(\xv_C | z_S)  \,   \right]}
+    \textcolor{blue}{\int_{z_{0}}^{x}} \E_{\xv_C \vert x_S} \left[\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right] \textcolor{blue}{dz_S}\\
+  = \textcolor{blue}{\int_{z_{0}}^{x}} \left[ \int_{-\infty}^{\infty}\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} d \P(\xv_C | z_S)  \,   \right]}
   \end{aligned}
     $
     \lz
@@ -168,88 +355,88 @@ Compared to PD, ALE avoids averaging predictions of unlikely data instances and 
 \end{itemize}
 
 \end{vbframe}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\begin{vbframe}{3-D Illustration}
-
-Consider the following data generating process:
-
-$$
-\begin{gathered}
-u_1, u_2 =  \{-10, -9.9, -9.8, \dots, 9.8, 9.9, 10\} \\
-n_1, n_2 \stackrel{iid}{\sim}  N(0, 1) \\
-\varepsilon \stackrel{iid}{\sim} N(0, 3) \\
-\\
-x_1 = u_1 + n_1 \\
-x_2 = u_2 + n_2 \\
-y = 100  \left[ \frac{\partial^2 \left[ \frac{1}{1 + exp(-x_1)} \right] }{\partial x_1 \partial x_1} \right] + 2 x_2 + \varepsilon
-\end{gathered}
-$$
-
-\framebreak
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{center}
-\includegraphics[width=0.6\textwidth]{figure_man/3D01.png}
-\end{center}
-
-3D visualization of the data, the predictions made by the predictive model (blue net) and 10 intervals for the value range of $x_1$.
-
-\framebreak
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figure_man/3D02.png}
-\end{center}
-
-Zooming in on the interval $x_1 \in [4.198, 6.249]$.
-
-\framebreak
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figure_man/3D03.png}
-\end{center}
-
-
-We substitute each observation`s $x_1$ value by the right and left interval boundaries, predict and take the difference.
-
-\framebreak
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{center}
-\includegraphics[width=0.6\textwidth]{figure_man/3D04.png}
-\end{center}
-
-For each observation, we receive a change in prediction when traversing the interval from the left to the right boundary.
-
-\end{vbframe}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{vbframe}{3-D Illustration}
-\begin{center}
-\includegraphics[width=0.6\textwidth]{figure_man/3D05.png}
-\end{center}
-
-We integrate over the conditional distribution of $x_2$ on $x_1$ by averaging all observation-wise finite differences inside each interval.
-
-\framebreak
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figure_man/3D06.png}
-\end{center}
-
-
-We repeat the same procedure for every interval. The first order ALE corresponds to adding up all average interval-wise finite differences and substracting the centering constant.
-
-\end{vbframe}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+% \begin{vbframe}{3-D Illustration}
+%
+% Consider the following data generating process:
+%
+% $$
+% \begin{gathered}
+% u_1, u_2 =  \{-10, -9.9, -9.8, \dots, 9.8, 9.9, 10\} \\
+% n_1, n_2 \stackrel{iid}{\sim}  N(0, 1) \\
+% \varepsilon \stackrel{iid}{\sim} N(0, 3) \\
+% \\
+% x_1 = u_1 + n_1 \\
+% x_2 = u_2 + n_2 \\
+% y = 100  \left[ \frac{\partial^2 \left[ \frac{1}{1 + exp(-x_1)} \right] }{\partial x_1 \partial x_1} \right] + 2 x_2 + \varepsilon
+% \end{gathered}
+% $$
+%
+% \framebreak
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin{center}
+% \includegraphics[width=0.6\textwidth]{figure_man/3D01.png}
+% \end{center}
+%
+% 3D visualization of the data, the predictions made by the predictive model (blue net) and 10 intervals for the value range of $x_1$.
+%
+% \framebreak
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{figure_man/3D02.png}
+% \end{center}
+%
+% Zooming in on the interval $x_1 \in [4.198, 6.249]$.
+%
+% \framebreak
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{figure_man/3D03.png}
+% \end{center}
+%
+%
+% We substitute each observation`s $x_1$ value by the right and left interval boundaries, predict and take the difference.
+%
+% \framebreak
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin{center}
+% \includegraphics[width=0.6\textwidth]{figure_man/3D04.png}
+% \end{center}
+%
+% For each observation, we receive a change in prediction when traversing the interval from the left to the right boundary.
+%
+% \end{vbframe}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin{vbframe}{3-D Illustration}
+% \begin{center}
+% \includegraphics[width=0.6\textwidth]{figure_man/3D05.png}
+% \end{center}
+%
+% We integrate over the conditional distribution of $x_2$ on $x_1$ by averaging all observation-wise finite differences inside each interval.
+%
+% \framebreak
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{figure_man/3D06.png}
+% \end{center}
+%
+%
+% We repeat the same procedure for every interval. The first order ALE corresponds to adding up all average interval-wise finite differences and substracting the centering constant.
+%
+% \end{vbframe}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{vbframe}{ALE Estimation: Formula}
