@@ -138,14 +138,15 @@
 \begin{vbframe}{Shapley Values}
 We can use Shapley values to explain individual predictions of a machine learning model $\fh$: 
 \begin{itemize}
-  \item Players $\hat{=}$ feature values of i-the observation $x^{(i)}_j, j \in \pset$.
-  \item Features collaborate to make a prediction $\fh(\xi)$.
+  \item Players $\hat{=}$ feature values of i-the observation $\xij, j \in \pset$.
+  \item Features collaborate to produce a prediction $\fh(\xi_1, \xi_2, \ldots, \xi_p)$.
   \item The value function / payout of coalition $S$ for observation $\xv$ is 
   $$v(\xv_S) =  \fh_{S} (\xv_S) - \E (\fh(\xv))$$ 
   i.e., the difference of the marginal prediction of $\xv_S$ and the average prediction.
-\item The marginal prediction is $\fh_{S}(\xv_S) = \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
-  \item We have already seen the marginal prediction in action in the PDP.
- \item By using the marginal prediction, we have defined what it means for features to be \enquote{missing} for the prediction: We remove it by averaging over its distribution.
+\item Reason for $ - \E(\fh(\xv))$ is that 
+\item The marginal prediction is $\fh_{S}(\xv_S) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
+\item We have already seen the marginal prediction in action in the PDP.
+\item By using the marginal prediction, we have defined what it means for features to be \enquote{missing} for the prediction: We remove it by integrating over its distribution.
 \end{itemize}
 \begin{center}
 \vspace{-0.3cm}

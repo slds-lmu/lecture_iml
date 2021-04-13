@@ -149,15 +149,15 @@
 
 
 \begin{vbframe}{What Would Be a Fair Attribution?}
-  One possibility to define \textbf{fair} attribution are the following axioms:
+  One possibility to define \textbf{fair} attribution are the following axioms for a given value function $v$:
   \begin{itemize}
     \item \textbf{Efficiency}: Player contributions add up to total payout of the game.
       $\sum\nolimits_{j=1}^p\phi_j = v(P)$
-    \item \textbf{Symmetry}: Players who contribute the same to any coalition get the same payout: \\
+    \item \textbf{Symmetry}: Players $j,k \in P$ who contribute the same to any coalition get the same payout: \\
       $v(S\cup\{j\}) = v(S\cup\{k\})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_{j}=\phi_{k}$
     \item \textbf{Dummy / Null Player}: The payout is zero for players who don't contribute to the value of any coalition: \\
-      $val(S\cup\{j\})=val(S)$ for all $S \subseteq P$ then $\phi_j=0$
-    \item \textbf{Additivity}: For a game with combined payouts ($v1$ and $v2$), the payout is the sum of payouts: $\phi_j(v1) + \phi_{j}(v2)$
+      $v(S\cup\{j\})=v(S)$ for all $S \subseteq P \setminus j$ then $\phi_j=0$
+    \item \textbf{Additivity}: For a game with combined payouts ($v = v_1 + v_2$), the payout is the sum of payouts: $\phi_j(v) = \phi_j(v_1) + \phi_{j}(v_2)$
   \end{itemize}
 
   Is there an attribution formula that adheres to all these axioms?
@@ -201,7 +201,7 @@ The Shapley value of a player $j=2$ is the marginal contribution to the value fu
 \begin{itemize}
   \item Let $\pi(P)$ be all possible orderings of players, for example for players a,b,c: $\pi(P) = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$.
   \item Then: $\phi_j(v) = \frac{1}{|P|!} \sum_{O \in \pi(P)} (v(Pre(O,j) \cup \{j\}) - v(Pre(O,j)))$
-  \item $Pre(O,j)$ are the players that are before player $j$ in the ordering $O$. For example if $O = (b,a,c)$ and $j=a$, then $Pre(O,j) = \{b\}$
+  \item $Pre(O,j)$ is the set of players that are before player $j$ in the ordering $O$. For example if $O = (b,a,c)$ and $j=a$, then $Pre(O,j) = \{b\}$
   \item Both Shapley formulations are equivalent, since the number of orderings which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$.
   \item Relevance of the permutation definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
 \end{itemize}
