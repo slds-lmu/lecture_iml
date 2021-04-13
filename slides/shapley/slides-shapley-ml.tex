@@ -233,10 +233,16 @@ How can we attribute outcomes so that these axioms are fulfilled?
   \begin{itemize}
     \item The coalition with $S = \empty$ (i.e., $|S| = 0$) and $S = \{1, \ldots, p\} \setminus j$ have the highest weights in the Shapley value computation. By including them on purpose, the Shapley value becomes more stable with fewer samples. Sample weights have to be adapted for the sampled coalations afterwards.
     \item Intuition: Adding a feature to the empty coalition gives information about the first order effect of the feature, which is the effect without any interactions. Adding the feature value to the otherwise complete set of feature values gives us the information about ALL interaction effects with other features.
-    \item Similarly, we can proceed with all coalitions of $|S| = 1$ and $|S| = p - 2$, which are $2 \cdot(p - 1)$ coalitions.
-    \item TODO: Report weights for $\empty$, but also for $S| = 1$
-    \item TODO: Formula how to adapt the weights have to be adapted.
-    \item TODO: Figure with geomline x:|S| and y: weight in Shapley computation.
+    \item For coaliation $S = \empty$, there are $0! (|P| - 0 - 1)! = 1 \cdot (|P| - 1)! = (p - 1)!$ orderings, which is the same for $S = P \setminus {j}$: $|P \setminus j|! (|P| - |P \setminus j| - 1)! = (p - 1)! (p - (p-1) - 1)! = (p-1)!$.
+    \item An example with $p = 5$ features:
+      \begin{itemize}
+        \item There are $5! = 120$ orderings in total.
+        \item In $(5 - 1)! = 24$ orderings, we added feature value $\xij$ to the empty set.
+        \item In 24 orderings, we added the feature value to the otherwise full feature set.
+        \item That means with just two sets, we can already get $\frac{48}{120} = 0.4$ of the contributions to the Shapley value. 
+      \end{itemize}
+    \item Similarly, we could proceed with all coalitions of $S = \emptyset$ ($|S| = 1$) and $S = P \setminus j$ ($|S| = p - 1$) 
+    \item When some coalitions are added \enquote{manually}, and the rest are sampled, we have to adapt the weights: Let $w$ be the weight of the \enquote{manually} sampled coalitions, $\phi_j^1$ the Shapley value with only the manual contributions and $\phi_j^2$ the Shapley value with the sampled coalitions, then the Shapley value is: $w \cdot \phi_j^1 + (1 - w) \phi_j^2$.
   \end{itemize}
 \end{vbframe}
 
