@@ -139,8 +139,8 @@
 
 % Defines macros and environments
 
-%\input{../../latex-math/basic-math.tex}
-%\input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
 
 \lecturechapter{Introduction}
 \lecture{Interpretable Machine Learning}
@@ -148,15 +148,15 @@
 % ------------------------------------------------------------------------------
 
 \begin{vbframe}{Methodological Motivation}
-Except for Shapley Values, we focused so far mostly on global explanation methods that explain global model behaviour (e.g. PDP, PFI, ALE, etc.). However, there are also many methods that explain the \emph{local} behaviour of a model.
+Except for Shapley Values, we focused so far mostly on global explanation methods that explain global model behaviour (e.g. PDP, PFI, ALE, etc.). However, there are also many methods that explain the \textbf{local} behaviour of a model.
 	\begin{itemize}
-		\item Some local methods provide insight into the driving factors for a \emph{particular decision}. Others, help to understand the model's decision making in a \emph{local environment} of the input space.
+		\item Some local methods provide insight into the driving factors for a \textbf{particular decision}. Others, help to understand the model's decision making in a \textbf{local environment} of the input space.
 		\item Local Methods can address questions such as: 
 		\begin{itemize}
-		    \item \emph{Why} did the model decide $y$ for input $\xv$?
-		    \item \emph{How} decides the model for cases similar to $\xv$?
-		    \item \emph{What} would the ML model have decided if $\xv$ differed in $\P$?
-		    \item  \emph{Where} does the model fail?
+		    \item \textbf{Why} did the model decide $y$ for input $\xv$?
+		    \item \textbf{How} decides the model for cases similar to $\xv$?
+		    \item \textbf{What} would the ML model have decided if $\xv$ differed in $\Xspace$?
+		    \item  \textbf{Where} does the model fail?
 		\end{itemize}  
 	\end{itemize}
 \end{vbframe}
@@ -164,11 +164,11 @@ Except for Shapley Values, we focused so far mostly on global explanation method
 \begin{vbframe}{Social Motivation}
 All these questions can indeed be relevant for the ML modeler. However, unlike in global methods that require expert ML understanding or even domain knowledge, many local methods aim to provide explanations also for laypersons. 
 	\begin{itemize}
-		\item Explanations for laypersons must be tailored for the \emph{explainee} (the person receiving the explanation).
+		\item Explanations for laypersons must be tailored for the \textbf{explainee} (the person receiving the explanation).
 		\item Thus, such explanations should be case-specific, easy for humans to understand, and faithful to the explained mechanism.
-		\item In particular if algorithms make decisions in \emph{socially/safety critical domains}, end-users have justified interest in receiving explanations.
-		\item Local Explanations can not only increase \emph{user trust}, but also help to detect \emph{critical biases} in algorithmic decision-making.
-		\item European citizens have the legally binding \emph{right to explanation} as given in the General Data Protection Regulation (GDPR).
+		\item In particular if algorithms make decisions in \textbf{socially/safety critical domains}, end-users have justified interest in receiving explanations.
+		\item Local Explanations can not only increase \textbf{user trust}, but also help to detect \textbf{critical biases} in algorithmic decision-making.
+		\item European citizens have the legally binding \textbf{right to explanation} as given in the General Data Protection Regulation (GDPR).
 
 	\end{itemize}
 \end{vbframe}
@@ -180,7 +180,7 @@ All these questions can indeed be relevant for the ML modeler. However, unlike i
 $\cdots$
 
 In any case, such processing should be subject to suitable safeguards, which should include specific information to the data subject and the \textbf{right} to obtain human intervention, to express his or her point of view, \textbf{to obtain an explanation of the decision reached after such assessment and to challenge the decision}.
-'' (Recital 71)
+'' \\[0.2cm] (\href{https://gdpr-text.com/read/recital-71/}{Recital 71, GDPR})
 \end{vbframe}
 
 
@@ -193,7 +193,7 @@ In any case, such processing should be subject to suitable safeguards, which sho
 	\begin{center}
 		\includegraphics[width=0.45\textwidth]{figure/lime-wolfhusky.png}\\
 		\includegraphics[width=0.45\textwidth]{figure/lime-wolfhusky2.png}\\
-		{\tiny \textbf{Source:} \href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{www.facweb.iitkgp.ac.in}}
+		{\tiny \textbf{Source:} \href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{Sameer Singh (2018)}}
 	\end{center}
 
 	\framebreak
@@ -204,8 +204,9 @@ In any case, such processing should be subject to suitable safeguards, which sho
 	\end{itemize}
 	\begin{center}
 		\includegraphics[width=0.75\textwidth]{figure/lime-wolfhusky3.png}\\
-		{\tiny \textbf{Source:} \href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{www.facweb.iitkgp.ac.in}}
+		{\tiny \textbf{Source:} \href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{Sameer Singh (2018)}}
 	\end{center}
+\footnote[frame]{Sameer Singh (2018). Explaining Black-Box Machine Learning Predictions.  \url{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}.}
 \end{vbframe}
 
 \begin{vbframe}{Example: Loan Application}
@@ -216,27 +217,38 @@ Assume you are applying at a bank's online portal for a loan and your applicatio
 	\end{center}
 	If the bank would use local explanation methods, it could e.g. provide a counterfactual explanation:
 	\begin{itemize}
-	    \item[] If you were older than 21, your loan application would have been accepted.
+	    \item[] ``If you were older than 21, your loan application would have been accepted."
 	\end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Example: Stop or Right-of-Way?}
 Assume you work in a car-company and are about to use an image-classifier for autonomous driving. Then, you show your model the following image and its $99\%$ sure it describes a right-of-way sign.
 	\begin{center}
-		\includegraphics[width=0.4\textwidth]{figure/IntroStop.jpg}\\
-		{\tiny \textbf{Source:} [Eykholt et. al]}
+		\includegraphics[width=0.3\textwidth]{figure/IntroStop.jpg}\\
+		{\tiny \textbf{Source:} Eykholt et. al (2018)}
 	\end{center}
 	Would you entrust other peoples lives into the hands of this software?
+	\footnote[frame]{Eykholt, Kevin et al. (2018). Robust Physical-World Attacks on Deep Learning Visual Classification. \\1625-1634. 10.1109/CVPR.2018.00175.}
 \end{vbframe}
 
 \begin{vbframe}{Characteristics}
 	\begin{itemize}
-		\item \textbf{Explanation Scope:} Specific prediction, local environment
-		\item \textbf{Model-classes:} Mostly model-agnostic in definition but model-specific for computational reasons. Very popular also for deep learning models.
-		\item \textbf{Audience:} Mostly laypersons, but also ML modellers.
-		\item \textbf{Data-Types:} Many, including tabular, image, text, audio-data.
-		\item \textbf{Methods:} e.g. Counterfactual Explanations, SHAP, Local interpretable model-agnostic explanations (LIME), Adversarial examples, Ceteris-paribus (single ICE curve), Anchors. 
+		\item \textbf{Explanation scope:} Specific prediction, local environment.
+		\item \textbf{Model-classes:} Mostly model-agnostic in definition but model-specific for computational reasons, very popular also for deep learning models.
+		\item \textbf{Audience:} ML modelers and laypersons.
+		\item \textbf{Data-types:} Many, including tabular, image, text and audio data.
+		\item \textbf{Methods:} Many, most prominent are Counterfactual Explanations, SHAP, Local interpretable model-agnostic explanations (LIME), Adversarial examples, Ceteris-paribus (single ICE curve), Anchors.
 		\item \textbf{Special:} Due to audience, strong interactions with Social Sciences. Also, strong connections to Cognitive Science and Neurosciences due to data-types.
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Literature}
+	\begin{itemize}
+		\small
+		\item Molnar, Christoph (2019). Interpretable machine learning. A Guide for Making Black Box Models Explainable". Chapter 5 and Chapter 6. \url{https://christophm.github.io/interpretable-ml-book/}.
+		\item Sameer Singh (2018). Explaining Black-Box Machine Learning Predictions.  \url{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}. 
+		\item Marco Tulio et al. (2016). ``Why Should I Trust You?": Explaining the Predictions of Any Classifier. In Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '16). Association for Computing Machinery, New York, NY, USA, 1135–1144. DOI:https://doi.org/10.1145/2939672.2939778
+		\item Eykholt, Kevin et al. (2018). Robust Physical-World Attacks on Deep Learning Visual Classification. 1625-1634. 10.1109/CVPR.2018.00175. 
 	\end{itemize}
 \end{vbframe}
 
