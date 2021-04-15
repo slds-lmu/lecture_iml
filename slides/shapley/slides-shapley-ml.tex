@@ -23,9 +23,6 @@
 \newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
 \newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
 
-% TODO: Move to latex-math
-\newcommand{\xij}{x_j^{(i)}}
-
 
 \let\hlipl\hlkwb
 
@@ -114,6 +111,7 @@
 
 \input{../../latex-math/basic-ml.tex}
 \input{../../latex-math/basic-math.tex}
+\input{../../latex-math/ml-interpretable.tex}
 
 %\usetheme{lmu-lecture}
 \newcommand{\titlefigure}{figure_man/shapley_valuefct.png}
@@ -187,17 +185,18 @@ Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Ex
 \end{vbframe}
 
 
+
 \begin{vbframe}{Revisited: Axioms for Fair Attributions}
   We take the general axioms for Shapley Values and apply it to predictions:
   \begin{itemize}
     \item \textbf{Efficiency}: Feature contributions add up to the (centered) prediction.
-      $\sum\nolimits_{j=1}^p\phi_j=\hat{f}(x)-E_X(\hat{f}(X))$
+      $\sum\nolimits_{j=1}^p\phi_j=\hat{f}(x)-E_X(\fh(X))$
     \item \textbf{Symmetry}: Two feature that contribute the same to the prediction get the same payout: \\
-      $\fh_{S\cup\{j\}}(\xv_{S\cup\{j\}}) = \fh_{S\cup\{k\}}(x_{S\cup\{k\}})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_{j}=\phi_{k}$
+      $\fh_{S\cup\{j\}}(\xv_{\Scupj}) = \fh_{\Scupk}(x_{\Scupk})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_j=\phi_k$
     \item \textbf{Dummy / Null Player}: Shapley value of a feature that does not influence the prediction is zero: \\
-      $\fh_{S\cup\{j\}}(S\cup\{j\})=\fh_{S}(S)$ for all $S \subseteq P$ then $\phi_j=0$
+      $\fh_{\Scupj}(\Scupj)=\fhS(S)$ for all $S \subseteq P$ then $\phi_j=0$
     \item \textbf{Additivity}:  For a prediction with combined payouts (v1 and v2), the
-      payout is the sum of payouts: $\phi_j(v1) + \phi_j(v2)$.
+      payout is the sum of payouts: $\phi_j(v_1) + \phi_j(v_2)$.
   \end{itemize}
 How can we attribute outcomes so that these axioms are fulfilled?
 \end{vbframe}

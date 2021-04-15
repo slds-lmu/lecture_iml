@@ -109,6 +109,7 @@
 
 \input{../../latex-math/basic-ml.tex}
 \input{../../latex-math/basic-math.tex}
+\input{../../latex-math/ml-interpretable.tex}
 
 %\usetheme{lmu-lecture}
 \newcommand{\titlefigure}{figure_man/earnings.png}
@@ -139,8 +140,8 @@
 
 \begin{vbframe}{Cooperative Games}
 \begin{itemize}
-  \item In cooperative games, a set of players $P$ with $P = \{1, \hdots, p\}$ forms a coalition $S \subseteq P$. 
-  \item A value function $v(S): \mathcal{P}(P)\mapsto \R$ describes the payout (or gain) achieved by the coalition $S$. Here, $\mathcal{P}$ is the powerset which contains all possible subbsets of $P$, including the empty set $\empty$ and $P$ itself.
+  \item In cooperative games, a set of players $P$ with $P = \{1, \hdots, p\}$ forms a coalition $\SsubP$. 
+  \item A value function $v(S): \mathcal{P}(P)\mapsto \R$ describes the payout (or gain) achieved by the coalition $S$. Here, $\mathcal{P}$ is the powerset which contains all possible subsets of $P$, including the empty set $\empty$ and $P$ itself.
   \item As some players contribute more than others, we are interested in the fair payout for each player.
   \item We call the payout per player $\phi_j(v) $, $j \in P$.
   \item Problem: How to fairly distribute values among players?
@@ -154,9 +155,9 @@
     \item \textbf{Efficiency}: Player contributions add up to total payout of the game.
       $\sum\nolimits_{j=1}^p\phi_j = v(P)$
     \item \textbf{Symmetry}: Players $j,k \in P$ who contribute the same to any coalition get the same payout: \\
-      $v(S\cup\{j\}) = v(S\cup\{k\})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_{j}=\phi_{k}$
+      $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$ then $\phi_j=\phi_k$
     \item \textbf{Dummy / Null Player}: The payout is zero for players who don't contribute to the value of any coalition: \\
-      $v(S\cup\{j\})=v(S)$ for all $S \subseteq P \setminus j$ then $\phi_j=0$
+      $v(\Scupj)=v(S)$ for all $\SsubP \setminus j$ then $\phi_j=0$
     \item \textbf{Additivity}: For a game with combined payouts ($v = v_1 + v_2$), the payout is the sum of payouts: $\phi_j(v) = \phi_j(v_1) + \phi_{j}(v_2)$
   \end{itemize}
 
@@ -170,7 +171,7 @@
   Shapley Values solve the attribution problem and provide a unique solution given axioms of efficiency, symmetry, dummy and additivity.
 \begin{itemize}
   \item The \textbf{Shapley value} assigns a value to each player according to the marginal contribution of each player in all possible coalitions.
-  \item $\phi_j(v) = \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(S \cup \{j\}) - v(S))$
+  \item $\phi_j(v) = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$
   \item In other words: To compute the payout for a player, we average for all possible coalitions how much the player would increase the value of the team (=marginal contribution).
   \item Shapley values are the \textit{only} solution for the attribution with the specified axioms.
   \item Shapley values were proposed by Lloyd Shapley in 1951 for cooperative game theory.
@@ -199,15 +200,15 @@ The Shapley value of a player $j=2$ is the marginal contribution to the value fu
 \begin{vbframe}{Proofing Axioms}
   We proof that Shapley values fulfilll all these axioms:
 \begin{itemize}
-  \item Efficiency: $v(P)$ exactly appears once per player, when $S = P \setminus \{j\}$, and the coefficient in the Shapley is $\frac{1}{p}$. Values for all other coalitions $v(S), S \subseteq P \{j,k\}$ appear with both minus and plus signs that cancel each other out.
+  \item Efficiency: $v(P)$ exactly appears once per player, when $S = P \setminus \{j\}$, and the coefficient in the Shapley is $\frac{1}{p}$. Values for all other coalitions $v(S), \SsubP \{j,k\}$ appear with both minus and plus signs that cancel each other out.
     % See also: https://math.stackexchange.com/questions/2747088/shapley-value-is-efficient
-  \item Symmetry: Let's assume coalition $S \subseteq P \setminus \{j, k\}$ and $v(S \cup \{j\}) = v(S \cup \{k\})$. Then
+  \item Symmetry: Let's assume coalition $\SsubPnojk$ and $v(\Scupj) = v(\Scupk)$. Then
     \begin{itemize}
-        \item marginal contributions are equal $v(S \cup \{j\}) -  v(S) = v(S \cup \{k\}) -  v(S), \forall S \subseteq P \setminus \{j, k\}$
+        \item marginal contributions are equal $v(\Scupj) -  v(S) = v(\Scupk) -  v(S), \forall \SsubPnojk$
         \item Consequently, $\phi_j = \phi_k$.
     \end{itemize}
-  \item Dummy: Let's assume we have player $j$ such that for all $S \subseteq P$, we have $v(S) = v(S \cup \{j\})$. Then, each marginal contribution of player $j$ is zero, and therefore $\phi_j = 0$.
-  \item Additivity:  Assume two games $v_1$ and $v_2$ and a third game which is the sum of both $v = v_1 + v_2$. The marginal contribution for all $S \subseteq P \{j\}$ for game $v$ can be expressed as $v(S \cup \{j\}) - v(S) = v_1(S \cup \{j\}) - v_1(S) + v_2(S \cup \{j\}) - v_2(S)$. Splitting the Shapley value sum shows that $\phi_j = \phi_j(v_1) + \phi_j(v_2)$.
+  \item Dummy: Let's assume we have player $j$ such that for all $\SsubP$, we have $v(S) = v(\Scupj)$. Then, each marginal contribution of player $j$ is zero, and therefore $\phi_j = 0$.
+  \item Additivity:  Assume two games $v_1$ and $v_2$ and a third game which is the sum of both $v = v_1 + v_2$. The marginal contribution for all $\SsubPnoj$ for game $v$ can be expressed as $v(\Scupj) - v(S) = v_1(\Scupj) - v_1(S) + v_2(\Scupj) - v_2(S)$. Splitting the Shapley value sum shows that $\phi_j = \phi_j(v_1) + \phi_j(v_2)$.
 \end{itemize}
 \end{vbframe}
 
