@@ -167,7 +167,7 @@
 
 
 \begin{vbframe}{Shapley Values}
- 
+
   Shapley Values solve the attribution problem and provide a unique solution given axioms of efficiency, symmetry, dummy and additivity.
 \begin{itemize}
   \item The \textbf{Shapley value} assigns a value to each player according to the marginal contribution of each player in all possible coalitions.
@@ -181,8 +181,21 @@
 
 \end{vbframe}
 
-  \frame{
-\frametitle{Shapley Values - Illustration}
+\begin{vbframe}{Definition via permutation}
+ Where does weight $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ come from?
+ Shapley values can also be defined via permutations of players:
+\begin{itemize}
+  \item Let $\pi(P)$ be all possible orderings of players, for example for players a,b,c: $\pi(P) = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$.
+  \item Then: $\phi_j(v) = \frac{1}{|P|!} \sum_{O \in \pi(P)} (v(Pre(O,j) \cup \{j\}) - v(Pre(O,j)))$
+  \item $Pre(O,j)$ is the set of players that are before player $j$ in the ordering $O$. For example if $O = (b,a,c)$ and $j=a$, then $Pre(O,j) = \{b\}$
+  \item Both Shapley formulations are equivalent, since the number of orderings which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$.
+  \item Relevance of the permutation definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
+\end{itemize}
+
+\end{vbframe}
+
+\frame{
+  \frametitle{Shapley Values - Illustration}
 The Shapley value of a player $j=2$ is the marginal contribution to the value function  when player $2$ enters an abitrary coalition. \\
 \only<1>{Here, player $2$ enters the coalition after player $1$, resulting in a prediction change of $24-12 = 12$. Overall, the coalition increases the prediction by 36.}
 \only<2>{We produce all possible orders of player coalitions and measure the prediction change if player $2$ enters the coalition.}
@@ -196,7 +209,6 @@ The Shapley value of a player $j=2$ is the marginal contribution to the value fu
 \end{center}
 
 }
-
 \begin{vbframe}{Proofing Axioms}
   We proof that Shapley values fulfilll all these axioms:
 \begin{itemize}
@@ -215,24 +227,12 @@ The Shapley value of a player $j=2$ is the marginal contribution to the value fu
 \begin{vbframe}{Proofing Uniqueness of the Shapley value}
   We proof that Shapley values is unique
 \begin{itemize}
-    \item Efficiency: 
+    \item TODO
+    % http://www.ratio.huji.ac.il/dp/neyman/uniqueness.pdf
 \end{itemize}
 \end{vbframe}
 
 
-\begin{vbframe}{Definition via permutation}
- Shapley values can also be defined via permutations of players:
-\begin{itemize}
-  \item Let $\pi(P)$ be all possible orderings of players, for example for players a,b,c: $\pi(P) = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$.
-  \item Then: $\phi_j(v) = \frac{1}{|P|!} \sum_{O \in \pi(P)} (v(Pre(O,j) \cup \{j\}) - v(Pre(O,j)))$
-  \item $Pre(O,j)$ is the set of players that are before player $j$ in the ordering $O$. For example if $O = (b,a,c)$ and $j=a$, then $Pre(O,j) = \{b\}$
-  \item Both Shapley formulations are equivalent, since the number of orderings which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$.
-  \item Relevance of the permutation definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
-\end{itemize}
-
-\tiny{}
-
-\end{vbframe}
 
 \begin{vbframe}{Applications of Shapley Value}
 
