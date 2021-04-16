@@ -139,16 +139,16 @@
 \lecture{Interpretable Machine Learning}
 
 \begin{vbframe}{Shapley Values}
-We can use Shapley values to explain individual predictions of a machine learning model $\fh$:
+  We can use Shapley values to explain individual predictions $\fh(\xi)$ of a machine learning model $\fh$:
 \begin{itemize}
   \item Players $\hat{=}$ feature values of i-the observation $\xij, j \in \pset$.
-  \item Features collaborate to produce a prediction $\fh(\xi_1, \xi_2, \ldots, \xi_p)$.
-  \item The value function / payout of coalition $S$ for observation $\xv$ is
-  $$v(\xv_S) =  \fh_{S} (\xv_S) - \E (\fh(\xv))$$
-  i.e., the difference of the marginal prediction of $\xv_S$ and the average prediction.
-\item Reason for $ - \E(\fh(\xv))$ is that
-\item The marginal prediction is $\fh_{S}(\xv_S) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
+  \item Features collaborate to produce a prediction $\fh(x^{(i)}_1, x^{(i)}_2, \ldots, x^{(i)}_p)$.
+  \item The value function / payout of coalition $S$ for observation $\xv^{(i)}$ is
+    $$v(\xi_S) =  \fh_{S} (\xi_S) - \E (\fh(\xi))$$, 
+    where $\xi_S = \{x_j^{(i)}\}_{j \in S}$ and $\fh_S: \Xspace_S \mapsto \Yspace$.
+\item The marginal prediction $\fh_S$ is defined as $\fh_{S}(\xv_S^{(i)}) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
 \item We have already seen the marginal prediction in action in the PDP.
+\item The subtraction of $\E(\fh(\xv))$ is necessary so that $v$ is a value function with $v(\emptyset) = 0$
 \item By using the marginal prediction, we have defined what it means for features to be \enquote{missing} for the prediction: We remove it by integrating over its distribution.
 \end{itemize}
 \begin{center}
@@ -167,14 +167,14 @@ We can use Shapley values to explain individual predictions of a machine learnin
 
 
 \begin{vbframe}{Shapley Value - Definition}
+  Using the order definition, the Shapley value for feature $j$ can be computed as:
+
+     $$ \hat{\phi_{j}}(\xv) = \frac{1}{p!} \sum_{\Scupj} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
 \begin{itemize}
-  \item The Shapley value of a feature $j$ is defined as:\\
-  For $m = 1, \dots, M$ exhaustively select coalition $S_m \subseteq P \setminus j$  and calculate
-    $$ \hat{\phi_{j}}(\xv) = \frac{1}{M} \sum_{m=1}^{M} \underbrace{\fh_{S_m \cup \{j \}}(\xv_{S_m \cup \{j \} }) - \fh_{S_m}(\xv_{S_m})}_{\text{marginal contribution of feature $j$}} $$
-    \item The term $\E (\fh(\xv))$ drops due to the difference.
+    \item The term $\E (\fh(\xv))$ drops due to the subtraction of value functions.
   \item Interpretation of Shapley value $\hat{\phi_{j}}(\xv)$ for feature $j$ and observation $\xv$:
   The feature value $\xv_{j}$ contributed $\hat{\phi_{j}}(\xv)$ towards the prediction $\fh(x)$ compared to the average prediction for the dataset.
-   \item Contributions can be negative.
+   \item Note: Marginal contributions and Shapley values can be negative.
 \end{itemize}
 \lz
 \tiny
@@ -189,14 +189,14 @@ Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Ex
 \begin{vbframe}{Revisited: Axioms for Fair Attributions}
   We take the general axioms for Shapley Values and apply it to predictions:
   \begin{itemize}
-    \item \textbf{Efficiency}: Feature contributions add up to the (centered) prediction. That means, unlike, e.g., LIME, we get a full attribution, and not sparse one.
+    \item \textbf{Efficiency}: Feature contributions add up to the (centered) prediction. That means, unlike, e.g., LIME, we get a full attribution, and not a sparse one.
       $\sum\nolimits_{j=1}^p\phi_j=\hat{f}(x)-E_X(\fh(X))$
-    \item \textbf{Symmetry}: Two feature that contribute the same to the prediction get the same payout: \\
-      $\fh_{S\cup\{j\}}(\xv_{\Scupj}) = \fh_{\Scupk}(x_{\Scupk})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_j=\phi_k$
-    \item \textbf{Dummy / Null Player}: Shapley value of a feature that does not influence the prediction is zero. This means that if a feature was not selected by the model (e.g., tree or LASSO) the Shapley value is zero.  \\
+    \item \textbf{Symmetry}: Two feature that contribute the same to the prediction get the same payout. This ensures that, for example, interaction effects between two features are fairly divided. \\
+      $\fh_{S\cup\{j\}}(\xv_{\Scupj}) = \fh_{\Scupk}(\xv_{\Scupk})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_j=\phi_k$
+    \item \textbf{Dummy / Null Player}: The Shapley value of a feature that does not influence the prediction is zero. This means that if a feature was not selected by the model (e.g., tree or LASSO) the Shapley value is zero.  \\
       $\fh_{\Scupj}(\Scupj)=\fhS(S)$ for all $S \subseteq P$ then $\phi_j=0$
-    \item \textbf{Additivity}:  For a prediction with combined payouts (v1 and v2), the
-      payout is the sum of payouts: $\phi_j(v_1) + \phi_j(v_2)$. This means we can combine the Shapley values for ensembles.
+    \item \textbf{Additivity}:  For a prediction with combined payouts, the
+      payout is the sum of payouts: $\phi_j(v_1) + \phi_j(v_2)$. This means we can combine the Shapley values for model ensembles.
   \end{itemize}
 How can we attribute outcomes so that these axioms are fulfilled?
 \end{vbframe}
@@ -206,9 +206,9 @@ How can we attribute outcomes so that these axioms are fulfilled?
 \begin{vbframe}{Estimation: A practical problem}
   \begin{itemize}
       \item Feature space is often high-dimensional.
-      \item High-dimensionality is problematic for the (exact) Shapley value computation: For only 10 features, there are already $10! \approx 3.6$ million possible orderings of features.
+      \item High-dimensionality is problematic for the (exact) Shapley value computation: For only 10 features, there are already $10! \approx 3.6$ million possible orders of features.
       \item We have a similar problem with the estimation of the marginal prediction: Averaging over the entire dataset for each (sampled) coalition would be very expensive.
-      \item The solution to both problems is sampling. We calculate the Shapley value over $M$ samples. For each sample, we sample one ordering of features and one data point to replace missing features.
+      \item The solution to both problems is sampling. We calculate the Shapley value over $M$ samples. For each sample, we sample one order of features and one data point to replace missing features.
       \item $M$ is a tradeoff between accuracy of the Shapley value and computational costs. The higher $M$, the closer we get to the true Shapley values, but the more costly the computation becomes.
   \end{itemize}
 \end{vbframe}
@@ -220,11 +220,11 @@ Estimation for model $\fh$, observation $\xi$, and sample size $M$:
   \begin{enumerate}
       \item For m in 1 to M, \textbf{do}:
       \begin{enumerate}
-        \item select random permutation $\pi \in \Pi$.
-        \item select random data point $x^{(k)} \in X$.
-        \item order $\xi$ according to $\pi$: $\xi_{\pi} = (x^{(i)}_{\pi(1)}, \ldots, x^{(i)}_{\pi(j)}, \ldots, x^{(i)}_{\pi(p)})$.
-        \item order $\xk$ according to $\pi$: $\xk_{\pi} = (x^{(k)}_{\pi(1)}, \ldots, x^{(k)}_{\pi(j)}, \ldots, x^{(k)}_{\pi(p)})$.
-        \item construct two instances:
+        \item Select random permutation $\pi \in \Pi$.
+        \item Select random data point $\xv^{(k)} \in X$.
+        \item Order $\xi$ according to $\pi$: $\xi_{\pi} = (x^{(i)}_{\pi(1)}, \ldots, x^{(i)}_{\pi(j)}, \ldots, x^{(i)}_{\pi(p)})$.
+        \item Order $\xk$ according to $\pi$: $\xk_{\pi} = (x^{(k)}_{\pi(1)}, \ldots, x^{(k)}_{\pi(j)}, \ldots, x^{(k)}_{\pi(p)})$.
+        \item Construct two instances:
           \begin{itemize}
             \item $\mathbf{x}_{+j} = (x^{(i)}_{\pi(1)}, \ldots, x^{(i)}_{\pi(j - 1)}, x^{(i)}_{\pi(j)}, x^{(k)}_{\pi(j + 1)}, \ldots, x^{(k)}_{\pi(p)}) $
             \item $\mathbf{x}_{-j} = (x^{(i)}_{\pi(1)}, \ldots, x^{(i)}_{\pi(j - 1)}, x^{(k)}_{\pi(j)}, x^{(k)}_{\pi(j + 1)}, \ldots, x^{(k)}_{\pi(p)}) $
@@ -245,17 +245,17 @@ Estimation for model $\fh$, observation $\xi$, and sample size $M$:
 
   The Shapley value can be estimated more efficiently when certain coalitions are always included in the computation, instead of relying on chance to sample them.
   \begin{itemize}
-    \item The coalition with $S = \empty$ (i.e., $|S| = 0$) and $S = \{1, \ldots, p\} \setminus j$ have the highest weights in the Shapley value computation. By including them on purpose, the Shapley value becomes more stable with fewer samples. Sample weights have to be adapted for the sampled coalations afterwards.
-    \item Intuition: Adding a feature to the empty coalition gives information about the first order effect of the feature, which is the effect without any interactions. Adding the feature value to the otherwise complete set of feature values gives us the information about ALL interaction effects with other features.
-    \item For coaliation $S = \empty$, there are $0! (|P| - 0 - 1)! = 1 \cdot (|P| - 1)! = (p - 1)!$ orderings, which is the same for $S = P \setminus {j}$: $|P \setminus j|! (|P| - |P \setminus j| - 1)! = (p - 1)! (p - (p-1) - 1)! = (p-1)!$.
+    \item The coalition with $S = \emptyset$ (i.e., $|S| = 0$) and $S = \{1, \ldots, p\} \setminus j$ have the highest weights in the Shapley value computation. By including them on purpose, the Shapley value becomes more stable with fewer samples. Sample weights have to be adapted for the sampled coalitions afterwards.
+    \item Intuition: Adding a feature to the empty coalition gives information about the \textit{pure} first order effect of the feature, which is the effect without any interactions. Adding the feature value to the otherwise complete set of feature values gives us the information about ALL interaction effects with other features.
+    \item For coaliation $S = \emptyset$, there are $0! (|P| - 0 - 1)! = 1 \cdot (|P| - 1)! = (p - 1)!$ orders, which is the same for $S = P \setminus \{j\}$: $|P \setminus \{j\}|! (|P| - |P \setminus \{j\}| - 1)! = (p - 1)! (p - (p-1) - 1)! = (p-1)!$.
     \item An example with $p = 5$ features:
       \begin{itemize}
-        \item There are $5! = 120$ orderings in total.
-        \item In $(5 - 1)! = 24$ orderings, we added feature value $\xij$ to the empty set.
-        \item In 24 orderings, we added the feature value to the otherwise full feature set.
+        \item There are $5! = 120$ orders in total.
+        \item In $(5 - 1)! = 24$ orders, we added feature value $\xij$ to the empty set.
+        \item In 24 orders, we added the feature value to the otherwise full feature set.
         \item That means with just two sets, we can already get $\frac{48}{120} = 0.4$ of the contributions to the Shapley value.
       \end{itemize}
-    \item Similarly, we could proceed with all coalitions of $S = \emptyset$ ($|S| = 1$) and $S = P \setminus j$ ($|S| = p - 1$)
+    \item Similarly, we could proceed with all coalitions of $\{S: |S| = 1\}$ and $\{S: |S| = p - 1\}$
     \item When some coalitions are added \enquote{manually}, and the rest are sampled, we have to adapt the weights: Let $w$ be the weight of the \enquote{manually} sampled coalitions, $\phi_j^1$ the Shapley value with only the manual contributions and $\phi_j^2$ the Shapley value with the sampled coalitions, then the Shapley value is: $w \cdot \phi_j^1 + (1 - w) \phi_j^2$.
   \end{itemize}
 
@@ -274,6 +274,18 @@ The plot shows the Shapley values for observation 200.
 The difference between the model prediction of this observation and the average prediction of the data is fairly distributed among the features (i.e., 4514 - 4508).
 The most positive effect had feature value temp=28.503349, with a contribution (increase of prediction) of + 350.
 \end{vbframe}
+
+\begin{vbframe}{Versions of the Shapley Value}
+
+  \begin{itemize}
+  \item KernelSHAP formulates the Shapley value solution as a regression problem using a specific kernel function.
+  \item TreeSHAP is a fast Shapley value computation method for tree-based models such as gradient boosted trees.
+ \end{itemize}
+    \tiny{Lundberg, Scott M., and Su-In Lee. "A Unified Approach to Interpreting Model Predictions." Advances in Neural Information Processing Systems 30 (2017): 4765-4774.}
+    \tiny{Lundberg, Scott M., Gabriel G. Erion, and Su-In Lee. "Consistent individualized feature attribution for tree ensembles." arXiv preprint arXiv:1802.03888 (2018).}
+\end{vbframe}
+
+
 
 
 \endlecture

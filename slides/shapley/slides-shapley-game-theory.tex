@@ -197,9 +197,9 @@
 
 \frame{
   \frametitle{Shapley Values - Illustration}
-The Shapley value of a player $j=2$ is the marginal contribution to the value function  when player $2$ enters an abitrary coalition. \\
-\only<1>{Here, player $2$ enters the coalition after player $1$, resulting in a prediction change of $24-12 = 12$. Overall, the coalition increases the prediction by 36.}
-\only<2>{We produce all possible orders of player coalitions and measure the prediction change if player $2$ enters the coalition.}
+The Shapley value of a player $j=2$ is the marginal contribution to the value function when player $2$ enters an abitrary coalition. \\
+\only<1>{Here, player $2$ enters the coalition after player $1$, resulting in a value change of $24-12 = 12$. Overall, the coalition increases the prediction by 36.}
+\only<2>{We produce all possible orders of player coalitions and measure the value change if player $2$ enters the coalition.}
 \begin{center}
   \only<1>{
     \includegraphics[page=1, width=0.8\textwidth]{figure_man/shapley_feature_effect}
@@ -211,17 +211,17 @@ The Shapley value of a player $j=2$ is the marginal contribution to the value fu
 
 }
 \begin{vbframe}{Proofing Axioms}
-  We proof that Shapley values fulfilll all these axioms:
+  We proof that Shapley values fulfilll all the 4 axioms:
 \begin{itemize}
-  \item Efficiency: $v(P)$ exactly appears once per player, when $S = P \setminus \{j\}$, and the coefficient in the Shapley is $\frac{1}{p}$. Values for all other coalitions $v(S), \SsubP \{j,k\}$ appear with both minus and plus signs that cancel each other out.
+  \item \textbf{Efficiency}: $v(P)$ exactly appears once per player ($=p times$) for coalition $S = P \setminus \{j\}$ with the weight $\frac{|P - 1|!(|P| - |P - 1| - 1)!}{|P|!} = \frac{1}{p}$ each. The values for all other coalitions $v(S), \SsubP \{j,k\}$ appear with both minus and plus signs that cancel each other out.
     % See also: https://math.stackexchange.com/questions/2747088/shapley-value-is-efficient
-  \item Symmetry: Let's assume coalition $\SsubPnojk$ and $v(\Scupj) = v(\Scupk)$. Then
+  \item \textbf{Symmetry}: Let's assume coalition $\SsubPnojk$ and $v(\Scupj) = v(\Scupk)$. Then
     \begin{itemize}
-        \item marginal contributions are equal $v(\Scupj) -  v(S) = v(\Scupk) -  v(S), \forall \SsubPnojk$
+        \item All marginal contributions are equal $v(\Scupj) -  v(S) = v(\Scupk) -  v(S), \forall \SsubPnojk$
         \item Consequently, $\phi_j = \phi_k$.
     \end{itemize}
-  \item Dummy: Let's assume we have player $j$ such that for all $\SsubP$, we have $v(S) = v(\Scupj)$. Then, each marginal contribution of player $j$ is zero, and therefore $\phi_j = 0$.
-  \item Additivity:  Assume two games $v_1$ and $v_2$ and a third game which is the sum of both $v = v_1 + v_2$. The marginal contribution for all $\SsubPnoj$ for game $v$ can be expressed as $v(\Scupj) - v(S) = v_1(\Scupj) - v_1(S) + v_2(\Scupj) - v_2(S)$. Splitting the Shapley value sum shows that $\phi_j = \phi_j(v_1) + \phi_j(v_2)$.
+  \item \textbf{Dummy}: Let's assume we have player $j$ such that for all $\SsubP$, we have $v(S) = v(\Scupj)$. Then, each marginal contribution of player $j$ is zero, and therefore $\phi_j = 0$.
+  \item \textbf{Additivity}:  Assume two games $v_1$ and $v_2$ and a third game which is the sum of both $v = v_1 + v_2$. The marginal contribution for all $\SsubPnoj$ for game $v$ can be expressed as $v(\Scupj) - v(S) = v_1(\Scupj) - v_1(S) + v_2(\Scupj) - v_2(S)$. Splitting the Shapley value sum shows that $\phi_j = \phi_j(v_1) + \phi_j(v_2)$.
 \end{itemize}
 \end{vbframe}
 
@@ -245,7 +245,7 @@ The Shapley value of a player $j=2$ is the marginal contribution to the value fu
       \item Machine learning
        \begin{itemize}
          \item Feature selection: Attribution of loss to individual features
-         \item Quantify value of data: Loss decomposition among data instances 
+         \item Quantify data value: Attribute loss reduction to data points
          \item \textbf{Explain individual predictions}
        \end{itemize}
   \end{itemize}
