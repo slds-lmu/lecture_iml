@@ -141,24 +141,24 @@
 \begin{vbframe}{Cooperative Games}
 \begin{itemize}
   \item In cooperative games, a set of players $P$ with $P = \{1, \hdots, p\}$ forms a coalition $\SsubP$. 
-  \item A value function $v(S): 2^{|P|}\mapsto \R$ describes the payout (or gain) achieved by the coalition $S$. The value of the empty coalition must be zero: $v(\empty) = 0$.
-  \item As some players contribute more than others, we are interested in the fair payout for each player.
-  \item We call the payout per player $\phi_j(v) $, $j \in P$.
-  \item Problem: How to fairly distribute values among players?
+  \item A value function $v(S): 2^{|P|}\mapsto \R$ describes the payout (or gain) achieved by the coalition $S$. The value of the empty coalition must be zero: $v(\emptyset) = 0$.
+  \item As some players contribute more than others, we are interested to fairly divide the total payout $v(P)$ among the players.
+  \item We call the payout per player $\phi_j(v) $, $j \in P$, or, in short, $\phi_j$.
+  \item What would be properties of a a fair distribution of the payout?
 \end{itemize}
 \end{vbframe}
 
 
-\begin{vbframe}{What Would Be a Fair Attribution?}
-  One possibility to define \textbf{fair} attribution are the following axioms for a given value function $v$:
+\begin{vbframe}{Axioms of Fair Payouts}
+  One possibility to define \textbf{fair} payouts are the following axioms for a given value function $v$:
   \begin{itemize}
-    \item \textbf{Efficiency}: Player contributions add up to total payout of the game.
+    \item \textbf{Efficiency}: Player contributions add up to the total payout of the game.
       $\sum\nolimits_{j=1}^p\phi_j = v(P)$
     \item \textbf{Symmetry}: Players $j,k \in P$ who contribute the same to any coalition get the same payout: \\
-      $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$ then $\phi_j=\phi_k$
+      If $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$, then $\phi_j=\phi_k$
     \item \textbf{Dummy / Null Player}: The payout is zero for players who don't contribute to the value of any coalition: \\
-      $v(\Scupj)=v(S)$ for all $\SsubP \setminus j$ then $\phi_j=0$
-    \item \textbf{Additivity}: For a game with combined payouts ($v = v_1 + v_2$), the payout is the sum of payouts: $\phi_j(v) = \phi_j(v_1) + \phi_{j}(v_2)$
+      If $v(\Scupj)=v(S)\quad  \forall \quad \SsubP \setminus j$, then $\phi_j=0$
+    \item \textbf{Additivity}: For a game $v$ with combined payouts $v(S) = v_1(S) + v_2(S)$, the payout is the sum of payouts: $\phi_j(v) = \phi_j(v_1) + \phi_{j}(v_2)$
   \end{itemize}
 
   Is there an attribution formula that adheres to all these axioms?
@@ -168,28 +168,29 @@
 
 \begin{vbframe}{Shapley Values}
 
-  Shapley Values solve the attribution problem and provide a unique solution given axioms of efficiency, symmetry, dummy and additivity.
+  Shapley values solve the attribution problem and provide a unique solution given axioms of efficiency, symmetry, dummy and additivity.
 \begin{itemize}
+  \item Shapley values were proposed by Lloyd Shapley in 1951 for cooperative game theory.
   \item The \textbf{Shapley value} assigns a value to each player according to the marginal contribution of each player in all possible coalitions.
   \item $\phi_j(v) = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$
-  \item In other words: To compute the payout for a player, we average for all possible coalitions how much the player would increase the value of the team (=marginal contribution).
+  \item $v(\Scupj) - v(S)$ is the marginal contribution of player $j$ to coalition $S$.
+  \item To compute the Shapley payout for a player, we average, for all possible coalitions, how much the player would increase the value of the team (=marginal contribution).
   \item Shapley values are the \textit{only} solution for the attribution with the specified axioms.
-  \item Shapley values were proposed by Lloyd Shapley in 1951 for cooperative game theory.
 \end{itemize}
 
 \tiny{ Shapley, Lloyd S. (August 21, 1951). "Notes on the n-Person Game -- II: The Value of an n-Person Game" (PDF). Santa Monica, Calif.: RAND Corporation.}
 
 \end{vbframe}
 
-\begin{vbframe}{Definition via permutation}
- Where does weight $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ come from?
- Shapley values can also be defined via permutations of players:
+\begin{vbframe}{Definition via orders}
+ Shapley values can be defined via all possible orders of players:
 \begin{itemize}
-  \item Let $\pi(P)$ be all possible orderings of players, for example for players a,b,c: $\pi(P) = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$.
-  \item Then: $\phi_j(v) = \frac{1}{|P|!} \sum_{O \in \pi(P)} (v(Pre(O,j) \cup \{j\}) - v(Pre(O,j)))$
-  \item $Pre(O,j)$ is the set of players that are before player $j$ in the ordering $O$. For example if $O = (b,a,c)$ and $j=a$, then $Pre(O,j) = \{b\}$
-  \item Both Shapley formulations are equivalent, since the number of orderings which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$.
-  \item Relevance of the permutation definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
+  \item Let $\Pi$ be all possible orders of players  \item Then: $\phi_j(v) = \frac{1}{|P|!} \sum_{\pi \in \Pi} (v(Pre(\pi,j) \cup \{j\}) - v(Pre(\pi,j)))$
+  \item $Pre(\pi,j)$ is the set of players in the order $\pi$ before player $j$.
+  \item For example: for players a,b,c: $\Pi = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$. If $\pi = (b,a,c)$ and $j=c$, then $Pre(\pi,j) = \{b, a\}$
+
+  \item Both Shapley formulations are equivalent, since the number of orders which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$. There are $|S|!$ possible orders of players within coalition $S$ and $(|P| - |S| - 1)!$ possible orders of players without $S$ and $j$.
+  \item Relevance of the order definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
 \end{itemize}
 
 \end{vbframe}
