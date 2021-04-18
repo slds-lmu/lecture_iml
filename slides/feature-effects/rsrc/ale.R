@@ -6,55 +6,9 @@ library(vcd)
 library(iml)
 library(gridExtra)
 library(ggpubr)
-theme_set(theme_bw())
+theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 ######################################################
-
-set.seed(10)
-x1 = runif(20, -5, 5)
-x2 = x1 + rnorm(20, 0, 1)
-df_observed = data.frame(x1, x2)
-df_permuted = data.frame(expand.grid(x1, x2))
-names(df_permuted) = c("x1", "x2")
-
-dens = density(x2)
-d = data.frame(x = dens$x, y = dens$y)
-
-p1 = ggplot() +
-  geom_point(data = df_observed, aes(x1, x2),
-    shape = 3, color = "red", size = 2, stroke = 2) +
-  theme_bw() + ylim(range(d$x))
-
-p2 = ggplot() +
-  geom_point(data = df_permuted, aes(x1, x2),
-    shape = 3, color = "green", size = 2, stroke = 1) +
-  geom_point(data = df_observed, aes(x1, x2),
-    shape = 3, color = "red", size = 2, stroke = 2) +
-  theme_bw() + ylim(range(d$x))
-
-dens2 = density(df_observed$x2)
-p2 = p2 + geom_path(data = data.frame(x = dens2$x, y = dens2$y),
-  aes(x = -5*y - 3, y = x)) +
-  geom_line(data = NULL, aes(x = c(-3,-3), y = range(dens2$x))) +
-  labs(x = expression(x[1]), y = expression(x[2]))
-
-p = grid.arrange(p1, p2, ncol = 2, respect = TRUE)
-
-
-
-
-
-
-
-
-
-
-
-
-
-library(ggplot2)
-library(gridExtra)
-theme_set(theme_bw())
 set.seed(10)
 
 # Generate Pseudo Random Variables
@@ -142,10 +96,70 @@ pgrid = p + ylim(c(-10,10)) +
   theme(legend.position = c(0.2, 0.875), legend.title = element_blank())
     #legend.background = element_rect(size = 0.5, linetype = "solid", colour = "black"))
 
-
 ggsave("../figure_man/ale_scatter.pdf", p + ylim(c(-10,10)), width = 5.5, height = 4)
 ggsave("../figure_man/ale_scatter_grid.pdf", pgrid, width = 5.5, height = 4)
 ggsave("../figure_man/ale_mplot.pdf", mplot, width = 5.5, height = 4)
 ggsave("../figure_man/ale_pdplot.pdf", pdplot, width = 5.5, height = 4)
 
 
+##
+inv = seq(floor(min(x1)), ceiling(max(x1)), length.out = 5)
+id = which(x1 >= inv[1] & x1 < inv[2])
+p3 = p + geom_vline(xintercept = inv, colour = "black") +
+  geom_segment(aes(x = inv[1], xend = inv[2], y = x2[id], yend = x2[id]), colour = "blue") +
+  geom_point(aes(x = inv[1], y = x2[id]), colour = "blue") +
+  geom_point(aes(x = inv[2], y = x2[id]), colour = "blue")
+
+interval_lab = c(
+  expression(z[0~",1"]),
+  expression(z[1~",1"]),
+  expression(z[2~",1"]),
+  expression(z[3~",1"]),
+  expression(z[4~",1"]))
+
+# grid.arrange(p, p3 +
+#     scale_x_continuous(sec.axis = sec_axis(~., breaks = inv, labels = interval_lab)), ncol = 2, respect = TRUE)
+
+library(patchwork)
+ale_interval = p + p3 + scale_x_continuous(sec.axis = sec_axis(~., breaks = inv, labels = interval_lab))
+
+ggsave("../figure_man/ale_interval.pdf", ale_interval, width = 10/1.25, height = 4/1.25)
+
+
+
+
+
+
+
+
+
+
+
+
+
+set.seed(123)
+load("bike.RData")
+task = makeRegrTask(data = bike, target = "cnt")
+mod = train("regr.randomForest", task)
+set.seed(123)
+pred.bike = Predictor$new(mod, data = bike)
+bike.x = bike[names(bike) != 'cnt']
+
+set.seed(123)
+pdp = FeatureEffect$new(pred.bike, "hum", method = "pdp", grid.size = 50)
+pdp_plot <- pdp$plot() + scale_y_continuous('Univariate PD on humidity')
+ale = FeatureEffect$new(pred.bike, "hum", method = "ale", grid.size = 50)
+ale_plot <- ale$plot() + scale_y_continuous('First order ALE of humidity')
+ale1d = grid.arrange(pdp_plot, ale_plot, nrow = 1, ncol = 2)
+
+ggsave("../figure_man/ale1d.pdf", ale1d, width = 8, height = 4)
+###################################################
+
+set.seed(123)
+pdp = FeatureEffect$new(pred.bike, feature = c("temp", "hum"), method = "pdp", grid.size = 10)
+pdp_plot <- pdp$plot() + theme(legend.position = "top", legend.key.width = unit(1.5,"cm")) + ggtitle("Bivariate PD")
+ale = FeatureEffect$new(pred.bike, feature = c("temp", "hum"), method = "ale", grid.size = 10)
+ale_plot <- ale$plot() + theme(legend.position = "top", legend.key.width = unit(1.5,"cm")) + ggtitle("Second order ALE")
+ale2d = grid.arrange(pdp_plot, ale_plot, nrow = 1, ncol = 2)
+
+ggsave("../figure_man/ale2d.pdf", ale2d, width = 8, height = 4)
