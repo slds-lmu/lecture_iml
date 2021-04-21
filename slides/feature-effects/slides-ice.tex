@@ -108,9 +108,9 @@ shorten >=2pt,}
 \input{../../style/common.tex}
 
 %\usetheme{lmu-lecture}
-\newcommand{\titlefigure}{figure_man/bike-sharing-dataset01.png}
+\newcommand{\titlefigure}{figure_man/feature-effects}
 \newcommand{\learninggoals}{
-\item Motivation behind feature effects
+\item Introduction to feature effects
 \item Understand the steps involved in constructing ICE plots
 %\item Understand how to interpret ICE curves and PD plots
 }
@@ -152,9 +152,9 @@ shorten >=2pt,}
 $\xrightarrow[]{\text{aggregate}}$ \hspace{2px} Global (curve) \hspace{2px}
 $\xrightarrow[]{\text{aggregate}}$ \hspace{2px} Global (number)
 
-\framebreak
+%\framebreak
 
-Why visualizations of feature effects are meaningful in ML.
+%Why visualizations of feature effects are meaningful in ML.
 
 \lz
 
@@ -167,19 +167,24 @@ Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ contai
 
 \lz
 
+\begin{columns}[T, totalwidth=\textwidth]
+\begin{column}{0.6\textwidth}
 Individual conditional expectation (ICE) curves visualize how the model prediction of individual observations $\xi$
-change by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed.
+change by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed:
 $$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S, \xi_C)$$
 
 In practice, $\xv_S$ consists of one or two features.
 
-\vspace{-0.2cm}
-\begin{center}
-\includegraphics[width=0.7\textwidth]{figure_man/ICE01.png}
-\end{center}
-\vspace{-0.3cm}
-\scriptsize{\textbf{Figure:} ICE Curves of the last 10 observations of the bike sharing dataset. Each line displays the change in prediction for a single observation due to varying the feature temperature.\par}
+\end{column}
+\begin{column}{0.4\textwidth}
+%\begin{center}
+\centerline{\includegraphics[width=\textwidth]{figure_man/ice_bike10obs}}
+%\end{center}
+%\vspace{-0.3cm}
+\scriptsize{\textbf{Figure:} ICE Curves of 10 observations of the bike sharing dataset. Each line displays the change in prediction for a single observation due to varying the feature temperature.\par}
 
+\end{column}
+\end{columns}
 \footnote[frame]{Goldstein, A., Kapelner, A., Bleich, J., and Pitkin, E. (2013). Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation, 1-22. https://doi.org/10.1080/10618600.2014.907095}
 \end{vbframe}
 

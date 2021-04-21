@@ -6,6 +6,7 @@ library(vcd)
 library(iml)
 library(gridExtra)
 library(ggpubr)
+library(patchwork)
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 ######################################################
@@ -101,8 +102,8 @@ ggsave("../figure_man/ale_scatter_grid.pdf", pgrid, width = 5.5, height = 4)
 ggsave("../figure_man/ale_mplot.pdf", mplot, width = 5.5, height = 4)
 ggsave("../figure_man/ale_pdplot.pdf", pdplot, width = 5.5, height = 4)
 
+######################################################
 
-##
 inv = seq(floor(min(x1)), ceiling(max(x1)), length.out = 5)
 id = which(x1 >= inv[1] & x1 < inv[2])
 p3 = p + geom_vline(xintercept = inv, colour = "black") +
@@ -120,22 +121,61 @@ interval_lab = c(
 # grid.arrange(p, p3 +
 #     scale_x_continuous(sec.axis = sec_axis(~., breaks = inv, labels = interval_lab)), ncol = 2, respect = TRUE)
 
-library(patchwork)
 ale_interval = p + p3 + scale_x_continuous(sec.axis = sec_axis(~., breaks = inv, labels = interval_lab))
 
 ggsave("../figure_man/ale_interval.pdf", ale_interval, width = 10/1.25, height = 4/1.25)
 
+######################################################
 
+set.seed(1)
+library(mvtnorm)
+#x1 = runif(1000, -5, 5)
+#x2 = x1 + rnorm(1000, 0, 1)
+sig = matrix(c(1,0.9,0.9,1), byrow = TRUE, ncol = 2)
+df_observed = as.data.frame(rmvnorm(500, sigma = sig))
+df_observed$y = - 1*df_observed$V1 + 2*df_observed$V2 + rnorm(500)
 
+cor(df_observed$V1, df_observed$V2)
 
+mod = lm(y ~ V1 + V2, data = df_observed)
 
+mplot = function(data, feature, target, eps) {
+  x = data[, feature]
+  y = data[, target]
+  x.lower = x - eps
+  x.upper = x + eps
+  m = n = numeric(length(x))
+  for(i in 1:length(x)) {
+    ind = x > x.lower[i] & x < x.upper[i]
+    m[i] = mean(y[ind])
+    n[i] = sum(ind)
+  }
+  return(data.frame(x = x, mplot = m, n = n))
+}
 
+pred = Predictor$new(mod, data = df_observed, y = df_observed$y)
+pdp = FeatureEffect$new(pred, feature = "V1", method = "pdp")
+mpl = mplot(df_observed, "V1", target = "y", eps = 0.5)
+p1 = ggplot(data = df_observed, aes(V1, V2)) +
+  geom_point() +
+  stat_cor(method = "pearson", aes(label = gsub("R", "Cor(x[1],x[2])", ..r.label..))) +
+  #stat_cor(aes(label = ..r.label..)) +
+  labs(x = expression(x[1]), y = expression(x[2])) +
+  theme_minimal()
+p2 = ggplot() +
+  stat_function(data = NULL, fun = function(x) -1*x, mapping = aes(col = "function f(x) = -x")) +
+  geom_line(data = pdp$results, aes(V1, .value, col = "PD plot")) +
+  geom_line(data = mpl, aes(x, mplot, col = "M-plot")) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  labs(colour = "Method", x = expression(x[1]), y = expression("Marginal Effect "~hat(f)[1](x[1]))) +
+  #scale_colour_manual(values = c("black", "red", "blue"),
+  #  labels=c("PD plot", "M-plot", "f(x) = -0.1x")) +
+  theme_minimal() + theme(legend.position="bottom")
+p = p1 + p2 #grid.arrange(p1, p2, ncol = 2, respect = TRUE)
+ggsave("../figure_man/pd_vs_mplot.pdf", p, width = 10/1.25, height = 4/1.25)
 
-
-
-
-
-
+###################################################
 
 set.seed(123)
 load("bike.RData")
@@ -153,6 +193,7 @@ ale_plot <- ale$plot() + scale_y_continuous('First order ALE of humidity')
 ale1d = grid.arrange(pdp_plot, ale_plot, nrow = 1, ncol = 2)
 
 ggsave("../figure_man/ale1d.pdf", ale1d, width = 8, height = 4)
+
 ###################################################
 
 set.seed(123)
@@ -163,3 +204,5 @@ ale_plot <- ale$plot() + theme(legend.position = "top", legend.key.width = unit(
 ale2d = grid.arrange(pdp_plot, ale_plot, nrow = 1, ncol = 2)
 
 ggsave("../figure_man/ale2d.pdf", ale2d, width = 8, height = 4)
+
+###################################################

@@ -108,7 +108,7 @@
 \input{../../style/common.tex}
 
 %\usetheme{lmu-lecture}
-\newcommand{\titlefigure}{figure_man/bike-sharing-dataset01.png}
+\newcommand{\titlefigure}{figure_man/pdp_num}
 \newcommand{\learninggoals}{
 \item Understand PD plots and their relation to ICE plots
 \item Understand how to interpret ICE curves and PD plots
@@ -203,11 +203,10 @@ $$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
 }
 }
 
-
 \frame{
 \frametitle{Interpretation: PD and ICE}
 \begin{center}
-\includegraphics[width=0.7\textwidth]{figure_man/bike-sharing-dataset01.png}
+\includegraphics[width=0.7\textwidth]{figure_man/pdp_num}
 \end{center}
 
 \begin{onlyenv}
@@ -220,7 +219,7 @@ $$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
   \(\Rightarrow\) ICE is a local interpretation method (black curves).
 \item
   \textbf{PD plot:} Visualizes the \textbf{average effect of a feature},
-  i.e., how the expected model prediction changes if the feature value is changed.\\
+  i.e., how the expected prediction changes if the feature value is changed.\\
   \(\Rightarrow\) PD plot is a global interpretation method (yellow curve).
 \end{itemize}
 }
@@ -228,10 +227,10 @@ $$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
 \only<2>{
 Insights from the Bike Sharing Dataset:
 \begin{itemize}
-  \item Higher temperature $\Rightarrow$ higher number of bike rentals.
-  \item Temperatures of more than $27^\circ$C decreases bike rentals.
-  \item The effect is very homogeneous across all observations.
   \item Averaging ICE curves yields the PD plot (yellow curve).
+  \item Parallel ICE curves across all observations indicate a very homogeneous effect.
+  \item Higher temperature $\Rightarrow$ higher number of bike rentals.
+  \item Bike rentals decrease at temperatures of more than $\approx 27^\circ$C.
 \end{itemize}
 }
 \end{onlyenv}
@@ -241,15 +240,19 @@ Insights from the Bike Sharing Dataset:
 \frame{
 \frametitle{Categorical Features}
 
-Same concept, different way to convey the information (boxplots)
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figure_man/pdp_ice_cat}
+\end{center}
+
+\begin{itemize}
+\item The PD plot visualizes the expected prediction (and the distribution of predictions, e.g., in a box plot) if all observations would belong to a certain category level.
+\item The ICE plot connects the predictions of individual observations to identify heterogenous effects between categories (here: lines between SPRING and SUMMER are heterogenous).\\
+\textbf{Note:} For nominal categories, the different categories do not have an ordering but could be compared pairwise.
+\end{itemize}
+
 }
 
-
 \begin{vbframe}{2D Partial Dependence}
-
-Same concept, but two features are replaced
-
-\framebreak
 
 \begin{center}
 \includegraphics[width=0.7\textwidth]{figure_man/bike-sharing-dataset02.png}
