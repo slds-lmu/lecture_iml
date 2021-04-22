@@ -49,40 +49,6 @@ dev.off()
 
 ######################################################
 
-set.seed(10)
-n = 700
-x1 = runif(n, -1, 1)
-x2 = runif(n, -1, 1)
-x3 = runif(n, -1, 1)
-eps = rnorm(n, 0, 1)
-y = 0.2*x2 - 8*x1 + ifelse(x3 >= 0, 16*x1, 0) + eps
-dat = data.frame(x1, x2, x3, y)
-
-tsk = makeRegrTask(data = dat, target = "y")
-lrn = makeLearner("regr.gbm", interaction.depth = 6)
-
-# # stupid mini grid
-# ps = makeParamSet(
-#   makeIntegerParam("interaction.depth", lower = 3, upper = 10),
-#   makeNumericParam("shrinkage", lower = 0.05, upper = 0.2)
-# )
-# ctrl = makeTuneControlRandom()
-# inner = makeResampleDesc("CV", iters = 3)
-# lrn = makeTuneWrapper(lrn, resampling = inner, par.set = ps, control = ctrl)
-# b = benchmark(list(lrn, makeLearner("regr.gbm", interaction.depth = 3)), tsk, cv3)
-
-mod = train(lrn, tsk)
-pred = Predictor$new(mod, data = dat[-which(names(dat) == "y")], y = dat$y)
-
-pdp = FeatureEffect$new(pred, "x1", method = "pdp+ice")
-p1 = pdp$plot()
-ggxor = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
-  scale_x_continuous(name = expression(x[1]))
-
-ggsave("../figure_man/pdp_xor.pdf", ggxor, width = 5.5, height = 4)
-
-######################################################
-
 pred.sub = Predictor$new(mod, data = bike, y = bike$cnt)
 pdp = FeatureEffect$new(pred.sub, "temp", method = "ice")
 p1 = pdp$plot() + scale_x_continuous('Temperature') + scale_y_continuous('Predicted bike rentals', limits = c(0, 4000))

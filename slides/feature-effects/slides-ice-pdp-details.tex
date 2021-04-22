@@ -111,7 +111,7 @@
 \newcommand{\titlefigure}{figure_man/bike-sharing-dataset01.png}
 \newcommand{\learninggoals}{
 \item Understand c-ICE curves to identify the heterogeneity in the model
-\item Understand the usefullness of ICE curves and d-ICE curves in case of interaction effects
+%\item Understand the usefullness of ICE curves and d-ICE curves in case of interaction effects
 \item Understand the extrapolation issue}
 \usepackage{../../style/lmu-lecture}
 
@@ -136,12 +136,11 @@
 \lecture{Interpretable Machine Learning}
 
 
-\frame{
-\frametitle{Centered ICE Plot (c-ICE)}
+\begin{vbframe}{Centered ICE Plot (c-ICE)}
 
-Aim: When ICE curves start at different intercepts and hence are stacked, it is difficult to identify heterogenous predictions.
+Issue: When ICE curves start at different intercepts and hence are stacked, it is difficult to identify heterogenous predictions.
 
-Solution: ICE
+Solution: Center all ICE curves at a fixed reference value $x^* \sim \P(\xv_S)$.
 
 
 $$\begin{aligned}
@@ -152,46 +151,30 @@ $$\begin{aligned}
 
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{figure_man/cICE}
+\includegraphics[width=\textwidth]{figure_man/cICE}
 \end{center}
 
-}
+\framebreak
 
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figure_man/cICEcat}
+\end{center}
 
-\begin{vbframe}{Interactions}
+\begin{itemize}
+\item Centered ICE plots are also usefull for categorical features and can be interpreted as in linear regression models.
+\item The reference category is $x^* =$ SPRING.
+\item Golden crosses refer to the expected number of bike rentals if we move from season category SPRING to any other category.
+\end{itemize}
 
-For PD plots, the averaging of ICE curves might \textbf{obfuscate} heterogeneous effects and interactions. \newline \(\Rightarrow\) Ideally plot ICE curves and PD plots together.
-
-\begin{center}\includegraphics[width=0.65\textwidth]{figure_man/pdp_xor.pdf} \end{center}
-%
-% \framebreak
-%
-% \begin{itemize}
-% \item
-%   For PD plots, the averaging of ICE curves might \textbf{obfuscate}
-%   heterogeneous effects and interactions. \newline \(\Rightarrow\)
-%   Ideally plot ICE curves and PD plots together.
-% \item
-%   \textbf{Extrapolation:} Interprete curves for highly correlated
-%   features and in feature regions with few observations with care.
-% \item
-%   Accumulated Local Effects (ALE) plots are a novel alternative to the PD plots developed by Apley (2020) that do not suffer from
-%   extrapolation in case of correlated features.
-% \end{itemize}
-%
-% \vspace{80pt}
-% \tiny{
-% Apley, D. W., \& Zhu, J. (2020). Visualizing the effects of predictor variables in black box supervised learning models. Journal of the Royal Statistical Society: Series B, 82(4), 1059-1086. \par}
 \end{vbframe}
 
-\frame{
-\frametitle{Derivative ICE Plot (d-ICE)}
 
-Aim: Interactions
-
-}
-
-
+% \frame{
+% \frametitle{Derivative ICE Plot (d-ICE)}
+%
+% Aim: Interactions
+%
+% }
 
 \begin{vbframe}{Extrapolation}
 
@@ -208,60 +191,84 @@ $\Rightarrow$ Biased estimates, especially in case of correlated features.
 
 \framebreak
 
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figure_man/extrapolation01.png}
-\end{center}
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{figure_man/extrapolation01.png}
+% \end{center}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figure_man/ale_scatter_grid}
+\end{column}
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figure_man/ale_pdplot}
+\end{column}
+\end{columns}
 
 \begin{itemize}
 \item The features $x_1$ and $x_2$ are strongly correlated.
-\item \textcolor{red}{Red:} Observed points of the original data.
-\item \textcolor{green}{Green:} Grid points used to calculate the ICE and PD curves.
+\item \textbf{Black points:} Observed points of the original data.
+\item \textbf{\textcolor{red}{Red:}} Grid points used to calculate the ICE and PD curves.
 \end{itemize}
-$\Rightarrow$ unrealistic combination of feature values are used.
-
-\framebreak
-
-
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figure_man/extrapolation02.png}
-\end{center}
-
-\begin{itemize}
-\item The features $x_1$ and $x_2$ are strongly correlated.
-\item \textcolor{red}{Red:} Observed points of the original data.
-\item \textcolor{green}{Green:} Grid points used to calculate the ICE and PD curves.
-\item Example: PD plot at $x_1=1.9$ averages predictions over the whole marginal distribution of feature $x_2$.
-\end{itemize}
-\end{vbframe}
-
-\begin{vbframe}{Comments}
-\begin{itemize}
-  \item For PD plots, the averaging of ICE curves might obfuscate heterogeneous effects and interactions. \\
-  $\Rightarrow$ Ideally plot ICE curves and PD plots together.
-% \end{itemize}
-%  \vspace{-0.3cm}
+$\Rightarrow$ Unrealistic combination of feature values are used, e.g., the PD plot at $x_1=0$ averages predictions over the whole marginal distribution of feature $x_2$.
+%
+% \framebreak
 %
 %
 % \begin{center}
-% \includegraphics[width=0.8\textwidth]{figure_man/comments.png}
+% \includegraphics[width=0.8\textwidth]{figure_man/extrapolation02.png}
 % \end{center}
 %
-% \vspace{-0.5cm}
-% \framebreak
-%
 % \begin{itemize}
-% \lz
+% \item The features $x_1$ and $x_2$ are strongly correlated.
+% \item \textcolor{red}{Red:} Observed points of the original data.
+% \item \textcolor{green}{Green:} Grid points used to calculate the ICE and PD curves.
+% \item Example: PD plot at $x_1=1.9$ averages predictions over the whole marginal distribution of feature $x_2$.
+% \end{itemize}
+\end{vbframe}
+
+
+
+
+% \begin{vbframe}{Interactions}
+%
+% For PD plots, the averaging of ICE curves might \textbf{obfuscate} heterogeneous effects and interactions. \newline \(\Rightarrow\) Ideally plot ICE curves and PD plots together.
+%
+% \begin{center}\includegraphics[width=0.65\textwidth]{figure_man/pdp_xor.pdf} \end{center}
+% %
+% % \framebreak
+% %
+% % \begin{itemize}
+% % \item
+% %   For PD plots, the averaging of ICE curves might \textbf{obfuscate}
+% %   heterogeneous effects and interactions. \newline \(\Rightarrow\)
+% %   Ideally plot ICE curves and PD plots together.
+% % \item
+% %   \textbf{Extrapolation:} Interprete curves for highly correlated
+% %   features and in feature regions with few observations with care.
+% % \item
+% %   Accumulated Local Effects (ALE) plots are a novel alternative to the PD plots developed by Apley (2020) that do not suffer from
+% %   extrapolation in case of correlated features.
+% % \end{itemize}
+% %
+% % \vspace{80pt}
+% % \tiny{
+% % Apley, D. W., \& Zhu, J. (2020). Visualizing the effects of predictor variables in black box supervised learning models. Journal of the Royal Statistical Society: Series B, 82(4), 1059-1086. \par}
+% \end{vbframe}
+
+\begin{vbframe}{Comments}
+\begin{itemize}
 \item Extrapolation: interprete curves for highly correlated features and in feature regions with few observations with care.
 %\lz
-\item Accumulated Local Effects (ALE) plots are a novel alternative to PD plots developed by Apley (2016) that do not suffer from extrapolation in case of correlated features.
+%\item Accumulated Local Effects (ALE) plots are a novel alternative to PD plots developed by Apley (2016) that do not suffer from extrapolation in case of correlated features.
+
+\item For PD plots, the averaging of ICE curves might \textbf{obfuscate} heterogeneous effects and interactions. \newline \(\Rightarrow\) Ideally plot ICE curves and PD plots together.
+
+\begin{center}\includegraphics[width=0.65\textwidth]{figure_man/pdp_xor.pdf} \end{center}
 \end{itemize}
 
-\vspace{2cm}
-\vfill\tiny
-Apley (2016).
-Visualizing the effects of predictor variables in black box supervised learning models.
-arXiv preprint arXiv:1612.08468.
-
+%\footnote[frame]{Apley, Daniel W., and Jingyu Zhu (2020). Visualizing the Effects of Predictor Variables in Black Box Supervised Learning Models. Journal of the Royal Statistical Society: Series B (Statistical Methodology) 82.4: 1059-1086.}
 \end{vbframe}
 
 
