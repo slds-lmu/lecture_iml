@@ -131,25 +131,24 @@ shorten >=2pt,}
 % \lecturechapter{Introduction and Background}
 % \lecture{Interpretable Machine Learning}
 % 
-\begin{vbframe}{Additive Decomposition of a Prediction Function}
+\begin{vbframe}{High-Dimensional Model Representation}
 
 \begin{itemize}
 \item
-Every function can be decomposed into a sum of components of increasing order:
+A high-dimensional model representation (HDMR) decomposes the model into a sum of effect terms of increasing order:
 \begin{align*}
 \hat{f}(x) &= g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \\
 &\phantom{{}={}} + \;\dots\; + g_{\{1,\ldots,p\}}(x_1, \ldots,x_p)
 \end{align*}
-\item The features need to be independent to make the decomposition unique.
+\item The features need to be independent to make the HDMR unique.
 \item Different techniques to estimate an additive decomposition exist, e.g., repeated expectations (partial dependence / PD) or accumulated local effects (ALE).
-\item The PD on a subset of features $X_S$ is the minimum L2 loss approximation of the prediction function given $X_S$, denoted by $\mathbb{E}_{X_{-S}}\left[\widehat{f}(x) \; \vert \; X_S \right]$, where $X_{-S}$ is the subset of complementary features.
 
 \end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Additive Decomposition of a Prediction Function}
 
-Consider a recursive estimation of the decomposition via the PD:
+Consider the estimation via iterative expectations:
 \begin{align*}
  g_{\{0\}} &= \mathbb{E}_X\left[\widehat{f}(x)\right] \\
  g_{\{1\}}(x_1) &= \mathbb{E}_{X_{-1}}\left[\widehat{f}(x) \; \vert  \; X_1 \right] - g_{\{0\}} \\
