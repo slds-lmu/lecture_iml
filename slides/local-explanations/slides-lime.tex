@@ -173,11 +173,11 @@
 We can measure the complexity of a model $g$ using $J(g)$. \\ 
 \vspace{0.5cm}
  	\textbf{Example: Linear regression model}\\
- 	Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = \thetab^\top \xv\right\}$ be the class of linear models then $J(g) = \sum_{j = 1}^p \Ind_{[\theta_j \neq 0]}$ could be the L0 loss, i.e. the number of non-zero coefficients. 
+ 	Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = \thetab^\top \xv\right\}$ be the class of linear models then $J(g) = \sum_{j = 1}^p \Ind_{\{ \theta_j \neq 0 \}}$ could be the L0 loss, i.e. the number of non-zero coefficients. 
  	\vspace{0.5cm}
  	
  	\textbf{Example: Tree}\\
- 	Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \Ind(x \in Q_m)\right\}$ be the class of trees (i.e., class of additive model over the leaf-rectangles) then $J(g)$ could measure the number of terminal/leaf nodes.\\
+ 	Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \Ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees (i.e., class of additive model over the leaf-rectangles) then $J(g)$ could measure the number of terminal/leaf nodes.\\
  	\end{vbframe}
  
  	\begin{vbframe}{Local model fidelity}
@@ -196,7 +196,7 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
  				L(\fh, g, \neigh) = \sum_{\zv \in \Zspace} \neigh(\zv) L(\fh(\zv), g(\zv))
  				\label{eq:optim}
  			\end{equation}
- 			
+ 			\item Note that identifying \textbf{locally} faithful explanations that are interpretable is less of a challenge than identifying \textbf{globally} faithful explanations. Yet, global fidelity implies local fidelity but not vice versa.
  		\end{itemize}
 \end{vbframe}
 
@@ -250,7 +250,7 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
 			\includegraphics[width=0.4\textwidth]{figure/lime4}
 		\end{center}
 	An alternative is the Gower proximity: 
-	$\neigh(\zv) = 1 - \frac{1}{p}\sum_{j = 1}^{p} \delta_G(z_j, x_j) $ 
+	$\neigh(\zv) = 1 - \frac{1}{p}\sum_{j = 1}^{p} d_G(z_j, x_j) $ 
 	$\textnormal{ with } \delta_G(z_j, x_j) = 
 	\begin{cases}
 	\frac{1}{\widehat{R}_j}|z_j- x_j| & \text{if $x_j$ and $z_j$ are numerical} \\

@@ -194,7 +194,7 @@
 
 \begin{vbframe}{Aims \& Roles}
 	CE can serve various purposes, the user can decide what to learn from them. Consider the following example:\newline
-	``If the person was one year older and the credit amount were increased to \$12.000, her credit would have been granted."  \\[0.2cm]
+	``If the person had been one year older and the credit amount had been increased to \$12.000, her credit would have been granted."  \\[0.2cm]
 	\begin{itemize}
 		\itemsep1.3em
 		\item \textbf{Guidance for future actions:} \textit{Ok, I'll apply again next year for the higher amount.}
@@ -207,7 +207,7 @@
 \begin{vbframe}{Philosophical Basis: CEs \& Lewis}
 Interestingly, counterfactuals have a long-standing tradition in philosophy and, in fact the IML discussion of CEs is based on the work of Lewis (1973). 
 
-A \textbf{Counterfactual Conditional} is a statement of the form:	
+A \textbf{counterfactual conditional} is a statement of the form:	
 \begin{equation}
 		\textnormal{``If $S$ was the case, $Q$ would have been the case."}
 		\label{eq:sent}
@@ -235,8 +235,8 @@ Counterfactuals have mainly been studied to give an account of causal dependence
 \begin{vbframe}{Philosophical Basis: CEs as Contrastive}
 CEs are or can be easily translated into contrastive explanations and often vice versa. Contrastive explanations are answers to a question of the form ``why did Q' occur instead of Q?''.
 	\begin{itemize}
-	    \item  Contrastive Explanations answer these questions by \textbf{contrasting} the actual scenario with a different scenario $S$ in which $Q$ had occurred.
-		\item According to psychologists [Miller (2019)], Contrastive Explanations are the gold standard of explanations in human-to-human interaction.
+	    \item  Contrastive explanations answer these questions by \textbf{contrasting} the actual scenario with a different scenario $S$ in which $Q$ had occurred.
+		\item According to psychologists [Miller (2019)], contrastive explanations are the gold standard of explanations in human-to-human interaction.
 		\item A CE becomes contrastive if its antecedent $S$ is presented in contrast to the actual scenario.
 	\end{itemize}
 \end{vbframe}
@@ -245,7 +245,7 @@ CEs are or can be easily translated into contrastive explanations and often vice
 	Terminology: 
 	\begin{itemize}
 		\item $\xv$ as original/factual datapoint whose prediction we want to explain
-		\item $y' \in \Yspace$ as desired outcome 
+		\item $y' \in \R^g$ as desired outcome 
 	\end{itemize}
 	\vspace{0.3cm}
 	A \textbf{valid} counterfactual $\xv'$ is a datapoint: 
@@ -262,15 +262,15 @@ CEs are or can be easily translated into contrastive explanations and often vice
 		\item $\lambda$ balances the two objectives.
 		\item $o_1$ and $o_2$ are distances, their choice is critical.
 		\framebreak
-		\item $o_1$ could be, for example, L1-distance $o_1(\fh(\xv'), y') = |\fh(\xv')-y'|$ for regression or the indicator function $o_1(\fh(\xv'), y') = \mathbb{I}_{\fh(\xv') \neq y'}$ for binary classification.
+		\item $o_1$ could be, for example, L1-distance $o_1(\fh(\xv'), y') = |\fh(\xv')-y'|$ for regression or the indicator function $o_1(\fh(\xv'), y') = \Ind_{\{ \fh(\xv') \neq y' \}}$ for binary classification.
 		\item $o_2$ could be the Gower distance that is suitable for mixed features: 
 		$$o_2(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(x'_j, x_j)\in [0, 1]$$
-		The value of $\delta_G$ depends on the feature type:
+		The value of $d_G$ depends on the feature type:
 		\begin{equation*}
-		\delta_G(x_j, x^*_j) = 
+		d_G(x_j, x^*_j) = 
 		\begin{cases}
-		\frac{1}{\widehat{R}_j}|x_j- x^*_j| & \text{if $x_j$ is numerical} \\
-		\mathbb{I}_{x_j \neq x_j^*} & \text{if $x_j$ is categorical}
+		\frac{1}{\widehat{R}_j}|x_j'- x_j| & \text{if $x_j$ is numerical} \\
+		\Ind_{\{ x_j' \neq x_j \}} & \text{if $x_j$ is categorical}
 		\end{cases}
 		\end{equation*}
 		with $\widehat{R}_j$ as the value range of feature $j$, which is extracted from the training dataset. 
@@ -287,7 +287,7 @@ CEs are or can be easily translated into contrastive explanations and often vice
 		\item End-users often prefer short over long explanations. For CEs this means that the changes made to obtain counterfactuals must be \textbf{sparse}. 
 		\item The distance $o_2$ can but does not necessarily take the number of changed features into account. Prominent examples that do so are the L0- and the L1-norm.
 %		\item There could be a trade-off between the number of features changed and the total amount of change made to obtain a certain prediction. 
-        \item We can also account for sparsity by adding an extra term to our objective that counts the number of changed features via the L0-norm $$o_3(\xv', \xv) = \sum_{j = 1}^p \mathbb{I}_{x'_j \neq x_j}.$$ 
+        \item We can also account for sparsity by adding an extra term to our objective that counts the number of changed features via the L0-norm $$o_3(\xv', \xv) = \sum_{j = 1}^p \Ind_{\{ x'_j \neq x_j \}}.$$ 
 	\end{itemize}
 	\framebreak
 	\textbf{Plausibility:}
@@ -295,7 +295,7 @@ CEs are or can be easily translated into contrastive explanations and often vice
 	    \item CEs should suggest alternatives that are plausible. For example, it is a bad idea to suggest a loan applicant to raise her income and get unemployed at the same time. 
 	    \item Thus, it is desirable to generate counterfactuals that are realistic in the sense that they originate from the distribution of $\Xspace$ or adhere to the data manifold. 
 		\item Estimating a joint distribution over the training data is a complex problem, especially for mixed feature spaces. As a proxy, we could desire that $\xv'$ is close to the training data $\Xmat$. For example, $o_4$ could then be the Gower distance of $\xv'$ to the nearest data point of the training dataset $\xv^{[1]}$
-		$$o_4(\xv, \Xmat) =  \frac{1}{p} \sum_{j = 1}^{p}  \delta_G(x_j, x^{[1]}_j).$$
+		$$o_4(\xv', \Xmat) =  \frac{1}{p} \sum_{j = 1}^{p}  \delta_G(x_j', x^{[1]}_j).$$
 	\end{itemize}	
 	Overall, we could update Eq.~(\ref{eq:wachter}) to be: 
 	\begin{equation}
@@ -317,12 +317,12 @@ CEs are or can be easily translated into contrastive explanations and often vice
 \end{vbframe}
 
 \begin{vbframe}{Remarks: The Rashomon Effect}
-The solution to the optimization problem might not be unique, there can be many equally close inputs that obtain the desired classification. Correspondingly, there can be many different equally good explanations for the same decision. This is called the \textbf{Rashomon Effect}.
+The solution to the optimization problem might not be unique, there can be many equally close inputs that obtain the desired classification. Correspondingly, there can be many different equally good explanations for the same decision. This is called the \textbf{Rashomon effect}.
 	\begin{itemize}
 		\item We could present all CEs for a given case, however, time is limited and so is the human processing capacity.
 		\item Another solution is to focus on one or few CEs, however, by which criterion should they be selected?
 		\item Worse, as the model is generally non-linear, incompatible CEs can arise e.g. suggesting either an increase or decrease in credit duration, which confuses the explainee.
-		\item How to deal with the Rashomon Effect is considered an open problem in IML.
+		\item How to deal with the Rashomon effect is considered an open problem in IML.
 	\end{itemize}
 \end{vbframe}
 
