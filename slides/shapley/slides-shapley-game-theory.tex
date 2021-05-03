@@ -141,7 +141,7 @@
 \begin{vbframe}{Cooperative Games}
 \begin{itemize}
   \item In cooperative games, a set of players $P$ with $P = \{1, \hdots, p\}$ forms a coalition $\SsubP$. 
-  \item A value function $v(S): 2^{|P|}\mapsto \R$ describes the payout (or gain) achieved by the coalition $S$. The value of the empty coalition must be zero: $v(\emptyset) = 0$.
+  \item A value function $v(S): 2^{|P|}\mapsto \R$ describes the payout (or gain) achieved by any coalition $\forall S \subseteq P$. The value of the empty coalition must be zero: $v(\emptyset) = 0$.
   \item As some players contribute more than others, we are interested to fairly divide the total payout $v(P)$ among the players.
   \item We call the payout per player $\phi_j$, $j \in P$.
   \item What would be properties of a a fair distribution of the payout?
@@ -152,7 +152,7 @@
 \begin{vbframe}{Axioms of Fair Payouts}
   One possibility to define \textbf{fair} payouts are the following axioms for a given value function $v$:
   \begin{itemize}
-    \item \textbf{Efficiency}: Player contributions add up to the total payout of the game.
+    \item \textbf{Efficiency}: Player contributions add up to the total payout of the game:
       $\sum\nolimits_{j=1}^p\phi_j = v(P)$
     \item \textbf{Symmetry}: Players $j,k \in P$ who contribute the same to any coalition get the same payout: \\
       If $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$, then $\phi_j=\phi_k$
@@ -186,9 +186,10 @@
 The Shapley value was introduced as summation over sets $S$, but it's also possible to define it as a summation of all orders of players.
 This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from.
 \begin{itemize}
-  \item Let $\Pi$ be all possible orders of players. \item Then: $\phi_j = \frac{1}{|P|!} \sum_{\pi \in \Pi} (v(Pre(\pi,j) \cup \{j\}) - v(Pre(\pi,j)))$
-  \item $Pre(\pi,j)$ is the set of players before player $j$ in order $\pi$ .
-  \item For example players a,b,c: $\Pi = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$. If $\pi = (b,a,c)$ and $j=c$, then $Pre(\pi,j) = \{b, a\}$.
+  \item Let $\Pi$ be all possible orders of players ($|P|!$ in total).
+  \item Then: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
+  \item $Pre(\tau,j)$ is the set of players before player $j$ in order $\tau$ .
+  \item For example players a,b,c: $\Pi = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$. If $\tau = (b,a,c)$ and $j=c$, then $Pre(\tau,j) = \{b, a\}$.
   \item For the Shapley value computation via order definition, we sum the marginal contribution twice for orders that yield set $S = \{a,b\}$, which in the set definition has the weight $2! (3 - 2 - 1)! = 2 \cdot 0! = 2$.
   \item More general, the Shapley value definition via orders is equivalent to the definition via sets, since the number of orders which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$: There are $|S|!$ possible orders of players within coalition $S$ and $(|P| - |S| - 1)!$ possible orders of players without $S$ and $j$.
   \item Relevance of the order definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
@@ -212,9 +213,9 @@ The Shapley value of a player $j=2$ is the marginal contribution to the value fu
 
 }
 \begin{vbframe}{Proof of Axioms}
-  The Shapley values fulfills all the 4 axioms. Proof sketches:
+  The Shapley values fulfills all the 4 axioms.
+  Symmetry, Dummy and Additivity are relatively easy to proof:
 \begin{itemize}
-  \item \textbf{Efficiency}: $v(P)$ exactly appears once per player ($=p times$) for coalition $S = P \setminus \{j\}$ with the weight $\frac{|P - 1|!(|P| - |P - 1| - 1)!}{|P|!} = \frac{1}{p}$ each. The values for all other coalitions $v(S), \SsubP \{j,k\}$ appear with both minus and plus signs that cancel each other out.
     % See also: https://math.stackexchange.com/questions/2747088/shapley-value-is-efficient
   \item \textbf{Symmetry}: Let's assume coalition $\SsubPnojk$ and $v(\Scupj) = v(\Scupk)$. 
     \begin{itemize}
@@ -223,6 +224,10 @@ The Shapley value of a player $j=2$ is the marginal contribution to the value fu
     \end{itemize}
   \item \textbf{Dummy}: Let's assume we have player $j$ such that for all $\SsubP$, we have $v(S) = v(\Scupj)$. Then, each marginal contribution of player $j$ is zero, and therefore $\phi_j = 0$.
   \item \textbf{Additivity}:  Assume two games $v_1$ and $v_2$ and a third game which is the sum of both $v(S) = v_1(S) + v_2(S)$. The marginal contribution for all $\SsubPnoj$ for game $v$ can be expressed as $v(\Scupj) - v(S) = v_1(\Scupj) - v_1(S) + v_2(\Scupj) - v_2(S)$. Since the Shapley value is additive in the marginal contributions, we can split the sum into two sums so that $\phi_{j,v} = \phi_{j, v_1} + \phi_{j,v_2}$.
+\end{itemize}
+Efficiency requires a bit more effort, see proof sketch:
+  \begin{itemize}
+  \item \textbf{Efficiency}: $v(P)$ exactly appears once per player ($=p$ times) for coalition $S = P \setminus \{j\}$ with the weight $\frac{|P - 1|!(|P| - |P - 1| - 1)!}{|P|!} = \frac{1}{p}$ each. The values for all other coalitions $v(S), \SsubP \{j,k\}$ appear with both minus and plus signs that cancel each other out.
 \end{itemize}
 \end{vbframe}
 
