@@ -128,10 +128,6 @@
 
 \setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
 
-% additional math commands
-\newcommand{\Gspace}{\mathcal{G}}
-\newcommand{\neigh}{\phi_{\xv}}
-\newcommand{\zv}{\mathbf{z}}
 \begin{document}
 	
 	% Set style/preamble.Rnw as parent.
@@ -146,6 +142,7 @@
 	
 	\input{../../latex-math/basic-math.tex}
 	\input{../../latex-math/basic-ml.tex}
+	\input{../../latex-math/ml-interpretable.tex}
 	
 	\lecturechapter{LIME}
 	\lecture{Interpretable Machine Learning}
@@ -173,39 +170,43 @@
 \end{vbframe}
 
 \begin{vbframe}{Model Complexity}
-We can measure the complexity of a model $g$ using $\Omega(g)$. \\ 
+We can measure the complexity of a model $g$ using $J(g)$. \\ 
 \vspace{0.5cm}
  	\textbf{Example: Linear regression model}\\
- 	Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = \thetab^\top \xv\right\}$ be the class of linear models then $\Omega(g) = \sum_{j = 1}^p \I_{[\theta_j \neq 0]}$ could be the number of non-zero coefficients. 
+ 	Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = \thetab^\top \xv\right\}$ be the class of linear models then $J(g) = \sum_{j = 1}^p \Ind_{\{ \theta_j \neq 0 \}}$ could be the L0 loss, i.e. the number of non-zero coefficients. 
  	\vspace{0.5cm}
  	
  	\textbf{Example: Tree}\\
- 	Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \I(x \in Q_m)\right\}$ be the class of trees (i.e., class of additive model over the leaf-rectangles) then $\Omega(g)$ could measure the number of terminal/leaf nodes.\\
+ 	Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \Ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees (i.e., class of additive model over the leaf-rectangles) then $J(g)$ could measure the number of terminal/leaf nodes.\\
  	\end{vbframe}
  
  	\begin{vbframe}{Local model fidelity}
  		\begin{itemize}
- 			\item A model $g$ is locally faithful to $f$ with respect to an instance $\xv$ if for instances $\zv$ in the vicinity of $\xv$ the predictions of $g(\zv)$ are close to $f(\zv)$. 
- 			 \item We can rephrase that in an optimization task: the closer $\zv$ is to $\xv$, the closer $g(\xv)$ should be to $f(\zv)$.  
+ 			\item A model $g$ is locally faithful to $f$ w.r.t. an point $\xv$ if for points $\zv \in \Zspace \subseteq \R^p$ in the vicinity of $\xv$ the predictions of $g(\zv)$ are close to $\fh(\zv)$. 
+ 			 \item We can rephrase that in an optimization task: the closer $\zv$ is to $\xv$, the closer $g(\xv)$ should be to $\fh(\zv)$.  
  			\item For this definition we need two measures:
  			\begin{enumerate}
  				\item A proximity measure $\neigh(\zv)$ between $\zv$ and $\xv$, e.g. the exponential kernel which converts any distance measure into a similarity measure 
  				$$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$$ 
  				with $\sigma$ as the kernel width. $d$ could be for example the Euclidean distance (numeric features) or the Gower distance (mixed features). 
- 				\item A distance measure $d_{g, f}(\zv)$ to assess how close the predictions of $f(\zv)$ and $g(\zv)$ are, e.g. the squared loss $$d_{g,f}(\zv) = (g(\zv) - f(\zv))^2.$$ 
+ 				\item A distance measure or loss function $L(\fh(\zv), g(\zv))$ to assess how close the predictions of $\fh(\zv)$ and $g(\zv)$ are, e.g. the L2 loss/squared error $$L(\fh(\zv), g(\zv)) = (g(\zv) - \fh(\zv))^2.$$ 
  			\end{enumerate}
- 			\item Given points $\zv \in Z$, we can measure local fidelity of $g$ with respect to $f$ in terms of a weighted loss
- 			$$L(f, g, \neigh) = \sum_{z \in Z} \neigh(\zv) d_{g,f}(\zv)$$
+ 			\item Given points $\zv$, we can measure local fidelity of $g$ with respect to $f$ in terms of a weighted loss
+ 			\begin{equation}
+ 				L(\fh, g, \neigh) = \sum_{\zv \in \Zspace} \neigh(\zv) L(\fh(\zv), g(\zv))
+ 				\label{eq:optim}
+ 			\end{equation}
+ 			\item Note that identifying \textbf{locally} faithful explanations that are interpretable is less of a challenge than identifying \textbf{globally} faithful explanations. Yet, global fidelity implies local fidelity but not vice versa.
  		\end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Minimization task}
 	\begin{itemize}
 		\item Formally, an explanation produced by LIME is obtained by the following: 
-		$$ \argmin_{g \in \Gspace} L(f, g, \neigh) + \Omega(g)$$
-		\item In practice, LIME only optimizes $L(f, g, \neigh)$ (model-fidelity). 	
+		$$ \argmin_{g \in \Gspace} L(\fh, g, \neigh) + J(g)$$
+		\item In practice, LIME only optimizes $L(\fh, g, \neigh)$ (model-fidelity). 	
 		\item The complexity is determined by users beforehand by restricting the class $\Gspace$. For example, users could only consider sparse linear models. 
-		\item Since we want a \textbf{model-agnostic} explainer, we need to optimize $L(f, g, \neigh)$ without making any assumptions about $f$. 
+		\item Since we want a \textbf{model-agnostic} explainer, we need to optimize $L(\fh, g, \neigh)$ without making any assumptions about $f$. 
 		\item Therefore, we learn $g$ only approximately with the following algorithm.  
 		\end{itemize}
 \end{vbframe} 
@@ -214,9 +215,9 @@ We can measure the complexity of a model $g$ using $\Omega(g)$. \\
 		For the algorithm, we need a pre-trained model $f$, $\xv$ whose prediction we want to explain and model class $\Gspace$.\\ \vspace{0.5cm}
 		We illustrate the steps of the algorithm with a classification example: 
 		\begin{itemize}
-			\item The light/dark gray background represents the prediction surface of classifier $f: \R^2 \to \{0, 1\}$.
+			\item The light/dark gray background represents the prediction surface of a hard label classifier $h: \R^2 \to \{0, 1\}$.
 			\item The yellow point displays $\xv$ we are interested in. 
-			\item $\Gspace$ is restricted to the class of logistic regression models 
+			\item $\Gspace$ is restricted to the class of logistic regression models. 
 		\end{itemize}
 		\begin{center}
 			\includegraphics[width=0.4\textwidth]{figure/lime2}
@@ -224,12 +225,12 @@ We can measure the complexity of a model $g$ using $\Omega(g)$. \\
 	
 		\begin{enumerate}
 		\framebreak 
-		\item Sample new instances $\zv \in Z$. 
-		\item Retrieve predictions $f(\zv)$ for the perturbed points $\zv \in Z$. \\[0.2cm]
+		\item Independently sample new points $\zv \in \Zspace$. 
+		\item Retrieve predictions $\fh(\zv)$ for obtained points $\zv$. \\[0.2cm]
 		
 		\hspace{-0.7cm} Strategies for sampling: 
 		\begin{itemize} 
-			\item Randomly sample new instances. 
+			\item Uniformly sample new points from the feasible feature range. 
 			\item Use the training data set with or without perturbations.
 			\item Draw samples from the estimated univariate distribution of each feature.
 			\item Create an equidistant grid over the supported feature range.  
@@ -240,22 +241,30 @@ We can measure the complexity of a model $g$ using $\Omega(g)$. \\
 		\end{center}
 		
 		\framebreak
-		\item Weight $\zv \in Z$ by their proximity $\neigh(\zv)$.
+		\item Weight $\zv \in \Zspace$ by their proximity $\neigh(\zv)$.
 		\\[0.2cm]
 		\end{enumerate}
-		In this example, we use the exponential kernel defined on the Euclidean distance. An alternative is the Gower proximity (i.e. 1 - Gower distance).
-		\vspace{1cm}
+		In this example, we use the exponential kernel defined on the Euclidean distance $d$
+		 $$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2).$$ 
 		\begin{center}
 			\includegraphics[width=0.4\textwidth]{figure/lime4}
 		\end{center}
+	An alternative is the Gower proximity: 
+	$\neigh(\zv) = 1 - \frac{1}{p}\sum_{j = 1}^{p} d_G(z_j, x_j) $ 
+	$\textnormal{ with } \delta_G(z_j, x_j) = 
+	\begin{cases}
+	\frac{1}{\widehat{R}_j}|z_j- x_j| & \text{if $x_j$ and $z_j$ are numerical} \\
+	\mathbb{I}_{z_j \neq x_j} & \text{if $x_j$ and $z_j$) are categorical.}
+	\end{cases}$
 		
 		\framebreak
 		\begin{enumerate}
 			\setcounter{enumi}{3}
-		\item Train a weighted, interpretable model $g$ on $Z$ with the obtained predictions as the target.
+		\item Train a interpretable model $g$ on weighted data points $\zv \in \Zspace$. The obtained predictions $\fh(\zv)$ is the target of this model.
 		\item Return the interpretable model $g$ as the explainer. \\[0.3cm]
 			\end{enumerate}
-		Popular interpretable models: linear/logistic regression models, LASSO, classification/regression trees, decision rules
+		Popular interpretable models are linear models, LASSO, classification/regression trees, decision rules. \\
+		In our example, we fit a logistic regression model. \\Consequently, $L(\fh(\zv), g(\zv))$  is the Bernoulli loss in Eq.~(\ref{eq:optim}). 
 		\begin{center}
 			\includegraphics[width=0.4\textwidth]{figure/lime5}
 		\end{center}
@@ -265,9 +274,9 @@ We can measure the complexity of a model $g$ using $\Omega(g)$. \\
 \begin{vbframe}{Credit Dataset}
 	\begin{itemize}
 		\item Model: SVM with RBF kernel
-		\item $\xv$: first data point of the dataset with $\hat{\P}(y = bad) = 0.75$
-		\item Local surrogate model: L1-regularized logistic regression model with 5 features. The local model prediction for $\xv$ is 0.7. 
-		\item Similarity measure: the Gower proximity. 
+		\item $\xv$: first data point of the dataset with $\pih_{bad}(\xv) = 0.658$
+		\item $\zv$: training data. They are weighted by the Gower proximity. 
+		\item Surrogate model $g$: L1-regularized linear model with 5 features. 
 	\end{itemize}
 \vspace{-0.5cm}
 	\begin{table}[ht]
@@ -281,9 +290,38 @@ We can measure the complexity of a model $g$ using $\Omega(g)$. \\
 			\hline
 		\end{tabular}
 	\end{table}
+\vspace{-0.5cm}
 \begin{center}
 	\includegraphics[width=0.55\textwidth]{figure/lime_credit.pdf}
+	
+	\tiny{\textbf{Figure:} Effects of surrogate model, i.e. $\thetah^T \xv$.}
+	
 \end{center}
+
+\begin{itemize}
+	\item The local model prediction for $\xv$ is $g(\xv) = 0.64$. 
+	\item $g$ has a local fidelity of $L(\pih, g, \neigh) = 4.82$ with $\neigh(\zv)$ as the Gower proximity and $L(\pih_{bad}(\zv), g(\zv))$ as the euclidean distance. 
+	\item 2-dim ICE plots (also called prediction surface plot) of credit amount and duration show us how the surrogate model $g$ linearly approximates the previously nonlinear prediction surface of $\pih_{bad}$. 
+\end{itemize}
+\vspace{-0.4cm}
+ \begin{columns}
+	\begin{column}{0.47\textwidth}
+		\begin{center}
+		\includegraphics[width=1\textwidth]{figure/lime_credit_ice1.pdf}
+		\end{center}		
+	\end{column}
+	\begin{column}{0.46\textwidth}  
+		\begin{center}
+				\includegraphics[width=1\textwidth]{figure/lime_credit_ice2.pdf}
+		\end{center}
+			
+	\end{column}
+\end{columns}
+\vspace{-0.4cm}
+\begin{center}
+		\tiny{\textbf{Figures:} 2-dim ICE plot of $\pih_{bad}$ (\textbf{left}) and surrogate $g$ (\textbf{right}) for features duration and credit amount. \\The white dot is $\xv$. The histograms display the marginal distribution of the training data $\Xmat$.}
+\end{center}
+
 \end{vbframe}
 
 %\begin{vbframe}{Bike Sharing Dataset}
@@ -305,9 +343,21 @@ We can measure the complexity of a model $g$ using $\Omega(g)$. \\
 \begin{vbframe}{LIME for Text Data}
 	So far, we focused on tabular data but LIME could also be applied to text data: 
 	\begin{itemize}
-		\item Each instance is represented as a binary vector indicating the presence or absence of a word.
-		\item Starting from the original text, new samples $\zv$ are created by randomly removing words from the original text.
+		\item Raw text could be converted to a data frame by transforming the text into a binary vector indicating the presence or absence of a word or into a vector of word counts.
+		\item For the latter, texts \textit{``This text is the first text."} and \textit{``Finally, this is the last one."} become for example 
+		\begin{center}
+			\begin{tabular}{c|c|c|c|c|c|c|c} 
+				this & text & is & the & first & finally & last & one \\ 
+				\hline
+				1 & 2 & 1 & 1 & 1 & 0 & 0 & 0 \\
+				1 & 0 & 1 & 1 & 0 & 1 & 1 & 1 \\
+			\end{tabular}
+		\end{center} 
+		\item New samples $\zv$ are created by randomly setting the entry of individual words to $0$ which is equal to removing all occurrences of this word in the text. 
 		\item An exponential kernel with cosine distance could be used as a proximity measure. 
+		\item Cosine distance is advantageous for text data because it neglects words that do not occur in both texts and it measures the distance irrespective of the text size. 
+		\item Below LIME explains a random forest classifier that labels movie reviews from IMDB. 
+		\item The surrogate model is a sparse linear model. 
 	\end{itemize}
 	
 	\begin{figure}
@@ -324,19 +374,46 @@ We can measure the complexity of a model $g$ using $\Omega(g)$. \\
 	\footnote[frame]{Shen, Ian, (2019). Explain sentiment prediction with LIME.
 		\url{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}.}
 	
+	
 	\end{vbframe}
 	
 	\begin{vbframe}{LIME for image data}
-	LIME also works for image data:  
+	\begin{columns}
+		\begin{column}{0.67\textwidth}
+			LIME also works for image data:  
+			\begin{itemize}
+				\item Each instance is represented as a binary vector indicating the presence or absence of superpixels. 
+				\item Superpixels are interconnected pixels with similar colors. They are used because a single pixel would probably not change a prediction by much.
+				\item The size of superpixels needs to be determined before the segmentation takes place.
+			\end{itemize}		
+		\end{column}
+		\begin{column}{0.26\textwidth}  
+			\begin{center}
+				\includegraphics[width=1\textwidth]{figure/superpixel_woman}
+				\tiny{\textbf{Figure:} Example for superpixels of different sizes.}
+			\end{center}
+		\end{column}
+	\end{columns}
+			\begin{itemize}
+		\item New samples $\zv$ are created by randomly switching some of the super pixels ``off", i.e., by coloring some superpixels uniformly.  
+\end{itemize}
+\footnote[frame]{Achanta et al. (2012). SLIC Superpixels Compared to State-of-the-Art Superpixel Methods. IEEE transactions on pattern analysis and machine intelligence. 34. 10.1109/TPAMI.2012.120. }
+\end{vbframe}
+
+\begin{vbframe}{LIME for image data}
 	\begin{itemize}
-		\item Each instance is represented as a binary vector indicating the presence or absence of superpixels. 
-		\item Superpixels are interconnected pixels with similar colors. They are used because a single pixel would probably not change a prediction by much.
-		\item Starting from the original image, new samples $\zv$ are created by randomly turning ``superpixels" off or on (uniformly coloring). 
-		\item An exponential kernel with L2 distance could be used as a proximity measure.
+		\item Below, LIME explains the prediction of Google's pre-trained Inception neural network classifier of an arbitrary image. 
+		\item Samples $\zv$ are created by graying out all superpixels besides 10. 
+		\item As a surrogate model, locally weighted sparse linear models are trained to predict the probability of each class. 
+		\item Weights are determined by an exponential kernel with euclidean distance.
+		\item Below the corresponding explanations for the top 3 predicted classes are shown.   
 	\end{itemize}
+% https://lime-ml.readthedocs.io/en/latest/lime.html#module-lime.lime_image
 	\vspace{-0.3cm}
 	\begin{center}
 		\includegraphics[width=0.8\textwidth]{figure/lime-images}
+		
+		\tiny{\textbf{Figure:} Top 3 classes predicted.}
 	\end{center}
 	\vspace{-0.3cm}
 	\footnote[frame]{Ribeiro, M. T., (2016, August). Why should i trust you?: Explaining the predictions of any classifier. Retrieved from \url{https://github.com/marcotcr/lime}}

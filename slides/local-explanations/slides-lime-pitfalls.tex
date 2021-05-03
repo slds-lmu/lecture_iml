@@ -126,10 +126,6 @@
 
 \setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
 
-% additional math commands
-\newcommand{\Gspace}{\mathcal{G}}
-\newcommand{\neigh}{\phi_{\xv}}
-\newcommand{\zv}{\mathbf{z}}
 \begin{document}
 	
 	% Set style/preamble.Rnw as parent.
@@ -144,6 +140,7 @@
 	
 	\input{../../latex-math/basic-math.tex}
 	\input{../../latex-math/basic-ml.tex}
+	\input{../../latex-math/ml-interpretable.tex}
 	
 	\lecturechapter{LIME Pitfalls}
 	\lecture{Interpretable Machine Learning}
@@ -160,39 +157,30 @@
 	\begin{itemize}
 	  \item The most common sampling strategies for $\zv \in Z$ do not take the correlation between features into account. 
       \item This can lead to unlikely data points which can then be used to learn local explanation models.
-      \item An easy solution would be to use the original training data to fit the surrogate model but it only works well with larger amounts of data. 
+      \item Ideally, we need a local sampler that samples $\zv$ from $\Xspace$. However, its derivation is particularly difficult for high dimensional or mixed feature spaces. 
+      \item We could use the original training data to fit the surrogate model, but this only works well with enough data near $\xv$.
     \end{itemize}
 \framebreak
 	\textbf{Pitfall 2: Locality}
 	\begin{itemize} 
-     \item It is difficult to define locality (= how samples are weighted locally). It has a huge influence on the local model, but there is no automatic procedure for choosing the neighborhood. 
-     \item The authors of LIME proposed an exponential smoothing kernel to define the neighborhood. 
-     Until now there is not a good way to find a good kernel and kernel width. 
-     \item A small kernel width means that an instance must be very close to influence the local model, a larger kernel width means that instances that are farther away also influence the model. 
-     \item In certain scenarios, you can easily turn your explanation around by changing the kernel width. This is illustrated on the next slide. 
-   \end{itemize}
-	\framebreak
-  \begin{columns}
-  \begin{column}{0.47\textwidth}
-  \begin{itemize}
-    \item In the figure, the predictions of the black box model depending on a single feature $x$ is shown as a thick line. The distribution of the data is shown with rugs.
-    \item Three local surrogate models with different kernel widths are computed. 
-  \end{itemize}
-  \end{column}
-  \begin{column}{0.46\textwidth}  
-        \begin{center}
-        \includegraphics[width=1\textwidth]{figure/lime-fail-1}
-        \tiny{\textbf{Source:} Molnar (2019)}
-      \end{center}
-  \end{column}
-\end{columns}
-\begin{itemize}
-	\item The resulting linear regression model heavily depends on the kernel width.
-	\item A better alternative is the Gower proximity. It is often the default method in software packages. 
+     \item It is difficult to define locality (= how samples are weighted locally). It has a huge influence on the local model, but there is no automatic procedure for choosing the neighborhood.
+     \item The authors of LIME proposed an exponential kernel as proximity measure between $\xv$ and $\zv$:
+     	$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$ where $d$ is a distance measure and $\sigma$ is the kernel width. 
+     	 \begin{center}
+     		\includegraphics[width=0.6\textwidth]{figure/lime_locality}
+     		\vspace{-0.5cm}
+     		
+     		\scriptsize{\textbf{Figure:} Linear surrogate models for two different data points based on the same model with one target and one feature. Each line displays one linear surrogate model with a different kernel width. In the right figure larger, kernel sizes are more severe.}
+     		
+     	\end{center}
+     \item A larger kernel width means that instances that are farther away also influence the model such that we do not receive a local but a global surrogate model. 
+     \item Therefore, we prefer smaller kernel widths such that an instance must be very close to influence the local model.  
+     \item If the kernel with is set too small, we only fit a local model based on a few observations which carries the risk to fit noise.   
+	\item Multiple software package use another default standardized distance: the Gower proximity where no kernel width needs to be specified. However, experiments showed that since also data points far away receive a weight $ > 0$, their resulting explanations are rather global surrogates than local surrogates.   
 \end{itemize}
 \vspace{0.3cm}
 
-\footnote[frame]{Molnar, C, (2019). Interpretable machine learning. A Guide for Making Black Box Models Explainable. \url{https://christophm.github.io/interpretable-ml-book/}.}
+\footnote[frame]{Kopper P., Molnar M. (2019) Chapter 13 LIME and Neighborhood. In: Molnar C., Casalicchio G., König G., Pfisterer F., Scholbeck C., Bischl B. (eds) Limitations of Interpretable Machine Learning Methods. \url{https://compstat-lmu.github.io/iml_methods_limitations/}.}
 
 \end{vbframe}
 
@@ -201,15 +189,46 @@
 \textbf{Pitfall 3: Local vs. global features}
 \begin{itemize}
 	\item There exist two types of features: Features with a \textbf{global} influence that influence the global shape of the black-box model and features with a \textbf{local} influence that impact predictions for a small area of the whole features space. 
-	\item Im most LIME implementations, new instances are sampled from the whole input space and are not taken around the instance of interest $\xv$.
-	\item Laugel et al. (2018) showed that this tends to hide the features with a local influence for the benefit of features with a global influence in classification problems. 
-	\framebreak
-	\item The authors propose to sample new instances $\zv$ precisely around the decision boundary closest from point $\xv$ for higher local accuracy of the surrogate model. 
+	\item For example in decision trees, splitting variables close to the root have a more global influence than the ones close to the leaves. 
+	\item Im most LIME implementations, new instances are sampled from the whole input space and are not taken around $\xv$.
+	\item Laugel et al. (2018) showed that this tends to hide the features with a local influence for the benefit of features with a global influence even when the kernel width was reduced. 
+	\item Instead of global sampling, the authors propose to sample new instances $\zv$ precisely around the decision boundary closest from point $\xv$ for higher local accuracy of the surrogate model. 
 \end{itemize}
- \begin{center}
-	\includegraphics[width=1\textwidth]{figure/lime_bordersample}
-	{\tiny \textbf{Source:} \href{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}{ICML WHI 2018}}
-\end{center}
+
+\framebreak
+
+
+\begin{columns}
+	
+	\begin{column}{0.68\textwidth}
+			\vspace{-0.7cm}
+		 \begin{center}
+		\includegraphics[width=1\textwidth]{figure/lime_bordersample}
+		
+		\vspace{-0.3cm}
+		{\tiny \textbf{Figure:} Proposed method by Laugel et al. (2018). Source: \href{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}{ICML WHI 2018}}
+		
+	\end{center}
+ 	\end{column}
+	\begin{column}{0.3\textwidth}
+			\vspace{-0.7cm}
+		\begin{center}
+			\includegraphics[width=1\textwidth]{figure/lime-globallocal}
+			
+			\vspace{-0.3cm}
+			{\tiny \textbf{Figure:} Half-moons dataset.}
+			
+		\end{center}
+	\end{column}
+\end{columns}
+\vspace{0.3cm}
+	\begin{itemize}
+		\item E.g., let us explain the prediction of the green dot (right figure). Background colors display predictions of a random forest. 
+		\item The decision boundary of LIME with default kernel width (green line) does not match the direction of the steeper local boundary. 
+		\item LIME with reduced kernel width (blue line) performs a bit better but still does not approximate the local border properly. 
+		\item The method of Laugel et al. (2018) (red line) approximates the local border direction better. The red dot is the point closest to the border detected by this method. 
+	\end{itemize}
+
 \footnote[frame]{Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.}
 \end{vbframe}
 
@@ -218,9 +237,7 @@
 \begin{itemize}
 	\item There exists a trade-off between local fidelity vs. sparsity. 
 	\item If the local fidelity of our interpretable model is low, we do not receive reliable explanations.
-	\item On the other hand, high fidelity is only possible with a more complex model bearing the risk to substitute a black-box by another.
-	\item It should also be noted that identifying \textbf{locally} faithful explanations that are interpretable is less of a challenge than identifying \textbf{globally} faithful explanations. 
-	\item Yet, global fidelity implies local fidelity but not vice versa. 
+	\item On the other hand, high fidelity is only possible with a more complex model bearing the risk to substitute a black-box by complex model that is difficult to interpret.
 \end{itemize}
 \framebreak
 
