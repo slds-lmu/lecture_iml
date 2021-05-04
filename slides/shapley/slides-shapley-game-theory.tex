@@ -195,6 +195,20 @@ This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes fr
   \item Relevance of the order definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
 \end{itemize}
 
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{|S|! \text{ permutations}}$}} &
+    \multicolumn{1}{c}{} & 
+    \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
+    \hline
+    $\tau(1)$ & \ldots & $\tau(|S|)$ & $\tau(|S| + 1)$ & $\tau(|S| + 2)$ & \ldots & $\tau(P)$ \\
+    \hline
+    \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}} &
+    \multicolumn{1}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{4em}}^{}$}} & 
+    \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}}\\
+    \multicolumn{3}{c}{Players before player $j$} & \multicolumn{1}{c}{player $j$} & \multicolumn{3}{c}{Players after player $j$} \\
+  \end{tabular}
+
+
 \end{vbframe}
 
 \frame{
@@ -231,13 +245,15 @@ Efficiency requires a bit more effort, see proof sketch:
 \end{itemize}
 \end{vbframe}
 
-%\begin{vbframe}{Proofing Uniqueness of the Shapley value}
-%  We proof that Shapley values is unique
-%\begin{itemize}
-%    \item TODO
-    % http://www.ratio.huji.ac.il/dp/neyman/uniqueness.pdf
-%\end{itemize}
-%\end{vbframe}
+
+\begin{vbframe}{Linearity Axiom Corollary}
+  \begin{itemize}
+  \item The Shapley values are also linear:
+  \item For a game with payout $v(S) = \alpha v_1(S) + v_2(S)$, the Shapley values are $\alpha \phi_{j,v_1} + \phi_{j,v_2}$.
+  \item The multiplication with $\alpha$ works since we can pull out $\alpha$ from the sum of marginal contributions, so that for $v(S) = \alpha v_1(S)$ the Shapley value is $\alpha \phi_{j,v_1}$.
+  \item We already know that Shapley values are additive which proofs the linearity.
+  \end{itemize}
+\end{vbframe}
 
 
 
