@@ -149,22 +149,22 @@
 % ------------------------------------------------------------------------------
 
 \begin{vbframe}{Adversarial Machine Learning}
-Computer systems must be \textbf{robust}, that means they have to be able to cope with errors during execution.
+Computer systems must be \textbf{robust} i.e. they have to be able to cope with errors during execution.
 \begin{itemize}
-\item \textbf{Adversarial ML} is the field that studies the robustness of Machine Learning (ML) algorithms to malicious input.
-\item We differentiate between three different kind of attacks: Evasion, Poisoning, and Model Stealing.
-\item \textbf{Evasion attacks} allow to mislead an employed ML model with manipulated inputs. These attacks are focused in this lecture.
-\item In \textbf{Poisoning}, an attackers enters malicious inputs in the training dataset.
-\item \textbf{Model Stealing} encompass methods by which an attacker can recover a model or the data it was trained on.
+\item \textbf{Adversarial ML} is the field that studies the robustness of machine learning (ML) algorithms to malicious input.
+\item We differentiate between two different kinds of attacks: evasion and poisoning.
+\item \textbf{Evasion attacks} allow misleading an employed ML model with manipulated inputs. These attacks are focused in this lecture.
+\item In \textbf{poisoning}, an attacker enters malicious inputs to the training dataset. This weak spot can after the training-process be exploited by the attacker.
+%\item \textbf{Model Stealing} encompass methods by which an attacker can recover a model or the data it was trained on.
 \end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Adversarial Examples}
-The inputs by which evasion attacks can be conducted are called \textbf{Adversarial Examples (AEs)}
+%The inputs by which evasion attacks can be conducted are called \textbf{Adversarial Examples (AEs)}
 \begin{itemize}
 \item An AE is an input to a model that is deliberately designed to "fool" the model into misclassifying it.
 \item AEs occur even for ML algorithms with very high accuracy scores on a test set.
-\item Deep Learning (DL) algorithms like Convolutional Neural Networks (CNNs) are particular vulnerable to such attacks, but, classical ML models are often too [cite Dalvi].
+\item Deep Learning (DL) algorithms like Convolutional Neural Networks (CNNs) are particularly vulnerable to such attacks, but, classical ML models are often too.
 \item AEs that are created from a real data instance $\xv$ are often indistinguishable from $\xv$ by a human observer. Such cases suggest that even models with a very good test set performance have no deep understanding of the underlying concepts.% that determine the correct output label.
 \end{itemize}
 \end{vbframe}
@@ -173,7 +173,7 @@ The inputs by which evasion attacks can be conducted are called \textbf{Adversar
 \begin{figure}[h]
 \centering
   \includegraphics[width=0.6\linewidth]{figure/AEduckSound.png}
-  \caption{On the left side, we see real instances of image and audio data  correctly classified. The middle column, depicts a noisy input in the same respective spaces. Column three, shows the summation of the original inputs plus the noisy input multiplied by a small scalar. The resulting data points are AEs as they are assigned the wrong label.}
+  \caption{On the left side, we see real instances of image and audio data  correctly classified. The middle column, depicts a noisy input in the same respective spaces. Column three shows the summation of the original inputs plus the noisy input multiplied by a small scalar. The resulting data points are AEs as they are assigned the wrong label. \href{https://arxiv.org/pdf/1803.09156.pdf}{\textit{Source Gong \& Poellabauer (2018)}}}
   \label{fig:mnist}
 \end{figure} 
 
@@ -194,7 +194,7 @@ The inputs by which evasion attacks can be conducted are called \textbf{Adversar
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.46\linewidth]{figure/AEstop.png}\quad \includegraphics[width=0.45\linewidth]{figure/AEturtle.jpg}
-  \caption{The images show AEs employed in a real-world application. The stop sign on the right is an input designed to resemble a normal stop sign with graffiti on it like the one on the right. The right stop sign is misclassified as a right of way sign. In the second image we see a 3D-print turtle. It is designed in a way that it is misclassified as a rifle from every angle of presentation.}
+  \caption{The images show AEs employed in a real-world application. The stop sign on the right is an input designed to resemble a normal stop sign with graffiti on it like the one on the right. The right stop sign is misclassified as a right of way sign. In the second image, we see a 3D-print turtle. It is designed in a way that it is misclassified as a rifle from every angle of presentation. \href{https://arxiv.org/abs/1807.07769}{\textit{Sources from Eykholt et al. (2018)}} and \href{https://arxiv.org/pdf/1707.07397.pdf}{\textif{Brown et al. (2019)}}}
   \label{fig:mnist}
 \end{figure} 
 
@@ -212,34 +212,35 @@ The inputs by which evasion attacks can be conducted are called \textbf{Adversar
 \end{vbframe}
 
 \begin{vbframe}{Example: Tabular Data Setup}
-For tabular data, it is difficult to define e.g. the ground truth or imperceptibility. Expert knowledge is required in evaluation.
+For tabular data, it is difficult to define imperceptibility properly.% Expert knowledge is required in evaluation.
 \begin{itemize}
-    \item Experts focus on the most important features in their judgment.
+    \item Idea: Experts focus on the most important features in their judgment.
 %    \item Tabular features have specific natural ranges that must be respected.
     \item An AE arises from manipulating features the model deems important but the expert does not.
 \end{itemize}
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.6\linewidth]{figure/AEloanApplication.png}
-  \caption{The image depicts the decision boundary of a classifier that decides about loan applications.}
+  \caption{The image depicts the decision boundary of a classifier that decides about loan applications. \href{https://arxiv.org/pdf/1911.03274.pdf}{\textit{Source Ballet (2019)}}}
   \label{fig:mnist}
 \end{figure} 
+
 \end{vbframe}
 
 \begin{vbframe}{AEs and Interpretability}
-From the examples we can see that AEs pose security threats on the use of ML algorithms in real-world applications. But what do they have to do with interpretability?
+From the examples, we can see that AEs pose security threats to the use of ML algorithms in real-world applications. But what do they have to do with interpretability?
 
 \begin{itemize}
     \item AEs show where models fail and can therefore increase the understanding of the constructor of the model.
     \item AEs motivate the need for interpretability.
-    \item Interpretation techniques can provide insight of how to improve ML algorithms and make them more robust against AEs.
-    \item Explanations to end users may enclose too much information about the used model. This information can be used to build adversarial attacks.
+    \item Interpretation techniques can provide insight into how to improve ML algorithms and make them more robust against AEs.
+    \item Explanations to end users may enclose too much information about the used model. This information can be used to construct adversarial attacks.
 \end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Formal Definition}
 \begin{block}{Adversarial Input}
-Let $\epsilon>0$, $f:\Xspace \rightarrow \Yspace$ be an ML model, $y'\in \Yspace$ be a desired output, and $\xv \in \Xspace$ be an input correctly classified i.e. $f(\xv)=y_{\xv,true}$. We call $a_{\xv}$ an \textbf{adversarial input} to $\xv$ if:
+Let $\epsilon>0$, $f:\Xspace \rightarrow \Yspace$ be an ML model, $y'\in \Yspace$ be a desired output, and $\xv \in \Xspace$ be a real data point that the model classifies correctly. $f(\xv)=y_{\xv,true}$. We call $a_{\xv}$ an \textbf{adversarial input} to $\xv$ if:
 \begin{equation*}
     \| a_{\xv}- \xv\|<\epsilon\text{ and } f(a_{\xv})\neq y_{a_{\xv},true}=f(\xv).
 \end{equation*}
@@ -248,20 +249,21 @@ Moreover, we call $a_{\xv}$ \textbf{targeted} if $f(a_{\xv})=y'$.
 \begin{itemize}
     \item Intuitively speaking an adversarial is a data point close to a real, correctly classified input that is misclassified.
     \item It is called targeted if the class it is assigned to is determined.
-    \item An AE is the depiction of such an input in visual, textual or any other form. 
+%    \item An AE is the depiction of such an input in visual, textual or any other form. 
+    \item This definition of adversarials is restricted to classification tasks but can be generalized to regression problems.
 \end{itemize}
 \end{vbframe}
 
 
 \begin{vbframe}{AEs and Counterfactual Explanations}
-It seems as if AEs are defined very similarly to Counterfactual Explanations (CEs). Both, adversarials and counterfactuals describe inputs close to a given input $\xv$ that gets a different assignment. What are the differences?
+It seems as if AEs are defined very similarly to Counterfactual Explanations (CEs). Both adversarials and counterfactuals describe inputs close to a given input $\xv$ that gets a different assignment. What are the differences?
 \begin{itemize}
     \item Counterfactuals do not have to be misclassified.
-    \item Counterfactuals should be maximally close to $\xv$.
+%    \item Counterfactuals should be maximally close to $\xv$.
     \item Different notions of distance $\|\cdot\|$ are applied e.g. $p_{2,\infty}$-norm for AEs or $p_{0,1}$-norm for CEs.
-    \item Informal Difference I: AEs are largely considered for high-dimensional data, while CEs mostly in the context of low-dimensional data.
-    \item Informal Difference II: AEs hide changes while CEs highlight them.
-    \item \textbf{Joint Example:} If you had two more pets, your loan application would have been granted.
+    \item Informal difference I: AEs are largely considered for high-dimensional data, while CEs mostly in the context of low-dimensional data.
+    \item Informal difference II: AEs hide changes while CEs highlight them.
+    \item \textbf{Shared example:} If you had two more pets, your loan application would have been granted.
 \end{itemize}
 \end{vbframe}
 
@@ -275,7 +277,7 @@ There are many hypotheses about why AEs occur. We present a non-exhaustive list 
  % journal={arXiv preprint arXiv:1312.6199},
  % year={2013}
 %}
-    \item \textbf{Linearity Hypotheses (most popular):} Adversarial examples are omnipresent in the data manifold. They occur, because of the very linear behavior of CNNs (using ReLU as it's easy to optimize). Small changes of $\epsilon$ in every feature make a resultant change of $\epsilon\|w\|_1$ in prediction (for $w$ the weights in the linear function).
+    \item \textbf{Linearity Hypotheses (most popular):} Adversarial examples are omnipresent in the data manifold. They occur, because of the very linear behavior of commonly used models. Small changes of $\epsilon$ in every feature make a resultant change of $\epsilon\|w\|_1$ in prediction (for $w$ the weights in the linear function).
     %@article{goodfellow2014explaining,
  % title={Explaining and harnessing adversarial examples},
  % author={Goodfellow, Ian J and Shlens, Jonathon and Szegedy, Christian},
@@ -306,14 +308,14 @@ There exist various ways in the literature to generate such AEs for a given mode
     \item formulate the search for AEs as an \textbf{optimization problem}, e.g. 
     \begin{equation*}
         \label{eq:optimization}
-        \underset{\xv'\in \Xspace}{\text{argmin}}\; \| \xv-\xv' \|+\lambda\;    \vertiii{f(\xv')-y'}.
+        \underset{\xv'\in \Xspace}{\text{argmin}}\; \| \xv-\xv' \|_X+\lambda\;    \|f(\xv')-y'\|_Y.
     \end{equation*}
     \item use \textbf{sensitivity analysis} to find out about features that influence the target class.
     \item train a generative network to generate adversarials for a given model.
 \end{itemize}
 Moreover, dependent on the model access of the attacker we can distinguish between...
 \begin{itemize}
-    \item \textbf{White-Box Attacks}: the attacker has full access to the internals of the model.
+    \item \textbf{Full-Access Attacks}: the attacker has full access to the internals of the model.
     \item \textbf{Black-Box Attacks}: the attacker can only query the model on some inputs and receives the model's outputs.
 \end{itemize}
 \end{vbframe}
@@ -331,7 +333,7 @@ We have seen optimization problem approaches already for CEs. Therefore, we focu
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.44\linewidth]{figure/AEpanda.png}
-  \caption{An AE generated with the FGSM}
+  \caption{An AE generated with the FGSM. \href{https://arxiv.org/pdf/1412.6572.pdf}{\textit{Source Goodfellow et al. (2019)}}}
   \label{fig:mnist}
 \end{figure} 
 \end{vbframe}
@@ -357,12 +359,14 @@ We have seen optimization problem approaches already for CEs. Therefore, we focu
 \begin{vbframe}{Black-Box Attacks with Surrogates}
 The biggest threat comes from AEs that can be generated in a black-box scenario. Among these, solution approaches through surrogates are conceptually most interesting.
 \begin{itemize}
-    \item Query the model you aim to attack on data similar to the training data.
-    \item Use the labeled data you received to train a surrogate model by supervised learning e.g. a CNN.
-    \item Use white-box methods (e.g. Gradient-Based-Methods) to generate AEs for the surrogate model for the given optimisation problem.
+    \item Query the model you aim to attack as often as allowed on data similar to the training data.
+    \item Use the labeled data you received to train a surrogate model.% by supervised learning e.g. a CNN.
+    \item %Use white-box methods (e.g. Gradient-Based-Methods) to g
+    Generate AEs for the surrogate model.% for the given optimisation problem.
     \item Use these AEs to attack the original model.
 \end{itemize}
-Several experiments showed that such attacks are often successful. Papernot et al. call this surprising phenomenon the \textbf{Transferability} of AEs.
+Several experiments showed that such attacks are often successful.% Papernot et al. call 
+This surprising phenomenon is known as the \textbf{Transferability} of AEs.
 %
 %
 %@article{papernot2016transferability,
@@ -378,38 +382,38 @@ Several experiments showed that such attacks are often successful. Papernot et a
 There are several ways to protect your network against such attacks. We distinguish between two broad types of defenses, differing in the position in which they act.
 \begin{itemize}
     \item \textbf{Guards:} Act on the inputs a model receives. Includes methods to \textbf{detect anomalies} (e.g. statistical testing, or discriminator networks from GANs), or \textbf{conduct transformations} on inputs (e.g. PCA).
-    \item \textbf{Defense by Design:} Act on the employed model itself. Includes methods like \textbf{adversarial training} (train model on adversarials) or \textbf{architectural defenses} (e.g. removing low-predictive features from the model or imposing layer-wise contraints on output-variance) to make models more robust against AEs.
+    \item \textbf{Defense by Design:} Act on the employed model itself. Includes methods like \textbf{adversarial training} (train model on adversarials) or \textbf{architectural defenses} (e.g. removing low-predictive features from the model or imposing layer-wise constraints on output-variance) to make models more robust against AEs.
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Regularization Against AEs}
-The use of regularization techniques against AEs is motivated by most hypotheses that explain AEs. As an example we look at a technique based on the FGSM and the linearity hypotheses.
-\begin{itemize}
-    \item Goodfellow et al. suggest to specfiy the cost function s.t.
-    \begin{equation*}
-        \tilde{J}(\theta,\xv,y):=\alpha J(\theta,\xv,y)+(1-\alpha) J(\theta,\xv+\epsilon\cdot\text{sign}(\nabla_{\xv} J(\theta,\xv,y)),y)
-    \end{equation*}
-    with $\alpha=0.5$.
-    \item This increased the model robustness against FGSM generated AEs.
-    \item However, model are not only still prone to other AEs but also to many FGSM-AEs.
-    \item Applying such regularization terms can increase test error.
-\end{itemize}
-\end{vbframe}
+%\begin{vbframe}{Regularization Against AEs}
+%The use of regularization techniques against AEs is motivated by most hypotheses that explain AEs. As an example we look at a technique based on the FGSM and the linearity hypotheses.
+%\begin{itemize}
+%    \item Goodfellow et al. suggest to specfiy the cost function s.t.
+%    \begin{equation*}
+%        \tilde{J}(\theta,\xv,y):=\alpha J(\theta,\xv,y)+(1-\alpha) J(\theta,\xv+\epsilon\cdot\text{sign}(\nabla_{\xv} J(\theta,\xv,y)),y)
+%    \end{equation*}
+%    with $\alpha=0.5$.
+%    \item This increased the model robustness against FGSM generated AEs.
+%    \item However, model are not only still prone to other AEs but also to many FGSM-AEs.
+%    \item Applying such regularization terms can increase test error.
+%\end{itemize}
+%\end{vbframe}
 
 \begin{vbframe}{Summary}
 \begin{itemize}
-    \item AEs are not explanations themselves, but are strongly connected to them conceptually.
-    \item AEs can be generated in white-box and black-box settings. Crucial modelling decisions are the distance measure, the local environment, and the target level (model or process).
+    \item AEs are not explanations themselves but are strongly connected to them conceptually.
+    \item AEs can be generated in white-box and black-box settings. Crucial modeling decisions are the distance measure, the local environment, and the target level (model or process).
     \item There are various hypotheses on the existence of AEs which also motivate different defense strategies.
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Outlook}
-\begin{itemize}
-    \item Even in highly non-linear models AEs occur. As long as their existence is not well-understood, defenses against them will have limited power.
-    \item More and more different distance measures are considered, e.g. $p_0$ for one pixel attacks, the Wasserstein-metric or psychologically motivated measures like the Perceptual Adversarial Similarity Score (PASS).
-    \item Recent work considered AEs that fool both, humans and ML models. AEs may be a case where research on human and machine perception can profit from each other.
-\end{itemize}
+%\begin{vbframe}{Outlook}
+%\begin{itemize}
+%    \item Even in highly non-linear models AEs occur. As long as their existence is not well-understood, defenses against them will have limited power.
+%    \item More and more different distance measures are considered, e.g. $p_0$ for one-pixel attacks, the Wasserstein-metric or psychologically motivated measures like the Perceptual Adversarial Similarity Score (PASS).
+%    \item Recent work considered AEs that fool both, humans and ML models. AEs may be a case where research on human and machine perception can profit from each other.
+%\end{itemize}
 %@misc{rozsa2016adversarial,
 %      title={Adversarial Diversity and Hard Positive Generation}, 
 %      author={Andras Rozsa and Ethan M. Rudd and Terrance E. Boult},
@@ -418,9 +422,15 @@ The use of regularization techniques against AEs is motivated by most hypotheses
 %      archivePrefix={arXiv},
 %      primaryClass={cs.CV}
 %}
+%\end{vbframe}
+
+\begin{vbframe}{Central References}
+\begin{itemize}
+    \item Serban, A., Poll, E., & Visser, J. (2020). Adversarial examples on object recognition: A comprehensive survey. ACM Computing Surveys (CSUR), 53(3), 1-38.
+    \item Goodfellow, I. J., Shlens, J., & Szegedy, C. (2014). Explaining and harnessing adversarial examples. arXiv preprint arXiv:1412.6572.
+    \item Yuan, X., He, P., Zhu, Q., & Li, X. (2019). Adversarial examples: Attacks and defenses for deep learning. IEEE transactions on neural networks and learning systems, 30(9), 2805-2824.
+\end{itemize}
 \end{vbframe}
-
-
 
 
 \endlecture
