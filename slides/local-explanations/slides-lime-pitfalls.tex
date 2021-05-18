@@ -243,11 +243,13 @@
 
 \textbf{Pitfall 5: Possibility to hide biases}
 \begin{itemize}
-	\item Slack et al. (2020) showed that data scientist could manipulate their model to hide biases. 
-	\item They make use of the fact that sampled instances to build the surrogate model are out of the input data distribution if we do not account for feature dependencies. 
-	\item They built a classifier that detects whether a given data point is an out-of-distribution sample or not. 
-	\item If the sample is out-of-distribution (usually samples for the surrogate models), an unbiased predictor is used, otherwise a biased on. 
-	\item Since the surrogate model is trained on samples whose target values are derived from an unbiased predictor, the explanations do not detect any bias although the original predictor is biased. 
+	\item Slack et al. (2020) showed that data scientists could manipulate their model to hide biases. 
+	\item They make use of the fact that sampled instances for the surrogate model are out of the input data distribution if we do not account for feature dependencies. 
+	\item We can built a classifier that detects whether a given data point is an out-of-distribution sample or not using the original training data and data sampled by LIME. 
+	\item If a new data point has the same distribution as the training data, the prediction of the biased classifier is returned. If a new data point is out-of-distribution (usually samples for the surrogate models), the unbiased prediction is returned.
+	\item For the credit dataset, a biased model could be a model solely trained on the feature `gender`, while an unbiased model could be trained on features uncorrelated with `gender` -- for example, percentage of income the credit rate represents.   
+	\item Since the surrogate model is trained on out-of-distribution samples, the predictions of these samples are derived from an unbiased predictor. 
+	\item Consequently, the explanations do not detect any bias although the original predictor is biased. 
 \end{itemize}
 \footnote[frame]{Dylan Slack et al. (2020). Fooling LIME and SHAP: Adversarial Attacks on Post hoc Explanation Methods. In Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society (AIES '20). Association for Computing Machinery, New York, NY, USA, 180–186.}
 \end{vbframe}
@@ -257,8 +259,29 @@
 \begin{itemize}
 	\item Another really big problem is the instability of the explanations. 
 	\item Explanations of two very close points could vary greatly. 
-	\item But also if $\xv$ is fixed and only new sampled data sets $Z$ are used, the resulting explanations could differ.  
+	\item But also if $\fh$ and $\xv$ are fixed, and only new sampled data points $\zv$ are used, the resulting explanations could differ. This is called the \textbf{Rashomon Effect} since we receive multiple different explanations for a single data point. 
 \end{itemize}
+\vspace{-0.7cm}
+\begin{columns}
+	\begin{column}{0.48\textwidth}
+		\begin{center}
+		
+		\includegraphics[width=0.6\textwidth]{figure/lime_robustness_1.png}
+		
+		\tiny{Figure: Linear prediction task (logistic regression). Linear surrogate returns similar coefficients for similar points.}
+		
+		\end{center}
+	\end{column}
+	\begin{column}{0.48\textwidth}
+		\begin{center}
+	\includegraphics[width=0.6\textwidth]{figure/lime_robustness_2.png}
+	
+	\tiny{Figure: Circular prediction task (random forest). Linear surrogate returns different coefficients for similar points.}
+	
+	\end{center}
+\end{column}
+\end{columns}
+\vspace{-0.2cm}
 \footnote[frame]{Alvarez-Melis, D., \& Jaakkola, T. (2018). On the Robustness of Interpretability Methods. ArXiv, abs/1806.08049.}
 \end{vbframe}
 
