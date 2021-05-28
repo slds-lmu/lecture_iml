@@ -182,13 +182,13 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
  
  	\begin{vbframe}{Local model fidelity}
  		\begin{itemize}
- 			\item A model $g$ is locally faithful to $f$ w.r.t. an point $\xv$ if for points $\zv \in \Zspace \subseteq \R^p$ in the vicinity of $\xv$ the predictions of $g(\zv)$ are close to $\fh(\zv)$. 
+ 			\item A model $g$ is locally faithful to $f$ w.r.t. a point $\xv$ if for points $\zv \in \Zspace \subseteq \R^p$ close to $\xv$ the predictions of $g(\zv)$ are close to $\fh(\zv)$. 
  			 \item We can rephrase that in an optimization task: the closer $\zv$ is to $\xv$, the closer $g(\xv)$ should be to $\fh(\zv)$.  
  			\item For this definition we need two measures:
  			\begin{enumerate}
  				\item A proximity measure $\neigh(\zv)$ between $\zv$ and $\xv$, e.g. the exponential kernel which converts any distance measure into a similarity measure 
  				$$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$$ 
- 				with $\sigma$ as the kernel width. $d$ could be for example the Euclidean distance (numeric features) or the Gower distance (mixed features). 
+ 				with $\sigma$ as the kernel width. $d$ could be for example the Euclidean distance (numeric features) or the Gower distance $d_G$ (mixed features). 
  				\item A distance measure or loss function $L(\fh(\zv), g(\zv))$ to assess how close the predictions of $\fh(\zv)$ and $g(\zv)$ are, e.g. the L2 loss/squared error $$L(\fh(\zv), g(\zv)) = (g(\zv) - \fh(\zv))^2.$$ 
  			\end{enumerate}
  			\item Given points $\zv$, we can measure local fidelity of $g$ with respect to $f$ in terms of a weighted loss
@@ -250,7 +250,7 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
 			\includegraphics[width=0.4\textwidth]{figure/lime4}
 		\end{center}
 	An alternative is the Gower proximity: 
-	$\neigh(\zv) = 1 - \frac{1}{p}\sum_{j = 1}^{p} d_G(z_j, x_j) $ 
+	$\neigh(\zv) = 1 - \Gower(\zv, \xv) =  1 - \frac{1}{p}\sum_{j = 1}^{p} \delta_G(z_j, x_j) $ 
 	$\textnormal{ with } \delta_G(z_j, x_j) = 
 	\begin{cases}
 	\frac{1}{\widehat{R}_j}|z_j- x_j| & \text{if $x_j$ and $z_j$ are numerical} \\
