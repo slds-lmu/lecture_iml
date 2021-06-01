@@ -55,7 +55,6 @@ X = data.frame(pch, x, dL)
 X.aggr = aggregate(dL ~ x, data = X, FUN = mean, na.rm = TRUE)
 
 pdf(file = "../figure_man/ICE.pdf", width = 5, height = 4)
-par(mar = c(3,3.5,0.25,0.25))
 pch.sym = paste0("i=", c("1","2","3"))
 p = pch.sym[pch]
 #p[p == x] = NA
@@ -63,6 +62,16 @@ p = pch.sym[pch]
 split = split(X, X$pch)
 split = lapply(split, function(x) x[order(x$x), ])
 
+
+par(mar = c(3,3.5,0.25,0.25))
+plotImportanceDemo(x[1], dL[1], ylab = expression(hat(f)[S]), main = "",
+  split = lapply(split[1], function(x) x[1,]), i = 1, col  = "red")
+
+par(mar = c(3,3.5,0.25,0.25))
+plotImportanceDemo(x[1], dL[1], ylab = expression(hat(f)[S]), main = "",
+  split = lapply(split[1], function(x) x[1:2,]), i = 1, col  = "red")
+
+par(mar = c(3,3.5,0.25,0.25))
 plotImportanceDemo(x, dL, ylab = expression(hat(f)[S]), main = "",
   split = split, i = 1, col  = "red")
 # plotImportanceDemo(x, dL, ylab = expression(hat(f)[S]), main = "",

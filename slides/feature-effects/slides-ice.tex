@@ -160,148 +160,199 @@ $\xrightarrow[]{\text{aggregate}}$ \hspace{2px} Global (number)
 
 \end{vbframe}
 
+
+
+\begin{vbframe}{Feature Effects}
+
+Effects von LM und GAM zeigen
+
+Because
+
+\end{vbframe}
+
 \begin{vbframe}{Individual Conditional Expectation (ICE)}
 
 %Consider an index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
-Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
-
+%\lz
+\begin{columns}[T]
+\begin{column}{0.18\textwidth} % 0.2 4.26cm
+\includegraphics[page=1, trim=0cm 0.35cm 4.53cm 0.35cm, clip, width=\textwidth]{figure_man/ice_plot_demo}
+\end{column}
+\begin{column}{0.82\textwidth}
+%Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values from the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
+%Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
+%Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing values from features addressed by the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
+Partition each observation $\xi$ into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 \lz
 
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.6\textwidth}
 Individual conditional expectation (ICE) curves visualize how the model prediction of individual observations $\xi$
 change by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed:
 $$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S, \xi_C)$$
 
 In practice, $\xv_S$ consists of one or two features.
-
-\end{column}
-\begin{column}{0.4\textwidth}
-%\begin{center}
-\centerline{\includegraphics[width=\textwidth]{figure_man/ice_bike10obs}}
-%\end{center}
-%\vspace{-0.3cm}
-\scriptsize{\textbf{Figure:} ICE Curves of 10 observations of the bike sharing dataset. Each line displays the change in prediction for a single observation due to varying the feature temperature.\par}
-
 \end{column}
 \end{columns}
+
+% \begin{columns}[T, totalwidth=\textwidth]
+% \begin{column}{0.6\textwidth}
+
+
+% \end{column}
+% \begin{column}{0.4\textwidth}
+% %\begin{center}
+% \centerline{\includegraphics[width=\textwidth]{figure_man/ice_bike10obs}}
+% %\end{center}
+% %\vspace{-0.3cm}
+% \scriptsize{\textbf{Figure:} ICE Curves of 10 observations of the bike sharing dataset. Each line displays the change in prediction for a single observation due to varying the feature temperature.\par}
+%
+% \end{column}
+% \end{columns}
 \footnote[frame]{Goldstein, A., Kapelner, A., Bleich, J., and Pitkin, E. (2013). Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation, 1-22. https://doi.org/10.1080/10618600.2014.907095}
 \end{vbframe}
 
+% \begin{vbframe}{Individual Conditional Expectation (ICE)}
+%
+% Steps to create an ICE curve of an observation regarding a single feature $x_S$ according to the \textbf{SIPA} framework:
+%
+% \begin{enumerate}
+% \item \textbf{Sampling:} Choose grid points along $x_S$.
+% \item For each grid point:
+% \begin{itemize}
+% \item \textbf{Intervention:} Replace the original feature value $x_S$ with the current grid value.
+% \item \textbf{Prediction:} Get the model prediction with replaced feature value $x_S$.
+% \end{itemize}
+% \item \textbf{Aggregation:} none.
+% \item \textbf{Visualization:} Draw a curve per observation with the grid points on the x-axis and the prediction on the y-axis.
+% \end{enumerate}
+%
+% \footnote[frame]{Scholbeck, C. A., Molnar, C., Heumann, C., Bischl, B., and Casalicchio, G. (2019). Sampling, Intervention, Prediction, Aggregation: A Generalized Framework for Model Agnostic Interpretations. ECML PKDD 2019. (pp. 205-216).}
+% \end{vbframe}
+
+% \begin{vbframe}{Individual Conditional Expectation (ICE)}
+%
+% \begin{columns}[T]
+% \begin{column}{0.45\textwidth}
+% \includegraphics[page=1, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+% \end{column}
+% \begin{column}{0.55\textwidth}
+%
+% \end{column}
+% \end{columns}
+% \vspace*{\topsep}
+%
+% aa
+% \end{vbframe}
+
+
 \begin{vbframe}{Individual Conditional Expectation (ICE)}
 
-Steps to create an ICE curve of an observation regarding a single feature $x_S$ according to the \textbf{SIPA} framework:
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\includegraphics[page=2, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\end{column}
+\begin{column}{0.55\textwidth}
 
-\begin{enumerate}
-\item \textbf{Sampling:} Choose grid points along $x_S$.
-\item For each grid point:
-\begin{itemize}
-\item \textbf{Intervention:} Replace the original feature value $x_S$ with the current grid value.
-\item \textbf{Prediction:} Get the model prediction with replaced feature value $x_S$.
-\end{itemize}
-\item \textbf{Aggregation:} none.
-\item \textbf{Visualization:} Draw a curve per observation with the grid points on the x-axis and the prediction on the y-axis.
-\end{enumerate}
+\end{column}
+\end{columns}
+\vspace*{\topsep}
 
-\footnote[frame]{Scholbeck, C. A., Molnar, C., Heumann, C., Bischl, B., and Casalicchio, G. (2019). Sampling, Intervention, Prediction, Aggregation: A Generalized Framework for Model Agnostic Interpretations. ECML PKDD 2019. (pp. 205-216).}
+\textbf{Grid points:}
+
+The first step is to choose the $i$-th observation and to sample grid values along the feature of interest (here: $x_1$).
+The original feature value of the $i$-th observation will be replaced by the grid values (here with $1, 2, 3$). \newline
+$\Rightarrow$ We obtain new artificial data points for the $i$-th observation.
+
+
+\framebreak
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\includegraphics[page=3, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\end{column}
+\begin{column}{0.55\textwidth}
+\includegraphics[page=1, width=0.95\textwidth]{figure_man/ICE}
+\end{column}
+\end{columns}
+\vspace*{\topsep}
+
+\textbf{Predict and visualize:}
+
+Make predictions for each artificially created data point of the $i$-th observation and plot $\fh_{1}^{(i)}(x_1)$ vs. $x_1$, where $$\fh_{1}^{(i)}(x_1) = \fh(x_1, \xi_{2, 3}).$$
+
+
+\framebreak
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\includegraphics[page=4, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\end{column}
+\begin{column}{0.55\textwidth}
+\includegraphics[page=2, width=0.95\textwidth]{figure_man/ICE}
+\end{column}
+\end{columns}
+\vspace*{\topsep}
+
+\textbf{Predict and visualize:}
+
+Make predictions for each artificially created data point of the $i$-th observation and plot $\fh_{1}^{(i)}(x_1)$ vs. $x_1$, where $$\fh_{1}^{(i)}(x_1) = \fh(x_1, \xi_{2, 3}).$$
+
+\framebreak
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\end{column}
+\begin{column}{0.55\textwidth}
+\includegraphics[page=3, width=0.95\textwidth]{figure_man/ICE}
+\end{column}
+\end{columns}
+\vspace*{\topsep}
+
+\textbf{Predict and visualize:}
+
+Make predictions for each artificially created data point of the $i$-th observation and plot $\fh_{1}^{(i)}(x_1)$ vs. $x_1$, where $$\fh_{1}^{(i)}(x_1) = \fh(x_1, \xi_{2, 3}).$$
+
+\framebreak
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\includegraphics[page=6, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\end{column}
+\begin{column}{0.55\textwidth}
+\includegraphics[page=4, width=0.95\textwidth]{figure_man/ICE}
+\end{column}
+\end{columns}
+\vspace*{\topsep}
+
+\textbf{Repeat for other observation:}
+
+The ICE curve of observation $i=2$ connects all predictions at the corresponding grid values associated to the $i$-th observation.
+
+\framebreak
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\includegraphics[page=7, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\end{column}
+\begin{column}{0.55\textwidth}
+%\begin{center}
+\includegraphics[page=5, width=0.95\textwidth]{figure_man/ICE}
+%\end{center}
+\end{column}
+\end{columns}
+\vspace*{\topsep}
+
+\textbf{Repeat for other observation:}
+
+The ICE curve of observation $i=3$ connects all predictions at the corresponding grid values associated to the $i$-th observation.
 \end{vbframe}
 
-\begin{vbframe}{Individual Conditional Expectation (ICE)}
-%\vspace*{-\topsep}
-\vspace*{-\lineskip}
-%\vspace*{-\baselineskip}
 
-%\begin{center}
-\includegraphics[page=1, width=0.55\textwidth]{figure_man/ice_pd_plot_demo}
-%\end{center}
-
-\textbf{Sampling:} Choose grid points along $x_1  $ that will be used to intervene the data (here: all unique values $1, 2$ and $3$).
-
-\framebreak
-
-%\begin{center}
-\includegraphics[page=2, width=0.55\textwidth]{figure_man/ice_pd_plot_demo}
-%\end{center}
-
-\textbf{Intervention:} Replace all observed values in $x_1$ for each observation with the previously sampled grid points.
-
-\framebreak
-
-%\begin{center}
-\includegraphics[page=3, width=0.55\textwidth]{figure_man/ice_pd_plot_demo}
-%\end{center}
-
-\textbf{Prediction:} Make predictions and plot $\fh_{1}^{(i)}(x_1)$ vs. $x_1$, where $$\fh_{1}^{(i)}(x_1) = \fh(x_1, \xi_{2, 3}).$$
-
-\framebreak
-
-%\vspace*{-\baselineskip}
-%\vspace{1cm}
-\begin{columns}[T]
-\begin{column}{0.55\textwidth}
-\vspace*{-\topsep}
-\vspace*{0.5\lineskip}
-%\centering
-\includegraphics[page=5, trim=-3.69cm 0cm 3.69cm 0cm, width=\textwidth]{figure_man/ice_pd_plot_demo}
-\end{column}
-\begin{column}{0.45\textwidth}
-%\vspace{0.3cm}
-
-\begin{center}
-\includegraphics[page=1, width=\textwidth]{figure_man/ICE}
-\end{center}
-
-\end{column}
-\end{columns}
-\vspace*{\topsep}
-
-\textbf{Visualization:} ICE curve for observation $i=1$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
-
-\framebreak
-
-%\vspace{1cm}
-\begin{columns}[T]
-\begin{column}{0.55\textwidth}
-\vspace*{-\topsep}
-\vspace*{0.5\lineskip}
-%\centering
-\includegraphics[page=6, trim=-3.69cm 0cm 3.69cm 0cm, width=\textwidth]{figure_man/ice_pd_plot_demo}
-\end{column}
-\begin{column}{0.45\textwidth}
-%\vspace{0.3cm}
-
-\begin{center}
-\includegraphics[page=2, width=\textwidth]{figure_man/ICE}
-\end{center}
-
-\end{column}
-\end{columns}
-\vspace*{\topsep}
-
-\textbf{Visualization:} ICE curve for observation $i=2$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
-
-\framebreak
-
-%\vspace{1cm}
-\begin{columns}[T]
-\begin{column}{0.55\textwidth}
-%\centering
-\vspace*{-\topsep}
-\vspace*{0.5\lineskip}
-\includegraphics[page=7, trim=-3.69cm 0cm 3.69cm 0cm, width=\textwidth]{figure_man/ice_pd_plot_demo}
-\end{column}
-\begin{column}{0.45\textwidth}
-%\vspace{0.3cm}
-
-\begin{center}
-\includegraphics[page=3, width=\textwidth]{figure_man/ICE}
-\end{center}
-
-\end{column}
-\end{columns}
-\vspace*{\topsep}
-
-\textbf{Visualization:} ICE curve for observation $i=3$ connects all predictions at the corresponding grid points associated to the $i$-th observation.
+\begin{vbframe}{Comments}
+\begin{itemize}
+\item Local interpretation method
+\item Grid values: uniform values, all unique observed values,
+\end{itemize}
 \end{vbframe}
 
 \endlecture

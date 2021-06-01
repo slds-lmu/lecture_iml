@@ -97,10 +97,43 @@ pgrid = p + ylim(c(-10,10)) +
   theme(legend.position = c(0.2, 0.875), legend.title = element_blank())
     #legend.background = element_rect(size = 0.5, linetype = "solid", colour = "black"))
 
+
+
+
+label5 = expression(atop(displaystyle(atop(
+  paste("ALE plot at"~X[1]~"= 0 averages and"),
+  paste("accumulates the local effect ", frac(delta~f(x[1]~X[2]),delta~x[1]), " over"))),
+  paste("the conditional distribution of"~X[2]~"|"~X[1]~"="~x[1])
+))
+label6 = expression(paste("conditional distribution of"~X[2]~"|"~X[1]~"= 0"))
+aleplot = p +
+  geom_vline(xintercept = 0, alpha = 0.5) +
+  geom_path(data = cond_discrete, aes(x = -5*y + xcond, y = x + ymid), alpha = 0.5, lwd = 2) +
+  annotate(geom = "segment",
+    x = 0,
+    y = cond_discrete$x[nrow(cond_discrete)/2],
+    xend = xcond + 1, yend = ymid - 4,
+    arrow = arrow(length = unit(2, "mm"))) +
+  annotate(geom = "segment",
+    x = -5*cond_discrete$y[400] + xcond,
+    y = cond_discrete$x[400] + ymid,
+    xend = -2.5, yend = 4,
+    arrow = arrow(length = unit(2, "mm"))) +
+  annotate(geom = "label", x = xcond + 0.1, y = ymid - 5, label = label5,
+    hjust = "left") +
+  annotate(geom = "label", x = -5, y = 5, label = label6,
+    hjust = "left") + ylim(c(-10,10))
+
+
+
+
+
+
 ggsave("../figure_man/ale_scatter.pdf", p + ylim(c(-10,10)), width = 5.5, height = 4)
 ggsave("../figure_man/ale_scatter_grid.pdf", pgrid, width = 5.5, height = 4)
 ggsave("../figure_man/ale_mplot.pdf", mplot, width = 5.5, height = 4)
 ggsave("../figure_man/ale_pdplot.pdf", pdplot, width = 5.5, height = 4)
+ggsave("../figure_man/ale_plot.pdf", aleplot, width = 7, height = 4)
 
 ######################################################
 
