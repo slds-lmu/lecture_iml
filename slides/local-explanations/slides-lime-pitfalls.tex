@@ -170,7 +170,7 @@
      		\includegraphics[width=0.6\textwidth]{figure/lime_locality}
      		\vspace{-0.5cm}
      		
-     		\scriptsize{\textbf{Figure:} Linear surrogate models for two different data points based on the same model with one target and one feature. Each line displays one linear surrogate model with a different kernel width. In the right figure larger, kernel sizes are more severe.}
+     		\scriptsize{\textbf{Figure:} Linear surrogate models for two different data points based on the same model with one target and one feature. Each line displays one linear surrogate model with a different kernel width. For the data point in the right figure, larger kernel sizes are more severe.}
      		
      	\end{center}
      \item A larger kernel width means that instances that are farther away also influence the model such that we do not receive a local but a global surrogate model. 
@@ -187,48 +187,52 @@
 \begin{vbframe}{LIME Pitfalls}
 
 \textbf{Pitfall 3: Local vs. global features}
-\begin{itemize}
-	\item There exist two types of features: Features with a \textbf{global} influence that influence the global shape of the black-box model and features with a \textbf{local} influence that impact predictions for a small area of the whole features space. 
-	\item For example in decision trees, splitting variables close to the root have a more global influence than the ones close to the leaves. 
-	\item Im most LIME implementations, new instances are sampled from the whole input space and are not taken around $\xv$.
-	\item Laugel et al. (2018) showed that this tends to hide the features with a local influence for the benefit of features with a global influence even when the kernel width was reduced. 
-	\item Instead of global sampling, the authors propose to sample new instances $\zv$ precisely around the decision boundary closest from point $\xv$ for higher local accuracy of the surrogate model. 
-\end{itemize}
-
-\framebreak
-
 
 \begin{columns}
-	
-	\begin{column}{0.68\textwidth}
-			\vspace{-0.7cm}
-		 \begin{center}
-		\includegraphics[width=1\textwidth]{figure/lime_bordersample}
+	\begin{column}{0.78\textwidth}
+\begin{itemize}
+	\item There are features that influence the \textbf{global} shape of the black-box model and \textbf{local} features that impact predictions for a small area of $\Xspace$. 
+	\item For example in decision trees, splitting variables close to the root have a more global influence than the ones close to the leaves. 
+	\item In most implementations, instances for the surrogate model are sampled from the whole input space which tends to hide the features with a local influence for the benefit of features with a global influence even when the kernel width was reduced. 
+	\item Laugel et al. (2018) propose to sample new instances $\zv$ around the decision boundary closest from point $\xv$ for higher local accuracy.
+\end{itemize}
+\end{column}
+\begin{column}{0.2\textwidth}
+
+			\vspace{-0.2cm}
+		\includegraphics[width=1.2\textwidth]{figure/lime_bordersample2}
 		
 		\vspace{-0.3cm}
-		{\tiny \textbf{Figure:} Proposed method by Laugel et al. (2018). Source: \href{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}{ICML WHI 2018}}
 		
-	\end{center}
- 	\end{column}
-	\begin{column}{0.3\textwidth}
-			\vspace{-0.7cm}
 		\begin{center}
-			\includegraphics[width=1\textwidth]{figure/lime-globallocal}
-			
-			\vspace{-0.3cm}
-			{\tiny \textbf{Figure:} Half-moons dataset.}
-			
+			\tiny{\textbf{Figure:} Proposed method by Laugel et al. (2018). Source: \href{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}{ICML WHI 2018}}
 		\end{center}
-	\end{column}
+
+	
+ 	\end{column}
 \end{columns}
-\vspace{0.3cm}
-	\begin{itemize}
-		\item E.g., let us explain the prediction of the green dot (right figure). Background colors display predictions of a random forest. 
-		\item The decision boundary of LIME with default kernel width (green line) does not match the direction of the steeper local boundary. 
-		\item LIME with reduced kernel width (blue line) performs a bit better but still does not approximate the local border properly. 
+\framebreak
+\begin{columns}
+	\begin{column}{0.6\textwidth}
+		\begin{itemize}
+		\item Let us explain the prediction of the green dot. Background colors display predictions of a random forest, the gray line is the decision boundary.
+		\item The decision boundary of LIME with default kernel width (green line) and reduced kernel width (blue line) do not match the direction of the steeper local boundary. 
 		\item The method of Laugel et al. (2018) (red line) approximates the local border direction better. The red dot is the point closest to the border detected by this method. 
 	\end{itemize}
+\end{column}
+\begin{column}{0.39\textwidth}
+\vspace{0.3cm}
 
+	\begin{center}
+	\includegraphics[width=1.1\textwidth]{figure/lime-globallocal2}
+	
+	\vspace{-0.3cm}
+	{\tiny \textbf{Figure:} Half-moons dataset.}
+	
+\end{center}
+
+	\end{column}
+\end{columns}
 \footnote[frame]{Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.}
 \end{vbframe}
 
