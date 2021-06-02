@@ -237,9 +237,36 @@ Assume you work in a car company and are about to use an image classifier for au
 		\item \textbf{Model classes:} Mostly model-agnostic in definition but model-specific for computational reasons, very popular also for deep learning models.
 		\item \textbf{Audience:} ML modelers and laypersons.
 		\item \textbf{Data types:} Many, including tabular, image, text and audio data.
-		\item \textbf{Methods:} Many, most prominent are counterfactual explanations, SHAP, local interpretable model-agnostic explanations (LIME), adversarial examples, ceteris-paribus (single ICE curve), anchors.
+		\item \textbf{Methods:} Many, most prominent are counterfactual explanations, shapley values, local interpretable model-agnostic explanations (LIME), adversarial examples, single ICE curve, anchors.
 		\item \textbf{Special:} Due to audience, strong interactions with social sciences. Also, strong connections to cognitive science and neurosciences due to data types.
 	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Recap: ICE Curve}
+		\begin{itemize}
+		\item ICE curves visualize how the model prediction $\fh(\xv)$ of a individual observation $\xv$ change by varying the feature values of one or two features while keeping all other features fixed. 
+		\item ICE curves must be interpreted with care for highly correlated features or feature regions with a few observations. 
+	\end{itemize}
+\vspace{0.5cm}
+\begin{columns}
+	\begin{column}{0.47\textwidth}
+		\includegraphics[width=1\textwidth]{figure/bike-sharing-dataset01.png}
+	\end{column}
+	\begin{column}{0.47\textwidth}
+		\includegraphics[width=1\textwidth]{figure/bike-sharing-dataset02.png}
+	\end{column}
+\end{columns}
+\end{vbframe}
+
+\begin{vbframe}{Recap: Shapley Values}
+	\begin{itemize}
+		\item Shapley values were original proposed in game theory.
+		\item They are a local explanation method because they tell us how each feature $x_j$ contributes to the overall prediction $\fh(\xv)$ of a specific observation $\xv$. 
+	\end{itemize}
+\vspace{0.5cm}
+\begin{center}
+	\includegraphics[width=0.8\textwidth]{figure/shapley_valuefct}
+\end{center}
 \end{vbframe}
 
 \begin{vbframe}{Credit Dataset}
@@ -268,13 +295,6 @@ Assume you work in a car company and are about to use an image classifier for au
 				risk & factor & \{good, bad\}
 			\end{tabular}
 		\end{center}
-\end{vbframe}
-
-\begin{vbframe}{Literature}
-	\begin{itemize}
-		\small
-		\item For an overview see: Molnar, Christoph (2019). Interpretable machine learning. A Guide for Making Black Box Models Explainable". Chapter 5 and Chapter 6. \url{https://christophm.github.io/interpretable-ml-book/}.
-	\end{itemize}
 \end{vbframe}
 
 \endlecture
