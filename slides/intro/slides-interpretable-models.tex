@@ -131,63 +131,76 @@ shorten >=2pt,}
 \newcommand{\learninggoals}{
 \item Interpretable Models}
 
-\lecturechapter{Introduction and Background}
+
+\lecturechapter{Interpretable Models}
 \lecture{Interpretable Machine Learning}
- 
-\begin{vbframe}{High-Dimensional Model Representation}
+
+
+\begin{vbframe}{Interpretable Models}
+\textbf{Linear models (LM) and generalized linear models (GLM):}
+
+The specification of model parameters makes LMs and GLMs intrinsically interpretable.
 
 \begin{itemize}
-\item
-A high-dimensional model representation (HDMR) decomposes the model into a sum of effect terms of increasing order:
-\begin{align*}
-\hat{f}(x) &= g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \\
-&\phantom{{}={}} + \;\dots\; + g_{\{1,\ldots,p\}}(x_1, \ldots,x_p)
-\end{align*}
-\item The features need to be independent to make the HDMR unique.
-\item Different techniques to estimate an additive decomposition exist, e.g., repeated expectations (partial dependence / PD) or accumulated local effects (ALE).
 
+\item \textbf{LM:}
+$$
+\mathbb{E}_Y(y \vert x) = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \epsilon
+$$
+
+\item \textbf{GLM:}
+$$
+g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p
+$$
 \end{itemize}
-\end{vbframe}
 
-\begin{vbframe}{Additive Decomposition of a Prediction Function}
 
-Consider the estimation via iterative expectations:
-\begin{align*}
- g_{\{0\}} &= \mathbb{E}_X\left[\widehat{f}(x)\right] \\
- g_{\{1\}}(x_1) &= \mathbb{E}_{X_{-1}}\left[\widehat{f}(x) \; \vert  \; X_1 \right] - g_{\{0\}} \\
- g_{\{2\}}(x_2) &= \mathbb{E}_{X_{-2}}\left[\widehat{f}(x) \; \vert  \; X_2 \right] - g_{\{0\}} \\
- g_{\{1, 2\}}(x_1, x_2) &= \mathbb{E}_{X_{-\{1,2\}}}\left[\widehat{f}(x) \; \vert \; X_1, X_2 \right] - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
- &\vdots \\
- g_{\{1, \dots, p\}}(x) &= \widehat{f}(x) - \dots - g_{\{1, 2\}}(x_1, x_2) \\
- &\phantom{{}={}} - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
-\end{align*}
+\textbf{Generalized additive models (GAM):} Add flexibility by replacing linear term by more general functional form, but retain interpretability by keeping the pre-specified additive predictor.
+
+$$
+g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 h(x_1) + \dots + \beta_p h(x_p)
+$$
 
 \end{vbframe}
 
-\begin{vbframe}{Functional ANOVA}
 
-After $\hat{f}$ has been decomposed, we can conduct a functional analysis of variance (functional ANOVA / FANOVA):
+\begin{vbframe}{Interpretable Models}
+
+
+\textbf{Model-based boosting:}
+
 \begin{itemize}
-\item
-\begin{align*}
-Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \right. \\
-&\phantom{{}={}} \left. + \;\dots\; + g_{\{1,\ldots,p\}}(x) \right]
-\end{align*}
-\item If the features are independent, the variance can be additively decomposed without covariances:
-\begin{align*}
-Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}}\right] + Var\left[g_{\{1\}}(x_1)\right] + Var\left[g_{\{2\}}(x_2)\right] \\
-&\phantom{{}={}} + Var\left[g_{\{1, 2\}}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\{1,\ldots,p\}}(x)\right]
-\end{align*}
-\item Dividing by the prediction variance results in the fraction of variance explained by each term:
-\begin{align*}
-1 &= \frac{Var\left[g_{\{0\}}\right]}{\predvar} + \frac{Var\left[g_{\{1\}}(x_1)\right]}{\predvar} + \frac{Var\left[g_{\{2\}}(x_2)\right]}{\predvar} \\
-&\phantom{{}={}} + \frac{Var\left[g_{\{1, 2\}}(x_1, x_2)\right]}{\predvar} + \;\dots\; + \frac{Var\left[g_{\{1,\ldots,p\}}(x)\right]}{\predvar}
-\end{align*}
 
-\item The fraction of variance explained by a term is referred to as the Sobol index:
+\item 
+Idea: Combine boosting with interpretable base learners (e.g., linear model with single parameter).
+\item
+Consider two linear base learners $b_j(x, \Theta)$ and $b_j(x, \Theta^{\star})$ with the same type, but distinct parameter vectors $\Theta$ and $\Theta^{\star}$. They can be combined in a base learner of the same type:
+
 $$
-S_j = \frac{Var\left[g_{\{j\}}(x_j)\right]}{Var\left[\hat{f}(x)\right]}
+b_j(x, \Theta) + b_j(x, \Theta^{\star}) = b_j(x, \Theta + \Theta^{\star})
 $$
+\item We create a selection of interpretable base learners. In each iteration, all base learners are trained on the so-called pseudo residuals, and the one with the best fit is added to the previously computed model.
+\item The final model has an additive structure (equivalent to a GAM), where each component function is itself interpretable.
+\end{itemize}
+
+
+
+\end{vbframe}
+
+\begin{vbframe}{Interpretable Models}
+
+
+\textbf{Rule-based ML:}
+
+
+Decision rules follow a general structure: IF the conditions are met THEN make a certain prediction. A single decision rule or a combination of several rules can be used to make predictions.
+
+\vspace{0.5cm}
+There are many ways to learn rules from data:
+\begin{itemize}
+\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
+\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.
+\item Bayesian Rule Lists combine pre-mined frequent patterns into a decision list using Bayesian statistics. Using pre-mined patterns is a common approach used by many rule learning algorithms.
 \end{itemize}
 
 \end{vbframe}
