@@ -8,8 +8,46 @@ library(ggplot2)
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 source("helpers.R")
 
-set.seed(123)
 load("bike.RData")
+
+library(mgcv)
+library(mgcViz)
+library(effects)
+
+#pdf(file = "../figure_man/lm_main_effects.pdf", width = 8, height = 3)
+#lm.mod = lm(cnt ~ temp + season, data = bike)
+#plot(allEffects(lm.mod))
+#dev.off()
+
+p1 = ggplot(data = bike, aes(x = temp, y = cnt)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm") +
+  labs(x = "Temperature in °C", y = "Number of bike rentals")
+
+# ggplot(data = bike, aes(x = temp, y = cnt, fill = season)) +
+#   geom_point(aes(col = season)) +
+#   geom_smooth(aes(col = season), method = "lm")
+
+p2 = ggplot(data = bike, aes(x = temp, y = cnt)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "gam") +
+  labs(x = "Temperature in °C", y = "Number of bike rentals")
+
+p = gridExtra::grid.arrange(p1 + ggtitle("LM"), p2 + ggtitle("GAM"), ncol = 2)
+
+ggsave("../figure_man/lm_main_effects.pdf", p, width = 8, height = 3)
+
+
+
+lm.mod = lm(cnt ~ temp*season, data = bike) #season + yr + holiday + temp + hum + windspeed + season:temp, data = bike)
+pdf(file = "../figure_man/lm_interaction.pdf", width = 8, height = 3)
+plot(allEffects(lm.mod), layout = c(4, 1))
+dev.off()
+#gam.mod = gam(cnt ~ season + yr + holiday + s(temp) + s(hum) + s(windspeed), data = bike)
+#print(plot(getViz(lm.mod), allTerms = TRUE), pages = 1)
+#print(plot(getViz(gam.mod), allTerms = TRUE), pages = 1)
+
+set.seed(123)
 task = makeRegrTask(data = bike, target = "cnt")
 mod = train("regr.randomForest", task)
 predictor = Predictor$new(mod, data = bike[-which(names(bike) == "cnt")], y = bike$cnt)
@@ -103,8 +141,58 @@ shadowtext(d$x, d$dL - 0.025,
   labels = paste0("i=", d$pch), pos = 3, col = col)
 dev.off()
 ############################################################
-
-
+#
+#
+#
+# set.seed(12345678)
+# n = 100
+# ngrid = 11
+# x1 = rexp(n, rate = 1)
+# x2 = x1 + rnorm(n, mean(x1), sd = 0.5*sd(x1)) #rexp(1000, rate = 100)
+# #x2 = sqrt(x1)*abs(x2)
+# plot(density(x1))
+# plot(x1, x2)
+#
+# par(mfrow = c(1, 3), mar = c(4,4,2,0))
+# # grid
+# grid.x1 = seq(min(x1), max(x1), length = ngrid+1)
+# grid.x2 = seq(min(x2), max(x2), length = ngrid+1)
+# data1 = expand.grid(x1 = grid.x1, x2 = grid.x2)
+# data1$method = "equidistant grid"
+# plot(data1$x1, data1$x2, pch = 4, main = "equidistant grid", xlim = range(x1), ylim = range(x2), col = "#000000A0")
+# points(x1, x2, col = "#FF000040", pch = 19)
+#
+# # subsample
+# grid.x1 = sample(x1, size = ngrid+1)
+# grid.x2 = sample(x2, size = ngrid+1)
+# data2 = expand.grid(x1 = grid.x1, x2 = grid.x2)
+# data2$method = "sub-sampled grid"
+# plot(data2$x1, data2$x2, pch = 4, main = "sub-sampled grid", xlim = range(x1), ylim = range(x2), col = "#000000A0")
+# points(x1, x2, col = "#FF000040", pch = 19)
+#
+# # quantile
+# grid.x1 = quantile(x1, 0:(ngrid)/(ngrid), type = 1)
+# grid.x2 = quantile(x2, 0:(ngrid)/(ngrid), type = 1)
+# data3 = expand.grid(x1 = grid.x1, x2 = grid.x2)
+# data3$method = "quantile grid"
+# plot(data3$x1, data3$x2, pch = 4, main = "quantile grid", xlim = range(x1), ylim = range(x2), col = "#000000A0")
+# points(x1, x2, col = "#FF000040", pch = 19)
+#
+# data = rbind(data1, data2, data3)
+# data$method = factor(data$method, levels = c("equidistant grid", "sub-sampled grid", "quantile grid"))
+#
+# p = ggplot(data = data, aes(x1, x2)) +
+#   geom_point(data = data.frame(x1 = x1, x2 = x2), aes(x1, x2), alpha = 0.25) +
+#   geom_point(data = data[1,], aes(x1, x2)) +
+#   facet_grid(~ method) +
+#   #geom_point(data = data[data$x2 == min(data[data$method=="sub-sampled grid", "x2"]),], shape = 4, alpha = 0.5, col = "red") +
+#   geom_rug(aes(x = x1), col = "blue", sides = "b") +
+#   xlab("Feature"~X[1]) +
+#   ylab("Feature"~X[2])
+#
+# pdf(file = "./figures/sampling.pdf", height = 3, width = 9)
+# print(p)
+# dev.off()
 
 
 
