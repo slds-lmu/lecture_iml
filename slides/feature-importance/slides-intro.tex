@@ -144,43 +144,83 @@
 	\input{../../latex-math/basic-ml.tex}
 	\input{../../latex-math/ml-interpretable.tex}
 	
-	\lecturechapter{Conditional Feature Importance}
+	\lecturechapter{Introduction}
 	\lecture{Interpretable Machine Learning}
 	
 	% ------------------------------------------------------------------------------
 
-
-
-
-\begin{vbframe}{Potential questions}
-
+\begin{vbframe}{Motivation}
 \begin{itemize}
-  \item Model audit
+  \item feature effects\footnote{as well as many other methods such as counterfactual explanations or SHAP} describe the relationship of features with the prediction $\yh$
   \begin{itemize}
-    \item Does the model (mechanistically) rely on feature $\xj$?
-    \item Does prediction share information with $\xj$?
-    \item \textbf{Does feature $\xj$ contribute information that isn't already contained in features $\xv_S$?}
+    \item requires one plot per feature
+    \item does not take the prediction target $y$ into account
   \end{itemize}
-  \item Inference
+  \item feature importance methods quantify the relevance of features for the prediction performance
   \begin{itemize}
-    \item Does $\xj$ share information with $\ydat$
-    \item \textbf{Does $\xj$ share information with $\ydat$ given $\xv_S$}
-    \item Is $\xj$ causal for $\ydat$
+    \item condensed to one number per feature
+    \item insight into the relationship with $y$
   \end{itemize}
 \end{itemize}
-
 \end{vbframe}
 
 
-\begin{vbframe}{Overview}
+\begin{vbframe}{Example}
+  Examplary plot for one of the example datasets.
+\end{vbframe}
 
-A range of methods with different strenghts and weaknesses:
+\begin{vbframe}{Feature Importance Scheme}
+In general, feature importance is computed in three steps:
+\lz
+\begin{enumerate}
+  \item \textbf{Perturbuation:} Sample a perturbed version of the dataset $\pert{\D}{}{}$.
+  \begin{itemize}
+    \item for example by replacing the feature of interest $x_j$ with an uninformative sample $\pert{x_j}{}{}$
+    \end{itemize}
+  \item \textbf{Prediction:} Make predictions for both i.e., $\D$ and $\pert{\D}{}{}$.
+  \item \textbf{Aggregation:} 
+    \begin{itemize}
+      \item Compute the loss for each observation in both data sets.
+      \item Take the difference of both losses $\Delta L$ for each observation.
+      \item Average this change in loss across all observations.
+      \item Also, average over multiple repetitions, if available.
+    \end{itemize}
+\end{enumerate}
+\lz
+The interpretation of the feature importance methods depends on the type of perturbation and aggregation.
+
+\footnote[frame]{Scholbeck, Christian A., et al. "Sampling, intervention, prediction, aggregation: A generalized framework for model-agnostic interpretations." arXiv preprint arXiv:1904.03959 (2019).}
+\end{vbframe}
+
+
+\begin{vbframe}{Potential Interpretation Goals}
+
+Depending on type of perturbation and aggregation, different interpretation goals can (or cannot) be reached.
+\lz
+\begin{itemize}
+    \item Is the feature $\xj$ causal for the prediction?
+    \item Does the variable $\xj$ contain prediction-relevant information about $\ydat$ (that the model exploits)?
+    \item Does the variable $\xj$ contain more prediction-relevant information about $\ydat$ than $\xv_S$ (that the model exploits)?
+\end{itemize}
+\lz
+Except for special cases, these questions are mutually exclusive.
+\end{vbframe}
+
+\begin{vbframe}{Potential Interpretation Goals}
+
+Examples where the aforementioned interpretation goals are mutually exclusive?
+
+\end{vbframe}
+
+\begin{vbframe}{Method Overview}
+
+In this lecture chapter we cover the following global, model-agnostic feature importance techniques:
 
 \begin{itemize}
   \item Permutation Feature Importance (PFI)
   \item Conditional Feature Importance (CFI)
   \item SAGE value function, SAGE values
-  \item Further approaches to Feature Importance
+  \item (Further approaches to Feature Importance? E.g. variance based?)
 \end{itemize}
 
 \end{vbframe}
