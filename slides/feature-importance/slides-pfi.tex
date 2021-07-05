@@ -142,6 +142,7 @@
 	
 	\input{../../latex-math/basic-math.tex}
 	\input{../../latex-math/basic-ml.tex}
+	\input{../../latex-math/ml-interpretable.tex}
 	
 	\lecturechapter{Permutation Feature Importance}
 	\lecture{Interpretable Machine Learning}
@@ -183,22 +184,23 @@ As we calculate the feature importance for one feature at a time $|S| = 1$.}\par
 
 \framebreak 
 
-Steps to calculate the PFI for a single feature $x_S$ according to the SIPA framework:
+Steps to calculate the PFI for a single feature $x_j$ according to the SIPA framework:
+\lz
 \begin{enumerate}
-  \item \textbf{Sampling:} Sample feature values from the distribution of $x_S$. \newline $\Rightarrow$ Randomly permute feature $x_S$ (retains the distribution).
-  \lz
-  \item \textbf{Intervention:} Replace the original feature of the test dataset $\D$  with the permuted feature  creating the dataset $\D_{S}$.
-  \lz
-  \item \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\D_{S}$.
-  \lz
+  \item \textbf{Perturbation:} Sample a perturbed version of the dataset $\pert{\D}{}{}$.
+  \begin{itemize}
+    \item replace the feature with a sample from the marginal $P(X_j)$, yielding $\pert{\D}{j}{}$
+    \item marginal sampling can be approximated by permuting the feature vector $\xj$
+    \end{itemize}
+  \item \textbf{Prediction:} Make predictions for both i.e., $\D$ and $\pert{\D}{j}{}$.
   \item \textbf{Aggregation:} 
     \begin{itemize}
       \item Compute the loss for each observation in both data sets.
       \item Take the difference of both losses $\Delta L$ for each observation.
-      \item Average this change in loss across all observations.
-      \item Also, average over multiple repetitions, if available.
+      \item For global interpretation: Average this change in loss across all observations.
     \end{itemize}
 \end{enumerate}
+\lz
 \end{vbframe}
 
 
