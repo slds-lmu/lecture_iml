@@ -150,48 +150,11 @@
 	% ------------------------------------------------------------------------------
 
 \begin{vbframe}{Permutation Feature Importance}
-\textbf{Idea:} Permuting a feature breaks the association between the feature and the target.\\
-$\Rightarrow$ Model's prediction error should increase after permutation if the considered feature is important.
 
-\begin{figure}
-  \includegraphics[width=0.75\textwidth]{figure_man/feature-importance.png}
-\end{figure}
-
-\vspace{-0.2cm}
-\tiny{Fisher et al. (2018). All models are wrong but many are useful: Variable importance for black-box, proprietary, or misspecified prediction models, using model class reliance. arXiv preprint arXiv:1801.01489 (2018).}
-
-\framebreak
-\normalsize
-
-Performance-based permutation feature importance (PFI) for a feature $x_S$ using test data $\D$:
-\begin{itemize}
-  \item Measure the error \color{red}\textbf{with permuted feature values} \color{black} for $x_S$.
-  \item Measure the error \color{blue}\textbf{without permuting features}\color{black}.
-  \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
-$$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \widehat{GE}(\fh, {\color{red}\D_{S}^{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D})$$
-\end{itemize}
-
-Example of permuting feature $x_S$ with $S = \{1\}$:
-
-\begin{center}
-\includegraphics[width=0.75\textwidth]{figure_man/permuted-fv.png}
-\end{center}
-
-\vspace*{0.2cm}
-{\scriptsize{Note: 
-The $S$ in $x_S$ refers to a \textbf{S}ubset of features for which we are interested in their effect on the prediction.
-As we calculate the feature importance for one feature at a time $|S| = 1$.}\par}
-
-\framebreak 
-
-Steps to calculate the PFI for a single feature $x_j$ according to the SIPA framework:
+Reminder: General Feature Importance framework
 \lz
 \begin{enumerate}
   \item \textbf{Perturbation:} Sample a perturbed version of the dataset $\pert{\D}{}{}$.
-  \begin{itemize}
-    \item replace the feature with a sample from the marginal $P(X_j)$, yielding $\pert{\D}{j}{}$
-    \item marginal sampling can be approximated by permuting the feature vector $\xj$
-    \end{itemize}
   \item \textbf{Prediction:} Make predictions for both i.e., $\D$ and $\pert{\D}{j}{}$.
   \item \textbf{Aggregation:} 
     \begin{itemize}
@@ -201,6 +164,42 @@ Steps to calculate the PFI for a single feature $x_j$ according to the SIPA fram
     \end{itemize}
 \end{enumerate}
 \lz
+
+
+\textbf{Permutation Feature Importance Idea:} Perturb such that feature of interest $\xj$ is uninformative while preserving the marginal distribution $P(X_j)$. Such a sample $\pert{\xv}{}{}_j$ can be approximate by randomly permuting observations in $\xj$.
+
+%\framebreak
+
+%\begin{figure}
+%  \includegraphics[width=0.75\textwidth]{figure_man/feature-importance.png}
+%\end{figure}
+
+%\vspace{-0.2cm}
+%\tiny{Fisher et al. (2018). All models are wrong but many are useful: Variable importance for black-box, proprietary, or misspecified prediction models, using model class reliance. arXiv preprint arXiv:1801.01489 (2018).}
+
+\framebreak
+\normalsize
+
+Performance-based permutation feature importance (PFI) for a feature $x_S$ using test data $\D$:
+\begin{itemize}
+  \item Measure the error \color{red}\textbf{with permuted feature values} \color{black} $\pert{x}{}{}_S$.
+  \item Measure the error \color{blue}\textbf{without permuting features}\color{black}.
+  \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
+$$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \widehat{GE}(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D})$$
+\end{itemize}
+
+Example of permuting feature $x_S$ with $S = \{1\}$:
+
+% TODO: update to new notation
+\begin{center}
+\includegraphics[width=0.75\textwidth]{figure_man/permuted-fv.png}
+\end{center}
+
+\vspace*{0.2cm}
+{\scriptsize{Note: 
+The $S$ in $x_S$ refers to a \textbf{S}ubset of features for which we are interested in their effect on the prediction.
+As we calculate the feature importance for one feature at a time $|S| = 1$.}\par}
+
 \end{vbframe}
 
 
@@ -208,11 +207,11 @@ Steps to calculate the PFI for a single feature $x_j$ according to the SIPA fram
 
 \frametitle{Permutation Feature Importance}
 
-  \only<1-3,5-7>{$\hspace{36pt}{\color{white}\widehat{GE}(\fh, {\color{red}\D_{S}^{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D})}$}
-  \only<4>{$\hspace{36pt}\widehat{GE}(\fh, {\color{red}\D_{S}^{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D}),$ where 
+  \only<1-3,5-7>{$\hspace{36pt}{\color{white}\widehat{GE}(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D})}$}
+  \only<4>{$\hspace{36pt}\widehat{GE}(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D}),$ where 
 $\scriptstyle\widehat{GE}(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
 % $\scriptstyle\widehat{GE}(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
-%   \only<5-6>{$\hspace{36pt}{\color{white}\widehat{GE}(\fh, {\color{red}\D_{S}^{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D})}$}
+%   \only<5-6>{$\hspace{36pt}{\color{white}\widehat{GE}(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D})}$}
   
   \begin{center}
   \only<1>{\includegraphics[page=2, trim=0pt 5pt 0 66pt, clip, width=0.88\textwidth]{figure_man/pfi_demo2}}%
@@ -224,25 +223,24 @@ $\scriptstyle\widehat{GE}(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_
   \end{center}
   
   \begin{itemize}
-    \only<1-2>{\item[1.]\textbf{Sampling:} Sample feature values from the distribution of $x_S$. \newline $\Rightarrow$ Randomly permute feature $x_S$ (retains the distribution).
-        \item[2.] \textbf{Intervention:} Replace the original feature with the permuted feature and create data with permuted feature   $\D_{S}$.}
-    \only<2>{\item[3.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\D_{S}$.}
-    \only<3-4>{\item[4.] \textbf{Aggregation:}
+    \only<1-2>{\item[1.]\textbf{Perturbation:} Sample feature values from the distribution of $x_S$ ($P(X_S)$). \newline $\Rightarrow$ Randomly permute feature $x_S$ (retains the distribution). Replace the original feature with the permuted feature $\pert{x}{}{}_S$ and create data with permuted feature   $\pert{\D}{S}{}$.}
+    \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\D_{S}$.}
+    \only<3-4>{\item[3.] \textbf{Aggregation:}
       \begin{itemize}
         \item Compute the loss for each observation in both data sets.
       \end{itemize}}
-    \only<5>{\item[4.] \textbf{Aggregation:}
+    \only<5>{\item[3.] \textbf{Aggregation:}
       \begin{itemize}
         \item Compute the loss for each observation in both data sets.
        \item Take the difference of both losses $\Delta L$ for each observation.
       \end{itemize}}
-     \only<6>{\item[4.] \textbf{Aggregation:}
+     \only<6>{\item[3.] \textbf{Aggregation:}
       \begin{itemize}
         \item Compute the loss for each observation in both data sets.
         \item Take the difference of both losses $\Delta L$ for each observation.
         \item Average this change in loss across all observations.
       \end{itemize}}
-    \only<7>{\item[4.] \textbf{Aggregation:}
+    \only<7>{\item[3.] \textbf{Aggregation:}
       \begin{itemize}
         \item Compute the loss for each observation in both data sets.
         \item Take the difference of both losses $\Delta L$ for each observation.
@@ -350,22 +348,27 @@ PIMP algorithm:
   {\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
 \end{vbframe}
 
-\begin{vbframe}{Potential questions}
 
+\begin{vbframe}{Interpretation Goals}
+
+Discuss which of the following questions can be answered:
+\lz
 \begin{itemize}
-  \item Model audit
-  \begin{itemize}
-    \item \textbf{Does the model (mechanistically) rely on feature $\xj$}?
-    \item Does prediction share information with $\xj$?
-    \item Does feature $\xj$ contribute information that isn't already contained in features $\xv_S$?
-  \end{itemize}
-  \item Inference
-  \begin{itemize}
-    \item \textbf{Does $\xj$ share information with $\ydat$}
-    \item Does $\xj$ share information with $\ydat$ given $\xv_S$
-    \item Is $\xj$ causal for $\ydat$?
-  \end{itemize}
+    \item Is the feature $\xj$ causal for the prediction?
+    \begin{itemize}
+      \item What if no association with the target right away?
+    \end{itemize}
+    \item Does the variable $\xj$ contain prediction-relevant information about $\ydat$ (that the model exploits)?
+    \begin{itemize}
+      \item inference possible depending on loss and model optimality
+      \item always the model's perspective
+    \end{itemize}
+    \item Does the variable $\xj$ contain more prediction-relevant information about $\ydat$ than $\xv_S$ (that the model exploits)?
+    \begin{itemize}
+        \item no
+    \end{itemize}
 \end{itemize}
+\lz
 
 \end{vbframe}
 
