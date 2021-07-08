@@ -7,12 +7,11 @@ library(gridExtra)
 library(ggplot2)
 
 set.seed(123)
-load("bike.RData")
+load("data/bike.RData")
 task = makeRegrTask(data = bike, target = "cnt")
-mod = train("regr.randomForest", task)
+mod = mlr::train("regr.randomForest", task)
 predictor = Predictor$new(mod, data = bike[-which(names(bike) == "cnt")], y = bike$cnt)
 bike.x = bike[names(bike) != 'cnt']
-
 pred.bike = Predictor$new(mod, data = bike)
 
 # Helpers
@@ -183,7 +182,8 @@ p1 + xlim(range(bike$temp))
 set.seed(123)
 pred.bike = Predictor$new(mod, data = bike)
 pdp.2feature = FeatureEffect$new(pred.bike, feature = c("temp", "hum"), method = "pdp")
-pdp.2feature$plot() + scale_x_continuous('Temperature', limits = c(0, NA)) +  scale_y_continuous('Humidity', limits = c(0, NA))
+pdp.2feature$plot() +
+  geom_point(data = bike, mapping = aes(x = temp, y = hum), alpha = 0.5)
 
 ####################################################
 

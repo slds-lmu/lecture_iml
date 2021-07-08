@@ -162,13 +162,15 @@ $$\fh(\xi) = \hat\beta_0 + x^{(i)}_1\hat\beta_1 + \dots + x^{(i)}_p\hat\beta_p.$
 \includegraphics[width=0.75\textwidth, trim=0cm 0.1cm 0cm 0cm, clip]{figure_man/lm_main_effects}
 
 \end{vbframe}
-%
+
 %
 % \begin{vbframe}{Feature Effects}
 %
 % %If the model contains interactions, the global effect is not enough as the
-% However, if the model contains interactions, there is a modifying effect for certain observations that changes the slope of the regression line (in case of LMs) or the shape of the partial effect curve (in case of GAMs).
+% %If the model contains interactions, there is a modifying effect for certain observations that changes the slope of the regression line (in case of LMs) or the shape of the partial effect curve (in case of GAMs).
 % %(in case of LMs) or the shape of the partial effect curve (in case of GAMs).
+% %If the model contains interactions, the slope of the regression line (in case of LMs) or the shape of the partial effect curve (in case of GAMs) will be different for certain observations.
+% If the model contains interactions, the functional shape of the estimated feature effect will usually be different for certain observations.
 % \lz
 %
 % \textbf{Example}: If we include the interaction \texttt{temp*season},
@@ -179,7 +181,7 @@ $$\fh(\xi) = \hat\beta_0 + x^{(i)}_1\hat\beta_1 + \dots + x^{(i)}_p\hat\beta_p.$
 %
 % {\centering\includegraphics[width=0.9\textwidth, trim=0cm 0.1cm 0cm 0cm, clip]{figure_man/lm_interaction}}
 %
-% \textbf{Note}: In case of interactions between two continuous features, we would obtain multiple regression lines with different slopes.
+% %\textbf{Note}: In case of interactions between two continuous features, we would obtain multiple regression lines with different slopes.
 % %The marginal effect can then be visualized in a 2d effect plot or
 %
 % \end{vbframe}
@@ -408,7 +410,7 @@ The ICE curve of observation $i=3$ connects all predictions at the corresponding
 
 \begin{vbframe}{Comments}
 \begin{itemize}
-\item The ICE plot is a local interpretation method as it shows how changing the feature value of an observation changes the prediction of that observation.
+\item The ICE curves as a local interpretation method shows how different feature values of an observation affect the prediction of that observation.
 \item Plotting ICE curves involves generating grid values that are visualized on the x-axis.
 Common choices for grid values are
 \begin{itemize}

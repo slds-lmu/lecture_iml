@@ -8,10 +8,10 @@ library(gridExtra)
 library(ggpubr)
 library(patchwork)
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
-source("helpers.R")
+source("slides/feature-effects/rsrc/helpers.R")
 
 set.seed(123)
-load("bike.RData")
+load("data/bike.RData")
 task = makeRegrTask(data = bike, target = "cnt")
 mod = train("regr.randomForest", task)
 bike.x = bike[names(bike) != 'cnt']

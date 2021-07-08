@@ -6,15 +6,15 @@ library(iml)
 library(gridExtra)
 library(ggplot2)
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
-source("helpers.R")
+source("slides/feature-effects/rsrc/helpers.R")
 
-load("bike.RData")
+load("data/bike.RData")
 
 library(mgcv)
 library(mgcViz)
 library(effects)
 
-#pdf(file = "../figure_man/lm_main_effects.pdf", width = 8, height = 3)
+#pdf(file = "slides/feature-effects/figure_man/lm_main_effects.pdf", width = 8, height = 3)
 #lm.mod = lm(cnt ~ temp + season, data = bike)
 #plot(allEffects(lm.mod))
 #dev.off()
@@ -35,12 +35,26 @@ p2 = ggplot(data = bike, aes(x = temp, y = cnt)) +
 
 p = gridExtra::grid.arrange(p1 + ggtitle("LM"), p2 + ggtitle("GAM"), ncol = 2)
 
-ggsave("../figure_man/lm_main_effects.pdf", p, width = 8, height = 3)
+ggsave("slides/feature-effects/figure_man/lm_main_effects.pdf", p, width = 8, height = 3)
 
+
+
+
+p1 = ggplot(data = bike, aes(x = temp, y = cnt, fill = season)) +
+  geom_point(aes(col = season), alpha = 0.5) +
+  geom_smooth(aes(col = season), method = "lm", se = FALSE) + #, fullrange = TRUE) +
+  labs(x = "Temperature in °C", y = "Number of bike rentals")
+
+p2 = ggplot(data = bike, aes(x = temp, y = cnt, fill = season)) +
+  geom_point(aes(col = season), alpha = 0.5) +
+  geom_smooth(aes(col = season), method = "gam", se = FALSE) + #, fullrange = TRUE) +
+  labs(x = "Temperature in °C", y = "Number of bike rentals")
+
+p = gridExtra::grid.arrange(p1 + ggtitle("LM"), p2 + ggtitle("GAM"), ncol = 2)
 
 
 lm.mod = lm(cnt ~ temp*season, data = bike) #season + yr + holiday + temp + hum + windspeed + season:temp, data = bike)
-pdf(file = "../figure_man/lm_interaction.pdf", width = 8, height = 3)
+pdf(file = "slides/feature-effects/figure_man/lm_interaction.pdf", width = 8, height = 3)
 plot(allEffects(lm.mod), layout = c(4, 1))
 dev.off()
 #gam.mod = gam(cnt ~ season + yr + holiday + s(temp) + s(hum) + s(windspeed), data = bike)
@@ -70,7 +84,7 @@ p1 = pdp$plot() + scale_x_continuous('Temperature') + scale_y_continuous('Predic
 p1
 #gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
 
-ggsave("../figure_man/ice_bike10obs.pdf", p1, width = 4, height = 2.5)
+ggsave("slides/feature-effects/figure_man/ice_bike10obs.pdf", p1, width = 4, height = 2.5)
 
 ############################################################
 
@@ -92,7 +106,7 @@ lreplace = dL + mean(l)
 X = data.frame(pch, x, dL)
 X.aggr = aggregate(dL ~ x, data = X, FUN = mean, na.rm = TRUE)
 
-pdf(file = "../figure_man/ICE.pdf", width = 5, height = 4)
+pdf(file = "slides/feature-effects/figure_man/ICE.pdf", width = 5, height = 4)
 pch.sym = paste0("i=", c("1","2","3"))
 p = pch.sym[pch]
 #p[p == x] = NA
@@ -212,7 +226,7 @@ p = ggplot(data = data, aes(x1, x2)) +
   ylab("Feature"~X[C]) +
   ggtitle("Grid points for"~X[S]~"(red) for highlighted observation (blue)")
 
-ggsave("../figure_man/sampling.pdf", p, height = 2.3, width = 7.5)
+ggsave("slides/feature-effects/figure_man/sampling.pdf", p, height = 2.3, width = 7.5)
 # pdf(file = "./figures/sampling.pdf", height = 3, width = 9)
 # print(p)
 # dev.off()

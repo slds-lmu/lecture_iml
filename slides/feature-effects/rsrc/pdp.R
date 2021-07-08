@@ -8,9 +8,9 @@ library(gridExtra)
 library(ggpubr)
 library(patchwork)
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
-source("helpers.R")
+source("slides/feature-effects/rsrc/helpers.R")
 
-pdf(file = "../figure_man/PD.pdf", width = 5, height = 4)
+pdf(file = "slides/feature-effects/figure_man/PD.pdf", width = 5, height = 4)
 par(mar = c(3,3.5,0.25,0.25))
 plotImportanceDemo(x, dL, ylab = expression(hat(f)[S]), main = "",
   split = split, i = 3, col = "gray")
@@ -60,7 +60,7 @@ p1 + xlim(range(bike$temp))
 ######################################################
 
 set.seed(123)
-load("bike.RData")
+load("data/bike.RData")
 task = makeRegrTask(data = bike, target = "cnt")
 mod = train("regr.randomForest", task)
 pred.bike = Predictor$new(mod, data = bike[sample(1:nrow(bike), 100),])
@@ -71,7 +71,7 @@ pred.sub = Predictor$new(mod, data = bike, y = bike$cnt)
 pdp = FeatureEffect$new(pred.sub, "temp", method = "pdp+ice")
 p1 = pdp$plot() + scale_x_continuous('Temperature') + scale_y_continuous('Predicted bike rentals')
 p1
-ggsave("../figure_man/pdp_num.pdf", p1, width = 6, height = 3)
+ggsave("slides/feature-effects/figure_man/pdp_num.pdf", p1, width = 6, height = 3)
 
 
 
@@ -95,7 +95,7 @@ ice_cat = p + geom_path(aes(group = 1), alpha = 0.2) +
 
 pd_cat + ice_cat
 
-ggsave("../figure_man/pdp_ice_cat.pdf", pd_cat + ice_cat, width = 8, height = 3)
+ggsave("slides/feature-effects/figure_man/pdp_ice_cat.pdf", pd_cat + ice_cat, width = 8, height = 3)
 #eff$plot(features = c("season"))
 
 # library(pdp)
@@ -116,9 +116,58 @@ ggsave("../figure_man/pdp_ice_cat.pdf", pd_cat + ice_cat, width = 8, height = 3)
 
 
 
-
-
 set.seed(123)
 pred.bike = Predictor$new(mod, data = bike)
+pdp.2feature = FeatureEffect$new(pred.bike, feature = c("temp", "hum"), method = "pdp")
+pdp.2feature$plot() +
+  geom_point(data = bike, mapping = aes(x = temp, y = hum), alpha = 0.5)
+
+
 pdp.2feature = FeatureEffect$new(pred.bike, feature = c("temp", "season"), method = "pdp")
-pdp.2feature$plot() + scale_x_continuous('Temperature', limits = c(0, NA)) +  scale_y_continuous('Humidity', limits = c(0, NA))
+library(data.table)
+quant = as.data.table(bike)[, .(temp.q1 = quantile(temp, 0.25), temp.q3 = quantile(temp, 0.75)), by = season]
+pdp.2feature$plot() +
+  geom_point(data = d, aes(x = x, y = y, col = col), alpha = 0.5)
+
+#d.range = as.data.table(bike)[, .(temp.min = quantile(temp, 0), temp.max = quantile(temp, 1)), by = season]
+d.split = split(bike$temp, bike$season)
+d = as.data.table(pdp.2feature$results)[, list(temp = temp, .value = .value - mean(.value)), by = season]
+d
+library(patchwork)
+pdp.2feature$plot()
+ggplot(data = d) + geom_line(aes(x = temp, y = .value, col = season))
+
+pdp.2feature$plot() / ggplot(data = bike) + geom_density(aes(x = temp, col = season))
+
+
+subs = split(bike$temp, bike$season)
+
+lapply(names(subs), function(fname) {
+  fe = FeatureEffect$new(pred_sub, feature = fname, grid.size = grid_size, method = "pdp")
+  ret = fe$results
+  ret$node = rep(nodes_df[subs_ids[1], ".path"][[1]], times = nrow(ret))
+
+  bpstats = data.frame(stats = boxplot.stats(subs[[fname]])$stats, feature = fname)
+  bpstats$.value = fe$predict(bpstats$stats)
+  outliers = subs[subs[[fname]] < bpstats$stats[1] |
+      subs[[fname]] > bpstats$stats[5],]
+  outliers$node = ret$node[1]
+  outliers$.value = fe$predict(outliers[[fname]])
+  ret$in_hinges = ret[[fname]] >= bpstats$stats[1] &
+    ret[[fname]] <= bpstats$stats[5]
+  ret$in_box = ret[[fname]] >= bpstats$stats[2] &
+    ret[[fname]] <= bpstats$stats[4]
+  return(list("pdp" = ret, "outliers" = outliers, "bpstats" = bpstats))
+})
+
+
+
+pdp = rbindlist(lapply(res, function(x) x$pdp))
+outliers = rbindlist(lapply(res, function(x) x$outliers))
+bpstats = rbindlist(lapply(res, function(x) x$bpstats))
+p = ggplot(data = pdp,
+    aes_string(x = fname, y = ".value",
+      group = "node", color = "node")) +
+    geom_line(data = pdp[pdp$in_hinges,]) +
+    geom_line(data = pdp[pdp$in_box,], size = 2) +
+    geom_point(data = outliers)
