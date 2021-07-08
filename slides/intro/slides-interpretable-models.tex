@@ -82,6 +82,7 @@
 \usepackage{mathtools}
 \usepackage{wrapfig}
 \usepackage{bm}
+\usepackage{verbatim}
 
 \usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
 \tikzset{
@@ -129,37 +130,72 @@ shorten >=2pt,}
 \input{../../latex-math/basic-ml}
 \newcommand{\titlefigure}{figure/open_blackbox}
 \newcommand{\learninggoals}{
-\item Interpretable Models}
-
+\item Examples for interpretable models: (generalized) linear models, generalized additive models, model-based boosting}
 
 \lecturechapter{Interpretable Models}
 \lecture{Interpretable Machine Learning}
 
-
-\begin{vbframe}{Interpretable Models}
-\textbf{Linear models (LM) and generalized linear models (GLM):}
-
-The specification of model parameters makes LMs and GLMs intrinsically interpretable.
+\begin{vbframe}{Linear Regression}
 
 \begin{itemize}
-
-\item \textbf{LM:}
+\item For linear regression models, we only estimate the model parameters. The model equation is manually specified and known in advance:
 $$
-\mathbb{E}_Y(y \vert x) = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \epsilon
+y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
 $$
+\item The predictive power of LMs is determined by specifying the correct model structure.
+\item The model equation is identical across the entire feature space, i.e., local interpretations are identical to global ones. By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
+\item Note that for inference-based metrics (p-values, t-statistics, confidence intervals) to be valid, the error term needs to be normally distributed with zero mean (i.e., $(Y \vert X) \sim N(x^T\beta, \sigma^2)$. This severely restricts the usage of LMs in practice.
+\end{itemize}
+\end{vbframe}
 
-\item \textbf{GLM:}
+\begin{vbframe}{Linear Regression}
+\tiny
+\verbatiminput{figure/lm_output.txt}
+\end{vbframe}
+
+\begin{vbframe}{Linear Regression}
+\begin{figure}
+  \includegraphics[width = 0.6\textwidth]{figure/lm_effect_plot.png}
+\end{figure}
+\end{vbframe}
+
+
+\begin{vbframe}{Generalized Linear Regression}
+
+\begin{itemize}
+\item Generalized linear models (GLMs) are able to model data more flexibly through the link function, but keep the pre-specified model equation: 
 $$
 g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p
 $$
+\item This flexibility relates to the distribution of the target. The target conditional on the features can follow a distribution of the exponential family, e.g., Binomial, Poisson, Exponential, Gamma. We still need to specify the correct model equation in advance in order to receive a good model fit.
+\item As the model equation is still known, interpretations are possible the same way as for linear models. However, even linear terms become non-linear through the link function!
+\end{itemize}
+\end{vbframe}
+
+
+\begin{vbframe}{Generalized Linear Regression}
+\tiny
+\verbatiminput{figure/glm_output.txt}
+\end{vbframe}
+
+\begin{vbframe}{Generalized Linear Regression}
+\begin{figure}
+  \includegraphics[width = 0.6\textwidth]{figure/glm_effect_plot.png}
+\end{figure}
+\end{vbframe}
+
+\begin{vbframe}{Generalized Additive Models}
+
+\begin{itemize}
+\item A generalized additive model (GAM) adds flexibility and predictive power by replacing pre-specified terms with smoothing functions:
+$$
+g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 h_1(x_1) + \dots + \beta_p h_p(x_p) + \dots
+$$
+\item For the component functions, we may either specify a parametric form (e.g., a regression splines), or a non-parametric one, e.g., locally estimated scatterplot smoothing (LOESS).
+\item This makes GAMs much more flexible regarding the model structure, which is largely determined by the structure of the data instead of premade assumptions as in LMs and GLMs.
+\item A GAM retains interpretability by keeping the additive model equation (as long as the component functions are interpretable). As the model equation is known, we can use similar interpretation methods as for LMs and GLMs, e.g., evaluating the estimated functions that depend on the features of interest.
 \end{itemize}
 
-
-\textbf{Generalized additive models (GAM):} Add flexibility by replacing linear term by more general functional form, but retain interpretability by keeping the pre-specified additive predictor.
-
-$$
-g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 h(x_1) + \dots + \beta_p h(x_p)
-$$
 
 \end{vbframe}
 
