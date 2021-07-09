@@ -130,114 +130,150 @@ shorten >=2pt,}
 \input{../../latex-math/basic-ml}
 \newcommand{\titlefigure}{figure/open_blackbox}
 \newcommand{\learninggoals}{
-\item Examples for interpretable models: (generalized) linear models, generalized additive models, model-based boosting}
+\item Examples for interpretable models: linear and polynomial regression models, generalized linear models, generalized additive models, model-based boosting, rule-based learning
+\item Methodological summary, motivation behind the model, model interpretations}
 
 \lecturechapter{Interpretable Models}
 \lecture{Interpretable Machine Learning}
 
-\begin{vbframe}{Linear Regression}
+\begin{vbframe}{Linear and Polynomial Regression}
 
 \begin{itemize}
+\setlength\itemsep{2em}
 \item For linear regression models, we only estimate the model parameters. The model equation is manually specified and known in advance:
-$$
-y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
-$$
-\item The predictive power of LMs is determined by specifying the correct model structure.
-\item The model equation is identical across the entire feature space, i.e., local interpretations are identical to global ones. By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
-\item Note that for inference-based metrics (p-values, t-statistics, confidence intervals) to be valid, the error term needs to be normally distributed with zero mean (i.e., $(Y \vert X) \sim N(x^T\beta, \sigma^2)$. This severely restricts the usage of LMs in practice.
+\begin{align*}
+y &= \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon \\
+Y &= X^T\beta + \mathcal{E}
+\end{align*}
+\item The model equation is identical across the entire feature space.
+\item The predictive power of LMs is determined by specifying the correct model structure. A polynomial regression model is an extension of the LM that includes higher order terms or interactions. This way we can additively model non-linear data and make use of the entire LM toolbox.
+\item
+By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics). For higher order effects or interactions, beta coefficients cannot be interpreted in isolation, i.e., we need to use marginal effects or effect plots with simultaenous changes in feature values.
+\item Note that for inference-based metrics (p-values, t-statistics, confidence intervals) to be valid, the error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2)$. It follows that $(y \vert x) \sim N(x^T \beta, \sigma^2)$. This restricts the usage of LMs in practice, as the distribution of the error term is a prior assumption about the data.
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Linear Regression}
+\begin{vbframe}{Linear and Polynomial Regression Models}
 \tiny
 \verbatiminput{figure/lm_output.txt}
 \end{vbframe}
 
-\begin{vbframe}{Linear Regression}
+\begin{vbframe}{Linear and Polynomial Regression Models}
 \begin{figure}
   \includegraphics[width = 0.6\textwidth]{figure/lm_effect_plot.png}
 \end{figure}
 \end{vbframe}
 
 
-\begin{vbframe}{Generalized Linear Regression}
+\begin{vbframe}{Generalized Linear Regression Models}
 
 \begin{itemize}
-\item Generalized linear models (GLMs) are able to model data more flexibly through the link function, but keep the pre-specified model equation: 
-$$
-g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p
-$$
-\item This flexibility relates to the distribution of the target. The target conditional on the features can follow a distribution of the exponential family, e.g., Binomial, Poisson, Exponential, Gamma. We still need to specify the correct model equation in advance in order to receive a good model fit.
-\item As the model equation is still known, interpretations are possible the same way as for linear models. However, even linear terms become non-linear through the link function!
+\setlength\itemsep{2em}
+\item Generalized linear models (GLMs) are more flexible regarding the target distribution. They keep the linear predictor $X^T\beta$ which now explains the transformed, expected conditional target through a link function $g$: 
+\begin{align*}
+g\left(\mathbb{E}_Y(Y \vert X)\right) &= X^T\beta \\
+\mathbb{E}_Y \left(Y \vert X\right) &= g^{-1}(X^T\beta) 
+\end{align*}
+\item GLMs are a framework for target distributions of the exponential family, e.g., Gaussian, Binomial, Poisson, Exponential, Gamma. A Gaussian target distribution with identity link corresponds to a linear / polynomial regression model.
+\item The link function describes how the linear predictor $X^T\beta$ relates to the expected, conditional target $\mathbb{E}_Y(Y \vert X)$, e.g., if the target is distributed binomially, a natural link function is the logit link $log\left(\frac{\mathbb{E}_Y(Y \vert X)}{1 - \mathbb{E}_Y(Y \vert X)}\right)$.
+\item We need to specify the correct model equation, target distribution, and link function in order to receive a good model fit.
+\item As the model equation is still known, interpretations are possible the same way as for polynomial regression models. However, even linear terms become non-linear through the link function (if the identity link is not used)!
 \end{itemize}
 \end{vbframe}
 
 
-\begin{vbframe}{Generalized Linear Regression}
+\begin{vbframe}{Generalized Linear Regression Models}
 \tiny
 \verbatiminput{figure/glm_output.txt}
 \end{vbframe}
 
-\begin{vbframe}{Generalized Linear Regression}
+\begin{vbframe}{Generalized Linear Regression Models}
 \begin{figure}
   \includegraphics[width = 0.6\textwidth]{figure/glm_effect_plot.png}
 \end{figure}
 \end{vbframe}
 
 \begin{vbframe}{Generalized Additive Models}
-
 \begin{itemize}
-\item A generalized additive model (GAM) adds flexibility and predictive power by replacing pre-specified terms with smoothing functions:
+\setlength\itemsep{2em}
+\item A generalized additive model (GAM) adds flexibility and predictive power to the GLM framework by replacing pre-specified terms with smoothing functions:
 $$
 g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 h_1(x_1) + \dots + \beta_p h_p(x_p) + \dots
 $$
 \item For the component functions, we may either specify a parametric form (e.g., a regression splines), or a non-parametric one, e.g., locally estimated scatterplot smoothing (LOESS).
-\item This makes GAMs much more flexible regarding the model structure, which is largely determined by the structure of the data instead of premade assumptions as in LMs and GLMs.
-\item A GAM retains interpretability by keeping the additive model equation (as long as the component functions are interpretable). As the model equation is known, we can use similar interpretation methods as for LMs and GLMs, e.g., evaluating the estimated functions that depend on the features of interest.
+\item This makes GAMs much more adaptive. The estimated model is largely determined by the structure of the data instead of premade assumptions as in LMs and GLMs. However, we still need to specify the order and type of the component functions to be estimated, e.g., which interactions to include.
+\item Furthermore, the smoothing degree of each component function can be tuned to avoid overfitting. Regularization increases interpretability, as the interpretations drawn from the model can be transferred more easily to new data.
+\item A GAM retains interpretability by keeping the additive model equation (as long as the component functions are interpretable). As the model equation is known, we can use similar interpretation methods as for LMs and GLMs, e.g., evaluating the estimated components that depend on the features of interest.
 \end{itemize}
-
-
 \end{vbframe}
 
 
-\begin{vbframe}{Interpretable Models}
+\begin{vbframe}{Generalized Additive Models}
+\tiny
+\verbatiminput{figure/gam_output.txt}
+\end{vbframe}
 
 
-\textbf{Model-based boosting:}
+\begin{vbframe}{Generalized Additive Models}
+\begin{figure}
+  \includegraphics[width = 0.6\textwidth]{figure/gam_effect_plot.png}
+\end{figure}
+\end{vbframe}
+
+\begin{vbframe}{Model-Based Boosting}
 
 \begin{itemize}
-
+\setlength\itemsep{2em}
 \item 
-Idea: Combine boosting with interpretable base learners (e.g., linear model with single parameter).
+Boosting iteratively joins weak base learners to create a powerful ensemble model.
+\item 
+Idea: Combine boosting with interpretable base learners (e.g., single feature LM). The resulting ensemble is also interpretable.
 \item
 Consider two linear base learners $b_j(x, \Theta)$ and $b_j(x, \Theta^{\star})$ with the same type, but distinct parameter vectors $\Theta$ and $\Theta^{\star}$. They can be combined in a base learner of the same type:
-
 $$
 b_j(x, \Theta) + b_j(x, \Theta^{\star}) = b_j(x, \Theta + \Theta^{\star})
 $$
-\item We create a selection of interpretable base learners. In each iteration, all base learners are trained on the so-called pseudo residuals, and the one with the best fit is added to the previously computed model.
-\item The final model has an additive structure (equivalent to a GAM), where each component function is itself interpretable.
+\item We create a selection of interpretable base learners. In each iteration, all base learners are trained on the so-called pseudo residuals, and the one with the best fit is added to the previously computed model:
+\begin{align*}
+\widehat{f}^{[1]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) \\
+\widehat{f}^{[2]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) + \beta b_3(x_3, \theta^{[2]})\\
+\widehat{f}^{[3]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) + \beta b_3(x_3, \theta^{[2]}) + \beta b_1(x_1, \theta^{[3]}) \\
+\\
+\widehat{f}^{[3]}(x) &= f_0 + \beta \left(b_3(x_3, \theta^{[1]} + \theta^{[2]}) + b_1(x_1, \theta^{[3]})\right)
+\end{align*}
+
+\item The final model has an additive structure (equivalent to a GAM), where each component function is interpretable itself.
+
 \end{itemize}
-
-
-
 \end{vbframe}
 
-\begin{vbframe}{Interpretable Models}
+\begin{vbframe}{Model-Based Boosting}
+\tiny
+\verbatiminput{figure/mboost_output.txt}
+\end{vbframe}
 
 
-\textbf{Rule-based ML:}
+\begin{vbframe}{Model-Based Boosting}
+\begin{figure}
+  \includegraphics[width = 0.6\textwidth]{figure/mboost_effect_plot.png}
+\end{figure}
+\end{vbframe}
 
 
-Decision rules follow a general structure: IF the conditions are met THEN make a certain prediction. A single decision rule or a combination of several rules can be used to make predictions.
+\begin{vbframe}{Rule-Based Learning}
 
-\vspace{0.5cm}
-There are many ways to learn rules from data:
 \begin{itemize}
-\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
-\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.
-\item Bayesian Rule Lists combine pre-mined frequent patterns into a decision list using Bayesian statistics. Using pre-mined patterns is a common approach used by many rule learning algorithms.
+\setlength\itemsep{2em}
+\item 
+Decision rules follow a general structure: IF the conditions are met, THEN make a certain prediction. Rule-based learning aims to capture a set of decision rules that accurately describe the data. Rule-based learning is related to decision tree learning, as every decision tree can be represented as a series of decision rules.
+\item There are numerous rule-based learning algorithms, e.g., OneR, Sequential Covering, or Bayesian Rule Lists.
+\item A decision rule is highly interpretable, but a large collection of decision rules might not be.
+\item Rule-based learning is inherently more suited to classification tasks, as defining a collection of rules to predict a continuous target is a challenge.
 \end{itemize}
+%\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
+%\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.
+%\item Bayesian Rule Lists combine pre-mined frequent patterns into a decision list using Bayesian statistics. Using pre-mined patterns is a common approach used by many rule learning algorithms.
+%\end{itemize}
 
 \end{vbframe}
 
