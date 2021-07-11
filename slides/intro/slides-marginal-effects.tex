@@ -127,29 +127,70 @@ shorten >=2pt,}
 
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
-\newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\titlefigure}{figure/me_movement}
 \newcommand{\learninggoals}{
-\item Marginal Effects}
+\item Why parameter-based interpretations are not always possible for parametric models
+\item How marginal effects can be used in such cases
+\item Drawbacks of marginal effects
+\item Model-agnostic applicability}
 
 
-\lecturechapter{Interpretable Models}
+\lecturechapter{Marginal Effects}
 \lecture{Interpretable Machine Learning}
+
+\begin{vbframe}{Interpretations of Linear Models}
+
+\begin{itemize}
+\setlength\itemsep{2em}
+\item The LM can be directly interpreted by evaluating the model coefficients:
+\begin{equation*}
+y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
+\end{equation*}
+\item Increasing $x_1$ by $\Delta x_1$, increases $y$ by $\Delta x_1 \cdot \beta_1$.
+\item Default interpretations correspond to $\Delta x_1 = 1$, i.e., $\Delta y = \beta$. 
+\item All interpretations are done ceteris paribus, i.e., all remaining features are kept constant.
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Interpretations of Polynomial Models}
+
+\begin{itemize}
+\setlength\itemsep{2em}
+\item If higher-order terms or interactions are present, parameter-based interpretations are not possible anymore:
+\begin{equation}
+y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1, x_2 + \epsilon
+\label{eq:poly_model}
+\end{equation}
+\item The isolated main effects of both features vary across different values
+\item The interaction depends on values of the remaining feature
+\item The marginal effect (ME) allows us to determine a feature effect nonetheless. 
+\end{itemize}
+
+\end{vbframe}
 
 \begin{vbframe}{Marginal Effects}
 
 \begin{itemize}
-\item In LMs with interactions, higher order terms, or GLMs, the feature term cannot be interpreted as a direct effect on the predicted outcome.
-\item The default way to interpret LMs and GLMs with non-linear feature effects is the marginal effect (ME).
-\item Either, we take the derivative of the prediction function w.r.t. a feature, or we evaluate changes in prediction due to an intervention in the data, e.g., by increasing a feature value by one unit:
+\setlength\itemsep{2em}
+\item
+The most common definition of the marginal effect (ME) corresponds to the derivative of the prediction function w.r.t. a feature. We refer to this variant as the derivative ME (dME):
+\begin{equation*}
+dME_j(x) = \frac{\partial f(x)}{\partial x_j}
+\end{equation*}
+\item 
+A less commonly known definition corresponds to the change in predicted outcome due to an intervention in the data, e.g., by increasing a feature value by one unit. As this variant corresponds to a forward difference, we refer to it as a forward ME (fME):
+\begin{equation*}
+fME_j(x, h_j) = f(x_1, \dots, x_j + h_j, \dots, x_p) - f(x)
+\end{equation*}
+\item For Eq. (\ref{eq:poly_model}), the dME and fME of $x_1$ with step size 1 correspond to:
 \begin{align*}
-ME_j(x) &= \frac{\partial f(x)}{\partial x_j} \\
-ME_j(x, h_j) &= f(x_1, \dots, x_j + h_j, \dots, x_p) - f(x)
+dME_j(x) &= 2\beta_1 x_1 +  \beta_{1, 2} x_2 \\
+fME_j(x, h_j) &= 2\beta_1 h_1 +  \beta_{1, 2} x_2 h_1
 \end{align*}
-\item The average marginal effect (AME) is a global feature effect estimate in form of a single metric. 
 \end{itemize}
-
-
 \end{vbframe}
+
+
 
 
 

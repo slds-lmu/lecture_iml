@@ -128,7 +128,7 @@ shorten >=2pt,}
 
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
-\newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\titlefigure}{figure/whitebox}
 \newcommand{\learninggoals}{
 \item Examples for interpretable models: linear and polynomial regression models, generalized linear models, generalized additive models, model-based boosting, rule-based learning
 \item Methodological summary, motivation behind the model, model interpretations}
@@ -269,8 +269,8 @@ Decision rules follow a general structure: IF the conditions are met, THEN make 
 \item Although a single decision rule is very intelligibile, a large collection of decision rules might not be. An interpretable rule-based model should therefore be based on as few rules as possible.
 \item Descripte Rule Discovery (DRD) is based on mining databases for frequent item sets, and converting these into a set of decision rules, e.g., a rule \{mobile phone\} $\Rightarrow$ \{mobile phone case\} might stem from mobile phones and phone cases being bought together frequently. DRD is not suited to create a model that makes predictions on unseen data.
 \item Instead, we are interested in Predictive Rule Learning (PRL), which aims to discover a set of rules that cover the entire feature space, thereby being able to predict for any data instance\footnote[frame]{Fürnkranz J., Kliegr T. (2015) A Brief Overview of Rule Learning. In: Bassiliades N., Gottlob G., Sadri F., Paschke A., Roman D. (eds) Rule Technologies: Foundations, Tools, and Applications. RuleML 2015. Lecture Notes in Computer Science, vol 9202. Springer, Cham.}. There are innumerable rule-based learning algorithms, e.g., decision tree learning, OneR, Sequential Covering, or Bayesian Rule Lists.
-\item Decision tree learning, e.g, classification and regression trees (CART), is the most popular group of rule-based models, as every tree can be represented by a collection of decision rules. A decision tree recursively partitions the data by optimizing an objective function, e.g., minimizing the data impurity. A succession of tree splits corresponds to a decision rule with the succeeding split conditions as a conjunction.
-\item The RuleFit algorithm combines polynomial regression with rule ensembles for automatic interaction detection. In the first stage, a tree ensemble is trained to produce decision rules (where the predictions are discarded and only the splits are utilized), e.g., $x_1 < 0 \land x_2 > 1$. In the second stage, a linear model with main effects is augmented with each decision rule being represented by a single dummy feature.
+\item Decision tree learning, e.g, classification and regression trees (CART), is the most popular group of rule-based models, as every tree can be represented by a collection of decision rules. A decision tree recursively partitions the data by optimizing an objective function, e.g., minimizing the data impurity. A succession of tree splits can be converted to a decision rule by forming a conjunction of successive split criteria.
+%\item The RuleFit algorithm combines polynomial regression with rule ensembles for automatic interaction detection. In the first stage, a tree ensemble is trained to produce decision rules (where the predictions are discarded and only the splits are utilized), e.g., $x_1 < 0 \land x_2 > 1$. In the second stage, a linear model with main effects is augmented with each decision rule being represented by a single dummy feature.
 \end{itemize}
 %\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
 %\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.

@@ -49,6 +49,10 @@ dev.off()
 
 rpart_mod = rpart(cnt ~ hum + temp, data = data_bike)
 sink(file = "slides/intro/figure/rpart_output.txt")
+rpart_mod$call
+sink(file = NULL)
+sink(file = "slides/intro/figure/rpart_output.txt", append = TRUE)
+writeLines("\n")
 rpart.rules(rpart_mod)
 sink(file = NULL)
 png("slides/intro/figure/rpart_plot.png", width = 12, height = 12, units = "cm", res = 1200)
