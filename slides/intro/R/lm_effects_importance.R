@@ -1,6 +1,8 @@
 library(effects)
 library(mgcViz)
 library(mgcv)
+library(rpart)
+library(rpart.plot)
 
 data_bike = read.csv("slides/intro/R/day.csv")
 data_bike$cnt = as.numeric(data_bike$cnt)
@@ -42,4 +44,13 @@ summary(mboost_mod)
 sink(file = NULL)
 png("slides/intro/figure/mboost_effect_plot.png", width = 12, height = 12, units = "cm", res = 1200)
 plot(mboost_mod)
+dev.off()
+
+
+rpart_mod = rpart(cnt ~ hum + temp, data = data_bike)
+sink(file = "slides/intro/figure/rpart_output.txt")
+rpart.rules(rpart_mod)
+sink(file = NULL)
+png("slides/intro/figure/rpart_plot.png", width = 12, height = 12, units = "cm", res = 1200)
+rpart.plot(rpart_mod)
 dev.off()

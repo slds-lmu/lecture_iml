@@ -265,11 +265,12 @@ $$
 \begin{itemize}
 \setlength\itemsep{2em}
 \item 
-Decision rules follow a general structure: IF the conditions are met, THEN make a certain prediction. Rule-based learning aims to capture a set of decision rules that accurately describe the data.
-\item One needs to differentiate between descriptive rule discovery (DRD) and predictive rule learning (PRL). DRD is based on mining databases for frequent item sets, and converting these into a set of decision rules, e.g., a decision rule \{mobile phone\} $\Rightarrow$ \{mobile phone case\} might stem from mining a frequent pattern of mobile phones and phone cases being bought together. DRD is not suited to make predictions for unseen data. Conversely, PRL aims to discover a set of rules that covers the entire feature space, thereby being able to predict for any data instance\footnote[frame]{Fürnkranz J., Kliegr T. (2015) A Brief Overview of Rule Learning. In: Bassiliades N., Gottlob G., Sadri F., Paschke A., Roman D. (eds) Rule Technologies: Foundations, Tools, and Applications. RuleML 2015. Lecture Notes in Computer Science, vol 9202. Springer, Cham.}. 
-\item Although a single decision rule is perhaps the most interpretable model, a large collection of decision rules might not be.
-\item There are innumerable rule-based learning algorithms. Decision tree learning, e.g, classification and regression trees (CART), is the most popular group of rule-based models, as every tree can be represented as a collection of decision rules (and subsequent tree splits as a series of rules). Other variants include OneR, Sequential Covering, or Bayesian Rule Lists.
-\item Furthermore, the RuleFit algorithm learns a sparse linear model via automatic interaction detection.
+Decision rules follow a general structure: IF the conditions are met, THEN make a certain prediction. Rule-based learning aims to capture a set of decision rules that accurately describe the data. 
+\item Although a single decision rule is very intelligibile, a large collection of decision rules might not be. An interpretable rule-based model should therefore be based on as few rules as possible.
+\item Descripte Rule Discovery (DRD) is based on mining databases for frequent item sets, and converting these into a set of decision rules, e.g., a rule \{mobile phone\} $\Rightarrow$ \{mobile phone case\} might stem from mobile phones and phone cases being bought together frequently. DRD is not suited to create a model that makes predictions on unseen data.
+\item Instead, we are interested in Predictive Rule Learning (PRL), which aims to discover a set of rules that cover the entire feature space, thereby being able to predict for any data instance\footnote[frame]{Fürnkranz J., Kliegr T. (2015) A Brief Overview of Rule Learning. In: Bassiliades N., Gottlob G., Sadri F., Paschke A., Roman D. (eds) Rule Technologies: Foundations, Tools, and Applications. RuleML 2015. Lecture Notes in Computer Science, vol 9202. Springer, Cham.}. There are innumerable rule-based learning algorithms, e.g., decision tree learning, OneR, Sequential Covering, or Bayesian Rule Lists.
+\item Decision tree learning, e.g, classification and regression trees (CART), is the most popular group of rule-based models, as every tree can be represented by a collection of decision rules. A decision tree recursively partitions the data by optimizing an objective function, e.g., minimizing the data impurity. A succession of tree splits corresponds to a decision rule with the succeeding split conditions as a conjunction.
+\item The RuleFit algorithm combines polynomial regression with rule ensembles for automatic interaction detection. In the first stage, a tree ensemble is trained to produce decision rules (where the predictions are discarded and only the splits are utilized), e.g., $x_1 < 0 \land x_2 > 1$. In the second stage, a linear model with main effects is augmented with each decision rule being represented by a single dummy feature.
 \end{itemize}
 %\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
 %\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.
@@ -278,6 +279,21 @@ Decision rules follow a general structure: IF the conditions are met, THEN make 
 
 \end{vbframe}
 
+\begin{vbframe}{Rule-Based Learning}
+
+\begin{columns}
+  \begin{column}{0.5\textwidth}
+      \begin{center}
+        \includegraphics[width = \textwidth]{figure/rpart_plot.png}     
+      \end{center}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+     \tiny
+     \verbatiminput{figure/rpart_output.txt}
+  \end{column}
+\end{columns}
+
+\end{vbframe}
 
 \endlecture
 \end{document}
