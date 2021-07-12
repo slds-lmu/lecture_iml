@@ -146,13 +146,14 @@ shorten >=2pt,}
 \begin{equation*}
 y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
 \end{equation*}
-\item Increasing $x_1$ by $\Delta x_1$, increases $y$ by $\Delta x_1 \cdot \beta_1$.
+\item A change in $x_1$ by $\Delta x_1$ results in a change in $y$ by $\Delta y = \Delta x_1 \cdot \beta_1$.
 \item Default interpretations correspond to $\Delta x_1 = 1$, i.e., $\Delta y = \beta$. 
 \item All interpretations are done ceteris paribus, i.e., all remaining features are kept constant.
 \end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Interpretations of Polynomial Models}
+
 
 \begin{itemize}
 \setlength\itemsep{2em}
@@ -182,13 +183,52 @@ A less commonly known definition corresponds to the change in predicted outcome 
 \begin{equation*}
 fME_j(x, h_j) = f(x_1, \dots, x_j + h_j, \dots, x_p) - f(x)
 \end{equation*}
-\item For Eq. (\ref{eq:poly_model}), the dME and fME of $x_1$ with step size 1 correspond to:
-\begin{align*}
-dME_j(x) &= 2\beta_1 x_1 +  \beta_{1, 2} x_2 \\
-fME_j(x, h_j) &= 2\beta_1 h_1 +  \beta_{1, 2} x_2 h_1
-\end{align*}
+%\item For Eq. (\ref{eq:poly_model}), the dME and fME of $x_1$ with step size 1 correspond to:
+%\begin{align*}
+%dME_j(x) &= 2\beta_1 x_1 +  \beta_{1, 2} x_2 \\
+%fME_j(x, h_j) &= 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1
+%\end{align*}
 \end{itemize}
 \end{vbframe}
+
+\begin{vbframe}{Derivative versus Forward Difference}
+
+\begin{itemize}
+\setlength\itemsep{2em}
+\item The dME is not suited to interpret non-linear prediction functions, as the derivative of the prediction function at one point may be substantially different at another.
+\item The fME is better suited for non-linear prediction functions. It essentially corresponds to a movement on the prediction function, indicating changes in predicted outcome regardless of the function's shape.
+\item However, with both variants, we lose information about the prediction function along the finite difference.
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Derivative versus Forward Difference}
+\begin{figure}
+  \includegraphics[width = 0.65\textwidth]{figure/derivative_me_error.png}
+\end{figure}
+\end{vbframe}
+
+\begin{vbframe}{Additive Recovery}
+
+\begin{itemize}
+\setlength\itemsep{2em}
+\item Due being based on a finite difference, both variants only recover terms within the prediction function that depend on the feature(s) of interest.
+\item Consider a prediction function $\widehat{f}(x) = ax_1 + bx_2$. It follows that:
+\begin{align*}
+dME_1(x) &= a \\
+fME_1(x, h_1) &= ah_1
+\end{align*}
+\item The ME removes effects of other features that are linked additively, regardless of their number and effect structure.
+\end{itemize}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Model-Agnostic Applicability}
+
+\end{vbframe}
+
+
+
 
 
 
