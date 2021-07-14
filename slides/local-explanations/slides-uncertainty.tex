@@ -142,28 +142,63 @@
 \input{../../latex-math/basic-ml.tex}
 \input{../../latex-math/ml-interpretable.tex}
 
-\lecturechapter{Increasing Trust in Local Explanations}
+\lecturechapter{Increasing Trust in Explanations}
 \lecture{Interpretable Machine Learning}
 
 % ------------------------------------------------------------------------------
 
 \begin{vbframe}{Motivation}
 	\begin{itemize}
-		\item Many local explanation methods 
-		\item Can we trust explanation? 
-		\item Different strategies 
-		\item \textcolor{red}{All strategies could be also applied to global explanation methods}
+		\item In the previous sections we saw multiple local explanation methods. 
+		\item Their explanations should not only make a prediction interpretable ("why did the model came up with this decision?") but also reveal if its trustworthy ("how certain is this explanation?").
+		\item Equal to the underlying model, explanations are subject to uncertainty since they are computed from data. 
+		\item Uncertainty in explanations undermines users' trust in the explanations and therefore also in the model since the lack of a solid explanation raises concerns about the model's reliability and robustness. 
+		\item In the following, we discuss methods to quantify the robustness of IML methods.
+		% \item In the following, we discuss a few methods that try to combine IML methods with uncertainty quantification methods. 
+		\item While we focus on local IML methods, note that all strategies could be expanded to global IML methods, as well.
 	\end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Expert Knowledge}
+\begin{vbframe}
 	\begin{itemize}
-		\item Explanations in concordance with expert knowledge
-		\item Example: Number of pets does not matter for credit application. 
-		\url{https://arxiv.org/pdf/1911.03274.pdf}
+		\item In general, ML models are also not robust since they rely on training data that itself could be noisy. 
+		\item Differentiation between process variance (how does our explanation change if our model is changed) and explanation variance (how does our explanation change if we we use a different subset of data or slightly different parameters).
+		\item We focus on the second task.  
+		\item What if the ML model was trained on noisy data? 
+		\item If we use an explanation model to debug the ML model, it is okay, if our explanation model also takes up the noisy patterns learned in the ML model. 
+		\item If we use an explanation model to understand both the predictor but also the underlying true data generating process, we want to focus on the stable patterns learned by the ML model and receive robust explanations. 
 	\end{itemize}
 \end{vbframe}
 
+\begin{vbframe}{Sources of Uncertainty}
+	Two sources of uncertainty could be identified for local explanation methods: 
+	\begin{itemize}
+		\item Sampling variance in explaining a single data point. 
+		E.g., to train a surrogate model for LIME we sample a new data set.   
+		\item Sensitivity to choice of parameters. E.g., the user needs to determine the sample size and the kernel width to explain a model with LIME. 
+	\end{itemize}
+These sources could lead to different explanations although we analyse the same model and the same (or a very similar) data point. 
+\footnote[frame]{Zhang et al. (2019). ``Why Should You Trust My Explanation?'' Understanding Uncertainty in LIME Explanations. arXiv preprint arXiv:1904.12991.} 
+\end{vbframe}
+
+\begin{vbframe}{Measure Robustness in neighborhood}
+	\begin{itemize}
+		\item One way to address these limitations is to examine the behavior of the model in a neighborhood of the point of interest. 
+		\item Ideally, we would like to receive similar explanations for similar inputs. 
+		\item In the previous chapter on the limitations of LIME, we already saw an example, where LIME produced different explanations for very similar data points (with similar predictions).
+		\item For LIME and SHAP, Melis and Jaakkola (2018) derived a notion of stability based on discrete, finite-samples neighborhoods: 
+		Given a dataset $X = \{\xv_i\}_{i = 1}^n$, a $\epsilon$-neighborhood for $\xv$ is defined as 
+		$$ \mathcal{N}_{\epsilon}(\xv) = \{\xv_i \in X | d(\xv, \xv_i) \le \epsilon\}$$
+		where $d(\cdot)$ is an  arbitrary distance measure (e.g., Euclidean or Gower distance). 
+		\item Robustness for a interpretability method $g$ could then be measured by 
+		$$L_{X}(\xv) = \underset{x_i \in \mathcal{N}_{\epsilon}(\xv)}{\arg \max} \frac{||g(\xv) - g(\xv_i)||_2}{d(\xv, \xv_i)}$$
+		\item We cannot only impose that the explanation of one particular method is similar for similar data points, but also across multiple IML methods. 
+		\item Robustness in this setting could be defined as: 
+		
+	\end{itemize}
+\end{vbframe}
+
+\begin{comment}
 \begin{vbframe}{Robustness}
 	\begin{itemize}
 		\item Robustness in vicinity of data point \url{https://arxiv.org/pdf/1806.08049.pdf} (LIME and SHAP)
@@ -171,6 +206,7 @@
 		\item Levels: different seed, different permutation/bootstrap samples (only makes sense if training data is involved), different model fits (process` variance)
 	\end{itemize}
 \end{vbframe}
+\end{comment}
 
 \begin{vbframe}{Out-of-distribution Detection}
 	\begin{itemize}
@@ -178,13 +214,6 @@
 		\item DBSCAN \url{https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf}
 		\item Classifier trained on joined dataset of original training data and randomly sampled or perturbed data points \url{https://arxiv.org/pdf/1911.02508.pdf}
 		\item Fancier: Bayesian NN, generative model \url{http://proceedings.mlr.press/v119/sastry20a/sastry20a.pdf}
-	\end{itemize}
-\end{vbframe}
-
-
-\begin{vbframe}{Literature}
-	\begin{itemize}
-		\item https://arxiv.org/pdf/2105.11828.pdf
 	\end{itemize}
 \end{vbframe}
 
