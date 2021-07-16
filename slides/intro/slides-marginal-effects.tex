@@ -141,7 +141,7 @@ shorten >=2pt,}
 \begin{vbframe}{Interpretations of Linear Models}
 
 \begin{itemize}
-\setlength\itemsep{2em}
+\itemsep2em
 \item The LM can be directly interpreted by evaluating the model coefficients:
 \begin{equation*}
 y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
@@ -156,7 +156,7 @@ y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
 
 
 \begin{itemize}
-\setlength\itemsep{2em}
+\itemsep2em
 \item If higher-order terms or interactions are present, parameter-based interpretations are not possible anymore:
 \begin{equation}
 y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1, x_2 + \epsilon
@@ -172,7 +172,7 @@ y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1, x_2 + \epsil
 \begin{vbframe}{Marginal Effects}
 
 \begin{itemize}
-\setlength\itemsep{2em}
+\itemsep2em
 \item
 The most common definition of the marginal effect (ME) corresponds to the derivative of the prediction function w.r.t. a feature. In this lecture, we refer to this variant as the derivative ME (dME). The dME can be computed model-agnostically via numeric differentiation, e.g., with a symmetric difference quotient:
 \begin{align*}
@@ -198,7 +198,7 @@ fME_j(x, h_j) = 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1
 \begin{vbframe}{Derivative versus Forward Difference}
 
 \begin{itemize}
-\setlength\itemsep{2em}
+\itemsep2em
 \item The dME is not suited to interpret non-linear prediction functions, as the derivative of the prediction function at one point may be substantially different at another.
 \item The fME is better suited for non-linear prediction functions. It essentially corresponds to a movement on the prediction function, indicating changes in predicted outcome regardless of the function's shape.
 \item However, with both variants, we lose information about the prediction function along the finite difference.
@@ -214,7 +214,7 @@ fME_j(x, h_j) = 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1
 \begin{vbframe}{Additive Recovery}
 
 \begin{itemize}
-\setlength\itemsep{2em}
+\itemsep2em
 \item Due being based on a finite difference, both variants only recover terms within the prediction function that depend on the feature(s) of interest.
 \item Consider a prediction function $\widehat{f}(x) = ax_1 + bx_2$. It follows that:
 \begin{align*}
@@ -230,7 +230,7 @@ fME_1(x, h_1) &= ah_1
 \begin{vbframe}{Model-Agnostic Applicability}
 
 \begin{itemize}
-\setlength\itemsep{2em}
+\itemsep2em
 \item MEs are traditionally used to interpret parametric models such as GLMs. However, both dME and fME can be used as model-agnostic interpretation tools for non-parametric models. As the fME is better suited for non-linear prediction functions, it is the natural choice for black box ML models.
 \item The fME essentially correspond to an exploration of the prediction function. We can also use multivariate changes in feature values to explore the prediction surface in various directions simultaneously.
 \item One needs to keep in mind that the shape of the prediction function may vary considerably along the forward difference, i.e., an fME with half the step size may not result in half the fME. 
@@ -239,7 +239,16 @@ fME_1(x, h_1) &= ah_1
 \end{vbframe}
 
 
+\begin{vbframe}{Model-Agnostic Applicability}
 
+\begin{itemize}
+\itemsep2em
+\item MEs are traditionally used to interpret parametric models such as GLMs. However, both dME and fME can be used as model-agnostic interpretation tools for non-parametric models. As the fME is better suited for non-linear prediction functions, it is the natural choice for black box ML models.
+\item The fME essentially correspond to an exploration of the prediction function. We can also use multivariate changes in feature values to explore the prediction surface in various directions simultaneously.
+\item One needs to keep in mind that the shape of the prediction function may vary considerably along the forward difference, i.e., an fME with half the step size may not result in half the fME. 
+\end{itemize}
+
+\end{vbframe}
 
 
 
