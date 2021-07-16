@@ -130,23 +130,34 @@ shorten >=2pt,}
 \input{../../latex-math/basic-ml}
 \newcommand{\titlefigure}{figure/whitebox}
 \newcommand{\learninggoals}{
-\item Examples for interpretable models: linear and polynomial regression models, generalized linear models, generalized additive models, model-based boosting, rule-based learning
-\item Methodological summary, motivation behind the model, model interpretations}
+\item What characteristics does an interpretable model have
+\item Why we should use interpretable models
+\item Examples for interpretable models: linear and polynomial regression models, generalized linear models, generalized additive models, model-based boosting, rule-based learning}
 
 \lecturechapter{Interpretable Models}
 \lecture{Interpretable Machine Learning}
+
+\begin{vbframe}{Interpretable Models}
+\begin{itemize}
+\item We consider models to be interpretable if they give us feature effects and importance scores through model-specific methods.
+\item Parametric models are considered to be interpretable, as we pre-specify a model equation. However, there are interpretable non-parametric models, e.g., decision trees.
+\item One often assumes a trade-off between performance and interpretability. Although this is a good rule of thumb it is not universally true, i.e., a carefully selected generalized additive model can outperform black box models such as gradient boosting or random forests while being interpretable.
+\item It follows that one should first consider interpretable models, and only if these fail, e.g., due to insufficient knowledge about the data, one should consider black box models which can be interpreted through model-agnostic methods.
+\end{itemize}
+\end{vbframe}
+
 
 \begin{vbframe}{Linear and Polynomial Regression}
 
 \begin{itemize}
 \setlength\itemsep{2em}
-\item For linear regression models, we only estimate the model parameters. The model equation is manually specified and known in advance:
+\item For linear regression models, we specify the model equation. The model parameters are estimated via least squares:
 \begin{align*}
 y &= \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon \\
 Y &= X^T\beta + \mathcal{E}
 \end{align*}
 \item The model equation is identical across the entire feature space.
-\item The predictive power of LMs is determined by specifying the correct model structure. A polynomial regression model is an extension of the LM that includes higher order terms or interactions. This way we can additively model non-linear data and make use of the entire LM toolbox.
+\item The predictive power of LMs is determined by specifying the correct model structure. A polynomial regression model is an extension of the LM that includes higher order terms or interactions. This enables us to model non-linear data while making use of the entire arsenal of LM functionality.
 \item
 By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics). For higher order effects or interactions, beta coefficients cannot be interpreted in isolation, i.e., we need to use marginal effects or effect plots with simultaenous changes in feature values.
 \item Note that for inference-based metrics (p-values, t-statistics, confidence intervals) to be valid, the error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2)$. It follows that $(y \vert x) \sim N(x^T \beta, \sigma^2)$. This restricts the usage of LMs in practice, as the distribution of the error term is a prior assumption about the data.

@@ -147,7 +147,7 @@ shorten >=2pt,}
 y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
 \end{equation*}
 \item A change in $x_1$ by $\Delta x_1$ results in a change in $y$ by $\Delta y = \Delta x_1 \cdot \beta_1$.
-\item Default interpretations correspond to $\Delta x_1 = 1$, i.e., $\Delta y = \beta$. 
+\item Default interpretations correspond to $\Delta x_1 = 1$, i.e., $\Delta y = \beta$.
 \item All interpretations are done ceteris paribus, i.e., all remaining features are kept constant.
 \end{itemize}
 \end{vbframe}
@@ -174,20 +174,24 @@ y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1, x_2 + \epsil
 \begin{itemize}
 \setlength\itemsep{2em}
 \item
-The most common definition of the marginal effect (ME) corresponds to the derivative of the prediction function w.r.t. a feature. We refer to this variant as the derivative ME (dME):
+The most common definition of the marginal effect (ME) corresponds to the derivative of the prediction function w.r.t. a feature. In this lecture, we refer to this variant as the derivative ME (dME). The dME can be computed model-agnostically via numeric differentiation, e.g., with a symmetric difference quotient:
+\begin{align*}
+dME_j(x) &= \frac{\partial f(x)}{\partial x_j} \\
+dME_j(x) &\approx \frac{f(x + h) - f(x - h)}{2h} \\
+\end{align*}
+\item For Eq. (\ref{eq:poly_model}), the dME corresponds to:
 \begin{equation*}
-dME_j(x) = \frac{\partial f(x)}{\partial x_j}
+dME_j(x) = 2\beta_1 x_1 +  \beta_{1, 2} x_2
 \end{equation*}
-\item 
-A less commonly known definition corresponds to the change in predicted outcome due to an intervention in the data, e.g., by increasing a feature value by one unit. As this variant corresponds to a forward difference, we refer to it as a forward ME (fME):
+\item
+A less commonly  known definition corresponds to the change in predicted outcome due to an intervention in the data, e.g., by increasing a feature value by one unit. As this variant corresponds to a forward difference, we refer to it as a forward ME (fME) in this lecture:
 \begin{equation*}
 fME_j(x, h_j) = f(x_1, \dots, x_j + h_j, \dots, x_p) - f(x)
 \end{equation*}
-%\item For Eq. (\ref{eq:poly_model}), the dME and fME of $x_1$ with step size 1 correspond to:
-%\begin{align*}
-%dME_j(x) &= 2\beta_1 x_1 +  \beta_{1, 2} x_2 \\
-%fME_j(x, h_j) &= 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1
-%\end{align*}
+\item For Eq. (\ref{eq:poly_model}), the fME of $x_1$ with step size 1 correspond to:
+\begin{equation*}
+fME_j(x, h_j) = 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1
+\end{equation*}
 \end{itemize}
 \end{vbframe}
 
@@ -217,13 +221,20 @@ fME_j(x, h_j) = f(x_1, \dots, x_j + h_j, \dots, x_p) - f(x)
 dME_1(x) &= a \\
 fME_1(x, h_1) &= ah_1
 \end{align*}
-\item The ME removes effects of other features that are linked additively, regardless of their number and effect structure.
+\item The ME removes effects of other features that are linked additively, regardless of how many remaining features exist, and their effect structure.
 \end{itemize}
 
 \end{vbframe}
 
 
 \begin{vbframe}{Model-Agnostic Applicability}
+
+\begin{itemize}
+\setlength\itemsep{2em}
+\item MEs are traditionally used to interpret parametric models such as GLMs. However, both dME and fME can be used as model-agnostic interpretation tools for non-parametric models. As the fME is better suited for non-linear prediction functions, it is the natural choice for black box ML models.
+\item The fME essentially correspond to an exploration of the prediction function. We can also use multivariate changes in feature values to explore the prediction surface in various directions simultaneously.
+\item One needs to keep in mind that the shape of the prediction function may vary considerably along the forward difference, i.e., an fME with half the step size may not result in half the fME. 
+\end{itemize}
 
 \end{vbframe}
 
