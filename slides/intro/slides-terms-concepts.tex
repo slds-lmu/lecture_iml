@@ -137,7 +137,7 @@ shorten >=2pt,}
 \lecturechapter{Fundamental Terms and Concepts}
 \lecture{Interpretable Machine Learning}
 
-\begin{vbframe}{What is Interpretable Machine Learning}
+\begin{vbframe}{Interpretable Machine Learning}
 \begin{itemize}
 \itemsep2em
 \item Machine learning (ML) algorithms algorithmically train predictive models with no or little pre-specifications and assumptions about the data.
@@ -147,7 +147,7 @@ shorten >=2pt,}
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{What is Explainable AI}
+\begin{vbframe}{Explainable AI}
 \begin{itemize}
 \itemsep2em
 \item IML is often used synonymously with Explainable AI (XAI). There is no unified standard for these terminologies. We find that XAI often is specifically concerned with the interpretation of neural networks, whereas IML is used as an encompassing term for everything related to model interpretability, i.e., interpretable models such as generalized additive models, model-agnostic techniques, as well as interpretations of neural networks.
@@ -157,14 +157,16 @@ shorten >=2pt,}
 \end{vbframe}
 
 \begin{vbframe}{XAI - Saliency Maps}
+
 \begin{itemize}
-\itemsep2em
-\item The traditional assumption is that deep learning is best suited for non-tabular data, whereas other ML techniques such as gradient boosting or random forests are better suited for tabular data. However, recent developments seem to undermine this assumption, i.e., neural networks increasingly outperform other methods on tabular data as well.
-\item For visual data, i.e., pixels being represented as a matrix, deep learning has proven to deliver remarkable results. The default way to interpret neural networks on visual data is a saliency map. A saliency map is a heatmap indicating pixel influence on the prediction (e.g., a classification of an image):
+\item For visual data, i.e., pixels being represented as a matrix, deep learning has proven to deliver remarkable outperformance over other model types.
+\item A saliency map is a heatmap indicating pixel influence on the prediction (e.g., a classification of an image): \footnote[frame]{Mundhenk, T., Chen, B.Y., Friedland, G. (2019). Efficient Saliency Maps for Explainable AI. ArXiv, abs/1911.11293.
+}
 
-\includegraphics[width=0.7\textwidth]{figure/saliencymap}
+\begin{figure}
+\includegraphics[width = 0.8 \textwidth]{figure/saliencymap}
+\end{figure}
 \end{itemize}
-
 \end{vbframe}
 
 \begin{vbframe}{What is Interpretability?}
@@ -190,16 +192,47 @@ shorten >=2pt,}
  \begin{center}
   \includegraphics[width=0.9\textwidth]{figure/overview}
  \end{center}
- $\Rightarrow$ Due to their versatility, both industry and academia put a large focus on model-agnostic methods, which we will focus on!
+ $\Rightarrow$ Due to their versatility, both industry and academia are highly interested in model-agnostic methods, which we will focus on.
 \end{vbframe}
 
 \begin{vbframe}{Correlation versus Interaction}
 \begin{itemize}
-\itemsep2em
-\item You will discover that a lot of problems in IML arise due to correlated features and feature interactions. One needs to be careful not to confuse them.
-\item Correlated features imply that the joint probability density function (PDF) between features is not a product of their marginal distributions, i.e., $\mathcal{F}(x_1, \dots, x_p) \neq \mathcal{F}(x_1) \cdot \dots \cdot \mathcal{F}(x_p)$. This becomes a problem when interpretation methods rely on model evaluations in artifically sampled data points which may be located in areas where the model extrapolates if the training data is correlated.
+\item A lot of problems in IML arise due to correlated features and feature interactions. One needs to be careful not to confuse them.
+\item Correlated features imply that the joint probability density function (PDF) of a set of $p$ features is not a product of their marginal distributions, i.e., $\mathcal{F}(x_1, \dots, x_p) \neq \mathcal{F}(x_1) \cdot \ldots \cdot \mathcal{F}(x_p)$. This often becomes a problem as many interpretation methods rely on model evaluations with recombinations of feature values. If the training data is correlated, these recombinations are located in low training density areas of the feature space, which results in model extrapolations.
 \item An interaction is a product term between features inside the prediction function. As such, interactions are detached from the constitution of the data, i.e., regardloss of the degree of correlation, the effect of a feature on the target will depend on the values of one or multiple other features.
 \end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Correlation}
+
+1000 randomly sampled observations with correlation between both features:
+
+\begin{figure}
+\includegraphics[width = 0.7\textwidth]{figure/correlation}
+\end{figure}
+\end{vbframe}
+
+\begin{vbframe}{Interaction}
+
+Shape of the prediction function for a two-way interaction:
+
+\begin{figure}
+\includegraphics[width = 0.6\textwidth]{figure/interaction}
+\end{figure}
+\end{vbframe}
+
+
+\begin{vbframe}{Extrapolation}
+\begin{itemize}
+\itemsep2em
+\item As we do not assume any data generating process, ML models cannot extrapolate reliably in areas where the model was not trained with a sufficient amount of training data. The resulting predictions are subject to a high variance.
+\item If we solely wish to interpret the model, this is not an issue. However, in most applications we wish to use model interpretations to evaluate some kind of real-world phenomenon that generated the data, i.e., conduct inference. In such a case, interpretations based on model extrapolations can be misleading.
+\item In IML, extrapolation issues often arise due to recombining values of correlated features.
+\item Model extrapolation essentially corresponds to prediction uncertainty, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty and thus model extrapolation. Unfortunately, virtually no ML models are capable of quantifying prediction uncertainty.
+\item There is no consensus definition of when a model extrapolates and to what degree. Furthermore, the severity of the problem depends on the model itself. Some models might extrapolate more reliably than others.
+\item Theoretically, we could use the training density as a proxy. However, density estimation in high dimensions is extremely infeasible.
+\end{itemize}
+
 \end{vbframe}
 
 % \begin{vbframe}{Intrinsic and Model-Agnostic Interpretation}
