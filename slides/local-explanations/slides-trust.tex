@@ -151,10 +151,10 @@
 \begin{vbframe}{Motivation}
 	\begin{itemize}
 		\item In the previous sections, we saw multiple local explanation methods. 
-		\item Their explanations should not only make a model interpretable ("why did the model came up with this decision?") but also reveal if its trustworthy (``how certain is this explanation?'').
-		\item A trustworthy explanation is an explanation that gives \textbf{(1)} accurate insights into the inner workings of our algorithm and \textbf{(2)} are also robust (low variance). 
-		\item[(1)] Explanations could be misleading if their generation rely on inputs in areas where the model was trained with little or no training data (extrapolation). Thus, it is necessary to detect if an IML method uses out-of-distribution data to derive an explanation. 
-		\item[(2)] We expect to receive similar explanations for similar data points with similar prediction. However, depending on the IML method this is not always the case since multiple sources of uncertainty exist. Therefore, it is necessary to measure how robust an IML method is to small changes in the input data or parameters. 
+		\item Their explanations should not only make a model interpretable ("why did the model come up with this decision?") but also reveal if it is trustworthy (``how certain is this explanation?'').
+		\item A trustworthy explanation is an explanation that gives \textbf{(1)} accurate insights into the inner workings of our model and \textbf{(2)} are also robust (low variance). 
+		\item[(1)] Explanations could be misleading if their generation is based on inputs in areas where the model was trained with little or no training data (extrapolation). Thus, it is necessary to detect if an IML method uses out-of-distribution data to derive an explanation. 
+		\item[(2)] We expect to receive similar explanations for similar data points with similar predictions. However, depending on the IML method this is not always the case since multiple sources of uncertainty exist. Therefore, it is necessary to measure how robust an IML method is to small changes in the input data or parameters. 
 		\item Both aspects could undermine users' trust in the explanations and therefore also in the model since the lack of a solid explanation raises concerns about the model's reliability and robustness. 
 		\item In the upcoming section, we will, therefore, discuss methods to detect if a point is out-of-distribution and to measure how robust IML methods are.
 	\end{itemize}
@@ -225,7 +225,6 @@
 		\item Disadvantage: Depending on the distance metric $d(\cdot)$, DBSCAN could suffer from the ``curse of dimensionality''. 
 		\item Furthermore, the choice of $\epsilon$ and $m$ is not clear a-priori. 
 \end{itemize}
-	\footnote[frame]{Abhijit Annaldas (2017). Density Based Clustering of Applications with Noise (DBSCAN).\\ \url{https://www.linkedin.com/pulse/density-based-spatial-clustering-applications-noise-dbscan-annaldas/}.}
 	\footnote[frame]{Martin Ester et al. (1996). A density-based algorithm for discovering clusters in large spatial databases with noise. KDD'96: Proceedings of the Second International Conference on Knowledge Discovery and Data Mining. 226–231.}
 \end{frame}
 
@@ -234,9 +233,14 @@
 		\item In general we must differentiate between explanation uncertainty and process uncertainty that lead to non-robust explanations: 
 		\begin{enumerate}
 			\item Explanation uncertainty tries to answer how an explanation changes if we repeat the experiment. The explanation could differ depending on which subset of data we use for the explanation method and which parameters. 
-			\item Process uncertainty tries to answer how an explanation changes if the underlying model is changed. ML models can be non-robust since they rely on training data that itself could be noisy. 
+			\item Process uncertainty tries to answer how an explanation changes if the underlying model is changed. This is interesting since ML models can be non-robust, e.g., because they are trained on noisy data. 
 		\end{enumerate}
-		\item Here, we focus on the former - explanation uncertainty. We could receive different explanations although we analyse the same model and the same (or a very similar) data point.  
+		\item Here, we focus on the former - explanation uncertainty. We could receive different explanations although we analyse the same model and the same (or a very similar) data point.
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Robustness Measure for LIME and SHAP}  
+	\begin{itemize}
 		\item One way to quantify the robustness of an explanation is to examine the behavior of the model in a neighborhood of the point of interest. We would like to receive similar explanations for similar inputs. 
 		\item In the previous chapter on the limitations of LIME, we already saw an example where LIME produced different explanations for very similar data points (with similar predictions).
 		\item For LIME and SHAP, Alvarez-Melis and Jaakkola (2018) derived a notion of stability based on \textbf{locally Lipschitz continuity}: \\
@@ -247,7 +251,6 @@
 		\item $\omega$ is rarely known a-priori but it could be estimated as following: 
 		$$\hat{\omega}_{X}(\xv) = \underset{x_i \in \mathcal{N}_{\epsilon}(\xv)}{\arg \max} \frac{||g(\xv) - g(\xv_i)||_2}{d(\xv, \xv_i)},$$
 		where $\mathcal{N}_{\epsilon}(\xv)$ is the $\epsilon$-neighborhood of $\xv$.
-		\item 
 	\end{itemize}
 \vspace{2cm}
 \footnote[frame]{Alvarez-Melis, D., \& Jaakkola, T. (2018). On the Robustness of Interpretability Methods. ArXiv, abs/1806.08049.}
@@ -271,7 +274,7 @@ These sources could lead to different explanations although we analyse the same 
 \begin{comment}
 \begin{vbframe}{Noisy data}
 	\begin{itemize}
-		\item What if the ML model was trained on noisy data? Should the explanation model also takes up these noisy patterns? 
+		\item What if the ML model was trained on noisy data? Should the explanation model also take up these noisy patterns? 
 		\item If we use an explanation model to debug the ML model, it is okay, if our explanation model also takes up the noisy patterns learned in the ML model. 
 		\item If we use an explanation model to understand both the predictor but also the underlying true data generating process, we want to focus on the stable patterns learned by the ML model and receive robust explanations. 
 	\end{itemize}
