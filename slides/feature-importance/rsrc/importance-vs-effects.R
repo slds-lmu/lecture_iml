@@ -2,6 +2,8 @@ library("iml")
 library("randomForest")
 library("mlr")
 
+# setwd('~/university/phd/2021/teaching/lecture_iml/slides/feature-importance/rsrc')
+
 set.seed(123)
 load("bike.RData")
 bike = na.omit(bike)
@@ -16,5 +18,5 @@ imp$results
 ggsave('../figure_man/bike_pfi.pdf', width=4, height=4)
 
 pdp <- FeatureEffects$new(predictor, method='pdp+ice')
-pdp$plot()
-ggsave('../figure_man/bike_pdp+ice.pdf', width=7, height=4)
+p  = pdp$plot(ncols=3) + theme_bw()
+ggsave('../figure_man/bike_pdp+ice.pdf', width=12, height=8)

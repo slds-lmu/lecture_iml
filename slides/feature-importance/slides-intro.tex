@@ -178,23 +178,14 @@ Feature Importance offers a condensed summary of the relevance of features for t
 \end{vbframe}
 
 \begin{vbframe}{Feature Importance Scheme}
-In general, feature importance is computed in three steps:
+In general, feature importance methods share two components
 \lz
 \begin{enumerate}
-  \item \textbf{Perturbation:} Sample a perturbed version of the dataset $\pert{\D}{}{}$.
-  \begin{itemize}
-    \item for example by replacing the feature of interest $x_j$ with an uninformative sample $\pert{x_j}{}{}$
-    \end{itemize}
-  \item \textbf{Prediction:} Make predictions for both i.e., $\D$ and $\pert{\D}{}{}$.
-  \item \textbf{Aggregation:} 
-    \begin{itemize}
-      \item Compute the loss for each observation in both data sets.
-      \item Take the difference of both losses $\Delta L$ for each observation.
-      \item For global interpretation: Average this change in loss across all observations.
-    \end{itemize}
+  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed/removed.
+  \item \textbf{Performance Comparision:} Compare performance under perturbation/removal with the original model performance.
 \end{enumerate}
 \lz
-The interpretation of the feature importance methods depends on the type of perturbation and aggregation.
+Depending on the type of perturbation/removal feature importance methods provide insight into different aspects of model and data.
 
 \footnote[frame]{Scholbeck, Christian A., et al. "Sampling, intervention, prediction, aggregation: A generalized framework for model-agnostic interpretations." arXiv preprint arXiv:1904.03959 (2019).}
 \end{vbframe}
@@ -202,7 +193,7 @@ The interpretation of the feature importance methods depends on the type of pert
 
 \begin{vbframe}{Potential Interpretation Goals}
 
-Depending on type of perturbation and aggregation, different interpretation goals can (or cannot) be reached. For example, one may be interested in one of the following questions:
+Feature importance methods provide highly condensed insight, but can only highlight certain aspects of model and data. For example, one may be interested in one of the following questions:
 \lz
 \begin{enumerate}
     \item Is the feature $\xj$ causal for the prediction?
@@ -215,14 +206,15 @@ Except for special cases, the answers to these questions do not coincide.
 
 \begin{vbframe}{Potential Interpretation Goals}
 
-The properties do not necessarily coincide:
+The properties do not necessarily coincide. Can be proven by example (sketch):
 
 \begin{itemize}
-  \item A feature may causal for the prediction $\yh$ (1) without containing prediction-relevant information about $\ydat$ (2).
-  \item A feature may contain prediction relevant information (2) without the model exploiting it (1).
-  \item A feature may contain prediction-relevant information that the model exploits (2), without the model requiring access to the feature for (optimal) prediction performance (3).
+  \item A feature may causal for the prediction $\yh$ (1) without containing prediction-relevant information about $\ydat$ (2). \textit{Example:} overfitting.
+  \item A feature may contain prediction relevant information (2) without causing the prediction (1).  \textit{Example:} underfitting.
+  \item A feature may contain prediction-relevant information (that the model exploits) (2), without the model requiring access to the feature for (optimal) prediction performance (3).\\
+  \textit{Example:} random forest model on dataset with $y \not \ind x_1$ and $y \ind x_2 | x_1$ where $x_1$ was not drawn as potential split feature for one or more trees, such that the respective trees split on $x_2$ instead.
 \end{itemize}
-
+$\Rightarrow$ In general, an importance score cannot serve all goals at once.
 \end{vbframe}
 
 \endlecture
