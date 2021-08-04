@@ -110,9 +110,8 @@
 %\usetheme{lmu-lecture}
 \newcommand{\titlefigure}{figure_man/feature-importance.png}
 \newcommand{\learninggoals}{
-	\item Understand motivation for feature importance
-	\item Develop an intuition for possible use-cases
-	\item Know characteristics of feature importance methods}
+	\item Definition of LOCO
+	\item Interpretation of LOCO}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -144,76 +143,68 @@
 	\input{../../latex-math/basic-ml.tex}
 	\input{../../latex-math/ml-interpretable.tex}
 	
-	\lecturechapter{Introduction}
+	\lecturechapter{Leave One Covariate Out (LOCO)}
 	\lecture{Interpretable Machine Learning}
 	
 	% ------------------------------------------------------------------------------
 
-\begin{vbframe}{Motivation}
-\begin{itemize}
-  \item \textbf{Feature effects} describe the relationship of features with the prediction $\yh$.
+\begin{vbframe}{Leave One Covariate Out (LOCO)}
+
+\textbf{LOCO removal strategy:} fit learner on dataset where the feature was removed\\
+\lz
+For training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\inducer$ and for each feature $j \in \pset$
   \begin{itemize}
-    \item requires one plot per feature
-    \item does not take the prediction target $y$ into account
+    \item learn model on dataset where feature $\xj$ was removed, i.e.$\fh_{-j} = \inducer({\Dtrain}_{,-j})$
+    \item compute performance $\riske(\fh_{-j})$
+    \item compare $\riske(\fh_{-j})$ with the original performance $\riske(\fh)$
   \end{itemize}
-  \item \textbf{Feature importance} methods quantify the relevance of features for the prediction performance.
-  \begin{itemize}
-    \item condensed to one number per feature
-    \item insight into the relationship with $y$
-  \end{itemize}
-\end{itemize}
 
 \end{vbframe}
-\begin{vbframe}{Example}
 
-Feature Importance offers a condensed summary of the relevance of features for the prediction.
+\begin{vbframe}{Bike Sharing Dataset}
 
 \begin{center}
-  \begin{figure}
-  \includegraphics[width=0.6\linewidth]{figure_man/bike_pdp+ice} \hfill \includegraphics[width=0.35\linewidth]{figure_man/bike_pfi}
-  \caption{A random forest was fit on the bike sharing dataset. Left: Feature Effect Plots (PDP) for all features. Right: Feature Importance Plot (PFI).}
-\end{figure}
+\includegraphics[width=0.75\textwidth]{figure_man/bike_sharing_loco.pdf}
 \end{center}
 
-\end{vbframe}
-
-\begin{vbframe}{Feature Importance Scheme}
-In general, feature importance methods share two components
-\lz
-\begin{enumerate}
-  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed/removed.
-  \item \textbf{Performance Comparision:} Compare performance under perturbation/removal with the original model performance.
-\end{enumerate}
-\lz
-Depending on the type of perturbation/removal feature importance methods provide insight into different aspects of model and data.
-\end{vbframe}
-
-
-\begin{vbframe}{Potential Interpretation Goals}
-
-Feature importance methods provide highly condensed insight, but can only highlight certain aspects of model and data. For example, one may be interested in one of the following questions:
-\lz
-\begin{enumerate}
-    \item Is the feature $\xj$ causal for the prediction?
-    \item Does the variable $\xj$ contain prediction-relevant information about $\ydat$ (that the model exploits)?
-    \item Does the model require access to $\xj$ to achieve it's prediction performance? (I.e. does the feature contribute unique information about $\ydat$?)
-\end{enumerate}
-\lz
-Except for special cases, the answers to these questions do not coincide.
-\end{vbframe}
-
-\begin{vbframe}{Potential Interpretation Goals}
-
-The properties do not necessarily coincide. Can be proven by example (sketch):
-
 \begin{itemize}
-  \item A feature may causal for the prediction $\yh$ (1) without containing prediction-relevant information about $\ydat$ (2). \textit{Example:} overfitting.
-  \item A feature may contain prediction relevant information (2) without causing the prediction (1).  \textit{Example:} underfitting.
-  \item A feature may contain prediction-relevant information (that the model exploits) (2), without the model requiring access to the feature for (optimal) prediction performance (3).\\
-  \textit{Example:} random forest model on dataset with $y \not \ind x_1$ and $y \ind x_2 | x_1$ where $x_1$ was not drawn as potential split feature for one or more trees, such that the respective trees split on $x_2$ instead.
+ \item The year is the most important feature.
+ \item Interpretation: Destroying the information about the year by shuffling this feature increases the mean absolute error of the model by an amount of 816.
+ \item Additionally, the $5 \%$ and $95 \%$ quantile of the repetitions are shown as error bars.
 \end{itemize}
-$\Rightarrow$ In general, an importance score cannot serve all goals at once.
 \end{vbframe}
+
+\begin{vbframe}{Interpretation of LOCO}
+
+\textbf{Interpretation:} LOCO estimates the generalization error of the learner on a reduced dataset $\D_{-j}$.\\
+\lz
+What insight into model and data can we gain?
+\begin{enumerate}
+    \item Is the feature $\xj$ causal for the prediction $\yh$?
+    \begin{itemize}
+      \item In general, no.
+    \end{itemize}
+    \item Does the variable $\xj$ contain prediction-relevant information about $\ydat$ (that the model exploits)?
+    \begin{itemize}
+      \item In general, no.
+    \end{itemize}
+    \item Does the model require access to $\xj$ to achieve it's prediction performance? (I.e. does the feature contribute unique information about $\ydat$?)
+    \begin{itemize}
+      \item Approximately.
+    \end{itemize}
+\end{enumerate}
+
+\framebreak
+
+Is the feature $\xj$ causal for the prediction $\yh$?\\
+\lz
+Counterexample:
+
+\end{vbframe}
+
+
+\end{vbframe}
+
 
 \endlecture
 \end{document}
