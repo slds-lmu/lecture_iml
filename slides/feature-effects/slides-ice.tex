@@ -153,8 +153,10 @@ $$\fh(\xi) = \hat\beta_0 + x^{(i)}_1\hat\beta_1 + \dots + x^{(i)}_p\hat\beta_p.$
 %The $\hat\beta$-coefficients are constant across different observations.
 %It is sufficient to consider a feature's $\hat\beta$ coefficient as marginal effect as it provides an understanding how a feature affects the model prediction. % on average.
 
-\lz
-\textbf{Example}: Visualizing the marginal effect of a LM (left) and a GAM (right) with a single feature (temperature) to predict the number of bike rentals. For the GAM, the linear terms $x_j\hat\beta_j$ are replaced by more flexible non-linear functions $f_j(x_j)$ estimated via splines.
+%\lz
+\textbf{Example}: %Visualizing the marginal effect of a LM (left) and a GAM (right) with a single feature (temperature) to predict the number of bike rentals.
+The feature effect of a LM (left) or GAM (right) visualizes the relationship (i.e., marginal effect) of a single feature (here: temperature) on the prediction (here: number of bike rentals) while ignoring all other features.
+For the GAM, the linear terms $x_j\hat\beta_j$ are replaced by more flexible non-linear functions $f_j(x_j)$ estimated via splines.
 %Marginal effects of a LM with features temperature (\texttt{temp}) and \texttt{season} to predict the number of bike rentals (\texttt{cnt}).
 
 \centering
@@ -203,7 +205,11 @@ In ML, \textbf{feature effect methods} visualize or quantify the marginal contri
 $\xrightarrow[]{\text{aggregate}}$ \hspace{2px} Global (curve) \hspace{2px}
 $\xrightarrow[]{\text{aggregate}}$ \hspace{2px} Global (number)
 
-%\framebreak
+\framebreak
+
+M plot
+
+%which types of questions can be answered
 
 %Why visualizations of feature effects are meaningful in ML.
 
@@ -410,19 +416,19 @@ The ICE curve of observation $i=3$ connects all predictions at the corresponding
 
 \begin{vbframe}{Comments}
 \begin{itemize}
-\item The ICE curves as a local interpretation method shows how different feature values of an observation affect the prediction of that observation.
-\item Plotting ICE curves involves generating grid values that are visualized on the x-axis.
+\item ICE curves show how different feature values of an observation affect its prediction $\Rightarrow$ local interpretation method.
+\item Plotting ICE curves involves generating grid values $x_S^*$ that are visualized on the x-axis.
 Common choices for grid values are
 \begin{itemize}
 \item equidistant values within the range of the considered feature,
 \item randomly sampled values or quantile values from the observed feature values.
 \end{itemize}
-In contrast to an equidistant grid, the other two options preserve (approximately) the marginal distribution of the feature of interest.
+\item In contrast to an equidistant grid, the other two options preserve (approximately) the marginal distribution of the feature of interest.
 $\Rightarrow$ Avoids unrealistic feature values for distributions with outliers.
 
-\vspace{1pt}
+\vspace{3pt}
 \centering
-\includegraphics[width=0.7\textwidth, trim=0cm 0cm 0cm 0cm, clip]{figure_man/sampling}
+\includegraphics[width=0.75\textwidth, trim=0cm 0cm 0cm 0cm, clip]{figure_man/sampling}
 
 %Preferable for skewed distributions (with outliers) to avoid using unrealistic feature values.
 % \begin{itemize}

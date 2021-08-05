@@ -215,7 +215,7 @@ data.const$method = factor(data.const$method, levels = c("equidistant grid", "ra
 ind = which(x2 == sort(x2, decreasing = TRUE)[2])
 
 p = ggplot(data = data, aes(x1, x2)) +
-  geom_point(data = data.frame(x1 = x1[ind], x2 = x2[ind]), aes(x1, x2), size = 2, col = "blue") +
+  geom_point(data = data.frame(x1 = x1[ind], x2 = x2[ind]), aes(x1, x2), size = 3, col = "blue") +
   geom_point(data = data.frame(x1 = x1, x2 = x2), aes(x1, x2), alpha = 0.25) +
   geom_rug(data = data.frame(x1 = x1, x2 = x2), aes(x = x1), alpha = 0.25, sides = "b") +
   geom_point(data = data.const, aes(x1, x2), shape = 4, alpha = 0.5, col = "red") +
@@ -226,7 +226,16 @@ p = ggplot(data = data, aes(x1, x2)) +
   ylab("Feature"~X[C]) +
   ggtitle("Grid points for"~X[S]~"(red) for highlighted observation (blue)")
 
-ggsave("slides/feature-effects/figure_man/sampling.pdf", p, height = 2.3, width = 7.5)
+
+ann_text = data.frame(x1 = max(x1), x2 = x2[ind], diff = max(diff(sort(x1))), #lab = "Text",
+  method = factor("equidistant grid", levels = levels(data$method)))
+p = p + geom_text(data = ann_text, aes(x = x1-diff/2, y = x2), nudge_y = -1, label = paste0("unrealistic?"), parse = F, col = "red") + # atop('unrealistic', 'values')
+  geom_rect(data = ann_text, mapping = aes(ymax = x2 + 0.5, ymin = x2 - 0.5,
+    xmax = x1 - 0.3, xmin = (x1-diff) + 0.3), alpha = 0, size = 0.5,
+    colour = "red", fill = "red") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("slides/feature-effects/figure_man/sampling.pdf", p, height = 2.5, width = 7.5)
 # pdf(file = "./figures/sampling.pdf", height = 3, width = 9)
 # print(p)
 # dev.off()

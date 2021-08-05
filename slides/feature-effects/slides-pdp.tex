@@ -138,8 +138,8 @@
 
 \begin{vbframe}{Partial Dependence}
 
-The partial dependence (PD) plot is the expectation of ICE curves w.r.t. the marginal distribution of complementary features $\xv_C$,
-$$f_{S, PD}(x_S) = \E_{\xv_C} \left( \fh(x_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_C) \, d\mathcal{P}(\xv_C)$$
+The partial dependence (PD) function is the expectation of ICE curves w.r.t. the marginal distribution of complementary features $\xv_C$,
+$$f_{S, PD}(x_S) = \E_{\xv_C} \left( \fh(x_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_C) \, d\P(\xv_C)$$
 
 For a grid value $x_S^*$, the PD function is estimated by the point-wise average of the ICE curves:
 $$\fh_{S, PD}(x_S^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_S^*, \xv_C^{(i)})$$
@@ -149,6 +149,28 @@ $$\fh_{S, PD}(x_S^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_S^*, \xv_C^{(i)})$$
 \footnote[frame]{Friedman, Jerome H. (2001). Greedy Function Approximation: A Gradient Boosting Machine. Annals of Statistics: 1189-1232.}
 %\footnote[frame]{Scholbeck, C. A., Molnar, C., Heumann, C., Bischl, B., and Casalicchio, G. (2019). Sampling, Intervention, Prediction, Aggregation: A Generalized Framework for Model Agnostic Interpretations. ECML PKDD 2019. (pp. 205-216).}
 \end{vbframe}
+
+
+\frame{
+\frametitle{Example: Partial Dependence for LM}
+
+Assume a linear regression model with two features:
+
+$$\fh(\xv) = \fh(\xv_1, \xv_2) = \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_0$$
+
+The PD function for the feature of interest $S = \{1\}$ (with $C = \{2\}$) is:
+
+$$
+\begin{aligned}
+f_{1, PD}(\xv_1) = \E_{\xv_2} \left( \fh(\xv_1, \xv_2) \right) &= \int_{-\infty}^{\infty} \left( \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_0 \right) \, d\P(\xv_2) \\
+&= \hat\beta_1 \xv_1 + \hat\beta_2 \cdot \int_{-\infty}^{\infty} \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
+&= \hat\beta_1 \xv_1 + \underbrace{\hat\beta_2 \cdot \E_{\xv_2} (\xv_2) + \hat\beta_0}_{:= const}
+\end{aligned}
+$$
+
+Here, the PD plot visualizes the function $f_{1, PD}(\xv_1) = \hat\beta_1 \xv_1 + const$, which is the feature effect of $\xv_1$.
+
+}
 
 \frame{
 \frametitle{Partial Dependence}
@@ -190,18 +212,27 @@ $$\fh_{S, PD}(x_S^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_S^*, \xv_C^{(i)})$$
 %\end{onlyenv}
 
 \only<1>{
-\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves at \fcolorbox{red}{white}{$x_S = x_1 = 1$}:
+Estimate partial dependence by the \textbf{point-wise} average of the ICE curves at gridpoint \fcolorbox{red}{white}{$x_S^* = x_1^* = 1$}:
 $$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
 }
 \only<2>{
-\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves at \fcolorbox{red}{white}{$x_S = x_1 = 2$}:
+Estimate partial dependence by the \textbf{point-wise} average of the ICE curves at gridpoint \fcolorbox{red}{white}{$x_S^* = x_1^* = 2$}:
 $$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
 }
 \only<3>{
-\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves at \fcolorbox{red}{white}{$x_S = x_1 = 3$}:
+Estimate partial dependence by the \textbf{point-wise} average of the ICE curves at gridpoint \fcolorbox{red}{white}{$x_S^* = x_1^* = 3$}:
 $$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
 }
 }
+
+
+
+
+
+
+
+
+
 
 \frame{
 \frametitle{Interpretation: PD and ICE}
