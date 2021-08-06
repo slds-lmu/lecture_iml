@@ -81,6 +81,8 @@
 \usepackage{mathtools}
 \usepackage{wrapfig}
 \usepackage{bm}
+\usepackage[backend=biber]{biblatex}
+
 
 \usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
 \tikzset{
@@ -104,6 +106,7 @@
 
 \usepackage{subfig}
 
+
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -125,6 +128,9 @@
 \date{}
 
 \setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+
+\bibliography{feature-importance}
 
 %\usepackage{Sweave}
 \begin{document}
@@ -148,30 +154,47 @@
 	
 	% ------------------------------------------------------------------------------
 
-\begin{vbframe}{Leave One Covariate Out (LOCO)}
-
-\textbf{LOCO removal strategy:} fit learner on dataset where the feature was removed\\
+\begin{vbframe}{Reminder: Feature Importance Scheme}
+In general, feature importance methods share two components
 \lz
-For training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\inducer$ and for each feature $j \in \pset$
-  \begin{itemize}
-    \item learn model on dataset where feature $\xj$ was removed, i.e.$\fh_{-j} = \inducer({\Dtrain}_{,-j})$
-    \item compute performance $\riske(\fh_{-j})$
-    \item compare $\riske(\fh_{-j})$ with the original performance $\riske(\fh)$
-  \end{itemize}
+\begin{enumerate}
+  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed/removed.
+  \item \textbf{Performance Comparision:} Compare performance under perturbation/removal with the original model performance.
+\end{enumerate}
+\lz
+Depending on the type of perturbation/removal feature importance methods provide insight into different aspects of model and data.\\
+\lz
+\textbf{LOCO idea:} Simply remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.\\
 
 \end{vbframe}
 
-\begin{vbframe}{Bike Sharing Dataset}
+\begin{vbframe}{Leave One Covariate Out (LOCO)}
+% citation of the original LOCO paper
+%
+\textbf{Definition:} Given training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\inducer$ and a model $\fh = \inducer(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
+  \begin{enumerate}
+    \item learn model on dataset where feature $\xj$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$
+    \item compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |\ydat^{(i)} - \fh_{-j}(\xb_{-j}^{(i)}) \right | - \left |\ydat^{(i)} - \fh(\xb^{(i)}) \right | $ with $i \in \Dtest$
+    \item yield the importance score $\text{LOCO}_j = \text{med} \left ( \Delta_j  \right )$
+  \end{enumerate}
+\lz 
+The method can be generalized to other loss functions and aggregations. If we use mean instead of median, then we can write
+%
+$$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh) $$
+\footnote[frame]{\fullcite{lei_distribution-free_2018}\\ \fullcite{tibshirani_loco_2018}}
+\end{vbframe}
 
-\begin{center}
-\includegraphics[width=0.75\textwidth]{figure_man/bike_sharing_loco.pdf}
-\end{center}
-
-\begin{itemize}
- \item The year is the most important feature.
- \item Interpretation: Destroying the information about the year by shuffling this feature increases the mean absolute error of the model by an amount of 816.
- \item Additionally, the $5 \%$ and $95 \%$ quantile of the repetitions are shown as error bars.
-\end{itemize}
+\begin{vbframe}{Bike Sharing Example}
+%
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{figure_man/bike_sharing_loco.pdf}
+\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing dataset to optimize MSE. Then LOCO was computed for all features on the training dataset.}
+\end{figure}
+%
+ \textbf{Interpretation:} How important is variable $j$ to the algorithm's estimate on $\Dtrain$?\\
+The year is the most important feature.\\
+%
 \end{vbframe}
 
 \begin{vbframe}{Interpretation of LOCO}
@@ -196,15 +219,52 @@ What insight into model and data can we gain?
 
 \framebreak
 
-Is the feature $\xj$ causal for the prediction $\yh$?\\
+\begin{figure}
+\centering
+%\hfill
+ % \begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=0.6, line width=0.3mm, black, fill=white}]
+%		\node[draw, circle, font=\large] (x1) at  (-.5, 2) {$X_1$};
+%		\node[draw, circle, font=\large] (x2) at  (-.5,1) {$X_2$};
+%		\node[draw, circle, font=\large] (x3) at  (.5,1) {$X_3$};
+%		\node[draw, circle, font=\large] (y) at  (0,0) {$Y$};
+%		\draw[->, black] (x1) -- (x2);
+%		\draw[->, black] (x3) -- (y);
+%		\draw[->, black] (x2) -- (y);
+%	\end{tikzpicture} 
+\hfill
+	\includegraphics[width=0.25\linewidth]{figure_man/simulation_corr.pdf} 
+\hfill
+  \includegraphics[width=0.5\linewidth]{figure_man/simulation_loco}
+  \hfill
+\end{figure}
+
+Setting: Linear gaussian data generating process with correlation matrix as depicted left. A linear model was fit with $\fh(x) = -0.09 - 0.86 x_1 + 1.86 x_2 + 0.96 x_3$.\\
 \lz
-Counterexample:
+$\Rightarrow$ We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient $1.86$) (1). We also can't infer (2), e.g. $corr(x_2, y) = 0.69$.\\
+$\Rightarrow$ We can get insight into (3). Since $x_2$ and $x_1$ are highly correlated, they can take each others place, which is not the case for $x_3$.
+\framebreak
+
 
 \end{vbframe}
 
-
+\begin{vbframe}{Pros and Cons}
+  Pros
+  \begin{itemize}
+    \item Requires (only?) one model fit per feature for evaluation
+    \item Easy to implement
+    \item Testing framework available in \cite{lei_distribution-free_2018}
+  \end{itemize}
+%
+  Cons:
+  \begin{itemize}
+    \item Does not provide insight into a specific model, but rather a learner on a specific dataset.
+    \item Model training is a random process, so estimates can be noisy.
+  \end{itemize}
 \end{vbframe}
 
+\begin{vbframe}
+  \printbibliography
+\end{vbframe}
 
 \endlecture
 \end{document}
