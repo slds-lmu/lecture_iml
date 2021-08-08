@@ -149,23 +149,16 @@
 	
 	% ------------------------------------------------------------------------------
 
-\begin{vbframe}{Permutation Feature Importance}
+\begin{vbframe}{Permutation Feature Importance Idea}
 
-Reminder: General Feature Importance framework
+In general, feature importance methods share two components
 \lz
 \begin{enumerate}
-  \item \textbf{Perturbation:} Sample a perturbed version of the dataset $\pert{\D}{}{}$.
-  \item \textbf{Prediction:} Make predictions for both i.e., $\D$ and $\pert{\D}{j}{}$.
-  \item \textbf{Aggregation:} 
-    \begin{itemize}
-      \item Compute the loss for each observation in both data sets.
-      \item Take the difference of both losses $\Delta L$ for each observation.
-      \item For global interpretation: Average this change in loss across all observations.
-    \end{itemize}
+  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed/removed.
+  \item \textbf{Performance Comparison:} Compare performance under perturbation/removal with the original model performance.
 \end{enumerate}
 \lz
-
-\textbf{Permutation Feature Importance Idea:} Perturb such that feature of interest $\xj$ is uninformative while preserving the marginal distribution $P(X_j)$. Such a sample $\pert{\xv}{}{}_j$ can be approximate by randomly permuting observations in $\xj$.
+\textbf{Permutation Feature Importance Idea:} "Remove" the feature of interest $x_j$ by perturbing it such that it is uninformative. Therefore, resample the variable from its marginal distribution $\P(X_j)$, e.g. by randomly permuting observations in $x_j$.
 
 %\framebreak
 
@@ -184,14 +177,14 @@ Performance-based permutation feature importance (PFI) for a feature $x_S$ using
   \item Measure the error \color{red}\textbf{with permuted feature values} \color{black} $\pert{x}{}{}_S$.
   \item Measure the error \color{blue}\textbf{without permuting features}\color{black}.
   \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
-$$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \widehat{GE}(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D})$$
+$$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
 \end{itemize}
 
 Example of permuting feature $x_S$ with $S = \{1\}$:
 
 % TODO: update to new notation
 \begin{center}
-\includegraphics[width=0.75\textwidth]{figure_man/permuted-fv.png}
+\includegraphics[width=0.75\textwidth]{figure_man/permuted-fv.pdf}
 \end{center}
 
 \vspace*{0.2cm}
@@ -206,11 +199,11 @@ As we calculate the feature importance for one feature at a time $|S| = 1$.}\par
 
 \frametitle{Permutation Feature Importance}
 
-  \only<1-3,5-7>{$\hspace{36pt}{\color{white}\widehat{GE}(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D})}$}
-  \only<4>{$\hspace{36pt}\widehat{GE}(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D}),$ where 
-$\scriptstyle\widehat{GE}(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
-% $\scriptstyle\widehat{GE}(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
-%   \only<5-6>{$\hspace{36pt}{\color{white}\widehat{GE}(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D})}$}
+  \only<1-3,5-7>{$\hspace{36pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}
+  \only<4>{$\hspace{36pt}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D}),$ where 
+$\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
+% $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
+%   \only<5-6>{$\hspace{36pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}
   
   \begin{center}
   \only<1>{\includegraphics[page=2, trim=0pt 5pt 0 66pt, clip, width=0.88\textwidth]{figure_man/pfi_demo2}}%
@@ -223,7 +216,7 @@ $\scriptstyle\widehat{GE}(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_
   
   \begin{itemize}
     \only<1-2>{\item[1.]\textbf{Perturbation:} Sample feature values from the distribution of $x_S$ ($P(X_S)$). \newline $\Rightarrow$ Randomly permute feature $x_S$ (retains the distribution). Replace the original feature with the permuted feature $\pert{x}{}{}_S$ and create data with permuted feature   $\pert{\D}{S}{}$.}
-    \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\D_{S}$.}
+    \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\pert{\D}{S}{}$.}
     \only<3-4>{\item[3.] \textbf{Aggregation:}
       \begin{itemize}
         \item Compute the loss for each observation in both data sets.
@@ -266,48 +259,91 @@ $\scriptstyle\widehat{GE}(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_
  \begin{itemize}
  \itemsep1em
   \item Interpretation: PFI displays the increase of the model error when the feature's information is destroyed.
-  \item PFI produces a single importance value per feature. \\
-  $\Rightarrow$ It is a global interpretability method.
   \item Results can be unreliable due to random permutations. \\
   $\Rightarrow$ Solution: Average results over multiple repetitions.
-  \item Permuting features despite correlation with other features can lead to unrealistic combinations of feature values.
+  \item Permuting features despite correlation with other features can lead to unrealistic combinations of feature values (since under dependence $\P(x_j,x_{-j}) \neq \P(x_j) \P(x_{-j})$).
   \item Feature importance automatically includes the importance of interaction effects with other features.
+  \item The interpretation strongly depends on whether training or test data is used.\\
  \end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Permutation Feature Importance: Extrapolation}
- \begin{itemize}
- \itemsep1em
-  \item Permuting features despite correlation with other features can lead to unrealistic combinations of feature values.
-  \item Example from conditional subgroups paper Christoph
-  \item Refer to CFI/SAGE values for non-extrapolating variants
- \end{itemize}
-\end{vbframe}
+ 
+ \textbf{Example:} Let $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$, $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, $y = x_3 + \epsilon_y$ with independent noise terms $\epsilon_1, \epsilon_3, \epsilon_4 \sim N(0,1)$, $\epsilon_2 \sim N(0, 0.01)$, $\epsilon_Y \sim N(0, 0.1)$.
+A lm is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
+ %
+\begin{figure}
+\hfill
+  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
+  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
+  \includegraphics[width=0.4\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
+  \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ confidence band.}
+\end{figure}
+% 
+$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
+$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+
+ \end{vbframe}
 
 \begin{vbframe}{Permutation Feature Importance: Interactions}
- \begin{itemize}
- \itemsep1em
-  \item Feature importance automatically includes the importance of interaction effects with other features.
-  \item Example
-  \begin{itemize}
-    \item two variables, only interaction; further variable no interaction
-    \item $Y = \frac{1}{2} \sqrt{X_1 \cdot X_2} + \frac{1}{2} X_3$
-    \item both variables are fully attributed with the interaction term
-    \item overestimation of the importance of $X_1$ and $X_2$?
- \end{itemize}
- \item refer to SAGE/Shapley for fair attribution
- \end{itemize}
+
+\textbf{Example:} Let $x_1, \dots, x_4$ be independently and uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$.\\
+A linear model is fit yielding $\fh(x) \approx x_1 x_2 + x_3$.\\
+
+\begin{figure}
+\centering
+  \includegraphics[width=0.5\linewidth]{figure_man/pfi_interactions.pdf}
+\end{figure}
+
+Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ jointly, all three are considered equally relevant.\\
+\lz
+$\Rightarrow$ PFI does not fairly attribute the performance to the individual features.
 \end{vbframe}
+
+\begin{vbframe}{Permutation Feature Importance: Test versus Training data}
+
+\textbf{Example:} $x_1, \dots, x_{20}$ are independently sampled from $\mathcal{U} (-10, 10)$. A \texttt{xgboost} model with default hyperparameters if fit on a small training set of $50$ observations. The model overfits heavily.\\
+
+\begin{figure}
+  \includegraphics[width=0.6\linewidth]{figure_man/pfi_test_vs_train.pdf}
+  \caption{While PFI on test data considers all features to be irrelevant, PFI on train data exposes the features on which the model overfit.}
+\end{figure}
+
+Why? PFI can only be nonzero if the permutation breaks a dependence in the data. Spurious correlations help the model perform on train data, but are not present in the test data.\\
+$\Rightarrow$ If you are interested in which features help the model to generalize, apply PFI on test data.
+  
+\end{vbframe}
+
+\begin{vbframe}{Implications of PFI}
+
+\begin{enumerate}
+    \item Is the feature $x_j$ causal for the prediction?
+    \begin{itemize}
+      \item Nonzero PFI implies that the model relies on $x_j$.
+      \item As the training vs test data example demonstrates, the contraposition does not hold.
+    \end{itemize}
+    \item Does the variable $x_j$ contain prediction-relevant information about $y$ (that the model exploits)?
+    \begin{itemize}
+      \item Nonzero PFI implies that the feature is dependent with $y$ or it's covariates $x_{-j}$ or both (due to extrapolation).
+      \item If a feature is not exploited by the model, PFI is zero, irrespective of whether the feature is useful or not.
+    \end{itemize}
+    \item Does the model require access to $x_j$ to achieve it's prediction performance? (I.e. does the feature contribute unique information about $y$?)
+    \begin{itemize}
+      \item As the extrapolation example demonstrates, such insight is not possible.
+    \end{itemize}
+\end{enumerate}
+\end{vbframe}
+
 
 \begin{vbframe}{Testing Importance (PIMP)}
 
 \begin{itemize}
   \item PIMP was originally introduced for random forest feature importance.
-  \item It fixes the problem that the importance measure prefers features with many categories.
-  \item PIMP answers the questions when the importance significantly differs from 0. 
-  \item It computes the distribution of importances under the $H_0$-hypothesis that the feature has no influence.
-  \item Sampling under $H_0$ is achieved by permuting the $\ydat$-vector and retraining the model.
-  \item We now rescale the importance to a p-value - the tail probability under $H_0$ - as a new importance score. 
+  %\item It fixes the problem that the importance measure prefers features with many categories.
+  \item PIMP investigates whether the PFI significantly differs from 0. 
+  \item It computes the distribution of importances under the $H_0$-hypothesis that the feature is independent of the target $y$.
+  \item Sampling under $H_0$ is achieved by permuting the $y$-vector and retraining the model.
+  \item We now rescale the importance to a p-value - the tail probability under $H_0$ - as a new importance score.
 \end{itemize}
 
 {\tiny{Altmann, André, et al. "Permutation importance: a corrected feature importance measure." 
@@ -319,11 +355,11 @@ PIMP algorithm:
 \begin{enumerate}
 	\item For $m \in \{1, \ldots, n_{repetitions}\}$:
 		\begin{itemize}
-			\item Permute response vector $\ydat$.
-			\item Retrain model with data $\Xmat$ and permuted $\ydat$.
+			\item Permute response vector $y$.
+			\item Retrain model with data $\Xmat$ and permuted $y$.
 			\item Compute feature importance $PFI_j^m$ for each feature $j$.
 		\end{itemize}
-	\item Train model with $\Xmat$ and unpermuted $\ydat$.
+	\item Train model with $\Xmat$ and unpermuted $y$.
 	\item For each feature $j \in \{1,\ldots,p\}$:
 		\begin{itemize}
 			\item Fit probability distribution of the feature importance values $PFI_j^m$, $m \in \{1, \ldots, n_{repetitions}\}$ (choice between Gaussian, lognormal, gamma or non-parametric).
@@ -347,30 +383,9 @@ PIMP algorithm:
   {\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
 \end{vbframe}
 
-
-\begin{vbframe}{Interpretation Goals}
-
-Discuss which of the following questions can be answered:
-\lz
-\begin{itemize}
-    \item Is the feature $\xj$ causal for the prediction?
-    \begin{itemize}
-      \item What if no association with the target right away?
-    \end{itemize}
-    \item Does the variable $\xj$ contain prediction-relevant information about $\ydat$ (that the model exploits)?
-    \begin{itemize}
-      \item inference possible depending on loss and model optimality
-      \item always the model's perspective
-    \end{itemize}
-    \item Does the variable $\xj$ contain more prediction-relevant information about $\ydat$ than $\xv_S$ (that the model exploits)?
-    \begin{itemize}
-        \item no
-    \end{itemize}
-\end{itemize}
-\lz
-
+\begin{vbframe}
+  Apply PIMP to extrapolation example?
 \end{vbframe}
-
 
 \endlecture
 \end{document}
