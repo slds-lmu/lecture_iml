@@ -81,6 +81,7 @@
 \usepackage{mathtools}
 \usepackage{wrapfig}
 \usepackage{bm}
+\usepackage[backend=biber]{biblatex}
 
 \usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
 \tikzset{
@@ -110,9 +111,8 @@
 %\usetheme{lmu-lecture}
 \newcommand{\titlefigure}{figure_man/feature-importance.png}
 \newcommand{\learninggoals}{
-	\item Understand motivation for feature importance
-	\item Develop an intuition for possible use-cases
-	\item Know characteristics of feature importance methods}
+	\item SAGE value functions
+	\item SAGE interpretation}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -126,6 +126,8 @@
 \date{}
 
 \setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\bibliography{feature-importance}
 
 %\usepackage{Sweave}
 \begin{document}
@@ -144,13 +146,70 @@
 	\input{../../latex-math/basic-ml.tex}
 	\input{../../latex-math/ml-interpretable.tex}
 	
-	\lecturechapter{SAGE}
+	\lecturechapter{Shapley Additive Global Importance (SAGE)}
 	\lecture{Interpretable Machine Learning}
 	
 	% ------------------------------------------------------------------------------
 
+% CHALLENGE
+\begin{frame}{Challenge: Fair attribution of importance}
+
+\begin{itemize}
+  \item contribution of a feature may be shared
+  \item how do we fairly attribute importance?
+\end{itemize}
+\lz
+Copy interaction example from PFI chapter.\\
+\lz
+$\Rightarrow$ Regard feature importance attribution as cooperative game, where each feature is a player. Depending on the order in which they enter a game, their marginal payoff may differ.\\
+$\Rightarrow$ Use Shapley values to compute a fair attribution.
+  
+\end{frame}
+
+
+% SAGE IDEA
+\begin{vbframe}{SAGE Removal}
+  
+SAGE translates SHAP into a global feature importance technique. For SAGE, value functions quantify the predictive power of a coalition $S$ in terms of reduction in risk over the mean prediction.\\
+\lz
+\textbf{Removal Idea:} In order to deprive the model of the non-coalition features $-S$, marginalize the prediction function over the dropped features.
+
+$$\fh_S(x_S) = \E[\fh(x) | X_S = x_S]$$
+  
+The dropped features can either be sampled from the marginal distribution $\P(x_{-S})$ or the conditional distribution $\P(x_{-S}|x_S)$.\\
+\lz
+
+  
+\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
+  
+\end{vbframe}
+
+% SAGE value functions
+
+\begin{vbframe}{SAGE value function}
+
+Value function:  $ v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S})$\\
+\lz
+Contribution of feature $x_j$ over coalition $x_S$:  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S)$\\
+\lz
+Depending on model and loss function, interesting links exist:
+\begin{itemize}
+  \item cross-entropy loss: conditional mutual information
+  \item MSE: reduction in variance
+\end{itemize}
+
+
+\end{vbframe}
 
 \begin{vbframe}{SAGE}
+
+Algorithm and closed form
+  
+\end{vbframe}
+
+
+
+\begin{vbframe}{SAGE Interpretation}
 
 \begin{itemize}
 	\item indirect influence not quantified
@@ -163,24 +222,6 @@
 
 \end{vbframe}
 
-\begin{vbframe}{SAGE value function}
-
-\begin{itemize}
-	\item definition of importance
-	\item marginalization of prediction function
-	\item quantification defined in terms of sets
-	\item improvement over set
-	\item link to mutual information etc
-\end{itemize}
-
-\end{vbframe}
-
-
-\begin{vbframe}{SAGE values}
-
-reference to Shapley chapter
-
-\end{vbframe}
 
 \begin{vbframe}{Interpretation goal overview}
 
@@ -202,6 +243,9 @@ reference to Shapley chapter
 
 \end{vbframe}
 
+\begin{vbframe}
+  \printbibliography
+\end{vbframe}
 
 \endlecture
 \end{document}

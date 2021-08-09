@@ -276,8 +276,8 @@ $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y
 
 \begin{vbframe}{Permutation Feature Importance: Extrapolation}
  
- \textbf{Example:} Let $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$, $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, $y = x_3 + \epsilon_y$ with independent noise terms $\epsilon_1, \epsilon_3, \epsilon_4 \sim N(0,1)$, $\epsilon_2 \sim N(0, 0.01)$, $\epsilon_Y \sim N(0, 0.1)$.
-A lm is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
+ \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
  %
 \begin{figure}
 \hfill

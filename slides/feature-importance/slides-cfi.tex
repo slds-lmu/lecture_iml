@@ -111,8 +111,9 @@
 %\usetheme{lmu-lecture}
 \newcommand{\titlefigure}{figure_man/feature-importance.png}
 \newcommand{\learninggoals}{
-	\item Understand Conditional Feature Importance
-	\item Understanding strengths and weaknesses}
+	\item Extrapolation and Conditional Sampling
+	\item Conditional Feature Importance (CFI)
+	\item Interpretation of CFI}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -151,6 +152,8 @@
 	
 	% ------------------------------------------------------------------------------
 
+
+
 % CFI IDEA
 \begin{vbframe}{Conditional Feature Importance Idea}
 
@@ -163,11 +166,12 @@
 \end{vbframe}
 
 
+
 % RECAP EXTRAPOLATION
 \begin{vbframe}{Recap: Extrapolation in PFI}
  
- \textbf{Example:} Let $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$, $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, $y = x_3 + \epsilon_y$ with independent noise terms $\epsilon_1, \epsilon_3, \epsilon_4 \sim N(0,1)$, $\epsilon_2 \sim N(0, 0.01)$, $\epsilon_Y \sim N(0, 0.1)$.
-A lm is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
+ \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
  %
 \begin{figure}
 \hfill
@@ -181,11 +185,13 @@ $\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 
 $\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 
  \end{vbframe}
+
+
  
  % CONDITIONAL SAMPLING PRESERVES THE JOINT
  \begin{vbframe}{Conditional Sampling preserves the Joint}
  
- Let $\pert{x}{S}{-S}$ be the feature vector where features $x_S$ were replaced with a sample from $\P(x_S|x_{-S})$. Then
+ Let $\pert{x}{S}{-S}$ be the feature vector where features $x_S$ were replaced with an independent sample from $\P(x_S|x_{-S})$. Then
 %
 \begin{align*}
   \P(\pert{x}{S}{-S}) = \P(\pert{x}{S}{-S}_S, x_{-S}) &= \P(\pert{x}{S}{-S}_S|x_{-S}) P(x_{-S})\\
@@ -196,10 +202,9 @@ $\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the fea
  $\Rightarrow$ CFI only evaluates the model within the observational covariate distribution\\
  \lz
  \textbf{Note:} That does not imply $\P(x,y) = \P(\pert{x}{S}{-S}, y)$! In the perturbed data, the relationship between $x_j$ and $y$ may still be destroyed.\\
- \lz
- 
- 
  \end{vbframe}
+
+
 
 % CFI DEFINITION
 \begin{vbframe}{Conditional Feature Importance}
@@ -207,8 +212,8 @@ $\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the fea
 
 Conditional feature importance (CFI) for features $x_S$ using test data $\D$:
 \begin{itemize}
-  \item Measure the error \color{red}\textbf{with permuted feature values} \color{black} $\pert{x}{S}{-S}$, where $\pert{x}{S}{-S}_S \sim \P(x_S|x_{-S})$
-  \item Measure the error \color{blue}\textbf{without permuting features}\color{black}.
+  \item Measure the error \color{red}\textbf{with perturbed feature values} \color{black} $\pert{x}{S}{-S}$, where $\pert{x}{S}{-S}_S \sim \P(x_S|x_{-S})$
+  \item Measure the error \color{blue}\textbf{with unperturbed features}\color{black}.
   \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
 $$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{-S}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
 \end{itemize}
@@ -218,6 +223,8 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 \footnote[frame]{\fullcite{Strobl2008}}
 
 \end{vbframe}
+
+
 
 % INTERPRETATION OF CFI
 \begin{vbframe}{Implications of CFI}
@@ -234,10 +241,11 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
   \item Why? Then the prediction is not affected by any perturbation of the feature (and consequently the performance is invariant).
 \end{itemize}
 
-
 \footnote[frame]{\fullcite{konig_relative_2021}}
 \end{vbframe}
 
+
+% IMPLICATIONS OF CFI
 \begin{vbframe}{Implications of CFI}
 
 Can we gain insight into whether..

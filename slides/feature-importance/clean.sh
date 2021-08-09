@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # cleans all latex compilation log files
+rm *.dvi
 rm *.aux
 rm *.pdf
 rm *.log
