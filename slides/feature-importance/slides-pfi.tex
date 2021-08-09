@@ -81,6 +81,7 @@
 \usepackage{mathtools}
 \usepackage{wrapfig}
 \usepackage{bm}
+\usepackage[backend=biber]{biblatex}
 
 \usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
 \tikzset{
@@ -127,6 +128,8 @@
 
 \setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
 
+\bibliography{feature-importance}
+
 %\usepackage{Sweave}
 \begin{document}
 	
@@ -160,6 +163,8 @@ In general, feature importance methods share two components
 \lz
 \textbf{Permutation Feature Importance Idea:} "Remove" the feature of interest $x_j$ by perturbing it such that it is uninformative. Therefore, resample the variable from its marginal distribution $\P(X_j)$, e.g. by randomly permuting observations in $x_j$.
 
+\footnote[frame]{\fullcite{Breiman2001rf}}
+
 %\framebreak
 
 %\begin{figure}
@@ -169,7 +174,9 @@ In general, feature importance methods share two components
 %\vspace{-0.2cm}
 %\tiny{Fisher et al. (2018). All models are wrong but many are useful: Variable importance for black-box, proprietary, or misspecified prediction models, using model class reliance. arXiv preprint arXiv:1801.01489 (2018).}
 
-\framebreak
+\end{vbframe}
+
+\begin{vbframe}{Permutation Feature Importance}
 \normalsize
 
 Performance-based permutation feature importance (PFI) for a feature $x_S$ using test data $\D$:
@@ -316,21 +323,23 @@ $\Rightarrow$ If you are interested in which features help the model to generali
 
 \begin{vbframe}{Implications of PFI}
 
+Can we get insight into whether ...
+
 \begin{enumerate}
-    \item Is the feature $x_j$ causal for the prediction?
+    \item the feature $x_j$ is causal for the prediction?
     \begin{itemize}
       \item Nonzero PFI implies that the model relies on $x_j$.
       \item As the training vs test data example demonstrates, the contraposition does not hold.
     \end{itemize}
-    \item Does the variable $x_j$ contain prediction-relevant information about $y$ (that the model exploits)?
+    \item the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
       \item Nonzero PFI implies that the feature is dependent with $y$ or it's covariates $x_{-j}$ or both (due to extrapolation).
       \item If a feature is not exploited by the model, PFI is zero, irrespective of whether the feature is useful or not.
     \end{itemize}
-    \item Does the model require access to $x_j$ to achieve it's prediction performance? (I.e. does the feature contribute unique information about $y$?)
+    \item the model requires access to $x_j$ to achieve it's prediction performance?    
     \begin{itemize}
       \item As the extrapolation example demonstrates, such insight is not possible.
-    \end{itemize}
+\end{itemize}
 \end{enumerate}
 \end{vbframe}
 
@@ -346,10 +355,13 @@ $\Rightarrow$ If you are interested in which features help the model to generali
   \item We now rescale the importance to a p-value - the tail probability under $H_0$ - as a new importance score.
 \end{itemize}
 
-{\tiny{Altmann, André, et al. "Permutation importance: a corrected feature importance measure." 
-Bioinformatics 26.10 (2010): 1340-134.}}
+\footnote[frame]{\fullcite{altmann2010permutation}}
+%{\tiny{Altmann, André, et al. "Permutation importance: a corrected feature importance measure." 
+%Bioinformatics 26.10 (2010): 1340-134.}}
 
-\framebreak
+\end{vbframe}
+
+\begin{vbframe}{Testing Importance (PIMP)}
 
 PIMP algorithm:
 \begin{enumerate}
@@ -379,12 +391,17 @@ PIMP algorithm:
   \item One classical method to control the FWE is the \textbf{Bonferroni correction} which rejects a null hypothesis if its p-value is smaller than $\alpha/p$ with $p$ as the number of tests. 
   \item We refer to other lectures like \textit{Schätzen \& Testen I} for more details.
   \end{itemize} 
-  \vspace{0.2cm}
-  {\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
+
+  \footnote[frame]{\fullcite{romano2010multiple}}
+  %{\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
 \end{vbframe}
 
 \begin{vbframe}
   Apply PIMP to extrapolation example?
+\end{vbframe}
+
+\begin{vbframe}
+  \printbibliography
 \end{vbframe}
 
 \endlecture

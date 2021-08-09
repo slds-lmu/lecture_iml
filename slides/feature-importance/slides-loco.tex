@@ -173,8 +173,8 @@ Depending on the type of perturbation/removal feature importance methods provide
 %
 \textbf{Definition:} Given training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\inducer$ and a model $\fh = \inducer(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
   \begin{enumerate}
-    \item learn model on dataset where feature $\xj$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$
-    \item compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |\ydat^{(i)} - \fh_{-j}(\xb_{-j}^{(i)}) \right | - \left |\ydat^{(i)} - \fh(\xb^{(i)}) \right | $ with $i \in \Dtest$
+    \item learn model on dataset where feature $x_j$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$
+    \item compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |y^{(i)} - \fh_{-j}(x_{-j}^{(i)}) \right | - \left |y^{(i)} - \fh(x^{(i)}) \right | $ with $i \in \Dtest$
     \item yield the importance score $\text{LOCO}_j = \text{med} \left ( \Delta_j  \right )$
   \end{enumerate}
 \lz 
@@ -201,19 +201,19 @@ The year is the most important feature.\\
 
 \textbf{Interpretation:} LOCO estimates the generalization error of the learner on a reduced dataset $\D_{-j}$.\\
 \lz
-What insight into model and data can we gain?
+Can we get insight into whether ...
 \begin{enumerate}
-    \item Is the feature $\xj$ causal for the prediction $\yh$?
+    \item the feature $x_j$ is causal for the prediction $\yh$?
     \begin{itemize}
       \item In general, no.
     \end{itemize}
-    \item Does the variable $\xj$ contain prediction-relevant information about $\ydat$ (that the model exploits)?
+    \item the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
       \item In general, no.
     \end{itemize}
-    \item Does the model require access to $\xj$ to achieve it's prediction performance? (I.e. does the feature contribute unique information about $\ydat$?)
+    \item the model requires access to $x_j$ to achieve it's prediction performance?
     \begin{itemize}
-      \item Approximately.
+      \item Approximately. It provides insight into whether the \textit{learner} requires access to $x_j$.
     \end{itemize}
 \end{enumerate}
 
@@ -240,7 +240,7 @@ What insight into model and data can we gain?
 
 Setting: Linear gaussian data generating process with correlation matrix as depicted left. A linear model was fit with $\fh(x) = -0.09 - 0.86 x_1 + 1.86 x_2 + 0.96 x_3$.\\
 \lz
-$\Rightarrow$ At the example of $x_2$ we see that: We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient $1.86$) (1). We also can't infer (2), e.g. $corr(x_2, y) = 0.69$ and large coefficient.\\
+$\Rightarrow$ At the example of $x_2$ we see that: We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient $1.86$) (1). We also can't infer (2), e.g. $corr(x_2, y) = 0.69$ but $\text{LOCO}_2 \approx 0$.\\
 $\Rightarrow$ We can get insight into (3). Since $x_2$ and $x_1$ are highly correlated, they can take each others place, which is not the case for $x_3$.
 \framebreak
 
