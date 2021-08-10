@@ -128,7 +128,7 @@
 
 \setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
 
-\bibliography{feature-importance}
+\bibliography{feature-importance.bib}
 
 %\usepackage{Sweave}
 \begin{document}
@@ -179,14 +179,15 @@ In general, feature importance methods share two components
 \begin{vbframe}{Permutation Feature Importance}
 \normalsize
 
-Performance-based permutation feature importance (PFI) for a feature $x_S$ using test data $\D$:
+Performance-based permutation feature importance (PFI) for features $x_S$ using test data $\D$:
 \begin{itemize}
-  \item Measure the error \color{red}\textbf{with permuted feature values} \color{black} $\pert{x}{}{}_S$.
+  \item Measure the error \color{red}\textbf{with permuted feature values} \color{black} $\pert{x}{}{}_S$
   \item Measure the error \color{blue}\textbf{without permuting features}\color{black}.
   \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
 $$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
 \end{itemize}
 
+The data $\D$ where $x_S$ is replace with $\pert{x}{S}{}$ is denoted as $\pert{\D}{S}{}$.\\
 Example of permuting feature $x_S$ with $S = \{1\}$:
 
 % TODO: update to new notation
@@ -222,7 +223,7 @@ $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y
   \end{center}
   
   \begin{itemize}
-    \only<1-2>{\item[1.]\textbf{Perturbation:} Sample feature values from the distribution of $x_S$ ($P(X_S)$). \newline $\Rightarrow$ Randomly permute feature $x_S$ (retains the distribution). Replace the original feature with the permuted feature $\pert{x}{}{}_S$ and create data with permuted feature   $\pert{\D}{S}{}$.}
+    \only<1-2>{\item[1.]\textbf{Perturbation:} Sample feature values from the distribution of $x_S$ ($P(X_S)$). \newline $\Rightarrow$ Randomly permute feature $x_S$. Replace the original feature with the permuted feature $\pert{x}{}{}_S$ and create data with permuted feature   $\pert{\D}{S}{}$.}
     \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\pert{\D}{S}{}$.}
     \only<3-4>{\item[3.] \textbf{Aggregation:}
       \begin{itemize}
@@ -256,7 +257,7 @@ $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y
 \end{center}
 
 \begin{itemize}
- \item The year is the most important feature.
+ \item The year is the most important feature. Features like weekday also contribute to the performance.
  \item Interpretation: Destroying the information about the year by shuffling this feature increases the mean absolute error of the model by an amount of 816.
  \item Additionally, the $5 \%$ and $95 \%$ quantile of the repetitions are shown as error bars.
 \end{itemize}

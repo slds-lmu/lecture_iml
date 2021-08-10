@@ -111,8 +111,9 @@
 %\usetheme{lmu-lecture}
 \newcommand{\titlefigure}{figure_man/feature-importance.png}
 \newcommand{\learninggoals}{
-	\item SAGE value functions
-	\item SAGE interpretation}
+	\item Underdstand how PFI is computed
+	\item Understanding strengths and weaknesses
+	\item Testing Importance}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -152,25 +153,38 @@
 	% ------------------------------------------------------------------------------
 
 % CHALLENGE
-\begin{frame}{Challenge: Fair attribution of importance}
+\begin{vbframe}{Challenge: Fair Attribution of Importance}
+\textbf{Recap PFI example:} Let $x_1, \dots, x_4$ be independently and uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$.\\
+A linear model is fit yielding $\fh(x) \approx x_1 x_2 + x_3$.\\
 
-\begin{itemize}
-  \item contribution of a feature may be shared
-  \item how do we fairly attribute importance?
-\end{itemize}
+\begin{figure}
+\centering
+  \includegraphics[width=0.5\linewidth]{figure_man/pfi_interactions.pdf}
+\end{figure}
+
+Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ jointly, all three are considered equally relevant.\\
 \lz
-Copy interaction example from PFI chapter.\\
+$\Rightarrow$ PFI does not fairly attribute the performance to the individual features.
+\end{vbframe}
+
+
+\begin{vbframe}{Challenge: Fair attribution of importance}
+
+\textbf{Observation:} Feature importance attribution can be regarded as cooperative game, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on which features are already in the room.\\
 \lz
-$\Rightarrow$ Regard feature importance attribution as cooperative game, where each feature is a player. Depending on the order in which they enter a game, their marginal payoff may differ.\\
-$\Rightarrow$ Use Shapley values to compute a fair attribution.
+\textbf{SAGE Idea:} Leverage Shapley values to compute a fair attribution of importance.\\
+\lz
+$\Rightarrow$ SAGE translates SHAP into a global feature importance technique
+
+\cite{NEURIPS2020_c7bf0b7c}
   
-\end{frame}
+\end{vbframe}
 
 
 % SAGE IDEA
 \begin{vbframe}{SAGE Removal}
   
-SAGE translates SHAP into a global feature importance technique. For SAGE, value functions quantify the predictive power of a coalition $S$ in terms of reduction in risk over the mean prediction.\\
+ For SAGE, value functions quantify the predictive power of a coalition $S$ in terms of reduction in risk over the mean prediction.\\
 \lz
 \textbf{Removal Idea:} In order to deprive the model of the non-coalition features $-S$, marginalize the prediction function over the dropped features.
 
@@ -207,41 +221,69 @@ Algorithm and closed form
   
 \end{vbframe}
 
+\begin{vbframe}{Interaction Example}
+  
+  Both for SAGE and PFI
+  
+\end{vbframe}
+
 
 
 \begin{vbframe}{SAGE Interpretation}
 
-\begin{itemize}
-	\item indirect influence not quantified
-	\begin{itemize}
-		\item if the model did not mechanistically use the feature, that does not imply that the model did not make use of information that is also contained in the feature
-		\item e.g. relevant for fairness audits (we do not care whether influence is direct or indirect)
-	\end{itemize}
-	\item no fair attribution (e.g. interactions)
-\end{itemize}
+Properties that are satisfied for marginal/conditional SAGE
 
 \end{vbframe}
 
 
-\begin{vbframe}{Interpretation goal overview}
+\begin{vbframe}{Implications marginal SAGE}
+
+Can we gain insight into whether...
 
 \begin{itemize}
-    \item Is the feature $\xj$ causal for the prediction?
+    \item the feature $\xj$ is causal for the prediction?
     \begin{itemize}
-      \item What if no association with the target right away?
+      \item Yes, if the feature contributes to the performance
     \end{itemize}
-    \item Does the variable $\xj$ contain prediction-relevant information about $\ydat$ (that the model exploits)?
+    \item the variable $\xj$ contains prediction-relevant information about $\ydat$?
     \begin{itemize}
-      \item inference possible depending on loss and model optimality
-      \item always the model's perspective
+      \item no
     \end{itemize}
-    \item Does the variable $\xj$ contain more prediction-relevant information about $\ydat$ than $\xv_S$ (that the model exploits)?
+    \item the model requires access to $x_j$ to achieve it's prediction performance?  
     \begin{itemize}
         \item no
     \end{itemize}
 \end{itemize}
 
 \end{vbframe}
+
+\begin{vbframe}{Implications conditional SAGE}
+
+Can we gain insight into whether...
+
+\begin{itemize}
+    \item the feature $\xj$ is causal for the prediction?
+    \begin{itemize}
+      \item no
+    \end{itemize}
+    \item the variable $\xj$ contains prediction-relevant information about $\ydat$?
+    \begin{itemize}
+      \item yes
+    \end{itemize}
+    \item the model requires access to $x_j$ to achieve it's prediction performance?  
+    \begin{itemize}
+        \item no
+    \end{itemize}
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Example Marginal vs Conditional}
+
+Take example from pitfalls paper and apply both marginal and conditional SAGE
+  
+\end{vbframe}
+
 
 \begin{vbframe}
   \printbibliography

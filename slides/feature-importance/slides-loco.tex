@@ -178,9 +178,9 @@ Depending on the type of perturbation/removal feature importance methods provide
     \item yield the importance score $\text{LOCO}_j = \text{med} \left ( \Delta_j  \right )$
   \end{enumerate}
 \lz 
-The method can be generalized to other loss functions and aggregations. If we use mean instead of median, then we can write
+The method can be generalized to other loss functions and aggregations. If we use mean instead of median we can rewrite LOCO as
 %
-$$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh) $$
+$$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
 \footnote[frame]{\fullcite{lei_distribution-free_2018}\\ \fullcite{tibshirani_loco_2018}}
 \end{vbframe}
 
@@ -189,11 +189,10 @@ $$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh) $$
 \begin{figure}
   \centering
   \includegraphics[width=0.65\textwidth]{figure_man/bike_sharing_loco.pdf}
-\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing dataset to optimize MSE. Then LOCO was computed for all features on the training dataset.}
+\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing dataset to optimize MSE. Then LOCO was computed for all features on the training dataset. The year is the most important feature. Without access to the variable, the MSE increases by $10^6$.}
 \end{figure}
 %
- \textbf{Interpretation:} How important is variable $j$ to the algorithm's estimate on $\Dtrain$?\\
-The year is the most important feature.\\
+ %\textbf{Interpretation:} $\text{LOCO}_j$ quantifies how important variable $x_j$ is to the generalization performance of the learner on $\Dtrain$.\\
 %
 \end{vbframe}
 
@@ -205,11 +204,11 @@ Can we get insight into whether ...
 \begin{enumerate}
     \item the feature $x_j$ is causal for the prediction $\yh$?
     \begin{itemize}
-      \item In general, no.
+      \item In general, no (counterexample on the next slide).
     \end{itemize}
     \item the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
-      \item In general, no.
+      \item In general, no (counterexample on the next slide).
     \end{itemize}
     \item the model requires access to $x_j$ to achieve it's prediction performance?
     \begin{itemize}
@@ -262,7 +261,7 @@ $\Rightarrow$ We can get insight into (3). Since $x_2$ and $x_1$ are highly corr
   \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}
+\begin{vbframe}{Bibliography}
   \printbibliography
 \end{vbframe}
 

@@ -166,12 +166,12 @@
 \end{vbframe}
 \begin{vbframe}{Example}
 
-Feature Importance offers a condensed summary of the relevance of features for the prediction.
+Feature importance offers a condensed summary of the relevance of features for the prediction.
 
 \begin{center}
   \begin{figure}
   \includegraphics[width=0.6\linewidth]{figure_man/bike_pdp+ice} \hfill \includegraphics[width=0.35\linewidth]{figure_man/bike_pfi}
-  \caption{A random forest was fit on the bike sharing dataset. Left: Feature Effect Plots (PDP) for all features. Right: Feature Importance Plot (PFI).}
+  \caption{A random forest was fit on the bike sharing dataset. Left: Partial dependence plots (PDP) for all features. Right: Feature importance plot (PFI).}
 \end{figure}
 \end{center}
 
@@ -200,11 +200,11 @@ Feature importance methods provide highly condensed insight, but can only highli
     \end{itemize}
     \item the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
-      \item $x_j \not \ind y$
+      \item e.g. when $\E[y|x_j] \neq \E[y]$ for MSE loss
     \end{itemize}
     \item the model requires access to $x_j$ to achieve it's prediction performance?
     \begin{itemize}
-      \item $x_j \not \ind y | x_{-j}$
+      \item e.g. when $\E[y|x_j] \neq \E[y|x_j, x_{-j}]$ for MSE loss
     \end{itemize}
 \end{enumerate}
 \lz
@@ -216,12 +216,12 @@ Except for special cases, the answers to these questions do not coincide.
 The distinctness of the aforementioned aspects can be proven by example (sketch):
 
 \begin{itemize}
-  \item A feature may causal for the prediction $\yh$ (1) without containing prediction-relevant information about $y$ (2). \textit{Example:} overfitting.
-  \item A feature may contain prediction relevant information (2) without causing the prediction (1).  \textit{Example:} underfitting.
+  \item A feature may be causal for the prediction $\yh$ (1) without containing prediction-relevant information about $y$ (2). \textit{Example:} overfitting.
+  \item A feature may contain prediction relevant information (2) without causing the prediction (1).  \textit{Examples:} underfitting, model multiplicity
   \item A feature may contain prediction-relevant information (2), without the model requiring access to the feature for (optimal) prediction performance (3).\\
-  \textit{Example:} random forest model on dataset with $y \not \ind x_1$ and $y \ind x_2 | x_1$ where $x_1$ was not drawn as potential split feature for one or more trees, such that the respective trees split on $x_2$ instead.
-\end{itemize}
-$\Rightarrow$ In general, an importance score cannot serve all goals at once.
+  \textit{Note:} A model may rely on features that can be replace with others. E.g., a random forest model on dataset with $\E[y|x_1] \neq \E[y]$ and $\E[y|x_1] = \E[y|x_1, x_2]$ where $x_1$ was not sampled as potential split variable may rely on $x_2$.
+  \end{itemize}
+$\Rightarrow$ In general, an importance score cannot provide insight into all aspects at once.
 \end{vbframe}
 
 \endlecture
