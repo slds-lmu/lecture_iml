@@ -236,7 +236,7 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
   \item Why? Under the conditional independence $\P(\pert{x}{S}{-S}, y) = \P(x,y)$ and therefore no prediction-relevant information is destroyed.
 \end{itemize}
 \lz
-\textbf{Entanglement with the model:} If the model does not rely of a feature, CFI is zero.\\
+\textbf{Entanglement with the model:} If the model does mechanistically use a feature, CFI is zero.\\
 \begin{itemize}
   \item Why? Then the prediction is not affected by any perturbation of the feature (and consequently the performance is invariant).
 \end{itemize}
@@ -269,7 +269,26 @@ Can we gain insight into whether..
 \end{enumerate}
 \end{vbframe}
 
-\begin{vbframe}
+% RECAP EXTRAPOLATION
+\begin{vbframe}{Comparison: PFI and CFI}
+ 
+ \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
+ %
+\begin{figure}
+\hfill
+  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
+  \includegraphics[width=0.6\linewidth]{figure_man/cfi_pfi.pdf} \hfill
+  \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left). PFI and CFI (right).}
+\end{figure}
+% 
+$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
+$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+$\Rightarrow$ Since $x_1$ can be reconstructed from $x_2$ and vice versa, CFI considers $x_1$ and $x_2$ to be irrelevant
+
+ \end{vbframe}
+
+\begin{vbframe}{Bibliography}
   \printbibliography
 \end{vbframe}
 
