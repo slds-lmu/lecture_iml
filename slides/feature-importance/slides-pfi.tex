@@ -253,7 +253,7 @@ $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y
 \begin{vbframe}{Bike Sharing Dataset}
 
 \begin{center}
-\includegraphics[width=0.75\textwidth]{figure_man/bike-sharing02.png}
+\includegraphics[width=0.7\textwidth]{figure_man/bike-sharing02.png}
 \end{center}
 
 \begin{itemize}
@@ -397,8 +397,14 @@ PIMP algorithm:
   %{\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
 \end{vbframe}
 
-\begin{vbframe}
-  Apply PIMP to extrapolation example?
+\begin{vbframe}{PIMP for extrapolation example}
+\textbf{Recap:} $x_1$ and $x_2$ are highly correlated by independent of $y$. $x_4$ is independent of all other variables, $x_3$ is only correlated with $y$.\\
+A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
+ %
+\begin{figure}
+  \includegraphics[width=0.55\linewidth]{figure_man/pimp.pdf}
+  \caption{$H_0$ distribution (100 samples) for each feature as histograms, the true PFI indicated in red. PIMP only considers $x_3$ relevant. Although PFI for $x_1$ and $x_2$ is nonzero, PIMP considers them irrelevant since they are not predictive of $y$. Even after permuting $y$, the model relies on them.}
+\end{figure}
 \end{vbframe}
 
 \begin{vbframe}

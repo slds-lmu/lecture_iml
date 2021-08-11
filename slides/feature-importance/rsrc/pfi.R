@@ -140,3 +140,86 @@ p = plot(imp_test)
 p
 
 ggsave("../figure_man/pfi_interactions.pdf", height=1.5, width=3)
+
+
+# pimp
+
+# extrapolation
+
+n = 1000
+ntrain = 0.7 * n
+
+x1 = rnorm(n)
+x2 = x1 + rnorm(n, sd=0.01)
+x3 = rnorm(n)
+x4 = rnorm(n)
+y = x3 + rnorm(n, sd=0.1)
+
+data = data.frame(x1=x1, x2=x2, x3=x3, x4=x4, y=y)
+task = TaskRegr$new(id='correlated', backend=data, target='y')
+learner = lrn('regr.lm')
+
+train_set = sample(task$nrow, ntrain)
+test_set = setdiff(seq_len(task$nrow), train_set)
+
+learner$train(task, row_ids = train_set)
+learner$model
+
+predictor_test = Predictor$new(learner, data[test_set,], y='y')
+
+imp_test <- FeatureImp$new(predictor_test,loss = "mae", n.repetitions = 10, compare='difference')
+library("ggplot2")
+p = plot(imp_test)
+
+
+df = data.frame(imp_test$results[,c('feature', 'importance')])
+df$type = 'H1'
+
+for (ii in 1:100) {
+  y_perm = sample(y, length(y))
+  data = data.frame(x1=x1, x2=x2, x3=x3, x4=x4, y=y_perm)
+  
+  task = TaskRegr$new(id='correlated', backend=data, target='y')
+  learner = lrn('regr.lm')
+  
+  train_set = sample(task$nrow, ntrain)
+  test_set = setdiff(seq_len(task$nrow), train_set)
+  
+  learner$train(task, row_ids = train_set)
+  learner$model
+  
+  predictor_test = Predictor$new(learner, data[test_set,], y='y')
+  
+  imp_test_perm <- FeatureImp$new(predictor_test,loss = "mae", n.repetitions = 10, compare='difference')
+  
+  df_tmp = data.frame(imp_test_perm$results[,c('feature', 'importance')])
+  df_tmp$type = 'H0'
+
+  df = rbind(df_tmp, df)
+}
+
+df_h1 = df[df$type == 'H1', c('feature', 'importance')]
+df_h0 = df[df$type == 'H0', c('feature', 'importance')]
+
+
+p = ggplot(df_h0, aes(x=importance)) + geom_histogram()
+p = p + geom_vline(data=df_h1, aes(xintercept=importance), colour="red", linetype="dashed")
+p = p + facet_grid(feature ~ .)
+p
+
+ggsave("../figure_man/pimp.pdf", width=6, height=4)
+
+
+p2 = ggplot(data, aes(x=x1, y=x2)) + geom_de() #+ theme_bw()
+p2
+
+ggsave("../figure_man/pfi_hexbin_pre.pdf", width=4, height=3)
+
+
+data_perm = data.frame(data)
+data_perm$x1 = data_perm$x1[sample(nrow(data_perm))]
+
+p3 = ggplot(data_perm, aes(x=x1, y=x2)) + geom_hex() #+ theme_bw()
+p3
+ggsave("../figure_man/pfi_hexbin_post.pdf", width=4, height=3)
+
