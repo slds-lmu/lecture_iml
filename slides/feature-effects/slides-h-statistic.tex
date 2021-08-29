@@ -108,10 +108,11 @@ shorten >=2pt,}
 \input{../../style/common.tex}
 
 %\usetheme{lmu-lecture}
-\newcommand{\titlefigure}{figure_man/feature-effects}
+\newcommand{\titlefigure}{figure_man/h-statistic}
 \newcommand{\learninggoals}{
-\item Introduction to feature effects
-\item Understand the steps involved in constructing ICE plots
+\item Understand the Friedman's H-statistic
+\item How to measure the overall interaction strength
+\item How to measure 2-way interaction strengths
 %\item Understand how to interpret ICE curves and PD plots
 }
 \usepackage{../../style/lmu-lecture}
@@ -137,11 +138,11 @@ shorten >=2pt,}
 \lecture{Interpretable Machine Learning}
 
 \begin{vbframe}{Idea}
-	
+
 	\textbf{Idea}: If two features do not interact, we can decompose the PD function (assuming it is centered at zero) by:
-	
+
 	$$\fh_{jk, PD}(x_j, x_k) = \fh_{j, PD}(x_j) + \fh_{k, PD}(x_k)$$
-	
+
 \begin{itemize}
 	\item $\fh_{jk, PD}(x_j, x_k)$ is the 2-dim PD function of both features $j$ and $k$.
 	\item $\fh_{j, PD}(x_j)$ and $\fh_{k, PD}(x_k)$ are the PD functions of the single features.
@@ -150,7 +151,7 @@ shorten >=2pt,}
 \lz
 
 	Similarly, if a feature does not interact with any other feature, we can decompose the prediction function by:
-	
+
 	$$\fh(x) = \fh_{j, PD}(x_j) +  \fh_{-j, PD}(x_{-j}).$$
 
 \begin{itemize}
@@ -176,9 +177,9 @@ $\Rightarrow$ Small values of $H^2_{jk}$ indicate that $x_j$ and $x_k$ do not in
 
 
 \begin{vbframe}{Overall Interaction Strength}
-	
+
 Similarly, it is possible to measure whether a feature $j$ interacts with any other feature (Overall interaction strength):
-	
+
 
 $$H^2_{j} = \frac{\sum_{i=1}^n\left[\fh(x^{(i)}) - \fh_{j, PD}(x_j^{(i)}) - \fh_{-j, PD}(x_{-j}^{(i)})  \right]^2}{\sum_{i=1}^n \left[\fh(x^{(i)}) \right]^2}$$
 
