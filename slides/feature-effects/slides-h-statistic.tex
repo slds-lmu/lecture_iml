@@ -1,0 +1,194 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+\ifdim\Gin@nat@width>\linewidth
+\linewidth
+\else
+\Gin@nat@width
+\fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+\def\at@end@of@kframe{}%
+\ifinner\ifhmode%
+\def\at@end@of@kframe{\end{minipage}}%
+\begin{minipage}{\columnwidth}%
+\fi\fi%
+\def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+\colorbox{shadecolor}{##1}\hskip-\fboxsep
+% There is no \\@totalrightmargin, so:
+\hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+\MakeFramed {\advance\hsize-\width
+\@totalleftmargin\z@ \linewidth\hsize
+\@setminipage}}%
+{\par\unskip\endMakeFramed%
+\at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+%Define standard arrow tip
+>=stealth',
+%Define style for boxes
+punkt/.style={
+rectangle,
+rounded corners,
+draw=black, very thick,
+text width=6.5em,
+minimum height=2em,
+text centered},
+% Define arrow style
+pil/.style={
+->,
+thick,
+shorten <=2pt,
+shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+\newcommand{\titlefigure}{figure_man/feature-effects}
+\newcommand{\learninggoals}{
+\item Introduction to feature effects
+\item Understand the steps involved in constructing ICE plots
+%\item Understand how to interpret ICE curves and PD plots
+}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Interpretable Machine Learning}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\begin{document}
+
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\lecturechapter{Friedman's H-Statistic}
+\lecture{Interpretable Machine Learning}
+
+\begin{vbframe}{Idea}
+	
+	\textbf{Idea}: If two features do not interact, we can decompose the PD function (assuming it is centered at zero) by:
+	
+	$$\fh_{jk, PD}(x_j, x_k) = \fh_{j, PD}(x_j) + \fh_{k, PD}(x_k)$$
+	
+\begin{itemize}
+	\item $\fh_{jk, PD}(x_j, x_k)$ is the 2-dim PD function of both features $j$ and $k$.
+	\item $\fh_{j, PD}(x_j)$ and $\fh_{k, PD}(x_k)$ are the PD functions of the single features.
+\end{itemize}
+
+\lz
+
+	Similarly, if a feature does not interact with any other feature, we can decompose the prediction function by:
+	
+	$$\fh(x) = \fh_{j, PD}(x_j) +  \fh_{-j, PD}(x_{-j}).$$
+
+\begin{itemize}
+	\item $\fh(x)$ is the prediction function of the considered model.
+	\item $\fh_{j, PD}(x_j)$ is the PD function of feature $j$.
+	\item $\fh_{-j, PD}(x_{-j})$ is the PD function of all features except feature $j$.
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{2-way Interaction Strength}
+Based on this idea, the H-statistic proposed by Friedman and Popescu measures the interaction strength between feature $j$ and $k$ by:
+
+	$$H^2_{jk} = \frac{\sum_{i=1}^n\left[\fh_{jk,PD}(x_j^{(i)}, x_k^{(i)}) - \fh_{j, PD}(x_j^{(i)}) - \fh_{k, PD}(x_k^{(i)})  \right]^2}{\sum_{i=1}^n \left[\fh_{jk,PD}(x_j^{(i)}, x_k^{(i)}) \right]^2}$$
+
+\textbf{Note}: The numerator is $0$ if the two features $x_j$ and $x_k$ do not interact, i.e., $\fh_{jk, PD}(x_j, x_k) - \fh_{j, PD}(x_j) + \fh_{k, PD}(x_k) = 0$.
+
+$\Rightarrow$ Small values of $H^2_{jk}$ indicate that $x_j$ and $x_k$ do not interact.
+
+
+\footnote[frame]{Friedman, Jerome H., and Bogdan E. Popescu (2008). Predictive learning via rule ensembles. The Annals of Applied Statistics. JSTOR, 916–54.}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Overall Interaction Strength}
+	
+Similarly, it is possible to measure whether a feature $j$ interacts with any other feature (Overall interaction strength):
+	
+
+$$H^2_{j} = \frac{\sum_{i=1}^n\left[\fh(x^{(i)}) - \fh_{j, PD}(x_j^{(i)}) - \fh_{-j, PD}(x_{-j}^{(i)})  \right]^2}{\sum_{i=1}^n \left[\fh(x^{(i)}) \right]^2}$$
+
+\textbf{Example}: Inspect interactions of a random forest for the bike data
+
+\begin{center}
+	\includegraphics[width=0.85\textwidth]{figure_man/h-statistic}
+\end{center}
+\end{vbframe}
+
+
+\endlecture
+\end{document}
