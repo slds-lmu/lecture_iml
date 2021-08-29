@@ -110,6 +110,133 @@ ggsave("../figure_man/pd_vs_mplot.pdf", p, width = 8, height = 4)
 #
 #
 
+
+
+
+###################################################
+
+library(ggplot2)
+library(gridExtra)
+theme_set(theme_bw())
+set.seed(10)
+# Generate Pseudo Random Variables
+x1 = runif(100, -5, 5)
+x2 = x1 + rnorm(100, 0, 1)
+df_observed = data.frame(x1, x2)
+df_permuted = data.frame(expand.grid(x1, x2))
+names(df_permuted) = c("x1", "x2")
+# Generate Densities
+marg_dens = density(x2)
+marg_discrete = data.frame(x = marg_dens$x, y = marg_dens$y)
+eps = 0.1
+df_cond = subset(df_observed, x1 < (0 + eps) & x1 > (0 - eps))
+cond_dens = density(df_cond$x2)
+cond_discrete = data.frame(x = cond_dens$x, y = cond_dens$y)
+# Plot Data
+p1 = ggplot() +
+  geom_point(data = df_observed, aes(x1, x2), size = 1) +
+  labs(x = expression(X[1]), y = expression(X[2]))
+# Plot Marginal
+parse1 ="paste(\"PD-plot at \",X[1], \" averages f(\", X[1], \", \", X[2], \")\")"
+parse2 = "paste(\"over the marginal distribution of \", X[2])"
+
+marg_plot = p1 +
+  geom_line(data = marg_discrete, aes(x = -5*y + min(df_observed$x1) -eps, y = x),
+    alpha = 0.5) +
+  geom_segment(data = df_observed, aes(x = -2.75, y = -8, xend = -4.75, yend = -5),
+    arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+  geom_text(aes(x = -2.5, y = -7.5, label = parse1), hjust = 0, parse = TRUE) +
+  geom_text(aes(x = -2.5, y = -9, label = parse2), hjust = 0, parse = TRUE) +
+  labs(subtitle = expression(paste("Marginal distribution of ", X[2])))
+# Plot Conditional
+parse3 ="paste(\"M plot averages f(\", X[1], \", \", X[2], \")\")"
+parse4 = "paste(\"over the condtional distribution of \", X[2], \"|\", X[1], \"=\", X[1])"
+
+cond_plot = p1 +
+  geom_line(data = cond_discrete, aes(x = -5*y + 0 -eps, y = x), alpha = 0.5) +
+  geom_segment(data = df_observed, aes(x = -1, y = -7, xend = 0, yend = -3),
+    arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+  geom_text(aes(x = -2.5, y = -7.5, label = parse3), hjust = 0, parse = TRUE) +
+  geom_text(aes(x = -2.5, y = -9, label = parse4), hjust = 0, parse = TRUE) +
+  labs(subtitle = expression(paste("Conditional distribution of ", X[2], "|", X[1], "=0")))
+
+# Plot both
+gridExtra::grid.arrange(marg_plot, cond_plot, nrow = 1)
+
+
+
+
+# new
+# Plot Data
+p1 = ggplot() +
+  geom_point(data = df_observed, aes(x1, x2), size = 1) +
+  labs(x = expression(X[1]), y = expression(X[2]))
+# Plot Marginal
+parse1 ="paste(\"PD-plot at \",X[1], \" averages f(\", X[1], \", \", X[2], \")\")"
+parse2 = "paste(\"over the marginal distribution of \", X[2])"
+
+marg_plot = p1 +
+  geom_line(data = marg_discrete, aes(x = -5*y + min(df_observed$x1) -eps, y = x),
+    alpha = 0.5) +
+  geom_segment(data = df_observed, aes(x = -2.75, y = -8, xend = -4.75, yend = -5),
+    arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+  geom_text(aes(x = -2.5, y = -7.5, label = parse1), hjust = 0, parse = TRUE) +
+  geom_text(aes(x = -2.5, y = -9, label = parse2), hjust = 0, parse = TRUE) +
+  labs(subtitle = expression(paste("Marginal distribution of ", X[2])))
+# Plot Conditional
+parse3 ="paste(\"M plot averages f(\", X[1], \", \", X[2], \")\")"
+parse4 = "paste(\"over the condtional distribution of \", X[2], \"|\", X[1], \"=\", X[1])"
+
+cond_plot = p1 +
+  geom_path(data = cond_discrete, aes(x = -5*y + min(df_observed$x1) -eps, y = x + mean(with(df_observed, x2[x2<quantile(x2, 0.05)]))), alpha = 0.5) +
+geom_segment(data = df_observed, aes(x = -1, y = -7, xend = 0, yend = -3),
+  arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+  geom_text(aes(x = -2.5, y = -7.5, label = parse3), hjust = 0, parse = TRUE) +
+  geom_text(aes(x = -2.5, y = -9, label = parse4), hjust = 0, parse = TRUE) +
+  labs(subtitle = expression(paste("Conditional distribution of ", X[2], "|", X[1], "=-5")))
+
+
+p1 +
+  geom_path(data = cond_discrete, aes(x = -3*y + min(df_observed$x1) -eps, y = x + mean(with(df_observed, x2[x2<quantile(x2, 0.05)]))), alpha = 0.5) +
+  annotate(
+    geom = "line",
+    x = min(df_observed$x1),
+    y = mean(with(df_observed, x2[x2<quantile(x2, 0.05)])),
+    xend = min(df_observed$x1) + 3,
+    yend = mean(with(df_observed, x2[x2<quantile(x2, 0.05)])),
+    curvature = .3, arrow = arrow(length = unit(2, "mm"))
+  ) +
+  annotate(geom = "text",
+    x = -2,
+    y = -4,
+    label = "subaru", hjust = "left")
+
+gridExtra::grid.arrange(marg_plot, cond_plot, nrow = 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ###################################################
 
 inv = seq(floor(min(x1)), ceiling(max(x1)), length.out = 5)

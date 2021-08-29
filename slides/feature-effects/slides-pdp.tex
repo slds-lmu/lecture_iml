@@ -108,7 +108,7 @@
 \input{../../style/common.tex}
 
 %\usetheme{lmu-lecture}
-\newcommand{\titlefigure}{figure_man/bike-sharing-dataset01.png}
+\newcommand{\titlefigure}{figure_man/pdp_num}
 \newcommand{\learninggoals}{
 \item Understand PD plots and their relation to ICE plots
 \item Understand how to interpret ICE curves and PD plots
@@ -138,17 +138,39 @@
 
 \begin{vbframe}{Partial Dependence}
 
-The partial dependence (PD) plot is the expectation of the ICE curves w.r.t. the marginal distribution of complementary features $\xv_C$,
-$$\E_{\xv_C} \left( \fh(\xv_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(\xv_S, \xv_C) \, d\mathcal{P}(\xv_C)$$
+The partial dependence (PD) function is the expectation of ICE curves w.r.t. the marginal distribution of complementary features $\xv_C$,
+$$f_{S, PD}(x_S) = \E_{\xv_C} \left( \fh(x_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_C) \, d\P(\xv_C)$$
 
-For a single $x_S$ it is estimated by the point-wise average of the ICE curves:
-$$PD_S := \fh_{S}(x_S) = \frac{1}{n} \sum_{i=1}^n \fh(x_S, \xv_C^{(i)})$$
+For a grid value $x_S^*$, the PD function is estimated by the point-wise average of the ICE curves:
+$$\fh_{S, PD}(x_S^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_S^*, \xv_C^{(i)})$$
 
-Within the SIPA framework, the partial dependence builds the \textbf{Aggregation} step.
+%Within the SIPA framework, the partial dependence builds the \textbf{Aggregation} step.
 
 \footnote[frame]{Friedman, Jerome H. (2001). Greedy Function Approximation: A Gradient Boosting Machine. Annals of Statistics: 1189-1232.}
-\footnote[frame]{Scholbeck, C. A., Molnar, C., Heumann, C., Bischl, B., and Casalicchio, G. (2019). Sampling, Intervention, Prediction, Aggregation: A Generalized Framework for Model Agnostic Interpretations. ECML PKDD 2019. (pp. 205-216).}
+%\footnote[frame]{Scholbeck, C. A., Molnar, C., Heumann, C., Bischl, B., and Casalicchio, G. (2019). Sampling, Intervention, Prediction, Aggregation: A Generalized Framework for Model Agnostic Interpretations. ECML PKDD 2019. (pp. 205-216).}
 \end{vbframe}
+
+
+\frame{
+\frametitle{Example: Partial Dependence for LM}
+
+Assume a linear regression model with two features:
+
+$$\fh(\xv) = \fh(\xv_1, \xv_2) = \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_0$$
+
+The PD function for the feature of interest $S = \{1\}$ (with $C = \{2\}$) is:
+
+$$
+\begin{aligned}
+f_{1, PD}(\xv_1) = \E_{\xv_2} \left( \fh(\xv_1, \xv_2) \right) &= \int_{-\infty}^{\infty} \left( \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_0 \right) \, d\P(\xv_2) \\
+&= \hat\beta_1 \xv_1 + \hat\beta_2 \cdot \int_{-\infty}^{\infty} \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
+&= \hat\beta_1 \xv_1 + \underbrace{\hat\beta_2 \cdot \E_{\xv_2} (\xv_2) + \hat\beta_0}_{:= const}
+\end{aligned}
+$$
+
+Here, the PD plot visualizes the function $f_{1, PD}(\xv_1) = \hat\beta_1 \xv_1 + const$, which is the feature effect of $\xv_1$.
+
+}
 
 \frame{
 \frametitle{Partial Dependence}
@@ -190,24 +212,32 @@ Within the SIPA framework, the partial dependence builds the \textbf{Aggregation
 %\end{onlyenv}
 
 \only<1>{
-\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves at \fcolorbox{red}{white}{$x_S = x_1 = 1$}:
-$$PD_1 = \fh_{1}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+Estimate partial dependence by the \textbf{point-wise} average of the ICE curves at gridpoint \fcolorbox{red}{white}{$x_S^* = x_1^* = 1$}:
+$$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
 }
 \only<2>{
-\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves at \fcolorbox{red}{white}{$x_S = x_1 = 2$}:
-$$PD_1 = \fh_{1}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+Estimate partial dependence by the \textbf{point-wise} average of the ICE curves at gridpoint \fcolorbox{red}{white}{$x_S^* = x_1^* = 2$}:
+$$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
 }
 \only<3>{
-\textbf{Aggregation:} Estimate partial dependence by the point-wise average of the ICE curves at \fcolorbox{red}{white}{$x_S = x_1 = 3$}:
-$$PD_1 = \fh_{1}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+Estimate partial dependence by the \textbf{point-wise} average of the ICE curves at gridpoint \fcolorbox{red}{white}{$x_S^* = x_1^* = 3$}:
+$$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
 }
 }
+
+
+
+
+
+
+
+
 
 
 \frame{
 \frametitle{Interpretation: PD and ICE}
 \begin{center}
-\includegraphics[width=0.7\textwidth]{figure_man/bike-sharing-dataset01.png}
+\includegraphics[width=0.7\textwidth]{figure_man/pdp_num}
 \end{center}
 
 \begin{onlyenv}
@@ -220,7 +250,7 @@ $$PD_1 = \fh_{1}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
   \(\Rightarrow\) ICE is a local interpretation method (black curves).
 \item
   \textbf{PD plot:} Visualizes the \textbf{average effect of a feature},
-  i.e., how the expected model prediction changes if the feature value is changed.\\
+  i.e., how the expected prediction changes if the feature value is changed.\\
   \(\Rightarrow\) PD plot is a global interpretation method (yellow curve).
 \end{itemize}
 }
@@ -228,10 +258,10 @@ $$PD_1 = \fh_{1}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
 \only<2>{
 Insights from the Bike Sharing Dataset:
 \begin{itemize}
-  \item Higher temperature $\Rightarrow$ higher number of bike rentals.
-  \item Temperatures of more than $27^\circ$C decreases bike rentals.
-  \item The effect is very homogeneous across all observations.
   \item Averaging ICE curves yields the PD plot (yellow curve).
+  \item Parallel ICE curves across all observations indicate a very homogeneous effect.
+  \item Higher temperature $\Rightarrow$ higher number of bike rentals.
+  \item Bike rentals decrease at temperatures of more than $\approx 27^\circ$C.
 \end{itemize}
 }
 \end{onlyenv}
@@ -241,15 +271,19 @@ Insights from the Bike Sharing Dataset:
 \frame{
 \frametitle{Categorical Features}
 
-Same concept, different way to convey the information (boxplots)
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figure_man/pdp_ice_cat}
+\end{center}
+
+\begin{itemize}
+\item The PD plot visualizes the expected prediction (and the distribution of predictions, e.g., in a box plot) if all observations would belong to a certain category level.
+\item The ICE plot connects the predictions of individual observations to identify heterogenous effects between categories (here: lines between SPRING and SUMMER are heterogenous).\\
+\textbf{Note:} For nominal categories, the different categories do not have an ordering but could be compared pairwise.
+\end{itemize}
+
 }
 
-
 \begin{vbframe}{2D Partial Dependence}
-
-Same concept, but two features are replaced
-
-\framebreak
 
 \begin{center}
 \includegraphics[width=0.7\textwidth]{figure_man/bike-sharing-dataset02.png}
@@ -261,9 +295,9 @@ Same concept, but two features are replaced
 \end{itemize}
 
 
-\framebreak
-
-add datapoints to previous figure and mention convex hull (see pdp package)
+% \framebreak
+%
+% add datapoints to previous figure and mention convex hull (see pdp package)
 
 \end{vbframe}
 
