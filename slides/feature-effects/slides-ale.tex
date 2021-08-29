@@ -166,60 +166,8 @@
 % }
 % }
 
-\begin{vbframe}{Motivation}
-
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\centering
-\includegraphics[width=\textwidth]{figure_man/ale_scatter_grid}
-\end{column}
-\begin{column}{0.5\textwidth}
-\centering
-\includegraphics[width=\textwidth]{figure_man/ale_pdplot}
-\end{column}
-\end{columns}
-
-%\begin{center}
-%\includegraphics[width=0.8\textwidth]{figure_man/pd_grid}
-%\tiny{Source: Figure taken from Apley et al. (2020)}
-%\end{center}
-
-\textbf{Recall:} In case of strongly correlated features $x_1$ and $x_2$, partial dependence (PD) plots \textbf{average predictions} of artificial data instances that are unlikely in reality (red).
-This can be an undesired property
-
-\lz
-
-\textbf{Question:} Can we avoid the extrapolation issue by averaging only over points in an appropriate neighborhood? % of a specific point $x_1$? %, i.e., using the conditional distribution at
-
-\framebreak
-
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\centering
-\includegraphics[width=\textwidth]{figure_man/ale_scatter}
-\end{column}
-\begin{column}{0.5\textwidth}
-\centering
-\includegraphics[width=\textwidth]{figure_man/ale_mplot}
-\end{column}
-\end{columns}
-
-\textbf{Answer:} Yes, we could. Marginal plots (M plots) do this by averaging (i.e., marginalizing) over the conditional distribution $\P(\xv_2|x_1)$.
-
-\lz
-
-\textbf{But:} M plots introduce the omitted-variable bias (OVB) issue, i.e., an
-M plot always includes the marginal effect of other dependent features.\\
-$\Rightarrow$ M plots are useless to assess the main effect of a feature.
-% in case of dependent features.
-
-%M plots average over the conditional distribution $x_2|x_1$. However, the M plot of $x_1$ also includes the marginal effect of other dependent features $\Rightarrow$ We don't want this.
-% do not include the marginal effect of the considered feature but
-% mixture of its marginal effect and the marginal effects of all dependent features
-\end{vbframe}
-
 \frame{
-\frametitle{Motivation: PD vs. M plot}
+\frametitle{Motivation}
 
 % \begin{center}
 % \includegraphics[width=0.7\textwidth]{figure_man/PD_M.jpg}\\
@@ -252,6 +200,69 @@ where $N(x_1) = \{i: x_1^{(i)} \in [x_1 - \epsilon, x_1 + \epsilon]\}$ is an ind
 \end{enumerate}
 
 }
+
+\begin{vbframe}{Motivation}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figure_man/ale_scatter_grid}
+\end{column}
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figure_man/ale_pdplot}
+\end{column}
+\end{columns}
+
+%\begin{center}
+%\includegraphics[width=0.8\textwidth]{figure_man/pd_grid}
+%\tiny{Source: Figure taken from Apley et al. (2020)}
+%\end{center}
+
+\textbf{Recall:} In case of strongly correlated features $x_1$ and $x_2$, partial dependence (PD) plots \textbf{average predictions} of artificial data instances that are unlikely in reality (red).
+
+\lz
+
+\textbf{But:} This can be an undesired property if the model contains interactions and one is interested in interpreting effects w.r.t. the data distribution.
+
+%\lz
+
+%\textbf{Question:} Can we avoid the extrapolation issue by averaging only over points in an appropriate neighborhood? % of a specific point $x_1$? %, i.e., using the conditional distribution at
+
+\framebreak
+
+Example what can go wrong with PDPs and NNs
+
+\framebreak
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figure_man/ale_scatter}
+\end{column}
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figure_man/ale_mplot}
+\end{column}
+\end{columns}
+
+%\textbf{Answer:} Yes, we could.
+%\textbf{Recall:} Marginal plots (M plots) do this by averaging (i.e., marginalizing) over the conditional distribution $\P(\xv_2|x_1)$.
+%\textbf{Recall:}
+Marginal plots (M plots) average (i.e., marginalize) predictions over the conditional distribution $\P(\xv_2|x_1)$, i.e., by definition, they do not average predictions of observations outside the data distribution.
+
+\lz
+
+\textbf{But:} M plots introduce the omitted-variable bias (OVB) issue, i.e., an
+M plot always includes the marginal effect of other dependent features.\\
+$\Rightarrow$ M plots are useless to assess the main effect of a feature.
+% in case of dependent features.
+
+%M plots average over the conditional distribution $x_2|x_1$. However, the M plot of $x_1$ also includes the marginal effect of other dependent features $\Rightarrow$ We don't want this.
+% do not include the marginal effect of the considered feature but
+% mixture of its marginal effect and the marginal effects of all dependent features
+\end{vbframe}
+
 
 
 \frame{
@@ -289,7 +300,7 @@ $$\int_{z_0}^{x} \frac{\partial \fh(x_1, x_2)}{\partial x_1} dx_1 = \left[2x_1 -
 \begin{vbframe}{Accumulated Local Effects (ALE)}
 %\begin{columns}[T]
 %\begin{column}{0.65\textwidth}
-ALE plots were developed to overcome the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent (Apley, 2020).
+ALE plots use the idea of integrating partial derivatives and were developed to overcome the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent (Apley, 2020).
 %\end{column}
 %\begin{column}{0.35\textwidth}
 %\centering

@@ -20,18 +20,22 @@ library(effects)
 #dev.off()
 
 p1 = ggplot(data = bike, aes(x = temp, y = cnt)) +
-  geom_point(alpha = 0.5) +
+  geom_point(alpha = 0.25) +
   geom_smooth(method = "lm") +
-  labs(x = "Temperature in °C", y = "Number of bike rentals")
+  labs(x = "Temperature in °C", y = "Marginal Effect on \n 'number of bike rentals'") +
+  theme(axis.text.y = element_text(angle = 90, vjust = 0, hjust = 0.5),
+    plot.title = element_text(hjust = 0.5))
 
 # ggplot(data = bike, aes(x = temp, y = cnt, fill = season)) +
 #   geom_point(aes(col = season)) +
 #   geom_smooth(aes(col = season), method = "lm")
 
 p2 = ggplot(data = bike, aes(x = temp, y = cnt)) +
-  geom_point(alpha = 0.5) +
+  geom_point(alpha = 0.25) +
   geom_smooth(method = "gam") +
-  labs(x = "Temperature in °C", y = "Number of bike rentals")
+  labs(x = "Temperature in °C", y = "Marginal Effect on \n 'number of bike rentals'") +
+  theme(axis.text.y = element_text(angle = 90, vjust = 0, hjust = 0.5),
+    plot.title = element_text(hjust = 0.5))
 
 p = gridExtra::grid.arrange(p1 + ggtitle("LM"), p2 + ggtitle("GAM"), ncol = 2)
 
