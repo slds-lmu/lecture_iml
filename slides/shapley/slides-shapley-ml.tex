@@ -142,13 +142,13 @@
   We can use Shapley values to explain individual predictions $\fh(\xi)$ of a machine learning model $\fh$:
 \begin{itemize}
   \item Players $\hat{=}$ feature values of i-the observation $\xij, j \in \pset$.
-  \item Features collaborate to produce a prediction $\fh(x^{(i)}_1, x^{(i)}_2, \ldots, x^{(i)}_p)$.
+  \item Features cooperate to produce a prediction $\fh(x^{(i)}_1, x^{(i)}_2, \ldots, x^{(i)}_p)$.
   \item The value function / payout of coalition $S$ for observation $\xv^{(i)}$ is
-    $$v(\xi_S) =  \fh_{S} (\xi_S) - \E (\fh(\xi))$$, 
+    $$v(S) =  \fh_{S} (\xi_S) - \E (\fh(\xi))$$, 
     where $\xi_S = \{x_j^{(i)}\}_{j \in S}$ and $\fh_S: \Xspace_S \mapsto \Yspace$.
 \item The marginal prediction $\fh_S$ is defined as $\fh_{S}(\xv_S^{(i)}) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
 \item We have already seen the marginal prediction in action in the PDP.
-\item The subtraction of $\E(\fh(\xv))$ is necessary so that $v$ is a value function with $v(\emptyset) = 0$
+\item The subtraction of $\E(\fh(\xv))$ is necessary so that $v$ is a value function with $v(\emptyset) = 0$.
 \item By using the marginal prediction, we have defined what it means for features to be \enquote{missing} for the prediction: We remove it by integrating over its distribution.
 \end{itemize}
 \begin{center}
@@ -163,17 +163,14 @@
   \end{itemize}
 \end{vbframe}
 
-
-
-
 \begin{vbframe}{Shapley Value - Definition}
-  Using the order definition, the Shapley value for feature $j$ can be computed as:
+  Using the order definition, the Shapley value for feature $j$ and a given data point $\xi$ can be computed as:
 
-     $$ \hat{\phi_{j}}(\xv) = \frac{1}{p!} \sum_{\Scupj} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
+     $$ \phiij  = \frac{1}{p!} \sum_{\Scupj} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
 \begin{itemize}
-    \item The term $\E (\fh(\xv))$ drops due to the subtraction of value functions.
-  \item Interpretation of Shapley value $\hat{\phi_{j}}(\xv)$ for feature $j$ and observation $\xv$:
-  The feature value $\xv_{j}$ contributed $\hat{\phi_{j}}(\xv)$ towards the prediction $\fh(x)$ compared to the average prediction for the dataset.
+    \item The term $\E(\fh(\xv))$ drops due to the subtraction of value functions.
+  \item Interpretation of Shapley value $\phiij$ for feature $j$ and observation $\xi$:
+  The feature value $\xi_{j}$ contributed $\phiij$ towards the prediction $\fh(x)$ compared to the average prediction for the dataset.
    \item Note: Marginal contributions and Shapley values can be negative.
 \end{itemize}
 \lz
@@ -189,7 +186,7 @@ Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Ex
 \begin{vbframe}{Revisited: Axioms for Fair Attributions}
   We take the general axioms for Shapley Values and apply it to predictions:
   \begin{itemize}
-    \item \textbf{Efficiency}: Feature contributions add up to the (centered) prediction. That means, unlike, e.g., LIME, we get a full attribution, and not a sparse one.
+    \item \textbf{Efficiency}: Feature contributions add up to the (centered) prediction. That means, unlike, e.g., LIME, we get a dense attribution, and not a sparse one.
       $\sum\nolimits_{j=1}^p\phi_j=\hat{f}(x)-E_X(\fh(X))$
     \item \textbf{Symmetry}: Two feature that contribute the same to the prediction get the same payout. This ensures that, for example, interaction effects between two features are fairly divided. \\
       $\fh_{S\cup\{j\}}(\xv_{\Scupj}) = \fh_{\Scupk}(\xv_{\Scupk})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_j=\phi_k$
@@ -198,7 +195,6 @@ Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Ex
     \item \textbf{Additivity}:  For a prediction with combined payouts, the
       payout is the sum of payouts: $\phi_j(v_1) + \phi_j(v_2)$. This means we can combine the Shapley values for model ensembles.
   \end{itemize}
-How can we attribute outcomes so that these axioms are fulfilled?
 \end{vbframe}
 
 
@@ -246,7 +242,7 @@ Estimation for model $\fh$, observation $\xi$, and sample size $M$:
   The Shapley value can be estimated more efficiently when certain coalitions are always included in the computation, instead of relying on chance to sample them.
   \begin{itemize}
     \item The coalition with $S = \emptyset$ (i.e., $|S| = 0$) and $S = \{1, \ldots, p\} \setminus j$ have the highest weights in the Shapley value computation. By including them on purpose, the Shapley value becomes more stable with fewer samples. Sample weights have to be adapted for the sampled coalitions afterwards.
-    \item Intuition: Adding a feature to the empty coalition gives information about the \textit{pure} first order effect of the feature, which is the effect without any interactions. Adding the feature value to the otherwise complete set of feature values gives us the information about ALL interaction effects with other features.
+    \item Intuition: Adding a feature to the empty coalition gives information about the \textit{pure} first order effect of the feature, which is the effect without any interactions. Adding the feature value to the otherwise complete set of feature values gives us the information about the total effect of a feature, which is the main effect effect all interaction effects with other features.
     \item For coaliation $S = \emptyset$, there are $0! (|P| - 0 - 1)! = 1 \cdot (|P| - 1)! = (p - 1)!$ orders, which is the same for $S = P \setminus \{j\}$: $|P \setminus \{j\}|! (|P| - |P \setminus \{j\}| - 1)! = (p - 1)! (p - (p-1) - 1)! = (p-1)!$.
     \item An example with $p = 5$ features:
       \begin{itemize}
@@ -255,8 +251,8 @@ Estimation for model $\fh$, observation $\xi$, and sample size $M$:
         \item In 24 orders, we added the feature value to the otherwise full feature set.
         \item That means with just two sets, we can already get $\frac{48}{120} = 0.4$ of the contributions to the Shapley value.
       \end{itemize}
-    \item Similarly, we could proceed with all coalitions of $\{S: |S| = 1\}$ and $\{S: |S| = p - 1\}$
-    \item When some coalitions are added \enquote{manually}, and the rest are sampled, we have to adapt the weights: Let $w$ be the weight of the \enquote{manually} sampled coalitions, $\phi_j^1$ the Shapley value with only the manual contributions and $\phi_j^2$ the Shapley value with the sampled coalitions, then the Shapley value is: $w \cdot \phi_j^1 + (1 - w) \phi_j^2$.
+    \item Similarly, we could proceed with all coalitions of $\{S: |S| = 1\}$ and $\{S: |S| = p - 1\}$.
+    \item When some coalitions are added \enquote{manually}, and the rest are sampled, we have to adapt the weights: Let $w$ be the weight of the \enquote{manually} sampled coalitions, $\hat{\phi}_{j,fixed}$ the part of the Shapley value with only the manual contributions and $\hat{\phi}_{j,sample}$ the Shapley value with the sampled coalitions, then the Shapley value is: $w \cdot \hat{\phi}_{j,fixed} + (1 - w) \hat{\phi}_{j,sample}$.
   \end{itemize}
 
   \begin{center}
@@ -272,13 +268,13 @@ Estimation for model $\fh$, observation $\xi$, and sample size $M$:
 
 The plot shows the Shapley values for observation 200.
 The difference between the model prediction of this observation and the average prediction of the data is fairly distributed among the features (i.e., 4514 - 4508).
-The most positive effect had feature value temp=28.503349, with a contribution (increase of prediction) of + 350.
+The most positive effect had feature value temp=28.5, with a contribution (increase of prediction) of + 350.
 \end{vbframe}
 
 \begin{vbframe}{Versions of the Shapley Value}
 
   \begin{itemize}
-  \item KernelSHAP formulates the Shapley value solution as a regression problem using a specific kernel function.
+  \item KernelSHAP formulates the Shapley value solution as a regression problem using a specific kernel function. The authors show paralles to LIME and Deeplift.
   \item TreeSHAP is a fast Shapley value computation method for tree-based models such as gradient boosted trees.
  \end{itemize}
     \tiny{Lundberg, Scott M., and Su-In Lee. "A Unified Approach to Interpreting Model Predictions." Advances in Neural Information Processing Systems 30 (2017): 4765-4774.}

@@ -1,0 +1,318 @@
+
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+	\ifdim\Gin@nat@width>\linewidth
+	\linewidth
+	\else
+	\Gin@nat@width
+	\fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+	\def\at@end@of@kframe{}%
+	\ifinner\ifhmode%
+	\def\at@end@of@kframe{\end{minipage}}%
+\begin{minipage}{\columnwidth}%
+	\fi\fi%
+	\def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+		\colorbox{shadecolor}{##1}\hskip-\fboxsep
+		% There is no \\@totalrightmargin, so:
+		\hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+	\MakeFramed {\advance\hsize-\width
+		\@totalleftmargin\z@ \linewidth\hsize
+		\@setminipage}}%
+{\par\unskip\endMakeFramed%
+	\at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+	%Define standard arrow tip
+	>=stealth',
+	%Define style for boxes
+	punkt/.style={
+		rectangle,
+		rounded corners,
+		draw=black, very thick,
+		text width=6.5em,
+		minimum height=2em,
+		text centered},
+	% Define arrow style
+	pil/.style={
+		->,
+		thick,
+		shorten <=2pt,
+		shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+\newcommand{\titlefigure}{figure/lime5}
+\newcommand{\learninggoals}{
+	\item Learn why LIME should be used with caution}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Local Explanations}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_i2ml/}{compstat-lmu.github.io/lecture\_i2ml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\begin{document}
+	
+	% Set style/preamble.Rnw as parent.
+	
+	% Load all R packages and set up knitr
+	
+	% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+	% parent file
+	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+	
+	% Defines macros and environments
+	
+	\input{../../latex-math/basic-math.tex}
+	\input{../../latex-math/basic-ml.tex}
+	\input{../../latex-math/ml-interpretable.tex}
+	
+	\lecturechapter{LIME Pitfalls}
+	\lecture{Interpretable Machine Learning}
+	
+	% ------------------------------------------------------------------------------
+
+
+\begin{vbframe}{LIME Pitfalls}
+  \begin{itemize}
+  	\item LIME is one of the best known interpretable machine learning methods but several papers caution to be careful in their use. 
+  	\item Problems can occur in several places. These are discussed in more detail below. 
+  \end{itemize}
+	\textbf{Pitfall 1: Sampling}
+	\begin{itemize}
+	  \item The most common sampling strategies for $\zv \in Z$ do not take the correlation between features into account. 
+      \item This can lead to unlikely data points which can then be used to learn local explanation models.
+      \item Ideally, we need a local sampler that samples $\zv$ from $\Xspace$. However, its derivation is particularly difficult for high dimensional or mixed feature spaces. 
+      \item We could use the original training data to fit the surrogate model, but this only works well with enough data near $\xv$.
+    \end{itemize}
+\framebreak
+	\textbf{Pitfall 2: Locality}
+	\begin{itemize} 
+     \item It is difficult to define locality (= how samples are weighted locally). It has a huge influence on the local model, but there is no automatic procedure for choosing the neighborhood.
+     \item The authors of LIME proposed an exponential kernel as proximity measure between $\xv$ and $\zv$:
+     	$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$ where $d$ is a distance measure and $\sigma$ is the kernel width. 
+     	 \begin{center}
+     		\includegraphics[width=0.6\textwidth]{figure/lime_locality}
+     		\vspace{-0.5cm}
+     		
+     		\scriptsize{\textbf{Figure:} Linear surrogate models for two different data points based on the same model with one target and one feature. Each line displays one linear surrogate model with a different kernel width. For the data point in the right figure, larger kernel sizes are more severe.}
+     		
+     	\end{center}
+     \item A larger kernel width means that instances that are farther away also influence the model such that we do not receive a local but a global surrogate model. 
+     \item Therefore, we prefer smaller kernel widths such that an instance must be very close to influence the local model.  
+     \item If the kernel with is set too small, we only fit a local model based on a few observations which carries the risk to fit noise.   
+	\item Multiple software package use another default standardized distance: the Gower proximity where no kernel width needs to be specified. However, experiments showed that since also data points far away receive a weight $ > 0$, their resulting explanations are rather global surrogates than local surrogates.   
+\end{itemize}
+\vspace{0.3cm}
+
+\footnote[frame]{Kopper P., Molnar M. (2019) Chapter 13 LIME and Neighborhood. In: Molnar C., Casalicchio G., König G., Pfisterer F., Scholbeck C., Bischl B. (eds) Limitations of Interpretable Machine Learning Methods. \url{https://compstat-lmu.github.io/iml_methods_limitations/}.}
+
+\end{vbframe}
+
+\begin{vbframe}{LIME Pitfalls}
+
+\textbf{Pitfall 3: Local vs. global features}
+
+\begin{columns}
+	\begin{column}{0.78\textwidth}
+\begin{itemize}
+	\item There are features that influence the \textbf{global} shape of the black-box model and \textbf{local} features that impact predictions for a small area of $\Xspace$. 
+	\item For example in decision trees, splitting variables close to the root have a more global influence than the ones close to the leaves. 
+	\item In most implementations, instances for the surrogate model are sampled from the whole input space which tends to hide the features with a local influence for the benefit of features with a global influence even when the kernel width was reduced. 
+	\item Laugel et al. (2018) propose to sample new instances $\zv$ around the decision boundary closest from point $\xv$ for higher local accuracy.
+\end{itemize}
+\end{column}
+\begin{column}{0.2\textwidth}
+
+			\vspace{-0.2cm}
+		\includegraphics[width=1.2\textwidth]{figure/lime_bordersample2}
+		
+		\vspace{-0.3cm}
+		
+		\begin{center}
+			\tiny{\textbf{Figure:} Proposed method by Laugel et al. (2018). Source: \href{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}{ICML WHI 2018}}
+		\end{center}
+
+	
+ 	\end{column}
+\end{columns}
+\framebreak
+\begin{columns}
+	\begin{column}{0.6\textwidth}
+		\begin{itemize}
+		\item Let us explain the prediction of the green dot. Background colors display predictions of a random forest, the gray line is the decision boundary.
+		\item The decision boundary of LIME with default kernel width (green line) and reduced kernel width (blue line) do not match the direction of the steeper local boundary. 
+		\item The method of Laugel et al. (2018) (red line) approximates the local border direction better. The red dot is the point closest to the border detected by this method. 
+	\end{itemize}
+\end{column}
+\begin{column}{0.39\textwidth}
+\vspace{0.3cm}
+
+	\begin{center}
+	\includegraphics[width=1.1\textwidth]{figure/lime-globallocal2}
+	
+	\vspace{-0.3cm}
+	{\tiny \textbf{Figure:} Half-moons dataset.}
+	
+\end{center}
+
+	\end{column}
+\end{columns}
+\footnote[frame]{Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.}
+\end{vbframe}
+
+\begin{vbframe}{LIME Pitfalls}
+\textbf{Pitfall 4: Faithfulness}
+\begin{itemize}
+	\item There exists a trade-off between local fidelity vs. sparsity. 
+	\item If the local fidelity of our interpretable model is low, we do not receive reliable explanations.
+	\item On the other hand, high fidelity is only possible with a more complex model bearing the risk to substitute a black-box by complex model that is difficult to interpret.
+\end{itemize}
+\framebreak
+
+\textbf{Pitfall 5: Possibility to hide biases}
+\begin{itemize}
+	\item Slack et al. (2020) showed that data scientists could manipulate their model to hide biases. 
+	\item They make use of the fact that sampled instances for the surrogate model are out of the input data distribution if we do not account for feature dependencies. 
+	\item We can built a classifier that detects whether a given data point is an out-of-distribution sample or not using the original training data and data sampled by LIME. 
+	\item If a new data point has the same distribution as the training data, the prediction of the biased classifier is returned. If a new data point is out-of-distribution (usually samples for the surrogate models), the unbiased prediction is returned.
+	\item For the credit dataset, a biased model could be a model solely trained on the feature `gender`, while an unbiased model could be trained on features uncorrelated with `gender` -- for example, percentage of income the credit rate represents.   
+	\item Since the surrogate model is trained on out-of-distribution samples, the predictions of these samples are derived from an unbiased predictor. 
+	\item Consequently, the explanations do not detect any bias although the original predictor is biased. 
+\end{itemize}
+\footnote[frame]{Dylan Slack et al. (2020). Fooling LIME and SHAP: Adversarial Attacks on Post hoc Explanation Methods. In Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society (AIES '20). Association for Computing Machinery, New York, NY, USA, 180–186.}
+\end{vbframe}
+
+\begin{vbframe}{LIME Pitfalls}
+\textbf{Pitfall 6: Robustness}
+\begin{itemize}
+	\item Another really big problem is the instability of the explanations. 
+	\item Explanations of two very close points could vary greatly. 
+	\item But also if $\fh$ and $\xv$ are fixed, and only new sampled data points $\zv$ are used, the resulting explanations could differ. This is called the \textbf{Rashomon Effect} since we receive multiple different explanations for a single data point. 
+\end{itemize}
+\vspace{-0.7cm}
+\begin{columns}
+	\begin{column}{0.48\textwidth}
+		\begin{center}
+		
+		\includegraphics[width=0.6\textwidth]{figure/lime_robustness_1.png}
+		
+		\tiny{Figure: Linear prediction task (logistic regression). Linear surrogate returns similar coefficients for similar points.}
+		
+		\end{center}
+	\end{column}
+	\begin{column}{0.48\textwidth}
+		\begin{center}
+	\includegraphics[width=0.6\textwidth]{figure/lime_robustness_2.png}
+	
+	\tiny{Figure: Circular prediction task (random forest). Linear surrogate returns different coefficients for similar points.}
+	
+	\end{center}
+\end{column}
+\end{columns}
+\vspace{-0.2cm}
+\footnote[frame]{Alvarez-Melis, D., \& Jaakkola, T. (2018). On the Robustness of Interpretability Methods. ArXiv, abs/1806.08049.}
+\end{vbframe}
+
+\begin{vbframe}{LIME Pitfalls}
+\textbf{Pitfall 7: Definition of superpixels}
+\begin{itemize}
+	\item Another source of instability concerns the definition of superpixels for image data. 
+	\item Multiple definitions of superpixels exist and these definitions influence both the shape and size. 
+	\item The definition of superpixel has a large influence on the explanations. 
+	\item Furthermore, if superpixel are only slightly changed (adversarial attack), the definitions could still differ greatly.  
+\end{itemize}
+
+\textbf{Conclusion: LIME should only be used with great caution.}
+
+\end{vbframe}
+
+%\begin{vbframe}{Literature}
+%	\begin{itemize}
+%		\small
+%		\item Marco Tulio Ribeiro, Sameer Singh, and Carlos Guestrin. 2016. "Why Should I Trust You?": Explaining the Predictions of Any Classifier. In Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '16). Association for Computing Machinery, New York, NY, USA, 1135–1144. 
+%		\item Dylan Slack, Sophie Hilgard, Emily Jia, Sameer Singh, and Himabindu Lakkaraju. 2020. Fooling LIME and SHAP: Adversarial Attacks on Post hoc Explanation Methods. In Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society (AIES '20). Association for Computing Machinery, New York, NY, USA, 180–186. 
+%		\item Alvarez-Melis, D., \& Jaakkola, T. (2018). On the Robustness of Interpretability Methods. ArXiv, abs/1806.08049.
+%		\item Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.
+%	\end{itemize}
+%	
+%\end{vbframe}
+
+
+\endlecture
+\end{document}

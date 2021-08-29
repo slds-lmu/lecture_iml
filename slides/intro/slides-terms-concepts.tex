@@ -1,0 +1,238 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+\ifdim\Gin@nat@width>\linewidth
+\linewidth
+\else
+\Gin@nat@width
+\fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\newcommand{\predvar}{Var\left[\hat{f}(x)\right]}
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+\def\at@end@of@kframe{}%
+\ifinner\ifhmode%
+\def\at@end@of@kframe{\end{minipage}}%
+\begin{minipage}{\columnwidth}%
+\fi\fi%
+\def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+\colorbox{shadecolor}{##1}\hskip-\fboxsep
+% There is no \\@totalrightmargin, so:
+\hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+\MakeFramed {\advance\hsize-\width
+\@totalleftmargin\z@ \linewidth\hsize
+\@setminipage}}%
+{\par\unskip\endMakeFramed%
+\at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+%Define standard arrow tip
+>=stealth',
+%Define style for boxes
+punkt/.style={
+rectangle,
+rounded corners,
+draw=black, very thick,
+text width=6.5em,
+minimum height=2em,
+text centered},
+% Define arrow style
+pil/.style={
+->,
+thick,
+shorten <=2pt,
+shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Interpretable Machine Learning}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\begin{document}
+
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\learninggoals}{
+\item Fundamental Terms and Concepts}
+
+
+\lecturechapter{Fundamental Terms and Concepts}
+\lecture{Interpretable Machine Learning}
+
+\begin{vbframe}{What tools do we have?}
+ \begin{center}
+  \includegraphics[width=0.9\textwidth]{figure/overview}
+ \end{center}
+ $\Rightarrow$ We will focus on model-agnostic interpretability!
+\end{vbframe}
+
+\begin{vbframe}{Intrinsic and Model-Agnostic Interpretation}
+\begin{itemize}
+  \item Intrinsically interpretable models:
+  \begin{itemize}
+  \item Examples are linear models and decision trees.
+  \item They are interpretable because of their simple structures, e.g. 
+  weighted combination of feature values or tree structure. 
+  \item They are difficult to interpret with many features or complex interaction terms.
+  \end{itemize}
+  \lz
+  \item Model-agnostic interpretation methods:
+  \begin{itemize}
+  \item They are applied after training (post-hoc).
+  \item They also work for more complex black box models.
+  \item They can also be applied to intrinsically interpretable models, e.g.
+    feature importance for decision trees. 
+  \end{itemize}
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Model-Agnostic Interpretability}
+ \begin{itemize}
+  \itemsep2em
+  \item Model-agnostic interpretability methods work for \textbf{any} kind of machine learning model.
+  \item Explanation type is not tied to the underlying model type.
+  \item Often, only access to data and fitted predictor is required. No further knowledge about the model itself is necessary.
+  \item We usually distinguish between \textbf{feature effect} and \textbf{feature importance} methods.
+ \end{itemize}
+\end{vbframe}
+
+
+\begin{vbframe}{Feature Effects vs. Feature Importance}
+\textbf{Feature Effects} visualize or quantify the (average) relationship or contribution of a feature to the model prediction.
+\begin{center}
+\includegraphics[page=1, width=\textwidth]{figure/feature-effects}
+\end{center}
+  \begin{itemize}
+    \item Methods: Partial Dependence Plots, Individual Conditional Expectation, Accumulated Local Effects (ALE)
+    \item Pendant in linear models: Regression coefficient $\hat{\theta}_j$
+  \end{itemize}
+\framebreak
+
+\textbf{Feature importance} methods rank features by how much they contribute to the predictive performance or prediction variance of the model.
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\begin{itemize}
+    \itemsep1em
+    \item Methods: Permutation Feature Importance, Functional Anova
+    \item Analog in linear models: Absolute t-statistic $\left|\frac{\hat{\theta}_j}{SE(\hat{\theta}_j)}\right|$
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{center}
+\includegraphics[page=1, width=\textwidth]{figure/feature-importance}
+\end{center}
+\end{column}
+\end{columns}
+\end{vbframe}
+
+
+\begin{vbframe}{Global and Local Interpretability}
+Global interpretability methods explain the expected model behavior for the entire input space by considering all available observations (or representative subsets). For example:
+  \begin{itemize}
+    \item Permutation Feature Importance
+    \item Partial Dependence Plot
+    \item Functional Anova
+    \item ...
+  \end{itemize}
+\lz
+Local interpretability methods explain single predictions or a group of similar observations. For example:
+ \begin{itemize}
+  \item Individual Conditional Expectation (ICE) Plots
+  \item Local Interpretable Model-Agnostic Explanations (LIME)
+  \item Shapley Values
+  \item ...
+ \end{itemize}
+\end{vbframe}
+
+
+\begin{vbframe}{Fixed model vs. refits}
+  \begin{itemize}
+     \itemsep2em
+     \item Most methods presented in this lecture analyze a fixed, trained model 
+     (e.g., permutation feature importance).
+     \item Some methods require refitting the model (e.g., PIMP).
+     \item Trained model $\Rightarrow$ Model is the object of analysis.
+     \item Refitting $\Rightarrow$ Learning process is the object of analysis.
+     \item The advantage of refitting is that it includes information about the variability in the learning process.
+  \end{itemize}
+\end{vbframe}
+
+
+\endlecture
+\end{document}

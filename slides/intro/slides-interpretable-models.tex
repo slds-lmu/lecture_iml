@@ -1,0 +1,210 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+\ifdim\Gin@nat@width>\linewidth
+\linewidth
+\else
+\Gin@nat@width
+\fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\newcommand{\predvar}{Var\left[\hat{f}(x)\right]}
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+\def\at@end@of@kframe{}%
+\ifinner\ifhmode%
+\def\at@end@of@kframe{\end{minipage}}%
+\begin{minipage}{\columnwidth}%
+\fi\fi%
+\def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+\colorbox{shadecolor}{##1}\hskip-\fboxsep
+% There is no \\@totalrightmargin, so:
+\hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+\MakeFramed {\advance\hsize-\width
+\@totalleftmargin\z@ \linewidth\hsize
+\@setminipage}}%
+{\par\unskip\endMakeFramed%
+\at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+%Define standard arrow tip
+>=stealth',
+%Define style for boxes
+punkt/.style={
+rectangle,
+rounded corners,
+draw=black, very thick,
+text width=6.5em,
+minimum height=2em,
+text centered},
+% Define arrow style
+pil/.style={
+->,
+thick,
+shorten <=2pt,
+shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Interpretable Machine Learning}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\begin{document}
+
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\learninggoals}{
+\item Interpretable Models}
+
+
+\lecturechapter{Interpretable Models}
+\lecture{Interpretable Machine Learning}
+
+
+\begin{vbframe}{Interpretable Models}
+\textbf{Linear models (LM) and generalized linear models (GLM):}
+
+The specification of model parameters makes LMs and GLMs intrinsically interpretable.
+
+\begin{itemize}
+
+\item \textbf{LM:}
+$$
+\mathbb{E}_Y(y \vert x) = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \epsilon
+$$
+
+\item \textbf{GLM:}
+$$
+g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p
+$$
+\end{itemize}
+
+
+\textbf{Generalized additive models (GAM):} Add flexibility by replacing linear term by more general functional form, but retain interpretability by keeping the pre-specified additive predictor.
+
+$$
+g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 h(x_1) + \dots + \beta_p h(x_p)
+$$
+
+\end{vbframe}
+
+
+\begin{vbframe}{Interpretable Models}
+
+
+\textbf{Model-based boosting:}
+
+\begin{itemize}
+
+\item 
+Idea: Combine boosting with interpretable base learners (e.g., linear model with single parameter).
+\item
+Consider two linear base learners $b_j(x, \Theta)$ and $b_j(x, \Theta^{\star})$ with the same type, but distinct parameter vectors $\Theta$ and $\Theta^{\star}$. They can be combined in a base learner of the same type:
+
+$$
+b_j(x, \Theta) + b_j(x, \Theta^{\star}) = b_j(x, \Theta + \Theta^{\star})
+$$
+\item We create a selection of interpretable base learners. In each iteration, all base learners are trained on the so-called pseudo residuals, and the one with the best fit is added to the previously computed model.
+\item The final model has an additive structure (equivalent to a GAM), where each component function is itself interpretable.
+\end{itemize}
+
+
+
+\end{vbframe}
+
+\begin{vbframe}{Interpretable Models}
+
+
+\textbf{Rule-based ML:}
+
+
+Decision rules follow a general structure: IF the conditions are met THEN make a certain prediction. A single decision rule or a combination of several rules can be used to make predictions.
+
+\vspace{0.5cm}
+There are many ways to learn rules from data:
+\begin{itemize}
+\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
+\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.
+\item Bayesian Rule Lists combine pre-mined frequent patterns into a decision list using Bayesian statistics. Using pre-mined patterns is a common approach used by many rule learning algorithms.
+\end{itemize}
+
+\end{vbframe}
+
+
+\endlecture
+\end{document}
