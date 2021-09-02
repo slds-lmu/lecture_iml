@@ -154,85 +154,138 @@
 
 % CHALLENGE
 \begin{vbframe}{Challenge: Fair Attribution of Importance}
-\textbf{Recap PFI example:} Let $x_1, \dots, x_4$ be independently and uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$.\\
-A linear model is fit yielding $\fh(x) \approx x_1 x_2 + x_3$.\\
+\textbf{Recap:} Data: $x_1, \dots, x_4$ uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$. Model: $\fh(x) \approx x_1 x_2 + x_3$.\\
 
 \begin{figure}
 \centering
   \includegraphics[width=0.5\linewidth]{figure_man/pfi_interactions.pdf}
 \end{figure}
 
-Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ jointly, all three are considered equally relevant.\\
+Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ jointly, all three are considered equally relevant by PFI.\\
 \lz
-$\Rightarrow$ PFI does not fairly attribute the performance to the individual features.
+Why? PFI assesses importance given that all remaining covariates are preserved. If we were to first permute $x_1$ and then $x_2$, the permutation of $x_2$ would have no effect on the performance (and vice versa).
 \end{vbframe}
 
 
 \begin{vbframe}{Challenge: Fair attribution of importance}
 
-\textbf{Observation:} Feature importance attribution can be regarded as cooperative game, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on which features are already in the room.\\
+\textbf{Observation:} Feature importance attribution can be regarded as cooperative game, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
 \lz
-\textbf{SAGE Idea:} Leverage Shapley values to compute a fair attribution of importance.\\
+\textbf{SAGE Idea:} Leverage game-theoretic Shapley values to compute a fair attribution of importance.\\
 \lz
-$\Rightarrow$ SAGE translates SHAP into a global feature importance technique
+$\Rightarrow$ SAGE translates SHAP into a global feature importance technique\\
+\lz
+In order to compute SAGE, approximate Shapley values $\phi_j$ as for SHAP, replacing SHAP value functions with SAGE value functions.\\
 
-\cite{NEURIPS2020_c7bf0b7c}
+\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
   
 \end{vbframe}
 
 
 % SAGE IDEA
-\begin{vbframe}{SAGE Removal}
+\begin{vbframe}{SAGE Removal and Value function}
   
- For SAGE, value functions quantify the predictive power of a coalition $S$ in terms of reduction in risk over the mean prediction.\\
-\lz
-\textbf{Removal Idea:} In order to deprive the model of the non-coalition features $-S$, marginalize the prediction function over the dropped features.
+ \textbf{Removal Idea:} In order to deprive the model of the non-coalition features $-S$, marginalize the prediction function over the dropped features.
 
 $$\fh_S(x_S) = \E[\fh(x) | X_S = x_S]$$
   
 The dropped features can either be sampled from the marginal distribution $\P(x_{-S})$ or the conditional distribution $\P(x_{-S}|x_S)$.\\
 \lz
 
-  
 \footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
-  
-\end{vbframe}
 
-% SAGE value functions
-
-\begin{vbframe}{SAGE value function}
-
+For SAGE, value functions quantify the predictive power of a coalition $S$ in terms of reduction in risk over the mean prediction.\\
+\lz
 Value function:  $ v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S})$\\
 \lz
 Contribution of feature $x_j$ over coalition $x_S$:  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S)$\\
 \lz
-Depending on model and loss function, interesting links exist:
+
+\framebreak
+
+Depending on whether conditional or marginal resampling is used, the interpretation of SAGE value functions differ.\\
+\lz
+\textbf{Marginal resampling:} $v(S)$ quantifies the reliance of the model on features $x_S$
 \begin{itemize}
-  \item cross-entropy loss: conditional mutual information
-  \item MSE: reduction in variance
+  \item features $x_S$ not being causal for the prediction is a sufficient condition for $v(S) = 0$
 \end{itemize}
 
+\textbf{Conditional resampling}: $v(S)$ quantifies the reliance of the model on the information contained in variables $x_S$.
+\begin{itemize}
+  \item features $x_S$ not being causal for the prediction is not a sufficient condition for $v(S) = 0$
+  \item under model optimality, links to mutual information or the conditional variance can be drawn
+\end{itemize}
+
+\framebreak
+
+\textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). The prediction model is defined as  $\fh \approx 0.95 x_3 + 0.05 x_2$. 
+
+\begin{figure}
+  \includegraphics[width=0.6\linewidth]{figure_man/sage_variants}
+\end{figure}
+
+While the conditional $v(j)$ are nonzero for features that are not used by $\fh$, marginal $v(j)$ are only nonzero for features that are used by $\fh$. Since conditional $v(-j \cup j) - v(-j)$ quantifies the unique contribution of $x_j$ over remaining variables $-j$, only $v(\{1,2,3\}) - v(\{1, 2\})$ is nonzero.
+
+\framebreak
+
+When the loss-optimal model $f^*$ is inspected using \textit{conditional-sampling} based SAGE value functions, interesting links exist.
+\begin{itemize}
+  \item \textbf{for cross-entropy loss:} the value function $v_{f^*}(S) = I(y;x_S)$ corresponds to the mutual information and the surplus contribution of a feature $x_j$ $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = I(y,x_i|x_S)$ to the conditional mutual information
+  \item \textbf{for MSE loss:} the value function $v_{f^*}(S) = Var(y) - \E[Var(y|x_S)]$ corresponds to the expected reduction in variance given knowledge of the features $x_S$ and the surplus contribution $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = \E[Var(y|x_S)] - \E[Var(y|x_{S \cup {j}})]$ to the respective reduction over $x_S$
+\end{itemize}
 
 \end{vbframe}
 
-\begin{vbframe}{SAGE}
+\begin{vbframe}{SAGE interpretation}
 
-Algorithm and closed form
-  
+The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
+%
+\begin{table}
+  \centering
+  \begin{tabular}{l | l }
+  Shapley property $\implies$ & conditional SAGE property \\
+  \hline
+  efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
+  symmetry & $x_j = x_i \implies \phi_i = \phi_j$ \\
+  linearity & $\phi_j$ expecation of per-instance\\
+  & SHAP applied to model loss\\
+  monotonicity & given models $f, f'$, if  $\forall S:$\\
+  &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
+  &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
+  dummy & if $ \forall S: f_S(x_S) = f_{S \cup j}(x_{S \cup j})$ then $\phi_j = 0$ \\
+  & (e.g. if $\forall S: \fh(x) \ind x_j | x_S$)
+  \end{tabular}
+\end{table}
+
+\end{vbframe}
+
+\begin{vbframe}{SAGE interpretation}
+
+The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
+%
+\begin{table}
+  \centering
+  \begin{tabular}{l | l }
+  Shapley property $\implies$ & conditional SAGE property \\
+  \hline
+  efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
+  symmetry & $x_j = x_i \implies \phi_i = \phi_j$ \\
+  linearity & $\phi_j$ expecation of per-instance\\
+  & SHAP applied to model loss\\
+  monotonicity & given models $f, f'$, if  $\forall S:$\\
+  &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
+  &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
+  dummy & if $ \forall S: f_S(x_S) = f_{S \cup j}(x_{S \cup j})$ then $\phi_j = 0$ \\
+  & (e.g. if $\forall S: \fh(x) \ind x_j | x_S$)
+  \end{tabular}
+\end{table}
+
 \end{vbframe}
 
 \begin{vbframe}{Interaction Example}
   
   Both for SAGE and PFI
   
-\end{vbframe}
-
-
-
-\begin{vbframe}{SAGE Interpretation}
-
-Properties that are satisfied for marginal/conditional SAGE
-
 \end{vbframe}
 
 
@@ -276,12 +329,6 @@ Can we gain insight into whether...
     \end{itemize}
 \end{itemize}
 
-\end{vbframe}
-
-\begin{vbframe}{Example Marginal vs Conditional}
-
-Take example from pitfalls paper and apply both marginal and conditional SAGE
-  
 \end{vbframe}
 
 
