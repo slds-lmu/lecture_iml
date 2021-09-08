@@ -173,7 +173,7 @@ Depending on the type of perturbation/removal feature importance methods provide
 %
 \textbf{Definition:} Given training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\inducer$ and a model $\fh = \inducer(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
   \begin{enumerate}
-    \item learn model on dataset where feature $x_j$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$
+    \item learn model on dataset $\Dtrain_{,-j}$ where feature $x_j$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$
     \item compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |y^{(i)} - \fh_{-j}(x_{-j}^{(i)}) \right | - \left |y^{(i)} - \fh(x^{(i)}) \right | $ with $i \in \Dtest$
     \item yield the importance score $\text{LOCO}_j = \text{med} \left ( \Delta_j  \right )$
   \end{enumerate}
@@ -249,7 +249,7 @@ $\Rightarrow$ We can get insight into (3). Since $x_2$ and $x_1$ are highly corr
 \begin{vbframe}{Pros and Cons}
   Pros:
   \begin{itemize}
-    \item Requires (only?) one model fit per feature for evaluation
+    \item Requires (only?) one resampling set per feature for evaluation
     \item Easy to implement
     \item Testing framework available in \cite{lei_distribution-free_2018}
   \end{itemize}
@@ -257,7 +257,7 @@ $\Rightarrow$ We can get insight into (3). Since $x_2$ and $x_1$ are highly corr
   Cons:
   \begin{itemize}
     \item Does not provide insight into a specific model, but rather a learner on a specific dataset.
-    \item Model training is a random process, so estimates can be noisy.
+    \item Model training is a random process, so estimates can be noisy (which is problematic for inference about model and data).
   \end{itemize}
 \end{vbframe}
 
