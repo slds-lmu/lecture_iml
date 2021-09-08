@@ -201,7 +201,9 @@ Value function:  $ v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S})$\\
 Contribution of feature $x_j$ over coalition $x_S$:  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S)$\\
 \lz
 
-\framebreak
+\end{vbframe}
+
+\begin{vbframe}{SAGE Removal and Value function}
 
 Depending on whether conditional or marginal resampling is used, the interpretation of SAGE value functions differ.\\
 \lz
@@ -218,22 +220,23 @@ Depending on whether conditional or marginal resampling is used, the interpretat
 
 \framebreak
 
-\textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). The prediction model is defined as  $\fh \approx 0.95 x_3 + 0.05 x_2$. 
-
-\begin{figure}
-  \includegraphics[width=0.6\linewidth]{figure_man/sage_variants}
-\end{figure}
-
-While the conditional $v(j)$ are nonzero for features that are not used by $\fh$, marginal $v(j)$ are only nonzero for features that are used by $\fh$. Since conditional $v(-j \cup j) - v(-j)$ quantifies the unique contribution of $x_j$ over remaining variables $-j$, only $v(\{1,2,3\}) - v(\{1, 2\})$ is nonzero.
-
-\framebreak
-
 When the loss-optimal model $f^*$ is inspected using \textit{conditional-sampling} based SAGE value functions, interesting links exist.
 \begin{itemize}
   \item \textbf{for cross-entropy loss:} the value function $v_{f^*}(S) = I(y;x_S)$ corresponds to the mutual information and the surplus contribution of a feature $x_j$ $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = I(y,x_i|x_S)$ to the conditional mutual information
   \item \textbf{for MSE loss:} the value function $v_{f^*}(S) = Var(y) - \E[Var(y|x_S)]$ corresponds to the expected reduction in variance given knowledge of the features $x_S$ and the surplus contribution $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = \E[Var(y|x_S)] - \E[Var(y|x_{S \cup {j}})]$ to the respective reduction over $x_S$
 \end{itemize}
 
+\framebreak
+
+\textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). The prediction model is defined as  $\fh \approx 0.95 x_3 + 0.05 x_2$. 
+%
+\begin{figure}
+  \includegraphics[width=0.6\linewidth]{figure_man/sage_variants}
+\end{figure}
+%
+While the conditional $v(j)$ are nonzero for features that are not used by $\fh$, marginal $v(j)$ are only nonzero for features that are used by $\fh$. 
+Since for conditional $v$ the difference $v(-j \cup j) - v(-j)$ quantifies the unique contribution of $x_j$ over remaining variables $-j$ and $y \ind x_1, x_2 | x_3$, only $v(\{1,2,3\}) - v(\{1, 2\})$ is nonzero.
+%
 \end{vbframe}
 
 \begin{vbframe}{SAGE interpretation}
@@ -248,38 +251,36 @@ The Shapley axioms can be translated into properties of SAGE. The interpretation
   efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
   symmetry & $x_j = x_i \implies \phi_i = \phi_j$ \\
   linearity & $\phi_j$ expecation of per-instance\\
-  & SHAP applied to model loss\\
+  & conditional SHAP applied to model loss\\
   monotonicity & given models $f, f'$, if  $\forall S:$\\
   &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
   &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
-  dummy & if $ \forall S: f_S(x_S) = f_{S \cup j}(x_{S \cup j})$ then $\phi_j = 0$ \\
-  & (e.g. if $\forall S: \fh(x) \ind x_j | x_S$)
+  dummy & if $\forall S: \fh(x) \ind x_j | x_S \Rightarrow \phi_j = 0$
   \end{tabular}
 \end{table}
 
 \end{vbframe}
 
 \begin{vbframe}{SAGE interpretation}
-
+%
 The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
 %
 \begin{table}
   \centering
   \begin{tabular}{l | l }
-  Shapley property $\implies$ & conditional SAGE property \\
+  Shapley property $\implies$ & marginal SAGE property \\
   \hline
   efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
-  symmetry & $x_j = x_i \implies \phi_i = \phi_j$ \\
+  symmetry & no intelligible implication \\
   linearity & $\phi_j$ expecation of per-instance\\
-  & SHAP applied to model loss\\
+  & marginal SHAP applied to model loss\\
   monotonicity & given models $f, f'$, if  $\forall S:$\\
   &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
   &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
-  dummy & if $ \forall S: f_S(x_S) = f_{S \cup j}(x_{S \cup j})$ then $\phi_j = 0$ \\
-  & (e.g. if $\forall S: \fh(x) \ind x_j | x_S$)
+  dummy & model invariant to $x_j \Rightarrow \phi_j = 0$\\
   \end{tabular}
 \end{table}
-
+%
 \end{vbframe}
 
 \begin{vbframe}{Interaction Example}
@@ -289,47 +290,47 @@ The Shapley axioms can be translated into properties of SAGE. The interpretation
 \end{vbframe}
 
 
-\begin{vbframe}{Implications marginal SAGE}
-
-Can we gain insight into whether...
-
-\begin{itemize}
-    \item the feature $\xj$ is causal for the prediction?
-    \begin{itemize}
-      \item Yes, if the feature contributes to the performance
-    \end{itemize}
-    \item the variable $\xj$ contains prediction-relevant information about $\ydat$?
-    \begin{itemize}
-      \item no
-    \end{itemize}
-    \item the model requires access to $x_j$ to achieve it's prediction performance?  
-    \begin{itemize}
-        \item no
-    \end{itemize}
-\end{itemize}
-
-\end{vbframe}
-
-\begin{vbframe}{Implications conditional SAGE}
-
-Can we gain insight into whether...
-
-\begin{itemize}
-    \item the feature $\xj$ is causal for the prediction?
-    \begin{itemize}
-      \item no
-    \end{itemize}
-    \item the variable $\xj$ contains prediction-relevant information about $\ydat$?
-    \begin{itemize}
-      \item yes
-    \end{itemize}
-    \item the model requires access to $x_j$ to achieve it's prediction performance?  
-    \begin{itemize}
-        \item no
-    \end{itemize}
-\end{itemize}
-
-\end{vbframe}
+%\begin{vbframe}{Implications marginal SAGE}
+%
+%Can we gain insight into whether...
+%
+%\begin{enumerate}
+%    \item the feature $x_j$ is causal for the prediction?
+%    \begin{itemize}
+%      \item yes, because of the dummy property nonzero $\phi_j$ implies $x_j \rightarrow \fh(x)$
+%    \end{itemize}
+%    \item the variable $x_j$ contains prediction-relevant information?
+%    \begin{itemize}
+%      \item No, whether a model relies on the feature (to improve the performance).
+%    \end{itemize}
+%    \item the model requires access to $x_j$ to achieve it's prediction performance?    
+%    \begin{itemize}
+%      \item 
+%\end{itemize}
+%\end{enumerate}
+%
+%\end{vbframe}
+%
+%\begin{vbframe}{Implications conditional SAGE}
+%
+%Can we gain insight into whether...
+%
+%\begin{itemize}
+%    \item the feature $\xj$ is causal for the prediction?
+%    \begin{itemize}
+%      \item no
+%    \end{itemize}
+%    \item the variable $\xj$ contains prediction-relevant information about $\ydat$?
+%    \begin{itemize}
+%      \item yes
+%    \end{itemize}
+%    \item the model requires access to $x_j$ to achieve it's prediction performance?  
+%    \begin{itemize}
+%        \item no
+%    \end{itemize}
+%\end{itemize}
+%
+%\end{vbframe}
 
 
 \begin{vbframe}
