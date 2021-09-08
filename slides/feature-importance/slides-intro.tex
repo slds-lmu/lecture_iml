@@ -197,18 +197,23 @@ Feature importance methods provide highly condensed insight, but can only highli
     \item the feature $x_j$ is causal for the prediction?
     \begin{itemize}
       \item In a linear model: nonzero coefficient.
-    \end{itemize}
+      \item More generally: changing the input to a feature $x_j$ has an effect on the prediction $\yh = \fh(x)$.
+      \item \textit{Note:} A feature being causal for the prediction does not imply that the underlying variable is causal for the prediction target. For example, a disease symptom may be used to classify disease status (and is therefore causal for the prediction $\yh$). But intervening on the disease symptom does not have an effect on the disease and therefore is not causal for $y$.
+    \end{itemize} \framebreak
     \item the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
       \item e.g. when $\E[y|x_j] \neq \E[y]$ for MSE loss
+      \item More generally: The variable helps to predict the target quantity (e.g. conditional expectation), as measured by the difference in expected loss.
+      \item If $x_j \ind y$ then $x_j$ and $y$ have zero mutual information and therefore cannot contain prediction-relevant information.
     \end{itemize}
     \item the model requires access to $x_j$ to achieve it's prediction performance?
     \begin{itemize}
-      \item e.g. when $\E[y|x_j] \neq \E[y|x_j, x_{-j}]$ for MSE loss
+      \item e.g. when $\E[y|x_{-j}] \neq \E[y|x_j, x_{-j}]$ for MSE loss
+      \item More generally: The variable enables to improve the prediction of the target quantity over $x_{-j}$ only, as measured by the difference in expected loss.
+      \item If $x_j \ind y | x_{-j}$ then $x_j$ cannot contain unique prediction-relevant information.
     \end{itemize}
 \end{enumerate}
-\lz
-Except for special cases, the answers to these questions do not coincide.
+Except for special cases, these questions do not coincide.
 \end{vbframe}
 
 \begin{vbframe}{Potential Interpretation Goals}
