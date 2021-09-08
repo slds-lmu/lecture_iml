@@ -161,7 +161,7 @@ In general, feature importance methods share two components
   \item \textbf{Performance Comparison:} Compare performance under perturbation/removal with the original model performance.
 \end{enumerate}
 \lz
-\textbf{Permutation Feature Importance Idea:} "Remove" the feature of interest $x_j$ by perturbing it such that it is uninformative. Therefore, resample the variable from its marginal distribution $\P(X_j)$, e.g. by randomly permuting observations in $x_j$.
+\textbf{Permutation Feature Importance Idea:} "Remove" the feature of interest $x_j$ by perturbing it such that it is uninformative. Therefore, resample the variable from its marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.
 
 \footnote[frame]{\fullcite{Breiman2001rf}}
 
@@ -277,7 +277,7 @@ $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y
 
 \begin{vbframe}{Permutation Feature Importance: Extrapolation}
  
- \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+ \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
 A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
  %
 \begin{figure}
@@ -288,7 +288,7 @@ A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
   \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ confidence band.}
 \end{figure}
 % 
-$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
+$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $\{x: \P(x) > 0\}$ \\
 $\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 
  \end{vbframe}
@@ -310,7 +310,7 @@ $\Rightarrow$ PFI does not fairly attribute the performance to the individual fe
 
 \begin{vbframe}{Permutation Feature Importance: Test versus Training data}
 
-\textbf{Example:} $x_1, \dots, x_{20}$ are independently sampled from $\mathcal{U} (-10, 10)$. A \texttt{xgboost} model with default hyperparameters if fit on a small training set of $50$ observations. The model overfits heavily.\\
+\textbf{Example:} $x_1, \dots, x_{20}, y$ are independently sampled from $\mathcal{U} (-10, 10)$. A \texttt{xgboost} model with default hyperparameters if fit on a small training set of $50$ observations. The model overfits heavily.\\
 
 \begin{figure}
   \includegraphics[width=0.6\linewidth]{figure_man/pfi_test_vs_train.pdf}
