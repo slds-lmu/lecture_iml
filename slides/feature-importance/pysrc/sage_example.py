@@ -8,6 +8,8 @@ from sklearn.model_selection import train_test_split
 
 import rfi.examples.chains as chains
 from rfi.explainers.explainer import Explainer
+from rfi.explanation.explanation import Explanation
+from rfi.explanation.decomposition import DecompositionExplanation
 from rfi.samplers.simple import SimpleSampler
 from rfi.samplers.gaussian import GaussianSampler
 from rfi.decorrelators.gaussian import NaiveGaussianDecorrelator
@@ -124,7 +126,6 @@ ntrain = math.floor(0.7*df.shape[0])
 df_train, df_test = train_test_split(df, train_size=ntrain)
 X_train, y_train = df_train[xcolumns], df_train[ycolumns]
 X_test, y_test = df_test[xcolumns], df_test[ycolumns]
-
 reg_lin = smf.ols('y ~ x1*x2 + x3', data=df_train).fit()
 print(reg_lin.summary())
 
@@ -153,7 +154,8 @@ wrk = Explainer(reg_lin.predict, fsoi, X_train,
 
 ex_pfi = wrk.dis_from_baselinefunc(fsoi, X_test, y_test, baseline='remainder', marginalize=False)
 ex_pfi.ex_name = 'pfi'
-ex_pfi.to_csv(savepath+'ex_pfi.csv')
+ex_pfi.to_csv(savepath=savepath, filename='ex_pfi.csv')
+ex_pfi = Explanation.from_csv(savepath + 'ex_pfi.csv')
 
 ex_pfi.hbarplot()
 plt.show()
@@ -164,7 +166,9 @@ df_pfi['type'] = 'pfi'
 
 ex_msage, orderings = wrk.sage(X_test, y_test, ordering)
 ex_msage.ex_name = 'msage'
-ex_msage.to_csv(savepath+'ex_msage.csv')
+ex_msage.to_csv(savepath=savepath, filename='ex_msage.csv')
+ex_msage = Explanation.from_csv(savepath+'ex_msage.csv')
+
 ex_msage.hbarplot()
 plt.show()
 
