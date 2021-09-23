@@ -161,10 +161,10 @@
 \end{vbframe}
 
 \begin{vbframe}{Formal Definition}
-	LIME provides a local explanation for a black-box model $f$ in form of a model $g \in \Gspace$ with $\Gspace$ as the class of potential (interpretable) models. This model $g$ should have two characteristics:
+	LIME provides a local explanation for a black-box model $\fh$ in form of a model $g \in \Gspace$ with $\Gspace$ as the class of potential (interpretable) models. This model $g$ should have two characteristics:
 	\begin{enumerate}
-		\item It should be \textbf{interpretable}, i.e. provide qualitative understanding between the input variables and the response that are easy to understand.  
-		\item It should be \textbf{locally faithful}, i.e. it should behave similarly to $f$ in the vicinity of the instance being predicted. This characteristic is also called local fidelity. 
+		\item It should be \textbf{interpretable}, i.e. relation between the input variables and the response are easy to understand.  
+		\item It should be \textbf{locally faithful}, i.e. it should behave similarly to $\fh$ in the vicinity of the instance being predicted. This characteristic is also called local fidelity. 
 	\end{enumerate}
 	Formally, we want to receive a model $g$ with minimal complexity and maximal local-fidelity. 
 \end{vbframe}
@@ -178,12 +178,12 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
  	\vspace{0.5cm}
  	
  	\textbf{Example: Tree}\\
- 	Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \Ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees (i.e., class of additive model over the leaf-rectangles) then $J(g)$ could measure the number of terminal/leaf nodes.\\
+ 	Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \Ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees (i.e., class of additive model over the leaf-rectangles $Q_m$) then $J(g)$ could measure the number of terminal/leaf nodes.\\
  	\end{vbframe}
  
  	\begin{vbframe}{Local model fidelity}
  		\begin{itemize}
- 			\item A model $g$ is locally faithful to $f$ w.r.t. a point $\xv$ if for points $\zv \in \Zspace \subseteq \R^p$ close to $\xv$ the predictions of $g(\zv)$ are close to $\fh(\zv)$. 
+ 			\item A model $g$ is locally faithful to $\fh$ w.r.t. a point $\xv$ if for points $\zv \in \Zspace \subseteq \R^p$ close to $\xv$ the predictions of $g(\zv)$ are close to $\fh(\zv)$. 
  			 \item We can rephrase that in an optimization task: the closer $\zv$ is to $\xv$, the closer $g(\xv)$ should be to $\fh(\zv)$.  
  			\item For this definition we need two measures:
  			\begin{enumerate}
@@ -192,7 +192,7 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
  				with $\sigma$ as the kernel width. $d$ could be for example the Euclidean distance (numeric features) or the Gower distance $d_G$ (mixed features). 
  				\item A distance measure or loss function $L(\fh(\zv), g(\zv))$ to assess how close the predictions of $\fh(\zv)$ and $g(\zv)$ are, e.g. the L2 loss/squared error $$L(\fh(\zv), g(\zv)) = (g(\zv) - \fh(\zv))^2.$$ 
  			\end{enumerate}
- 			\item Given points $\zv$, we can measure local fidelity of $g$ with respect to $f$ in terms of a weighted loss
+ 			\item Given points $\zv$, we can measure local fidelity of $g$ with respect to $\fh$ in terms of a weighted loss
  			\begin{equation}
  				L(\fh, g, \neigh) = \sum_{\zv \in \Zspace} \neigh(\zv) L(\fh(\zv), g(\zv))
  				\label{eq:optim}
@@ -207,13 +207,13 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
 		$$ \argmin_{g \in \Gspace} L(\fh, g, \neigh) + J(g)$$
 		\item In practice, LIME only optimizes $L(\fh, g, \neigh)$ (model-fidelity). 	
 		\item The complexity is determined by users beforehand by restricting the class $\Gspace$. For example, users could only consider sparse linear models. 
-		\item Since we want a \textbf{model-agnostic} explainer, we need to optimize $L(\fh, g, \neigh)$ without making any assumptions about $f$. 
+		\item Since we want a \textbf{model-agnostic} explainer, we need to optimize $L(\fh, g, \neigh)$ without making any assumptions about $\fh$. 
 		\item Therefore, we learn $g$ only approximately with the following algorithm.  
 		\end{itemize}
 \end{vbframe} 
 
 \begin{vbframe}{LIME Algorithm}
-		For the algorithm, we need a pre-trained model $f$, $\xv$ whose prediction we want to explain and model class $\Gspace$.\\ \vspace{0.5cm}
+		For the algorithm, we need a pre-trained model $\fh$, $\xv$ whose prediction we want to explain and model class $\Gspace$.\\ \vspace{0.5cm}
 		We illustrate the steps of the algorithm with a classification example: 
 		\begin{itemize}
 			\item The light/dark gray background represents the prediction surface of a hard label classifier $h: \R^2 \to \{0, 1\}$.
@@ -233,7 +233,7 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
 		\begin{itemize} 
 			\item Uniformly sample new points from the feasible feature range. 
 			\item Use the training data set with or without perturbations.
-			\item Draw samples from the estimated univariate distribution of each feature.
+			\item Draw samples from the estimated marginal distribution of each feature.
 			\item Create an equidistant grid over the supported feature range.  
 		\end{itemize}
 		\begin{center}
@@ -255,8 +255,8 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
 	$\textnormal{ with } \delta_G(z_j, x_j) = 
 	\begin{cases}
 	\frac{1}{\widehat{R}_j}|z_j- x_j| & \text{if $x_j$ and $z_j$ are numerical} \\
-	\mathbb{I}_{z_j \neq x_j} & \text{if $x_j$ and $z_j$) are categorical.}
-	\end{cases}$
+	\mathbb{I}_{z_j \neq x_j} & \text{if $x_j$ and $z_j$ are categorical}
+	\end{cases}.$
 		
 		\framebreak
 		\begin{enumerate}
