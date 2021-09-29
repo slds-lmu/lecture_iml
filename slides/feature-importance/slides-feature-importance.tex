@@ -110,7 +110,9 @@
 %\usetheme{lmu-lecture}
 \newcommand{\titlefigure}{figure_man/feature-importance.png}
 \newcommand{\learninggoals}{
-	\item }
+	\item Learn how to calculate permutation feature importance
+	\item Understand why multiple repetitions are necessary
+	\item Know its pitfalls}
 \usepackage{../../style/lmu-lecture}
 
 \let\code=\texttt
@@ -118,7 +120,7 @@
 
 \setkeys{Gin}{width=0.9\textwidth}
 
-\title{Local Explanations}
+\title{Feature Importance}
 % \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
 \institute{\href{https://compstat-lmu.github.io/lecture_i2ml/}{compstat-lmu.github.io/lecture\_i2ml}}
 \date{}
@@ -140,13 +142,13 @@
 	\input{../../latex-math/basic-math.tex}
 	\input{../../latex-math/basic-ml.tex}
 	
-	\lecturechapter{Feature Importance}
+	\lecturechapter{Permutation Feature Importance}
 	\lecture{Interpretable Machine Learning}
 	
 	% ------------------------------------------------------------------------------
 
 
-\begin{vbframe}{Permutation Feature Importance}
+\begin{vbframe}{Motivation}
 \textbf{Idea:} Permuting a feature breaks the association between the feature and the target.\\
 $\Rightarrow$ Model's prediction error should increase after permutation if the considered feature is important.
 
@@ -202,7 +204,7 @@ Steps to calculate the PFI for a single feature $x_S$ according to the SIPA fram
 
 \frame{
 
-\frametitle{Permutation Feature Importance}
+\frametitle{Calculation: Step-by-step}
 
   \only<1-3,5-7>{$\hspace{36pt}{\color{white}\widehat{GE}(\fh, {\color{red}\D_{S}^{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D})}$}
   \only<4>{$\hspace{36pt}\widehat{GE}(\fh, {\color{red}\D_{S}^{(k)}}) - \widehat{GE}(\fh, {\color{blue}\D}),$ where 
@@ -261,7 +263,7 @@ $\scriptstyle\widehat{GE}(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Permutation Feature Importance}
+\begin{vbframe}{Comments}
  \begin{itemize}
  \itemsep1em
   \item Interpretation: PFI displays the increase of the model error when the feature's information is destroyed.
