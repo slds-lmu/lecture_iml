@@ -1,0 +1,347 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+	\ifdim\Gin@nat@width>\linewidth
+	\linewidth
+	\else
+	\Gin@nat@width
+	\fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+	\def\at@end@of@kframe{}%
+	\ifinner\ifhmode%
+	\def\at@end@of@kframe{\end{minipage}}%
+\begin{minipage}{\columnwidth}%
+	\fi\fi%
+	\def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+		\colorbox{shadecolor}{##1}\hskip-\fboxsep
+		% There is no \\@totalrightmargin, so:
+		\hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+	\MakeFramed {\advance\hsize-\width
+		\@totalleftmargin\z@ \linewidth\hsize
+		\@setminipage}}%
+{\par\unskip\endMakeFramed%
+	\at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+\usepackage[backend=biber]{biblatex}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+	%Define standard arrow tip
+	>=stealth',
+	%Define style for boxes
+	punkt/.style={
+		rectangle,
+		rounded corners,
+		draw=black, very thick,
+		text width=6.5em,
+		minimum height=2em,
+		text centered},
+	% Define arrow style
+	pil/.style={
+		->,
+		thick,
+		shorten <=2pt,
+		shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+\newcommand{\titlefigure}{figure_man/feature-importance.png}
+\newcommand{\learninggoals}{
+	\item Underdstand how PFI is computed
+	\item Understanding strengths and weaknesses
+	\item Testing Importance}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Feature Importance}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_i2ml/}{compstat-lmu.github.io/lecture\_i2ml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\bibliography{feature-importance}
+
+%\usepackage{Sweave}
+\begin{document}
+	
+	% Set style/preamble.Rnw as parent.
+	
+	% Load all R packages and set up knitr
+	
+	% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+	% parent file
+	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+	
+	% Defines macros and environments
+	
+	\input{../../latex-math/basic-math.tex}
+	\input{../../latex-math/basic-ml.tex}
+	\input{../../latex-math/ml-interpretable.tex}
+	
+	\lecturechapter{Shapley Additive Global Importance (SAGE)}
+	\lecture{Interpretable Machine Learning}
+	
+	% ------------------------------------------------------------------------------
+
+% CHALLENGE
+\begin{vbframe}{Challenge: Fair Attribution of Importance}
+\textbf{Recap:} Data: $x_1, \dots, x_4$ uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$. Model: $\fh(x) \approx x_1 x_2 + x_3$.\\
+
+\begin{figure}
+\centering
+  \includegraphics[width=0.5\linewidth]{figure_man/pfi_interactions.pdf}
+\end{figure}
+
+Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ jointly, all three are considered equally relevant by PFI.\\
+\lz
+Why? PFI assesses importance given that all remaining covariates are preserved. If we were to first permute $x_1$ and then $x_2$, the permutation of $x_2$ would have no effect on the performance (and vice versa).
+\end{vbframe}
+
+
+\begin{vbframe}{Challenge: Fair attribution of importance}
+
+\textbf{Observation:} Feature importance attribution can be regarded as cooperative game, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
+\lz
+\textbf{SAGE Idea:} Leverage game-theoretic Shapley values to compute a fair attribution of importance.\\
+\lz
+$\Rightarrow$ SAGE translates SHAP into a global feature importance technique\\
+\lz
+In order to compute SAGE, approximate Shapley values $\phi_j$ as for SHAP, replacing SHAP value functions with SAGE value functions.\\
+
+\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
+  
+\end{vbframe}
+
+
+% SAGE IDEA
+\begin{vbframe}{SAGE Removal and Value function}
+  
+ \textbf{Removal Idea:} In order to deprive the model of the non-coalition features $-S$, marginalize the prediction function over the dropped features.
+
+$$\fh_S(x_S) = \E[\fh(x) | X_S = x_S]$$
+  
+The dropped features can either be sampled from the marginal distribution $\P(x_{-S})$ or the conditional distribution $\P(x_{-S}|x_S)$.\\
+\lz
+
+\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
+
+For SAGE, value functions quantify the predictive power of a coalition $S$ in terms of reduction in risk over the mean prediction.\\
+\lz
+Value function:  $ v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S})$\\
+\lz
+Contribution of feature $x_j$ over coalition $x_S$:  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S)$\\
+\lz
+
+\end{vbframe}
+
+\begin{vbframe}{SAGE Removal and Value function}
+
+Depending on whether conditional or marginal resampling is used, the interpretation of SAGE value functions differ.\\
+\lz
+\textbf{Marginal resampling:} $v(S)$ quantifies the reliance of the model on features $x_S$
+\begin{itemize}
+  \item features $x_S$ not being causal for the prediction is a sufficient condition for $v(S) = 0$
+\end{itemize}
+
+\textbf{Conditional resampling}: $v(S)$ quantifies the reliance of the model on the information contained in variables $x_S$.
+\begin{itemize}
+  \item features $x_S$ not being causal for the prediction is not a sufficient condition for $v(S) = 0$
+  \item under model optimality, links to mutual information or the conditional variance can be drawn
+\end{itemize}
+
+\framebreak
+
+When the loss-optimal model $f^*$ is inspected using \textit{conditional-sampling} based SAGE value functions, interesting links exist.
+\begin{itemize}
+  \item \textbf{for cross-entropy loss:} the value function $v_{f^*}(S) = I(y;x_S)$ corresponds to the mutual information and the surplus contribution of a feature $x_j$ $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = I(y,x_i|x_S)$ to the conditional mutual information
+  \item \textbf{for MSE loss:} the value function $v_{f^*}(S) = Var(y) - \E[Var(y|x_S)]$ corresponds to the expected reduction in variance given knowledge of the features $x_S$ and the surplus contribution $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = \E[Var(y|x_S)] - \E[Var(y|x_{S \cup {j}})]$ to the respective reduction over $x_S$
+\end{itemize}
+
+\framebreak
+
+\textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). The prediction model is defined as  $\fh \approx 0.95 x_3 + 0.05 x_2$. 
+%
+\begin{figure}
+  \includegraphics[width=0.6\linewidth]{figure_man/sage_variants}
+\end{figure}
+%
+While the conditional $v(j)$ are nonzero for features that are not used by $\fh$, marginal $v(j)$ are only nonzero for features that are used by $\fh$. 
+Since for conditional $v$ the difference $v(-j \cup j) - v(-j)$ quantifies the unique contribution of $x_j$ over remaining variables $-j$ and $y \ind x_1, x_2 | x_3$, only $v(\{1,2,3\}) - v(\{1, 2\})$ is nonzero.
+%
+\end{vbframe}
+
+\begin{vbframe}{SAGE interpretation}
+
+The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
+%
+\begin{table}
+  \centering
+  \begin{tabular}{l | l }
+  Shapley property $\implies$ & conditional SAGE property \\
+  \hline
+  efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
+  symmetry & $x_j = x_i \implies \phi_i = \phi_j$ \\
+  linearity & $\phi_j$ expecation of per-instance\\
+  & conditional SHAP applied to model loss\\
+  monotonicity & given models $f, f'$, if  $\forall S:$\\
+  &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
+  &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
+  dummy & if $\forall S: \fh(x) \ind x_j | x_S \Rightarrow \phi_j = 0$
+  \end{tabular}
+\end{table}
+
+\end{vbframe}
+
+\begin{vbframe}{SAGE interpretation}
+%
+The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
+%
+\begin{table}
+  \centering
+  \begin{tabular}{l | l }
+  Shapley property $\implies$ & marginal SAGE property \\
+  \hline
+  efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
+  symmetry & no intelligible implication \\
+  linearity & $\phi_j$ expecation of per-instance\\
+  & marginal SHAP applied to model loss\\
+  monotonicity & given models $f, f'$, if  $\forall S:$\\
+  &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
+  &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
+  dummy & model invariant to $x_j \Rightarrow \phi_j = 0$\\
+  \end{tabular}
+\end{table}
+%
+\end{vbframe}
+
+\begin{vbframe}{Interaction Example Revisited}
+
+\textbf{Recap:} Data: $x_1, \dots, x_4$ uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$. Model: $\fh(x) \approx x_1 x_2 + x_3$.\\
+%
+\begin{figure}
+  \includegraphics[width=0.7\linewidth]{figure_man/sage_pfi_interactions}
+\end{figure}
+%
+While PFI regards $x_1, x_2$ to be equally important as $x_3$, marginal SAGE fairly divides the contribution of the interaction $x_1$ and $x_2$.
+  
+\end{vbframe}
+
+
+%\begin{vbframe}{Implications marginal SAGE}
+%
+%Can we gain insight into whether...
+%
+%\begin{enumerate}
+%    \item the feature $x_j$ is causal for the prediction?
+%    \begin{itemize}
+%      \item yes, because of the dummy property nonzero $\phi_j$ implies $x_j \rightarrow \fh(x)$
+%    \end{itemize}
+%    \item the variable $x_j$ contains prediction-relevant information?
+%    \begin{itemize}
+%      \item No, whether a model relies on the feature (to improve the performance).
+%    \end{itemize}
+%    \item the model requires access to $x_j$ to achieve it's prediction performance?    
+%    \begin{itemize}
+%      \item 
+%\end{itemize}
+%\end{enumerate}
+%
+%\end{vbframe}
+%
+%\begin{vbframe}{Implications conditional SAGE}
+%
+%Can we gain insight into whether...
+%
+%\begin{itemize}
+%    \item the feature $\xj$ is causal for the prediction?
+%    \begin{itemize}
+%      \item no
+%    \end{itemize}
+%    \item the variable $\xj$ contains prediction-relevant information about $\ydat$?
+%    \begin{itemize}
+%      \item yes
+%    \end{itemize}
+%    \item the model requires access to $x_j$ to achieve it's prediction performance?  
+%    \begin{itemize}
+%        \item no
+%    \end{itemize}
+%\end{itemize}
+%
+%\end{vbframe}
+
+
+\begin{vbframe}
+  \printbibliography
+\end{vbframe}
+
+\endlecture
+\end{document}

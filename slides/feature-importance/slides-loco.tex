@@ -1,0 +1,269 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+	\ifdim\Gin@nat@width>\linewidth
+	\linewidth
+	\else
+	\Gin@nat@width
+	\fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+	\def\at@end@of@kframe{}%
+	\ifinner\ifhmode%
+	\def\at@end@of@kframe{\end{minipage}}%
+\begin{minipage}{\columnwidth}%
+	\fi\fi%
+	\def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+		\colorbox{shadecolor}{##1}\hskip-\fboxsep
+		% There is no \\@totalrightmargin, so:
+		\hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+	\MakeFramed {\advance\hsize-\width
+		\@totalleftmargin\z@ \linewidth\hsize
+		\@setminipage}}%
+{\par\unskip\endMakeFramed%
+	\at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+\usepackage[backend=biber]{biblatex}
+
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+	%Define standard arrow tip
+	>=stealth',
+	%Define style for boxes
+	punkt/.style={
+		rectangle,
+		rounded corners,
+		draw=black, very thick,
+		text width=6.5em,
+		minimum height=2em,
+		text centered},
+	% Define arrow style
+	pil/.style={
+		->,
+		thick,
+		shorten <=2pt,
+		shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+\newcommand{\titlefigure}{figure_man/feature-importance.png}
+\newcommand{\learninggoals}{
+	\item Definition of LOCO
+	\item Interpretation of LOCO}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Feature Importance}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_i2ml/}{compstat-lmu.github.io/lecture\_i2ml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+
+\bibliography{feature-importance}
+
+%\usepackage{Sweave}
+\begin{document}
+	
+	% Set style/preamble.Rnw as parent.
+	
+	% Load all R packages and set up knitr
+	
+	% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+	% parent file
+	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+	
+	% Defines macros and environments
+	
+	\input{../../latex-math/basic-math.tex}
+	\input{../../latex-math/basic-ml.tex}
+	\input{../../latex-math/ml-interpretable.tex}
+	
+	\lecturechapter{Leave One Covariate Out (LOCO)}
+	\lecture{Interpretable Machine Learning}
+	
+	% ------------------------------------------------------------------------------
+
+\begin{vbframe}{Reminder: Feature Importance Scheme}
+In general, feature importance methods share two components
+\lz
+\begin{enumerate}
+  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed/removed.
+  \item \textbf{Performance Comparision:} Compare performance under perturbation/removal with the original model performance.
+\end{enumerate}
+\lz
+Depending on the type of perturbation/removal feature importance methods provide insight into different aspects of model and data.\\
+\lz
+\textbf{LOCO idea:} Simply remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.\\
+
+\end{vbframe}
+
+\begin{vbframe}{Leave One Covariate Out (LOCO)}
+% citation of the original LOCO paper
+%
+\textbf{Definition:} Given training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\inducer$ and a model $\fh = \inducer(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
+  \begin{enumerate}
+    \item learn model on dataset $\Dtrain_{,-j}$ where feature $x_j$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$
+    \item compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |y^{(i)} - \fh_{-j}(x_{-j}^{(i)}) \right | - \left |y^{(i)} - \fh(x^{(i)}) \right | $ with $i \in \Dtest$
+    \item yield the importance score $\text{LOCO}_j = \text{med} \left ( \Delta_j  \right )$
+  \end{enumerate}
+\lz 
+The method can be generalized to other loss functions and aggregations. If we use mean instead of median we can rewrite LOCO as
+%
+$$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
+\footnote[frame]{\fullcite{lei_distribution-free_2018}\\ \fullcite{tibshirani_loco_2018}}
+\end{vbframe}
+
+\begin{vbframe}{Bike Sharing Example}
+%
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{figure_man/bike_sharing_loco.pdf}
+\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing dataset to optimize MSE. Then LOCO was computed for all features on the training dataset. The year is the most important feature. Without access to the variable, the MSE increases by $10^6$.}
+\end{figure}
+%
+ %\textbf{Interpretation:} $\text{LOCO}_j$ quantifies how important variable $x_j$ is to the generalization performance of the learner on $\Dtrain$.\\
+%
+\end{vbframe}
+
+\begin{vbframe}{Interpretation of LOCO}
+
+\textbf{Interpretation:} LOCO estimates the generalization error of the learner on a reduced dataset $\D_{-j}$.\\
+\lz
+Can we get insight into whether ...
+\begin{enumerate}
+    \item the feature $x_j$ is causal for the prediction $\yh$?
+    \begin{itemize}
+      \item In general, no (counterexample on the next slide).
+    \end{itemize}
+    \item the variable $x_j$ contains prediction-relevant information?
+    \begin{itemize}
+      \item In general, no (counterexample on the next slide).
+    \end{itemize}
+    \item the model requires access to $x_j$ to achieve it's prediction performance?
+    \begin{itemize}
+      \item Approximately. It provides insight into whether the \textit{learner} requires access to $x_j$.
+    \end{itemize}
+\end{enumerate}
+
+\framebreak
+
+\begin{figure}
+\centering
+%\hfill
+ % \begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=0.6, line width=0.3mm, black, fill=white}]
+%		\node[draw, circle, font=\large] (x1) at  (-.5, 2) {$X_1$};
+%		\node[draw, circle, font=\large] (x2) at  (-.5,1) {$X_2$};
+%		\node[draw, circle, font=\large] (x3) at  (.5,1) {$X_3$};
+%		\node[draw, circle, font=\large] (y) at  (0,0) {$Y$};
+%		\draw[->, black] (x1) -- (x2);
+%		\draw[->, black] (x3) -- (y);
+%		\draw[->, black] (x2) -- (y);
+%	\end{tikzpicture} 
+\hfill
+	\includegraphics[width=0.25\linewidth]{figure_man/simulation_corr.pdf} 
+\hfill
+  \includegraphics[width=0.5\linewidth]{figure_man/simulation_loco}
+  \hfill
+\end{figure}
+
+Setting: Linear gaussian data generating process with correlation matrix as depicted left. A linear model was fit with $\fh(x) = -0.09 - 0.86 x_1 + 1.86 x_2 + 0.96 x_3$.\\
+\lz
+$\Rightarrow$ At the example of $x_2$ we see that: We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient $1.86$) (1). We also can't infer (2), e.g. $corr(x_2, y) = 0.69$ but $\text{LOCO}_2 \approx 0$.\\
+$\Rightarrow$ We can get insight into (3). Since $x_2$ and $x_1$ are highly correlated, they can take each others place, which is not the case for $x_3$.
+\framebreak
+
+
+\end{vbframe}
+
+\begin{vbframe}{Pros and Cons}
+  Pros:
+  \begin{itemize}
+    \item Requires (only?) one resampling set per feature for evaluation
+    \item Easy to implement
+    \item Testing framework available in \cite{lei_distribution-free_2018}
+  \end{itemize}
+%
+  Cons:
+  \begin{itemize}
+    \item Does not provide insight into a specific model, but rather a learner on a specific dataset.
+    \item Model training is a random process, so estimates can be noisy (which is problematic for inference about model and data).
+  \end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Bibliography}
+  \printbibliography
+\end{vbframe}
+
+\endlecture
+\end{document}

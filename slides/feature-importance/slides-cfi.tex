@@ -1,0 +1,296 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+	\ifdim\Gin@nat@width>\linewidth
+	\linewidth
+	\else
+	\Gin@nat@width
+	\fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+	\def\at@end@of@kframe{}%
+	\ifinner\ifhmode%
+	\def\at@end@of@kframe{\end{minipage}}%
+\begin{minipage}{\columnwidth}%
+	\fi\fi%
+	\def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+		\colorbox{shadecolor}{##1}\hskip-\fboxsep
+		% There is no \\@totalrightmargin, so:
+		\hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+	\MakeFramed {\advance\hsize-\width
+		\@totalleftmargin\z@ \linewidth\hsize
+		\@setminipage}}%
+{\par\unskip\endMakeFramed%
+	\at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+\usepackage[backend=biber]{biblatex}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+	%Define standard arrow tip
+	>=stealth',
+	%Define style for boxes
+	punkt/.style={
+		rectangle,
+		rounded corners,
+		draw=black, very thick,
+		text width=6.5em,
+		minimum height=2em,
+		text centered},
+	% Define arrow style
+	pil/.style={
+		->,
+		thick,
+		shorten <=2pt,
+		shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+\newcommand{\titlefigure}{figure_man/feature-importance.png}
+\newcommand{\learninggoals}{
+	\item Extrapolation and Conditional Sampling
+	\item Conditional Feature Importance (CFI)
+	\item Interpretation of CFI}
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Feature Importance}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_i2ml/}{compstat-lmu.github.io/lecture\_i2ml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\bibliography{feature-importance}
+
+%\usepackage{Sweave}
+\begin{document}
+	
+	% Set style/preamble.Rnw as parent.
+	
+	% Load all R packages and set up knitr
+	
+	% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+	% parent file
+	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+	
+	% Defines macros and environments
+	
+	\input{../../latex-math/basic-math.tex}
+	\input{../../latex-math/basic-ml.tex}
+	\input{../../latex-math/ml-interpretable.tex}
+	
+	\lecturechapter{Conditional Feature Importance}
+	\lecture{Interpretable Machine Learning}
+	
+	% ------------------------------------------------------------------------------
+
+
+
+% CFI IDEA
+\begin{vbframe}{Conditional Feature Importance Idea}
+
+\textbf{Permutation Feature Importance Idea:} Replace the feature of interest $x_j$ with an independent sample from the marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.\\
+\lz
+\textbf{Problem:} Under dependent features, permutation leads to extrapolation.\\
+\lz
+\textbf{Conditional Feature Importance Idea:} Resample $x_j$ from the conditional distribution $\P(x_j|x_{-j})$, such that the covariate joint distribution is preserved. (I.e., $\P(x_j|x_{-j}) \P(x_{-j}) = \P(x_j, x_{-j})$).
+
+\end{vbframe}
+
+
+
+% RECAP EXTRAPOLATION
+\begin{vbframe}{Recap: Extrapolation in PFI}
+ 
+ \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
+ %
+\begin{figure}
+\hfill
+  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
+  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
+  \includegraphics[width=0.4\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
+  \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ confidence band.}
+\end{figure}
+% 
+$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
+$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+
+ \end{vbframe}
+
+
+ 
+ % CONDITIONAL SAMPLING PRESERVES THE JOINT
+ \begin{vbframe}{Conditional Sampling preserves the Joint}
+ 
+ Let $\pert{x}{S}{-S}$ be the feature vector where features $x_S$ were replaced with an independent sample from $\P(x_S|x_{-S})$. Then
+%
+\begin{align*}
+  \P(\pert{x}{S}{-S}) = \P(\pert{x}{S}{-S}_S, x_{-S}) &= \P(\pert{x}{S}{-S}_S|x_{-S}) P(x_{-S})\\
+   &= \P(x_S|x_{-S}) \P(x_{-S}) = \P(x)
+\end{align*}
+ %
+ meaning that the joint distribution is preserved in the perturbed dataset.\\
+ $\Rightarrow$ CFI only evaluates the model within the observational covariate distribution\\
+ \lz
+ \textbf{Note:} That does not imply $\P(x,y) = \P(\pert{x}{S}{-S}, y)$! In the perturbed data, the relationship between $x_j$ and $y$ may still be destroyed.\\
+ \end{vbframe}
+
+
+
+% CFI DEFINITION
+\begin{vbframe}{Conditional Feature Importance}
+\normalsize
+
+Conditional feature importance (CFI) for features $x_S$ using test data $\D$:
+\begin{itemize}
+  \item Measure the error \color{red}\textbf{with perturbed feature values} \color{black} $\pert{x}{S}{-S}$, where $\pert{x}{S}{-S}_S \sim \P(x_S|x_{-S})$
+  \item Measure the error \color{blue}\textbf{with unperturbed features}\color{black}.
+  \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
+$$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{-S}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
+\end{itemize}
+
+Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled conditional on the remaining features $x_{-S}$.
+
+\footnote[frame]{\fullcite{Strobl2008}}
+
+\end{vbframe}
+
+
+
+% INTERPRETATION OF CFI
+\begin{vbframe}{Implications of CFI}
+
+\textbf{Interpretation:} CFI quantifies the unique contribution of the feature to the performance of the model.\\
+\lz
+\textbf{Entanglement with the data:} If the feature does not contribute unique information about $y$, i.e. $x_S \ind y | x_{-S}$, CFI is zero.\\
+\begin{itemize}
+  \item Why? Under the conditional independence $\P(\pert{x}{S}{-S}, y) = \P(x,y)$ and therefore no prediction-relevant information is destroyed.
+\end{itemize}
+\lz
+\textbf{Entanglement with the model:} If the model does mechanistically use a feature, CFI is zero.\\
+\begin{itemize}
+  \item Why? Then the prediction is not affected by any perturbation of the feature (and consequently the performance is invariant).
+\end{itemize}
+
+\footnote[frame]{\fullcite{konig_relative_2021}}
+\end{vbframe}
+
+
+% IMPLICATIONS OF CFI
+\begin{vbframe}{Implications of CFI}
+
+Can we gain insight into whether..
+
+\begin{enumerate}
+    \item the feature $x_j$ is causal for the prediction?
+    \begin{itemize}
+      \item Nonzero CFI implies that the model relies on $x_j$.
+      \item The contraposition does not hold.
+    \end{itemize}
+    \item the variable $x_j$ contains prediction-relevant information?
+    \begin{itemize}
+      \item If $x_S \not \ind y$ but $x_S \ind y | x_{-S}$ CFI is zero.
+      \item If a feature is not exploited by the model, CFI is zero, irrespective of whether the feature is useful or not.
+    \end{itemize}
+    \item Does the model require access to $x_j$ to achieve it's prediction performance?
+\begin{itemize}
+      \item Nonzero CFI implies that the feature contributes unique information (meaning $x_S \not \ind y | x_{-S}$).
+      \item Only uncovers the relationships that were exploited by the model.
+    \end{itemize}
+\end{enumerate}
+\end{vbframe}
+
+% RECAP EXTRAPOLATION
+\begin{vbframe}{Comparison: PFI and CFI}
+ 
+ \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
+ %
+\begin{figure}
+\hfill
+  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
+  \includegraphics[width=0.6\linewidth]{figure_man/cfi_pfi.pdf} \hfill
+  \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left). PFI and CFI (right).}
+\end{figure}
+% 
+$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
+$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+$\Rightarrow$ Since $x_1$ can be reconstructed from $x_2$ and vice versa, CFI considers $x_1$ and $x_2$ to be irrelevant
+
+ \end{vbframe}
+
+\begin{vbframe}{Bibliography}
+  \printbibliography
+\end{vbframe}
+
+\endlecture
+\end{document}
