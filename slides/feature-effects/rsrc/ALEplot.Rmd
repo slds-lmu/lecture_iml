@@ -1,0 +1,200 @@
+---
+title: "aleplot"
+output: html_document
+---
+
+```{r, message = FALSE}
+## Load relevant packages
+library(ALEPlot)
+library(mlr)
+library(iml)
+library(ggplot2)
+library(patchwork)
+library(devtools)
+source_url('https://gist.githubusercontent.com/fawda123/7471137/raw/466c1474d0a505ff044412703516c34f1a4684a5/nnet_plot_update.r')
+
+simData = function(n) {
+  x = runif(n, min = 0, max = 1)
+  x1 = x + rnorm(n, 0, 0.05)
+  x2 = x + rnorm(n, 0, 0.05)
+  y = x1 + x2^2 + rnorm(n, 0, 0.1)
+  return(data.frame(y, x1, x2))
+}
+
+set.seed(1)
+n = 5000
+DAT = simData(n)
+
+#test.ind = sample(1:n, size = 0.5*n)
+test = DAT#[test.ind, ]
+#DAT = DAT[-test.ind, ]
+
+breaks = c(-Inf, seq(min(test$y), max(test$y), by = 0.5), Inf)
+
+tsk = makeRegrTask(data = DAT, target = "y")
+
+lrn.nn = makeLearner("regr.nnet", skip = F, size = 10,
+  decay = 0.0001, maxit = 1000, trace = F)
+mod.nn = mlr::train(lrn.nn, tsk)
+
+lrn.rf = makeLearner("regr.ranger")
+mod.rf = mlr::train(lrn.rf, tsk)
+
+nn.eval = performance(predict(mod.nn, newdata = simData(100000)))
+rf.eval = performance(predict(mod.rf, newdata = simData(100000)))
+
+# lrn.list = list(lrn,
+#   makeLearner("regr.featureless"),
+#   makeLearner("regr.lm"),
+#   makeLearner("regr.ranger"))
+# bench = benchmark(lrn.list, tsk, resamplings = cv3)
+# bench
+```
+
+```{r, out.width="100%", fig.width=12, fig.height=7}
+#m = mod.nn$learner.model
+#m$call$formula = y~x1+x2
+#plot(m)
+
+pred = Predictor$new(mod.nn, data = test)
+# plotLearnerPrediction(lrn, task = tsk)
+
+df = expand.grid(
+  x1 = seq(min(test$x1), max(test$x1), length = 50),
+  x2 = seq(min(test$x2), max(test$x2), length = 50)
+)
+df$y = predict(mod.nn, newdata = df)$data$response
+
+surf = ggplot(data = df, aes(x = x1, y = x2, z = y)) +
+  geom_contour_filled(breaks = breaks) +
+  geom_point(data = test, aes(x1, x2)) +
+  ggtitle(paste0("algorithm:", lrn.nn$id, ", performance: ", round(nn.eval, 6))) +
+  NULL
+
+fnames = c("x1", "x2")
+ale = lapply(fnames, function(x)
+  FeatureEffect$new(pred, feature = x, grid.size = 20)
+)
+pdp = lapply(fnames, function(x) {
+  eff = FeatureEffect$new(pred, feature = x, grid.size = 20, method = "pdp")
+  # center like aleplots, taken from ALEPlot package
+  xmin = min(test[[x]])
+  xgridval = eff$results[,1]
+  a = cut(test[[x]], breaks = c(xmin - (xgridval[2] - xgridval[1]), xgridval),
+    include.lowest = TRUE)
+  b = as.numeric(table(a))
+  eff$results$.value = eff$results$.value - sum(eff$results$.value * b)/sum(b)
+
+  #eff$results$.value = eff$results$.value - mean(eff$results$.value)
+  return(eff)
+  }
+)
+# pdpcenter = lapply(fnames, function(x) {
+#   eff = FeatureEffect$new(pred, feature = x, grid.size = 20, method = "pdp")
+#   eff$results$.value = eff$results$.value - mean(eff$results$.value)
+#   return(eff)
+# }
+# )
+
+ale1 = ale[[1]]$plot() + ylab("") +
+  geom_function(fun = function(x) x - 0.5, col = "red") +
+  ggtitle("ALE x1")
+
+ale2 = ale[[2]]$plot() + ylab("") +
+  geom_function(fun = function(x) x^2 - (1/3+0.05^2), col = "red") +
+  ggtitle("ALE x2")
+
+pdp1 = pdp[[1]]$plot() + geom_line(aes(col = "estimated")) + ylab("") +
+  geom_function(fun = function(x) x - 0.5, aes(col = "true")) +
+  ggtitle("PDP x1") + labs(color = "Marginal Effect") + 
+  scale_color_manual(values = c("estimated" = "black", "true" = "red"))
+
+# + ylab("") +
+#   geom_function(fun = function(x) x - 0.5, col = "red") +
+#   ggtitle("PDP x1")
+
+pdp2 = pdp[[2]]$plot() + ylab("") +
+  geom_function(fun = function(x) x^2 - (1/3+0.05^2), col = "red") +
+  ggtitle("PDP x2")
+
+#pp = FeatureEffect$new(pred, feature = c("x1", "x2"), grid.size = 20, method = "pdp")
+#pp$plot() + geom_point(data = test, aes(x = x1, y = x2))
+
+p = surf | ((ale1 + ale2) / (pdp1 + pdp2)) #surf / (ale1 + pdp1) / (ale2 + pdp2)
+p + plot_layout(heights = c(3, 2, 2), guides = "collect") & theme(legend.position = 'bottom') #& guides(fill=guide_legend(nrow = 1, byrow = TRUE))
+
+#FeatureEffects$new(pred, grid.size = 20, method = "pdp+ice")$plot()
+```
+
+```{r, out.width="100%", fig.width=12, fig.height=7}
+pred = Predictor$new(mod.rf, data = test)
+
+df = expand.grid(
+  x1 = seq(min(test$x1), max(test$x1), length = 50),
+  x2 = seq(min(test$x2), max(test$x2), length = 50)
+)
+df$y = predict(mod.rf, newdata = df)$data$response
+
+surf = ggplot(data = df, aes(x = x1, y = x2, z = y)) +
+  geom_contour_filled(breaks = breaks) +
+  geom_point(data = test, aes(x1, x2)) +
+  ggtitle(paste0("algorithm:", lrn.rf$id, ", performance: ", round(rf.eval, 6))) +
+  NULL
+
+ale = lapply(fnames, function(x)
+  FeatureEffect$new(pred, feature = x, grid.size = 20)
+)
+
+pdp = lapply(fnames, function(x) {
+  eff = FeatureEffect$new(pred, feature = x, grid.size = 20, method = "pdp")
+  # center like aleplots, taken from ALEPlot package
+  xmin = min(test[[x]])
+  xgridval = eff$results[,1]
+  a = cut(test[[x]], breaks = c(xmin - (xgridval[2] - xgridval[1]), xgridval),
+    include.lowest = TRUE)
+  b = as.numeric(table(a))
+  eff$results$.value = eff$results$.value - sum(eff$results$.value * b)/sum(b)
+
+  #eff$results$.value = eff$results$.value - mean(eff$results$.value)
+  return(eff)
+  }
+)
+
+ale1 = ale[[1]]$plot() + ylab("") +
+  geom_function(fun = function(x) x - 0.5, col = "red") +
+  ggtitle("ALE x1")
+
+ale2 = ale[[2]]$plot() + ylab("") +
+  geom_function(fun = function(x) x^2 - (1/3+0.05^2), col = "red") +
+  ggtitle("ALE x2")
+
+pdp1 = pdp[[1]]$plot() + geom_line(aes(col = "estimated")) + ylab("") +
+  geom_function(fun = function(x) x - 0.5, aes(col = "true")) +
+  ggtitle("PDP x1") + labs(color = "Marginal Effect") + 
+  scale_color_manual(values = c("estimated" = "black", "true" = "red"))
+
+pdp2 = pdp[[2]]$plot() + ylab("") +
+  geom_function(fun = function(x) x^2 - (1/3+0.05^2), col = "red") +
+  ggtitle("PDP x2")
+
+p = surf | ((ale1 + ale2) / (pdp1 + pdp2)) #surf / (ale1 + pdp1) / (ale2 + pdp2)
+p + plot_layout(heights = c(3, 2, 2), guides = "collect") & theme(legend.position = 'bottom') #& guides(fill=guide_legend(nrow = 1, byrow = TRUE))
+
+#FeatureEffects$new(pred, grid.size = 20, method = "pdp+ice")$plot()
+```
+
+
+
+In Figure X, we fitted a neural network and a random forest to 5000 observations (training set) sampled from the data generating process
+$Y = X_1 + X_2^2 + \epsilon$ with .... 
+We used the MSE and a large test set with 1 million observations following the same distribution as the training data to estimate the generalization error.
+Looking at the MSE suggests that the neural network performs better.
+Assuming that a better performing model is closer to the data generating process might suggest that effects of the better performing model are closer to the ground truth.
+We illustrate that this assumption is wrong and show how a perturbation-based method such as the PDP can produce misleading interpretations if interactions and dependent features are present. 
+Specifically, we show that the feature effects estimated by PDP do not match the true marginal effects from the data generating process.
+
+While the neural network performs quite well on data that follows the same distribution as the data it was trained on, predictions outside this data distribution are usually unreliable.
+However, by definition the PDP uses these predictions to estimate and describe the feature effects of the model.
+Although the PDP describes the model behavior correctly on the whole feature space, its interpretations should not be used to draw inferences regarding the true marginal effects.
+
+ALE plots overcome this issue as they estimate the feature effect of the model based on predictions that are not too far from away from the data distribution.

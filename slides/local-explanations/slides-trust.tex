@@ -1,0 +1,293 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{bm}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
+\tikzset{
+  %Define standard arrow tip
+  >=stealth',
+  %Define style for boxes
+  punkt/.style={
+    rectangle,
+    rounded corners,
+    draw=black, very thick,
+    text width=6.5em,
+    minimum height=2em,
+    text centered},
+  % Define arrow style
+  pil/.style={
+    ->,
+    thick,
+    shorten <=2pt,
+    shorten >=2pt,}
+}
+
+\usepackage{subfig}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+%\usetheme{lmu-lecture}
+ \newcommand{\titlefigure}{figure/dbscan.jpg}
+\newcommand{\learninggoals}{
+\item Understand the aspects that undermine users' trust in an explanation
+\item Learn diagnostic tools that could increase trust }
+\usepackage{../../style/lmu-lecture}
+
+\let\code=\texttt
+\let\proglang=\textsf
+
+\setkeys{Gin}{width=0.9\textwidth}
+
+\title{Local Explanations}
+% \author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
+\institute{\href{https://compstat-lmu.github.io/lecture_i2ml/}{compstat-lmu.github.io/lecture\_i2ml}}
+\date{}
+
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\begin{document}
+
+	
+% Set style/preamble.Rnw as parent.
+
+% Load all R packages and set up knitr
+
+% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+% parent file
+% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+
+% Defines macros and environments
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/ml-interpretable.tex}
+
+\lecturechapter{Increasing Trust in Explanations}
+\lecture{Interpretable Machine Learning}
+
+% ------------------------------------------------------------------------------
+
+\begin{vbframe}{Motivation}
+	\begin{itemize}
+		\item In the previous sections, we saw multiple local explanation methods. 
+		\item Their explanations should not only make a model interpretable ("why did the model come up with this decision?") but also reveal if it is trustworthy (``how certain is this explanation?'').
+		\item A trustworthy explanation is an explanation that gives \textbf{(1)} accurate insights into the inner workings of our model and \textbf{(2)} are also robust (low variance). 
+		\item[(1)] Explanations could be misleading if their generation is based on inputs in areas where the model was trained with little or no training data (extrapolation). Thus, it is necessary to detect if an IML method uses out-of-distribution data to derive an explanation. 
+		\item[(2)] We expect to receive similar explanations for similar data points with similar predictions. However, depending on the IML method this is not always the case since multiple sources of uncertainty exist. Therefore, it is necessary to measure how robust an IML method is to small changes in the input data or parameters. 
+		\item Both aspects could undermine users' trust in the explanations and therefore also in the model since the lack of a solid explanation raises concerns about the model's reliability and robustness. 
+		\item In the upcoming section, we will, therefore, discuss methods to detect if a point is out-of-distribution and to measure how robust IML methods are.
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Out-of-distribution Detection}
+	\begin{itemize}
+		\item In areas with little data support, models are unreliable and so are the explanations we receive from our local-explanation methods.
+		\item For local explanation methods, the following components could be out-of-distribution (OOD): 
+		\begin{itemize}
+			\item the data for LIME's surrogate model
+			\item Counterfactuals themselves
+			\item Shapley value's permuted instances to calculate the marginal contributions 
+			\item ICE curves grid data points 
+		\end{itemize}
+		\item In the following, we see two very simple and intuitive approaches for OOD detection. Of course, also more complex approaches exist, e.g., based on Bayesian variational autoencoders (Daxberger et al. (2020)).
+	\end{itemize}
+\footnote[frame]{Daxberger et al. (2020). Bayesian Variational Autoencoders for Unsupervised Out-of-Distribution Detection.}
+\end{vbframe}
+
+
+\begin{vbframe}{Out-of-distribution Detection}
+	\textbf{OOD-Classifier:} 
+	\begin{itemize}
+		\item In the chapter on LIME's pitfalls, we saw a classifier by Slack et al. (2020) that detects if data points adhere to the data manifold. 
+		\item It was trained on the joined dataset of original training data and randomly sampled data points. 
+		The binary outcome variable is 0 for original training data and 1 for randomly sampled data points. 
+		\item Slack et al. used the classifier to hide biases of a ML model but it could also be used for diagnosis.  
+	\end{itemize}
+	\footnote[frame]{Dylan Slack et al. (2020). Fooling LIME and SHAP: Adversarial Attacks on Post hoc Explanation Methods. In Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society (AIES '20). Association for Computing Machinery, New York, NY, USA, 180–186.}
+\end{vbframe}
+
+\begin{frame}{Out-of-distribution Detection}
+\textbf{DBSCAN:}
+\begin{itemize}
+	\item Another popular method is the data clustering algorithm DBSCAN (Density-Based Spatial Clustering of Applications with Noise) 
+	\item For this method, we need the notion of an $\epsilon$-neighborhood: \\
+	Given a dataset $X = \{\xv_i\}_{i = 1}^n$, a $\epsilon$-neighborhood for $\xv \in \Xspace$ is defined as 
+	$$ \mathcal{N}_{\epsilon}(\xv) = \{\xv_i \in X | d(\xv, \xv_i) \le \epsilon\}.$$
+	 $d(\cdot)$ is a distance measure (e.g., Euclidean or Gower distance). 
+	\item The method differentiates between core points $\xv$ with at least $m$ data points within $\mathcal{N}_{\epsilon}(\xv)$, border points that are within $\mathcal{N}_{\epsilon}(\xv)$ and noise points that are not within $\mathcal{N}_{\epsilon}(\xv)$.
+	\item Each core point forms an own cluster with all its neighborhood points. If another core point $\xv$ is part of the neighborhood of another core point, their clusters are joint. Noise points are not part of any cluster. 
+\end{itemize}
+\vspace{-0.6cm}
+\end{frame}
+
+\begin{frame}{Out-of-distribution Detection}
+\vspace{-0.6cm}
+\begin{columns}
+	\begin{column}{0.68\textwidth}
+		\begin{itemize}
+			\item In the right figure, the (green) points A and B are core points and form one cluster since they lie in each others neighborhood, all yellow points are border points of this cluster. 
+			\item Since D is not part of the neighborhood of core points, it is a noise point. 
+		\end{itemize}
+	\end{column}
+	\begin{column}{0.27\textwidth}
+		\vspace{-0.4cm}
+		\begin{center}
+			\includegraphics[width=1\textwidth]{figure/dbscan.jpg}
+			
+			\tiny{Example for DBSCAN, circles display $\epsilon$-neighborhoods, $m = 4$}
+			
+		\end{center}
+	\end{column}
+\end{columns}
+\begin{itemize}
+		\item A new point could be classified as being in-distribution if it lies within a cluster, or out-of-distribution if it lies outside the clusters. 
+		\item Disadvantage: Depending on the distance metric $d(\cdot)$, DBSCAN could suffer from the ``curse of dimensionality''. 
+		\item Furthermore, the choice of $\epsilon$ and $m$ is not clear a-priori. 
+\end{itemize}
+	\footnote[frame]{Martin Ester et al. (1996). A density-based algorithm for discovering clusters in large spatial databases with noise. KDD'96: Proceedings of the Second International Conference on Knowledge Discovery and Data Mining. 226–231.}
+\end{frame}
+
+\begin{vbframe}{Robustness}
+		\begin{itemize}
+		\item In general we must differentiate between explanation uncertainty and process uncertainty that lead to non-robust explanations: 
+		\begin{enumerate}
+			\item Explanation uncertainty tries to answer how an explanation changes if we repeat the experiment. The explanation could differ depending on which subset of data we use for the explanation method and which parameters. 
+			\item Process uncertainty tries to answer how an explanation changes if the underlying model is changed. This is interesting since ML models can be non-robust, e.g., because they are trained on noisy data. 
+		\end{enumerate}
+		\item Here, we focus on the former - explanation uncertainty. We could receive different explanations although we analyse the same model and the same (or a very similar) data point.
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Robustness Measure for LIME and SHAP}  
+	\begin{itemize}
+		\item One way to quantify the robustness of an explanation is to examine the behavior of the model in a neighborhood of the point of interest. We would like to receive similar explanations for similar inputs. 
+		\item In the previous chapter on the limitations of LIME, we already saw an example where LIME produced different explanations for very similar data points (with similar predictions).
+		\item For LIME and SHAP, Alvarez-Melis and Jaakkola (2018) derived a notion of stability based on \textbf{locally Lipschitz continuity}: \\
+		An explanation method $g:\Xspace \rightarrow \R^m$ is locally Lipschitz if for every $\xv_0 \in \Xspace$ there exist $\delta > 0$ and $\omega \in \R$ such that $||\xv - \xv_0|| < \delta$ implies $||g(\xv) - g(\xv_0)|| < \omega ||\xv - \xv_0||$. \\
+		\footnotesize Note that, for LIME, $g$ returns the $m$ coefficients of the surrogate model. \normalsize
+		\item According to this definition we can quantify and compare the robustness of explanation models in terms of $\omega$. 
+		The closer $\omega$ is to 0, the more robust our explanation method is. 
+		\item $\omega$ is rarely known a-priori but it could be estimated as following: 
+		$$\hat{\omega}_{X}(\xv) = \underset{x_i \in \mathcal{N}_{\epsilon}(\xv)}{\arg \max} \frac{||g(\xv) - g(\xv_i)||_2}{d(\xv, \xv_i)},$$
+		where $\mathcal{N}_{\epsilon}(\xv)$ is the $\epsilon$-neighborhood of $\xv$.
+	\end{itemize}
+\vspace{2cm}
+\footnote[frame]{Alvarez-Melis, D., \& Jaakkola, T. (2018). On the Robustness of Interpretability Methods. ArXiv, abs/1806.08049.}
+\end{vbframe}
+
+
+\begin{comment}
+\begin{vbframe}{Sources of Uncertainty}
+Two sources of uncertainty could be identified for local explanation methods: 
+\begin{itemize}
+\item Sampling variance in explaining a single data point. 
+E.g., to train a surrogate model for LIME we sample a new data set.   
+\item Sensitivity to choice of parameters. E.g., the user needs to determine the sample size and the kernel width to explain a model with LIME. 
+\end{itemize}
+These sources could lead to different explanations although we analyse the same model and the same (or a very similar) data point. 
+\footnote[frame]{Zhang et al. (2019). ``Why Should You Trust My Explanation?'' Understanding Uncertainty in LIME Explanations. arXiv preprint arXiv:1904.12991.} 
+\end{vbframe}
+\end{comment}
+
+
+\begin{comment}
+\begin{vbframe}{Noisy data}
+	\begin{itemize}
+		\item What if the ML model was trained on noisy data? Should the explanation model also take up these noisy patterns? 
+		\item If we use an explanation model to debug the ML model, it is okay, if our explanation model also takes up the noisy patterns learned in the ML model. 
+		\item If we use an explanation model to understand both the predictor but also the underlying true data generating process, we want to focus on the stable patterns learned by the ML model and receive robust explanations. 
+	\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Addtional notes}
+	\begin{itemize}
+		\item We cannot only impose that the explanation of one particular method is similar for similar data points, but also across multiple IML methods. 
+	\end{itemize}
+\end{vbframe}
+
+content...
+\end{comment}
+
+\endlecture
+\end{document}
