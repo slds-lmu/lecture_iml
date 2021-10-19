@@ -81,6 +81,7 @@
 \usepackage{mathtools}
 \usepackage{wrapfig}
 \usepackage{bm}
+\usepackage[backend=biber]{biblatex}
 
 \usetikzlibrary{shapes,arrows,automata,positioning,calc,chains,trees, shadows}
 \tikzset{
@@ -228,6 +229,55 @@ The distinctness of the aforementioned aspects can be proven by example (sketch)
   \end{itemize}
 $\Rightarrow$ In general, an importance score cannot provide insight into all aspects at once.
 \end{vbframe}
+
+\begin{vbframe}
+  %\textit{Note:} A model may rely on features that can be replace with others. E.g., a random forest model on dataset with $\E[y|x_1] \neq \E[y]$ and $\E[y|x_1] = \E[y|x_1, x_2]$ where $x_1$ was not sampled as potential split variable may rely on $x_2$. 
+  \begin{figure}
+  \begin{tikzpicture}[thick, scale=1.25, every node/.style={scale=1, line width=0.25mm, black, fill=white}]
+		%
+		\node[draw, ellipse, scale=0.7] (x0) at (0, 2) {trust};
+		\node[draw, ellipse, scale=0.7] (x1) at (0, 1) {vaccinated};
+		\node[draw, ellipse, scale=0.7] (x2) at (0, 0) {contact};
+		\node[draw, ellipse, scale=0.7] (x3) at (0,-1) {cough};
+		\node[draw, ellipse, scale=0.7] (x4) at (0,-2) {test};
+		\node[draw, ellipse, scale=0.7] (x5) at (0,-3) {compliance};
+		\node[draw, ellipse, scale=0.7] (y) at (-2,-.5) {$Y$: CoViD risk};
+		\draw[dashed,gray] (-3,-3.5) -- (.75,-3.5) -- (.75,2.5) -- (-3,2.5) -- cycle;
+		\node[scale=0.7] (dots) at (-1,-3.75) {data level, variables};
+		\draw[->] (x0) -- (x1);
+		\draw[->] (x1) -- (y);
+		\draw[->] (x2) -- (y);
+		\draw[->] (y) -- (x3);
+		\draw[->] (y) -- (x4);
+		\draw[->] (x5) -- (x4);
+		%\draw[-] (xd) -- (y);
+		
+		\node[draw, ellipse, scale=0.7] (ux0) at (2, 2) {\texttt{trust}};
+		\node[draw, ellipse, scale=0.7] (ux1) at (2, 1) {\texttt{vac}};
+		\node[draw, ellipse, scale=0.7] (ux2) at (2, 0) {\texttt{con}};
+		\node[draw, ellipse, scale=0.7] (ux3) at (2,-1) {\texttt{cough}};
+		\node[draw, ellipse, scale=0.7] (ux4) at (2,-2) {\texttt{test}};
+		\node[draw, ellipse, scale=0.7] (ux5) at (2,-3) {\texttt{cmpl}};
+
+		\draw[dashed,gray] (1.25,-3.5) -- (3.5,-3.5) -- (3.5,2.5) -- (1.25,2.5) -- cycle;
+		\node[scale=0.7] (dots) at (2.5,-3.75) {model level, features};
+		\draw[->, dotted] (x1) -- (ux1);
+		\draw[->, dotted] (x2) -- (ux2);
+		\draw[->, dotted] (x3) -- (ux3);
+		\draw[->, dotted] (x4) -- (ux4);
+		\draw[->, dotted] (x0) -- (ux0);
+		\draw[->, dotted] (x5) -- (ux5);
+		
+		\node[draw, circle, scale=0.7] (yhat) at (3, -.5) {$\hat{Y}$};
+		\draw[->] (ux1) -- (yhat);
+		\draw[->] (ux2) -- (yhat);
+		\draw[->] (ux3) -- (yhat);
+		\draw[->] (ux4) -- (yhat);
+		\draw[->] (ux5) -- (yhat);
+\end{tikzpicture}
+\end{figure} 
+\end{vbframe}
+
 
 \endlecture
 \end{document}
