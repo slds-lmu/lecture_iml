@@ -137,126 +137,435 @@ shorten >=2pt,}
 \lecturechapter{Interpretable Models}
 \lecture{Interpretable Machine Learning}
 
-\begin{vbframe}{Interpretable Models}
+
+
+
+\begin{vbframe}{Motivation}
+
+    \begin{itemize}
+        \item Achieving interpretability by using interpretable models is the most straightforward approach
+        
+        \item Classes of models deemed to be interpretable:
+        \begin{itemize}
+            \item Linear regression
+            \item Logistic regression ($\leadsto$ Classification)
+            \item Decision trees
+            \item k-NN
+            \item Naive Bayes
+            \item ...
+        \end{itemize}
+    \end{itemize}	
+	
+\end{vbframe}
+	
+\begin{vbframe}{Advantages}
+
+    \begin{itemize}
+        \item No further technique for interpretability required
+        \begin{itemize}
+            \item reduces risk of bringing in another source of failure
+        \end{itemize}
+        
+        \medskip
+        \item Since the models are often rather simple, training time is also fairly small
+        
+        \medskip
+        \item Some of them fulfill the monotonicity constraint
+        \begin{itemize}
+            \item[$\leadsto$] Larger feature values always lead to higher (or smaller) outcomes (e.g., regression values)
+        \end{itemize}
+        
+        \medskip
+        \item Some models can also explain interaction effects
+    \end{itemize}	
+	
+\end{vbframe}
+
+\begin{vbframe}{Disadvantages}
+
+    \begin{itemize}
+        \item Too simple models
+        \begin{itemize}
+            \item[$\leadsto$] poor accuracy $\leadsto$ unusable in practice in the first place
+        \end{itemize}
+        
+        \medskip
+        \item If too complex interactions are modelled, interpretability could suffer
+    \end{itemize}	
+	
+\end{vbframe}
+
+\begin{vbframe}{Further Comments}
+
+    \begin{itemize}
+        \item Some argue that one should always use interpretable models in the first place \footnote{Rudin 2019}{https://www.nature.com/articles/s42256-019-0048-x}
+        \begin{itemize}
+            \item \ldots and not try to explain uninterpretable models posthoc
+            \item Can sometimes work out by spending enough time and energy\\ on feature engineering and data cleaning
+        \end{itemize}
+        \item[$\leadsto$] Drawback: Hard to achieve for data for which end-to-end learning is crucial\\ (e.g., images and text)
+    \end{itemize}	
+	
+\end{vbframe}
+
+% 
+% 
+% \begin{vbframe}{Linear and Polynomial Regression}
+% 
+% \begin{itemize}
+% \itemsep2em
+% \item For linear regression models, we specify the model equation. The model parameters are estimated via least squares:
+% \begin{align*}
+% y &= \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon \\
+% Y &= X^T\beta + \mathcal{E}
+% \end{align*}
+% \item The model equation is identical across the entire feature space.
+% \item The predictive power of LMs is determined by specifying the correct model structure. A polynomial regression model is an extension of the LM that includes higher order terms or interactions. This enables us to model non-linear data while making use of the entire arsenal of LM functionality.
+% \item
+% By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics). For higher order effects or interactions, beta coefficients cannot be interpreted in isolation, i.e., we need to use marginal effects or effect plots with simultaenous changes in feature values.
+% \item Note that for inference-based metrics (p-values, t-statistics, confidence intervals) to be valid, the error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2)$. It follows that $(y \vert x) \sim N(x^T \beta, \sigma^2)$. This restricts the usage of LMs in practice, as the distribution of the error term is a prior assumption about the data.
+% \end{itemize}
+% \end{vbframe}
+% 
+% \begin{vbframe}{Linear and Polynomial Regression Models}
+% \tiny
+% \verbatiminput{figure/lm_output.txt}
+% \end{vbframe}
+% 
+% \begin{vbframe}{Linear and Polynomial Regression Models}
+% \begin{figure}
+%   \includegraphics[width = 0.6\textwidth]{figure/lm_effect_plot.png}
+% \end{figure}
+% \end{vbframe}
+% 
+% 
+% \begin{vbframe}{Generalized Linear Regression Models}
+% 
+% \begin{itemize}
+% \setlength\itemsep{2em}
+% \item Generalized linear models (GLMs) are more flexible regarding the target distribution. They keep the linear predictor $X^T\beta$ which now explains the transformed, expected conditional target through a link function $g$: 
+% \begin{align*}
+% g\left(\mathbb{E}_Y(Y \vert X)\right) &= X^T\beta \\
+% \mathbb{E}_Y \left(Y \vert X\right) &= g^{-1}(X^T\beta) 
+% \end{align*}
+% \item GLMs are a framework for target distributions of the exponential family, e.g., Gaussian, Binomial, Poisson, Exponential, Gamma. A Gaussian target distribution with identity link corresponds to a linear / polynomial regression model.
+% \item The link function describes how the linear predictor $X^T\beta$ relates to the expected, conditional target $\mathbb{E}_Y(Y \vert X)$, e.g., if the target is distributed binomially, a natural link function is the logit link $log\left(\frac{\mathbb{E}_Y(Y \vert X)}{1 - \mathbb{E}_Y(Y \vert X)}\right)$.
+% \item We need to specify the correct model equation, target distribution, and link function in order to receive a good model fit.
+% \item As the model equation is still known, interpretations are possible the same way as for polynomial regression models. However, even linear terms become non-linear through the link function (if the identity link is not used)!
+% \end{itemize}
+% \end{vbframe}
+% 
+% 
+% \begin{vbframe}{Generalized Linear Regression Models}
+% \tiny
+% \verbatiminput{figure/glm_output.txt}
+% \end{vbframe}
+% 
+% \begin{vbframe}{Generalized Linear Regression Models}
+% \begin{figure}
+%   \includegraphics[width = 0.6\textwidth]{figure/glm_effect_plot.png}
+% \end{figure}
+% \end{vbframe}
+% 
+% \begin{vbframe}{Generalized Additive Models}
+% \begin{itemize}
+% \setlength\itemsep{2em}
+% \item A generalized additive model (GAM) adds flexibility and predictive power to the GLM framework by replacing pre-specified terms with smoothing functions:
+% $$
+% g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 h_1(x_1) + \dots + \beta_p h_p(x_p) + \dots
+% $$
+% \item For the component functions, we may either specify a parametric form (e.g., a regression splines), or a non-parametric one, e.g., locally estimated scatterplot smoothing (LOESS).
+% \item This makes GAMs much more adaptive. The estimated model is largely determined by the structure of the data instead of premade assumptions as in LMs and GLMs. However, we still need to specify the order and type of the component functions to be estimated, e.g., which interactions to include.
+% \item Furthermore, the smoothing degree of each component function can be tuned to avoid overfitting. Regularization increases interpretability, as the interpretations drawn from the model can be transferred more easily to new data.
+% \item A GAM retains interpretability by keeping the additive model equation (as long as the component functions are interpretable). As the model equation is known, we can use similar interpretation methods as for LMs and GLMs, e.g., evaluating the estimated components that depend on the features of interest.
+% \end{itemize}
+% \end{vbframe}
+% 
+% 
+% \begin{vbframe}{Generalized Additive Models}
+% \tiny
+% \verbatiminput{figure/gam_output.txt}
+% \end{vbframe}
+% 
+% 
+% \begin{vbframe}{Generalized Additive Models}
+% \begin{figure}
+%   \includegraphics[width = 0.6\textwidth]{figure/gam_effect_plot.png}
+% \end{figure}
+% \end{vbframe}
+% 
+% \begin{vbframe}{Model-Based Boosting}
+% 
+% \begin{itemize}
+% \setlength\itemsep{2em}
+% \item 
+% Boosting iteratively joins weak base learners to create a powerful ensemble model.
+% \item 
+% Idea: Combine boosting with interpretable base learners (e.g., single feature LM). The resulting ensemble is also interpretable.
+% \item
+% Consider two linear base learners $b_j(x, \Theta)$ and $b_j(x, \Theta^{\star})$ with the same type, but distinct parameter vectors $\Theta$ and $\Theta^{\star}$. They can be combined in a base learner of the same type:
+% $$
+% b_j(x, \Theta) + b_j(x, \Theta^{\star}) = b_j(x, \Theta + \Theta^{\star})
+% $$
+% \item We create a selection of interpretable base learners. In each iteration, all base learners are trained on the so-called pseudo residuals, and the one with the best fit is added to the previously computed model:
+% \begin{align*}
+% \widehat{f}^{[1]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) \\
+% \widehat{f}^{[2]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) + \beta b_3(x_3, \theta^{[2]})\\
+% \widehat{f}^{[3]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) + \beta b_3(x_3, \theta^{[2]}) + \beta b_1(x_1, \theta^{[3]}) \\
+% \\
+% \widehat{f}^{[3]}(x) &= f_0 + \beta \left(b_3(x_3, \theta^{[1]} + \theta^{[2]}) + b_1(x_1, \theta^{[3]})\right)
+% \end{align*}
+% 
+% \item The final model has an additive structure (equivalent to a GAM), where each component function is interpretable itself.
+% 
+% \end{itemize}
+% \end{vbframe}
+
+
+
+\begin{vbframe}{Linear Regression}
+
+    $$y = w_0 + w_1 x_1 + w_2 x_2 + \ldots + w_p x_p + \epsilon $$
+
+    \begin{itemize}
+        \item $y$ output
+        \item $w_i$ weight of input feature $x_i$
+        \item $\epsilon$ remaining error (e.g., because of noise)
+        \item[$\leadsto$] model consists of $p+1$ weights $w_i$
+        \item Properties and assumptions:
+        \begin{itemize}
+            \item linear
+            \item normality assumption of the target
+            \item homoscedastic (i.e., constant variance)
+            \item independence of features
+            \item fixed features (i.e., free of noise)
+            \item no strong correlation of features
+        \end{itemize} 
+    \end{itemize}
+
+\end{vbframe}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{vbframe}{Interpretation of Linear Regression}
+
+    $$y = w_0 + w_1 x_1 + w_2 x_2 + \ldots + w_p x_p + \epsilon $$
+
+    Let's consider different feature types:
+    \begin{itemize}
+        \item Numerical features: Increase of numerical value will lead to $w_i$ times increased output
+        \item Binary feature: Either weight $w_i$ is active (1) or not (0).
+        \item Categorical feature: One-hot-encoding of $L-1$ new features for $L$ categories
+        \item Intercept $w_0$: reflects expected features values if features were standardised (0-mean, 1-stdev)
+    \end{itemize}	
+    
+    Feature importance:
+    \begin{itemize}
+        \item t-statistic by the estimated weight scaled with its standard error\\ (i.e., less certain about the correct value)
+    \end{itemize}
+    $$t_{w_i} = \frac{w_i}{SE(w_i)} $$
+\end{vbframe}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+	
+\begin{vbframe}{Logistic Regression}
+
+    $$P(y = 1) =\frac{1}{1 + \exp(-( w_0 + w_1 x_1 + w_2 x_2 + \ldots + w_p x_p ))} $$
+
+    \begin{itemize}
+        \item Probabilistic \alert{classification} model 
+        \item Typically, we set the threshold to $0.5$ to predict 
+        \begin{itemize}
+            \item Class 1 if $P(y=1) > 0.5$
+            \item Class 0 if $P(y=1) \leq 0.5$
+        \end{itemize}
+    \end{itemize}	
+
+\end{vbframe}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{vbframe}{Interpretation of Logistic Regression}
+
+    $$\log \left(\frac{P(y = 1)}{P(y=0)}\right) = w_0 + w_1 x_1 + w_2 x_2 + \ldots + w_p x_p  $$
+
+    \begin{itemize}
+        \item weights relate to log odds-ratio
+        \item Again linear in log odds-ratio
+        \item[$\leadsto$] change by one unit changes the odds ratio by a \alert{factor} of $\exp(w_i)$.
+        \medskip
+        
+        \item Interpretation for different feature types is the same as for linear regression
+    \end{itemize}	
+
+\end{vbframe}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{vbframe}{GLM and Interactions}
+
+    \begin{itemize}
+        \item Linear models are often too restrictive for many applications
+    \end{itemize}
+    
+    \medskip
+    Non-Gaussian outputs via Generalized Linear Models (GLMs):
+    $$g(\mathrm{E}_Y (y\mid x)) = w_0 + w_1 x_1 + w_2 x_2 + \ldots + w_p x_p$$
+    \begin{itemize}
+        \item link function $g$ -- can be freely chosen
+        \item exponential family defining $\mathrm{E}_Y$ -- can be freely chosen
+        \item weighted sum $X^\top W$
+    \end{itemize}
+    
+    \medskip 
+    
+    Interaction effects via feature engineering:
+    \begin{itemize}
+        \item E.g., feature expansion: $w_{x_i,x_j} x_i \cdot x_j$
+    \end{itemize}
+    
+\end{vbframe}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{vbframe}{Generalized Additive Models (GAMs)}
+
+Non-Linear relations can be addressed by:
+    \begin{itemize}
+        \item feature transformations (e.g., exp or log)
+        \item Categorization of features (i.e., intervals / buckets of feature values)
+        \item GAMs:
+    \end{itemize}
+    
+    $$g(\mathrm{E}_Y (y\mid x)) = w_0 + f_1(x_1) + f_2(x_2) + \ldots + f_p(x_p)$$
+    
+    \begin{itemize}
+        \item instead of $w_i x_i$ use flexible functions $f_i(x_i)$ $\leadsto$ splines
+    \end{itemize}
+
+\end{vbframe}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{vbframe}{Decision Trees}
+
+\begin{columns}
+
+\begin{column}{0.3\textwidth}
+
+   \begin{tikzpicture}
+   \usetikzlibrary{arrows}
+    \usetikzlibrary{shapes}
+     \tikzset{treenode/.style={draw, circle, font=\small}}
+     \tikzset{line/.style={draw, thick}}
+     \node [treenode, draw=red] (a0) {$a_0$};
+     \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
+     \node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
+     
+     \node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
+     \node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
+     
+     \node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
+     \node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
+     
+     \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
+     \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
+     
+     \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};;
+     \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
+     
+          
+     \path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};;
+     \path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
+     
+   \end{tikzpicture}
+
+\end{column}
+
+\begin{column}{0.7\textwidth}
+
+Properties:
 \begin{itemize}
-\item We consider models to be interpretable if they give us feature effects and importance scores through model-specific methods.
-\item Parametric models are considered to be interpretable, as we pre-specify a model equation. However, there are interpretable non-parametric models, e.g., decision trees.
-\item One often assumes a trade-off between performance and interpretability. Although this is a good rule of thumb it is not universally true, i.e., a carefully selected generalized additive model can outperform black box models such as gradient boosting or random forests while being interpretable.
-\item It follows that one should first consider interpretable models, and only if these fail, e.g., due to insufficient knowledge about the data, one should consider black box models which can be interpreted through model-agnostic methods.
+    \item able to model non-linear effects
+    \item terminal nodes (aka leaf nodes) can have several observations and predicts the mean outcome over these
+    \item Applicable to regression and classification
 \end{itemize}
+
+Interpretation:
+\begin{itemize}
+    \item directly by following the tree (i.e., sequence of rules)
+    \item Feature importance by (scaled) score of much the splitting criterion was reduced compared to the parent
+\end{itemize}
+
+\end{column}
+
+\end{columns}
+
 \end{vbframe}
 
+%------------------------------------------------------------------
+%------------------------------------------------------------------
 
-\begin{vbframe}{Linear and Polynomial Regression}
+\begin{vbframe}{Decision Rules}
+
+\texttt{IF COND$_1$ AND COND$_2$ AND ... THEN value}
 
 \begin{itemize}
-\itemsep2em
-\item For linear regression models, we specify the model equation. The model parameters are estimated via least squares:
-\begin{align*}
-y &= \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon \\
-Y &= X^T\beta + \mathcal{E}
-\end{align*}
-\item The model equation is identical across the entire feature space.
-\item The predictive power of LMs is determined by specifying the correct model structure. A polynomial regression model is an extension of the LM that includes higher order terms or interactions. This enables us to model non-linear data while making use of the entire arsenal of LM functionality.
-\item
-By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics). For higher order effects or interactions, beta coefficients cannot be interpreted in isolation, i.e., we need to use marginal effects or effect plots with simultaenous changes in feature values.
-\item Note that for inference-based metrics (p-values, t-statistics, confidence intervals) to be valid, the error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2)$. It follows that $(y \vert x) \sim N(x^T \beta, \sigma^2)$. This restricts the usage of LMs in practice, as the distribution of the error term is a prior assumption about the data.
+    \item \texttt{COND$_i$} can be of the form \texttt{feature <op> value} where \texttt{<op>} can be for example $\{=, <, > \}$
 \end{itemize}
+
+
+\medskip
+
+Properties:
+\begin{description}
+    \item{Support} Fraction of observations to support appliance of rule
+    \item{Accuracy} for predicting the correct class under the condition(s)
+\end{description}
+
+$\leadsto$ often trade-off between these two
+
+
+\medskip
+
+$\leadsto$ many different ways to learn a set of rules (incl. a default rule if none of the rules are met)
+
 \end{vbframe}
 
-\begin{vbframe}{Linear and Polynomial Regression Models}
-\tiny
-\verbatiminput{figure/lm_output.txt}
-\end{vbframe}
-
-\begin{vbframe}{Linear and Polynomial Regression Models}
-\begin{figure}
-  \includegraphics[width = 0.6\textwidth]{figure/lm_effect_plot.png}
-\end{figure}
-\end{vbframe}
+%------------------------------------------------------------------
+%------------------------------------------------------------------
 
 
-\begin{vbframe}{Generalized Linear Regression Models}
+\begin{vbframe}{Other Interpretable Models}
 
+\textbf{RuleFit} \footnote{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
 \begin{itemize}
-\setlength\itemsep{2em}
-\item Generalized linear models (GLMs) are more flexible regarding the target distribution. They keep the linear predictor $X^T\beta$ which now explains the transformed, expected conditional target through a link function $g$: 
-\begin{align*}
-g\left(\mathbb{E}_Y(Y \vert X)\right) &= X^T\beta \\
-\mathbb{E}_Y \left(Y \vert X\right) &= g^{-1}(X^T\beta) 
-\end{align*}
-\item GLMs are a framework for target distributions of the exponential family, e.g., Gaussian, Binomial, Poisson, Exponential, Gamma. A Gaussian target distribution with identity link corresponds to a linear / polynomial regression model.
-\item The link function describes how the linear predictor $X^T\beta$ relates to the expected, conditional target $\mathbb{E}_Y(Y \vert X)$, e.g., if the target is distributed binomially, a natural link function is the logit link $log\left(\frac{\mathbb{E}_Y(Y \vert X)}{1 - \mathbb{E}_Y(Y \vert X)}\right)$.
-\item We need to specify the correct model equation, target distribution, and link function in order to receive a good model fit.
-\item As the model equation is still known, interpretations are possible the same way as for polynomial regression models. However, even linear terms become non-linear through the link function (if the identity link is not used)!
+    \item Combination of linear models and decision trees 
+    \item Allows for feature interactions and non-linearities
 \end{itemize}
-\end{vbframe}
 
-
-\begin{vbframe}{Generalized Linear Regression Models}
-\tiny
-\verbatiminput{figure/glm_output.txt}
-\end{vbframe}
-
-\begin{vbframe}{Generalized Linear Regression Models}
-\begin{figure}
-  \includegraphics[width = 0.6\textwidth]{figure/glm_effect_plot.png}
-\end{figure}
-\end{vbframe}
-
-\begin{vbframe}{Generalized Additive Models}
+\textbf{NaiveBayes}
+$$P (C_k \mid x ) = \frac{1}{Z} P(C_k) \prod_{i=1}^{n} P(x_i \mid C_k) $$
 \begin{itemize}
-\setlength\itemsep{2em}
-\item A generalized additive model (GAM) adds flexibility and predictive power to the GLM framework by replacing pre-specified terms with smoothing functions:
-$$
-g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 h_1(x_1) + \dots + \beta_p h_p(x_p) + \dots
-$$
-\item For the component functions, we may either specify a parametric form (e.g., a regression splines), or a non-parametric one, e.g., locally estimated scatterplot smoothing (LOESS).
-\item This makes GAMs much more adaptive. The estimated model is largely determined by the structure of the data instead of premade assumptions as in LMs and GLMs. However, we still need to specify the order and type of the component functions to be estimated, e.g., which interactions to include.
-\item Furthermore, the smoothing degree of each component function can be tuned to avoid overfitting. Regularization increases interpretability, as the interpretations drawn from the model can be transferred more easily to new data.
-\item A GAM retains interpretability by keeping the additive model equation (as long as the component functions are interpretable). As the model equation is known, we can use similar interpretation methods as for LMs and GLMs, e.g., evaluating the estimated components that depend on the features of interest.
+    \item product of probabilities for a class on the value of each feature
+    \item strong independence assumption
 \end{itemize}
-\end{vbframe}
 
 
-\begin{vbframe}{Generalized Additive Models}
-\tiny
-\verbatiminput{figure/gam_output.txt}
-\end{vbframe}
-
-
-\begin{vbframe}{Generalized Additive Models}
-\begin{figure}
-  \includegraphics[width = 0.6\textwidth]{figure/gam_effect_plot.png}
-\end{figure}
-\end{vbframe}
-
-\begin{vbframe}{Model-Based Boosting}
-
+\textbf{k-Nearest Neighbor}
 \begin{itemize}
-\setlength\itemsep{2em}
-\item 
-Boosting iteratively joins weak base learners to create a powerful ensemble model.
-\item 
-Idea: Combine boosting with interpretable base learners (e.g., single feature LM). The resulting ensemble is also interpretable.
-\item
-Consider two linear base learners $b_j(x, \Theta)$ and $b_j(x, \Theta^{\star})$ with the same type, but distinct parameter vectors $\Theta$ and $\Theta^{\star}$. They can be combined in a base learner of the same type:
-$$
-b_j(x, \Theta) + b_j(x, \Theta^{\star}) = b_j(x, \Theta + \Theta^{\star})
-$$
-\item We create a selection of interpretable base learners. In each iteration, all base learners are trained on the so-called pseudo residuals, and the one with the best fit is added to the previously computed model:
-\begin{align*}
-\widehat{f}^{[1]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) \\
-\widehat{f}^{[2]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) + \beta b_3(x_3, \theta^{[2]})\\
-\widehat{f}^{[3]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) + \beta b_3(x_3, \theta^{[2]}) + \beta b_1(x_1, \theta^{[3]}) \\
-\\
-\widehat{f}^{[3]}(x) &= f_0 + \beta \left(b_3(x_3, \theta^{[1]} + \theta^{[2]}) + b_1(x_1, \theta^{[3]})\right)
-\end{align*}
-
-\item The final model has an additive structure (equivalent to a GAM), where each component function is interpretable itself.
-
+    \item (closely related to case-based reasoning)
+    \item Average of of the outcome of neighbors -- local explanation
 \end{itemize}
+
 \end{vbframe}
+
 
 \begin{vbframe}{Model-Based Boosting}
 \tiny
@@ -270,41 +579,135 @@ $$
 \end{figure}
 \end{vbframe}
 
+% 
+% \begin{vbframe}{Rule-Based Learning}
+% 
+% \begin{itemize}
+% \setlength\itemsep{2em}
+% \item 
+% Decision rules follow a general structure: IF the conditions are met, THEN make a certain prediction. Rule-based learning aims to capture a set of decision rules that accurately describe the data. 
+% \item Although a single decision rule is very intelligibile, a large collection of decision rules might not be. An interpretable rule-based model should therefore be based on as few rules as possible.
+% \item Descripte Rule Discovery (DRD) is based on mining databases for frequent item sets, and converting these into a set of decision rules, e.g., a rule \{mobile phone\} $\Rightarrow$ \{mobile phone case\} might stem from mobile phones and phone cases being bought together frequently. DRD is not suited to create a model that makes predictions on unseen data.
+% \item Instead, we are interested in Predictive Rule Learning (PRL), which aims to discover a set of rules that cover the entire feature space, thereby being able to predict for any data instance\footnote[frame]{Fürnkranz J., Kliegr T. (2015) A Brief Overview of Rule Learning. In: Bassiliades N., Gottlob G., Sadri F., Paschke A., Roman D. (eds) Rule Technologies: Foundations, Tools, and Applications. RuleML 2015. Lecture Notes in Computer Science, vol 9202. Springer, Cham.}. There are innumerable rule-based learning algorithms, e.g., decision tree learning, OneR, Sequential Covering, or Bayesian Rule Lists.
+% \item Decision tree learning, e.g, classification and regression trees (CART), is the most popular group of rule-based models, as every tree can be represented by a collection of decision rules. A decision tree recursively partitions the data by optimizing an objective function, e.g., minimizing the data impurity. A succession of tree splits can be converted to a decision rule by forming a conjunction of successive split criteria.
+% %\item The RuleFit algorithm combines polynomial regression with rule ensembles for automatic interaction detection. In the first stage, a tree ensemble is trained to produce decision rules (where the predictions are discarded and only the splits are utilized), e.g., $x_1 < 0 \land x_2 > 1$. In the second stage, a linear model with main effects is augmented with each decision rule being represented by a single dummy feature.
+% \end{itemize}
+% %\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
+% %\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.
+% %\item Bayesian Rule Lists combine pre-mined frequent patterns into a decision list using Bayesian statistics. Using pre-mined patterns is a common approach used by many rule learning algorithms.
+% %\end{itemize}
+% 
+% \end{vbframe}
+% 
+% \begin{vbframe}{Rule-Based Learning}
+% 
+% \begin{columns}
+%   \begin{column}{0.5\textwidth}
+%       \begin{center}
+%         \includegraphics[width = \textwidth]{figure/rpart_plot.png}     
+%       \end{center}
+%   \end{column}
+%   \begin{column}{0.5\textwidth}
+%      \tiny
+%      \verbatiminput{figure/rpart_output.txt}
+%   \end{column}
+% \end{columns}
+% 
+% \end{vbframe}
 
-\begin{vbframe}{Rule-Based Learning}
 
-\begin{itemize}
-\setlength\itemsep{2em}
-\item 
-Decision rules follow a general structure: IF the conditions are met, THEN make a certain prediction. Rule-based learning aims to capture a set of decision rules that accurately describe the data. 
-\item Although a single decision rule is very intelligibile, a large collection of decision rules might not be. An interpretable rule-based model should therefore be based on as few rules as possible.
-\item Descripte Rule Discovery (DRD) is based on mining databases for frequent item sets, and converting these into a set of decision rules, e.g., a rule \{mobile phone\} $\Rightarrow$ \{mobile phone case\} might stem from mobile phones and phone cases being bought together frequently. DRD is not suited to create a model that makes predictions on unseen data.
-\item Instead, we are interested in Predictive Rule Learning (PRL), which aims to discover a set of rules that cover the entire feature space, thereby being able to predict for any data instance\footnote[frame]{Fürnkranz J., Kliegr T. (2015) A Brief Overview of Rule Learning. In: Bassiliades N., Gottlob G., Sadri F., Paschke A., Roman D. (eds) Rule Technologies: Foundations, Tools, and Applications. RuleML 2015. Lecture Notes in Computer Science, vol 9202. Springer, Cham.}. There are innumerable rule-based learning algorithms, e.g., decision tree learning, OneR, Sequential Covering, or Bayesian Rule Lists.
-\item Decision tree learning, e.g, classification and regression trees (CART), is the most popular group of rule-based models, as every tree can be represented by a collection of decision rules. A decision tree recursively partitions the data by optimizing an objective function, e.g., minimizing the data impurity. A succession of tree splits can be converted to a decision rule by forming a conjunction of successive split criteria.
-%\item The RuleFit algorithm combines polynomial regression with rule ensembles for automatic interaction detection. In the first stage, a tree ensemble is trained to produce decision rules (where the predictions are discarded and only the splits are utilized), e.g., $x_1 < 0 \land x_2 > 1$. In the second stage, a linear model with main effects is augmented with each decision rule being represented by a single dummy feature.
-\end{itemize}
-%\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
-%\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.
-%\item Bayesian Rule Lists combine pre-mined frequent patterns into a decision list using Bayesian statistics. Using pre-mined patterns is a common approach used by many rule learning algorithms.
-%\end{itemize}
+    \begin{vbframe}{Bike Rentals (Regression)}
+        
+        \begin{itemize}
+            \item Target: number of rented bikes
+            \item Source: bicycle rental company Capital-Bikeshare in Washington D.C.,
+            \item Reference: \footnote{Fanaee-T and Gama. 2014}{https://link.springer.com/article/10.1007/s13748-013-0040-3}
+            \item Exemplary features:
+            \begin{itemize}
+                \item season: spring, summer, fall or winter.
+                \item holiday or not.
+                \item working day or weekend
+                \item weather situation on that day 
+                \item temperature
+            \end{itemize}
+        \end{itemize}
+        
+    \end{vbframe}
+    
+    \begin{vbframe}{Regression on Bike Rentals}
+        
+        \centering
+        \includegraphics[width=0.55\textwidth]{figure/lin_bikesharing.png}        
 
-\end{vbframe}
+    \end{vbframe}
+    
+    \begin{vbframe}{Decision Tree on Bike Rentals}
+        
+        \centering
+        \includegraphics[width=0.55\textwidth]{figure/dt_bike_sharing.png}        
 
-\begin{vbframe}{Rule-Based Learning}
-
-\begin{columns}
-  \begin{column}{0.5\textwidth}
-      \begin{center}
-        \includegraphics[width = \textwidth]{figure/rpart_plot.png}     
-      \end{center}
-  \end{column}
-  \begin{column}{0.5\textwidth}
-     \tiny
-     \verbatiminput{figure/rpart_output.txt}
-  \end{column}
-\end{columns}
-
-\end{vbframe}
+    \end{vbframe}
+    
+    \begin{vbframe}{Risk Factors for Cervical Cancer (Classification)}
+        
+        \begin{itemize}
+            \item Target: patient will get cancer or not?
+            \item Reference: \footnote{Fernandes et al. 2017, \url{https://link.springer.com/chapter/10.1007/978-3-319-58838-4_27}}
+            \item Exemplary features:
+            \begin{itemize}
+                \item Age in years
+                \item Number of sexual partners
+                \item First sexual intercourse (age in years)
+                \item Number of pregnancies
+                \item Smoking yes or no
+                \item Smoking (in years)
+                \item Hormonal contraceptives yes or no
+                \item Hormonal contraceptives (in years)
+                \item Intrauterine device yes or no (IUD)
+            \end{itemize}
+        \end{itemize}
+        
+    \end{vbframe}
+	
+	\begin{vbframe}{Logistic Regression on  Cancer (Classification)}
+        
+        \centering
+        \includegraphics[width=0.55\textwidth]{figure/lin_cancer.png}     
+        
+    \end{vbframe}
+	
+	\begin{vbframe}{Decision Tree on  Cancer (Classification)}
+        
+        \centering
+        \includegraphics[width=0.55\textwidth]{figure/dt_cancer.png}     
+    \end{vbframe}
+	
+	\begin{vbframe}{Predictive Performance}
+        
+        \begin{itemize}
+            \item Bike Rental (normalized MSE):
+            \begin{itemize}
+                \item Linear Regression: 0.0276
+                \item Decision Tree: 0.0328
+                \item GLM: 0.0244
+            \end{itemize}
+            
+            \medskip
+            \item Cancer (Accuracy)
+            \begin{itemize}
+                \item Logistic Regression: 0.58
+                \item Decision Tree: 0.62
+            \end{itemize}
+            
+            \smallskip
+            \item[$\leadsto$] although easy to interpret, not really well-performing 
+            \begin{itemize}
+                \item Boosting: 0.79
+            \end{itemize}
+        \end{itemize}
+        
+    \end{vbframe}
+	
 
 \endlecture
 \end{document}
