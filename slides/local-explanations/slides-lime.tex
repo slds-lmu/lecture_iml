@@ -153,7 +153,8 @@
 \begin{itemize}
 		\item Local Interpretable Model-agnostic Explanations (LIME) assume that even if a machine learning model is very complex, the local prediction can be described with a simpler model.
 		\item  Therefore, LIME explains \textbf{individual} predictions of \textbf{any} black-box model by approximating the model \textbf{locally} with an interpretable model.
-		\item These approximations are called local surrogate models. Typically, they are linear models or trees.
+		\item These approximations are called local surrogate models. \\
+		Typically, they are linear models or trees.
 		\item They should answer why a machine learning model predicted $y$ for input $\xv$.
 		\item Since they can be applied to any black-box model they are model-agnostic.  
 		\item They can handle tabular, image and text data. 
@@ -206,7 +207,7 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
 		\item Formally, an explanation produced by LIME is obtained by the following: 
 		$$ \argmin_{g \in \Gspace} L(\fh, g, \neigh) + J(g)$$
 		\item In practice, LIME only optimizes $L(\fh, g, \neigh)$ (model-fidelity). 	
-		\item The complexity is determined by users beforehand by restricting the class $\Gspace$. For example, users could only consider sparse linear models. 
+		\item The model complexity ($J(g)$) is determined by users beforehand by restricting the class $\Gspace$. For example, users could only consider sparse linear models. 
 		\item Since we want a \textbf{model-agnostic} explainer, we need to optimize $L(\fh, g, \neigh)$ without making any assumptions about $\fh$. 
 		\item Therefore, we learn $g$ only approximately with the following algorithm.  
 		\end{itemize}
@@ -233,7 +234,7 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
 		\begin{itemize} 
 			\item Uniformly sample new points from the feasible feature range. 
 			\item Use the training data set with or without perturbations.
-			\item Draw samples from the estimated marginal distribution of each feature.
+			\item Draw samples from the estimated univariate distribution of each feature.
 			\item Create an equidistant grid over the supported feature range.  
 		\end{itemize}
 		\begin{center}
@@ -261,7 +262,7 @@ We can measure the complexity of a model $g$ using $J(g)$. \\
 		\framebreak
 		\begin{enumerate}
 			\setcounter{enumi}{3}
-		\item Train a interpretable model $g$ on weighted data points $\zv \in \Zspace$. The obtained predictions $\fh(\zv)$ is the target of this model.
+		\item Train an interpretable model $g$ on weighted data points $\zv \in \Zspace$. The obtained predictions $\fh(\zv)$ is the target of this model.
 		\item Return the interpretable model $g$ as the explainer. \\[0.3cm]
 			\end{enumerate}
 		Popular interpretable models are linear models, LASSO, classification/regression trees, decision rules. \\

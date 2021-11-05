@@ -152,7 +152,8 @@
 	\begin{itemize}
 	    \item \textbf{Counterfactual explanations} (CEs) or short \textbf{counterfactuals} explain particular decisions of an ML model by presenting an alternative input whose prediction equals a desired outcome.
 		\item CEs represent \textbf{close neighbors} of a data point we are interested in, but belonging to the \textbf{desired outcome class}. 
-		\item Therefore, CEs reveal what minimal changes to the input are sufficient to receive a different response.
+		\item Therefore, CEs reveal what minimal changes to the input are sufficient to receive a different response.\\
+		$\rightarrow$ Very useful if there is a chance to change the input features (e.g., by changing behaviour).
 		\item Due to their natural interpretation, the targeted audience of CEs are often end-users not ML engineers.
 %		\item While we focus here exclusively on their application to tabular data, they can also be applied to image and text data. 
 	\end{itemize}
@@ -193,14 +194,14 @@
 
 
 \begin{vbframe}{Aims \& Roles}
-	CEs can serve various purposes, the user can decide what to learn from them. Consider the following example:\newline
+	CEs can serve various purposes, the user can decide what to learn from them. For example:\newline
 	``If the person had been one year older and the credit amount had been increased to \$12.000, her credit would have been granted."  \\[0.2cm]
 	\begin{itemize}
 		\itemsep1.3em
 		\item \textbf{Guidance for future actions:} \textit{Ok, I'll apply again next year for the higher amount.}
 		\item \textbf{Provide reasons:} \textit{Interesting, I did not know that age plays a role in loan applications.}
 		\item \textbf{Provide grounds to contest the decision:} \textit{How dare you, I do not want to be discriminated for my age in an application.}
-		\item \textbf{Detect model biases:} \textit{Oh, there is a bug, an increase in amount should not increase approval rates.}
+		\item \textbf{Detect model biases:} \textit{There is a bug, an increase in amount should not increase approval rates.}
 	\end{itemize}
 \end{vbframe}
 
@@ -336,9 +337,9 @@ Accoding to Lewis (1973), a \textbf{counterfactual conditional} is a statement o
 \begin{vbframe}{Remarks: The Rashomon Effect}
 The solution to the optimization problem might not be unique, there can be many equally close inputs that obtain the desired classification. Correspondingly, there can be many different equally good explanations for the same decision. This is called the \textbf{Rashomon effect}.
 	\begin{itemize}
-		\item We could present all CEs for a given case, however, time is limited and so is the human processing capacity.
-		\item Another solution is to focus on one or few CEs, however, by which criterion should they be selected?
-		\item Worse, as the model is generally non-linear, incompatible CEs can arise e.g. suggesting either an increase or decrease in credit duration, which confuses the explainee.
+		\item We could present all CEs for a given case; however, time is limited and so is the human processing capacity.
+		\item Another solution is to focus on one or few CEs; however, by which criterion should they be selected?
+		\item Worse, as the model is generally non-linear, inconsistent CEs can arise e.g. suggesting either an increase or decrease in credit duration, which confuses the explainee.
 		\item How to deal with the Rashomon effect is considered an open problem in IML.
 	\end{itemize}
 \end{vbframe}

@@ -175,7 +175,7 @@
      	\end{center}
      \item A larger kernel width means that instances that are farther away also influence the model such that we do not receive a local but a global surrogate model. 
      \item Therefore, we prefer smaller kernel widths such that an instance must be very close to influence the local model.  
-     \item If the kernel with is set too small, we only fit a local model based on a few observations which carries the risk to fit noise.   
+     \item If the kernel width is set too small, we only fit a local model based on a few observations which carries the risk to fit noise.   
 	\item Multiple software package use another default standardized distance: the Gower proximity where no kernel width needs to be specified. However, experiments showed that since also data points far away receive a weight $ > 0$, their resulting explanations are rather global surrogates than local surrogates.   
 \end{itemize}
 \vspace{0.3cm}
@@ -248,7 +248,7 @@
 \textbf{Pitfall: Possibility to hide biases}
 \begin{itemize}
 	\item Slack et al. (2020) showed that data scientists could manipulate their model to hide biases. 
-	\item They make use of the fact that sampled instances for the surrogate model are out of the input data distribution if we do not account for feature dependencies. 
+	\item They make use of the fact that sampled instances for the surrogate model could be out of the input data distribution if we do not account for feature dependencies. 
 	\item We can built a classifier that detects whether a given data point is an out-of-distribution sample or not using the original training data and data sampled by LIME. 
 	\item If a new data point has the same distribution as the training data, the prediction of the biased classifier is returned. If a new data point is out-of-distribution (usually samples for the surrogate models), the unbiased prediction is returned.
 	\item For the credit dataset, a biased model could be a model solely trained on the feature `gender`, while an unbiased model could be trained on features uncorrelated with `gender` -- for example, percentage of income the credit rate represents.   
@@ -263,7 +263,7 @@
 \begin{itemize}
 	\item Another really big problem is the instability of the explanations. 
 	\item Explanations of two very close points could vary greatly. 
-	\item But also if $\fh$ and $\xv$ are fixed, and only new sampled data points $\zv$ are used, the resulting explanations could differ. This is called the \textbf{Rashomon Effect} since we receive multiple different explanations for a single data point. 
+	\item But also if $\fh$ and $\xv$ are fixed, and only new sampled data points $\zv$ are used, the resulting explanations could differ. This is called the \textbf{Rashomon Effect}.
 \end{itemize}
 \vspace{-0.7cm}
 \begin{columns}
@@ -272,7 +272,7 @@
 		
 		\includegraphics[width=0.6\textwidth]{figure/lime_robustness_1.png}
 		
-		\tiny{Figure: Linear prediction task (logistic regression). Linear surrogate returns similar coefficients for similar points.}
+		\tiny{Figure: Linear prediction task (logistic regression). \\Linear surrogate returns similar coefficients for similar points.}
 		
 		\end{center}
 	\end{column}
@@ -280,7 +280,7 @@
 		\begin{center}
 	\includegraphics[width=0.6\textwidth]{figure/lime_robustness_2.png}
 	
-	\tiny{Figure: Circular prediction task (random forest). Linear surrogate returns different coefficients for similar points.}
+	\tiny{Figure: Circular prediction task (random forest). \\Linear surrogate returns different coefficients for similar points.}
 	
 	\end{center}
 \end{column}
@@ -297,8 +297,8 @@
 	\item The definition of superpixel has a large influence on the explanations. 
 	\item Furthermore, if superpixel are only slightly changed (adversarial attack), the definitions could still differ greatly.  
 \end{itemize}
-
-\textbf{Conclusion: LIME should only be used with great caution.}
+\vspace{0.5cm}
+\textbf{Conclusion: LIME should only be used with great caution!}
 
 \end{vbframe}
 
