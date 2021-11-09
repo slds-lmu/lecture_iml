@@ -141,24 +141,18 @@ shorten >=2pt,}
 	\begin{vbframe}{Why Interpretability?}
 		
 		\begin{itemize}
-			\item Machine Learning (ML) has a huge potential to aid the decision-making process in various scientific and business applications due to its predictive power.
+			\item Due to its predictive power, machine learning (ML) has a huge potential to aid the decision-making process in many applications.
 			\smallskip
-			\item ML models usually are intransparent black boxes, e.g., XGBoost, RBF SVM or DNNs.
+			\item ML models often are intransparent black boxes, e.g., XGBoost, RBF SVM, or NNs.
 			\begin{itemize}
-				\item[$\leadsto$] too complex to be understood by humans
+				\item[$\rightarrow$] too complex to be understood by humans.
 			\end{itemize}
 			\smallskip
-			\item The lack of explanation
-			\begin{enumerate}
-				\item hurts trust
-				\item creates barriers
-			\end{enumerate}  
-			
+			\item A lack in explanations diminishes trust in the model and creates barriers for adoption, especially in areas with critical decision-making consequences, e.g., medicine.
 			\smallskip
-		    \item[$\leadsto$] Harder to adapt for critical areas with decisions affecting human life (e.g., medicine or credits).
-			
-			%\smallskip
-			\item[$\leadsto$] Many disciplines with required trust rely on traditional models,\\ e.g., linear models, with less predictive performance.
+			\item Such disciplines often rely on traditional models,\\ e.g., linear models, with less predictive performance.
+			\smallskip
+			\item Interpretable machine learning (IML) aims to bridge the gap between interpretability and predictive performance.
 		\end{itemize}
 		
 	\end{vbframe}
@@ -168,163 +162,20 @@ shorten >=2pt,}
 	\begin{vbframe}{Brief History of Interpretability}
 		\begin{itemize}
 			\item 18th and 19th century: linear regression models (Gauss, Legendre, Quetelet)
-			\item 1940s: sensitivity analysis (SA), still used today
-			\item Middle of 20th century: Rule-based ML, incl. decision rules and decision trees
-			\item 2001: built-in feature importance measure of random forests
-			\item >2010: explainable AI (XAI) for deep learning
-			\item >2015: IML as an independent field of research 
-			\item 2018: GDPR requires explainability for some applications 
+			\medskip
+			\item 1940s: emergence of sensitivity analysis (SA).
+			\medskip
+			\item Middle of 20th century: Rule-based ML, incl. decision rules and decision trees.
+			\medskip
+			\item 2001: built-in feature importance measure of random forests.
+			\medskip
+			\item >2010: Explainable AI (XAI) for deep learning.
+			\medskip
+			\item >2015: IML as an independent field of research .
 		\end{itemize}
 	\end{vbframe}
 	
 	%-----------------------------------------------------------------------------------------------------------------------------
-	
-	\begin{vbframe}{When do We Need Interpretability?}
-		\begin{columns}
-			\begin{column}{0.6\textwidth}
-				\begin{itemize}
-					\item To \textbf{Justify} (and increase trust in models): investigate if and why biased, unexpected or discriminatory predictions were made.
-					\item To \textbf{Control}: debug models, identify and correct vulnerabilities and flaws.
-					\item To \textbf{Improve}: understanding why a prediction was made makes it easier to improve the model.
-					\item To \textbf{Discover}: learn new facts, gather information and gain insights.
-				\end{itemize}
-			\end{column}
-			\begin{column}{0.6\textwidth}  
-				\begin{center}
-					\begin{figure}
-						\includegraphics[width=0.58\textwidth]{figure/explain-to}
-					\end{figure}
-				\end{center}
-			\end{column}
-		\end{columns}
-	\end{vbframe}
-
-
-\begin{vbframe}{Why is Interpretability Important?}
-	
-	\begin{itemize}
-	    \item Machine learning is (mostly) about discovering patterns in data
-	    \item Unfortunately, it is not guaranteed that ML will identify the correct patterns
-	    
-	    \medskip
-	    \item We humans might not be able to discover patterns ML models discovered
-	    \begin{itemize}
-	        \item That's good for science or to get new insights
-	        \item That's bad in many practical application where unexpected behavior is not wanted
-	    \end{itemize}
-	    \medskip
-	    
-	    \item \alert{How can you check whether the model is correct in its inference?}
-	\end{itemize}
-	
-\end{vbframe}
-
-\begin{vbframe}{Clever Hans \footnote{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
-	
-	\centering
-	\includegraphics[width=0.6\textwidth]{figure/horse_without_label.PNG}
-	
-\end{vbframe}
-
-\begin{vbframe}{Clever Hans \footnote{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
-	
-	\centering
-	\includegraphics[width=0.6\textwidth]{figure/horse_with_label.PNG}
-	
-\end{vbframe}
-
-\begin{vbframe}{Clever Hans \footnote{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
-	
-	\centering
-	\includegraphics[width=0.6\textwidth]{figure/horse_map_with_label.PNG}
-	
-\end{vbframe}
-
-\begin{vbframe}{Clever Hans \footnote{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
-	
-	\centering
-	\includegraphics[width=0.6\textwidth]{figure/horse_map_without_label.PNG}
-	
-\end{vbframe}
-
-\begin{vbframe}{Clever Hans \footnote{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
-	
-	\centering
-	\includegraphics[width=0.6\textwidth]{figure/boats_maps.PNG}
-	
-\end{vbframe}
-
-\begin{vbframe}{COMPASS}
-
-    \begin{itemize}
-        \item Correctional Offender Management Profiling for Alternative Sanctions 
-        \item predict recidivism risk
-        \begin{itemize}
-            \item i.e., criminal re-offense after previous crime, resulting in jail booking
-            \item different risk levels: high risk, medium risk or low risk
-        \end{itemize}
-        \item evaluation based on a questionnaire the defendant has to answer
-    \end{itemize}	
-	
-\end{vbframe}
-
-\begin{vbframe}{COMPAS Model Analysis~\footnote{Larson et al. 2016}{https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm}}
-    
-    \centering
-    \includegraphics[width=0.7\textwidth]{figure/compass_black_white.PNG}
-	
-	$\leadsto$ Strong indication that the model is discriminating black defendants
-	
-\end{vbframe}
-
-\begin{vbframe}{Other Examples ML failed in}
-
-    \begin{itemize}
-        \item Credit and insurance scoring
-        
-        \item Medical applications
-        \begin{itemize}
-            \item Identification of diseases
-            \item Chance of recovering
-            \item Recommendations of treatments
-        \end{itemize}
-        
-        \item Crime predictions
-        
-        \item Rating job applications
-        
-        \item \ldots
-    \end{itemize}
-
-    
-    \bigskip
-
-    $\leadsto$ GDPR (aka DSGVO) requires that for some applications predictive models have to be explainable        
-	
-\end{vbframe}
-
-
-
-\begin{vbframe}{Adversarial Examples~\footnote{Goodfellow et al. 2016}{https://arxiv.org/pdf/1412.6572.pdf}}
-    
-    \centering
-    \includegraphics[width=0.7\textwidth]{figure/panda-airplane.pdf}
-	
-	$\leadsto$ ML Models might not capture human-like understanding.        
-	
-\end{vbframe}
-
-	
-\begin{vbframe}{Adversarial Noise~\footnote{Goodfellow et al. 2016}{https://arxiv.org/pdf/1412.6572.pdf}}
-    
-    \centering
-    \includegraphics[width=0.6\textwidth]{figure/adv-noise.pdf}
-	
-	$\leadsto$ \textbf{Adversarial Noise:} Noise that is imperceptible to \textbf{humans}\\ but results in incorrect classification results
-	
-\end{vbframe}
-
-<<<<<<< HEAD
 \begin{vbframe}{When do we need interpretability?}
 \begin{columns}
 \begin{column}{0.6\textwidth}
@@ -339,32 +190,154 @@ shorten >=2pt,}
 \begin{itemize}
   \item To \textbf{Justify} (and increase trust in models): investigate if and why biased, unexpected or discriminatory predictions were made.
   \item To \textbf{Control}: debug models, identify and correct vulnerabilities and flaws.
-  \item To \textbf{Improve}: understanding why a prediction was made makes it easier to improve the model.
+  \item To \textbf{Improve}: understanding why a prediction was made, makes it easier to improve the model.
   \item To \textbf{Discover}: learn new facts, gather information and gain insights.
 \end{itemize}
 \end{column}
-\begin{column}{0.6\textwidth}  %%<--- here
+\begin{column}{0.4\textwidth}  %%<--- here
  \vspace{0.5cm}
  \begin{center}
+ 
  \begin{figure}
-  \includegraphics[width=0.7\textwidth]{figure/explain-to}
-  \caption{Reasons for IML.}
+  \includegraphics[width=\textwidth]{figure/explain-to}
  \end{figure}
  \end{center}
 \end{column}
 \end{columns}
- \lz
-\tiny{Doshi-Velez, F., and Kim, B. (2017)}
-\tiny{Adadi, Amina, and Mohammed Berrada (2018)}
-=======
-\begin{vbframe}{Adversarial Examples~\footnote{Goodfellow et al. 2016}{https://arxiv.org/pdf/1412.6572.pdf}}
-    
-    \centering
-    \includegraphics[width=0.7\textwidth]{figure/adv-noise-2.pdf}
-	
->>>>>>> intro
+     \lz
+    \footnote[frame]{Doshi-Velez, F., \& Kim, B. (2017). Towards A Rigorous Science of Interpretable Machine Learning. arXiv: 1702.08608.}
+    \footnote[frame]{A. Adadi and M. Berrada, "Peeking Inside the Black-Box: A Survey on Explainable Artificial Intelligence (XAI)," in IEEE Access, vol. 6, pp. 52138-52160, 2018.}
 \end{vbframe}
 
+
+
+\begin{vbframe}{Why is Interpretability Important?}
+	
+	\begin{itemize}
+	    \item Machine learning is (mostly) about discovering patterns in data.
+	    \medskip
+	    \item Unfortunately, it is not guaranteed that ML will identify the correct patterns.
+	    
+	    \medskip
+	    \item We humans might not be able to discover patterns ML models discovered.
+	    \begin{itemize}
+	        \item Good for science or to get new insights.
+	        \item Bad in applications where unexpected behavior is not desired.
+	    \end{itemize}
+	    \medskip
+	    
+	    \item \alert{How can you check whether the model is correct in its inference?}
+	\end{itemize}
+	
+\end{vbframe}
+
+% \begin{vbframe}{Clever Hans \footnote{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
+	
+% 	\centering
+% 	\includegraphics[width=0.6\textwidth]{figure/horse_without_label.PNG}
+	
+% \end{vbframe}
+
+% \begin{vbframe}{Clever Hans \footnote{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
+	
+% 	\centering
+% 	\includegraphics[width=0.6\textwidth]{figure/horse_with_label.PNG}
+	
+% \end{vbframe}
+
+% \begin{vbframe}{Clever Hans \footnote{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
+	
+% 	\centering
+% 	\includegraphics[width=0.6\textwidth]{figure/horse_map_with_label.PNG}
+	
+% \end{vbframe}
+
+% \begin{vbframe}{Clever Hans \footnote{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
+	
+% 	\centering
+% 	\includegraphics[width=0.6\textwidth]{figure/horse_map_without_label.PNG}
+	
+% \end{vbframe}
+
+% \begin{vbframe}{Clever Hans \footnote{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
+	
+% 	\centering
+% 	\includegraphics[width=0.6\textwidth]{figure/boats_maps.PNG}
+	
+% \end{vbframe}
+
+% \begin{vbframe}{COMPASS}
+
+%     \begin{itemize}
+%         \item Correctional Offender Management Profiling for Alternative Sanctions 
+%         \item predict recidivism risk
+%         \begin{itemize}
+%             \item i.e., criminal re-offense after previous crime, resulting in jail booking
+%             \item different risk levels: high risk, medium risk or low risk
+%         \end{itemize}
+%         \item evaluation based on a questionnaire the defendant has to answer
+%     \end{itemize}	
+	
+% \end{vbframe}
+
+% \begin{vbframe}{COMPAS Model Analysis~\footnote{Larson et al. 2016}{https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm}}
+    
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{figure/compass_black_white.PNG}
+	
+% 	$\leadsto$ Strong indication that the model is discriminating black defendants
+	
+% \end{vbframe}
+
+% \begin{vbframe}{Examples ML failed in}
+
+%     \begin{itemize}
+%         \item Credit and insurance scoring
+        
+%         \item Medical applications
+%         \begin{itemize}
+%             \item Diagnosis
+%             \item Chance of recovery
+%             \item Treatment recommendations
+%         \end{itemize}
+        
+%         \item Crime predictions
+        
+%         \item Rating job applications
+        
+%         \item \ldots
+%     \end{itemize}
+
+    
+%     \bigskip
+
+%     $\leadsto$ GDPR (aka DSGVO) requires that for some applications predictive models have to be explainable        
+	
+% \end{vbframe}
+
+
+
+\begin{vbframe}{Motivation - Adversarial Examples}
+    
+    \begin{center}
+    \includegraphics[width=0.9\textwidth]{figure/panda-airplane.pdf}
+    \end{center}
+	\bigskip
+	
+	$\rightarrow$ ML Models might not capture human-like understanding.        
+    \footnote[frame]{Goodfellow, Ian \& Shlens, Jonathon \& Szegedy, Christian. (2014). Explaining and Harnessing Adversarial Examples. arXiv 1412.6572.}
+\end{vbframe}
+
+	
+\begin{vbframe}{Adversarial Noise}
+    \begin{center}
+    \includegraphics[width=0.8\textwidth]{figure/adv-noise.pdf}    \footnote[frame]{Goodfellow, Ian \& Shlens, Jonathon \& Szegedy, Christian. (2014). Explaining and Harnessing Adversarial Examples. arXiv 1412.6572.}
+    % https://arxiv.org/pdf/1412.6572.pdf
+	\end{center}
+	\normalsize
+	\bigskip
+	$\rightarrow$\textbf{Adversarial Noise:} Noise that is imperceptible to \textbf{humans}\\ but results in incorrect classification results.
+\end{vbframe}
 
 \endlecture
 \end{document}

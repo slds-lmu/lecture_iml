@@ -129,29 +129,33 @@ shorten >=2pt,}
 \input{../../latex-math/basic-ml}
 \newcommand{\titlefigure}{figure/open_blackbox}
 \newcommand{\learninggoals}{
-\item Interpretable Models}
+\item What are additive decomposition of prediction functions?
+\item Why are they useful?
+\item How do we obtain them?}
 
-\lecturechapter{Introduction and Background}
+\lecturechapter{Additive Decomposition}
 \lecture{Interpretable Machine Learning}
  
 \begin{vbframe}{High-Dimensional Model Representation}
 
 \begin{itemize}
+\itemsep2em
 \item
 A high-dimensional model representation (HDMR) decomposes the model into a sum of effect terms of increasing order:
 \begin{align*}
 \hat{f}(x) &= g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \\
 &\phantom{{}={}} + \;\dots\; + g_{\{1,\ldots,p\}}(x_1, \ldots,x_p)
 \end{align*}
+\item Univariate terms are referred to as first-order or main effects, bivariate terms as second-order effects, etc.
 \item The features need to be independent to make the HDMR unique.
 \item Different techniques to estimate an additive decomposition exist, e.g., repeated expectations (partial dependence / PD) or accumulated local effects (ALE).
 
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Additive Decomposition of a Prediction Function}
+\begin{vbframe}{High-Dimensional Model Representation}
 
-Consider the estimation via iterative expectations:
+Consider the estimation via iterative expectations (in the later chapters we will learn how to compute these expectations):
 \begin{align*}
  g_{\{0\}} &= \mathbb{E}_X\left[\widehat{f}(x)\right] \\
  g_{\{1\}}(x_1) &= \mathbb{E}_{X_{-1}}\left[\widehat{f}(x) \; \vert  \; X_1 \right] - g_{\{0\}} \\
@@ -164,11 +168,23 @@ Consider the estimation via iterative expectations:
 
 \end{vbframe}
 
+\begin{vbframe}{High-Dimensional Model Representation}
+
+\begin{itemize}
+\itemsep2em
+    \item Even if your goal is not to decompose the entire prediction function, it is helpful to keep in mind that a decomposition exists.
+    \item When interpreting a model, one is often interested in feature effects of various orders, e.g., first-order and second-order effects.
+    \item One may assume that the significance of effects decreases with increasing order, e.g., that the model can be approximated via first-order and second-order effects.
+    \item Do not confuse the outputs of interpretation methods such as the ICE or PD with the effect terms of the additive decomposition!
+    \\$\rightarrow$ A second-order effect is the sole interaction effect on the target after a constant effect or main effects have been removed.
+\end{itemize}
+\end{vbframe}
+
+
 \begin{vbframe}{Functional ANOVA}
 
-After $\hat{f}$ has been decomposed, we can conduct a functional analysis of variance (functional ANOVA / FANOVA):
 \begin{itemize}
-\item
+\item After the model has been decomposed one can analyze the variance of its constituent terms:
 \begin{align*}
 Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \right. \\
 &\phantom{{}={}} \left. + \;\dots\; + g_{\{1,\ldots,p\}}(x) \right]
