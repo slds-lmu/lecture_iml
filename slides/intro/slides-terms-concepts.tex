@@ -173,6 +173,7 @@ A saliency map is a heatmap indicating pixel influence on the prediction (e.g., 
 \item We use a practical definition of interpretability.
 Think back to the foundations of statistical modeling:  the linear regression model (LM). The LM, with its known equation of beta coefficients, represents a paradigm for statistical interpretability.
 \item It follows that it would be beneficial to create techniques that give us an interpretation similar to the one of an LM.
+
 \end{itemize}
 \end{vbframe}
 
@@ -180,10 +181,13 @@ Think back to the foundations of statistical modeling:  the linear regression mo
 
 
 \begin{vbframe}{Terms and Concepts}
+
+Methods from the field of IML can be organized in different dimensions, e.g.:
+
 	\begin{itemize}
 		\itemsep2em
 		\item Intrinsic versus model-agnostic interpretability.
-        \item Local versus global interpretations.
+        \item Global versus local interpretations.
 		\item Feature effects versus feature importance.
 		\item Explanation types: feature attribution, data attribution, counterfactual explanations
 		\item Fixed model analysis versus model refits.
@@ -249,7 +253,8 @@ Think back to the foundations of statistical modeling:  the linear regression mo
 		\textbf{Feature attribution:} Feature effect or importance.
 		\\
 		\smallskip
-		Parameter: feature $\rightarrow$ Evaluate: target
+		%Input: feature $\rightarrow$ Output: target 
+		Vary feature, inspect how target changes
 	
 	\item 
 		\textbf{Data attribution:} Data attribution identifies  training instances that are most responsible for a decision.
@@ -258,8 +263,9 @@ Think back to the foundations of statistical modeling:  the linear regression mo
 	   \textbf{Counterfactual Explanation:} 
 	   Counterfactual explanations are identify the smallest necessary change in an input to change the prediction to the desired output.
 	   \\
-		\smallskip
-		Parameter: target $\rightarrow$ Evaluate: feature
+		%\smallskip
+		%Input: target $\rightarrow$ Output: feature
+		%Vary target, identify how feature needs to be changed
 	  
 	\end{itemize}
 	
@@ -294,7 +300,7 @@ Think back to the foundations of statistical modeling:  the linear regression mo
 % \end{vbframe}
 
 
-\begin{vbframe}{Local versus Local}
+\begin{vbframe}{Global versus Local}
 Global interpretation methods explain the model behavior for the entire input space by considering all available observations:
 	\begin{itemize}
 		\item Permutation Feature Importance (PFI)
