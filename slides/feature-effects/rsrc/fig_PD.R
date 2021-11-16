@@ -1,8 +1,6 @@
 # PREREQ -----------------------------------------------------------------------
 
-source(textConnection(
-  readLines("slides/feature-effects/rsrc/figureICE.R")[c(1:63)]
-))
+source("slides/feature-effects/rsrc/feature_effect_helpers.R")
 
 # PLOT -------------------------------------------------------------------------
 

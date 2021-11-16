@@ -5,9 +5,7 @@ library(mlr3learners)
 library(paradox)
 library(mlr3tuning)
 library(ALEPlot)
-source(textConnection(
-  readLines("slides/feature-effects/rsrc/ale_grid.R")[10:22]
-))
+source("slides/feature-effects/rsrc/ale_dat.R")
 
 # DATA -------------------------------------------------------------------------
 

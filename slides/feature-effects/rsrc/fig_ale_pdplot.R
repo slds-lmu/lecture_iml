@@ -1,9 +1,7 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(ggplot2)
-source(textConnection(
-  readLines("slides/feature-effects/rsrc/ale_scatter.R")[1:20]
-))
+p = readRDS("slides/feature-effects/figure/ale_scatter.RDS")
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 # DATA -------------------------------------------------------------------------

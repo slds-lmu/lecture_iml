@@ -19,5 +19,6 @@ p = ggplot() +
   labs(x = expression(X[1]), y = expression(X[2])) + 
   ylim(c(-10,10))
 
+saveRDS(object = p, "slides/feature-effects/figure/ale_scatter.RDS")
 ggsave("slides/feature-effects/figure/ale_scatter.pdf", p, width = 5.5,
        height = 4)

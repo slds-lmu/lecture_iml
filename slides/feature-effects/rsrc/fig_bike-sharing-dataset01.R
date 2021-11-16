@@ -14,4 +14,4 @@ p1 = pdp$plot() +
   scale_y_continuous('Predicted number of bike rentals') +
   xlim(range(bike$temp))
 
-ggsave("slides/feature-effects/figure/pdpice_bike.jpg", p1)
+ggsave("slides/feature-effects/figure/bike-sharing-dataset01.png", p1)

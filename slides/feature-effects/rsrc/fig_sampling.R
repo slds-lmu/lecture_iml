@@ -57,8 +57,6 @@ p = ggplot(data = data, aes(x1, x2)) +
   geom_rug(data = data.frame(x1 = x1, x2 = x2), aes(x = x1), alpha = 0.25, sides = "b") +
   geom_point(data = data.const, aes(x1, x2), shape = 4, alpha = 0.5, col = "red") +
   facet_grid(~ method) +
-  #geom_point(data = data[data$x2 == min(data[data$method=="randomly sampled grid", "x2"]),], shape = 4, alpha = 0.5, col = "red") +
-  #geom_rug(aes(x = x1), col = "blue", sides = "b") +
   xlab("Feature"~X[S]) +
   ylab("Feature"~X[C]) +
   ggtitle("Grid points for"~X[S]~"(red) for highlighted observation (blue)")
@@ -66,7 +64,8 @@ p = ggplot(data = data, aes(x1, x2)) +
 
 ann_text = data.frame(x1 = max(x1), x2 = x2[ind], diff = max(diff(sort(x1))), #lab = "Text",
                       method = factor("equidistant grid", levels = levels(data$method)))
-p = p + geom_text(data = ann_text, aes(x = x1-diff/2, y = x2), nudge_y = -1, label = paste0("unrealistic?"), parse = F, col = "red") + # atop('unrealistic', 'values')
+p = p + 
+  geom_text(data = ann_text, aes(x = x1-diff/2, y = x2), nudge_y = -1, label = paste0("unrealistic?"), parse = F, col = "red") +
   geom_rect(data = ann_text, mapping = aes(ymax = x2 + 0.5, ymin = x2 - 0.5,
                                            xmax = x1 - 0.3, xmin = (x1-diff) + 0.3), alpha = 0, size = 0.5,
             colour = "red", fill = "red") +

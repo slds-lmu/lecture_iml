@@ -1,6 +1,7 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(ggplot2)
+library(patchwork)
 source("slides/feature-effects/rsrc/anova_bike.R")
 
 # DATA -------------------------------------------------------------------------

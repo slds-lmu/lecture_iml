@@ -3,7 +3,6 @@
 library(patchwork)
 library(ggplot2)
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
-source("slides/feature-effects/rsrc/helpers.R")
 source("slides/feature-effects/rsrc/anova_bike.R")
 
 # DATA -------------------------------------------------------------------------
@@ -17,6 +16,4 @@ p1 = H.global$plot() + ggtitle("Overall interactions")
 p2 = H.twoway$plot() + scale_x_continuous("2-way interaction strength") +
   ggtitle("2-way interactions with 'temp'")
 
-p = p1 + p2
-
-ggsave("slides/feature-effects/figure/h-statistic.pdf", p, width = 8, height = 3)
+ggsave("slides/feature-effects/figure/h-statistic.pdf", p1 + p2, width = 8, height = 3)
