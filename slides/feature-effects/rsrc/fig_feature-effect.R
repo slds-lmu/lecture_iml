@@ -1,6 +1,7 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(ggplot2)
+library(patchwork)
 theme_set(theme_bw())
 source("slides/feature-effects/rsrc/anova_bike.R")
 
@@ -13,10 +14,6 @@ mod = lm(mpg ~ cyl + drat + wt + gear + carb - 1, data = mtcars)
 d = as.data.frame(summary(mod)$coefficients)
 d$Var = paste("Feat.", 1:nrow(d))
 colnames(d)[2] = "sd"
-# one obs
-
-
-
 
 # PLOT -------------------------------------------------------------------------
 p1 = ice$plot() + xlab("Feature 1")
