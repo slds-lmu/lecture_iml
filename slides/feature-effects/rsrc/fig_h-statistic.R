@@ -7,8 +7,8 @@ source("slides/feature-effects/rsrc/anova_bike.R")
 
 # DATA -------------------------------------------------------------------------
 
-H.global = Interaction$new(pred.bike)
-H.twoway = Interaction$new(pred.bike, feature = "temp")
+H.global = Interaction$new(pred.bike, grid.size = 10)
+H.twoway = Interaction$new(pred.bike, feature = "temp", grid.size = 10)
 
 # PLOT -------------------------------------------------------------------------
 

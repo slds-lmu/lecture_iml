@@ -15,4 +15,4 @@ pdp2d_bike = pdp.2feature$plot() +
   geom_point(data = bike, mapping = aes(x = temp, y = hum), alpha = 0.5) +
   ylab("Humidity") + xlab("Temperature")
 
-ggsave("slides/feature-effects/figure/pdp2d_bike.pdf", pdp2d_bike)
+ggsave("slides/feature-effects/figure/pdp2d_bike.pdf", height = 4, width = 6, pdp2d_bike)
