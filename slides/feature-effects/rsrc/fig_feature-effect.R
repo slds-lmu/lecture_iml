@@ -27,4 +27,4 @@ p3 = ggplot(d, aes(x = reorder(Var, Estimate), y = Estimate)) +
   coord_flip() + xlab("Features") + ylab("Average Marginal Effect (AME)") +
   ggtitle("Global Effect (aggregated)", "AME (e.g., average slope)")
 
-ggsave("slides/feature-effects/figure/feature-effect.pdf", p1 + p2 + p3, height = 3.5, width = 9)
+ggsave("slides/feature-effects/figure/feature-effect.pdf", p1 + p2 + p3, height = 3, width = 9)
