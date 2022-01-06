@@ -27,17 +27,17 @@
         \bigskip
         \item Classes of models deemed interpretable:
         \begin{itemize}
-            %\item Linear regression models 
+            %\item Linear regression models
             \item (Generalized) linear models
             \item Generalized additive models
             \item Rule-based learning
             \item Model-based boosting / component-wise boosting
             \item ...
         \end{itemize}
-    \end{itemize}	
-	
+    \end{itemize}
+
 \end{vbframe}
-	
+
 \begin{vbframe}{Advantages}
 
     \begin{itemize}
@@ -46,8 +46,8 @@
         \item Since the models are often rather simple, training time is also fairly small.
         \item Many people are familiar with traditional models. This increases trust in the model, and facilitates communication about its results.
         \item It is easier to deploy simple models in practice. Implementations are available in many programming languages, and they are often also easy to implement from scratch.
-    \end{itemize}	
-	
+    \end{itemize}
+
 \end{vbframe}
 
 \begin{vbframe}{Disadvantages}
@@ -58,8 +58,8 @@
         \item If the wrong assumptions are made, interpretable models may have a bad predictive performance.
         \item The model may not even be capable of modeling highly complex data structures.
         \item A complex structure of an interpretable model may also be difficult to interpret, e.g., a linear model with hundreds of features and interactions.
-    \end{itemize}	
-	
+    \end{itemize}
+
 \end{vbframe}
 
 \begin{vbframe}{Further Comments}
@@ -72,8 +72,8 @@
         \item Interpretable models also have the potential for a high predictive performance, but require more knowledge and time spent on data preprocessing.
         \item However, one can assume a trade-off between interpretability and model performance which generally (but not always) holds.
         \item \textbf{Recommendation:} Always start with the most simple model that makes sense for your particular application. Gradually increase complexity, which will gradually lower interpretability and require additional interpretation methods. Choose the most simple, sufficient model (Occam's razor).
-    \end{itemize}	
-	
+    \end{itemize}
+
 \end{vbframe}
 
 
@@ -86,13 +86,14 @@
 \end{align*}
 
 \begin{itemize}
-\itemsep2em
+%\itemsep1em
 \item The model equation is identical across the entire feature space.
-\item The predictive power of LMs is determined by specifying the correct model structure.
-\item
-A polynomial regression model is an extension of the LM that includes higher order terms or interactions. This enables us to model non-linear data while making use of the entire arsenal of LM functionality.
-\item
-By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
+%\item The predictive power of LMs is determined by specifying the correct model structure.
+\item Polynomial regression extends the LM by non-linear effects and interactions.
+%A polynomial regression model is an extension of the LM that includes higher order terms or interactions.
+%This enables us to model non-linear data while making use of the entire arsenal of LM functionality.
+\item We can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
+%By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
 \item For higher order effects or interactions, beta coefficients cannot be interpreted in isolation.
 \item Note that for inference-based metrics (p-values, t-statistics, confidence intervals) to be valid, the error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2)$. It follows that $(y \vert x) \sim N(x^T \beta, \sigma^2)$.
 \item This restricts the usage of LMs in practice, as the distribution of the error term is a prior assumption about the data.
@@ -115,7 +116,7 @@ By knowing the model equation, we can exactly determine feature effects (e.g., b
 
 \begin{align*}
 g\left(\mathbb{E}_Y(Y \vert X)\right) &= X^T\beta \\
-\mathbb{E}_Y \left(Y \vert X\right) &= g^{-1}(X^T\beta) 
+\mathbb{E}_Y \left(Y \vert X\right) &= g^{-1}(X^T\beta)
 \end{align*}
 \begin{itemize}
 \setlength\itemsep{2em}
@@ -152,7 +153,7 @@ $$
 \item Makes GAMs much more adaptive, as model is more determined by the structure of the data instead of premade assumptions as in LMs and GLMs.
 \item We still need to specify the order and type of the component functions to be estimated, e.g., which interactions to include.
 \item The smoothing degree of each component function can be tuned to avoid overfitting. Regularization increases interpretability, as the interpretations drawn from the model can be transferred more easily to new data.
-\item Retains interpretability by keeping the additive model equation (as long as the component functions are interpretable). 
+\item Retains interpretability by keeping the additive model equation (as long as the component functions are interpretable).
 \item
 As the model equation is known, we can use similar interpretation methods as for LMs and GLMs, e.g., evaluating the estimated components that depend on the features of interest.
 \end{itemize}
@@ -175,9 +176,9 @@ As the model equation is known, we can use similar interpretation methods as for
 
 \begin{itemize}
 \setlength\itemsep{2em}
-\item 
+\item
 Boosting iteratively joins weak base learners to create a powerful ensemble model.
-\item 
+\item
 Idea: Combine boosting with interpretable base learners (e.g., single feature LM). The resulting ensemble is also interpretable.
 \item
 Consider two linear base learners $b_j(x, \Theta)$ and $b_j(x, \Theta^{\star})$ with the same type, but distinct parameter vectors $\Theta$ and $\Theta^{\star}$. They can be combined in a base learner of the same type:
@@ -214,7 +215,7 @@ $$
 %         \item The relationship between the predictor and the mean of $y$ is linear.
 %         \item iid observations
 %         \item Homoscedasticity (i.e., constant error variance)
-%         \end{itemize} 
+%         \end{itemize}
 %     \end{itemize}
 
 % \end{vbframe}
@@ -240,8 +241,8 @@ $$
 %         \item Binary feature: Either weight $\beta_i$ is active (1) or not (0).
 %         \item Categorical feature: One-hot-encoding of $L-1$ new features for $L$ categories
 %         \item Intercept $\beta_0$: reflects expected features values if features were standardised (0-mean, 1-stdev)
-%     \end{itemize}	
-    
+%     \end{itemize}
+
 %     Feature importance:
 %     \begin{itemize}
 %         \item t-statistic by the estimated weight scaled with its standard error\\ (i.e., less certain about the correct value)
@@ -251,19 +252,19 @@ $$
 
 % %------------------------------------------------------------------
 % %------------------------------------------------------------------
-	
+
 % \begin{vbframe}{Logistic Regression}
 
 %     $$P(y = 1) =\frac{1}{1 + \exp(-( \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p ))} $$
 
 %     \begin{itemize}
-%         \item Probabilistic \alert{classification} model 
-%         \item Typically, we set the threshold to $0.5$ to predict 
+%         \item Probabilistic \alert{classification} model
+%         \item Typically, we set the threshold to $0.5$ to predict
 %         \begin{itemize}
 %             \item Class 1 if $P(y=1) > 0.5$
 %             \item Class 0 if $P(y=1) \leq 0.5$
 %         \end{itemize}
-%     \end{itemize}	
+%     \end{itemize}
 
 % \end{vbframe}
 
@@ -279,9 +280,9 @@ $$
 %         \item Again linear in log odds-ratio
 %         \item[$\leadsto$] change by one unit changes the odds ratio by a \alert{factor} of $\exp(\beta_i)$.
 %         \medskip
-        
+
 %         \item Interpretation for different feature types is the same as for linear regression
-%     \end{itemize}	
+%     \end{itemize}
 
 % \end{vbframe}
 
@@ -293,7 +294,7 @@ $$
 %     \begin{itemize}
 %         \item Linear models are often too restrictive for many applications
 %     \end{itemize}
-    
+
 %     \medskip
 %     Non-Gaussian outputs via Generalized Linear Models (GLMs):
 %     $$g(\mathrm{E}_Y (y\mid x)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p$$
@@ -302,14 +303,14 @@ $$
 %         \item exponential family defining $\mathrm{E}_Y$ -- can be freely chosen
 %         \item weighted sum $X^\top W$
 %     \end{itemize}
-    
-%     \medskip 
-    
+
+%     \medskip
+
 %     Interaction effects via feature engineering:
 %     \begin{itemize}
 %         \item E.g., feature expansion: $\beta_{x_i,x_j} x_i \cdot x_j$
 %     \end{itemize}
-    
+
 % \end{vbframe}
 
 % %------------------------------------------------------------------
@@ -323,9 +324,9 @@ $$
 %         \item Categorization of features (i.e., intervals / buckets of feature values)
 %         \item GAMs:
 %     \end{itemize}
-    
+
 %     $$g(\mathrm{E}_Y (y\mid x)) = \beta_0 + f_1(x_1) + f_2(x_2) + \ldots + f_p(x_p)$$
-    
+
 %     \begin{itemize}
 %         \item instead of $\beta_i x_i$ use flexible functions $f_i(x_i)$ $\leadsto$ splines
 %     \end{itemize}
@@ -349,23 +350,23 @@ $$
 %      \node [treenode, draw=red] (a0) {$a_0$};
 %      \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
 %      \node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
-     
+
 %      \node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
 %      \node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
-     
+
 %      \node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
 %      \node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
-     
+
 %      \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
 %      \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
-     
+
 %      \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};;
 %      \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
-     
-          
+
+
 %      \path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};;
 %      \path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
-     
+
 %   \end{tikzpicture}
 
 % \end{column}
@@ -442,7 +443,7 @@ $$
 
 \begin{itemize}
 \setlength\itemsep{1em}
-\item 
+\item
 Decision rules follow a general structure: IF the conditions are met, THEN make a certain prediction.
 \item Although a single decision rule is very intelligibile, a large collection of decision rules might not be. An interpretable rule-based model should therefore be based on as few rules as possible.
 \item Descripte Rule Discovery (DRD) is based on mining databases for frequent item sets, and converting these into a set of decision rules.
@@ -469,7 +470,7 @@ DRD is not suited to create a model that makes predictions on unseen data.
 \begin{columns}
   \begin{column}{0.6\textwidth}
       \begin{center}
-        \includegraphics[width = \textwidth]{figure/rpart_plot.png}     
+        \includegraphics[width = \textwidth]{figure/rpart_plot.png}
       \end{center}
   \end{column}
   \begin{column}{0.7\textwidth}
@@ -482,7 +483,7 @@ DRD is not suited to create a model that makes predictions on unseen data.
 
 
 %     \begin{vbframe}{Bike Rentals (Regression)}
-        
+
 %         \begin{itemize}
 %             \item Target: number of rented bikes
 %             \item Source: bicycle rental company Capital-Bikeshare in Washington D.C.,
@@ -492,29 +493,29 @@ DRD is not suited to create a model that makes predictions on unseen data.
 %                 \item season: spring, summer, fall or winter.
 %                 \item holiday or not.
 %                 \item working day or weekend
-%                 \item weather situation on that day 
+%                 \item weather situation on that day
 %                 \item temperature
 %             \end{itemize}
 %         \end{itemize}
-        
+
 %     \end{vbframe}
-    
+
 %     \begin{vbframe}{Regression on Bike Rentals}
-        
+
 %         \centering
-%         \includegraphics[width=0.55\textwidth]{figure/lin_bikesharing.png}        
+%         \includegraphics[width=0.55\textwidth]{figure/lin_bikesharing.png}
 
 %     \end{vbframe}
-    
+
 %     \begin{vbframe}{Decision Tree on Bike Rentals}
-        
+
 %         \centering
-%         \includegraphics[width=0.55\textwidth]{figure/dt_bike_sharing.png}        
+%         \includegraphics[width=0.55\textwidth]{figure/dt_bike_sharing.png}
 
 %     \end{vbframe}
-    
+
 %     \begin{vbframe}{Risk Factors for Cervical Cancer (Classification)}
-        
+
 %         \begin{itemize}
 %             \item Target: patient will get cancer or not?
 %             \item Reference: \footnote{Fernandes et al. 2017, \url{https://link.springer.com/chapter/10.1007/978-3-319-58838-4_27}}
@@ -531,24 +532,24 @@ DRD is not suited to create a model that makes predictions on unseen data.
 %                 \item Intrauterine device yes or no (IUD)
 %             \end{itemize}
 %         \end{itemize}
-        
+
 %     \end{vbframe}
-	
+
 % 	\begin{vbframe}{Logistic Regression on  Cancer (Classification)}
-        
+
 %         \centering
-%         \includegraphics[width=0.55\textwidth]{figure/lin_cancer.png}     
-        
+%         \includegraphics[width=0.55\textwidth]{figure/lin_cancer.png}
+
 %     \end{vbframe}
-	
+
 % 	\begin{vbframe}{Decision Tree on  Cancer (Classification)}
-        
+
 %         \centering
-%         \includegraphics[width=0.55\textwidth]{figure/dt_cancer.png}     
+%         \includegraphics[width=0.55\textwidth]{figure/dt_cancer.png}
 %     \end{vbframe}
-	
+
 % 	\begin{vbframe}{Predictive Performance}
-        
+
 %         \begin{itemize}
 %             \item Bike Rental (normalized MSE):
 %             \begin{itemize}
@@ -556,23 +557,23 @@ DRD is not suited to create a model that makes predictions on unseen data.
 %                 \item Decision Tree: 0.0328
 %                 \item GLM: 0.0244
 %             \end{itemize}
-            
+
 %             \medskip
 %             \item Cancer (Accuracy)
 %             \begin{itemize}
 %                 \item Logistic Regression: 0.58
 %                 \item Decision Tree: 0.62
 %             \end{itemize}
-            
+
 %             \smallskip
-%             \item[$\leadsto$] although easy to interpret, not really well-performing 
+%             \item[$\leadsto$] although easy to interpret, not really well-performing
 %             \begin{itemize}
 %                 \item Boosting: 0.79
 %             \end{itemize}
 %         \end{itemize}
-        
+
 %     \end{vbframe}
-	
+
 
 \endlecture
 \end{document}
