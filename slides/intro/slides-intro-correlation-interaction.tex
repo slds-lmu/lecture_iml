@@ -1,0 +1,135 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\begin{document}
+
+\newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\learninggoals}{
+\item What is interpretable machine learning (IML) and Explainable Artificial Intelligence (XAI)?
+\item What is interpretability?
+\item What are the fundamental terms and concepts of IML?}
+
+\lecturechapter{Fundamental Terms and Concepts}
+\lecture{Interpretable Machine Learning}
+%
+% \begin{vbframe}{Interpretable ML}
+% \begin{itemize}
+% %\itemsep2em
+% \item ML algorithms algorithmically train predictive models with no or little pre-specifications and assumptions about the data.
+% \item Several algorithms such as decision tree learning create interpretable models. However, most algorithms create models which can be considered a black box.
+% \item We use the term black box, although the internal workings of the model are in fact accessible, but too complex for the human mind to comprehend.
+% \end{itemize}
+% \end{vbframe}
+%
+% \begin{vbframe}{Explainable AI}
+% \begin{itemize}
+% %\itemsep1em
+% \item IML is often used synonymously with Explainable AI (XAI).
+% \item There is no unified standard for these terminologies. We find that XAI often is specifically concerned with the interpretation of neural networks, whereas IML is used as an encompassing term for everything related to model interpretability.
+% \item The nature of (deep) neural networks allows for powerful model-specific interpretation techniques, e.g., layer-wise relevance propagation (LRP) and saliency maps.
+% \item Also covering model-specific NN methods would exceed the timeframe of this lecture. This lecture will concentrate on model-agnostic techniques, as they are both versatile, and receive a lot of attention in industry and academia.
+% \end{itemize}
+% \end{vbframe}
+%
+% \begin{vbframe}{XAI - Saliency Maps}
+%
+% A saliency map is a heatmap indicating pixel influence on the prediction (e.g., a classification of an image): \footnote[frame]{Mundhenk, T., Chen, B.Y., Friedland, G. (2019). Efficient Saliency Maps for Explainable AI. ArXiv, abs/1911.11293.
+% }
+% \medskip
+% \begin{figure}
+% \includegraphics[width = 0.8 \textwidth]{figure/saliencymap}
+% \end{figure}
+% \end{vbframe}
+%
+% \begin{vbframe}{What is Interpretability?}
+% \begin{itemize}
+% %\itemsep1em
+% \item There is no scientific consensus on the definition of interpretability.
+% \item We need to differentiate between interpretations of a model or reality. The latter is distorted by all modeling fallacies involved in predictive modeling, e.g., data quality, under- and overfitting, or model extrapolations.
+% \item We use a practical definition of interpretability.
+% Think back to the foundations of statistical modeling:  the linear regression model (LM). The LM, with its known equation of beta coefficients, represents a paradigm for statistical interpretability.
+% \item It follows that it would be beneficial to create techniques that give us an interpretation similar to the one of an LM.
+%
+% \end{itemize}
+% \end{vbframe}
+
+
+\begin{vbframe}{Correlation vs. Interaction}
+\begin{itemize}
+%\itemsep2em
+\item A lot of problems in IML arise due to correlated features and feature interactions. One needs to be careful not to confuse them.
+\item Correlated features imply that the joint probability density function (PDF) of a set of $p$ features is not a product of their marginal PDFs, i.e., $\text{PDF}(x_1, \dots, x_p) \neq \text{PDF}(x_1) \cdot \ldots \cdot \text{PDF}(x_p)$.
+\item
+Many interpretation methods rely on model evaluations with recombined feature values. If the training data is correlated, these recombinations are located in low-training-density areas of the feature space.
+\item This results in model extrapolations.
+% \item An interaction is a product term between features inside the prediction function. As such, interactions are detached from the constitution of the data, i.e., regardloss of the degree of correlation, the effect of a feature on the target will depend on the values of one or multiple other features.
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Correlation}
+
+1000 randomly sampled observations with positive correlation between $x_1$ and $x_2$:
+\medskip
+\begin{figure}
+\includegraphics[width = 0.7\textwidth]{figure/correlation}
+\end{figure}
+\end{vbframe}
+
+\begin{vbframe}{Interaction}
+\begin{itemize}
+%\itemsep2em
+\item An interaction concerns the structure of the model itself.
+\item With interactions present, the effect of a feature on the prediction depends on the values of others, e.g., $\widehat{f}(x) = x_1 x_2$.
+\item Although correlation concerns the data and interactions the model, they are often connected as correlations in the training data are identified by the learning algorithm.
+\item Interaction terms are especially difficult to identify and analyze, as the number of potential interactions increases exponentially with the number of features.
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Interaction}
+
+Shape of the prediction function for a two-way interaction:
+
+\begin{figure}
+\includegraphics[width = 0.5\textwidth]{figure/interaction}
+\end{figure}
+\end{vbframe}
+
+
+\begin{vbframe}{Extrapolation}
+\begin{itemize}
+%\itemsep1em
+\item Predictions of an ML model in regions with a low density of training points are subject to a high variance.
+\item Essentially we are interested in the prediction uncertainty, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty. Unfortunately, virtually no ML models are capable of quantifying prediction uncertainty.
+\item There is no consensus definition of when a model extrapolates and to what degree. Furthermore, the severity of the problem depends on the model itself. Some models might extrapolate more reliably than others.
+\item Theoretically, we could use the training density as a proxy. However, density estimation in many dimensions is often infeasible.
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Pitfalls of Interpretation Methods}
+\begin{itemize}
+%\itemsep1em
+\item Many methods in IML are theoretically defined for uncorrelated features, e.g., the PD or the PFI.
+\item In practice, the features are usually correlated, but methods are applied regardless of potential misinterpretations.
+\item Many people call for a more careful approach to conduct model interpretations, either by using intrinsically interpretable models (Rudin, 2019), or by avoiding feature permutations (Hooker, 2021).
+\item There are many potential pitfalls to consider when interpreting ML models (Molnar, 2021).
+\\
+$\rightarrow$ Know the theory and be careful!
+
+\footnote[frame]{Molnar, Christoph \& König, Gunnar \& Herbinger, Julia \& Freiesleben, Timo \& Dandl, Susanne \& Scholbeck, Christian \& Casalicchio, Giuseppe \& Grosse-Wentrup, Moritz \& Bischl, Bernd. (2020). Pitfalls to Avoid when Interpreting Machine Learning Models.}
+\footnote[frame]{Rudin, C. Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. Nat Mach Intell 1, 206–215 (2019).}
+\footnote[frame]{Hooker, Giles \& Mentch, Lucas \& Zhou, Siyu. (2021). Unrestricted permutation forces extrapolation: variable importance requires at least one more model, or there is no free variable importance. Statistics and Computing. 31. 10.1007/s11222-021-10057-z.}
+\end{itemize}
+
+\end{vbframe}
+
+\endlecture
+\end{document}
