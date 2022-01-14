@@ -21,7 +21,7 @@
 \lecturechapter{Marginal Effects}
 \lecture{Interpretable Machine Learning}
 
-\begin{vbframe}{Interpretations of Linear Models}
+\begin{frame}{Interpretations of Linear Models}
 
 \begin{itemize}
 \itemsep2em
@@ -33,9 +33,9 @@ y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
 \item Default interpretations correspond to $\Delta x_1 = 1$, i.e., $\Delta y = \beta$.
 \item All interpretations are done ceteris paribus, i.e., all remaining features are kept constant.
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Interpretations of Polynomial Models}
+\begin{frame}{Interpretations of Polynomial Models}
 
 
 \begin{itemize}
@@ -50,9 +50,9 @@ y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1, x_2 + \epsil
 \item The marginal effect (ME) allows us to determine a feature effect nonetheless.
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Marginal Effects}
+\begin{frame}{Marginal Effects}
 
 \begin{itemize}
 \itemsep2em
@@ -76,9 +76,9 @@ fME_j(x, h_j) = f(x_1, \dots, x_j + h_j, \dots, x_p) - f(x)
 fME_j(x, h_j) = 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1
 \end{equation*}
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Derivative versus Forward Difference}
+\begin{frame}{Derivative versus Forward Difference}
 
 \begin{itemize}
 \itemsep2em
@@ -86,15 +86,15 @@ fME_j(x, h_j) = 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1
 \item The fME is better suited for non-linear prediction functions. It essentially corresponds to a movement on the prediction function, indicating changes in predicted outcome regardless of the function's shape.
 \item However, with both variants, we lose information about the prediction function along the finite difference.
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Derivative versus Forward Difference}
+\begin{frame}{Derivative versus Forward Difference}
 \begin{figure}
   \includegraphics[width = 0.65\textwidth]{figure_man/derivative_me_error.png}
 \end{figure}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Additive Recovery}
+\begin{frame}{Additive Recovery}
 
 \begin{itemize}
 \itemsep2em
@@ -107,22 +107,10 @@ fME_1(x, h_1) &= ah_1
 \item The ME removes effects of other features that are linked additively, regardless of how many remaining features exist, and their effect structure.
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Model-Agnostic Applicability}
-
-\begin{itemize}
-\itemsep2em
-\item MEs are traditionally used to interpret parametric models such as GLMs. However, both dME and fME can be used as model-agnostic interpretation tools for non-parametric models. As the fME is better suited for non-linear prediction functions, it is the natural choice for black box ML models.
-\item The fME essentially correspond to an exploration of the prediction function. We can also use multivariate changes in feature values to explore the prediction surface in various directions simultaneously.
-\item One needs to keep in mind that the shape of the prediction function may vary considerably along the forward difference, i.e., an fME with half the step size may not result in half the fME.
-\end{itemize}
-
-\end{vbframe}
-
-
-\begin{vbframe}{Model-Agnostic Applicability}
+\begin{frame}{Model-Agnostic Applicability}
 
 \begin{itemize}
 \itemsep2em
@@ -131,7 +119,19 @@ fME_1(x, h_1) &= ah_1
 \item One needs to keep in mind that the shape of the prediction function may vary considerably along the forward difference, i.e., an fME with half the step size may not result in half the fME.
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
+
+
+\begin{frame}{Model-Agnostic Applicability}
+
+\begin{itemize}
+\itemsep2em
+\item MEs are traditionally used to interpret parametric models such as GLMs. However, both dME and fME can be used as model-agnostic interpretation tools for non-parametric models. As the fME is better suited for non-linear prediction functions, it is the natural choice for black box ML models.
+\item The fME essentially correspond to an exploration of the prediction function. We can also use multivariate changes in feature values to explore the prediction surface in various directions simultaneously.
+\item One needs to keep in mind that the shape of the prediction function may vary considerably along the forward difference, i.e., an fME with half the step size may not result in half the fME.
+\end{itemize}
+
+\end{frame}
 
 
 

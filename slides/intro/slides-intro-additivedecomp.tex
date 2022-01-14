@@ -20,24 +20,27 @@
 \lecturechapter{Additive Decomposition}
 \lecture{Interpretable Machine Learning}
  
-\begin{vbframe}{High-Dimensional Model Representation}
+\begin{frame}{High-Dimensional Model Representation}
 
 \begin{itemize}
-\itemsep2em
+\itemsep1em
 \item
 A high-dimensional model representation (HDMR) decomposes the model into a sum of effect terms of increasing order:
 \begin{align*}
 \hat{f}(x) &= g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \\
 &\phantom{{}={}} + \;\dots\; + g_{\{1,\ldots,p\}}(x_1, \ldots,x_p)
 \end{align*}
-\item Univariate terms are referred to as first-order or main effects, bivariate terms as second-order effects, etc.
+\item Univariate terms $\hat = $ first-order or main effects, bivariate terms as second-order effects, etc.
 \item The features need to be independent to make the HDMR unique.
-\item Different techniques to estimate an additive decomposition exist, e.g., repeated expectations (partial dependence / PD) or accumulated local effects (ALE).
-
+\item Different techniques to estimate an additive decomposition exist, e.g., 
+		\begin{itemize}
+			\item repeated expectations (partial dependence / PD) 
+			\item  accumulated local effects (ALE).
+		\end{itemize}
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{High-Dimensional Model Representation}
+\begin{frame}{High-Dimensional Model Representation}
 
 Consider the estimation via iterative expectations (in the later chapters we will learn how to compute these expectations):
 \begin{align*}
@@ -50,9 +53,9 @@ Consider the estimation via iterative expectations (in the later chapters we wil
  &\phantom{{}={}} - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
 \end{align*}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{High-Dimensional Model Representation}
+\begin{frame}{High-Dimensional Model Representation}
 
 \begin{itemize}
 \itemsep2em
@@ -62,10 +65,10 @@ Consider the estimation via iterative expectations (in the later chapters we wil
     \item Do not confuse the outputs of interpretation methods such as the ICE or PD with the effect terms of the additive decomposition!
     \\$\rightarrow$ A second-order effect is the sole interaction effect on the target after a constant effect or main effects have been removed.
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Functional ANOVA}
+\begin{frame}{Functional ANOVA}
 
 \begin{itemize}
 \item After the model has been decomposed one can analyze the variance of its constituent terms:
@@ -78,6 +81,12 @@ Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_
 Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}}\right] + Var\left[g_{\{1\}}(x_1)\right] + Var\left[g_{\{2\}}(x_2)\right] \\
 &\phantom{{}={}} + Var\left[g_{\{1, 2\}}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\{1,\ldots,p\}}(x)\right]
 \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Functional ANOVA}
+
+\begin{itemize}
 \item Dividing by the prediction variance results in the fraction of variance explained by each term:
 \begin{align*}
 1 &= \frac{Var\left[g_{\{0\}}\right]}{\predvar} + \frac{Var\left[g_{\{1\}}(x_1)\right]}{\predvar} + \frac{Var\left[g_{\{2\}}(x_2)\right]}{\predvar} \\
@@ -90,7 +99,7 @@ S_j = \frac{Var\left[g_{\{j\}}(x_j)\right]}{Var\left[\hat{f}(x)\right]}
 $$
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
 
 \endlecture

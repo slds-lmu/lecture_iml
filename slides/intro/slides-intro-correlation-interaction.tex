@@ -1,3 +1,4 @@
+%TODO: Chapter needs to be improved a lot
 \documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
 
 \usepackage{../../style/lmu-lecture}
@@ -13,23 +14,22 @@
 
 \newcommand{\titlefigure}{figure/open_blackbox}
 \newcommand{\learninggoals}{
-\item What is interpretable machine learning (IML) and Explainable Artificial Intelligence (XAI)?
-\item What is interpretability?
-\item What are the fundamental terms and concepts of IML?}
+\item Understand the feature correlations and interactions
+\item What are general pitfalls of interpretation methods?}
 
-\lecturechapter{Fundamental Terms and Concepts}
+\lecturechapter{General Pitfalls}
 \lecture{Interpretable Machine Learning}
 %
-% \begin{vbframe}{Interpretable ML}
+% \begin{frame}{Interpretable ML}
 % \begin{itemize}
 % %\itemsep2em
 % \item ML algorithms algorithmically train predictive models with no or little pre-specifications and assumptions about the data.
 % \item Several algorithms such as decision tree learning create interpretable models. However, most algorithms create models which can be considered a black box.
 % \item We use the term black box, although the internal workings of the model are in fact accessible, but too complex for the human mind to comprehend.
 % \end{itemize}
-% \end{vbframe}
+% \end{frame}
 %
-% \begin{vbframe}{Explainable AI}
+% \begin{frame}{Explainable AI}
 % \begin{itemize}
 % %\itemsep1em
 % \item IML is often used synonymously with Explainable AI (XAI).
@@ -37,9 +37,9 @@
 % \item The nature of (deep) neural networks allows for powerful model-specific interpretation techniques, e.g., layer-wise relevance propagation (LRP) and saliency maps.
 % \item Also covering model-specific NN methods would exceed the timeframe of this lecture. This lecture will concentrate on model-agnostic techniques, as they are both versatile, and receive a lot of attention in industry and academia.
 % \end{itemize}
-% \end{vbframe}
+% \end{frame}
 %
-% \begin{vbframe}{XAI - Saliency Maps}
+% \begin{frame}{XAI - Saliency Maps}
 %
 % A saliency map is a heatmap indicating pixel influence on the prediction (e.g., a classification of an image): \footnote[frame]{Mundhenk, T., Chen, B.Y., Friedland, G. (2019). Efficient Saliency Maps for Explainable AI. ArXiv, abs/1911.11293.
 % }
@@ -47,9 +47,9 @@
 % \begin{figure}
 % \includegraphics[width = 0.8 \textwidth]{figure/saliencymap}
 % \end{figure}
-% \end{vbframe}
+% \end{frame}
 %
-% \begin{vbframe}{What is Interpretability?}
+% \begin{frame}{What is Interpretability?}
 % \begin{itemize}
 % %\itemsep1em
 % \item There is no scientific consensus on the definition of interpretability.
@@ -59,31 +59,31 @@
 % \item It follows that it would be beneficial to create techniques that give us an interpretation similar to the one of an LM.
 %
 % \end{itemize}
-% \end{vbframe}
+% \end{frame}
 
 
-\begin{vbframe}{Correlation vs. Interaction}
+\begin{frame}{Correlation vs. Interaction}
 \begin{itemize}
 %\itemsep2em
-\item A lot of problems in IML arise due to correlated features and feature interactions. One needs to be careful not to confuse them.
+\item Correlated (or dependent) features and feature interactions can cause misleading explanations. %One needs to be careful not to confuse them.
 \item Correlated features imply that the joint probability density function (PDF) of a set of $p$ features is not a product of their marginal PDFs, i.e., $\text{PDF}(x_1, \dots, x_p) \neq \text{PDF}(x_1) \cdot \ldots \cdot \text{PDF}(x_p)$.
 \item
-Many interpretation methods rely on model evaluations with recombined feature values. If the training data is correlated, these recombinations are located in low-training-density areas of the feature space.
-\item This results in model extrapolations.
+Many interpretation methods rely on varying feature values and may create data points that are out-of-distribution or located in low-density regions if features are correlated.\\
+$\leadsto$ May produce biased explanations that rely on predictions where the model extrapolated.
 % \item An interaction is a product term between features inside the prediction function. As such, interactions are detached from the constitution of the data, i.e., regardloss of the degree of correlation, the effect of a feature on the target will depend on the values of one or multiple other features.
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Correlation}
+\begin{frame}{Correlation vs. Interaction}
 
 1000 randomly sampled observations with positive correlation between $x_1$ and $x_2$:
 \medskip
 \begin{figure}
 \includegraphics[width = 0.7\textwidth]{figure/correlation}
 \end{figure}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Interaction}
+\begin{frame}{Correlation vs. Interaction}
 \begin{itemize}
 %\itemsep2em
 \item An interaction concerns the structure of the model itself.
@@ -91,19 +91,19 @@ Many interpretation methods rely on model evaluations with recombined feature va
 \item Although correlation concerns the data and interactions the model, they are often connected as correlations in the training data are identified by the learning algorithm.
 \item Interaction terms are especially difficult to identify and analyze, as the number of potential interactions increases exponentially with the number of features.
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Interaction}
+\begin{frame}{Correlation vs. Interaction}
 
 Shape of the prediction function for a two-way interaction:
 
 \begin{figure}
 \includegraphics[width = 0.5\textwidth]{figure/interaction}
 \end{figure}
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Extrapolation}
+\begin{frame}{Extrapolation}
 \begin{itemize}
 %\itemsep1em
 \item Predictions of an ML model in regions with a low density of training points are subject to a high variance.
@@ -112,9 +112,9 @@ Shape of the prediction function for a two-way interaction:
 \item Theoretically, we could use the training density as a proxy. However, density estimation in many dimensions is often infeasible.
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Pitfalls of Interpretation Methods}
+\begin{frame}{Pitfalls of Interpretation Methods}
 \begin{itemize}
 %\itemsep1em
 \item Many methods in IML are theoretically defined for uncorrelated features, e.g., the PD or the PFI.
@@ -129,7 +129,7 @@ $\rightarrow$ Know the theory and be careful!
 \footnote[frame]{Hooker, Giles \& Mentch, Lucas \& Zhou, Siyu. (2021). Unrestricted permutation forces extrapolation: variable importance requires at least one more model, or there is no free variable importance. Statistics and Computing. 31. 10.1007/s11222-021-10057-z.}
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
 \endlecture
 \end{document}
