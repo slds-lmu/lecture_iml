@@ -23,7 +23,7 @@
 
 \begin{frame}{Feature Effects}
 
-For a LM without interactions, the effect of a feature $x_j$ is quantified by its associated coefficient $\hat\beta_j$ and does not vary across observations $\xi$:
+LM without interaction quantifies effect of $x_j$ via coefficient $\hat\beta_j$ (constant across all observations $\xi$):
 
 %the prediction of any observation $\xi$ is %can be expressed by %explained by its marginal feature effects
 %prediction of an observation $\xi$ can be explained by the individual main effects, e.g.:
@@ -38,8 +38,8 @@ $$\fh(\xi) = \hat\beta_0 + x^{(i)}_1\hat\beta_1 + \dots + x^{(i)}_p\hat\beta_p.$
 
 %\lz
 \textbf{Example}: %Visualizing the marginal effect of a LM (left) and a GAM (right) with a single feature (temperature) to predict the number of bike rentals.
-The feature effect of a LM (left) or GAM (right) visualizes the relationship (i.e., marginal effect) of a single feature (here: temperature) on the prediction (here: number of bike rentals) while ignoring all other features.
-For the GAM, the linear terms $x_j\hat\beta_j$ are replaced by more flexible non-linear functions $f_j(x_j)$ estimated via splines.
+Feature effect of LM (left) visualizes relationship of a single feature (here: temperature) on prediction (here: number of bike rentals) while ignoring all other features.
+GAM (right) replaces linear terms $x_j\hat\beta_j$ of LM by non-linear functions $f_j(x_j)$ estimated via splines.
 %Marginal effects of a LM with features temperature (\texttt{temp}) and \texttt{season} to predict the number of bike rentals (\texttt{cnt}).
 
 \centering
@@ -111,21 +111,21 @@ $\xrightarrow[]{\text{aggregate}}$ \hspace{2px} Global (number)
 %\lz
 \begin{columns}[T]
 \begin{column}{0.18\textwidth} % 0.2 4.26cm
-\includegraphics[page=1, trim=0cm 0.35cm 4.53cm 0.35cm, clip, width=\textwidth]{figure_man/ice_plot_demo}
+\includegraphics[page=1, trim=0cm 0.35cm 4.53cm 0.35cm, clip, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.82\textwidth}
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values from the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing values from features addressed by the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
-Partition each observation $\xi$ into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
+Partition $\xi$ into $\xi_S$ and $\xi_C$ containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
 \lz
 
-Individual conditional expectation (ICE) curves visualize how the model prediction of individual observations $\xi$ change by varying the feature values indexed by $S$ while keeping all other features indexed by $C$ fixed:
+ICE curves visualize how prediction of an observation $\xi$ changes by varying its feature values in $S$ while keeping all other features in $C$ fixed:
 %by replacing the feature values $\xv_S^{(i)}$ with other values $\xv_S$ while keeping all other features in $\xi_C$ fixed:
 %by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed:
 $$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S, \xi_C)$$
 
-Here, $\fh_{S}^{(i)}(\xv_S)$ refers to the prediction of the $i$-th observation in which feature values indexed by $S$ were replaced with $\xv_S$.
+$\fh_{S}^{(i)}(\xv_S)$ is prediction of $i$-th observation where $\xi_S$ was replaced by $\xv_S$.
 
 \textbf{Note:} In practice, $\xv_S$ consists of one or two features.
 
@@ -170,140 +170,136 @@ Here, $\fh_{S}^{(i)}(\xv_S)$ refers to the prediction of the $i$-th observation 
 % \begin{frame}{Individual Conditional Expectation (ICE)}
 %
 % \begin{columns}[T]
-% \begin{column}{0.45\textwidth}
-% \includegraphics[page=1, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+% \begin{column}{0.4\textwidth}
+% \includegraphics[page=1, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 % \end{column}
 % \begin{column}{0.55\textwidth}
 %
 % \end{column}
 % \end{columns}
-% \vspace*{\topsep}
+% %\vspace*{\topsep}
 %
 % aa
 % \end{frame}
 
-
-\begin{frame}{Individual Conditional Expectation (ICE)}
-
-
-
-\end{frame}
-
 \begin{frame}{Individual Conditional Expectation (ICE)}
 
 \begin{columns}[T]
-\begin{column}{0.45\textwidth}
-\includegraphics[page=2, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\begin{column}{0.4\textwidth}
+\includegraphics[page=2, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
 
 \end{column}
 \end{columns}
-\vspace*{\topsep}
+%\vspace*{\topsep}
 
 \textbf{Grid points:}
 
 For the $i$-th observation, we sample grid values $x_S^*$ (here: $x_S^* \in \{1, 2, 3\}$) along the feature of interest $x_S$ (here: $S = 1$) and replace the original feature value of the $i$-th observation by these grid values. \newline
 $\Rightarrow$ We obtain new artificial data points for the $i$-th observation.
 
+\end{frame}
 
-\framebreak
+\begin{frame}{Individual Conditional Expectation (ICE)}
 
 \begin{columns}[T]
-\begin{column}{0.45\textwidth}
-\includegraphics[page=3, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\begin{column}{0.4\textwidth}
+\includegraphics[page=3, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=1, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=1, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
-\vspace*{\topsep}
+%\vspace*{\topsep}
 
 \textbf{Predict and visualize:}
 
 For each artificially created data point of the $i$-th observation, we plot its prediction $\fh_{S}^{(i)}(x_S^*)$ vs. the corresponding grid value $x_S^*$, here $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}.$$
 
+\end{frame}
 
-\framebreak
+\begin{frame}{Individual Conditional Expectation (ICE)}
 
 \begin{columns}[T]
-\begin{column}{0.45\textwidth}
-\includegraphics[page=4, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\begin{column}{0.4\textwidth}
+\includegraphics[page=4, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=2, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=2, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
-\vspace*{\topsep}
+%\vspace*{\topsep}
 
 \textbf{Predict and visualize:}
 
 For each artificially created data point of the $i$-th observation, we plot its prediction $\fh_{S}^{(i)}(x_S^*)$ vs. the corresponding grid value $x_S^*$, here $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}.$$
+\end{frame}
 
-\framebreak
+\begin{frame}{Individual Conditional Expectation (ICE)}
 
 \begin{columns}[T]
-\begin{column}{0.45\textwidth}
-\includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\begin{column}{0.4\textwidth}
+\includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=3, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=3, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
-\vspace*{\topsep}
+%\vspace*{\topsep}
 
 \textbf{Predict and visualize:}
 
 For each artificially created data point of the $i$-th observation, we plot its prediction $\fh_{S}^{(i)}(x_S^*)$ vs. the corresponding grid value $x_S^*$, here $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}.$$
+\end{frame}
 
-\framebreak
+\begin{frame}{Individual Conditional Expectation (ICE)}
 
 \begin{columns}[T]
-\begin{column}{0.45\textwidth}
-\includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\begin{column}{0.4\textwidth}
+\includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=3, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=3, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
-\vspace*{\topsep}
+%\vspace*{\topsep}
 
 \textbf{Interpretation:}
 
 The resulting \textbf{ICE} curve visualizes for an \textbf{I}ndividual observation and \textbf{C}onditional on all other features (by keeping all other features constant) how the \textbf{E}xpected prediction changes.
+\end{frame}
 
-\framebreak
-
-
-
+\begin{frame}{Individual Conditional Expectation (ICE)}
 
 \begin{columns}[T]
-\begin{column}{0.45\textwidth}
-\includegraphics[page=6, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\begin{column}{0.4\textwidth}
+\includegraphics[page=6, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=4, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=4, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
-\vspace*{\topsep}
+%\vspace*{\topsep}
 
 \textbf{Repeat for other observation:}
 
 The ICE curve of observation $i=2$ connects all predictions at the corresponding grid values associated to the $i$-th observation.
+\end{frame}
 
-\framebreak
+\begin{frame}{Individual Conditional Expectation (ICE)}
 
 \begin{columns}[T]
-\begin{column}{0.45\textwidth}
-\includegraphics[page=7, trim=0cm 0.35cm 0.85cm 0.35cm, width=\textwidth]{figure_man/ice_plot_demo}
+\begin{column}{0.4\textwidth}
+\includegraphics[page=7, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
 %\begin{center}
-\includegraphics[page=5, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=5, width=0.85\textwidth]{figure/ICE}
 %\end{center}
 \end{column}
 \end{columns}
-\vspace*{\topsep}
+%\vspace*{\topsep}
 
 \textbf{Repeat for other observation:}
 
