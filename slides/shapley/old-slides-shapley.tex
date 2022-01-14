@@ -12,33 +12,33 @@
 \begin{document}
 
 \newcommand{\learninggoals}{
-\item Understand structure of tabular data in ML 
-\item Understand difference between target and features 
-\item Understand difference between labeled and unlabeled data 
+\item Understand structure of tabular data in ML
+\item Understand difference between target and feature
+\item Understand difference between labeled and unlabeled data
 \item Know concept of data-generating process}
 
 \lecturechapter{Shapley Values}
 \lecture{Interpretable Machine Learning}
 
 \begin{vbframe}{Shapley Values}
-Shapley values are a concept of \textbf{cooperative game theory}: 
+Shapley values are a concept of \textbf{cooperative game theory}:
 \begin{itemize}
-  \item In cooperative games, a set of players $P$ with $P = \{1, \hdots, p\}$ forms a coalition $S \subseteq P$. 
-  \item A value function $v(S)$ describes the payout (or gain) achieved by the coalition $S$. 
-  \item As some players contribute more than others, we are interested in the distribution of the payout among the players. 
-  \item We can measure the payout of each player by Shapley values. 
+  \item In cooperative games, a set of players $P$ with $P = \{1, \hdots, p\}$ forms a coalition $S \subseteq P$.
+  \item A value function $v(S)$ describes the payout (or gain) achieved by the coalition $S$.
+  \item As some players contribute more than others, we are interested in the distribution of the payout among the players.
+  \item We can measure the payout of each player by Shapley values.
   \item The \textbf{Shapley value} assigns a value to each player according to the marginal contribution of each player in all possible coalitions.
 \end{itemize}
 
 \framebreak
-In Machine Learning, we can use Shapley values to explain individual predictions of specific observations: 
+In Machine Learning, we can use Shapley values to explain individual predictions of specific observations:
 \begin{itemize}
   \item Players $\hat{=}$ features.
   \item Features collaborate to make a prediction.
-  \item The payout of coalition $S$ for observation $\xv$ is 
-  $$v(\xv_S) =  \fh_{S} (\xv_S) - \E (\fh(\xv))$$ 
+  \item The payout of coalition $S$ for observation $\xv$ is
+  $$v(\xv_S) =  \fh_{S} (\xv_S) - \E (\fh(\xv))$$
   i.e., the difference of the marginal prediction of $\xv_S$ and the average prediction.
-  \item We have already seen how the marginal prediction can be calculated: ICE curves. 
+  \item We have already seen how the marginal prediction can be calculated: ICE curves.
 \end{itemize}
 \begin{center}
 \vspace{-0.3cm}
@@ -47,7 +47,7 @@ In Machine Learning, we can use Shapley values to explain individual predictions
 \framebreak
 
 \begin{itemize}
- \item Shapley values tell us what the payout of each feature is, i.e., how each feature contributes to the overall prediction of a specific observation.  
+ \item Shapley values tell us what the payout of each feature is, i.e., how each feature contributes to the overall prediction of a specific observation.
     \item The Shapley value is the average marginal contribution of a feature towards the prediction \textbf{across all possible feature coalitions}.
     \item The sum of Shapley values over all features yields the difference between the average prediction of all data points (baseline) and the selected individual prediction.
   \end{itemize}
@@ -72,11 +72,11 @@ The Shapley value of the feature $x_2$ is the marginal contribution (prediction 
 
 \begin{vbframe}{Shapley Value - Definition}
 \begin{itemize}
-  \item The Shapley value of a feature $j$ is defined as:\\ 
+  \item The Shapley value of a feature $j$ is defined as:\\
   For $m = 1, \dots, M$ exhaustively select coalition $S_m \subseteq P \land S_m \backslash j$  and calculate
 $$ \hat{\phi_{j}}(\xv) = \frac{1}{M} \sum_{m=1}^{M} \underbrace{v(\xv_{S_m \cup \{j \} }) - v(\xv_{S_m})}_{\text{marginal contribution of feature $j$}} $$
 \lz
-  \item Interpretation of Shapley value $\hat{\phi_{j}}(\xv)$ for feature $j$ and observation $\xv$: 
+  \item Interpretation of Shapley value $\hat{\phi_{j}}(\xv)$ for feature $j$ and observation $\xv$:
   The feature value $\xv_{j}$ contributed $\hat{\phi_{j}}(\xv)$ towards the prediction $\fh(x)$ compared to the average prediction for the dataset.
 \end{itemize}
 \lz
