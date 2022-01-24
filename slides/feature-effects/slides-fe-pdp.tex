@@ -20,12 +20,12 @@
 \lecturechapter{Partial Dependence (PD) plot}
 \lecture{Interpretable Machine Learning}
 
-\begin{frame}{Partial Dependence}
+\begin{frame}{Partial Dependence (PD)}
 
-The partial dependence (PD) function is the expectation of ICE curves w.r.t. the marginal distribution of complementary features $\xv_C$,
+\textbf{Definition:} PD function is expectation of $\fh(x_S, \xv_C)$ w.r.t. marginal distribution of features $\xv_C$:
 $$f_{S, PD}(x_S) = \E_{\xv_C} \left( \fh(x_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_C) \, d\P(\xv_C)$$
 
-For each grid value $x_S^*$, the PD function is estimated by the point-wise average of the ICE curves at $x_S^*$:
+\textbf{Estimation:} For a grid value $x_S^*$, average ICE curves point-wise at $x_S^*$ over all observed $\xv_C^{(i)}$:
 $$\fh_{S, PD}(x_S^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_S^*, \xv_C^{(i)})$$
 
 %Within the SIPA framework, the partial dependence builds the \textbf{Aggregation} step.
@@ -42,7 +42,7 @@ Assume a linear regression model with two features:
 
 $$\fh(\xv) = \fh(\xv_1, \xv_2) = \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_0$$
 
-The PD function for the feature of interest $S = \{1\}$ (with $C = \{2\}$) is:
+PD function for feature of interest $S = \{1\}$ (with $C = \{2\}$) is:
 
 $$
 \begin{aligned}
@@ -52,7 +52,7 @@ f_{1, PD}(\xv_1) = \E_{\xv_2} \left( \fh(\xv_1, \xv_2) \right) &= \int_{-\infty}
 \end{aligned}
 $$
 
-Here, the PD plot visualizes the function $f_{1, PD}(\xv_1) = \hat\beta_1 \xv_1 + const$, which is the feature effect of $\xv_1$.
+$\Rightarrow$ PD plot visualizes the function $f_{1, PD}(\xv_1) = \hat\beta_1 \xv_1 + const$ ($\hat =$ feature effect of $\xv_1$).
 
 }
 
@@ -63,7 +63,7 @@ Here, the PD plot visualizes the function $f_{1, PD}(\xv_1) = \hat\beta_1 \xv_1 
 \begin{column}{0.5\textwidth}
 \centering
 \only<1>{
-\includegraphics[page=8, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\includegraphics[page=8, width=0.8\textwidth]{figure_man/ice_pd_plot_demo}
 \end{column}
 \begin{column}{0.5\textwidth}
 
@@ -73,7 +73,7 @@ Here, the PD plot visualizes the function $f_{1, PD}(\xv_1) = \hat\beta_1 \xv_1 
 }
 
 \only<2>{
-\includegraphics[page=9, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\includegraphics[page=9, width=0.8\textwidth]{figure_man/ice_pd_plot_demo}
 \end{column}
 \begin{column}{0.5\textwidth}
 
@@ -83,7 +83,7 @@ Here, the PD plot visualizes the function $f_{1, PD}(\xv_1) = \hat\beta_1 \xv_1 
 }
 
 \only<3>{
-\includegraphics[page=10, width=\textwidth]{figure_man/ice_pd_plot_demo}
+\includegraphics[page=10, width=0.8\textwidth]{figure_man/ice_pd_plot_demo}
 \end{column}
 \begin{column}{0.5\textwidth}
 
