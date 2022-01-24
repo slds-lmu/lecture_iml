@@ -5,7 +5,8 @@ library(patchwork)
 source("slides/feature-effects/rsrc/anova_bike.R")
 
 # DATA -------------------------------------------------------------------------
-
+set.seed(1)
+pred.bike = Predictor$new(mod, data = bike[sample(1:nrow(bike), 50), ])
 eff = FeatureEffect$new(pred.bike, feature = c("season"), method = "pdp+ice")
 
 # PLOT -------------------------------------------------------------------------

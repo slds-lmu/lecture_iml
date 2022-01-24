@@ -51,8 +51,7 @@
 % }
 % }
 
-\frame{
-\frametitle{Motivation}
+\begin{frame}{Motivation}
 
 % \begin{center}
 % \includegraphics[width=0.7\textwidth]{figure_man/PD_M.jpg}\\
@@ -64,13 +63,13 @@
 \vspace*{-1em}
 \centering
 \textbf{a) PD plot}
-\includegraphics[width=\textwidth]{figure/ale_pdplot}
+\includegraphics[width=0.9\textwidth]{figure/ale_pdplot}
 \end{column}
 \begin{column}{0.5\textwidth}
 \vspace*{-1em}
 \textbf{b) M plot}
 \centering
-\includegraphics[width=\textwidth]{figure/ale_mplot}
+\includegraphics[width=0.9\textwidth]{figure/ale_mplot}
 \end{column}
 \end{columns}
 
@@ -79,23 +78,22 @@
 %\item[b)] M plot $\fh_{1, M}(x_1) = \hat{\E}_{\xv_2|\xv_1} \left( \fh(x_1, \xv_2) \middle| \xv_1\right) = \frac{1}{|N(x_1)|} \sum\limits_{i \in N(x_1)} \fh(x_1, \xv_2^{(i)})$, where $N(x_1) = \{i: x_1^{(i)} \in [x_1 - \epsilon, x_1 + \epsilon]\}$ is an index set referring to observations in an appropriate neighborhood of feature value $x_1$.
 \item[a)] PD plot $\E_{\xv_2} \left( \fh(x_1, \xv_2) \right)$ is estimated by $ \fh_{1, PD}(x_1) = \frac{1}{n} \sum\limits_{i=1}^n \fh(x_1, \xv_2^{(i)})$
 \item[b)] M plot $\E_{\xv_2|\xv_1} \left( \fh(x_1, \xv_2) \middle| \xv_1\right)$ is
-estimated by
-\centerline{$\fh_{1, M}(x_1) = \displaystyle\frac{1}{|N(x_1)|} \sum\limits_{i \in N(x_1)} \fh(x_1, \xv_2^{(i)}),$}
-where $N(x_1) = \{i: x_1^{(i)} \in [x_1 - \epsilon, x_1 + \epsilon]\}$ is an index set referring to observations in an appropriate neighborhood of feature value $x_1$.
+estimated by $\fh_{1, M}(x_1) = \textstyle\frac{1}{|N(x_1)|} \sum_{i \in N(x_1)} \fh(x_1, \xv_2^{(i)}),$
+where index set $N(x_1) = \{i: x_1^{(i)} \in [x_1 - \epsilon, x_1 + \epsilon]\}$ refers to observations with feature value close to $x_1$. %in an appropriate neighborhood of feature value $x_1$.
 \end{enumerate}
+\end{frame}
 
-}
 
-\begin{vbframe}{Motivation}
+\begin{frame}{Motivation}
 
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figure/ale_scatter_grid}
+\includegraphics[width=0.9\textwidth]{figure/ale_scatter_grid}
 \end{column}
 \begin{column}{0.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figure/ale_pdplot}
+\includegraphics[width=0.9\textwidth]{figure/ale_pdplot}
 \end{column}
 \end{columns}
 
@@ -104,21 +102,26 @@ where $N(x_1) = \{i: x_1^{(i)} \in [x_1 - \epsilon, x_1 + \epsilon]\}$ is an ind
 %\tiny{Source: Figure taken from Apley et al. (2020)}
 %\end{center}
 
-In case of strongly correlated features $x_1$ and $x_2$, partial dependence (PD) plots \textbf{average predictions} of artificial data instances that are unlikely in reality (red).
+In case of strongly correlated features $x_1$ and $x_2$, PD plots \textbf{average predictions} of artificial data points that are unlikely in reality (red).
 
-\lz
-
-\textbf{But:} This can be an undesired property if the model contains interactions and one is interested in interpreting effects w.r.t. the data distribution.
+\textbf{But:} May be undesired if interest is to interpret effects within data distribution.
+%This can be an undesired property if the model contains interactions and one is interested in interpreting effects w.r.t. the data distribution.
 
 %\lz
 
 %\textbf{Question:} Can we avoid the extrapolation issue by averaging only over points in an appropriate neighborhood? % of a specific point $x_1$? %, i.e., using the conditional distribution at
 
-\framebreak
+\end{frame}
+
+
+\begin{frame}{Motivation}
 
 Example what can go wrong with PDPs and NNs
 
-\framebreak
+\end{frame}
+
+
+\begin{frame}{Motivation}
 
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
@@ -134,19 +137,16 @@ Example what can go wrong with PDPs and NNs
 %\textbf{Answer:} Yes, we could.
 %\textbf{Recall:} Marginal plots (M plots) do this by averaging (i.e., marginalizing) over the conditional distribution $\P(\xv_2|x_1)$.
 %\textbf{Recall:}
-Marginal plots (M plots) average (i.e., marginalize) predictions over the conditional distribution $\P(\xv_2|x_1)$, i.e., by definition, they do not average predictions of observations outside the data distribution.
+M plots average (i.e., marginalize) predictions over conditional distribution $\P(\xv_2|x_1)$, i.e., they do not average predictions of observations outside the data distribution.
 
-\lz
-
-\textbf{But:} M plots introduce the omitted-variable bias (OVB) issue, i.e., an
-M plot always includes the marginal effect of other dependent features.\\
-$\Rightarrow$ M plots are useless to assess the main effect of a feature.
+\textbf{But:} M plots introduce omitted-variable bias (OVB) issue, i.e., they always contain marginal effects of other dependent features.
+$\Rightarrow$ M plots are useless in assessing main effect of a feature.
 % in case of dependent features.
 
 %M plots average over the conditional distribution $x_2|x_1$. However, the M plot of $x_1$ also includes the marginal effect of other dependent features $\Rightarrow$ We don't want this.
 % do not include the marginal effect of the considered feature but
 % mixture of its marginal effect and the marginal effects of all dependent features
-\end{vbframe}
+\end{frame}
 
 
 
@@ -159,33 +159,32 @@ $\Rightarrow$ M plots are useless to assess the main effect of a feature.
 \includegraphics[width=0.9\textwidth]{figure/pd_vs_mplot}
 \end{center}
 
-\textbf{Illustration:}
-We fitted a linear model on a simulated dataset with 500 i.i.d. observations, features $x_1, x_2 \sim N(0,1)$ with $Cor(x_1, x_2) = 0.9$ and $$y = -x_1 + 2 \cdot x_2 + \epsilon, \; \epsilon \sim N(0,1).$$
+\textbf{Illustration:} Fit LM on 500 i.i.d. observations with features $x_1, x_2 \sim N(0,1)$, $Cor(x_1, x_2) = 0.9$ and $$y = -x_1 + 2 \cdot x_2 + \epsilon, \; \epsilon \sim N(0,1).$$
 
-\textbf{Results:} The M plot of $x_1$ is a mixture of the marginal effect of $x_1$ and the marginal effect of all other dependent features (here: $x_2$).
+\textbf{Results:} M plot of $x_1$ mixes marginal effect of $x_1$ and all other dependent features (here: $x_2$).
 }
 
-\begin{vbframe}{Idea: Integrating Partial Derivatives}
+\begin{frame}{Idea: Integrating Partial Derivatives}
 
-\textbf{Idea:} To remove unwanted effects of other features, we take the partial derivative (local effect) of the prediction function with respect to a feature and integrate (accumulate) it with respect to the same feature.
+\textbf{Idea:} To remove unwanted effects of other features, take partial derivatives (local effect) of prediction function w.r.t. feature of interest and integrate (accumulate) it w.r.t. the same feature.
 
 \lz
 
 \textbf{Example:}
 \begin{itemize}
 \item Consider an additive prediction function: $$\fh(x_1, x_2) = 2x_1 + 2x_2 - 4x_1 x_2$$
-\item Partial derivative of $\fh$ with respect to $x_1$:
+\item Partial derivative of $\fh$ w.r.t. $x_1$:
 $\frac{\partial \fh(x_1, x_2)}{\partial x_1} = 2 - 4x_2$
-\item Integral of the partial derivative:
+\item Integral of partial derivative ($z_0 = \min(x_1)$):
 $$\int_{z_0}^{x} \frac{\partial \fh(x_1, x_2)}{\partial x_1} dx_1 = \left[2x_1 - 4x_1 x_2\right]_{z_0}^{x}$$
-\item We removed the main effect of $x_2$, which was our goal.
+\item We removed main effect of $x_2$, which was our goal.
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Accumulated Local Effects (ALE)}
+\begin{frame}{Accumulated Local Effects (ALE)}
 %\begin{columns}[T]
 %\begin{column}{0.65\textwidth}
-ALE plots use the idea of integrating partial derivatives and were developed to overcome the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent (Apley, 2020).
+ALE plots use idea of integrating partial derivatives. Do not suffer from the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent (Apley, 2020).
 %\end{column}
 %\begin{column}{0.35\textwidth}
 %\centering
@@ -196,18 +195,17 @@ ALE plots use the idea of integrating partial derivatives and were developed to 
 
 %Let $z_0$ denote the minimum of observed values of feature $\xv_S$, i.e., $z_0 = \min(\xv_S)$. All complementary features are denoted by $\xv_C$.
 \lz
-
-Let $z_0 = \min(\xv_S)$ be the minimum of observed values of feature $\xv_S$. All complementary features are denoted by $\xv_C$. ALE plots are based on
+Concept of ALE plots is based on
 \begin{enumerate}
-\item estimating the local effect $\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}$ at $(x_S = z_S, \xv_C)$.
-\item averaging the local effects across all values of $\xv_C$, i.e., over the conditional distribution $\P(\xv_C|x_S)$ similar to M plots.\\
+\item estimating local effects $\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}$ (via finite differences) evaluated at point $(x_S = z_S, \xv_C)$.
+\item averaging local effects over the conditional distribution $\P(\xv_C|x_S)$ similar to M plots.\\ %across all values of $\xv_C$, i.e.,
 $\Rightarrow$ Avoids the extraploation issue.
-\item accumulating/integrating the averaged local effects over all values of $z_S$ from $z_0 := \min(\xv_S)$ up to a specific value $x \sim \P(x_S)$.\\
-$\Rightarrow$ Estimates the main effect of $\xv_S$ and avoids the OVB issue.
+\item accumulating/integrating averaged local effects up to a specific value $x \sim \P(x_S)$.\\ %all values of $z_S$   from $z_0 := \min(x_S)$ u
+$\Rightarrow$ Estimates main effect of $x_S$ and avoids OVB issue as unwanted main effects are removed.
 \end{enumerate}
 
 \footnote[frame]{Apley, Daniel W., and Jingyu Zhu (2020). Visualizing the Effects of Predictor Variables in Black Box Supervised Learning Models. Journal of the Royal Statistical Society: Series B (Statistical Methodology) 82.4: 1059-1086.}
-\end{vbframe}
+\end{frame}
 %\begin{itemize}
   %\item Accumulated Local Effect (ALE) plots were developed by Apley (2020) to overcome the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent.
   %. \item ALEs are an alternative to PD that do not suffer from extrapolation
@@ -219,24 +217,29 @@ $\Rightarrow$ Estimates the main effect of $\xv_S$ and avoids the OVB issue.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{First Order ALE}
-The uncentered first order ALE $\tilde{f}_{S, ALE}(x)$ at point $x$ is defined as:
+\begin{frame}{First Order ALE}
+
+\begin{itemize}
+%\item Let $z_0 = \min(x_S)$ be minimum of feature of interest $x_S$.
+%\item All complementary features are denoted by $\xv_C$.
+\item Let $x_S$ be feature of interest with $z_0 = \min(x_S)$ and $\xv_C$ all other features  (complement of $S$).
+\item Uncentered first order ALE $\tilde{f}_{S, ALE}(x)$ at feature value $x \sim \P(x_S)$ is defined as:
 $$
 \begin{aligned}
-\tilde{f}_{S, ALE}(x) &= \int_{z_{0}}^{x} \E_{\xv_C \vert x_S} \left(\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right) dz_S \\
-&= \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}  \frac{\partial \fh(z_S, \xv_C)}{\partial z_S} d\P(\xv_C | z_S) \,   \right) dz_S
+\tilde{f}_{S, ALE}(x) &= \int_{z_{0}}^{x} \E_{\xv_C \vert x_S} \left(\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right) dz_S = \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}  \frac{\partial \fh(z_S, \xv_C)}{\partial z_S} d\P(\xv_C | z_S) \,   \right) dz_S
 \end{aligned}
 $$
-
-A constant, i.e., the average of the uncentered ALE curve is substracted such that the centered ALE curve $f_{S, ALE}(x)$ has a mean of zero with respect to the marginal distribution of $x_S$:
-
+\item Substract average of uncentered ALE curve (constant) to obtain centered ALE curve $f_{S, ALE}(x)$ with zero mean regarding marginal distribution of feature of interest $x_S$:
 $$
 \begin{aligned}
-f_{S, ALE}(x) = \tilde{f}_{S, ALE}(x) - \underbrace{\int_{-\infty}^{\infty}\tilde{f}_{S, ALE}(x_S) \, d\P(x_S)}_{:= const}
+f_{S, ALE}(x) = \tilde{f}_{S, ALE}(x) - \underbrace{\int_{-\infty}^{\infty}\tilde{f}_{S, ALE}(x_S) \, d\P(x_S)}_{:= constant}
 \end{aligned}
 $$
+\end{itemize}
 
-\end{vbframe}
+
+
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -270,18 +273,18 @@ $$
     $}
     \lz
     \begin{itemize}
-    \item<1-> PD directly averages predictions over the marginal distribution.
+    \item<1-> PD directly averages predictions over marginal distribution of $\xv_C$.
     \only<1>{
-    \item Difference 1: ALE averages the \textcolor{purple}{change of predictions} (via the partial derivative) over the \textcolor{blue}{conditional distribution at $x_S = z_S$}.
+    \item Difference 1: ALE averages \textcolor{purple}{change of predictions} (via partial derivatives) over \textcolor{blue}{conditional distribution at $x_S = z_S$}.
     }
     \only<2-3>{
-    \item Difference 1: ALE averages the change of predictions (via the partial derivative) over the conditional distribution at $x_S = z_S$.
+    \item Difference 1: ALE averages change of predictions (via partial derivatives) over conditional distribution at $x_S = z_S$.
     }
     \only<2>{
-    \item Difference 2: ALE \textcolor{blue}{integrates over $z_S$} the partial derivatives of feature $S$ to isolate the effect of the feature of interest and to remove the main effect of dependent features.
+    \item Difference 2: ALE \textcolor{blue}{integrates over $z_S$} partial derivatives of feature $S$ to isolate effect of feature of interest and to remove main effect of dependent features.
     }
     \only<3>{
-    \item Difference 2: ALE integrates over $z_S$ the partial derivatives of feature $S$ to isolate the effect of the feature of interest and to remove the main effect of dependent features.
+    \item Difference 2: ALE integrates over $z_S$ partial derivatives of feature $S$ to isolate effect of feature of interest and to remove main effect of dependent features.
     }
     %\item Difference 2: ALE has an additional \textcolor{blue}{integral over $z_S$}. Instead of directly averaging the predictions, the ALE method calculates the prediction differences conditional on features S and integrates the derivative over features $S$ to estimate the effect. The derivative (or interval difference) isolates the effect of the feature of interest and blocks the effect of correlated features.
     %}
@@ -291,11 +294,11 @@ $$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{ALE Estimation}
+\begin{frame}{ALE Estimation}
 
 \begin{itemize}
-  \item The partial derivative can not be computed for all models, e.g., for tree-based methods such as the random forests.
-  \item The partial derivative of the prediction function is approximated by computing finite differences of predictions within a set of $K$ intervals across the range of observed feature values $\xv_S$:
+  \item Partial derivatives not possible for all models (e.g., tree-based methods as random forests).
+  \item Partial derivative of prediction function is approximated by computing finite differences of predictions within a set of $K$ intervals across range of observed feature values $\xv_S$:
   $$
   \begin{aligned}
   x \in [\min(\xv_S), \max(\xv_S)] \iff &x \in [z_{0, S}, z_{1, S}] \\
@@ -308,26 +311,26 @@ $$
   %A simple way of creating $K$ intervals for the value range of $\xv_S$ is to use $K-1$ quantiles as interval bounds $z_1, \dots, z_{K-1}$ (not counting the 0\% and 100\% quantiles).
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\begin{vbframe}{2-D Illustration}
+\begin{frame}{2-D Illustration}
 
 \centerline{\includegraphics[width=0.9\textwidth]{figure/ale_interval}}
 
 %Compared to PD, ALE avoids averaging predictions of unlikely data instances and blocks the effect of other correlated features.
 \begin{itemize}
 \item We divide the feature of interest into intervals (vertical lines).
-\item For all data instances within an interval, we compute the \textbf{difference} \textbf{in the prediction} when we replace the feature value with the upper and lower interval bound while keeping other feature values unchanged (blue lines/points).
+\item For all points within an interval, compute \textbf{prediction difference} when we replace feature value with upper/lower interval bound while keeping other feature values unchanged (blue).
 \item These \textbf{finite differences} approximate the local effect and are later accumulated and centered to produce the ALE plot.
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{vbframe}{2-D Illustration}
+\begin{frame}{2-D Illustration}
 \centerline{\includegraphics[width=0.9\textwidth]{figure/ale_interval}}
 
  \begin{itemize}
@@ -337,10 +340,10 @@ $$
   \item The finite differences correspond to $\fh(z_{k, S}, \xi_C) - \fh(z_{k-1, S}, \xi_C)$. %and approximates the local effect of the $i$-th observation.
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{vbframe}{2-D Illustration}
+\begin{frame}{2-D Illustration}
 \centerline{\includegraphics[width=0.9\textwidth]{figure/ale_interval}}
 
  \begin{itemize}
@@ -348,12 +351,12 @@ $$
   \item Summing up the local effects of all intervals up to the point of interest estimates the outer integral.
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %
-% \begin{vbframe}{3-D Illustration}
+% \begin{frame}{3-D Illustration}
 %
 % Consider the following data generating process:
 %
@@ -409,10 +412,10 @@ $$
 %
 % For each observation, we receive a change in prediction when traversing the interval from the left to the right boundary.
 %
-% \end{vbframe}
+% \end{frame}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% \begin{vbframe}{3-D Illustration}
+% \begin{frame}{3-D Illustration}
 % \begin{center}
 % \includegraphics[width=0.6\textwidth]{figure_man/3D05.png}
 % \end{center}
@@ -430,10 +433,10 @@ $$
 %
 % We repeat the same procedure for every interval. The first order ALE corresponds to adding up all average interval-wise finite differences and substracting the centering constant.
 %
-% \end{vbframe}
+% \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{ALE Estimation: Formula}
+\begin{frame}{ALE Estimation: Formula}
 
 Let $k_S(x)$ denote the interval index a feature value $x \in \xv_S$ falls in. $n_S(k)$ denotes the number of observations inside the $k$-th interval of $\xv_S$. The estimated uncentered first order ALE $\hat{\tilde{f}}_{S, ALE}(x)$ at point $x$ corresponds to:
 $$
@@ -450,10 +453,10 @@ $$
 \end{aligned}
 $$
 
-\end{vbframe}
+\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{ALE Estimation: Algorithm}
+\begin{frame}{ALE Estimation: Algorithm}
 
 \begin{enumerate}
 	\item \textbf{Sampling:} Create $K$ intervals for the value range of $\xv_S$.
@@ -466,10 +469,10 @@ $$
   \item \textbf{Aggregation:} Accumulate the interval-wise local effects up to the point of interest $x$ to estimate the uncentered ALE and center it.
 \end{enumerate}
 
-\end{vbframe}
+\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Extrapolation and the ALE}
+\begin{frame}{Extrapolation and the ALE}
 \begin{itemize}
 \item Remember that there are two sources of extrapolation:
   \begin{enumerate}
@@ -482,11 +485,11 @@ $$
     \item We integrate w.r.t. the conditional distribution of $\xv_C$ on $x_S$ instead of the marginal distribution of $\xv_C$, because we only average the finite differences inside a single interval.
   \end{enumerate}
 \end{itemize}
-\end{vbframe}
+\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\begin{vbframe}{Bike Sharing Dataset: First Order ALE}
+\begin{frame}{Bike Sharing Dataset: First Order ALE}
 
 The PD (left) often looks very similar to the (centered) first order ALE (right) but on a different scale. In the case of correlated features, the ALE is a better option due to the PD's extrapolation issues.
 
@@ -496,11 +499,11 @@ The PD (left) often looks very similar to the (centered) first order ALE (right)
 \end{center}
 
 
-\end{vbframe}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Bike Sharing Dataset: Second Order ALE}
+\begin{frame}{Bike Sharing Dataset: Second Order ALE}
 
 It is possible to estimate ALEs of higher order, e.g., second order ALEs. As opposed to the bivariate PD, the second order ALE corresponds to an estimate of the interaction between two features only, i.e., first order effects have been substracted.
 
@@ -510,7 +513,7 @@ It is possible to estimate ALEs of higher order, e.g., second order ALEs. As opp
 \includegraphics[width=0.9\textwidth]{figure/ale2d}
 \end{center}
 
-\end{vbframe}
+\end{frame}
 
 
 \endlecture
