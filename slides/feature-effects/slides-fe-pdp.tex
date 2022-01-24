@@ -96,16 +96,16 @@ $\Rightarrow$ PD plot visualizes the function $f_{1, PD}(\xv_1) = \hat\beta_1 \x
 %\end{onlyenv}
 
 \only<1>{
-Estimate partial dependence by the \textbf{point-wise} average of the ICE curves at gridpoint \fcolorbox{red}{white}{$x_S^* = x_1^* = 1$}:
-$$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+Estimate PD function by \textbf{point-wise} average of ICE curves at grid value \fcolorbox{red}{white}{$x_S^* = x_1^* = 1$}:
+$$\textstyle\fh_{1, PD}(x_1^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_1^*, \xv_{2, 3}^{(i)})$$
 }
 \only<2>{
-Estimate partial dependence by the \textbf{point-wise} average of the ICE curves at gridpoint \fcolorbox{red}{white}{$x_S^* = x_1^* = 2$}:
-$$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+Estimate PD function by \textbf{point-wise} average of ICE curves at grid value \fcolorbox{red}{white}{$x_S^* = x_1^* = 2$}:
+$$\textstyle \fh_{1, PD}(x_1^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_1^*, \xv_{2, 3}^{(i)})$$
 }
 \only<3>{
-Estimate partial dependence by the \textbf{point-wise} average of the ICE curves at gridpoint \fcolorbox{red}{white}{$x_S^* = x_1^* = 3$}:
-$$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
+Estimate PD function by \textbf{point-wise} average of ICE curves at grid value \fcolorbox{red}{white}{$x_S^* = x_1^* = 3$}:
+$$\textstyle\fh_{1, PD}(x_1^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_1^*, \xv_{2, 3}^{(i)})$$
 }
 }
 
@@ -121,29 +121,28 @@ $$\fh_{1, PD}(x_1) = \frac{1}{n} \sum_{i=1}^n \fh(x_1, \xv_{2, 3}^{(i)})$$
 \frame{
 \frametitle{Interpretation: PD and ICE}
 \begin{center}
-\includegraphics[width=0.7\textwidth]{figure/pdp_bike}
+\includegraphics[width=0.65\textwidth]{figure/pdp_bike}
 \end{center}
 
 \begin{onlyenv}
 \only<1>{
 \begin{itemize}
 \item
-  \textbf{ICE curve:} Visualize how the prediction of an
-  \textbf{individual observation} changes if the feature value is
-  changed.\\
-  \(\Rightarrow\) ICE is a local interpretation method (black curves).
+  \textbf{ICE:} Visualizes how \textbf{prediction of
+  individual observation} changes if feature values vary\\
+  \(\Rightarrow\) ICE is \textbf{local} interpretation method (black curves).
 \item
-  \textbf{PD plot:} Visualizes the \textbf{average effect of a feature},
-  i.e., how the expected prediction changes if the feature value is changed.\\
-  \(\Rightarrow\) PD plot is a global interpretation method (yellow curve).
+  \textbf{PD:} Visualizes average effect of a feature,
+  i.e., how \textbf{expected prediction} changes if feature values vary
+  \(\Rightarrow\) PD plot is \textbf{global} interpretation method (yellow curve).
 \end{itemize}
 }
 
 \only<2>{
-Insights from the Bike Sharing Dataset:
+Insights from bike sharing data:
 \begin{itemize}
-  \item Averaging ICE curves yields the PD plot (yellow curve).
-  \item Parallel ICE curves across all observations indicate a very homogeneous effect.
+  \item Averaging ICE curves yields PD plot (yellow curve).
+  \item Parallel ICE curves across all observations indicate homogeneous effect.
   \item Higher temperature $\Rightarrow$ higher number of bike rentals.
   \item Bike rentals decrease at temperatures of more than $\approx 27^\circ$C.
 \end{itemize}
@@ -160,9 +159,10 @@ Insights from the Bike Sharing Dataset:
 \end{center}
 
 \begin{itemize}
-\item The PD plot visualizes the expected prediction (and the distribution of predictions, e.g., in a box plot) if all observations would belong to a certain category level.
-\item The ICE plot connects the predictions of individual observations to identify heterogenous effects between categories (here: lines between SPRING and SUMMER are heterogenous).\\
-\textbf{Note:} For nominal categories, the different categories do not have an ordering but could be compared pairwise.
+\item PD plot visualizes the expected prediction if all observations would belong to a certain category (and shows distribution of predictions in a box plot).
+\item ICE plot connects predictions of individual observations (might identify heterogenous effects between categories if many lines are crossing).\\
+%to identify heterogenous effects between categories (here: lines between SPRING and SUMMER are heterogenous).\\
+\textbf{Note:} For nominal categories without ordering, categories could be compared pairwise.
 \end{itemize}
 
 }
@@ -170,7 +170,7 @@ Insights from the Bike Sharing Dataset:
 \begin{frame}{2D Partial Dependence}
 
 \begin{center}
-\includegraphics[width=0.7\textwidth]{figure/pdp2d_bike}
+\includegraphics[width=0.5\textwidth]{figure/pdp2d_bike}
 \end{center}
 
 \begin{itemize}
