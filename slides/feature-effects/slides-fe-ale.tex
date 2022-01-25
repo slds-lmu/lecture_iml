@@ -105,7 +105,7 @@ where index set $N(x_1) = \{i: x_1^{(i)} \in [x_1 - \epsilon, x_1 + \epsilon]\}$
 %In case of strongly correlated features $x_1$ and $x_2$, PD plots \textbf{average predictions} of artificial data points that are unlikely in reality (red).
 If features are correlated, PD plots \textbf{average predictions} of artificial points that are unlikely (red).
 
-\textbf{But:} May be undesired if interest is to interpret effects within data distribution.
+\textbf{But:} This might be undesired if interest is to interpret effects within data distribution.
 %This can be an undesired property if the model contains interactions and one is interested in interpreting effects w.r.t. the data distribution.
 
 %\lz
@@ -298,8 +298,8 @@ $$
 \begin{frame}{ALE Estimation}
 
 \begin{itemize}
-  \item Partial derivatives not possible for all models (e.g., tree-based methods as random forests).
-  \item Partial derivative of prediction function is approximated by computing finite differences of predictions within a set of $K$ intervals across range of observed feature values $\xv_S$:
+  \item Partial derivatives not useful for all models (e.g., tree-based methods as random forests).
+  \item Approximate partial derivatives by finite differences of predictions within $K$ intervals for $\xv_S$:
   $$
   \begin{aligned}
   x \in [\min(\xv_S), \max(\xv_S)] \iff &x \in [z_{0, S}, z_{1, S}] \\
@@ -440,35 +440,37 @@ $$
 
 \begin{frame}{ALE Estimation: Formula}
 
-Let $k_S(x)$ denote the interval index a feature value $x \in \xv_S$ falls in. $n_S(k)$ denotes the number of observations inside the $k$-th interval of $\xv_S$. The estimated uncentered first order ALE $\hat{\tilde{f}}_{S, ALE}(x)$ at point $x$ corresponds to:
+\begin{itemize}
+\item Estimated uncentered first order ALE $\hat{\tilde{f}}_{S, ALE}(x)$ at point $x$:
 $$
 \begin{aligned}
 \hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_C) -\fh(z_{k-1, S}, \xi_C)\right]
 \end{aligned}
 $$
-
-In order to receive the centered ALE estimate $\hat{f}_{S, ALE}(x)$ at point $x$, we substract the average of the estimated uncentered ALE curve:
-
+\item $k_S(x)$ denotes the interval index a feature value $x \in \xv_S$ falls in.
+\item $n_S(k)$ denotes the number of observations inside the $k$-th interval of $\xv_S$.
+\item Substract average of estimated uncentered ALE to obtain centered ALE estimate: %  $\hat{f}_{S, ALE}(x)$ at point $x$
 $$
 \begin{aligned}
 \hat{f}_{S, ALE}(x) = \hat{\tilde{f}}_{S, ALE}(x) - \frac{1}{n}\sum_{i = 1}^n \hat{\tilde{f}}_{S, ALE}(x_S^{(i)})
 \end{aligned}
 $$
 
+\end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{ALE Estimation: Algorithm}
 
 \begin{enumerate}
-	\item \textbf{Sampling:} Create $K$ intervals for the value range of $\xv_S$.
-	\item For each interval $k \in 1, \dots, k_S(x)$:
+	\item Create $K$ intervals for value range of $\xv_S$.
+	\item Repeat for each interval: %$k \in 1, \dots, k_S(x)$:
 	  \begin{itemize}
-	  \item Select the subset of observations inside the $k$-th interval.
-	  \item \textbf{Intervention:} Replace the observation's feature value $x_S$ with the value of the lower and upper interval bound for each observation inside the $k$-th interval.
-	  \item \textbf{Prediction:} Compute the observation-wise finite difference inside $k$-th interval and average them to estimate the interval-wise local effects.
+	  %\item Select the subset of observations inside the $k$-th interval.
+	  \item Replace observation's feature value $x_S^{(i)}$ with upper/lower interval bound for each observation inside $k$-th interval.
+	  \item Compute observation-wise finite difference inside $k$-th interval and average them to estimate interval-wise local effects.
 	  \end{itemize}
-  \item \textbf{Aggregation:} Accumulate the interval-wise local effects up to the point of interest $x$ to estimate the uncentered ALE and center it.
+  \item Accumulate interval-wise local effects up to value of interest $x$ to estimate uncentered ALE and then center it.
 \end{enumerate}
 
 \end{frame}
@@ -493,7 +495,8 @@ $$
 
 \begin{frame}{Bike Sharing Dataset: First Order ALE}
 
-The PD (left) often looks very similar to the (centered) first order ALE (right) but on a different scale. In the case of correlated features, the ALE is a better option due to the PD's extrapolation issues.
+Shape of PD plot (left) often looks similar to (centered) first order ALE plot (right) but on different $y$-axis scale.
+In case of correlated features, ALE might be better due to PD's extrapolation issue.
 
 
 \begin{center}
