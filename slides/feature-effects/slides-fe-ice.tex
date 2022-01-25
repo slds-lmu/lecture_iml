@@ -23,7 +23,7 @@
 
 \begin{frame}{Feature Effects}
 
-LM without interaction quantifies effect of $x_j$ via coefficient $\hat\beta_j$ (constant across all observations $\xi$):
+LM without interaction: Coefficient $\hat\beta_j$ (constant for all observations) is effect of feature $x_j$:
 
 %the prediction of any observation $\xi$ is %can be expressed by %explained by its marginal feature effects
 %prediction of an observation $\xi$ can be explained by the individual main effects, e.g.:
@@ -75,7 +75,7 @@ GAM (right) replaces linear terms $x_j\hat\beta_j$ of LM by non-linear functions
 
 \begin{frame}{Feature Effects}
 
-\textbf{Feature effect methods} visualize or quantify the marginal contribution of a feature of interest towards model predictions. %marginal contribution of a feature to the model \textbf{prediction}. % $\hat{y} = \fh(\xi[])$. effect (e.g., the average relationship) between a
+\textbf{Feature effects} visualize or quantify marginal contribution of a feature of interest w.r.t. predictions. %marginal contribution of a feature to the model \textbf{prediction}. % $\hat{y} = \fh(\xi[])$. effect (e.g., the average relationship) between a
 \begin{itemize}
 %\tightlist
 \item Methods: PD Plots, ICE curves, ALE plots
@@ -84,9 +84,9 @@ GAM (right) replaces linear terms $x_j\hat\beta_j$ of LM by non-linear functions
 
 \centerline{\includegraphics[width=\textwidth]{figure/feature-effect.pdf}}
 
-\hspace{8px} \small Individual (curves) \hspace{2px}
-$\xrightarrow[]{\text{aggregate}}$ \hspace{2px} Global (curve) \hspace{2px}
-$\xrightarrow[]{\text{aggregate}}$ \hspace{2px} Global (number)
+\centerline{\small \hspace{20px} Individual (curves) \hspace{8px}
+$\xrightarrow[]{\text{aggregate}}$ \hspace{8px} Global (single curve) \hspace{8px}
+$\xrightarrow[]{\text{aggregate}}$ \hspace{8px} Global (single value)}
 
 
 \end{frame}
@@ -120,26 +120,26 @@ $\xrightarrow[]{\text{aggregate}}$ \hspace{2px} Global (number)
 Partition $\xi$ into $\xi_S$ and $\xi_C$ containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
 \lz
 
-ICE curves visualize how prediction of an observation $\xi$ changes by varying its feature values in $S$ while keeping all other features in $C$ fixed:
+ICE curves visualize how prediction of observation $\xi$ changes after varying its feature values $\xi_S$ while keeping all other features in $C$ fixed:
 %by replacing the feature values $\xv_S^{(i)}$ with other values $\xv_S$ while keeping all other features in $\xi_C$ fixed:
 %by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed:
-$$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S, \xi_C)$$
+$$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S, \xi_C) \; \text{ vs. } \; \xv_S$$
 
 $\fh_{S}^{(i)}(\xv_S)$ is prediction of $i$-th observation where $\xi_S$ was replaced by $\xv_S$.
 
-\textbf{Note:} In practice, $\xv_S$ consists of one or two features.
+\textbf{Note:} In practice, $\xv_S$ consists of one or two features ($|S| \leq 2$).
 
 \end{column}
 \end{columns}
 
 % \begin{columns}[T, totalwidth=\textwidth]
-% \begin{column}{0.55\textwidth}
+% \begin{column}{0.6\textwidth}
 
 
 % \end{column}
 % \begin{column}{0.4\textwidth}
 % %\begin{center}
-% \centerline{\includegraphics[width=\textwidth]{figure_man/ice_bike10observation}}
+% \centerline{\includegraphics[width=\textwidth]{figure_man/ice_bike10obs}}
 % %\end{center}
 % %\vspace{-0.3cm}
 % \scriptsize{\textbf{Figure:} ICE Curves of 10 observations of the bike sharing dataset. Each line displays the change in prediction for a single observation due to varying the feature temperature.\par}
@@ -192,12 +192,14 @@ $\fh_{S}^{(i)}(\xv_S)$ is prediction of $i$-th observation where $\xi_S$ was rep
 
 \end{column}
 \end{columns}
-%\vspace*{\topsep}
+\vspace*{\topsep}
 
 \textbf{Grid points:}
 
-For $i$-th observation, sample grid values $x_S^*$ (here: $x_S^* \in \{1, 2, 3\}$) along feature of interest $x_S$ (here: $S = 1$) and replace original feature value of $i$-th observation with these grid values. \newline
-$\Rightarrow$ We obtain new artificial data points for the $i$-th observation.
+%For the $i$-th observation, we
+Sample grid values $x_S^*$ along feature of interest $x_S$ (here, grid is $x_S^* = x_1^* \in \{1, 2, 3\}$) and replace original feature value of $i$-th observation with these sampled grid values.
+%$\Rightarrow$ New artificial data points for $i$-th observation.
+\newline $\Rightarrow$ We obtain new artificial data points for the $i$-th observation.
 
 \end{frame}
 
@@ -208,14 +210,16 @@ $\Rightarrow$ We obtain new artificial data points for the $i$-th observation.
 \includegraphics[page=3, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=1, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=1, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
-%\vspace*{\topsep}
+\vspace*{\topsep}
 
 \textbf{Predict and visualize:}
 
-For each artificially created data point of observation $i$, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid value $x_S^*$: $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}.$$
+For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
+
+$$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}.$$
 
 \end{frame}
 
@@ -226,14 +230,16 @@ For each artificially created data point of observation $i$, plot prediction $\f
 \includegraphics[page=4, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=2, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=2, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
-%\vspace*{\topsep}
+\vspace*{\topsep}
 
 \textbf{Predict and visualize:}
 
-For each artificially created data point of observation $i$, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid value $x_S^*$: $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}.$$
+For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
+
+$$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}.$$
 \end{frame}
 
 \begin{frame}{Individual Conditional Expectation (ICE)}
@@ -243,14 +249,16 @@ For each artificially created data point of observation $i$, plot prediction $\f
 \includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=3, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=3, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
-%\vspace*{\topsep}
+\vspace*{\topsep}
 
 \textbf{Predict and visualize:}
 
-For each artificially created data point of observation $i$, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid value $x_S^*$: $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}.$$
+For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
+
+$$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}.$$
 \end{frame}
 
 \begin{frame}{Individual Conditional Expectation (ICE)}
@@ -260,10 +268,10 @@ For each artificially created data point of observation $i$, plot prediction $\f
 \includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=3, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=3, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
-%\vspace*{\topsep}
+\vspace*{\topsep}
 
 \textbf{Interpretation:}
 
@@ -277,14 +285,14 @@ Resulting \textbf{ICE} curve visualizes for \textbf{I}ndividual observations and
 \includegraphics[page=6, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=4, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=4, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
-%\vspace*{\topsep}
+\vspace*{\topsep}
 
-\textbf{Repeat for other observation:}
+\textbf{Repeat for other observations:}
 
-ICE curve $i=2$ connects all predictions at grid values associated to $i$-th observation.
+ICE curve for $i=2$ connects all predictions at grid values associated to $i$-th observation.
 \end{frame}
 
 \begin{frame}{Individual Conditional Expectation (ICE)}
@@ -295,32 +303,33 @@ ICE curve $i=2$ connects all predictions at grid values associated to $i$-th obs
 \end{column}
 \begin{column}{0.55\textwidth}
 %\begin{center}
-\includegraphics[page=5, width=0.95\textwidth]{figure/ICE}
+\includegraphics[page=5, width=0.85\textwidth]{figure/ICE}
 %\end{center}
 \end{column}
 \end{columns}
-%\vspace*{\topsep}
+\vspace*{\topsep}
 
-\textbf{Repeat for other observation:}
+\textbf{Repeat for other observations:}
 
-ICE curve $i=3$ connects all predictions at grid values associated to $i$-th observation.
+ICE curve for $i=3$ connects all predictions at grid values associated to $i$-th observation.
+%The ICE curve of observation $i=3$ connects all predictions at the corresponding grid values associated to the $i$-th observation.
 
 \textbf{Definition:}
 
-ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $x_S^{*^{(k)}}$.
+ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$.
 \end{frame}
 
 
 \begin{frame}{Comments}
 \begin{itemize}
-\item ICE curves show how different feature values of an observation affect its prediction \\ $\Rightarrow$ local interpretation method.
+\item ICE curves show how different feature values of an observation affect its prediction \newline $\Rightarrow$ \textbf{local interpretation method}.
 \item Plotting ICE curves involves generating grid values $x_S^*$ that are visualized on the x-axis.
 Common choices for grid values are
 \begin{itemize}
-\item equidistant values within the range of considered feature,
-\item randomly sampled values or quantile values from observed feature values.
+\item equidistant values within range of considered feature,
+\item randomly sampled values or quantile values of observed feature values.
 \end{itemize}
-\item Except equidistant grid, the other options (approximately) preserve marginal distribution of feature of interest.
+\item Except equidistant grid, the other two options preserve (approximately) the marginal distribution of feature of interest.
 $\Rightarrow$ Avoids unrealistic feature values for distributions with outliers.
 
 \vspace{3pt}
