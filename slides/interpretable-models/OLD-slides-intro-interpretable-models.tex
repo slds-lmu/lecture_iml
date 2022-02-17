@@ -24,7 +24,7 @@
 
     \begin{itemize}
         %\item Obtaining interpretations by using interpretable models is the easiest and least error-prone approach.
-        \item Achieving interpretability by using interpretable models is the most straightforward approach
+        \item Achieving interpretability by using interpretable models is the most straightforward approach.
         \bigskip
         \item Classes of models deemed interpretable:
         \begin{itemize}
@@ -41,11 +41,13 @@
 
 \begin{frame}{Advantages}
 
-    \begin{itemize}
+    \begin{itemize}[<+->]
     \itemsep1em
-        \item Some additional model-agnostic interpretation techniques are not required.\\
+        \item Additional model-agnostic interpretation techniques not required.\\
         $\Rightarrow$ Eliminates a source of error.
         \item Since interpretable models are often simple, training time is fairly small.
+        \item Some interpretable models fulfill the monotonicity constraint.\\
+        $\leadsto$ Larger feat. values always lead to higher (or smaller) outcomes (e.g., GLMs).
         \item Many people are familiar with traditional interpretable models.\\
         $\Rightarrow$ Increases trust in the model and facilitates communication about its results.
         \item Implementations are available in many programming languages. \\
@@ -59,15 +61,18 @@
     \begin{itemize}
     \itemsep1em
         \item Certain assumptions about data and / or model structure are often reqiured.\\
-        $\Rightarrow$ If assumptions are wrong, models may have a bad predictive performance.
+        $\Rightarrow$ If assumptions are wrong, models may have bad predictive performance.
         %\item If the wrong assumptions are made, interpretable models may have a bad predictive performance.
+        \pause
         \item Often not able to model highly complex relationships due to limited model flexibility.
+        \pause
         \item A complex structure of an interpretable model may also be difficult to interpret, e.g.:
         \begin{itemize}
             \item linear model with hundreds of features and interactions 
             \item decision trees with huge tree depth
         \end{itemize}
-        \item Still requires application of model-agnostic interpretation techniques if certain types of explanations are of interest (e.g., counterfactual explanations)
+        \pause
+        \item Still requires application of model-agnostic interpretation techniques if certain types of explanations are of interest (e.g., counterfactual explanations).
     \end{itemize}
 
 \end{frame}
@@ -76,16 +81,26 @@
 
     \begin{itemize}
     \itemsep1em
-        \item Some argue that one should always use interpretable models in the first place (Rudin, 2019).
-        \footnote[frame]{Rudin, C. Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. Nat Mach Intell 1, 206–215 (2019).}
+        \item Some argue that one should always use interpretable models in the first place \lit{Rudin 2019}{https://www.nature.com/articles/s42256-019-0048-x}
+        \begin{itemize}
+            \item \ldots and not try to explain uninterpretable models post-hoc.
+            \item Can sometimes work out by spending enough time and energy on data pre-processing. %feat. engineering and data cleaning
+        \end{itemize}
+        \pause
+        %\footnote[frame]{Rudin, C. Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. Nat Mach Intell 1, 206–215 (2019).}
         % {https://www.nature.com/articles/s42256-019-0048-x}
-        \item Interpretable models also have the potential for a high predictive performance, but require more knowledge and time spent on data preprocessing.
-        \item One can assume a trade-off between interpretability and model performance which generally (but not always) holds.
+       %\item Interpretable models also have the potential for a high predictive performance, but require more knowledge and time spent on data preprocessing.
+       \item[$\leadsto$] Drawback: Hard to achieve for data for which end-to-end learning is crucial\\ (e.g., images and text)
+        \pause
+        %\item One can assume a trade-off between interpretability and model performance which generally (but not always) holds.
+        \item There might be a trade-off between interpretability and model performance (but not always).
+        \pause
         \item \textbf{Recommendation:}
         \begin{itemize}
-            \item Start with most simple model that makes sense for application at hand.
-            \item Gradually increase complexity if performance is insufficient, which will gradually lower interpretability and require additional interpretation methods.
-            \item Choose the most simple, sufficient model (Occam's razor).
+            \item Start with most simple model that makes sense for application at hand
+            \item Gradually increase complexity if performance is insufficient\\
+            $\leadsto$ will usually lower interpretability and require additional interpretation methods
+            \item Choose the most simple, sufficient model (Occam's razor)
         \end{itemize} 
     \end{itemize}
 
@@ -171,20 +186,21 @@ g\left(\mathbb{E}_Y(Y \vert X)\right) &= X^T\beta \\
 \begin{frame}{Generalized Additive Models}
 
 $$
-g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + \beta_1 h_1(x_1) + \dots + \beta_p h_p(x_p) + \dots
+g\left(\mathbb{E}_Y(y \vert x)\right) = \beta_0 + h_1(x_1) + \dots + h_p(x_p) + \dots
 $$
 \begin{itemize}
 % TODO: needs to be shortened
 %\setlength\itemsep{1em}
-\item Replaces pre-specified linear / polynomial terms with smoothing functions $h_j$.\\
+\item Replaces pre-specified linear / polynomial terms with smooth terms $h_j$.\\
 $\Rightarrow h_j$ can be specified in a parametric (regression spline) or non-parametric (LOESS) way.
 %\item For the component functions, we may either specify a parametric form (e.g., regression splines), or a non-parametric one, e.g., locally estimated scatterplot smoothing (LOESS).
-\item GAMs are more adaptive than GLMs as they rely more on data structure instead of pre-specified linear / polynomial terms. %prior assumptions.
-\item We still need to specify the order and type of the component functions to be estimated, e.g., which interactions to include.
-\item The smoothing degree of each component function can be tuned to avoid overfitting. Regularization increases interpretability, as the interpretations drawn from the model can be transferred more easily to new data.
-\item Retains interpretability by keeping the additive model equation (as long as the component functions are interpretable).
-\item
-As the model equation is known, we can use similar interpretation methods as for LMs and GLMs, e.g., evaluating the estimated components that depend on the features of interest.
+%\item GAMs are more adaptive than GLMs as they rely more on data structure instead of pre-specified linear / polynomial terms. %prior assumptions.
+%\item We still need to specify the order and type of the component functions to be estimated, e.g., which interactions to include.
+\item Specification of order/type of smooth terms still required, e.g., which interactions.
+%\item The smoothing degree of each component function can be tuned to avoid overfitting. Regularization increases interpretability, as the interpretations drawn from the model can be transferred more easily to new data.
+\item Retains interpretability via additive model equation (if smooth terms are interpretable).
+%\item
+%As the model equation is known, we can use similar interpretation methods as for LMs and GLMs, e.g., evaluating the estimated components that depend on the features of interest.
 \end{itemize}
 \end{frame}
 
@@ -367,93 +383,6 @@ $$
 % %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-% \begin{frame}{Decision Trees}
-
-% \begin{columns}
-
-% \begin{column}{0.3\textwidth}
-
-%   \begin{tikzpicture}
-%   \usetikzlibrary{arrows}
-%     \usetikzlibrary{shapes}
-%      \tikzset{treenode/.style={draw, circle, font=\small}}
-%      \tikzset{line/.style={draw, thick}}
-%      \node [treenode, draw=red] (a0) {$a_0$};
-%      \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
-%      \node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
-
-%      \node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
-%      \node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
-
-%      \node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
-%      \node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
-
-%      \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
-%      \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
-
-%      \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};;
-%      \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
-
-
-%      \path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};;
-%      \path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
-
-%   \end{tikzpicture}
-
-% \end{column}
-
-% \begin{column}{0.7\textwidth}
-
-% Properties:
-% \begin{itemize}
-%     \item able to model non-linear effects
-%     \item terminal nodes (aka leaf nodes) can have several observations and predicts the mean outcome over these
-%     \item Applicable to regression and classification
-% \end{itemize}
-
-% Interpretation:
-% \begin{itemize}
-%     \item directly by following the tree (i.e., sequence of rules)
-%     \item Feature importance by (scaled) score of much the splitting criterion was reduced compared to the parent
-% \end{itemize}
-
-% \end{column}
-
-% \end{columns}
-
-% \end{frame}
-
-% %------------------------------------------------------------------
-% %------------------------------------------------------------------
-
-% \begin{frame}{Decision Rules}
-
-% \texttt{IF COND$_1$ AND COND$_2$ AND ... THEN value}
-
-% \begin{itemize}
-%     \item \texttt{COND$_i$} can be of the form \texttt{feature <op> value} where \texttt{<op>} can be for example $\{=, <, > \}$
-% \end{itemize}
-
-
-% \medskip
-
-% Properties:
-% \begin{description}
-%     \item{Support} Fraction of observations to support appliance of rule
-%     \item{Accuracy} for predicting the correct class under the condition(s)
-% \end{description}
-
-% $\leadsto$ often trade-off between these two
-
-
-% \medskip
-
-% $\leadsto$ many different ways to learn a set of rules (incl. a default rule if none of the rules are met)
-
-% \end{frame}
-
-%------------------------------------------------------------------
-%------------------------------------------------------------------
 
 
 
@@ -469,30 +398,68 @@ $$
 \end{columns}
 \end{frame}
 
-\begin{frame}{Rule-Based Learning}
 
+
+
+
+
+
+
+\begin{frame}{Decision Trees}
+
+\begin{columns}
+
+\begin{column}{0.3\textwidth}
+
+  \begin{tikzpicture}
+  \usetikzlibrary{arrows}
+    \usetikzlibrary{shapes}
+     \tikzset{treenode/.style={draw, circle, font=\small}}
+     \tikzset{line/.style={draw, thick}}
+     \node [treenode, draw=red] (a0) {$a_0$};
+     \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
+     \node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
+
+     \node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
+     \node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
+
+     \node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
+     \node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
+
+     \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
+     \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
+
+     \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};;
+     \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
+
+
+     \path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};;
+     \path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
+
+  \end{tikzpicture}
+
+\end{column}
+
+\begin{column}{0.7\textwidth}
+
+Properties:
 \begin{itemize}
-%\setlength\itemsep{1em}
-\item
-Decision rules follow a general structure: IF conditions are met, THEN make certain prediction.
-\item Although a single decision rule is very intelligibile, a large collection of decision rules might not be. An interpretable rule-based model should therefore be based on as few rules as possible.
-\item Descripte Rule Discovery (DRD) is based on mining databases for frequent item sets, and converting these into a set of decision rules.
-\item For instance, a rule \{mobile phone\} $\Rightarrow$ \{mobile phone case\} indicates that mobile phones and phone cases are bought together frequently.
-\item
-DRD is not suited to create a model that makes predictions on unseen data.
-\item Predictive Rule Learning (PRL) aims to discover a set of rules that cover the entire feature space\footnote[frame]{Fürnkranz J., Kliegr T. (2015) A Brief Overview of Rule Learning. In: Bassiliades N., Gottlob G., Sadri F., Paschke A., Roman D. (eds) Rule Technologies: Foundations, Tools, and Applications. RuleML 2015. Lecture Notes in Computer Science, vol 9202. Springer, Cham.}. There are innumerable rule-based learning algorithms, e.g., decision tree learning, OneR, Sequential Covering, or Bayesian Rule Lists.
-\item Decision tree learning, e.g, classification and regression trees (CART), is the most popular group of rule-based models, as every tree can be represented by a collection of decision rules.
-\item A decision tree recursively partitions the data by optimizing an objective function, e.g., minimizing the data impurity.
-\item A succession of tree splits can be converted to a decision rule by forming a conjunction of successive split criteria.
+    \item able to model non-linear effects
+    \item terminal nodes (aka leaf nodes) can have several observations and predicts the mean outcome over these
+    \item Applicable to regression and classification
 \end{itemize}
+
+Interpretation:
+\begin{itemize}
+    \item directly by following the tree (i.e., sequence of rules)
+    \item Feature importance by (scaled) score of much the splitting criterion was reduced compared to the parent
+\end{itemize}
+
+\end{column}
+
+\end{columns}
+
 \end{frame}
-
-
-%\item The RuleFit algorithm combines polynomial regression with rule ensembles for automatic interaction detection. In the first stage, a tree ensemble is trained to produce decision rules (where the predictions are discarded and only the splits are utilized), e.g., $x_1 < 0 \land x_2 > 1$. In the second stage, a linear model with main effects is augmented with each decision rule being represented by a single dummy feature.
-%\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
-%\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.
-%\item Bayesian Rule Lists combine pre-mined frequent patterns into a decision list using Bayesian statistics. Using pre-mined patterns is a common approach used by many rule learning algorithms.
-%\end{itemize}
 
 
 \begin{frame}{Decision Trees}
@@ -508,6 +475,67 @@ DRD is not suited to create a model that makes predictions on unseen data.
 \end{columns}
 
 \end{frame}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{frame}{Decision Rules}
+
+\texttt{IF COND$_1$ AND COND$_2$ AND ... THEN value}
+
+\begin{itemize}
+    \item \texttt{COND$_i$} can be of the form \texttt{feature <op> value} where \texttt{<op>} can be for example $\{=, <, > \}$
+\end{itemize}
+
+
+\medskip
+
+Properties:
+\begin{description}
+    \item[Support] Fraction of observations to support appliance of rule
+    \item[Accuracy] for predicting the correct class under the condition(s)
+\end{description}
+
+$\leadsto$ often trade-off between these two
+
+
+\medskip
+
+$\leadsto$ many different ways to learn a set of rules (incl. a default rule if none of the rules are met)
+
+\end{frame}
+
+
+
+% \begin{frame}{Rule-Based Learning}
+
+% \begin{itemize}
+% %\setlength\itemsep{1em}
+% \item
+% Decision rules follow a general structure: IF conditions are met, THEN make certain prediction.
+% \item Although a single decision rule is very intelligibile, a large collection of decision rules might not be. An interpretable rule-based model should therefore be based on as few rules as possible.
+% \item Descripte Rule Discovery (DRD) is based on mining databases for frequent item sets, and converting these into a set of decision rules.
+% \item For instance, a rule \{mobile phone\} $\Rightarrow$ \{mobile phone case\} indicates that mobile phones and phone cases are bought together frequently.
+% \item
+% DRD is not suited to create a model that makes predictions on unseen data.
+% \item Predictive Rule Learning (PRL) aims to discover a set of rules that cover the entire feature space\footnote[frame]{Fürnkranz J., Kliegr T. (2015) A Brief Overview of Rule Learning. In: Bassiliades N., Gottlob G., Sadri F., Paschke A., Roman D. (eds) Rule Technologies: Foundations, Tools, and Applications. RuleML 2015. Lecture Notes in Computer Science, vol 9202. Springer, Cham.}. There are innumerable rule-based learning algorithms, e.g., decision tree learning, OneR, Sequential Covering, or Bayesian Rule Lists.
+% \item Decision tree learning, e.g, classification and regression trees (CART), is the most popular group of rule-based models, as every tree can be represented by a collection of decision rules.
+% \item A decision tree recursively partitions the data by optimizing an objective function, e.g., minimizing the data impurity.
+% \item A succession of tree splits can be converted to a decision rule by forming a conjunction of successive split criteria.
+% \end{itemize}
+% \end{frame}
+
+
+%\item The RuleFit algorithm combines polynomial regression with rule ensembles for automatic interaction detection. In the first stage, a tree ensemble is trained to produce decision rules (where the predictions are discarded and only the splits are utilized), e.g., $x_1 < 0 \land x_2 > 1$. In the second stage, a linear model with main effects is augmented with each decision rule being represented by a single dummy feature.
+%\item OneR learns rules from a single feature. OneR is characterized by its simplicity, interpretability and its use as a benchmark.
+%\item Sequential covering is a general procedure that iteratively learns rules and removes the data points that are covered by the new rule. This procedure is used by many rule learning algorithms.
+%\item Bayesian Rule Lists combine pre-mined frequent patterns into a decision list using Bayesian statistics. Using pre-mined patterns is a common approach used by many rule learning algorithms.
+%\end{itemize}
+
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
 
 
 %     \begin{frame}{Bike Rentals (Regression)}
