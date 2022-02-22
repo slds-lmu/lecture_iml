@@ -1,0 +1,111 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\begin{document}
+
+\newcommand{\titlefigure}{figure/whitebox}
+\newcommand{\learninggoals}{
+\item What characteristics does an interpretable model have?
+\item Why should we use interpretable models at all?
+\item Examples for interpretable models.}
+
+\lecturechapter{Interpretable Models}
+\lecture{Interpretable Machine Learning}
+
+\begin{frame}{Motivation}
+
+    \begin{itemize}
+        %\item Obtaining interpretations by using interpretable models is the easiest and least error-prone approach.
+        \item Achieving interpretability by using interpretable models is the most straightforward approach.
+        \bigskip
+        \item Classes of models deemed interpretable:
+        \begin{itemize}
+            %\item Linear regression models
+            \item (Generalized) linear models
+            \item Generalized additive models
+            \item Rule-based learning
+            \item Model-based boosting / component-wise boosting
+            \item ...
+        \end{itemize}
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Advantages}
+
+    \begin{itemize}[<+->]
+    \itemsep1em
+        \item Additional model-agnostic interpretation techniques not required.\\
+        $\Rightarrow$ Eliminates a source of error.
+        \item Since interpretable models are often simple, training time is fairly small.
+        \item Some interpretable models fulfill the monotonicity constraint.\\
+        $\leadsto$ Larger feat. values always lead to higher (or smaller) outcomes (e.g., GLMs).
+        \item Many people are familiar with traditional interpretable models.\\
+        $\Rightarrow$ Increases trust in the model and facilitates communication about its results.
+        \item Implementations are available in many programming languages. \\
+        $\Rightarrow$ Simple models are easier to deploy in practice or implement from scratch.
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Disadvantages}
+
+    \begin{itemize}
+    \itemsep1em
+        \item Certain assumptions about data and / or model structure are often reqiured.\\
+        $\Rightarrow$ If assumptions are wrong, models may have bad predictive performance.
+        %\item If the wrong assumptions are made, interpretable models may have a bad predictive performance.
+        \pause
+        \item Often not able to model highly complex relationships due to limited model flexibility.
+        \pause
+        \item A complex structure of an interpretable model may also be difficult to interpret, e.g.:
+        \begin{itemize}
+            \item linear model with hundreds of features and interactions 
+            \item decision trees with huge tree depth
+        \end{itemize}
+        \pause
+        \item Still requires application of model-agnostic interpretation techniques if certain types of explanations are of interest (e.g., counterfactual explanations).
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Further Comments}
+
+    \begin{itemize}
+    \itemsep1em
+        \item Some argue that one should always use interpretable models in the first place \lit{Rudin 2019}{https://www.nature.com/articles/s42256-019-0048-x}
+        \begin{itemize}
+            \item \ldots and not try to explain uninterpretable models post-hoc.
+            \item Can sometimes work out by spending enough time and energy on data pre-processing. %feat. engineering and data cleaning
+        \end{itemize}
+        \pause
+        %\footnote[frame]{Rudin, C. Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. Nat Mach Intell 1, 206–215 (2019).}
+        % {https://www.nature.com/articles/s42256-019-0048-x}
+       %\item Interpretable models also have the potential for a high predictive performance, but require more knowledge and time spent on data preprocessing.
+       \item[$\leadsto$] Drawback: Hard to achieve for data for which end-to-end learning is crucial\\ (e.g., images and text)
+        \pause
+        %\item One can assume a trade-off between interpretability and model performance which generally (but not always) holds.
+        \item There might be a trade-off between interpretability and model performance (but not always).
+        \pause
+        \item \textbf{Recommendation:}
+        \begin{itemize}
+            \item Start with most simple model that makes sense for application at hand
+            \item Gradually increase complexity if performance is insufficient\\
+            $\leadsto$ will usually lower interpretability and require additional interpretation methods
+            \item Choose the most simple, sufficient model (Occam's razor)
+        \end{itemize} 
+    \end{itemize}
+
+\end{frame}
+
+
+\endlecture
+\end{document}

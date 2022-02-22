@@ -24,7 +24,7 @@
 \begin{frame}{Interpretations of Linear Models}
 
 \begin{itemize}
-\itemsep2em
+\itemsep1em
 \item The LM can be directly interpreted by evaluating the model coefficients:
 \begin{equation*}
 y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
@@ -39,7 +39,7 @@ y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
 
 
 \begin{itemize}
-\itemsep2em
+\itemsep1em
 \item If higher-order terms or interactions are present, parameter-based interpretations are not possible anymore:
 \begin{equation}
 y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1, x_2 + \epsilon
@@ -52,29 +52,20 @@ y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1, x_2 + \epsil
 
 \end{frame}
 
-\begin{frame}{Marginal Effects}
+\begin{frame}{Marginal Effects (ME)}
 
 \begin{itemize}
-\itemsep2em
+%\itemsep2em
 \item
-The most common definition of the marginal effect (ME) corresponds to the derivative of the prediction function w.r.t. a feature. In this lecture, we refer to this variant as the derivative ME (dME). The dME can be computed model-agnostically via numeric differentiation, e.g., with a symmetric difference quotient:
-\begin{align*}
-dME_j(x) &= \frac{\partial f(x)}{\partial x_j} \\
-dME_j(x) &\approx \frac{f(x + h) - f(x - h)}{2h} \\
-\end{align*}
-\item For Eq. (\ref{eq:poly_model}), the dME corresponds to:
-\begin{equation*}
-dME_j(x) = 2\beta_1 x_1 +  \beta_{1, 2} x_2
-\end{equation*}
-\item
-A less commonly  known definition corresponds to the change in predicted outcome due to an intervention in the data, e.g., by increasing a feature value by one unit. As this variant corresponds to a forward difference, we refer to it as a forward ME (fME) in this lecture:
+Most common definition: Derivative of prediction function w.r.t. a feature (derivative ME (dME)). Can be computed via numeric differentiation in a model-agnostic way:
+$$dME_j(x) = \frac{\partial f(x)}{\partial x_j} \approx \frac{f(x + h) - f(x - h)}{2h}$$
+\item For model in Eq. (\ref{eq:poly_model}), the dME of $x_1$ is $dME_1(x) = 2\beta_1 x_1 +  \beta_{1, 2} x_2$
+\item Less known definition based on forward differences: Change in predicted outcome due to a change in feature value (e.g., increasing a feature $x_j$ by $h_j$). $\Rightarrow$ forward ME (fME):
 \begin{equation*}
 fME_j(x, h_j) = f(x_1, \dots, x_j + h_j, \dots, x_p) - f(x)
 \end{equation*}
-\item For Eq. (\ref{eq:poly_model}), the fME of $x_1$ with step size 1 correspond to:
-\begin{equation*}
-fME_j(x, h_j) = 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1
-\end{equation*}
+\item For model in Eq. (\ref{eq:poly_model}), the fME of $x_1$ with step size $h_1 = 1$ is
+$fME_1(x, h_1) = 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1$
 \end{itemize}
 \end{frame}
 
@@ -90,7 +81,7 @@ fME_j(x, h_j) = 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1
 
 \begin{frame}{Derivative versus Forward Difference}
 \begin{figure}
-  \includegraphics[width = 0.65\textwidth]{figure_man/derivative_me_error.png}
+  \includegraphics[width = 0.5\textwidth]{figure_man/derivative_me_error.png}
 \end{figure}
 \end{frame}
 

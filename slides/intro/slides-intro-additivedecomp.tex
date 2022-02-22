@@ -20,29 +20,30 @@
 \lecturechapter{Additive Decomposition}
 \lecture{Interpretable Machine Learning}
  
-\begin{frame}{High-Dimensional Model Representation}
+\begin{frame}{High-Dimensional Model Representation (HDMR)}
 
 \begin{itemize}
 \itemsep1em
 \item
-A high-dimensional model representation (HDMR) decomposes the model into a sum of effect terms of increasing order:
+HDMR decomposes model into sum of effect terms of increasing order:
 \begin{align*}
 \hat{f}(x) &= g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \\
 &\phantom{{}={}} + \;\dots\; + g_{\{1,\ldots,p\}}(x_1, \ldots,x_p)
 \end{align*}
-\item Univariate terms $\hat = $ first-order or main effects, bivariate terms as second-order effects, etc.
-\item The features need to be independent to make the HDMR unique.
-\item Different techniques to estimate an additive decomposition exist, e.g., 
+\item Univariate terms $g_{\{j\}} \hat = $ first-order or main effects
+\item Bivariate terms $g_{\{j, k\}} \hat = $ second-order effects, etc.
+\item Features need to be independent to make HDMR unique
+\item Different techniques to estimate additive decomposition exist, e.g.:
 		\begin{itemize}
-			\item repeated expectations (partial dependence / PD) 
-			\item  accumulated local effects (ALE).
+			\item recursive expectations (via partial dependence) 
+			\item accumulated local effects (ALE)
 		\end{itemize}
 \end{itemize}
 \end{frame}
 
 \begin{frame}{High-Dimensional Model Representation}
 
-Consider the estimation via iterative expectations (in the later chapters we will learn how to compute these expectations):
+Estimation of effect terms via recursive expectations (based on partial dependence, see later):
 \begin{align*}
  g_{\{0\}} &= \mathbb{E}_X\left[\widehat{f}(x)\right] \\
  g_{\{1\}}(x_1) &= \mathbb{E}_{X_{-1}}\left[\widehat{f}(x) \; \vert  \; X_1 \right] - g_{\{0\}} \\
@@ -55,28 +56,28 @@ Consider the estimation via iterative expectations (in the later chapters we wil
 
 \end{frame}
 
-\begin{frame}{High-Dimensional Model Representation}
+% \begin{frame}{High-Dimensional Model Representation}
 
-\begin{itemize}
-\itemsep2em
-    \item Even if your goal is not to decompose the entire prediction function, it is helpful to keep in mind that a decomposition exists.
-    \item When interpreting a model, one is often interested in feature effects of various orders, e.g., first-order and second-order effects.
-    \item One may assume that the relevance of effects decreases with increasing order, e.g., that the model can be approximated via first-order and second-order effects.
-    \item Do not confuse the outputs of interpretation methods such as the ICE or PD with the effect terms of the additive decomposition!
-    \\$\rightarrow$ A second-order effect is the sole interaction effect on the target after a constant effect or main effects have been removed.
-\end{itemize}
-\end{frame}
+% \begin{itemize}
+% \itemsep1em
+%     \item Even if your goal is not to decompose $\hat{f}(x)$, it is useful to keep in mind that a decomposition exists.
+%     \item When interpreting a model, one is often interested in feature effects of various orders, e.g., first-order and second-order effects.
+%     \item One may assume that the relevance of effects decreases with increasing order, e.g., that the model can be approximated via first-order and second-order effects.
+%     \item Do not confuse the outputs of interpretation methods such as the ICE or PD with the effect terms of the additive decomposition!
+%     \\$\rightarrow$ A second-order effect is the sole interaction effect on the target after a constant effect or main effects have been removed.
+% \end{itemize}
+% \end{frame}
 
 
 \begin{frame}{Functional ANOVA}
 
 \begin{itemize}
-\item After the model has been decomposed one can analyze the variance of its constituent terms:
+\item After $\hat{f}(x)$ has been decomposed, we can conduct a functional analysis of variance (fANOVA):
 \begin{align*}
 Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \right. \\
 &\phantom{{}={}} \left. + \;\dots\; + g_{\{1,\ldots,p\}}(x) \right]
 \end{align*}
-\item If the features are independent, the variance can be additively decomposed without covariances:
+\item If features are independent $\Rightarrow$ Variance can be additively decomposed without covariances:
 \begin{align*}
 Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}}\right] + Var\left[g_{\{1\}}(x_1)\right] + Var\left[g_{\{2\}}(x_2)\right] \\
 &\phantom{{}={}} + Var\left[g_{\{1, 2\}}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\{1,\ldots,p\}}(x)\right]
@@ -87,13 +88,13 @@ Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}}\right] + Var\left[g_{\{1\}}(x_1
 \begin{frame}{Functional ANOVA}
 
 \begin{itemize}
-\item Dividing by the prediction variance results in the fraction of variance explained by each term:
+\item Dividing by the prediction variance, yields fraction of variance explained by each term:
 \begin{align*}
 1 &= \frac{Var\left[g_{\{0\}}\right]}{\predvar} + \frac{Var\left[g_{\{1\}}(x_1)\right]}{\predvar} + \frac{Var\left[g_{\{2\}}(x_2)\right]}{\predvar} \\
 &\phantom{{}={}} + \frac{Var\left[g_{\{1, 2\}}(x_1, x_2)\right]}{\predvar} + \;\dots\; + \frac{Var\left[g_{\{1,\ldots,p\}}(x)\right]}{\predvar}
 \end{align*}
 
-\item The fraction of variance explained by a term is referred to as the Sobol index:
+\item Fraction of variance explained by a term is the Sobol index:
 $$
 S_j = \frac{Var\left[g_{\{j\}}(x_j)\right]}{Var\left[\hat{f}(x)\right]}
 $$
