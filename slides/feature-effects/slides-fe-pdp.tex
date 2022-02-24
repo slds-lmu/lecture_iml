@@ -13,8 +13,8 @@
 
 \newcommand{\titlefigure}{figure/pdp_bike}
 \newcommand{\learninggoals}{
-\item Understand PD plots and their relation to ICE plots
-\item Understand how to interpret ICE curves and PD plots
+\item PD plots and relation to ICE plots
+\item Interpretation of PDP
 }
 
 \lecturechapter{Partial Dependence (PD) plot}
@@ -124,27 +124,26 @@ $$\textstyle\fh_{1, PD}(x_1^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_1^*, \xv_{2, 3}^
 \includegraphics[width=0.65\textwidth]{figure/pdp_bike}
 \end{center}
 
+
 \begin{onlyenv}
 \only<1>{
+If feature varies:\\
 \begin{itemize}
 \item
-  \textbf{ICE:} Visualizes how \textbf{prediction of
-  individual observation} changes if feature values vary\\
-  \(\Rightarrow\) ICE is \textbf{local} interpretation method (black curves).
+  \textbf{ICE:} How does \textbf{prediction of
+  individual observation} change? \(\Rightarrow\) \textbf{local} interpretation
 \item
-  \textbf{PD:} Visualizes average effect of a feature,
-  i.e., how \textbf{expected prediction} changes if feature values vary
-  \(\Rightarrow\) PD plot is \textbf{global} interpretation method (yellow curve).
+  \textbf{PD:} How does \textbf{average effect / expected prediction} change? \(\Rightarrow\) \textbf{global} interpretation
 \end{itemize}
 }
 
 \only<2>{
 Insights from bike sharing data:
 \begin{itemize}
-  \item Averaging ICE curves yields PD plot (yellow curve).
-  \item Parallel ICE curves across all observations indicate homogeneous effect.
-  \item Higher temperature $\Rightarrow$ higher number of bike rentals.
-  \item Bike rentals decrease at temperatures of more than $\approx 27^\circ$C.
+%  \item Averaging ICE curves yields PD plot (yellow curve)
+  \item Parallel ICE curves = homogeneous effect
+  \item Warmer $\Rightarrow$ more rented bikes
+  \item Too hot $\Rightarrow$ slightly less bikes 
 \end{itemize}
 }
 \end{onlyenv}
@@ -159,11 +158,12 @@ Insights from bike sharing data:
 \end{center}
 
 \begin{itemize}
-\item PD plot visualizes the expected prediction if all observations would belong to a certain category (and shows distribution of predictions in a box plot).
-\item ICE plot connects predictions of individual observations (might identify heterogenous effects between categories if many lines are crossing).\\
-%to identify heterogenous effects between categories (here: lines between SPRING and SUMMER are heterogenous).\\
-\textbf{Note:} For nominal categories without ordering, categories could be compared pairwise.
+\item PDP with boxplots and ICE
+%lot visualizes expected prediction if all observations would belong to a certain category (and shows distribution of predictions in a box plot)
+\item NB: Categroes can be unordered, if so, rather compare pairwise
 \end{itemize}
+%ICE plot connects predictions of individual observations (might identify heterogenous effects between categories if many lines are crossing)\\
+%to identify heterogenous effects between categories (here: lines between SPRING and SUMMER are heterogenous).\\
 
 }
 
@@ -174,8 +174,9 @@ Insights from bike sharing data:
 \end{center}
 
 \begin{itemize}
- \item Humidity and temperature interact with each other.
- \item The number of bike rentals is especially high when humidity is below 75 percent and temperature is between 15 $^{\circ}$C and 27 $^{\circ}$C
+ \item Humidity and temperature interact with each other
+ \item Low humidity + high temp < 27 $^{\circ}$C $\Rightarrow$ many rented bikes
+ %Many rented bikesThe number of bike rentals is especially high when humidity is below 75 percent and temperature is between 15 $^{\circ}$C and 27 $^{\circ}$C
 \end{itemize}
 
 

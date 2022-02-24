@@ -117,7 +117,32 @@ If features are correlated, PD plots \textbf{average predictions} of artificial 
 
 \begin{frame}{Motivation}
 
-Example what can go wrong with PDPs and NNs
+%TODO: Example what can go wrong with PDPs and NNs
+
+Example: Fit a NN to $5000$ simulated data points with $x \sim Unif(0,1), \epsilon, \epsilon_1, \epsilon_2 \sim N(0, 0.1)$ and
+
+\centerline{$y = x_1 + x_2^2 + \epsilon$, where
+$x_1 = x + \epsilon_1$, 
+$x_2 = x + \epsilon_2$.}
+
+\begin{columns}[T]
+\begin{column}{0.65\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figure/ale_vs_pdp}
+\end{column}
+\begin{column}{0.35\textwidth}
+What went wrong here?
+
+\begin{itemize}
+\item Test error (MSE) of NN is comparable to other models
+\item NN model contains interactions (see surface)
+\item ALE shows a linear and quadratic effect of $x_1$ and $x_2$ from DGP
+\item PDP shows expected model behaviour but does not recover effects of DGP \\
+$\Rightarrow$ Due to averaging of artificial points outside data distribution
+\end{itemize}
+
+\end{column}
+\end{columns}
 
 \end{frame}
 
