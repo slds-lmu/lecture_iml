@@ -37,7 +37,7 @@
 In general, feature importance methods share two components
 \lz
 \begin{enumerate}
-  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed/removed.
+  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed or removed.
   \item \textbf{Performance Comparison:} Compare performance under perturbation/removal with the original model performance.
 \end{enumerate}
 \lz
@@ -61,14 +61,14 @@ In general, feature importance methods share two components
 
 Performance-based permutation feature importance (PFI) for features $x_S$ using test data $\D$:
 \begin{itemize}
-  \item Measure the error \color{red}\textbf{with permuted feature values} \color{black} $\pert{x}{}{}_S$
   \item Measure the error \color{blue}\textbf{without permuting features}\color{black}.
+  \item Measure the error \color{red}\textbf{with permuted feature values} \color{black} $\pert{x}{}{}_S$
   \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
 $$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
 \end{itemize}
 
-The data $\D$ where $x_S$ is replace with $\pert{x}{S}{}$ is denoted as $\pert{\D}{S}{}$.\\
-Example of permuting feature $x_S$ with $S = \{1\}$:
+The data $\D$ where $x_S$ is replaced with $\pert{x}{S}{}$ is denoted as $\pert{\D}{S}{}$.\\
+Example of permuting feature $x_S$ with $S = \{1\}$ and $m=6$:
 
 % TODO: update to new notation
 \begin{center}
@@ -130,14 +130,14 @@ $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y
   \end{itemize}
 }
 
-\begin{vbframe}{Bike Sharing Dataset}
+\begin{vbframe}{Example: Bike Sharing Dataset}
 
 \begin{center}
 \includegraphics[width=0.66\textwidth]{figure_man/bike-sharing02.png}
 \end{center}
 
 \begin{itemize}
- \item The year is the most important feature. Features like weekday also contribute to the performance.
+ \item The year is the most important feature. Features such as weekday also contribute to the performance.
  \item Interpretation: Destroying the information about the year by shuffling this feature increases the mean absolute error of the model by an amount of 816.
  \item Additionally, the $5 \%$ and $95 \%$ quantile of the repetitions are shown as error bars.
 \end{itemize}
@@ -146,7 +146,7 @@ $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y
 \begin{vbframe}{Permutation Feature Importance}
  \begin{itemize}
  \itemsep1em
-  \item Interpretation: PFI displays the increase of the model error when the feature's information is destroyed.
+  \item Interpretation: PFI is the increase of the model error when the feature's information is destroyed.
   \item Results can be unreliable due to random permutations. \\
   $\Rightarrow$ Solution: Average results over multiple repetitions.
   \item Permuting features despite correlation with other features can lead to unrealistic combinations of feature values (since under dependence $\P(x_j,x_{-j}) \neq \P(x_j) \P(x_{-j})$).
@@ -155,6 +155,7 @@ $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y
  \end{itemize}
 \end{vbframe}
 
+%TODO: Simplify example
 \begin{vbframe}{Permutation Feature Importance: Extrapolation}
  
  \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
@@ -165,7 +166,7 @@ A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
   \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
   \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
   \includegraphics[width=0.4\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
-  \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ confidence band.}
+  \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
 \end{figure}
 % 
 $\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $\{x: \P(x) > 0\}$ \\
@@ -190,10 +191,10 @@ $\Rightarrow$ PFI does not fairly attribute the performance to the individual fe
 
 \begin{vbframe}{Permutation Feature Importance: Test versus Training data}
 
-\textbf{Example:} $x_1, \dots, x_{20}, y$ are independently sampled from $\mathcal{U} (-10, 10)$. A \texttt{xgboost} model with default hyperparameters if fit on a small training set of $50$ observations. The model overfits heavily.\\
+\textbf{Example:} $x_1, \dots, x_{20}, y$ are independently sampled from $\mathcal{U} (-10, 10)$. An \texttt{xgboost} model with default hyperparameters is fit on a small training set of $50$ observations. The model overfits heavily.\\
 
 \begin{figure}
-  \includegraphics[width=0.6\linewidth]{figure_man/pfi_test_vs_train.pdf}
+  \includegraphics[width=0.8\linewidth]{figure_man/pfi_test_vs_train.pdf}
   \caption{While PFI on test data considers all features to be irrelevant, PFI on train data exposes the features on which the model overfit.}
 \end{figure}
 
@@ -214,7 +215,7 @@ Can we get insight into whether ...
     \end{itemize}
     \item the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
-      \item Nonzero PFI implies that the feature is dependent with $y$ or it's covariates $x_{-j}$ or both (due to extrapolation).
+      \item Nonzero PFI implies that the feature is dependent of $y$ or it's covariates $x_{-j}$ or both (due to extrapolation).
       \item If a feature is not exploited by the model, PFI is zero, irrespective of whether the feature is useful or not.
     \end{itemize}
     \item the model requires access to $x_j$ to achieve it's prediction performance?    
@@ -262,23 +263,24 @@ PIMP algorithm:
 \end{enumerate}
 \end{vbframe}
 
-\begin{vbframe}{Excurs: Multiple testing problem}
+\begin{vbframe}{Digression: Multiple testing problem}
 \begin{itemize}
   \item When should we reject the $H_0$-hypothesis for a feature? 
-  \item The larger $p$, the more tests need to performed by PIMP. 
+  \item The larger $p$, the more tests need to be performed by PIMP. 
   \item This can lead to the \textbf{multiple testing problem}: If one does not take the multiplicity of tests into account, then the probability that some of the true null hypotheses are rejected (type-I error) by chance alone may be unduly large.
   \item Accounting for multiplicity of individual tests can be achieved by controlling
   an appropriate error rate like the \textbf{familywise error rate} (FWE, the probability of at least one type-I error). 
   \item One classical method to control the FWE is the \textbf{Bonferroni correction} which rejects a null hypothesis if its p-value is smaller than $\alpha/p$ with $p$ as the number of tests. 
-  \item We refer to other lectures like \textit{Schätzen \& Testen I} for more details.
+  \item We refer to other lectures or the statistics literature for more details.
   \end{itemize} 
 
   \footnote[frame]{\fullcite{romano2010multiple}}
   %{\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
 \end{vbframe}
 
+%TODO: Simplify or better explain example
 \begin{vbframe}{PIMP for extrapolation example}
-\textbf{Recap:} $x_1$ and $x_2$ are highly correlated by independent of $y$. $x_4$ is independent of all other variables, $x_3$ is only correlated with $y$.\\
+\textbf{Recap:} $x_1$ and $x_2$ are highly correlated but independent of $y$. $x_4$ is independent of all other variables, $x_3$ is only correlated with $y$.\\
 A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
  %
 \begin{figure}
