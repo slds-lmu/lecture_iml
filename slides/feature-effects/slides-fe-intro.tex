@@ -1,0 +1,127 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\begin{document}
+
+\newcommand{\titlefigure}{figure/feature-effect}
+\newcommand{\learninggoals}{
+\item Intro to feature effects
+\item ICE plots
+%\item Understand how to interpret ICE curves and PD plots
+}
+
+\lecturechapter{Individual Conditional Expectation (ICE) Plot}
+\lecture{Interpretable Machine Learning}
+
+\begin{frame}{Feature Effects}
+
+%Here,
+
+%Here, the marginal effect of a feature $x_j$ does not vary across observations and is quantified by its associated coefficient $\hat\beta_j$. %, which explains how a feature affects the model prediction.
+
+%The $\hat\beta$-coefficients are constant across different observations.
+%It is sufficient to consider a feature's $\hat\beta$ coefficient as marginal effect as it provides an understanding how a feature affects the model prediction. % on average.
+
+%\lz
+% \textbf{Example}: %Visualizing the marginal effect of a LM (left) and a GAM (right) with a single feature (temperature) to predict the number of bike rentals.
+% Feature effect of LM (left) visualizes relationship of a single feature (here: temperature) on prediction (here: number of bike rentals) while ignoring all other features.
+% GAM (right) replaces linear terms $x_j\hat\beta_j$ of LM by non-linear functions $f_j(x_j)$ estimated via splines.
+%Marginal effects of a LM with features temperature (\texttt{temp}) and \texttt{season} to predict the number of bike rentals (\texttt{cnt}).
+
+\centering
+%\includegraphics[width=0.75\textwidth, trim=0cm 0.56cm 0cm 0.08cm, clip]{figure_man/lm_main_effects}
+
+\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\phantom{\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}}
+
+LM without interaction: $\hat\beta_j$ is constant linear effect of feature $x_j$ (applies to all observations):
+%the prediction of any observation $\xi$ is %can be expressed by %explained by its marginal feature effects
+%prediction of an observation $\xi$ can be explained by the individual main effects, e.g.:
+$$\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$$ % + \dots + x_p\hat\beta_p.$$
+
+%\phantom{\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}}\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}
+
+% \begin{tabular}{c@{}c}
+%  \includegraphics[width=0.4\textwidth,trim=0cm 0.1cm 10.4cm 0cm,clip]{figure/lm_main_effects}\pause% 
+% &\includegraphics[width=0.4\textwidth,trim=10cm 0.1cm 0.4cm 0cm 0,clip]{figure/lm_main_effects}
+% \end{tabular}
+\end{frame}
+
+
+\begin{frame}{Feature Effects}
+
+\centering
+%\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\phantom{\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}}
+
+\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}
+
+LM without interaction: $\hat\beta_j$ is constant linear effect of feature $x_j$ (applies to all observations):
+$$\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$$% + \dots + x_p\hat\beta_p.$$
+
+GAM without interaction: $\hat{h}_j(x_j)$ is non-linear effect of feature $x_j$  (applies to all observations):
+$$\fh(\xv) = \hat\beta_0 + \hat{h}_j(x_1)$$% + \dots + \hat{h}_p(x_p).$$
+
+\end{frame}
+
+
+\begin{frame}{Feature Effects}
+
+\centerline{\includegraphics[width=0.75\textwidth, trim=0cm 0.1cm 0cm 0cm, clip]{figure/lm_main_interactions}}
+
+Interactions: Feature effect is modified by other features and varies across observations (e.g. effect of temperature varies across season).
+
+\end{frame}
+
+%
+% \begin{frame}{Feature Effects}
+%
+% %If the model contains interactions, the global effect is not enough as the
+% %If the model contains interactions, there is a modifying effect for certain observations that changes the slope of the regression line (in case of LMs) or the shape of the partial effect curve (in case of GAMs).
+% %(in case of LMs) or the shape of the partial effect curve (in case of GAMs).
+% %If the model contains interactions, the slope of the regression line (in case of LMs) or the shape of the partial effect curve (in case of GAMs) will be different for certain observations.
+% If the model contains interactions, the functional shape of the estimated feature effect will usually be different for certain observations.
+% \lz
+%
+% \textbf{Example}: If we include the interaction \texttt{temp*season},
+% %the marginal effect of \texttt{temp} will depend on \texttt{season}. That is,
+% observations belonging to a certain category of \texttt{season} will have different marginal effects (slopes) for \texttt{temp}.
+% %, which results in a different slope for the feature temp at each category of the feature season.
+% %so that each category of season yields a different slope for temp.
+%
+% {\centering\includegraphics[width=0.9\textwidth, trim=0cm 0.1cm 0cm 0cm, clip]{figure_man/lm_interaction}}
+%
+% %\textbf{Note}: In case of interactions between two continuous features, we would obtain multiple regression lines with different slopes.
+% %The marginal effect can then be visualized in a 2d effect plot or
+%
+% \end{frame}
+
+
+
+\begin{frame}{Feature Effects - TODO}
+
+\textbf{Feature effects} visualize or quantify marginal contribution of a feature of interest w.r.t. predictions. %marginal contribution of a feature to the model \textbf{prediction}. % $\hat{y} = \fh(\xi[])$. effect (e.g., the average relationship) between a
+\begin{itemize}
+%\tightlist
+\item Methods: PD Plots, ICE curves, ALE plots
+\item Similar to regression coefficients (LMs) or Splines (GAMs)
+\end{itemize}
+
+\centerline{\includegraphics[width=\textwidth]{figure/feature-effect.pdf}}
+
+\centerline{\small \hspace{20px} Individual (curves) \hspace{8px}
+$\xrightarrow[]{\text{aggregate}}$ \hspace{8px} Global (single curve) \hspace{8px}
+$\xrightarrow[]{\text{aggregate}}$ \hspace{8px} Global (single value)}
+
+
+\end{frame}
+
+
+\endlecture
+\end{document}
