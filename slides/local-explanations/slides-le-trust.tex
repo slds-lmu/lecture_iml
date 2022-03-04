@@ -26,24 +26,37 @@
 \lecturechapter{Increasing Trust in Explanations}
 \lecture{Interpretable Machine Learning}
 
+% Prerequisites: LIME and SHAP
+
 % ------------------------------------------------------------------------------
 
 
 % ------------------------------------------------------------------------------
 
-\begin{vbframe}{Motivation}
+\begin{vbframe}{Motivation \& Important Properties}
 	\begin{itemize}
-		\item In the previous sections, we saw multiple local explanation methods. 
-		\item Their explanations should not only make a model interpretable ("why did the model come up with this decision?") but also reveal if it is trustworthy (``how certain is this explanation?'').
-		\item A trustworthy explanation is an explanation that gives \textbf{(1)} accurate insights into the inner workings of our model and \textbf{(2)} are also robust (low variance). 
-		\item[(1)] Explanations could be misleading if their generation is based on inputs in areas where the model was trained with little or no training data (extrapolation). Thus, it is necessary to detect if an IML method uses out-of-distribution data to derive an explanation. 
-		\item[(2)] We expect to receive similar explanations for similar data points with similar predictions. However, depending on the IML method this is not always the case since multiple sources of uncertainty exist. Therefore, it is necessary to measure how robust an IML method is to small changes in the input data or parameters. 
-		\item Both aspects could undermine users' trust in the explanations and therefore also in the model since the lack of a solid explanation raises concerns about the model's reliability and robustness. 
-		\item In the upcoming section, we will, therefore, discuss methods to detect if a point is out-of-distribution and to measure how robust IML methods are.
+		\item Local explanations should not only make a model interpretable but also reveal if the model is trustworthy.
+	    \item \textbf{Interpretable}: ``why did the model come up with this decision?''
+	    \item \textbf{Trustworthy}: ``how certain is this explanation?''
+	    \begin{enumerate}
+	        \item accurate insights into the inner workings of our model
+	        \begin{itemize}
+	            \item Failure case: generation is based on inputs in areas where the model was trained with little or no training data (extrapolation).
+	        \end{itemize}
+	        \item robust (i.e. low variance)
+	        \begin{itemize}
+	            \item Expectation: similar explanations for similar data points with similar predictions
+	            \item However, multiple sources of uncertainty exist.
+	            \item[$\leadsto$] measure how robust an IML method is to small changes in the input data or parameters.
+	            \item[$\leadsto$] Is a point out of distribution?
+	        \end{itemize}
+	    \end{enumerate}
+		\item Failing in one of these $\leadsto$ undermining users' trust in the explanations $\leadsto$ undermining trust in the model. 
+		%\item In the upcoming section, we will, therefore, discuss methods to detect if a point is out-of-distribution and to measure how robust IML methods are.
 	\end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Out-of-distribution Detection}
+\begin{vbframe}[c]{Out-of-distribution Detection}
 	\begin{itemize}
 		\item In areas with little data support, models are unreliable and so are the explanations we receive from our local-explanation methods.
 		\item For local explanation methods, the following components could be out-of-distribution (OOD): 
@@ -53,90 +66,119 @@
 			\item Shapley value's permuted instances to calculate the marginal contributions 
 			\item ICE curves grid data points 
 		\end{itemize}
-		\item In the following, we see two very simple and intuitive approaches for OOD detection. Of course, also more complex approaches exist, e.g., based on Bayesian variational autoencoders (Daxberger et al. (2020)).
+		\item Two very simple and intuitive approaches
+		\begin{itemize}
+		    \item classifier for out of distribution
+		    \item clustering
+		\end{itemize}
+		\item more complicated also possible, e.g., variational autoencoders [\href{https://arxiv.org/abs/1912.05651}{Daxberger et al. 2020}]
 	\end{itemize}
-\footnote[frame]{Daxberger et al. (2020). Bayesian Variational Autoencoders for Unsupervised Out-of-Distribution Detection.}
 \end{vbframe}
 
 
-\begin{vbframe}{Out-of-distribution Detection}
-	\textbf{OOD-Classifier:} 
+\begin{vbframe}[c]{Out-of-distribution Detection: OOD-Classifier}
 	\begin{itemize}
-		\item In the chapter on LIME's pitfalls, we saw a classifier by Slack et al. (2020) that detects if data points adhere to the data manifold. 
-		\item It was trained on the joined dataset of original training data and randomly sampled data points. 
-		The binary outcome variable is 0 for original training data and 1 for randomly sampled data points. 
-		\item Slack et al. used the classifier to hide biases of a ML model but it could also be used for diagnosis.  
+	    \item Problem: we have only in-distribution data
+	    \item Idea: Hallucinate new (out-of-distribution) data by randomly sample data points
+	    \item[$\leadsto$] Learn a binary classifier to distinguish between the origins of the data
+	    \medskip
+	    \pause
+	    \item Study whether an explanation approach can be fooled [\href{https://arxiv.org/abs/1911.02508}{Dylan Slack et al. 2020}]
+	    \begin{itemize}
+	        \item Hide bias in the true (deployed) model, but use an unbiased model for all out-of-distribution samples.
+	    \end{itemize}
+	    \item[$\leadsto$] Important way to diagnose an explanation approach
 	\end{itemize}
-	\footnote[frame]{Dylan Slack et al. (2020). Fooling LIME and SHAP: Adversarial Attacks on Post hoc Explanation Methods. In Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society (AIES '20). Association for Computing Machinery, New York, NY, USA, 180–186.}
 \end{vbframe}
 
-\begin{frame}{Out-of-distribution Detection}
-\textbf{DBSCAN:}
+\begin{frame}[c]{Out-of-distribution Detection: Clustering via DBSCAN}
 \begin{itemize}
-	\item Another popular method is the data clustering algorithm DBSCAN (Density-Based Spatial Clustering of Applications with Noise) 
-	\item For this method, we need the notion of an $\epsilon$-neighborhood: \\
+	\item DBSCAN is a data clustering algorithm [\href{https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf}{Martin Ester et al. 1996}] \\ (Density-Based Spatial Clustering of Applications with Noise) 
+	\item For this method, we define an $\epsilon$-neighborhood: \\
 	Given a dataset $X = \{\xv_i\}_{i = 1}^n$, a $\epsilon$-neighborhood for $\xv \in \Xspace$ is defined as 
 	$$ \mathcal{N}_{\epsilon}(\xv) = \{\xv_i \in X | d(\xv, \xv_i) \le \epsilon\}.$$
 	 $d(\cdot)$ is a distance measure (e.g., Euclidean or Gower distance). 
-	\item The method differentiates between core points $\xv$ with at least $m$ data points within $\mathcal{N}_{\epsilon}(\xv)$, border points that are within $\mathcal{N}_{\epsilon}(\xv)$ and noise points that are not within $\mathcal{N}_{\epsilon}(\xv)$.
-	\item Each core point forms an own cluster with all its neighborhood points. If another core point $\xv$ is part of the neighborhood of another core point, their clusters are joint. Noise points are not part of any cluster. 
+	\item core points $\xv$
+	\begin{itemize}
+	    \item have at least $m$ data points within $\mathcal{N}_{\epsilon}(\xv)$
+	    \item forms an own cluster with all its neighborhood points
+	\end{itemize}
+    \item border points
+    \begin{itemize}
+        \item within $\mathcal{N}_{\epsilon}(\xv)$
+        \item part of a cluster defined by a core point
+    \end{itemize}
+    \item noise points
+    \begin{itemize}
+        \item are not within $\mathcal{N}_{\epsilon}(\xv)$
+        \item not part of any cluster
+    \end{itemize}
 \end{itemize}
-\vspace{-0.6cm}
 \end{frame}
 
-\begin{frame}{Out-of-distribution Detection}
+\begin{frame}[c]{Out-of-distribution Detection}
 \vspace{-0.6cm}
 \begin{columns}
-	\begin{column}{0.68\textwidth}
+	\begin{column}{0.5\textwidth}
+	
 		\begin{itemize}
 			\item In the right figure, the (green) points A and B are core points and form one cluster since they lie in each others neighborhood, all yellow points are border points of this cluster. 
 			\item Since D is not part of the neighborhood of core points, it is a noise point. 
+			\item In-distribution: new point lies within a cluster
+		    \item Out-of-distribution: new point lies outside the clusters 
 		\end{itemize}
 	\end{column}
-	\begin{column}{0.27\textwidth}
-		\vspace{-0.4cm}
+	\begin{column}{0.5\textwidth}
+	    \vspace{-2em}
 		\begin{center}
-			\includegraphics[width=1\textwidth]{figure/dbscan.jpg}
-			
+			\includegraphics[width=0.6\textwidth]{figure/dbscan.jpg}\\
 			\tiny{Example for DBSCAN, circles display $\epsilon$-neighborhoods, $m = 4$}
-			
 		\end{center}
 	\end{column}
 \end{columns}
+
 \begin{itemize}
-		\item A new point could be classified as being in-distribution if it lies within a cluster, or out-of-distribution if it lies outside the clusters. 
-		\item Disadvantage: Depending on the distance metric $d(\cdot)$, DBSCAN could suffer from the ``curse of dimensionality''. 
-		\item Furthermore, the choice of $\epsilon$ and $m$ is not clear a-priori. 
+		\item Disadvantages:
+		\begin{itemize}
+		    \item Depending on the distance metric $d(\cdot)$, DBSCAN could suffer from the ``curse of dimensionality''. 
+		    \item The choice of $\epsilon$ and $m$ is not clear a-priori. 
+		\end{itemize}
 \end{itemize}
-	\footnote[frame]{Martin Ester et al. (1996). A density-based algorithm for discovering clusters in large spatial databases with noise. KDD'96: Proceedings of the Second International Conference on Knowledge Discovery and Data Mining. 226–231.}
 \end{frame}
 
-\begin{vbframe}{Robustness}
+\begin{vbframe}[c]{Robustness}
 		\begin{itemize}
-		\item In general we must differentiate between explanation uncertainty and process uncertainty that lead to non-robust explanations: 
+		\item Differentiate between different kinds of uncertainty: 
 		\begin{enumerate}
-			\item Explanation uncertainty tries to answer how an explanation changes if we repeat the experiment. The explanation could differ depending on which subset of data we use for the explanation method and which parameters. 
-			\item Process uncertainty tries to answer how an explanation changes if the underlying model is changed. This is interesting since ML models can be non-robust, e.g., because they are trained on noisy data. 
+			\item \textbf{Explanation uncertainty}: Change of explanation if we repeat the process. For example, the explanation could differ depending on which subset of data we use for the explanation method and which hyperparameters. 
+			\item \textbf{Process uncertainty}: Change of explanation if the underlying model is changed. Is the ML models non-robust, e.g., because they are trained on noisy data?
 		\end{enumerate}
-		\item Here, we focus on the former - explanation uncertainty. We could receive different explanations although we analyse the same model and the same (or a very similar) data point.
+		\item We focus on explanation uncertainty. 
+		\begin{itemize}
+		    \item Even with the same model and same (or similar) data points, we can receive different explanations.
+		\end{itemize}
 	\end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Robustness Measure for LIME and SHAP}  
+\begin{vbframe}[c]{Robustness Measure for LIME and SHAP}  
 	\begin{itemize}
-		\item One way to quantify the robustness of an explanation is to examine the behavior of the model in a neighborhood of the point of interest. We would like to receive similar explanations for similar inputs. 
-		\item In the previous chapter on the limitations of LIME, we already saw an example where LIME produced different explanations for very similar data points (with similar predictions).
-		\item For LIME and SHAP, Alvarez-Melis and Jaakkola (2018) derived a notion of stability based on \textbf{locally Lipschitz continuity}: \\
-		An explanation method $g:\Xspace \rightarrow \R^m$ is locally Lipschitz if for every $\xv_0 \in \Xspace$ there exist $\delta > 0$ and $\omega \in \R$ such that $||\xv - \xv_0|| < \delta$ implies $||g(\xv) - g(\xv_0)|| < \omega ||\xv - \xv_0||$. \\
+		\item Objective: Similar explanations for similar inputs (in a neighborhood). 
+		%\item In the previous chapter on the limitations of LIME, we already saw an example where LIME produced different explanations for very similar data points (with similar predictions).
+		\item For LIME and SHAP, notion of stability based on \textbf{locally Lipschitz continuity} [\href{https://arxiv.org/abs/1806.08049}{Alvarez-Melis and Jaakkola. 2018}]:\\
+		An explanation method $g:\Xspace \rightarrow \R^m$ is locally Lipschitz if 
+		\begin{itemize}
+		    \item for every $\xv_0 \in \Xspace$ there exist $\delta > 0$ and  $\omega \in \R$
+		    \item such that $||\xv - \xv_0|| < \delta$ implies $||g(\xv) - g(\xv_0)|| < \omega ||\xv - \xv_0||$.
+		\end{itemize}
 		\footnotesize Note that, for LIME, $g$ returns the $m$ coefficients of the surrogate model. \normalsize
-		\item According to this definition we can quantify and compare the robustness of explanation models in terms of $\omega$. 
-		The closer $\omega$ is to 0, the more robust our explanation method is. 
+		\item According to this, we can quantify the robustness of explanation models in terms of $\omega$:
+		\begin{itemize}
+		    \item[$\leadsto$] The closer $\omega$ is to 0, the more robust our explanation method is. 
+		\end{itemize}
 		\item $\omega$ is rarely known a-priori but it could be estimated as following: 
 		$$\hat{\omega}_{X}(\xv) = \underset{x_i \in \mathcal{N}_{\epsilon}(\xv)}{\arg \max} \frac{||g(\xv) - g(\xv_i)||_2}{d(\xv, \xv_i)},$$
 		where $\mathcal{N}_{\epsilon}(\xv)$ is the $\epsilon$-neighborhood of $\xv$.
 	\end{itemize}
-\vspace{2cm}
-\footnote[frame]{Alvarez-Melis, D., \& Jaakkola, T. (2018). On the Robustness of Interpretability Methods. ArXiv, abs/1806.08049.}
 \end{vbframe}
 
 

@@ -22,156 +22,352 @@
 
 % Defines macros and environments
 
-\newcommand{\titlefigure}{figure/dbscan.jpg}
+\newcommand{\titlefigure}{figure/lime5}
 \newcommand{\learninggoals}{
-\item Understand the aspects that undermine users' trust in an explanation
-\item Learn diagnostic tools that could increase trust }
+	\item Understand motivation for LIME
+	\item Develop a mathematical intuition
+	\item See various applications}
 
-\lecturechapter{Increasing Trust in Explanations}
+\lecturechapter{LIME}
 \lecture{Interpretable Machine Learning}
 
+% Prerequisite: le-intro
+
 % ------------------------------------------------------------------------------
-
-\begin{vbframe}{Motivation}
-	\begin{itemize}
-		\item In the previous sections, we saw multiple local explanation methods. 
-		\item Their explanations should not only make a model interpretable ("why did the model come up with this decision?") but also reveal if it is trustworthy (``how certain is this explanation?'').
-		\item A trustworthy explanation is an explanation that gives \textbf{(1)} accurate insights into the inner workings of our model and \textbf{(2)} are also robust (low variance). 
-		\item[(1)] Explanations could be misleading if their generation is based on inputs in areas where the model was trained with little or no training data (extrapolation). Thus, it is necessary to detect if an IML method uses out-of-distribution data to derive an explanation. 
-		\item[(2)] We expect to receive similar explanations for similar data points with similar predictions. However, depending on the IML method this is not always the case since multiple sources of uncertainty exist. Therefore, it is necessary to measure how robust an IML method is to small changes in the input data or parameters. 
-		\item Both aspects could undermine users' trust in the explanations and therefore also in the model since the lack of a solid explanation raises concerns about the model's reliability and robustness. 
-		\item In the upcoming section, we will, therefore, discuss methods to detect if a point is out-of-distribution and to measure how robust IML methods are.
-	\end{itemize}
-\end{vbframe}
-
-\begin{vbframe}{Out-of-distribution Detection}
-	\begin{itemize}
-		\item In areas with little data support, models are unreliable and so are the explanations we receive from our local-explanation methods.
-		\item For local explanation methods, the following components could be out-of-distribution (OOD): 
-		\begin{itemize}
-			\item the data for LIME's surrogate model
-			\item Counterfactuals themselves
-			\item Shapley value's permuted instances to calculate the marginal contributions 
-			\item ICE curves grid data points 
-		\end{itemize}
-		\item In the following, we see two very simple and intuitive approaches for OOD detection. Of course, also more complex approaches exist, e.g., based on Bayesian variational autoencoders (Daxberger et al. (2020)).
-	\end{itemize}
-\footnote[frame]{Daxberger et al. (2020). Bayesian Variational Autoencoders for Unsupervised Out-of-Distribution Detection.}
-\end{vbframe}
-
-
-\begin{vbframe}{Out-of-distribution Detection}
-	\textbf{OOD-Classifier:} 
-	\begin{itemize}
-		\item In the chapter on LIME's pitfalls, we saw a classifier by Slack et al. (2020) that detects if data points adhere to the data manifold. 
-		\item It was trained on the joined dataset of original training data and randomly sampled data points. 
-		The binary outcome variable is 0 for original training data and 1 for randomly sampled data points. 
-		\item Slack et al. used the classifier to hide biases of a ML model but it could also be used for diagnosis.  
-	\end{itemize}
-	\footnote[frame]{Dylan Slack et al. (2020). Fooling LIME and SHAP: Adversarial Attacks on Post hoc Explanation Methods. In Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society (AIES '20). Association for Computing Machinery, New York, NY, USA, 180–186.}
-\end{vbframe}
-
-\begin{frame}{Out-of-distribution Detection}
-\textbf{DBSCAN:}
+\begin{frame}[c]{LIME}
 \begin{itemize}
-	\item Another popular method is the data clustering algorithm DBSCAN (Density-Based Spatial Clustering of Applications with Noise) 
-	\item For this method, we need the notion of an $\epsilon$-neighborhood: \\
-	Given a dataset $X = \{\xv_i\}_{i = 1}^n$, a $\epsilon$-neighborhood for $\xv \in \Xspace$ is defined as 
-	$$ \mathcal{N}_{\epsilon}(\xv) = \{\xv_i \in X | d(\xv, \xv_i) \le \epsilon\}.$$
-	 $d(\cdot)$ is a distance measure (e.g., Euclidean or Gower distance). 
-	\item The method differentiates between core points $\xv$ with at least $m$ data points within $\mathcal{N}_{\epsilon}(\xv)$, border points that are within $\mathcal{N}_{\epsilon}(\xv)$ and noise points that are not within $\mathcal{N}_{\epsilon}(\xv)$.
-	\item Each core point forms an own cluster with all its neighborhood points. If another core point $\xv$ is part of the neighborhood of another core point, their clusters are joint. Noise points are not part of any cluster. 
+		\item Local Interpretable Model-agnostic Explanations (LIME) assume that even if a machine learning model is very complex, the local prediction can be described with a simpler model.
+		\smallskip\pause
+		\item  Therefore, LIME explains \textbf{individual} predictions of \textbf{any} black-box model by approximating the model \textbf{locally} with an interpretable model.
+		\smallskip\pause
+		\item These approximations are called local surrogate models. \\
+		Typically, they are linear models or trees as interpretable models by design.
+		\smallskip\pause
+		\item LIME should answer why a machine learning model predicted $y$ for input $\xv$.
+		\smallskip\pause
+		\item Since LIME can be applied to any black-box model LIME is model-agnostic.  
+		\smallskip\pause
+		\item LIME can handle tabular, image and text data. 
 \end{itemize}
-\vspace{-0.6cm}
 \end{frame}
 
-\begin{frame}{Out-of-distribution Detection}
-\vspace{-0.6cm}
-\begin{columns}
-	\begin{column}{0.68\textwidth}
+
+\begin{frame}[c]{LIME: Characteristics}
+
+    \textbf{Definition:}\\
+	LIME provides a local explanation for a black-box model $\fh$ in form of a model $g \in \Gspace$ with $\Gspace$ as the class of potential (interpretable) models.\\[2em]
+	
+	
+	Model $g$ should have two characteristics:
+	\begin{enumerate}
+		\item \textbf{Interpretable}: relation between the input variables and the response are easy to understand.  
+		\item \textbf{Locally faithful / Fidelity}: similar behavior as $\fh$ in the vicinity of the instance being predicted.
+	\end{enumerate}
+	
+	\vspace{2em}
+	Formally, we want to receive a model $g$ with \textbf{minimal complexity and maximal local-fidelity}. 
+\end{frame}
+
+
+\begin{frame}[c]{Model Complexity}
+    
+    We can measure the complexity of a model $g$ using $J(g)$. \\[2em]
+
+ 	\textbf{Example: Linear model}\\
+ 	Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = s(\thetab^\top \xv)\right\}$ be the class of linear models with $s(\cdot)$ being either the identity function for linear regression or the logistic sigmoid function for logistic regression. \\
+ 	Then, $J(g) = \sum_{j = 1}^p \Ind_{\{ \theta_j \neq 0 \}}$ could be the L$_0$ loss, i.e. the number of non-zero coefficients. 
+ 	\vspace{0.5cm}
+ 	
+ 	\textbf{Example: Tree}\\
+ 	Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \Ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees (i.e., class of additive model over the leaf-rectangles $Q_m$) then $J(g)$ could measure the number of terminal/leaf nodes.\\
+ 	
+\end{frame}
+ 
+\begin{frame}{Local model fidelity}
+ 	\begin{itemize}
+ 		\item A model $g$ is locally faithful to $\fh$ w.r.t. a point $\xv$\\ 
+ 		if for points $\zv \in \Zspace \subseteq \R^p$ close to $\xv$, the predictions of $g(\zv)$ are close to $\fh(\zv)$. 
+ 		\item In an optimization task: the closer $\zv$ is to $\xv$, the closer $g(\xv)$ should be to $\fh(\zv)$.  
+ 		\pause
+ 		\item Two required measures:
+ 		\begin{enumerate}
+ 			\item A proximity (similarity) measure $\neigh(\zv)$ between $\zv$ and $\xv$, e.g. the exponential kernel:
+ 			$$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$$ 
+ 			with $\sigma$ as the kernel width and $d$ as the Euclidean distance (numeric features) or the Gower distance $d_G$ (mixed features). 
+ 			\pause
+ 			\item A distance measure or loss function $L(\fh(\zv), g(\zv))$, e.g. the L$_2$ loss/squared error
+ 			$$L(\fh(\zv), g(\zv)) = (g(\zv) - \fh(\zv))^2.$$ 
+ 		\end{enumerate}
+ 		\pause
+ 		\item Given points $\zv$, we can measure local fidelity of $g$ with respect to $\fh$ in terms of a weighted loss
+ 		$$ L(\fh, g, \neigh) = \sum_{\zv \in \Zspace} \neigh(\zv) L(\fh(\zv), g(\zv)) $$
+ 		%\item Note that identifying \textbf{locally} faithful explanations that are interpretable is less of a challenge than identifying \textbf{globally} faithful explanations. Yet, global fidelity implies local fidelity but not vice versa.
+ 	\end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Minimization task}
+	\begin{itemize}
+		\item Optimization objective of LIME: 
+		$$ \argmin_{g \in \Gspace} L(\fh, g, \neigh) + J(g)$$
+		\item In practice:
 		\begin{itemize}
-			\item In the right figure, the (green) points A and B are core points and form one cluster since they lie in each others neighborhood, all yellow points are border points of this cluster. 
-			\item Since D is not part of the neighborhood of core points, it is a noise point. 
+		    \item LIME only optimizes $L(\fh, g, \neigh)$ (model-fidelity). 	
+		    \item Users decide threshold on model complexity $J(g)$ beforehand
 		\end{itemize}
-	\end{column}
-	\begin{column}{0.27\textwidth}
-		\vspace{-0.4cm}
+		\item Goal: \textbf{model-agnostic} explainer
+		\begin{itemize}
+    		\item[$\leadsto$] optimize $L(\fh, g, \neigh)$ without making any assumptions about $\fh$. 
+    		\item[$\leadsto$] learn $g$ only approximately.  
+		\end{itemize}
+		\end{itemize}
+\end{frame} 
+
+\begin{frame}[c]{LIME Algorithm: Outline}
+		
+		\textbf{Input}:
+		\begin{itemize}
+		    \item a pre-trained model $\fh$
+		    \item an $\xv$ data points whose prediction $\fh(\xv)$ we want to explain
+		    \item model class $\Gspace$ for local surrogate (to limit the complexity of the explanation)
+		\end{itemize}
+		
+		\pause
+		\medskip
+		
+		\textbf{Algorithm}:
+		\begin{enumerate}
+    		\item Independently sample new points $\zv \in \Zspace$. 
+    		\item Retrieve predictions $\fh(\zv)$ for obtained points $\zv$. 
+    		\item Weight $\zv \in \Zspace$ by their proximity $\neigh(\zv)$.
+    		\item Train an interpretable surrogate model $g$ on weighted data points $\zv \in \Zspace$.\\ The obtained predictions $\fh(\zv)$ is the target of this model.
+    		\item Return the interpretable model $g$ as the explainer.
+		\end{enumerate}
+		
+
+	
+\end{frame} 
+
+\begin{frame}[c]{LIME Algorithm: Example}
+
+    	\textbf{Illustration} of LIME based on a classification task:
+		\begin{itemize}
+			\item Light/dark gray background: prediction surface of a classifier.
+			\item Yellow point: $\xv$. 
+			\item $\Gspace$: class of logistic regression models. 
+		\end{itemize}
 		\begin{center}
-			\includegraphics[width=1\textwidth]{figure/dbscan.jpg}
-			
-			\tiny{Example for DBSCAN, circles display $\epsilon$-neighborhoods, $m = 4$}
-			
+			\includegraphics[width=0.35\textwidth]{figure/lime2}
 		\end{center}
+
+\end{frame} 
+
+
+\begin{frame}[c]{LIME Algorithm: Example (Step 1+2: Sampling) \citebutton{Ribeiro. 2016}{https://github.com/marcotcr/lime}}
+		
+		Strategies for sampling: 
+		\begin{itemize} 
+			\item Uniformly sample new points from the feasible feature range. 
+			\item Use the training data set with or without perturbations.
+			\item Draw samples from the estimated univariate distribution of each feature.
+			\item Create an equidistant grid over the supported feature range.  
+		\end{itemize}
+		\begin{center}
+			\includegraphics[width=0.4\textwidth]{figure/lime3} \hspace{0.1cm}
+			\includegraphics[width=0.4\textwidth]{figure/lime3a}
+		\end{center}
+
+\end{frame}
+		
+\begin{frame}{LIME Algorithm: Example (Step 3: Proximity) \citebutton{Ribeiro. 2016}{https://github.com/marcotcr/lime}}
+
+	In this example, we use the exponential kernel defined on the Euclidean distance $d$
+		 $$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2).$$ 
+		\begin{center}
+			\includegraphics[width=0.4\textwidth]{figure/lime4}
+		\end{center}
+		
+% MARIUS: Not relevant for the example; if we want to introduce it, we should do it somewhere else
+% 	An alternative is the Gower proximity: 
+% 	$\neigh(\zv) = 1 - \Gower(\zv, \xv) =  1 - \frac{1}{p}\sum_{j = 1}^{p} \delta_G(z_j, x_j) $ 
+% 	$\textnormal{ with } \delta_G(z_j, x_j) = 
+% 	\begin{cases}
+% 	\frac{1}{\widehat{R}_j}|z_j- x_j| & \text{if $x_j$ and $z_j$ are numerical} \\
+% 	\mathbb{I}_{z_j \neq x_j} & \text{if $x_j$ and $z_j$ are categorical}
+% 	\end{cases}.$
+		
+\end{frame}
+		
+\begin{frame}[c]{LIME Algorithm: Example (Step 4: Surrogate) \citebutton{Ribeiro. 2016}{https://github.com/marcotcr/lime}}
+		Popular interpretable models include linear models, LASSO, classification/regression trees and\\ decision rules.\\
+		In our example, we fit a \textbf{logistic regression} model. (Consequently, $L(\fh(\zv), g(\zv))$ is the Bernoulli loss.)
+		\begin{center}
+			\includegraphics[width=0.4\textwidth]{figure/lime5}
+		\end{center}
+\end{frame}
+
+\begin{frame}[c]{Example on Credit Dataset (Tabular)}
+	\begin{itemize}
+		\item Model: SVM with RBF kernel
+		\item $\xv$: first data point of the dataset with $\fh_{bad}(\xv) = 0.658$
+		\item $\zv$: training data. They are weighted by the Gower proximity. 
+		\item Surrogate model $g$: L1-regularized linear model with 5 features. 
+	\end{itemize}
+
+    \bigskip
+
+	\begin{table}[ht]
+		\centering
+		\scriptsize
+		\begin{tabular}{rlrlllrrl}
+			\hline
+			age & sex & job & housing & saving & checking & credit.amount & duration & purpose \\ 
+			\hline
+			 22 & female &   2 & own & little & moderate & 5951 &  48 & radio/TV \\ 
+			\hline
+		\end{tabular}
+	\end{table}
+
+\end{frame}
+
+\begin{frame}[c]{Example on Credit Dataset (cont'd)}
+
+
+\begin{center}
+	\includegraphics[width=0.45\textwidth]{figure/lime_credit.pdf}\\
+	{Effects of surrogate model, i.e. $\thetah^T \xv$.}
+\end{center}
+
+\begin{itemize}
+	\item The local model prediction for $\xv$ is $g(\xv) = 0.64$ vs. $\fh(\xv) = 0.658$. 
+	\item $g$ has a local fidelity of $L(\pih, g, \neigh) = 4.82$ with $\neigh(\zv)$ as the Gower proximity and $L(\pih_{bad}(\zv), g(\zv))$ as the euclidean distance. 
+\end{itemize}
+
+\end{frame}
+	
+\begin{frame}[c]{Example on Credit Dataset (cont'd)}
+
+\begin{itemize}	
+	\item 2-dim ICE plots (aka. prediction surface plot) of credit amount and duration show how the surrogate model $g$ linearly approximates the previously nonlinear prediction surface of $\pih_{bad}$. 
+\end{itemize}
+\vspace{-0.4cm}
+ \begin{columns}
+	\begin{column}{0.47\textwidth}
+		\begin{center}
+		\includegraphics[width=1\textwidth]{figure/lime_credit_ice1.pdf}
+		\end{center}		
+	\end{column}
+	\begin{column}{0.46\textwidth}  
+		\begin{center}
+				\includegraphics[width=1\textwidth]{figure/lime_credit_ice2.pdf}
+		\end{center}
+			
 	\end{column}
 \end{columns}
-\begin{itemize}
-		\item A new point could be classified as being in-distribution if it lies within a cluster, or out-of-distribution if it lies outside the clusters. 
-		\item Disadvantage: Depending on the distance metric $d(\cdot)$, DBSCAN could suffer from the ``curse of dimensionality''. 
-		\item Furthermore, the choice of $\epsilon$ and $m$ is not clear a-priori. 
-\end{itemize}
-	\footnote[frame]{Martin Ester et al. (1996). A density-based algorithm for discovering clusters in large spatial databases with noise. KDD'96: Proceedings of the Second International Conference on Knowledge Discovery and Data Mining. 226–231.}
+\vspace{-0.4cm}
+\begin{center}
+		{2-dim ICE plot of $\fh_{bad}$ (\textbf{left}) and surrogate $g$ (\textbf{right}) for features duration and credit amount. \\The white dot is $\xv$. The histograms display the marginal distribution of the training data $\Xmat$.}
+\end{center}
+
 \end{frame}
 
-\begin{vbframe}{Robustness}
+%\begin{frame}[containsverbatim,allowframebreaks]{Bike Sharing Dataset}
+%\vspace{-.3cm}
+%
+%\begin{center}
+%\includegraphics[width=0.7\textwidth]{figure/bike-figure.png}
+%\end{center} 
+%
+%\footnotesize \textbf{Figure:} LIME for two example instances of the bike sharing dataset.
+%
+%\normalsize
+%\vspace{0.2cm}
+%The plots show the feature effect of the sparse linear model, i.e. the model coefficients times the feature value of the instance.
+%Warmer temperature has a positive effect on the prediction, 
+%while the year 2011 has a large negative effect as well as the springtime.
+%\end{frame}
+
+\begin{frame}{LIME for Text Data \citebutton{Shen, Ian, (2019)}{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}}
+    LIME can also be applied to text data: 
+	\begin{itemize}
+		\item Raw text representations: 
 		\begin{itemize}
-		\item In general we must differentiate between explanation uncertainty and process uncertainty that lead to non-robust explanations: 
-		\begin{enumerate}
-			\item Explanation uncertainty tries to answer how an explanation changes if we repeat the experiment. The explanation could differ depending on which subset of data we use for the explanation method and which parameters. 
-			\item Process uncertainty tries to answer how an explanation changes if the underlying model is changed. This is interesting since ML models can be non-robust, e.g., because they are trained on noisy data. 
-		\end{enumerate}
-		\item Here, we focus on the former - explanation uncertainty. We could receive different explanations although we analyse the same model and the same (or a very similar) data point.
+		    \item binary vector indicating the presence or absence of a word 
+		    \item a vector of word counts
+		\end{itemize}
+		\item Examples for \textit{``This text is the first text."} and \textit{``Finally, this is the last one."}:
+		\begin{center}
+			\begin{tabular}{c|c|c|c|c|c|c|c} 
+				this & text & is & the & first & finally & last & one \\ 
+				\hline
+				1 & 2 & 1 & 1 & 1 & 0 & 0 & 0 \\
+				1 & 0 & 1 & 1 & 0 & 1 & 1 & 1 \\
+			\end{tabular}
+		\end{center} 
+		\item \textbf{Sampling}: Randomly set the entry of individual words to $0$; equal to removing all occurrences of this word in the text. 
+		\item \textbf{Proximity}: Exponential kernel with cosine distance. 
+		\begin{itemize}
+		    \item neglects words that do not occur in both texts 
+		    \item measures the distance irrespective of the text size.
+		\end{itemize}
 	\end{itemize}
-\end{vbframe}
-
-\begin{vbframe}{Robustness Measure for LIME and SHAP}  
+\end{frame}
+	
+\begin{frame}{LIME for Text Data (cont'd) \citebutton{Shen, Ian, (2019)}{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}}	 
 	\begin{itemize}
-		\item One way to quantify the robustness of an explanation is to examine the behavior of the model in a neighborhood of the point of interest. We would like to receive similar explanations for similar inputs. 
-		\item In the previous chapter on the limitations of LIME, we already saw an example where LIME produced different explanations for very similar data points (with similar predictions).
-		\item For LIME and SHAP, Alvarez-Melis and Jaakkola (2018) derived a notion of stability based on \textbf{locally Lipschitz continuity}: \\
-		An explanation method $g:\Xspace \rightarrow \R^m$ is locally Lipschitz if for every $\xv_0 \in \Xspace$ there exist $\delta > 0$ and $\omega \in \R$ such that $||\xv - \xv_0|| < \delta$ implies $||g(\xv) - g(\xv_0)|| < \omega ||\xv - \xv_0||$. \\
-		\footnotesize Note that, for LIME, $g$ returns the $m$ coefficients of the surrogate model. \normalsize
-		\item According to this definition we can quantify and compare the robustness of explanation models in terms of $\omega$. 
-		The closer $\omega$ is to 0, the more robust our explanation method is. 
-		\item $\omega$ is rarely known a-priori but it could be estimated as following: 
-		$$\hat{\omega}_{X}(\xv) = \underset{x_i \in \mathcal{N}_{\epsilon}(\xv)}{\arg \max} \frac{||g(\xv) - g(\xv_i)||_2}{d(\xv, \xv_i)},$$
-		where $\mathcal{N}_{\epsilon}(\xv)$ is the $\epsilon$-neighborhood of $\xv$.
+		\item Random forest classifier labeling movie reviews from IMDB. 
+		\begin{itemize}
+		    \item \textcolor{blue}{0}: negative
+		    \item \textcolor{orange}{1}: positive
+		\end{itemize}
+		\item Surrogate model is a sparse linear model. 
 	\end{itemize}
-\vspace{2cm}
-\footnote[frame]{Alvarez-Melis, D., \& Jaakkola, T. (2018). On the Robustness of Interpretability Methods. ArXiv, abs/1806.08049.}
-\end{vbframe}
-
-
-\begin{comment}
-\begin{vbframe}{Sources of Uncertainty}
-Two sources of uncertainty could be identified for local explanation methods: 
-\begin{itemize}
-\item Sampling variance in explaining a single data point. 
-E.g., to train a surrogate model for LIME we sample a new data set.   
-\item Sensitivity to choice of parameters. E.g., the user needs to determine the sample size and the kernel width to explain a model with LIME. 
-\end{itemize}
-These sources could lead to different explanations although we analyse the same model and the same (or a very similar) data point. 
-\footnote[frame]{Zhang et al. (2019). ``Why Should You Trust My Explanation?'' Understanding Uncertainty in LIME Explanations. arXiv preprint arXiv:1904.12991.} 
-\end{vbframe}
-\end{comment}
-
-
-\begin{comment}
-\begin{vbframe}{Noisy data}
+	
+	\begin{figure}
+		\begin{center}
+			%\captionsetup{font = scriptsize, labelfont = {bf, scriptsize}}
+			\includegraphics[width=0.9\textwidth]{figure/lime_movier}
+		\end{center}
+	\end{figure}
+	
+	{Words like ``worst`` or ``waste`` indicate a negative review while words like ``best`` or ``great`` indicate a positive review.}
+	
+	\end{frame}
+	
+\begin{frame}[c]{LIME for image data}
+	\begin{columns}
+		\begin{column}{0.67\textwidth}
+			LIME also works for image data:  
+			\begin{itemize}
+				\item \textbf{Idea}: Each instance is represented as a binary vector indicating the presence or absence of superpixels. \citebutton{Achanta et al. 2012}{https://ieeexplore.ieee.org/document/6205760}
+				\item Superpixels are interconnected pixels with similar colors. A single pixel might not change a prediction by much.
+				\item \textbf{Warning}: The size of superpixels needs to be determined before the segmentation takes place.
+				\item \textbf{Sampling}: Randomly switching some of the super pixels ``off", i.e., by coloring some superpixels uniformly
+			\end{itemize}		
+		\end{column}
+		\begin{column}{0.26\textwidth}  
+			\begin{center}
+				\includegraphics[width=1\textwidth]{figure/superpixel_woman}
+				{Example for superpixels of different sizes.}
+			\end{center}
+		\end{column}
+	\end{columns}
+    
+\end{frame}
+\begin{frame}{LIME for image data (cont'd) \citebutton{Ribeiro. 2016}{https://github.com/marcotcr/lime}}
 	\begin{itemize}
-		\item What if the ML model was trained on noisy data? Should the explanation model also take up these noisy patterns? 
-		\item If we use an explanation model to debug the ML model, it is okay, if our explanation model also takes up the noisy patterns learned in the ML model. 
-		\item If we use an explanation model to understand both the predictor but also the underlying true data generating process, we want to focus on the stable patterns learned by the ML model and receive robust explanations. 
+		\item Explaining prediction of pre-trained Inception neural network classifier
+		\item \textbf{Sampling}: Graying out all superpixels besides 10
+		\item \textbf{Surrogate}: Locally weighted sparse linear models 
+		\item \textbf{Proximity}: Exponential kernel with euclidean distance.
 	\end{itemize}
-\end{vbframe}
-
-\begin{vbframe}{Addtional notes}
-	\begin{itemize}
-		\item We cannot only impose that the explanation of one particular method is similar for similar data points, but also across multiple IML methods. 
-	\end{itemize}
-\end{vbframe}
-
-content...
-\end{comment}
-
+% https://lime-ml.readthedocs.io/en/latest/lime.html#module-lime.lime_image
+	\vspace{-0.3cm}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{figure/lime-images}
+		
+		{Top 3 classes predicted.}
+	\end{center}
+	
+\end{frame}
 \endlecture
 \end{document}

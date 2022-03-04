@@ -167,10 +167,10 @@
 
 \begin{vbframe}{Motivation}
 \begin{itemize}
-  \item \textbf{Feature effects} describe the relationship of features with the prediction $\yh$.
+  \item \textbf{Feature effects} describe the relationship of features $x$ with the prediction $\yh$.
   \begin{itemize}
     \item requires one plot per feature
-    \item does not take the prediction target $y$ into account
+    \item does not take the true target $y$ into account
   \end{itemize}
   \item \textbf{Feature importance} methods quantify the relevance of features for the prediction performance.
   \begin{itemize}
@@ -187,7 +187,7 @@ Feature importance offers a condensed summary of the relevance of features for t
 \begin{center}
   \begin{figure}
   \includegraphics[width=0.6\linewidth]{figure_man/bike_pdp+ice} \hfill \includegraphics[width=0.35\linewidth]{figure_man/bike_pfi}
-  \caption{A random forest was fit on the bike sharing dataset. Left: Partial dependence plots (PDP) for all features. Right: Feature importance plot (PFI).}
+  \caption{A random forest was fit on the bike sharing dataset. Left: Partial dependence plots (PDP) for all features. Right: Permutation feature importance (PFI) plot.}
 \end{figure}
 \end{center}
 
@@ -197,11 +197,11 @@ Feature importance offers a condensed summary of the relevance of features for t
 In general, feature importance methods share two components
 \lz
 \begin{enumerate}
-  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed/removed.
+  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed or removed.
   \item \textbf{Performance Comparison:} Compare performance under perturbation/removal with the original model performance.
 \end{enumerate}
 \lz
-Depending on the type of perturbation/removal feature importance methods provide insight into different aspects of model and data.
+Depending on the type of perturbation/removal, feature importance methods provide insight into different aspects of model and data.
 \end{vbframe}
 
 
@@ -210,22 +210,22 @@ Depending on the type of perturbation/removal feature importance methods provide
 Feature importance methods provide highly condensed insight, but can only highlight certain aspects of model and data. For example, one may be interested in getting insight into whether ...
 \lz
 \begin{enumerate}
-    \item the feature $x_j$ is causal for the prediction?
+    \item<1|only@1> the feature $x_j$ is causal for the prediction?
     \begin{itemize}
       \item In a linear model: nonzero coefficient.
       \item More generally: changing the input to a feature $x_j$ has an effect on the prediction $\yh = \fh(x)$.
-      \item \textit{Note:} A feature being causal for the prediction does not imply that the underlying variable is causal for the prediction target. For example, a disease symptom may be used to classify disease status (and is therefore causal for the prediction $\yh$). But intervening on the disease symptom does not have an effect on the disease and therefore is not causal for $y$.
+      \item \textit{Note:} A feature being causal for the prediction $\yh$ does not imply that the underlying variable is causal for the prediction target $y$. For example, a disease symptom may be used to classify disease status (and is therefore causal for the prediction $\yh$). But intervening on the disease symptom does not have an effect on the disease and therefore is not causal for $y$.
     \end{itemize} \framebreak
-    \item the variable $x_j$ contains prediction-relevant information?
+    \item<1|only@1> the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
       \item e.g. when $\E[y|x_j] \neq \E[y]$ for MSE loss
       \item More generally: The variable helps to predict the target quantity (e.g. conditional expectation), as measured by the difference in expected loss.
       \item If $x_j \indep y$ then $x_j$ and $y$ have zero mutual information and therefore cannot contain prediction-relevant information.
     \end{itemize}
-    \item the model requires access to $x_j$ to achieve it's prediction performance?
+    \item<2> the model requires access to $x_j$ to achieve it's prediction performance?
     \begin{itemize}
       \item e.g. when $\E[y|x_{-j}] \neq \E[y|x_j, x_{-j}]$ for MSE loss
-      \item More generally: The variable enables to improve the prediction of the target quantity over $x_{-j}$ only, as measured by the difference in expected loss.
+      \item More generally: The variable helps to predict the target quantity, compared to using only $x_{-j}$, as measured by the difference in expected loss.
       \item If $x_j \indep y | x_{-j}$ then $x_j$ cannot contain unique prediction-relevant information.
     \end{itemize}
 \end{enumerate}
@@ -240,13 +240,14 @@ The distinctness of the aforementioned aspects can be proven by example (sketch)
   \item A feature may be causal for the prediction $\yh$ (1) without containing prediction-relevant information about $y$ (2). \textit{Example:} overfitting.
   \item A feature may contain prediction relevant information (2) without causing the prediction (1).  \textit{Examples:} underfitting, model multiplicity
   \item A feature may contain prediction-relevant information (2), without the model requiring access to the feature for (optimal) prediction performance (3).\\
-  \textit{Note:} A model may rely on features that can be replace with others. E.g., a random forest model on dataset with $\E[y|x_1] \neq \E[y]$ and $\E[y|x_1] = \E[y|x_1, x_2]$ where $x_1$ was not sampled as potential split variable may rely on $x_2$.
+  \textit{Note:} A model may rely on features that can be replaced with others. E.g., a random forest model on dataset with $\E[y|x_1] \neq \E[y]$ and $\E[y|x_1] = \E[y|x_1, x_2]$ where $x_1$ was not sampled as potential split variable may rely on $x_2$.\\
+  \textit{Examples:} correlated features, confounding
   \end{itemize}
 $\Rightarrow$ In general, an importance score cannot provide insight into all aspects at once.
 \end{vbframe}
 
+%TODO: Explain or replace figure
 \begin{vbframe}
-  %\textit{Note:} A model may rely on features that can be replace with others. E.g., a random forest model on dataset with $\E[y|x_1] \neq \E[y]$ and $\E[y|x_1] = \E[y|x_1, x_2]$ where $x_1$ was not sampled as potential split variable may rely on $x_2$. 
   \begin{figure}
   \begin{tikzpicture}[thick, scale=1.25, every node/.style={scale=1, line width=0.25mm, black, fill=white}]
 		%

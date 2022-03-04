@@ -36,7 +36,9 @@
 	
 	% ------------------------------------------------------------------------------
 
-
+%TODO: Add CFI sampling: Conditional subgroup, knockoffs/CPI, others?
+%TODO: Add more on when to use conditional, when marginal?
+%TODO: Conditioning on everything is not a good idea: CFI=0 for highly correlated variables? Other examples? Relative Importance (Gunnar)?
 
 % CFI IDEA
 \begin{vbframe}{Conditional Feature Importance Idea}
@@ -50,7 +52,7 @@
 \end{vbframe}
 
 
-
+%TODO: Changed in PFI slides? Also change here!
 % RECAP EXTRAPOLATION
 \begin{vbframe}{Recap: Extrapolation in PFI}
  
@@ -96,8 +98,8 @@ $\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the fea
 
 Conditional feature importance (CFI) for features $x_S$ using test data $\D$:
 \begin{itemize}
-  \item Measure the error \color{red}\textbf{with perturbed feature values} \color{black} $\pert{x}{S}{-S}$, where $\pert{x}{S}{-S}_S \sim \P(x_S|x_{-S})$
   \item Measure the error \color{blue}\textbf{with unperturbed features}\color{black}.
+  \item Measure the error \color{red}\textbf{with perturbed feature values} \color{black} $\pert{x}{S}{-S}$, where $\pert{x}{S}{-S}_S \sim \P(x_S|x_{-S})$
   \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
 $$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{-S}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
 \end{itemize}
@@ -109,7 +111,7 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 \end{vbframe}
 
 
-
+%TODO: What is meant by "mechanistically"?
 % INTERPRETATION OF CFI
 \begin{vbframe}{Implications of CFI}
 
@@ -153,6 +155,7 @@ Can we gain insight into whether..
 \end{enumerate}
 \end{vbframe}
 
+%TODO: Better example? 
 % RECAP EXTRAPOLATION
 \begin{vbframe}{Comparison: PFI and CFI}
  

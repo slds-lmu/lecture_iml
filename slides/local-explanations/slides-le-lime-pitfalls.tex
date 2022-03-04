@@ -23,84 +23,112 @@
 	
 	\newcommand{\titlefigure}{figure/lime5}
     \newcommand{\learninggoals}{
-    	\item Learn why LIME should be used with caution}
+    	\item Learn why LIME should be used with caution
+    	\item Possible pitfalls of LIME}
 	
 	\lecturechapter{LIME Pitfalls}
 	\lecture{Interpretable Machine Learning}
 	
+	% Prerequisite: le-into, le-lime
+	
 	% ------------------------------------------------------------------------------
 
 
-\begin{vbframe}[allowframebreaks]{LIME Pitfalls}
+\begin{vbframe}[c]{LIME Pitfalls}
   \begin{itemize}
-  	\item LIME is one of the best known interpretable machine learning methods but several papers caution to be careful in their use. 
-  	\item Problems can occur in several places. These are discussed in more detail below. 
+  	\item LIME is one of the best known interpretable machine learning methods\\ but several papers caution to be careful in their use. 
+  	\item Problems can occur in several places. 
+  	\item These are discussed in more detail in the following. 
   \end{itemize}
-	\textbf{Pitfall: Sampling}
+  
+\end{vbframe}
+  
+\begin{vbframe}[c]{LIME Pitfalls: Sampling}
 	\begin{itemize}
-	  \item The most common sampling strategies for $\zv \in Z$ do not take the correlation between features into account. 
-      \item This can lead to unlikely data points which can then be used to learn local explanation models.
-      \item Ideally, we need a local sampler that samples $\zv$ from $\Xspace$. However, its derivation is particularly difficult for high dimensional or mixed feature spaces. 
-      \item We could use the original training data to fit the surrogate model, but this only works well with enough data near $\xv$.
+	  \item \textbf{Pitfall}: Common sampling strategies for $\zv \in Z$ do not take the correlation between features into account. 
+      \item \textbf{Implication}:  Unlikely data points might be used to learn local explanation models.
+      \item \textbf{Solution I}: Ideally, local sampler directly on $\Xspace$. Derivation is particularly difficult for high dimensional or mixed feature spaces. 
+      \item \textbf{Solution II}: Use original training data to fit the surrogate model;\\ but this only works well with enough data near $\xv$.
     \end{itemize}
-\framebreak
-	\textbf{Pitfall: Locality}
+    
+\end{vbframe}
+
+\begin{vbframe}[c]{LIME Pitfall: Locality}
+
 	\begin{itemize} 
-     \item It is difficult to define locality (= how samples are weighted locally). It has a huge influence on the local model, but there is no automatic procedure for choosing the neighborhood.
-     \item The authors of LIME proposed an exponential kernel as proximity measure between $\xv$ and $\zv$:
+     \item \textbf{Pitfall}: Difficult to define locality (= how samples are weighted locally). 
+     \begin{itemize}
+         \item[$\leadsto$] Huge influence on the local model, but there is no automatic procedure for choosing the neighborhood.
+     \end{itemize}
+     \item Originally, an exponential kernel as proximity measure between $\xv$ and $\zv$ was used:\\
      	$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$ where $d$ is a distance measure and $\sigma$ is the kernel width. 
      	 \begin{center}
      		\includegraphics[width=0.6\textwidth]{figure/lime_locality}
      		\vspace{-0.5cm}
      		
-     		\scriptsize{\textbf{Figure:} Linear surrogate models for two different data points based on the same model with one target and one feature. Each line displays one linear surrogate model with a different kernel width. For the data point in the right figure, larger kernel sizes are more severe.}
+     		\scriptsize{Linear surrogate models for two different data points based on the same model with one target and one feature. Each line displays one linear surrogate model with a different kernel width. For the data point in the right figure, larger kernel sizes are more severe.}
      		
      	\end{center}
-     \item A larger kernel width means that instances that are farther away also influence the model such that we do not receive a local but a global surrogate model. 
-     \item Therefore, we prefer smaller kernel widths such that an instance must be very close to influence the local model.  
-     \item If the kernel width is set too small, we only fit a local model based on a few observations which carries the risk to fit noise.   
-	\item Multiple software package use another default standardized distance: the Gower proximity where no kernel width needs to be specified. However, experiments showed that since also data points far away receive a weight $ > 0$, their resulting explanations are rather global surrogates than local surrogates.   
-\end{itemize}
-\vspace{0.3cm}
+     \end{itemize}
+\end{vbframe}
 
-\footnote[frame]{Kopper P., Molnar M. (2019) Chapter 13 LIME and Neighborhood. In: Molnar C., Casalicchio G., König G., Pfisterer F., Scholbeck C., Bischl B. (eds) Limitations of Interpretable Machine Learning Methods. \url{https://compstat-lmu.github.io/iml_methods_limitations/}.}
+\begin{vbframe}[c]{LIME Pitfall: Locality \citebutton{Kopper et al. 2019}{https://compstat-lmu.github.io/iml_methods_limitations/}}
+    \begin{itemize} 
+         \item \textbf{Solution I}: Kernel width strongly interacts with locality:
+         \begin{itemize}
+             \item Large kernel width leads to interaction with points further away (unwanted)
+             \item Small kernel width leads to small neighborhood\\
+             $\leadsto$ Risk to few data points $\leadsto$ potentially fitting more noise
+         \end{itemize}
+    	\item \textbf{Solution II}: Gower proximity where no kernel width needs to be specified. 
+    	\begin{itemize}
+    	    \item \textbf{Problem}: data points far away receive a weight $ > 0$; their resulting explanations are rather global surrogates than local surrogates.   
+    	\end{itemize}
+    \end{itemize}
+\vspace{0.3cm}
 
 \end{vbframe}
 
-\begin{vbframe}[allowframebreaks]{LIME Pitfalls}
-
-\textbf{Pitfall: Local vs. global features}
+\begin{vbframe}[c]{LIME Pitfalls: Local vs. Global Features \citebutton{Laugel et al. 2018}{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}}
 
 \begin{columns}
 	\begin{column}{0.78\textwidth}
 \begin{itemize}
-	\item There are features that influence the \textbf{global} shape of the black-box model and \textbf{local} features that impact predictions for a small area of $\Xspace$. 
-	\item For example in decision trees, splitting variables close to the root have a more global influence than the ones close to the leaves. 
-	\item In most implementations, instances for the surrogate model are sampled from the whole input space which tends to hide the features with a local influence for the benefit of features with a global influence even when the kernel width was reduced. 
-	\item Laugel et al. (2018) propose to sample new instances $\zv$ around the decision boundary closest from point $\xv$ for higher local accuracy.
+	\item \textbf{Problem}: Some features influence the \textbf{global} shape of the black-box model vs. \textbf{Local} features impact predictions for a small area of $\Xspace$. 
+	\item \textbf{Example}: Decision trees; splitting variables close to the root have a more global influence than the ones close to the leaves.
+	\item \textbf{Problem}: Instances for the surrogate model are sampled from the whole input space 
+	\begin{itemize}
+	    \item[$\leadsto$] Hide the features with a local influence for the benefit of features with a global influence even when the kernel width was reduced. 
+	\end{itemize}
+	\item \textbf{Solution}: Sample new instances $\zv$ around the decision boundary closest from point $\xv$ for higher local accuracy.
 \end{itemize}
 \end{column}
 \begin{column}{0.2\textwidth}
 
-			\vspace{-0.6cm}
 		\includegraphics[width=1\textwidth]{figure/lime_bordersample2}
 		
 		\vspace{-0.3cm}
 		
-		\begin{center}
-			\tiny{\textbf{Figure:} Proposed method by Laugel et al. (2018). Source: \href{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}{ICML WHI 2018}}
-		\end{center}
-
-	
  	\end{column}
 \end{columns}
-\framebreak
+
+\end{vbframe}
+
+
+\begin{vbframe}{LIME Pitfalls: Local vs. Global Features: Visualization \citebutton{Laugel et al. 2018}{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}}
+
 \begin{columns}
 	\begin{column}{0.6\textwidth}
 		\begin{itemize}
-		\item Let us explain the prediction of the green dot. Background colors display predictions of a random forest, the gray line is the decision boundary.
-		\item The decision boundary of LIME with default kernel width (green line) and reduced kernel width (blue line) do not match the direction of the steeper local boundary. 
-		\item The method of Laugel et al. (2018) (red line) approximates the local border direction better. The red dot is the point closest to the border detected by this method. 
+		\item Given in figure to the right:
+		\begin{itemize}
+		    \item Green dot: To be explained
+		    \item Background color: Classification of random forest
+		    \item Grey curve: Decision boundary
+		    \item Red dot: Point closest to the border detected by this method. 
+		\end{itemize}
+		\item \textbf{Observation: }The decision boundary of LIME with different kernels (blue and green) do not match the direction of the steeper local boundary. 
+		\item The method \citebutton{Laugel et al. 2018}{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf} (red line) approximates the local border direction better. 
 	\end{itemize}
 \end{column}
 \begin{column}{0.39\textwidth}
@@ -110,7 +138,7 @@
 	\includegraphics[width=1\textwidth]{figure/lime-globallocal2}
 	
 	\vspace{-0.3cm}
-	{\tiny \textbf{Figure:} Half-moons dataset.}
+	{Half-moons dataset.}
 	
 \end{center}
 
@@ -119,34 +147,39 @@
 \footnote[frame]{Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.}
 \end{vbframe}
 
-\begin{vbframe}[allowframebreaks]{LIME Pitfalls}
-\textbf{Pitfall: Faithfulness}
+\begin{vbframe}[c]{LIME Pitfalls: Faithfulness}
 \begin{itemize}
-	\item There exists a trade-off between local fidelity vs. sparsity. 
-	\item If the local fidelity of our interpretable model is low, we do not receive reliable explanations.
-	\item On the other hand, high fidelity is only possible with a more complex model bearing the risk to substitute a black-box by a complex model that is difficult to interpret.
+	\item \textbf{Problem}: Trade-off between local fidelity vs. sparsity
+	\item \textbf{Observation I}: Low fidelity $\leadsto$ Unreliable explanations
+	\item \textbf{Observation II}: High fidelity requires more complex models $\leadsto$ surrogate model cannot easily interpreted
 \end{itemize}
-\framebreak
 
-\textbf{Pitfall: Possibility to hide biases}
-\begin{itemize}
-	\item Slack et al. (2020) showed that data scientists could manipulate their model to hide biases. 
-	\item They make use of the fact that sampled instances for the surrogate model could be out of the input data distribution if we do not account for feature dependencies. 
-	\item We can built a classifier that detects whether a given data point is an out-of-distribution sample or not using the original training data and data sampled by LIME. 
-	\item If a new data point has the same distribution as the training data, the prediction of the biased classifier is returned. If a new data point is out-of-distribution (usually samples for the surrogate models), the unbiased prediction is returned.
-	\item For the credit dataset, a biased model could be a model solely trained on the feature `gender`, while an unbiased model could be trained on features uncorrelated with `gender` -- for example, percentage of income the credit rate represents.   
-	\item Since the surrogate model is trained on out-of-distribution samples, the predictions of these samples are derived from an unbiased predictor. 
-	\item Consequently, the explanations do not detect any bias although the original predictor is biased. 
-\end{itemize}
-\footnote[frame]{Dylan Slack et al. (2020). Fooling LIME and SHAP: Adversarial Attacks on Post hoc Explanation Methods. In Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society (AIES '20). Association for Computing Machinery, New York, NY, USA, 180–186.}
 \end{vbframe}
 
-\begin{vbframe}{LIME Pitfalls}
-\textbf{Pitfall: Robustness}
+\begin{vbframe}{LIME Pitfalls: Hiding biases \citebutton{Slack et al. 2020}{https://arxiv.org/abs/1911.02508}}
+
 \begin{itemize}
-	\item Another really big problem is the instability of the explanations. 
-	\item Explanations of two very close points could vary greatly. 
-	\item But also if $\fh$ and $\xv$ are fixed, and only new sampled data points $\zv$ are used, the resulting explanations could differ. This is called the \textbf{Rashomon Effect}.
+	\item \textbf{Problem}: Developer could manipulate their model to hide biases. 
+	\item \textbf{Insight}: LIME can sample out-of-distribution points
+	\item \textbf{Attack}:
+	\begin{enumerate}
+	    \item classifier to discriminate between in-distribution and out-of-distribution data points
+	    \item for in-distribution points, use the original (biased) model
+	    \item for out-of-distribution points, use an unbiased model 
+	    \item[$\leadsto$] LIME will sample many points from the unbiased model and the local explanation will hide the bias of the true model
+	\end{enumerate}
+	\item \textbf{Example}: Credit dataset; a biased model trained on Feature `gender`; unbiased model could be trained on features uncorrelated with `gender`
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}[c]{LIME Pitfalls: Robustness \citebutton{Alvarez-Melis, D., \& Jaakkola, T. 2018}{https://arxiv.org/abs/1806.08049}}
+\begin{itemize}
+	\item \textbf{Problem}: Instability of explanations. 
+	\item \textbf{Observation}: Explanations of two very close points could vary greatly. 
+	\item \textbf{Rashomon Effect}: There could be more than one explanation for a prediction.
+	\begin{itemize}
+	    \item[$\leadsto$] For example can happen because of other models $\fh$ (trained on the same data) or other sampled data points $\zv$
+	\end{itemize}
 \end{itemize}
 \vspace{-0.7cm}
 \begin{columns}
@@ -155,7 +188,7 @@
 		
 		\includegraphics[width=0.55\textwidth]{figure/lime_robustness_1.png}
 		
-		\tiny{Figure: Linear prediction task (logistic regression). \\Linear surrogate returns similar coefficients for similar points.}
+		{Linear prediction task (logistic regression). \\Linear surrogate returns similar coefficients for similar points.}
 		
 		\end{center}
 	\end{column}
@@ -163,38 +196,38 @@
 		\begin{center}
 	\includegraphics[width=0.55\textwidth]{figure/lime_robustness_2.png}
 	
-	\tiny{Figure: Circular prediction task (random forest). \\Linear surrogate returns different coefficients for similar points.}
+	{Circular prediction task (random forest). \\Linear surrogate returns different coefficients for similar points.}
 	
 	\end{center}
 \end{column}
 \end{columns}
-\vspace{-0.2cm}
-\footnote[frame]{Alvarez-Melis, D., \& Jaakkola, T. (2018). On the Robustness of Interpretability Methods. ArXiv, abs/1806.08049.}
 \end{vbframe}
 
-\begin{vbframe}{LIME Pitfalls}
-\textbf{Pitfall: Definition of superpixels}
-\begin{itemize}
-	\item Another source of instability concerns the definition of superpixels for image data. 
-	\item Multiple definitions of superpixels exist and these definitions influence both the shape and size. 
-	\item The definition of superpixel has a large influence on the explanations. 
-	\item Furthermore, if superpixel are only slightly changed (adversarial attack), the definitions could still differ greatly.  
-\end{itemize}
-\vspace{0.5cm}
-\textbf{Conclusion: LIME should only be used with great caution!}
+\begin{vbframe}{LIME Pitfalls: Definition of Superpixels}
+
+\begin{columns}
+    
+    \begin{column}{0.6\textwidth}
+        
+        \begin{itemize}
+        	\item \textbf{Problem}: Instability because of specification of superpixels for image data. 
+        	\item \textbf{Observation}: Multiple specification of superpixels exist, influencing both the shape and size. 
+        	\item \textbf{Implication}: The specification of superpixel has a large influence on the explanations. 
+        	\item \textbf{Attack}: Change superpixels as part of an adversarial attack $\leadsto$ changed explanation
+        \end{itemize}
+        
+    \end{column}
+    
+    \begin{column}{0.4\textwidth}
+    
+        \centering
+        \includegraphics[width=0.7\textwidth]{figure/superpixel_woman}
+        
+    \end{column}
+    
+\end{columns}
 
 \end{vbframe}
-
-%\begin{vbframe}{Literature}
-%	\begin{itemize}
-%		\small
-%		\item Marco Tulio Ribeiro, Sameer Singh, and Carlos Guestrin. 2016. "Why Should I Trust You?": Explaining the Predictions of Any Classifier. In Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '16). Association for Computing Machinery, New York, NY, USA, 1135–1144. 
-%		\item Dylan Slack, Sophie Hilgard, Emily Jia, Sameer Singh, and Himabindu Lakkaraju. 2020. Fooling LIME and SHAP: Adversarial Attacks on Post hoc Explanation Methods. In Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society (AIES '20). Association for Computing Machinery, New York, NY, USA, 180–186. 
-%		\item Alvarez-Melis, D., \& Jaakkola, T. (2018). On the Robustness of Interpretability Methods. ArXiv, abs/1806.08049.
-%		\item Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.
-%	\end{itemize}
-%	
-%\end{vbframe}
 
 
 \endlecture
