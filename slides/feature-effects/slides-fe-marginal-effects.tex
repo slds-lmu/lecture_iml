@@ -21,37 +21,44 @@
 \lecturechapter{Marginal Effects}
 \lecture{Interpretable Machine Learning}
 
-\begin{frame}{Interpretations of LMs}
+\begin{frame}{Interpretation of Simple Models}
 
 \begin{itemize}
 \itemsep1em
-\item LM with feature coefficients:
+\item LM: Change in $x_1$ by $\Delta x_1$ results in change in $y$ by $\Delta y = \Delta x_1 \cdot \beta_1$
 %interpretation  characterized by feature coefficients:
 \begin{equation*}
 y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
 \end{equation*}
-\item A change in $x_1$ by $\Delta x_1$ results in a change in $y$ by $\Delta y = \Delta x_1 \cdot \beta_1$
+%\item A change in $x_1$ by $\Delta x_1$ results in a change in $y$ by $\Delta y = \Delta x_1 \cdot \beta_1$
 \item Default interpretations correspond to $\Delta x_1 = 1$, i.e., $\Delta y = \beta$
 \item All under "ceteris paribus", i.e., all remaining features are kept constant
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Interpretations of Polynomial Models}
-
-
-\begin{itemize}
-\itemsep1em
-\item If higher-order terms or interactions are present, parameter-based interpretations are not possible anymore:
+\item For polynomial models with higher-order or interaction terms, interpretations via single coefficients are not possible anymore:
 \begin{equation}
-y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1, x_2 + \epsilon
+y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1 \cdot x_2 + \epsilon
 \label{eq:poly_model}
 \end{equation}
-\item The isolated main effects of both features vary across different values
-\item The interaction depends on values of the remaining feature
-\item The marginal effect allows us to determine a feature effect nonetheless.
+\item Marginal effect of feature $x_1$ varies across different values for feature $x_2$ (and vice versa)\\
+$\Rightarrow$ Interaction depends on values of an other feature
 \end{itemize}
-
 \end{frame}
+
+% \begin{frame}{Interpretations of Polynomial Models}
+
+
+% \begin{itemize}
+% \itemsep1em
+% \item If higher-order terms or interactions are present, parameter-based interpretations are not possible anymore:
+% \begin{equation}
+% y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1, x_2 + \epsilon
+% \label{eq:poly_model}
+% \end{equation}
+% \item The isolated main effects of both features vary across different values
+% \item The interaction depends on values of the remaining feature
+% \item The marginal effect allows us to determine a feature effect nonetheless.
+% \end{itemize}
+
+% \end{frame}
 
 \begin{frame}{Marginal Effects}
 
