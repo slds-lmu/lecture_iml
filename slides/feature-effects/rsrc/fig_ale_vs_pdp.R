@@ -14,7 +14,7 @@ simData = function(n) {
   x = runif(n, min = 0, max = 1)
   x1 = x + rnorm(n, 0, 0.05)
   x2 = x + rnorm(n, 0, 0.05)
-  y = x1 + x2^2 + rnorm(n, 0, 0.1)
+  y = x1 + x2^2 + rnorm(n, 0, 0.2)
   return(data.frame(y, x1, x2))
 }
 
@@ -49,6 +49,7 @@ nn.eval = performance(predict(mod.nn, newdata = test))
 #m$call$formula = y~x1+x2
 #plot(m)
 
+
 pred = Predictor$new(mod.nn, data = DAT)
 # plotLearnerPrediction(lrn, task = tsk)
 
@@ -63,7 +64,7 @@ df$y = predict(mod.nn, newdata = df)$data$response
 surf.nn = ggplot(data = df, aes(x = x1, y = x2, z = y)) +
   geom_contour_filled(breaks = breaks) +
   geom_point(data = DAT, aes(x1, x2)) +
-  ggtitle(paste0("Model: ", "nnet", ", MSE: ", round(nn.eval, 6))) +
+  ggtitle(paste0("Model: ", "nnet", ", MSE: ", round(nn.eval, 5))) +
   NULL
 
 fnames = c("x1", "x2")
@@ -121,26 +122,30 @@ res.nn = p + plot_layout(heights = c(3, 2, 2), guides = "collect") & theme(legen
 
 # Create RF MODEL ------------------------------------------------------------------------
 
-lrn.rf = makeLearner("regr.ranger")
-mod.rf = mlr::train(lrn.rf, tsk)
+#lrn.rf = makeLearner("regr.ranger")
+#mod.rf = mlr::train(lrn.rf, tsk)
 
-rf.eval = performance(predict(mod.rf, newdata = test))
+lrn.lm = makeLearner("regr.lm")
+mod.lm = mlr::train(lrn.lm, tsk)
+mod.lm$learner.model = lm(y ~ x1 + poly(x2, degree = 2, raw = TRUE), data = DAT)
 
-pred = Predictor$new(mod.rf, data = DAT)
+lm.eval = performance(predict(mod.lm, newdata = test))
+
+pred = Predictor$new(mod.lm, data = DAT)
 
 df = expand.grid(
   x1 = seq(min(DAT$x1), max(DAT$x1), length = 50),
   x2 = seq(min(DAT$x2), max(DAT$x2), length = 50)
 )
-df$y = predict(mod.rf, newdata = df)$data$response
+df$y = predict(mod.lm, newdata = df)$data$response
 
 
 # RF PLOT -------------------------------------------------------------------------
 
-surf.rf = ggplot(data = df, aes(x = x1, y = x2, z = y)) +
+surf.lm = ggplot(data = df, aes(x = x1, y = x2, z = y)) +
   geom_contour_filled(breaks = breaks) +
   geom_point(data = DAT, aes(x1, x2)) +
-  ggtitle(paste0("Model: ", "random forest", ", MSE: ", round(rf.eval, 6))) +
+  ggtitle(paste0("Model: ", "correct specified polynomial", ", MSE: ", round(lm.eval, 5))) +
   NULL
 
 ale = lapply(fnames, function(x)
@@ -179,15 +184,15 @@ pdp2 = pdp[[2]]$plot() + ylab("") +
   geom_function(fun = function(x) x^2 - (1/3+0.05^2), col = "red") +
   ggtitle("PDP x2")
 
-p = surf.rf | ((ale1 + ale2) / (pdp1 + pdp2)) #surf / (ale1 + pdp1) / (ale2 + pdp2)
-res.rf = p + plot_layout(heights = c(3, 2, 2), guides = "collect") & theme(legend.position = 'bottom') #& guides(fill=guide_legend(nrow = 1, byrow = TRUE))
+p = surf.lm | ((ale1 + ale2) / (pdp1 + pdp2)) #surf / (ale1 + pdp1) / (ale2 + pdp2)
+res.lm = p + plot_layout(heights = c(3, 2, 2), guides = "collect") & theme(legend.position = 'bottom') #& guides(fill=guide_legend(nrow = 1, byrow = TRUE))
 
 # Save Plots ------------------------------------------------------------------------
 
-surf = (surf.nn | surf.rf) + plot_layout(guides = "collect") & theme(legend.position = 'bottom')
+surf = (surf.nn | surf.lm) + plot_layout(guides = "collect") & theme(legend.position = 'bottom')
 
 ggsave("slides/feature-effects/figure/ale_vs_pdp_surf.pdf", surf, width = 9.4, height = 5.5)
 
 ggsave("slides/feature-effects/figure/ale_vs_pdp_nn.pdf", res.nn, width = 9.4, height = 5.5)
 
-ggsave("slides/feature-effects/figure/ale_vs_pdp_rf.pdf", res.rf, width = 9.4, height = 5.5)
+ggsave("slides/feature-effects/figure/ale_vs_pdp_lm.pdf", res.lm, width = 9.4, height = 5.5)
