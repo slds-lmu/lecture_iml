@@ -51,60 +51,74 @@
 %The inputs by which evasion attacks can be conducted are called \textbf{Adversarial Examples (AEs)}
 \begin{itemize}
     \item \textbf{Informal Definition}: An AE is an input to a model that is deliberately designed to "fool" the model into misclassifying it.
-    \item AEs occur even for ML algorithms with low generalization error on a test set.
+    \item Even possible with low generalization error
     \item Both deep Learning models (e.g., CNNs) and classical ML can be vulnerable to such attacks.
-    \item AEs that are created from a real data instance $\xv$ are often indistinguishable from $\xv$ by a human observer. 
-    \item Such cases suggest that even models with a very good test set performance have no deep understanding of the underlying concepts of the provided inputs.
+    \item AEs created from a real data instance $\xv$ can be indistinguishable from $\xv$ by a human observer. 
+    \item Missing of a real understanding of the underlying concepts of the provided inputs?
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Examples: Model-Attacks}
+\begin{vbframe}{Examples: Model-Attacks \citebutton{Gong \& Poellabauer 2018}{https://arxiv.org/pdf/1803.09156.pdf}}
+
+\begin{columns}
+
+\begin{column}{0.6\textwidth}
+
 \begin{figure}[h]
 \centering
-  \includegraphics[width=0.6\linewidth]{figure/AEduckSound.png}
-  \caption{On the left side, we see real instances of image and audio data  correctly classified. The middle column, depicts a noisy input in the same spaces. Column three shows the summation of the original inputs plus the noisy input multiplied by a small scalar. The resulting data points are AEs as they get the wrong label assigned.}
+  \includegraphics[width=1\linewidth]{figure/AEduckSound.png}
   \label{fig:mnist}
 \end{figure} 
 
-\footnote[frame]{Gong \& Poellabauer (2018). An Overview of Vulnerabilities of Voice Controlled Systems. https://arxiv.org/pdf/1803.09156.pdf.}
+\end{column}
 
+\begin{column}{0.4\textwidth}
 
-%eykholt stop sign
-%brown turtle
-%Gong duck and sound
-%@inproceedings{inproceedings,
-%author = {Gong, Yuan and Poellabauer, Christian},
-%year = {2018},
-%month = {03},
-%pages = {},
-%title = {An Overview of Vulnerabilities of Voice Controlled Systems}
-%}
+    \vspace{3em}
+    \begin{itemize}
+        \item Is this a duck or a horse?
+        \item Small (hard-to-see) noise can change the prediction
+    \end{itemize}
+
+\end{column}
+
+\end{columns}
+
 \end{vbframe}
 
-\begin{vbframe}{Examples: Image Data}
+\begin{vbframe}[c]{Examples: Image Data \citebutton{Eykholt et al. (2018)}{https://arxiv.org/pdf/1807.07769.pdf}  \citebutton{Athalye et al. (2018)}{https://arxiv.org/pdf/1707.07397.pdf}}
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.46\linewidth]{figure/AEstop.png}\quad \includegraphics[width=0.45\linewidth]{figure/AEturtle.jpg}
-  \caption{The images show AEs employed in a real-world application. The stop sign on the right is an input designed to resemble a normal stop sign with graffiti on it like the one on the left. It is misclassified as a right of way sign. On the right image, we see a 3D-print turtle. It is designed in a way that it is misclassified as a rifle from every angle of presentation.} 
   \label{fig:mnist}
 \end{figure} 
 
-\footnote[frame]{Eykholt et al. (2018). Physical Adversarial Examples for Object Detectors. https://arxiv.org/pdf/1807.07769.pdf.} 
-\footnote[frame]{Athalye et al. (2018). Synthesizing Robust Adversarial Examples. https://arxiv.org/pdf/1707.07397.pdf. \href{https://www.youtube.com/watch?v=piYnd_wYlT8}{Link to video.}}
+\begin{columns}
 
-%eykholt stop sign
-%brown turtle
-%Gong duck and sound
-%@inproceedings{inproceedings,
-%author = {Gong, Yuan and Poellabauer, Christian},
-%year = {2018},
-%month = {03},
-%pages = {},
-%title = {An Overview of Vulnerabilities of Voice Controlled Systems}
-%}
+\begin{column}{0.5\textwidth}
+
+\begin{itemize}
+    \item Stop signs can be missclassified\\ e.g., because of graffiti
+    \item With some well-placed patches, the model identifies it as a ``right of way'' sign
+\end{itemize}
+
+\end{column}
+
+\begin{column}{0.5\textwidth}
+
+\begin{itemize}
+    \item 3D-print of a turtle
+    \item Misclassified as a rifle (from every angle)
+\end{itemize}
+
+\end{column}
+
+\end{columns}
+
+
 \end{vbframe}
 
-\begin{vbframe}{Example: Tabular Data}
+\begin{vbframe}{Example: Tabular Data \citebutton{Ballet (2019)}{https://arxiv.org/pdf/1911.03274.pdf}}
 For tabular data, it is difficult to define imperceptibility properly.% Expert knowledge is required in evaluation.
 \begin{itemize}
     \item Idea: experts focus on the most important features in their judgment.
@@ -117,8 +131,6 @@ For tabular data, it is difficult to define imperceptibility properly.% Expert k
   \caption{The image depicts the decision boundary of a classifier that decides about loan applications. Number of pets should not influence loan acceptance.}
   \label{fig:mnist}
 \end{figure} 
-\vspace{-0.75cm}
-\footnote[frame]{Ballet (2019). Imperceptible Adversarial Attacks on Tabular Data. https://arxiv.org/pdf/1911.03274.pdf}
 
 \end{vbframe}
 
