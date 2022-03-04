@@ -32,24 +32,29 @@
 
 % ------------------------------------------------------------------------------
 
-\begin{vbframe}{Adversarial Machine Learning}
-Computer systems must be \textbf{robust} i.e. they have to be able to cope with errors or erroneous inputs during execution.
+\begin{frame}[c]{Adversarial Machine Learning}
 \begin{itemize}
-\item \textbf{Adversarial ML} studies the robustness of machine learning (ML) algorithms to malicious input.
-\item We differentiate between two different kinds of attacks: evasion and poisoning.
-\item \textbf{Evasion attacks} mislead an employed ML model with manipulated inputs. We focus on these in this lecture.
-\item In \textbf{poisoning}, an attacker enters malicious inputs to the training dataset. This weak spot can be exploited by the attacker after model training, e.g., the attacker can trigger a specific behavior of the model for a specific input. 
-%\item \textbf{Model Stealing} encompass methods by which an attacker can recover a model or the data it was trained on.
-\end{itemize}
-\end{vbframe}
+    \item What happens if a computer system gets an erroneous input?
+    \item Even worse: What happens of someone feeds in a malicious input on purpose\\ to attack the system?
+    \item[$\leadsto$] \textbf{Robustness} is important to ensure a safe service!
+    \medskip
+    \item \textbf{Adversarial ML} studies the robustness of machine learning (ML) algorithms to malicious input.
+    \item Two different kinds of attacks:
+    \begin{itemize}
+        \item \textbf{Evasion attacks} mislead an employed ML model with manipulated inputs. (Our focus!)
+        \item \textbf{Data Poisoning} An attacker enters malicious inputs to the training dataset. This weak spot can be exploited by the attacker after model training.\\ For example, the attacker can trigger a specific behavior of the model for a specific input. 
+    \end{itemize}
+    \end{itemize}
+\end{frame}
 
-\begin{vbframe}{Adversarial Examples}
+\begin{vbframe}[c]{Adversarial Examples}
 %The inputs by which evasion attacks can be conducted are called \textbf{Adversarial Examples (AEs)}
 \begin{itemize}
-\item An AE is an input to a model that is deliberately designed to "fool" the model into misclassifying it.
-\item AEs occur even for ML algorithms with low generalization error on a test set.
-\item Deep Learning (DL) algorithms like Convolutional Neural Networks (CNNs) are particularly vulnerable to such attacks, but classical ML models are often, too.
-\item AEs that are created from a real data instance $\xv$ are often indistinguishable from $\xv$ by a human observer. Such cases suggest that even models with a very good test set performance have no deep understanding of the underlying concepts.% that determine the correct output label.
+    \item \textbf{Informal Definition}: An AE is an input to a model that is deliberately designed to "fool" the model into misclassifying it.
+    \item AEs occur even for ML algorithms with low generalization error on a test set.
+    \item Both deep Learning models (e.g., CNNs) and classical ML can be vulnerable to such attacks.
+    \item AEs that are created from a real data instance $\xv$ are often indistinguishable from $\xv$ by a human observer. 
+    \item Such cases suggest that even models with a very good test set performance have no deep understanding of the underlying concepts of the provided inputs.
 \end{itemize}
 \end{vbframe}
 
