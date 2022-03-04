@@ -119,106 +119,85 @@
 \end{vbframe}
 
 \begin{vbframe}{Example: Tabular Data \citebutton{Ballet (2019)}{https://arxiv.org/pdf/1911.03274.pdf}}
-For tabular data, it is difficult to define imperceptibility properly.% Expert knowledge is required in evaluation.
+What is imperceptibility on tabular data?
 \begin{itemize}
     \item Idea: experts focus on the most important features in their judgment.
-%    \item Tabular features have specific natural ranges that must be respected.
     \item An AE arises from manipulating features the model deems important but experts do not.
 \end{itemize}
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.6\linewidth]{figure/AEloanApplication.png}
-  \caption{The image depicts the decision boundary of a classifier that decides about loan applications. Number of pets should not influence loan acceptance.}
+\includegraphics[width=0.6\linewidth]{figure/AEloanApplication.png}\\
+   \centering
+  {Decision boundary of a classifier deciding loan applications. AE via ``number of pets''}
   \label{fig:mnist}
 \end{figure} 
 
 \end{vbframe}
 
-\begin{vbframe}{AEs and Interpretability}
-From the examples, we can see that AEs pose security threats to the use of ML algorithms in real world applications. But what is their connection to interpretability?
+\begin{vbframe}[c]{AE and Interpretability}
 
-\begin{itemize}
-    \item AEs show where models fail and can therefore increase the understanding of the model.
-    \item AEs motivate the need for interpretability.
-    \item Interpretation techniques can provide insights into how to improve ML algorithms and make them more robust against AEs.
-    \item Explanations to end users may enclose too much information about the used model. This information can be used to construct adversarial attacks.
-\end{itemize}
+\begin{enumerate}
+    \item AEs show where models fail $\leadsto$ improved model understanding
+    \item Because of AEs, we need more interpretability.
+    \item Interpretation can lead to robustness against AEs.
+    \medskip
+    \item Explanations can be used to construct AEs (e.g., see numer of pets on previous slide).
+\end{enumerate}
+
 \end{vbframe}
 
-\begin{vbframe}{Formal Definition}
+\begin{vbframe}[c]{Formal Definition}
 \begin{block}{Adversarial Input}
-Let $\epsilon>0$, $f:\Xspace \rightarrow \Yspace$ be an ML model, $y'\in \Yspace$ be a desired output, and $\xv \in \Xspace$ be a real data point that is correctly classified: $f(\xv)=y_{\xv,true}$. \\ 
+Let $\epsilon>0$, $f:\Xspace \rightarrow \Yspace$ be an ML model and $\xv \in \Xspace$ be a real data point that is correctly classified: $f(\xv)=y_{\xv,true}$. \\ 
  We call $a_{\xv}$ an \textbf{adversarial input} to $\xv$ if:
 \begin{equation*}
     \| a_{\xv}- \xv\|<\epsilon\text{ and } f(a_{\xv})\neq y_{a_{\xv},true}=f(\xv).
 \end{equation*}
-Moreover, we call $a_{\xv}$ \textbf{targeted} if $f(a_{\xv})=y'$.
 \end{block}
 \begin{itemize}
-    \item Intuitively speaking an adversarial is a data point close to a real, correctly classified input that is misclassified.
-    \item It is called targeted if the class it is assigned to is determined.
-%    \item An AE is the depiction of such an input in visual, textual or any other form. 
-    \item The above definition of adversarials is restricted to classification tasks but it can be generalized to regression problems.
+    \item $a_{\xv}$ an is a data point close to a real, correctly classified input that is misclassified.
+    \item $a_{\xv}$ is called \textbf{targeted} if the class it is assigned to is determined.\\
+    $f(a_{\xv})=y'$ with $y'$ being a desired prediction
+    \item Can be generalized to regression problems.
 \end{itemize}
 \end{vbframe}
 
 
-\begin{vbframe}{AEs and Counterfactual Explanations}
-It seems as if AEs and counterfactual explanations (CEs) are defined similarly. Both AEs and CEs describe inputs close to a given input $\xv$ that gets a different assignment. What are their differences?
-\begin{itemize}
-    \item Counterfactuals do not have to be misclassified.
-%    \item Counterfactuals should be maximally close to $\xv$.
-    \item Different notions of distance $\|\cdot\|$ are applied, e.g., $p_{2,\infty}$-norm for AEs or $p_{0,1}$-norm for CEs.
-    \item Informal difference I: AEs are mostly considered for high-dimensional data, while CEs are mostly considered in the context of low-dimensional data.
-    \item Informal difference II: AEs hide changes while CEs highlight them.
-    \item \textbf{Shared example:} ``If you had two more pets, your loan application would have been granted" is an example of both AEs and CEs.
-\end{itemize}
+% \begin{vbframe}{AE and Counterfactual Explanations}
+% It seems as if AEs and counterfactual explanations (CEs) are defined similarly. Both AEs and CEs describe inputs close to a given input $\xv$ that gets a different assignment. What are their differences?
+% \begin{itemize}
+%     \item Counterfactuals do not have to be misclassified.
+% %    \item Counterfactuals should be maximally close to $\xv$.
+%     \item Different notions of distance $\|\cdot\|$ are applied, e.g., $p_{2,\infty}$-norm for AEs or $p_{0,1}$-norm for CEs.
+%     \item Informal difference I: AEs are mostly considered for high-dimensional data, while CEs are mostly considered in the context of low-dimensional data.
+%     \item Informal difference II: AEs hide changes while CEs highlight them.
+%     \item \textbf{Shared example:} ``If you had two more pets, your loan application would have been granted" is an example of both AEs and CEs.
+% \end{itemize}
+% \end{vbframe}
+
+
+\begin{vbframe}[c]{Why Do AE Exist?}
+    Non-exhaustive list of hypotheses:
+    \begin{itemize}
+        \item \textbf{Low-Probability Spaces Hypotheses:} AEs live in low-probability yet dense spaces in the data manifold that are not well represented in the training samples. \citebutton{Szegedy et al. (2013)}{https://arxiv.org/abs/1312.6199}
+        \smallskip
+        \item \textbf{Linearity Hypotheses (most popular):} Adversarial examples are omnipresent in the data manifold. They occur, because commonly used models often show linear behavior. Small changes of $\epsilon$ in every feature cause a change of $\epsilon\|\thetab\|_1$ in prediction. \citebutton{Goodfellow et al. (2014)}{https://arxiv.org/abs/1412.6572}
+        \smallskip
+        \item \textbf{The Boundary Tilting Hypothesis:} Linearity is neither necessary nor sufficient to explain AEs. Instead, AEs mostly result from overfitting the sampled manifold. \citebutton{Tanay and Griffin (2016)}{https://arxiv.org/abs/1608.07690}
+        \smallskip
+        \item \textbf{Human-Centric Hypotheses:} ML models make use of predictive but non-robust features. These are features that are highly correlated with the prediction target, but not used by humans. \citebutton{Ilyas et al. (2019)}{https://papers.nips.cc/paper/2019/hash/e2c420d928d4bf8ce0ff2ec19b371514-Abstract.html}
+    \end{itemize}
+
 \end{vbframe}
 
-\begin{vbframe}{Why Do AEs Exist?}
-In the following, we present a non-exhaustive list of hypotheses:
-\begin{itemize}
-    \item \textbf{Low-Probability Spaces Hypotheses:} AEs live in low-probability yet dense spaces in the data manifold that are not well represented in the training samples.
-    %@article{szegedy2013intriguing,
- % title={Intriguing properties of neural networks},
- % author={Szegedy, Christian and Zaremba, Wojciech and Sutskever, Ilya and Bruna, Joan and Erhan, Dumitru and Goodfellow, Ian and Fergus, Rob},
- % journal={arXiv preprint arXiv:1312.6199},
- % year={2013}
-%}
-    \item \textbf{Linearity Hypotheses (most popular):} Adversarial examples are omnipresent in the data manifold. They occur, because commonly used models often show linear behavior. Small changes of $\epsilon$ in every feature cause a change of $\epsilon\|\thetab\|_1$ in prediction ($\thetab$ are the weights in the linear function).
-    %@article{goodfellow2014explaining,
- % title={Explaining and harnessing adversarial examples},
- % author={Goodfellow, Ian J and Shlens, Jonathon and Szegedy, Christian},
- % journal={arXiv preprint arXiv:1412.6572},
- % year={2014}
-%}
-    \item \textbf{The Boundary Tilting Hypothesis:} Linearity is neither necessary nor sufficient to explain AEs. Instead, AEs mostly result from overfitting the sampled manifold.
- %   @article{tanay2016boundary,
- % title={A boundary tilting perspective on the phenomenon of adversarial examples},
- % author={Tanay, Thomas and Griffin, Lewis},
- % journal={arXiv preprint arXiv:1608.07690},
- % year={2016}
-%}
-    \item \textbf{Human-Centric Hypotheses:} ML models make use of predictive but non-robust features. These are features that are highly correlated with the prediction target, but not used by humans.
-    %cite: @article{ilyas2019adversarial,
-%  title={Adversarial Examples Are Not Bugs, They Are Features},
-%  author={Ilyas, Andrew and Santurkar, Shibani and Engstrom, Logan and Tran, Brandon and Madry, Aleksander},
-%  journal={Advances in neural information processing systems},
-%  volume={32},
-%  year={2019}
-%}
-\end{itemize}
-\vspace{-0.2cm}
-\footnote[frame]{(1) Szegedy et al. (2013). Intriguing properties of neural networks; (2) Goodfellow et al. (2014). Explaining and harnessing adversarial examples; (3) Tanay and Griffin (2016). A boundary tilting perspective on the phenomenon of adversarial examples; (4) Ilyas et al. (2019). Adversarial Examples Are Not Bugs, They Are Features. Advances in neural information processing systems.}
-\end{vbframe}
-
-\begin{vbframe}{Ways to Generate AEs}
+\begin{vbframe}[c]{Ways to Generate AE}
+Different ways for constructing AEs:
 There exist various ways in the literature to generate AEs for a given model in feasible time. We can...
 \begin{itemize}
     \item formulate the search for AEs as an \textbf{optimization problem}, e.g. 
     \begin{equation*}
         \label{eq:optimization}
-        \underset{\xv'\in \Xspace}{\text{argmin}}\; \| \xv-\xv' \|_{\Xspace}+\lambda\;    \|f(\xv')-y'\|_{\Yspace}.
+        \underset{\xv'\in \Xspace}{\text{argmin}}\; \| \xv-\xv' \|_{\Xspace} + \lambda\;    \|f(\xv')-y'\|_{\Yspace}.
     \end{equation*}
     \item use \textbf{sensitivity analysis} to identify features that influence the target class.
     \item train a generative network to generate adversarials.
@@ -230,73 +209,72 @@ Moreover, depending on the attacker's model access, we can distinguish between..
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Fast-Gradient-Sign-Method (FGSM)}
-Since we have seen optimization methods for CEs, we focus on a method using sensitivity analysis, namely FGSM.
+\begin{vbframe}{Fast-Gradient-Sign-Method (FGSM) \citebutton{Goodfellow et al. (2015)}{https://arxiv.org/pdf/1412.6572.pdf}}
+% Since we have seen optimization methods for CEs, we focus on a method using sensitivity analysis, namely FGSM.
 \begin{itemize}
     \item FGSM is based on the linearity hypothesis.
     \item FGSM finds AEs from:
     \begin{equation*}
         a_{\xv}=\xv+\epsilon\cdot\text{sign}(\nabla_{\xv} J(\theta,\xv,y_{\xv,true}))
     \end{equation*}
-    where $\text{sign}(\nabla_{\xv} J(\theta,x,y_{\xv,true}))$ describes the component-wise signum of the Gradient of cost function $J$ in $\xv$ with true label $y_{\xv,true}$.
+    where $\text{sign}(\nabla_{\xv} J(\theta,x,y_{\xv,true}))$ describes the component-wise signum of the gradient of cost function $J$ in $\xv$ with true label $y_{\xv,true}$.
 \end{itemize}
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.5\linewidth]{figure/AEpanda.png}
-  \caption{An AE generated with the FGSM.}
+\includegraphics[width=0.6\linewidth]{figure/AEpanda.png}
   \label{fig:mnist}
 \end{figure} 
-\vspace{-0.6cm}
-\footnote[frame]{Goodfellow et al. (2015). Explaining and Harnessing Adversarial Examples. https://arxiv.org/pdf/1412.6572.pdf.}
+
 \end{vbframe}
 
-\begin{vbframe}{Fast-Gradient-Sign-Method (FGSM)}
+\begin{vbframe}[c]{Notes on FGSM \citebutton{Goodfellow et al. (2015)}{https://arxiv.org/pdf/1412.6572.pdf} \citebutton{Lyu et al. 2015}{https://arxiv.org/abs/1511.06385}}
 \begin{itemize}
-    \item FGSM works particularly well for linear(-like) models in high-dimensional spaces, e.g., LSTMs, logistic regressions or CNNs with ReLU activations.
+    \item FGSM works particularly well for linear(-like) models in high-dimensional spaces,\\ e.g., LSTMs, logistic regressions or CNNs with ReLU activations.
     \item Not every $a_{\xv}$ generated by FGSM is an AE, especially if $\epsilon$ is too small.
-    \item FGSM attacks can be also generated without model access by approximating the gradient, i.e. with finite difference methods.
-    \item The notion of similarity in FGSM is based on $\|\cdot\|_{\infty}$. However, there exist generalizations of FGSM to other norms.
+    \item FGSM attacks can be also generated without model access by approximating the gradient,\\ e.g. with finite difference methods.
+    \item The notion of similarity in FGSM is based on $\|\cdot\|_{\infty}$. There are generalizations of FGSM to other norms.
 \end{itemize}
-%@inproceedings{lyu2015unified,
-%  title={A unified gradient regularization family for adversarial examples},
-%  author={Lyu, Chunchuan and Huang, Kaizhu and Liang, Hai-Ning},
-%  booktitle={2015 IEEE international conference on data mining},
-%  pages={301--309},
-%  year={2015},
-%  organization={IEEE}
-%}
 \end{vbframe}
 
 
-\begin{vbframe}{Black-Box Attacks with Surrogates}
-The biggest threat comes from AEs that can be generated in a black-box scenario. Among these, approaches based on surrogates are conceptually most interesting.
+\begin{vbframe}[c]{Black-Box Attacks with Surrogates \citebutton{Papernot et al. (2016)}{https://arxiv.org/abs/1605.07277}}
+
 \begin{itemize}
-    \item Query the model you aim to attack as often as allowed on data similar to the training data.
-    \item Use the labeled data you received to train a surrogate model.% by supervised learning e.g. a CNN.
-    \item %Use white-box methods (e.g. Gradient-Based-Methods) to g
-    Generate AEs for the surrogate model.% for the given optimisation problem.
-    \item Use these AEs to attack the original model.
+    \item So far, we assumed full access to the predictive model
+    \item Black-box attacks only assume query-access
+    \item Large risk of attacks since often one can query predictive models many times
 \end{itemize}
-Several experiments showed that such attacks are often successful. % Papernot et al. call 
-This phenomenon is known as the \textbf{transferability} of AEs.
-%
-%
-%@article{papernot2016transferability,
-  %title={Transferability in machine learning: from phenomena to %black-box attacks using adversarial samples},
-  %author={Papernot, Nicolas and McDaniel, Patrick and Goodfellow,
-  %Ian},
-%  journal={arXiv preprint arXiv:1605.07277},
-%  year={2016}
-%}
-\footnote[frame]{Papernot et al. (2016). Transferability in machine learning: from phenomena to black-box attacks using adversarial samples.}
+
+\medskip
+\begin{enumerate}
+    \item Query the model you aim to attack as often as allowed on data similar to the training data.
+    \item Use the labeled data you received to train a surrogate model.
+    \item Generate AEs for the surrogate model.
+    \item Use these AEs to attack the original model.
+\end{enumerate}
+
+\medskip
+\begin{itemize}
+    \item[$\leadsto$] Known as the \textbf{transferability} of AEs.
+\end{itemize}
+
+
+
 \end{vbframe}
 
-\begin{vbframe}{Defenses Against AEs}
+\begin{vbframe}[c]{Defenses Against AE}
 There are several ways to protect your network against such attacks. We distinguish between two broad types of defenses, differing in the position in which they act.
 \begin{itemize}
-    \item \textbf{Guards} act on the inputs a model receives. They include methods to \textbf{detect anomalies} (e.g., statistical testing, or discriminator networks from GANs), or to \textbf{conduct transformations} on inputs (e.g. PCA).
-    \item \textbf{Defense by design} act on the employed model itself. It includes methods like \textbf{adversarial training} (train model on adversarials) or \textbf{architectural defenses} (e.g., removing low predictive features from the model) % or imposing layer-wise constraints on the output variance) 
-    to make models more robust against AEs.
+    \item \textbf{Guards} act on the inputs a model receives.
+    \begin{itemize}
+        \item \textbf{detect anomalies:} e.g., statistical testing, or discriminator networks from GANs
+        \item \textbf{conduct transformations} on inputs (e.g. PCA).
+    \end{itemize}
+    \item \textbf{Defense by design} act on the model itself.
+    \begin{itemize}
+        \item \textbf{adversarial training}: train model on adversarials
+        \item \textbf{architectural defenses}: e.g., removing low predictive features from the model)
+    \end{itemize}
 \end{itemize}
 \end{vbframe}
 
@@ -314,7 +292,7 @@ There are several ways to protect your network against such attacks. We distingu
 %\end{itemize}
 %\end{vbframe}
 
-\begin{vbframe}{Summary}
+\begin{vbframe}[c]{Summary}
 \begin{itemize}
     \item AEs are not explanations themselves but are conceptually connected to them.
     \item AEs can be generated in diverse settings. Crucial modeling decisions are the distance measure, the local environment, and the target level (model or process).
@@ -338,13 +316,13 @@ There are several ways to protect your network against such attacks. We distingu
 %}
 %\end{vbframe}
 
-\begin{vbframe}{Central References}
-\begin{itemize}
-    \item Serban, A., Poll, E., \& Visser, J. (2020). Adversarial examples on object recognition: A comprehensive survey. ACM Computing Surveys (CSUR), 53(3), 1-38.
-    \item Goodfellow, I. J., Shlens, J., \& Szegedy, C. (2014). Explaining and harnessing adversarial examples. arXiv preprint arXiv:1412.6572.
-    \item Yuan, X., He, P., Zhu, Q., \& Li, X. (2019). Adversarial examples: Attacks and defenses for deep learning. IEEE transactions on neural networks and learning systems, 30(9), 2805-2824.
-\end{itemize}
-\end{vbframe}
+% \begin{vbframe}{Central References}
+% \begin{itemize}
+%     \item Serban, A., Poll, E., \& Visser, J. (2020). Adversarial examples on object recognition: A comprehensive survey. ACM Computing Surveys (CSUR), 53(3), 1-38.
+%     \item Goodfellow, I. J., Shlens, J., \& Szegedy, C. (2014). Explaining and harnessing adversarial examples. arXiv preprint arXiv:1412.6572.
+%     \item Yuan, X., He, P., Zhu, Q., \& Li, X. (2019). Adversarial examples: Attacks and defenses for deep learning. IEEE transactions on neural networks and learning systems, 30(9), 2805-2824.
+% \end{itemize}
+% \end{vbframe}
 
 
 \endlecture

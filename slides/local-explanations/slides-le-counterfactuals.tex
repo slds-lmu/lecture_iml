@@ -32,18 +32,7 @@
 
 % ------------------------------------------------------------------------------
 
-\begin{vbframe}{Counterfactual Explanations}
-	\begin{itemize}
-	    \item \textbf{Counterfactual explanations} (CEs) or short \textbf{counterfactuals} explain particular decisions of an ML model by presenting an alternative input whose prediction equals a desired outcome.
-		\item CEs represent \textbf{close neighbors} of a data point we are interested in, but belonging to the \textbf{desired outcome class}. 
-		\item Therefore, CEs reveal what minimal changes to the input are sufficient to receive a different response.\\
-		$\rightarrow$ Very useful if there is a chance to change the input features (e.g., by changing behaviour).
-		\item Due to their natural interpretation, the targeted audience of CEs are often end-users not ML engineers.
-%		\item While we focus here exclusively on their application to tabular data, they can also be applied to image and text data. 
-	\end{itemize}
-\end{vbframe}
-
-\begin{vbframe}[allowframebreaks]{Example: Credit Risk Application} 
+\begin{vbframe}[c]{Example: Credit Risk Application} 
 	\begin{itemize}
 		\item $\textbf{x}$: customer and credit information
 		\item $y$: grant or reject credit
@@ -54,40 +43,44 @@
 	\begin{itemize}
 		\item Why was the credit rejected? 
 		\item Is it a fair decision? 
-		\item How should $\xv$ be changed so that the credit is accepted?  
+		\item \textbf{How should $\xv$ be changed so that the credit is accepted?}
 	\end{itemize}
+\end{vbframe}
+
 	
-	\framebreak
+\begin{vbframe}[c]{Example: Credit Risk Application} 
 	Counterfactual Explanations provide answers in the form of "What-If"-scenarios. 
 	\begin{center}\includegraphics[width=0.6\linewidth, page=2]{figure/counterfactuals_credit.pdf} \end{center}
 	
-	``If the person was more skilled and the credit amount had been reduced to \$8.000, his credit would have been granted."  \\[0.2cm]
-	
-%	 \begin{center}\includegraphics[width=1\linewidth, page=3]{figure/counterfactuals_credit.pdf} \end{center}
-%	Input: Desired target, original data point, predictor, observed data\\[0.1cm]
-%	Output: Data points which minimize  
-%	\begin{enumerate}
-%		\item Distance of prediction to desired prediction $|\fh(x) - y'|$
-%		\item Number of feature changes $\sum_{j = 1}^p I_{x_j \neq x^*_j}$
-%		\item Distance to original data point $d(x, x^*)$ (Gower)
-%		\item Distance to observed data points $d(x, X^{obs})$
-%	\end{enumerate}
+	``If the person was more skilled and the credit amount had been reduced to \$8.000,\\ his credit would have been granted."  \\[0.2cm]
 	
 \end{vbframe}
 
 
-
-\begin{vbframe}{Aims \& Roles}
-	CEs can serve various purposes, the user can decide what to learn from them. For example:\newline
-	``If the person had been one year older and the credit amount had been increased to \$12.000, her credit would have been granted."  \\[0.2cm]
+\begin{vbframe}[c]{Counterfactual Explanations: Main Idea}
 	\begin{itemize}
-		\itemsep1.3em
-		\item \textbf{Guidance for future actions:} \textit{Ok, I'll apply again next year for the higher amount.}
-		\item \textbf{Provide reasons:} \textit{Interesting, I did not know that age plays a role in loan applications.}
-		\item \textbf{Provide grounds to contest the decision:} \textit{How dare you, I do not want to be discriminated for my age in an application.}
-		\item \textbf{Detect model biases:} \textit{There is a bug, an increase in amount should not increase approval rates.}
+	    \item Counterfactual explanations == counterfactuals == CEs
+	    \item explain particular predictions of an ML model by presenting an alternative input whose prediction equals a desired outcome.
+		\item represent \textbf{close neighbors} of a data point we are interested in,\\ but belonging to the \textbf{desired outcome class}. 
+		\item reveal what minimal changes to the input are sufficient to receive a different response.\\
+		$\leadsto$ Useful if there is a chance to change the input features (e.g., by changing behaviour).
+		\item The targeted audience of CEs are often end-users, not ML engineers.
 	\end{itemize}
 \end{vbframe}
+
+
+\begin{vbframe}[c]{Aims \& Roles}
+	CEs can serve various purposes, the user can decide what to learn from them. For example:\newline
+	``If the person had been \textbf{one year older} and the \textbf{credit amount had been increased} to \$12.000,\\ her credit would have been granted."  \\[0.2cm]
+	\begin{itemize}
+		\itemsep1.3em
+		\item \textbf{Guidance for future actions:}\\ \textit{Ok, I'll apply again next year for the higher amount.}
+		\item \textbf{Provide reasons:}\\ \textit{Interesting, I did not know that age plays a role in loan applications.}
+		\item \textbf{Provide grounds to contest the decision:}\\ \textit{How dare you, I do not want to be discriminated for my age in an application.}
+		\item \textbf{Detect model biases:}\\ \textit{There is a bug, an increase in amount should not increase approval rates.}
+	\end{itemize}
+\end{vbframe}
+
 
 \begin{vbframe}{Philosophical Basis}
 %Interestingly, counterfactuals have a long-standing tradition in philosophy and, in fact the IML discussion of CEs is based on the work of Lewis (1973). 

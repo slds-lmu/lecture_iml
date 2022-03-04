@@ -21,7 +21,7 @@
 \lecturechapter{Individual Conditional Expectation (ICE) Plot}
 \lecture{Interpretable Machine Learning}
 
-\begin{frame}{Feature Effects}
+\begin{frame}{Feature Effects - Global View}
 
 %Here,
 
@@ -41,7 +41,7 @@
 
 \includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\phantom{\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}}
 
-LM without interaction: $\hat\beta_j$ is constant linear effect of feature $x_j$ (applies to all observations):
+LM without interaction: $\hat\beta_j$ is linear effect of feature $x_j$ (applies globally to all observations):
 %the prediction of any observation $\xi$ is %can be expressed by %explained by its marginal feature effects
 %prediction of an observation $\xi$ can be explained by the individual main effects, e.g.:
 $$\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$$ % + \dots + x_p\hat\beta_p.$$
@@ -55,27 +55,35 @@ $$\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$$ % + \dots + x_p\hat\beta_p.$$
 \end{frame}
 
 
-\begin{frame}{Feature Effects}
+\begin{frame}{Feature Effects - Global View}
 
 \centering
 %\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\phantom{\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}}
 
 \includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}
 
-LM without interaction: $\hat\beta_j$ is constant linear effect of feature $x_j$ (applies to all observations):
+LM without interaction: $\hat\beta_j$ is linear effect of feature $x_j$ (applies globally to all observations):
 $$\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$$% + \dots + x_p\hat\beta_p.$$
 
-GAM without interaction: $\hat{h}_j(x_j)$ is non-linear effect of feature $x_j$  (applies to all observations):
+GAM without interaction: $\hat{h}_j(x_j)$ is non-linear effect of feature $x_j$  (applies globally):
 $$\fh(\xv) = \hat\beta_0 + \hat{h}_j(x_1)$$% + \dots + \hat{h}_p(x_p).$$
 
 \end{frame}
 
 
-\begin{frame}{Feature Effects}
+\begin{frame}{Feature Effects - Local View}
 
 \centerline{\includegraphics[width=0.75\textwidth, trim=0cm 0.1cm 0cm 0cm, clip]{figure/lm_main_interactions}}
 
-Interactions: Feature effect is modified by other features and varies across observations (e.g. effect of temperature varies across season).
+\begin{itemize}
+    \item Interactions: Feature effect is modified by other features and varies across observations \\ 
+    $\Rightarrow$ Example: effect of temperature varies across seasons
+    \item ML models estimate non-linear effects and interactions \\
+    $\Rightarrow$
+\end{itemize}
+
+
+
 
 \end{frame}
 
@@ -104,7 +112,7 @@ Interactions: Feature effect is modified by other features and varies across obs
 
 
 
-\begin{frame}{Feature Effects - TODO}
+\begin{frame}{Feature Effects}
 
 \textbf{Feature effects} visualize or quantify marginal contribution of a feature of interest w.r.t. predictions. %marginal contribution of a feature to the model \textbf{prediction}. % $\hat{y} = \fh(\xi[])$. effect (e.g., the average relationship) between a
 \begin{itemize}
