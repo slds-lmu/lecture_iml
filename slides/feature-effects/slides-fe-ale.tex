@@ -51,7 +51,81 @@
 % }
 % }
 
-\begin{frame}{Motivation}
+
+
+\begin{frame}{Motivation - Correlated Features}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[width=0.9\textwidth]{figure/ale_scatter_grid}
+\end{column}
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[width=0.9\textwidth]{figure/ale_pdplot}
+\end{column}
+\end{columns}
+
+%\begin{center}
+%\includegraphics[width=0.8\textwidth]{figure_man/pd_grid}
+%\tiny{Source: Figure taken from Apley et al. (2020)}
+%\end{center}
+
+%In case of strongly correlated features $x_1$ and $x_2$, PD plots \textbf{average predictions} of artificial data points that are unlikely in reality (red).
+
+\begin{itemize}
+    \item PD plots \textbf{average over predictions} of artificial points that are out of distribution / unlikely (red)
+    \item Not wanted if interest is to interpret effects within data distribution
+    \item Can lead to misleading / biased interpretations if model contains interactions
+\end{itemize}
+%If features are correlated, PD plots \textbf{average predictions} of artificial points that are unlikely (red).
+%\textbf{But:} This might be undesired if interest is to interpret effects within data distribution.
+%This can be an undesired property if the model contains interactions and one is interested in interpreting effects w.r.t. the data distribution.
+
+%\lz
+
+%\textbf{Question:} Can we avoid the extrapolation issue by averaging only over points in an appropriate neighborhood? % of a specific point $x_1$? %, i.e., using the conditional distribution at
+
+\end{frame}
+
+
+\begin{frame}{Motivation - Correlated Features}
+
+%TODO: Example what can go wrong with PDPs and NNs
+
+Example: Fit a NN to $5000$ simulated data points with $x \sim Unif(0,1)$, $\epsilon \sim N(0, 0.2)$ and
+
+\centerline{$y = x_1 + x_2^2 + \epsilon$, where
+$x_1 = x + \epsilon_1$, 
+$x_2 = x + \epsilon_2$ and $\epsilon_1, \epsilon_2 \sim N(0, 0.05)$.}
+
+\begin{columns}[T]
+\begin{column}{0.65\textwidth}
+\centering
+\only<1>{\includegraphics[width=\textwidth]{figure/ale_vs_pdp_surf}}
+\only<2>{\includegraphics[width=\textwidth]{figure/ale_vs_pdp_nn}}
+\end{column}
+\begin{column}{0.35\textwidth}
+%What went wrong here?
+
+\begin{itemize}
+\item Test error (MSE) of NN is comparable to other models
+\item NN contains interactions (see complex pred. surface)
+%\item ALE shows a linear effect for $x_1$ and quadratic effect for $x_2$\\
+%$\Rightarrow$ In line with ground truth %Match true effects of DGP
+%\item PDP shows expected model behaviour but does not recover effects of DGP \\
+%$\Rightarrow$ Due to averaging of artificial points outside data distribution
+\item<2> ALE in line with ground truth
+\item<2> PDP does not reflect ground truth effects of DGP well \\
+$\Rightarrow$ Due to interactions and averaging of points outside data distribution
+\end{itemize}
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}{Motivation - M Plot}
 
 % \begin{center}
 % \includegraphics[width=0.7\textwidth]{figure_man/PD_M.jpg}\\
@@ -83,95 +157,33 @@ where index set $N(x_1) = \{i: x_1^{(i)} \in [x_1 - \epsilon, x_1 + \epsilon]\}$
 \end{enumerate}
 \end{frame}
 
-
-\begin{frame}{Motivation}
-
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\centering
-\includegraphics[width=0.9\textwidth]{figure/ale_scatter_grid}
-\end{column}
-\begin{column}{0.5\textwidth}
-\centering
-\includegraphics[width=0.9\textwidth]{figure/ale_pdplot}
-\end{column}
-\end{columns}
-
-%\begin{center}
-%\includegraphics[width=0.8\textwidth]{figure_man/pd_grid}
-%\tiny{Source: Figure taken from Apley et al. (2020)}
-%\end{center}
-
-%In case of strongly correlated features $x_1$ and $x_2$, PD plots \textbf{average predictions} of artificial data points that are unlikely in reality (red).
-If features are correlated, PD plots \textbf{average predictions} of artificial points that are unlikely (red).
-
-\textbf{But:} This might be undesired if interest is to interpret effects within data distribution.
-%This can be an undesired property if the model contains interactions and one is interested in interpreting effects w.r.t. the data distribution.
-
-%\lz
-
-%\textbf{Question:} Can we avoid the extrapolation issue by averaging only over points in an appropriate neighborhood? % of a specific point $x_1$? %, i.e., using the conditional distribution at
-
-\end{frame}
-
-
-\begin{frame}{Motivation}
-
-%TODO: Example what can go wrong with PDPs and NNs
-
-Example: Fit a NN to $5000$ simulated data points with $x \sim Unif(0,1), \epsilon, \epsilon_1, \epsilon_2 \sim N(0, 0.1)$ and
-
-\centerline{$y = x_1 + x_2^2 + \epsilon$, where
-$x_1 = x + \epsilon_1$, 
-$x_2 = x + \epsilon_2$.}
-
-\begin{columns}[T]
-\begin{column}{0.65\textwidth}
-\centering
-\only<1>{\includegraphics[width=\textwidth]{figure/ale_vs_pdp_surf}}
-\only<2>{\includegraphics[width=\textwidth]{figure/ale_vs_pdp_nn}}
-\end{column}
-\begin{column}{0.35\textwidth}
-%What went wrong here?
-
-\begin{itemize}
-\item Test error (MSE) of NN is comparable to other models
-\item NN contains interactions (see pred. surface)
-%\item ALE shows a linear effect for $x_1$ and quadratic effect for $x_2$\\
-%$\Rightarrow$ In line with ground truth %Match true effects of DGP
-%\item PDP shows expected model behaviour but does not recover effects of DGP \\
-%$\Rightarrow$ Due to averaging of artificial points outside data distribution
-\item<2> ALE in line with ground truth
-\item<2> PDP does not recover ground truth effects of DGP \\
-$\Rightarrow$ Due to interactions in NN and averaging of points outside data distribution
-\end{itemize}
-
-\end{column}
-\end{columns}
-
-\end{frame}
-
-
-\begin{frame}{Motivation}
+\begin{frame}{Motivation - M Plot}
 
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figure/ale_scatter}
+\includegraphics[width=0.9\textwidth]{figure/ale_scatter}
 \end{column}
 \begin{column}{0.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figure/ale_mplot}
+\includegraphics[width=0.9\textwidth]{figure/ale_mplot}
 \end{column}
 \end{columns}
 
 %\textbf{Answer:} Yes, we could.
 %\textbf{Recall:} Marginal plots (M plots) do this by averaging (i.e., marginalizing) over the conditional distribution $\P(\xv_2|x_1)$.
 %\textbf{Recall:}
-M plots average (i.e., marginalize) predictions over conditional distribution $\P(\xv_2|x_1)$, i.e., they do not average predictions of observations outside the data distribution.
 
-\textbf{But:} M plots introduce omitted-variable bias (OVB) issue, i.e., they always contain marginal effects of other dependent features.
-$\Rightarrow$ M plots are useless in assessing main effect of a feature.
+\begin{itemize}
+    \item M plots average predictions over conditional distribution (e.g., $\P(\xv_2|x_1)$)\\
+    $\Rightarrow$ Averaging predictions close to data distribution avoid extrapolation issues
+    \item \textbf{But:} M plots suffer from omitted-variable bias (OVB)
+\begin{itemize}
+\item They contain effects of other dependent features
+\item Useless in assessing a feature's marginal effect if feature dependencies are present
+\end{itemize}
+\end{itemize}
+
 % in case of dependent features.
 
 %M plots average over the conditional distribution $x_2|x_1$. However, the M plot of $x_1$ also includes the marginal effect of other dependent features $\Rightarrow$ We don't want this.
@@ -182,7 +194,7 @@ $\Rightarrow$ M plots are useless in assessing main effect of a feature.
 
 
 \frame{
-\frametitle{Motivation: PD vs. M plot}
+\frametitle{PD vs. M plot}
 %\vspace*{-\topsep}
 %\vspace*{-3\lineskip}
 
@@ -192,12 +204,12 @@ $\Rightarrow$ M plots are useless in assessing main effect of a feature.
 
 \textbf{Illustration:} Fit LM on 500 i.i.d. observations with features $x_1, x_2 \sim N(0,1)$, $Cor(x_1, x_2) = 0.9$ and $$y = -x_1 + 2 \cdot x_2 + \epsilon, \; \epsilon \sim N(0,1).$$
 
-\textbf{Results:} M plot of $x_1$ mixes marginal effect of $x_1$ and all other dependent features (here: $x_2$).
+\textbf{Results:} M plot of $x_1$ also includes marginal effect of all other dependent features (here: $x_2$)
 }
 
 \begin{frame}{Idea: Integrating Partial Derivatives}
 
-\textbf{Idea:} To remove unwanted effects of other features, take partial derivatives (local effect) of prediction function w.r.t. feature of interest and integrate (accumulate) it w.r.t. the same feature.
+\textbf{Idea:} To remove unwanted effects of other features, take partial derivatives (local effect) of prediction function w.r.t. feature of interest and integrate (accumulate) it w.r.t. the same feature
 
 \lz
 
@@ -208,11 +220,11 @@ $\Rightarrow$ M plots are useless in assessing main effect of a feature.
 $\frac{\partial \fh(x_1, x_2)}{\partial x_1} = 2 - 4x_2$
 \item Integral of partial derivative ($z_0 = \min(x_1)$):
 $$\int_{z_0}^{x} \frac{\partial \fh(x_1, x_2)}{\partial x_1} dx_1 = \left[2x_1 - 4x_1 x_2\right]_{z_0}^{x}$$
-\item We removed main effect of $x_2$, which was our goal.
+\item We removed main effect of $x_2$, which was our goal
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Accumulated Local Effects (ALE)}
+\begin{frame}{Accumulated Local Effects (ALE) \citebutton{Apley, Zhu (2020)}{https://arxiv.org/abs/1612.08468}}
 %\begin{columns}[T]
 %\begin{column}{0.65\textwidth}
 ALE plots use idea of integrating partial derivatives. Do not suffer from the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent (Apley, 2020).
@@ -228,14 +240,14 @@ ALE plots use idea of integrating partial derivatives. Do not suffer from the ex
 \lz
 Concept of ALE plots is based on
 \begin{enumerate}
-\item estimating local effects $\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}$ (via finite differences) evaluated at point $(x_S = z_S, \xv_C)$.
-\item averaging local effects over the conditional distribution $\P(\xv_C|x_S)$ similar to M plots.\\ %across all values of $\xv_C$, i.e.,
-$\Rightarrow$ Avoids the extraploation issue.
-\item accumulating/integrating averaged local effects up to a specific value $x \sim \P(x_S)$.\\ %all values of $z_S$   from $z_0 := \min(x_S)$ u
-$\Rightarrow$ Estimates main effect of $x_S$ and avoids OVB issue as unwanted main effects are removed.
+\item estimating local effects $\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}$ (via finite differences) evaluated at point $(x_S = z_S, \xv_C)$
+\item averaging local effects over conditional distribution $\P(\xv_C|x_S)$ similar to M plots\\ %across all values of $\xv_C$, i.e.,
+$\Rightarrow$ Avoids extraploation issue
+\item accumulating/integrating averaged local effects up to a specific value $x \sim \P(x_S)$\\ %all values of $z_S$   from $z_0 := \min(x_S)$ u
+$\Rightarrow$ Estimates main effect of $x_S$ and avoids OVB issue as unwanted main effects are removed
 \end{enumerate}
 
-\footnote[frame]{Apley, Daniel W., and Jingyu Zhu (2020). Visualizing the Effects of Predictor Variables in Black Box Supervised Learning Models. Journal of the Royal Statistical Society: Series B (Statistical Methodology) 82.4: 1059-1086.}
+%\footnote[frame]{Apley, Daniel W., and Jingyu Zhu (2020). Visualizing the Effects of Predictor Variables in Black Box Supervised Learning Models. Journal of the Royal Statistical Society: Series B (Statistical Methodology) 82.4: 1059-1086.}
 \end{frame}
 %\begin{itemize}
   %\item Accumulated Local Effect (ALE) plots were developed by Apley (2020) to overcome the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent.
@@ -515,7 +527,7 @@ $$
   \end{enumerate}
 \item Assuming that all interval bounds are close to the corresponding observed values, ALEs are robust to both sources of extrapolation
   \begin{enumerate}
-    \item The trained model does not predict in regions that are far away from the training data. %where it was not trained.
+    \item Trained model does not predict in regions that are far away from the training data. %where it was not trained.
     \item We integrate w.r.t. the conditional distribution of $\xv_C$ on $x_S$ instead of the marginal distribution of $\xv_C$, because we only average the finite differences inside a single interval.
   \end{enumerate}
 \end{itemize}
