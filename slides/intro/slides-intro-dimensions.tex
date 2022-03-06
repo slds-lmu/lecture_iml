@@ -16,8 +16,8 @@
 %\item What is interpretable machine learning (IML) and Explainable Artificial Intelligence (XAI)?
 \item Different types of interpretations:
 		feature attribution vs. data attribution vs. counterfactual explanations
-\item Intrinsic vs. model-agnostic
-\item Local vs global 
+\item Intrinsic vs. model-agnostic methods
+\item Local vs. global methods
 \item Model or Learner explanations -- with or without refits
 }
 
@@ -89,43 +89,78 @@
 
 
 \begin{frame}{Intrinsic vs. Model-Agnostic}
+		\begin{columns}
+		\begin{column}{0.75\textwidth}
 	\begin{itemize}
-		\item Intrinsically interpretable models:
+		\item<1-> Intrinsically interpretable models:
 		\medskip
-		\begin{itemize}
-		\itemsep1em
-			\item Examples: linear model and decision tree.
-			\item Interpretable because of simple model structure,\\
-			e.g. weighted combination of feature values or tree structure.
-			\item Difficult to interpret with many features or complex interaction terms.
-		\end{itemize}
 		
-
+		\begin{itemize}
+		%\itemsep1em
+			\item Examples: linear model and decision tree
+			\item Interpretable because of simple model structure, \\
+			e.g., weighted combination of feature values or tree structure
+			\item Difficult to interpret with many features / complex interactions
+		\end{itemize}
 		
 	\medskip
-	\pause
-		\item Model-agnostic interpretation methods:
+	%\pause
+		\item<2-> Model-agnostic interpretation methods:
 		\medskip
 		\begin{itemize}
-		\itemsep1em
-			\item Applied after training (post-hoc).
-			\item Also work for more complex black box models.
-			\item Can also be applied to intrinsically interpretable models,\\ e.g., feature importance for decision trees.
+		%\itemsep1em
+			\item Applied after training (post-hoc)
+			\item Work for any model $\leadsto$ only access to data and model required
+			%\item Also work for more complex black box models
+			\item Can also be applied to intrinsically interpretable models,\\ e.g., feature importance for linear model %decision trees
+			\item Different types of explanations,\\
+			e.g., feature or data attribution, counterfactual explanations
 		\end{itemize}
 	\end{itemize}
+	\end{column}
+	\begin{column}{0.25\textwidth}
+		
+   \only<1-2>{\begin{tikzpicture}[scale=0.75, transform shape]
+   \usetikzlibrary{arrows}
+    \usetikzlibrary{shapes}
+     \tikzset{treenode/.style={draw, circle, font=\small}}
+     \tikzset{line/.style={draw, thick}}
+     \node [treenode, draw=red] (a0) {$a_0$};
+     \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
+     \node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
+     
+     \node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
+     \node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
+     
+     \node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
+     \node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
+     
+     \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
+     \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
+     
+     \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};;
+     \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
+     
+          
+     \path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};;
+     \path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
+     
+   \end{tikzpicture}}
+	\end{column}
+	\end{columns}
 \end{frame}
 
-\begin{frame}{Model-Agnostic Interpretability}
-	\begin{itemize}
-		\itemsep1em
-		\item Model-agnostic interpretation methods work for \textbf{any} kind of machine learning model.
-		\item Explanation type is not tied to the underlying model type.
-		\item Only access to data and trained model is required.\\
-		 No further knowledge about the model itself is necessary.
-		\item There are multiple types of explanations:\\
-		feature attribution, data attribution, or counterfactual explanations.
-	\end{itemize}
-\end{frame}
+% \begin{frame}{Model-Agnostic Interpretability}
+% 	\begin{itemize}
+% 		\itemsep1em
+% 		\item Model-agnostic interpretation methods work for \textbf{any} kind of machine learning model.
+% 		\item Explanation type is not tied to the underlying model type.
+% 		\item Only access to data and trained model is required.\\
+% 		 No further knowledge about the model itself is necessary.
+% 		\item There are multiple types of explanations:\\
+% 		feature attribution, data attribution, or counterfactual explanations.
+% 	\end{itemize}
+% \end{frame}
 
 
 \begin{frame}{Types of Explanations}
