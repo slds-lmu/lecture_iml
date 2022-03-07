@@ -1,0 +1,10 @@
+
+<<echo = FALSE, results=FALSE>>=
+cor(d)
+cor(d, method = "spearman")
+library(mgcv)
+g1 <- gam(x1 ~ s(x2), data = d) 
+g2 <- gam(x2 ~ s(x1), data = d)
+summary(g1)
+summary(g2)
+@

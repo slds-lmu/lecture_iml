@@ -1,0 +1,27 @@
+You received a dataset with 10 observations and two features. 
+The scatter plot of these two features is shown in the following figure: 
+
+<<fig.height=3, fig.width=6, echo = FALSE, warning=FALSE,message=FALSE>>=
+library(ggplot2)
+set.seed(1234L)
+x1 = seq(-1, 1, 0.2)
+x2 = x1^2+rnorm(length(x1), sd = 0.04)
+d = data.frame(x1, x2)
+ggplot(d, aes(x = x1, y = x2)) + 
+  geom_point() +
+  theme_bw()
+@
+
+The underlying data table is showing here: 
+
+<<echo = FALSE, warning=FALSE,message=FALSE>>=
+options(digits = 2)
+t(d)
+@
+
+\begin{enumerate}[a)]
+  \item Compute Pearson Correlation and Rank Correlation with the corresponding R functions. Interprete the results? What are the shortcomings?
+  \item Do some research on other correlation coefficients that better reflect the nonlinear relationship? 
+  Some startpoints are: generalized additive effects 
+  \item PDP of x2 and x1, why is caution necessary?
+\end{enumerate}
