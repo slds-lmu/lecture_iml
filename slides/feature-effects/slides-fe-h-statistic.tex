@@ -13,42 +13,41 @@
 
 \newcommand{\titlefigure}{figure/h-statistic}
 \newcommand{\learninggoals}{
-\item Understand the Friedman's H-statistic
-\item How to measure the overall interaction strength
-\item How to measure 2-way interaction strengths
-%\item Understand how to interpret ICE curves and PD plots
+\item Understand Friedman's H-statistic
+\item Measure 2-way interactions between pairs of features
+\item Measure a feature's overall interaction strength
 }
 
 \lecturechapter{Friedman's H-Statistic}
 \lecture{Interpretable Machine Learning}
 
-\begin{frame}{Idea}
+\begin{frame}{Idea \citebutton{Friedman and Popescu (2008)}{https://doi.org/10.1214/07-AOAS148}}
 
-	\textbf{Idea}: If two features do not interact, we can decompose the PD function (assuming it is centered at zero) by:
+    \textbf{2-way interaction:} If two features $j$ and $k$ do not interact, their mean-centered PD function is
 
 	$$\fh_{jk, PD}(x_j, x_k) = \fh_{j, PD}(x_j) + \fh_{k, PD}(x_k)$$
 
 \begin{itemize}
-	\item $\fh_{jk, PD}(x_j, x_k)$ is the 2-dim PD function of both features $j$ and $k$.
-	\item $\fh_{j, PD}(x_j)$ and $\fh_{k, PD}(x_k)$ are the PD functions of the single features.
+	\item $\fh_{jk, PD}(x_j, x_k)$: joint 2-dim PD function of feature $j$ and $k$
+	\item $\fh_{j, PD}(x_j)$ and $\fh_{k, PD}(x_k)$: 1-dim PD functions of single features $j$ and $k$
 \end{itemize}
 
 \end{frame}
 \begin{frame}{Idea}
 
-	Similarly, if a feature does not interact with any other feature, we can decompose the prediction function by:
+	\textbf{Overall interaction:} If feature $j$ does not interact with any other feature (denoted by index $-j$), the mean-centered prediction function can be decomposed by
 
-	$$\fh(x) = \fh_{j, PD}(x_j) +  \fh_{-j, PD}(x_{-j}).$$
+	$$\fh(\xv) = \fh_{j, PD}(x_j) +  \fh_{-j, PD}(\xv_{-j})$$
 
 \begin{itemize}
-	\item $\fh(x)$ is the prediction function of the considered model.
-	\item $\fh_{j, PD}(x_j)$ is the PD function of feature $j$.
-	\item $\fh_{-j, PD}(x_{-j})$ is the PD function of all features except feature $j$.
+	\item $\fh(\xv)$: mean-centered prediction function
+	\item $\fh_{j, PD}(x_j)$: 1-dim PD function of feature $j$
+	\item $\fh_{-j, PD}(\xv_{-j})$: $(p-1)$-dim PD function of all $p$ features except feature $j$
 \end{itemize}
 \end{frame}
 
 \begin{frame}{2-way Interaction Strength}
-Based on this idea, the H-statistic proposed by Friedman and Popescu measures the interaction strength between feature $j$ and $k$ by:
+H-statistic measures interaction strength between feature $j$ and $k$ by
 
 	$$H^2_{jk} = \frac{\sum_{i=1}^n\left[\fh_{jk,PD}(x_j^{(i)}, x_k^{(i)}) - \fh_{j, PD}(x_j^{(i)}) - \fh_{k, PD}(x_k^{(i)})  \right]^2}{\sum_{i=1}^n \left[\fh_{jk,PD}(x_j^{(i)}, x_k^{(i)}) \right]^2}$$
 
@@ -72,7 +71,7 @@ $$H^2_{j} = \frac{\sum_{i=1}^n\left[\fh(x^{(i)}) - \fh_{j, PD}(x_j^{(i)}) - \fh_
 \textbf{Example}: Inspect interactions of a random forest for the bike data
 
 \begin{center}
-	\includegraphics[width=0.85\textwidth]{figure/h-statistic}
+	\includegraphics[width=0.7\textwidth]{figure/h-statistic}
 \end{center}
 \end{frame}
 
