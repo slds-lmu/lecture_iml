@@ -1,27 +1,42 @@
-You received a dataset with 10 observations and two features. 
-The scatter plot of these two features is shown in the following figure: 
-
-<<fig.height=3, fig.width=6, echo = FALSE, warning=FALSE,message=FALSE>>=
+You received a dataset with 11 observations and two features. 
+<<echo=FALSE, results='asis'>>=
 library(ggplot2)
 set.seed(1234L)
 x1 = seq(-1, 1, 0.2)
 x2 = x1^2+rnorm(length(x1), sd = 0.04)
-d = data.frame(x1, x2)
+y = 5*x1 + -2*x2 + rnorm(length(x1))
+d = data.frame(y, x1, x2)
+library(xtable)
+print(xtable(t(d), digits = 2))
+@
+
+\begin{enumerate}[a)]
+  \item Compute the Pearson correlation of $x_1$ and $x_2$. 
+  The formula is: 
+  $$ 
+  \rho(x_1, x_2) = \frac{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})(x_1^{(i)} - \bar{x_2})}{\sqrt{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})} \sqrt{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})}}
+  $$ 
+  Interprete the results. Based on $\rho(x_1, x_2)$, are $x_1$ and $x_2$ correlated? 
+  
+  \item The scatter plot of the two features is shown in the following figure: 
+  
+  \begin{center}
+<<fig.height=3, fig.width=4, echo = FALSE, warning=FALSE,message=FALSE,out.width='3in'>>=
 ggplot(d, aes(x = x1, y = x2)) + 
   geom_point() +
   theme_bw()
 @
-
-The underlying data table is showing here: 
-
-<<echo = FALSE, warning=FALSE,message=FALSE>>=
-options(digits = 2)
-t(d)
+  \end{center}
+ Would you still consider the Pearson correlation coefficient a reliable measure to 
+ detect correlations for above's use case?
+ \item One method to detect non-linear relationships is the usage of 
+  generalized additive models (GAM).
+  The following shows the output of the GAM when $x_2$ depends on a smooth function of $x_1$. 
+  Interprete the results. 
+<<echo = FALSE, message=FALSE>>=
+library(mgcv)
+mod <- gam(x2 ~ s(x1), data = d) 
+summary(mod)
 @
-
-\begin{enumerate}[a)]
-  \item Compute Pearson Correlation and Rank Correlation with the corresponding R functions. Interprete the results? What are the shortcomings?
-  \item Do some research on other correlation coefficients that better reflect the nonlinear relationship? 
-  Some startpoints are: generalized additive effects 
-  \item PDP of x2 and x1, why is caution necessary?
+  Interprete the results. 
 \end{enumerate}
