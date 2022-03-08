@@ -25,5 +25,5 @@ data_norm = cbind(grid, z = dbvn2(grid$x, grid$y, 0))
 p2 = ggjointmarg(data_norm, dnorm, dnorm, .sample = sample_norm,
   p21_layers = p21_layers)
 
-ggsave(filename = "slides/intro/figure/dependent.pdf", p1)
-ggsave(filename = "slides/intro/figure/independent.pdf", p2)
+ggsave(filename = "slides/intro/figure/dependent.pdf", p1, width = 4, height = 3)
+ggsave(filename = "slides/intro/figure/independent.pdf", p2, width = 4, height = 3)
