@@ -1,4 +1,4 @@
-Assume a linear regression model with two features: 
+Let us assume that we fitted the following linear regression model with two features: 
 
 \begin{equation}
   \fh(\xv) = \fh(\xv_1, \xv_2) = \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 + \hat\beta_0.
@@ -8,21 +8,26 @@ Assume a linear regression model with two features:
 
 \begin{enumerate}[a)]
   \item Derive the PD function of feature $S = \{1\}$ (with $C = \{2\}$), such 
-  that it includes the expected value of $\xv_2$.
+  that it includes the expected value of $\xv_2$.\\
+  \textit{Hint:} In the lecture slides we already derived the PD function for a
+  linear regression model without an interaction term. 
   \item Let us assume that the estimated coefficients in Equation~\ref{eq:linmod}
   are $\hat\beta_0 = 0$, $\hat\beta_1 = -8$, $\hat\beta_2 = 0.2$ and $\hat\beta_3 = 16$.
   Furthermore, $X_1 \sim Unif(-1, 1)$ is uniformly distributed between -1 and 1, 
   and $X_2 \sim B(1, 0.5)$ origins from a Bernoulli distribution. 
   Derive the exact PD function of feature $X = \{1\}$ using your derived function of a).
-  \item The following plot displays the derived PDP of b) and the ICE values of $X_1$ given $X_2$. 
-  Derive the conditional expectation functions for group $X_2 = 1$ and for group $X_2 = 0$ using Equation~\ref{eq:linmod} and the estimated coefficient values of b). 
-  Which of the values corresponds to the group $X_2 = 1$ and which line to the group $X_2 = 0$?
-    
-<<fig.height=3, fig.width=6, echo = FALSE, warning=FALSE,message=FALSE>>=
+  \item The following plot displays the derived PDP of b) and the ICE values of $X_1$. 
+  The coloring reflects if the derived ICE value originates from an observation with 
+  $x_2 = 1$ or $x_2 = 0$.
+  Derive the conditional expectation functions for group $X_2 = 1$ and for group $X_2 = 0$ using Equation~\ref{eq:linmod} given the estimated coefficient values of b). 
+  Which color coding (lightgreen or lightblue) reflects the group $X_2 = 1$, which one group $X_2 = 0$?
+
+\begin{center}
+<<fig-1-ex-pdpinteractions, fig.height=3, fig.width=5, echo = FALSE, warning=FALSE,message=FALSE>>=
 library(mlr3)
 library(iml)
 library(ggplot2)
-set.seed(10)
+set.seed(1000)
 n = 700
 x1 = runif(n, -1, 1)
 x2 = rbinom(n, size = 1, prob = 0.5)
@@ -43,4 +48,6 @@ p1 = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
   geom_point(data = dat[dat$x2 == 0,], aes(x = x1, y = y), color = "lightblue", alpha = 0.5)
 p1
 @
+\end{center}
+
 \end{enumerate}

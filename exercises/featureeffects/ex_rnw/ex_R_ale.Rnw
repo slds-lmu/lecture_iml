@@ -1,30 +1,30 @@
 
-Accumulated local effects describe how features influence the prediction of a machine learning model on average. ALE plots are a faster and unbiased alternative to PDPs. 
+Accumulated local effects describe how features influence the prediction of a machine learning model on average.
 The following tasks guide you to implement ALE from scratch.
 The associated files are \textit{ale.R} or \textit{ale.py} depending on the programming language you prefer.
 
 \begin{enumerate}[a)]
-  \item Since ALE works with bins, we have to select bounds first. Usually the bins are chosen s.t. every bin has roughly the same number of data points. However, to make it more simple, we use the same length for every interval. Complete the function \textit{get\_bounds} to select bounds by using \textit{n\_intervals}. Those bounds are used for the ALE within the next tasks.
+  \item Since ALE works with bins, we have to select bounds first. Usually the bins are chosen s.t. every bin has roughly the same number of data points. However, to make it more simple, we use the same length for every interval. Complete the function \texttt{get\_bounds()} to select bounds by using \texttt{n\_intervals}. Those bounds are used for the ALE within the next tasks.
   
-  \item Implement the ALE algorithm from scratch inside the function \textit{calculate\_ale} using the bounds from the previous task and the help of the lecture material. 
-  For each interval \textit{k}:
+  \item Implement the ALE algorithm from scratch inside the function \texttt{calculate\_ale()} using the bounds from the previous task and the help of the lecture material. 
+  For each interval \texttt{k}:
 \begin{itemize}
     \item Select the observations inside the interval (if zero observations are found then return 0 for this interval). In general $x_s$ can be counted as included if it is bigger than the lower bound and smaller equals the upper bound. However, make sure the elements in the first bound are included as well.
     \item Intervention: Use the relevant observations to create two new subsets:
     
     \begin{itemize}
-        \item \textit{X\_min}: Values at $s$-th feature position are replaced by the lower interval value $z_{k-1}$.
-        \item \textit{X\_max}: Values at $s$-th feature position are replaced by the higher interval value $z_k$.
+        \item \texttt{X\_min}: Values at $s$-th feature position are replaced by the lower interval value $z_{k-1}$.
+        \item \texttt{X\_max}: Values at $s$-th feature position are replaced by the higher interval value $z_k$.
     \end{itemize}
 
-    \item Prediction: Get the predictions from both \textit{X\_min} and \textit{X\_max}. Use the predictions to calculate a
+    \item Prediction: Get the predictions from both \texttt{X\_min} and \texttt{X\_max}. Use the predictions to calculate a
       difference. Sum up the differences and divide by the number of observations in the interval to get a single value.
     
 \end{itemize}
 
-\noindent Use \textit{cumsum} in R \textit{np.cumsum} in Python to perform the aggregation step and therefore to get accumulated values for each interval value. 
-Finally, if the \textit{center} parameter is set, center each interval by subtracting the average of all interval values\\
+\noindent Use \texttt{cumsum} in R or \texttt{np.cumsum} in Python to perform the aggregation step and therefore to get accumulated values for each interval value. 
+Finally, if the \texttt{center} parameter is set, center each interval by subtracting the average of all interval values\\
 
-\noindent \textit{Hint}: \textit{apply} in R or \textit{zip(bounds, bounds[1:])} in Python are a nice trick to iterate over the bounds.
+\noindent \textit{Hint}: \texttt{apply} in R or \texttt{zip(bounds, bounds[1:])} in Python are a nice trick to iterate over the bounds.
 
 \end{enumerate}
