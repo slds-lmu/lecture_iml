@@ -64,20 +64,34 @@
 
 \begin{frame}{Correlation and Dependence}
 \begin{itemize}
+\item \textbf{Correlation:} Often linear correlation $\rho$ (Pearson) between pairs of features is meant
+\item \textbf{Dependence:} More general dependence structure (non-linear relationship)
 \item $X_j$, $X_k$ independent $\Leftrightarrow$ joint probability density function (PDF) is product of marginal PDFs:
 %$$\text{PDF}_{X_j, X_k}(x_j, x_k) = \text{PDF}_{X_j}(x_j) \cdot \text{PDF}_{X_k}(x_k)$$
-$$\text{PDF}(X_j, X_k) = \text{PDF}(X_j) \cdot \text{PDF}(X_k)$$
-%\item $X_j$, $X_k$ independent $\Rightarrow$ $X_j$, $X_k$ uncorrelated \textbf{but} $X_j$, $X_k$ uncorrelated $\nRightarrow$ $X_j$, $X_k$  independent
-\item Auf einer slide eklären, visuell und mathematisch
+$$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$$
+\item $X_j$, $X_k$ independent $\Rightarrow$ $X_j$, $X_k$ uncorrelated \textbf{but} $X_j$, $X_k$ uncorrelated $\nRightarrow$ $X_j$, $X_k$  independent
+%\item Auf einer slide eklären, visuell und mathematisch
 \end{itemize}
 
-\includegraphics[width = 0.3\textwidth]{figure/independent}
-\includegraphics[width = 0.3\textwidth]{figure/dependent}
+\centering
+
+\only<1>{
+\textbf{Example:} $X_1$, $X_2 \sim N(0,1)$ independent ($\rho = 0$) \hspace{10pt} $X_1$, $X_2 \sim N(0,1)$ dependent ($\rho = 0.8$) \hspace{30pt}
+
+\includegraphics[width = 0.4\textwidth]{figure/independent}
+\includegraphics[width = 0.4\textwidth]{figure/dependent}
+}
+
+
+\only<2>{
+\includegraphics[width = 0.4\textwidth]{figure/dependent_2}
+}
 \end{frame}
 
-\begin{frame}{Warum ist korrel wichtig für IML}
+\begin{frame}{Interpretations with Dependent Features}
 \begin{itemize}
-\item
+\item Many interpretation methods rely on varying feature values and may create data points that are out-of-distribution or located in low-density regions if features are correlated\\
+$\leadsto$ May produce biased explanations that rely on predictions where model extrapolated
 \end{itemize}
 \end{frame}
 
@@ -103,26 +117,26 @@ $$\text{PDF}(X_j, X_k) = \text{PDF}(X_j) \cdot \text{PDF}(X_k)$$
 
 
 
-\begin{frame}{Correlation vs. Interaction}
-\begin{itemize}
-%\itemsep2em
-\item Correlated (or dependent) features and feature interactions can cause misleading explanations. %One needs to be careful not to confuse them.
-\item Correlated features implies joint is not product of marginals: $\text{PDF}(x_1, \dots, x_p) \neq \text{PDF}(x_1) \cdot \ldots \cdot \text{PDF}(x_p)$.
-\item
-Many interpretation methods rely on varying feature values and may create data points that are out-of-distribution or located in low-density regions if features are correlated.\\
-$\leadsto$ May produce biased explanations that rely on predictions where the model extrapolated.
-% \item An interaction is a product term between features inside the prediction function. As such, interactions are detached from the constitution of the data, i.e., regardloss of the degree of correlation, the effect of a feature on the target will depend on the values of one or multiple other features.
-\end{itemize}
-\end{frame}
+% \begin{frame}{Correlation vs. Interaction}
+% \begin{itemize}
+% %\itemsep2em
+% \item Correlated (or dependent) features and feature interactions can cause misleading explanations. %One needs to be careful not to confuse them.
+% \item Correlated features implies joint is not product of marginals: $\text{PDF}(x_1, \dots, x_p) \neq \text{PDF}(x_1) \cdot \ldots \cdot \text{PDF}(x_p)$.
+% \item
+% Many interpretation methods rely on varying feature values and may create data points that are out-of-distribution or located in low-density regions if features are correlated.\\
+% $\leadsto$ May produce biased explanations that rely on predictions where the model extrapolated.
+% % \item An interaction is a product term between features inside the prediction function. As such, interactions are detached from the constitution of the data, i.e., regardloss of the degree of correlation, the effect of a feature on the target will depend on the values of one or multiple other features.
+% \end{itemize}
+% \end{frame}
 
-\begin{frame}{Correlation vs. Interaction}
+% \begin{frame}{Correlation vs. Interaction}
 
-1000 randomly sampled observations with positive correlation between $x_1$ and $x_2$:
-\medskip
-\begin{figure}
-\includegraphics[width = 0.7\textwidth]{figure/correlation}
-\end{figure}
-\end{frame}
+% 1000 randomly sampled observations with positive correlation between $x_1$ and $x_2$:
+% \medskip
+% \begin{figure}
+% \includegraphics[width = 0.7\textwidth]{figure/correlation}
+% \end{figure}
+% \end{frame}
 
 \begin{frame}{Correlation vs. Interaction}
 \begin{itemize}
