@@ -1,0 +1,19 @@
+<<echo=FALSE, results='hide'>>=
+library(ranger)
+library(mlr3learners)
+task = tsk("german_credit")
+task$select(cols = c("age", "amount", "duration", "credit_history", "employment_duration", "personal_status_sex", "purpose"))
+learn = lrn("classif.ranger")
+learn$predict_type = "prob"
+
+learn$train(task)
+
+learn$predict(task)
+
+library(iml)
+pred = Predictor$new(learn, data = task$data())
+plot(iml::FeatureEffect$new(predictor = pred, feature = "age", method = "pdp"))
+plot(iml::FeatureEffect$new(predictor = pred, feature = "age", method = "ale"))
+# plot(iml::FeatureEffect$new(predictor = pred, feature = "purpose", method = "ale"))
+@
+
