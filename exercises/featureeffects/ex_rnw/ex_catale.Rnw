@@ -24,7 +24,7 @@ and to explain specific decisions.
 \item Your colleague already fitted a random forest model. 
 Since the regulations require that the model does not discriminate against 
 certain demographic groups, you want to evaluate the feature effect of
-\textit{personal\_status\_sex}. 
+\texttt{personal\_status\_sex}. 
 Your colleague provides the following partial dependence plot. 
 Interpet the plot with respect to the effect the personal status and sex has on the prediction. 
 
@@ -45,7 +45,7 @@ plot(iml::FeatureEffect$new(predictor = pred, feature = "personal_status_sex", m
 Give reasons why and in which situation inspecting the ALE plot besides the PDP is advisable?
 
 \item 
-Because the ALE models accumulates effects in a specific direction, the feature values must have an order by definition. However, there is no natural order to categorical/nominal features like \textit{personal\_status\_sex}. 
+Because the ALE models accumulates effects in a specific direction, the feature values must have an order by definition. However, there is no natural order to categorical/nominal features like \texttt{personal\_status\_sex}. 
 In order to derive an artificial order, Molnar 2022 proposes to order the categories of the features $x_s$ according to their similarity based on other features in $x_c \in X_C$. 
 \begin{enumerate}[1)]
   \item For each feature $x_c \in X_C$ do the following: 
@@ -64,9 +64,9 @@ In order to derive an artificial order, Molnar 2022 proposes to order the catego
 An illustrative example is also given in Molnar (2022) in Chapter 8.2 on ALE.
 
 Your task is now to implement the computation of the distance of distribution for a \textbf{categorical} feature $x_c$ in 
-\texttt{get\_diff\_cat}. 
-Test your function on the credit dataset using \textit{personal\_status\_sex} as $x_s$ 
-and, for example, \textit{employment\_duration} as $x_c$.
+\texttt{get\_diff\_cat()}. 
+Test your function on the credit dataset using \texttt{personal\_status\_sex} as $x_s$ 
+and, for example, \texttt{employment\_duration} as $x_c$.
 In the end, your returned \texttt{data.frame} should look similar to this: 
 
 \begin{table}[ht]

@@ -1,19 +1,48 @@
-<<echo=FALSE, results='hide'>>=
-library(ranger)
-library(mlr3learners)
-task = tsk("german_credit")
-task$select(cols = c("age", "amount", "duration", "credit_history", "employment_duration", "personal_status_sex", "purpose"))
-learn = lrn("classif.ranger")
-learn$predict_type = "prob"
 
-learn$train(task)
+\begin{enumerate}[a)]
+\item 
+Overall, all customers, regardless of their personal status and gender, have on 
+average a high probability of being a low (good) risk for the bank. 
+The average marginal prediction for divorced or separated male customers
+reveals a slightly higher risk for this group. 
+\item 
+The ALE is faster to compute and unbiased. Unbiasedness means that it does 
+not suffer from the extrapolation problem which is especially aparent in PDPs 
+when features are correlated and interaction terms are part of the ML model. 
+\item 
+The following code computes the pairwise sum of the absolute differences of relative 
+frequencies in the categories of a categorical feature $x_j$ based on a 
+feature $x_k$
 
-learn$predict(task)
-
-library(iml)
-pred = Predictor$new(learn, data = task$data())
-plot(iml::FeatureEffect$new(predictor = pred, feature = "age", method = "pdp"))
-plot(iml::FeatureEffect$new(predictor = pred, feature = "age", method = "ale"))
-# plot(iml::FeatureEffect$new(predictor = pred, feature = "purpose", method = "ale"))
+<<echo=TRUE, results='hide'>>=
+get_diff_cat <- function(feature.k, feature.j) {
+  
+  #'  Calculates the pairwise distances of classes of j of a feature k 
+  #'  
+  #'  @param feature.k (character|factor): vector of values of categorical 
+  #'  feature for which relative frequencies per class are calculated 
+  #'  @param feature.j (character|factor: vector of values of categorical feature 
+  #'  for which similarity based on feature k should be assessed. 
+  #'      
+  #'  Returns:
+  #'      a data.frame with three columns: 
+  #'      * column1: name of the first class
+  #'      * column2: name of the second class 
+  #'      * dist: the distributional distance between the two classes for feature k
+  x.count <- as.numeric(table(feature.j))
+  dists <- expand.grid(unique(feature.j), unique(feature.j))
+  colnames(dists) <- c("class1", "class2")
+  A <- table(feature.j, feature.k) / x.count
+  dists$dist <- rowSums(abs(A[dists[, "class1"], ] - A[dists[, "class2"], ])) / 2
+  return(dists)
+}
 @
 
+For our task at hand, we obtain the following distances
+
+<<echo=TRUE, results='markup'>>=
+data = read.csv("credit.csv")
+get_diff_cat(feature.k = data[,"employment_duration"], feature.j = data[,"personal_status_sex"])
+@
+
+\end{enumerate}
