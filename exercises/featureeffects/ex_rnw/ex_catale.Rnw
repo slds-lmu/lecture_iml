@@ -1,19 +1,89 @@
-<<echo=FALSE, results='hide'>>=
-library(ranger)
+
+In this exercise we use the German Credit dataset and a random forest model 
+to predict whether a customer reflects a high or low risk for a bank based on the available 
+customer and credit information.
+The following table provides an overview of the data
+
+<<echo=FALSE, results='hide',warnings=FALSE, message=FALSE>>=
 library(mlr3learners)
+library(xtable)
 task = tsk("german_credit")
 task$select(cols = c("age", "amount", "duration", "credit_history", "employment_duration", "personal_status_sex", "purpose"))
-learn = lrn("classif.ranger")
-learn$predict_type = "prob"
-
-learn$train(task)
-
-learn$predict(task)
-
-library(iml)
-pred = Predictor$new(learn, data = task$data())
-plot(iml::FeatureEffect$new(predictor = pred, feature = "age", method = "pdp"))
-plot(iml::FeatureEffect$new(predictor = pred, feature = "age", method = "ale"))
-# plot(iml::FeatureEffect$new(predictor = pred, feature = "purpose", method = "ale"))
+print(xtable(mlr::summarizeColumns(task$data())[, -c(3, 5:9)], digits = 2))
+# write.csv(task$data(), "credit.csv")
 @
 
+Since the decision whether a person could lend money could have some serious implications
+on the person's life, banks are subordinate to regulations and must disclose 
+the underlying mechanism of their used model. 
+Looking on the single trees of a random forest is not feasible, therefore, 
+we could use interpretable machine learning to unfold the underlying mechanisms
+and to explain certain decisions. 
+
+The dataset could be found in \textit{credit.csv}. 
+
+\begin{enumerate}[a)]
+\item Your colleagues already fitted a random forest model. 
+The regulations require that the model does not discriminate against 
+certain demographic groups. Therefore, you inspect the feature effect
+\textit{personal\_status\_sex}. 
+Your colleague provides the following partial dependence plot. 
+Interpet the plot with respect to the effect the personal status and sex has on the prediction. 
+
+<<fig.height=4, fig.width=8,echo=FALSE, results='asis',warnings=FALSE,message=FALSE>>=
+library(ranger)
+set.seed(1234)
+learn = lrn("classif.ranger")
+learn$predict_type = "prob"
+learn$train(task)
+library(iml)
+library(ggpubr)
+pred = Predictor$new(learn, data = task$data(), y = "credit_risk")
+plot(iml::FeatureEffect$new(predictor = pred, feature = "personal_status_sex", method = "pdp")) + 
+  theme(axis.text.x = element_text(angle = 50, hjust=1))
+@
+
+\item You also request an ALE plot from your colleague. 
+Give reasons why and in which situation inspecting the ALE plot besides the PDP is advisable?
+
+\item The ALE method needs – by definition – the feature values to have an order, because the method accumulates effects in a certain direction. Categorical features do not have any natural order.
+To compute an ALE plot for a categorical feature we have to somehow create or find an order. 
+The calculation and interpretation has an effect of the interpretation of accumulated local effects. 
+
+Because the ALE models accumulates effects in a specific direction, the feature values must have an order by definition. However, there is no natural order to categorical/nominal features like \textit{personal\_status\_sex}. 
+In order to derive an artificial order, Molnar 2022 proposes to order the categories of the features $x_j$ according to their similarity based on other features in $X_D$. 
+\begin{enumerate}[1)]
+  \item For each feature $x_k \in X_D$ used to determine the distance do the following: 
+  \begin{enumerate}
+    \item Get the empirical distribution: For numeric feature $x_k$ estimate the cumulative distribution function for each category of $x_j$ separately and derive its values at predefined points (e.g., at the quartiles or deciles of $x_k$). For categorical feature $x_k$ derive the relative frequency tables for each category of $x_j$ separately.
+    \item Compute the distance of distribution between each pair of categories of $x_j$: 
+    For numeric feature$x_k$the distance is equal to the absolute maximum point-wise distance of the two empirical distribution functions. For categorical feature $x_k$ the distance is equal to the sum of the absolute difference of both relative frequency tables.   
+  \end{enumerate}
+  \item end for
+  \item Sum up over the pairwise distances of the distributions between features $x_k$ in $X_D$. 
+  \item Reduce the resulting distance matrix to a single dimension using multi-dimensional scaling. 
+\end{enumerate}
+
+Implement the computation of the distance of distribution for a categorical feature $x_k$ in 
+\texttt{get\_diff\_cat}. Test your function on the credit dataset using \textit{personal\_status\_sex} as $x_j$ 
+and, for example, \textit{employment\_duration} as $x_k$.
+\textit{Hint:} Use \texttt{expand.grid(levels(feature.j), levels(feature.j))} to get all 
+pairwise class combinations for $x_j$.
+
+In the end, your returned \texttt{data.frame} should look similar to this: 
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llr}
+  \hline
+ class1 & class2 & dist \\ 
+  \hline
+male : married/widowed & male : married/widowed & 0.00 \\ 
+female : non-single or male : single & male : married/widowed & 0.22 \\ 
+male : divorced/separated & male : married/widowed & 0.19 \\ 
+  ... & ... & ... \\
+   \hline
+\end{tabular}
+\end{table}
+
+\end{enumerate}

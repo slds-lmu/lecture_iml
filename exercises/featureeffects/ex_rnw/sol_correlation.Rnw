@@ -35,22 +35,23 @@ print(xtable(t(d), digits = 2))
   
      $$ 
     \begin{aligned}
-  \rho(x_1, x_2) = \frac{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})(x_1^{(i)} - \bar{x_2})}{\sqrt{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})} \sqrt{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})}} \\
-  & = \frac{-1*0.95 + -0.8* 0.65 + -0.6 * 0.4 + -0.4 * 0.07 + -0.2* 0.06 + 0 + 0.2* 0.02 + 0.4* 0.14 + 0.6*0.34+0.8*0.6+1*0.98}{0}
+  \rho(x_1, x_2) & = \frac{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})(x_1^{(i)} - \bar{x_2})}{\sqrt{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})} \sqrt{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})}} \\
+  & = \frac{-0.95 + -0.52 + -0.24 + -0.028 + -0.012 + 0 + 0.04 + 0.056 + 0.204 + 0.48 + 0.98}{\approx 0}
     \end{aligned}
   $$ 
   
   The Pearson correlation coefficient is close to 0 - reflecting that there is no \textbf{linear} relationship between $x_1$ and $x_2$.
   
-  \item 
+  \item  The scatter plot reveals that there is a strong non-linear/quadratic relationship between $x_1$ and $x_2$. 
+  
+  \begin{center}
  <<fig.height=3, fig.width=4, echo = FALSE, warning=FALSE,message=FALSE,out.width='3in'>>=
 ggplot(d, aes(x = x1, y = x2)) + 
   geom_point() +
   theme_bw()
 @
-
-  The scatter plot reveals that there is a strong non-linear/quadratic relationship between $x_1$ and $x_2$. 
-  
+  \end{center}
+ 
   \item The p-value of \Sexpr{2.79e-05} (but also the adjusted $R^2$ value) reveals that there is a strong relationship between $x_1$ and $x_2$.
   The p-value does not specify the direction of the relationship.
   
