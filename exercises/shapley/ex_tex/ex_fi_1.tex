@@ -1,0 +1,18 @@
+\aufgabe{Permutation Feature Importance}{
+	
+Permutation Feature Importance is one of the oldest and most widely used IML techniques. It was first suggested by Breiman in the random forest paper \cite{Breiman2001rf}.
+It is defined as 
+%
+$$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, \pert{\D}{S}{}_{(k)}) - \riske (\fh, \D)$$
+%
+where $\pert{X}{j}$ is an independent random variable that preserves the marginal distribution $P(X_j)$. We can approximate sampling from the marginal distribution by random permutation of the original feature's observations.
+
+\begin{enumerate}
+    \item Implement Permutation Feature Importance.
+    \item Download the \texttt{extrapolation.csv} dataset. Fit a linear regression model without interactions to the data. Apply your implemented PFI to the dataset and interpret the result. What insight into model and data do we gain?
+    \item PFI has been criticized for its extrapolation. Under which assumptions does PFI lead to extrapolation, and when doesn't it?
+    \item Prove that  $\P(x_j) \neq \P(\pert{x}{j}{\emptyset}_j, x_{-j})$ if $x_j \not \perp x_{-j}$.
+    \item Demonstrate the extrapolation problem empirically, e.g. on the \texttt{extrapolation.csv} dataset or a real-world dataset of your choice.
+\end{enumerate}
+
+}
