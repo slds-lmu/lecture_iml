@@ -3,6 +3,9 @@
 \usepackage{../../style/lmu-lecture}
 % Defines macros and environments
 \input{../../style/common.tex}
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+
+\tikzset{main node/.style={rectangle,draw,minimum size=1cm,inner sep=4pt},}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -82,8 +85,37 @@
 
 
 \begin{frame}{Intrinsic vs. Model-Agnostic}
+%	\begin{center}
+%		\includegraphics[width=0.8\textwidth]{figure/overview}
+%	\end{center}
 	\begin{center}
-		\includegraphics[width=0.8\textwidth]{figure/overview}
+	    
+		\begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
+                        every label/.append style={align=left, font=\footnotesize, text width=4cm}]
+        \node[main node] (1) { Model Interpretation };
+        \node[main node,
+            label={below: 
+            \tab[0.25cm] - Decision trees \\ 
+            \tab[0.25cm] - Decision rules \\ 
+            \tab[0.25cm] - GLMs}
+            ] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };
+        \node[main node] (3) [below right = 1cm and -0cm of 1] { Black Box Models };
+        \node[main node,
+            label={below: 
+            - Random forest explainer \\ - Visualizing activations of neural networks}
+            ] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };
+        \node[main node, fill=lightgray,
+            label={below:
+            - \textbf{Advantage:} Applicable to any model\\ 
+            - Feature effect methods\\
+            - Feature importance methods}
+            ] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };
+        \draw (1) -- (2);
+        \draw (1) -- (3);
+        \draw (3) -- (4);
+        \draw (3) -- (5);
+
+    \end{tikzpicture}
 	\end{center}
 \end{frame}
 
@@ -164,8 +196,34 @@
 
 
 \begin{frame}{Types of Explanations}
-	\begin{center}
-		\includegraphics[width=\textwidth]{figure/1-attributions.png}
+% 	\begin{center}
+% 		\includegraphics[width=\textwidth]{figure/1-attributions.png}
+%     \end{center}
+    \begin{center}
+        \begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
+                            every label/.append style={align=left, font=\footnotesize, text width=4cm}]
+            \node[main node] (1) { Model Interpretation };
+            \node[main node,
+                label={below:
+                \tab[0.5cm] - Saliency Maps\\ %\tab[0.5cm] - Hard Masking \\
+                \tab[0.5cm] - Model-agnostic methods \\ 
+                \tab - SHAP\\ 
+                \tab - LIME}
+                ] (2) [below left = 1.3cm and 1.5cm of 1]  { Feature Attribution };
+            \node[main node, text width=3cm, align=center,
+                label={below: \tab[0.5cm] - Influence Functions\\ \tab[0.5cm] - ... }
+                ] (3) [below = 1.3cm of 1] { Data Attribution };
+            \node[main node,
+                label={below:
+                - Contrastive explanations\\ 
+                - Diverse counterfactuals \\ 
+                - Feasible \& actionable explanations}
+                ] (4) [below right = 1.3cm and 1.5cm of 1] { Counterfactual Explanations };
+            \draw (1) -- (2);
+            \draw (1) -- (3);
+            \draw (1) -- (4);
+    
+        \end{tikzpicture}  
     \end{center}
 \end{frame}
 
@@ -266,7 +324,7 @@ Global interpretation methods explain model behavior for the entire input space 
 	\begin{itemize}
 		\item Permutation Feature Importance (PFI)
 		\item Partial Dependence (PD)
-		\item Functional Anova (FANOVA)
+		\item Functional ANOVA (FANOVA)
 		\item Accumulated Local Effects (ALE)
 		\item ...
 	\end{itemize}
@@ -280,12 +338,35 @@ Local interpretation methods explain the model behavior for single data instance
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Local vs Global Explanations}
-	\begin{center}
-		\includegraphics[width=\textwidth]{figure/1-local-global.png}
-		%TODO: Remove ALE from local
-	\end{center}
-\end{frame}
+% \begin{frame}{Local vs. Global Explanations}
+% % 	\begin{center}
+% % 		\includegraphics[width=\textwidth]{figure/1-local-global.png}
+% % 		%TODO: Remove ALE from local
+% % 	\end{center}
+
+% \begin{center}
+%     \begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
+%                         every label/.append style={align=left, font=\footnotesize, text width=6cm}]
+%         \node[main node, text width=4cm, align=center] (1) { Model Interpretation };
+%         \node[main node, text width=4cm, align=center, 
+%             label={below:
+%             \tab - Instance wise feature selections \\ 
+%             \tab - Model-agnostic methods \\ \tab[1.5cm] - SHAP\\ 
+%             \tab[1.5cm] - LIME}
+%             ] (2) [below left = 1.3cm and 0cm of 1]  { Local Explanations };
+%         \node[main node,  text width=4cm, align=center, 
+%             label={below:
+%             %Rule-based Explanations\\ 
+%             \tab - Permutation feature importance \\ 
+%             \tab - Functional ANOVA \\ 
+%             \tab - PDP}
+%             ] (3) [below right = 1.3cm and 0cm of 1] { Global Explanations };
+%         \draw (1) -- (2);
+%         \draw (1) -- (3);
+
+%     \end{tikzpicture}  
+% \end{center}
+% \end{frame}
 
 
 \begin{frame}{Fixed Model vs. Refits}
