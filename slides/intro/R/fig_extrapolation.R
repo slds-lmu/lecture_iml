@@ -52,5 +52,5 @@ ppermute = p + ylim(-10, 10) +
   labs(colour = "Data Points") +
   theme(legend.position = c(0.3, 0.85), legend.title = element_blank())
 
-ggsave("slides/feature-effects/figure/extrapolation.pdf", pgrid + ppermute,
+ggsave("slides/intro/figure/extrapolation.pdf", pgrid + ppermute,
   width = 8, height = 3)
