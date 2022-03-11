@@ -1,9 +1,14 @@
-\aufgabe{Feature importance without extrapolation}{
-	Conditional Feature Importance and conditional SAGE value functions have been suggested as an alternative to Permutation Feature Importance. In contrast to PFI, the conditional sampling based techniques preserve the covariate joint distribution. Pick one of the two aforementioned methods, CFI or cSAGE value functions, and solve the following tasks for the method of your choice.
-
+\aufgabe{Conditional sampling based feature importance techniques}{
+	Conditional Feature Importance and conditional SAGE value functions have been suggested as an alternative to Permutation Feature Importance. %In contrast to PFI, the conditional sampling based techniques preserve the covariate joint distribution.
 \begin{enumerate}
-    \item Prove formally that the prediction function is not evaluated outside the covariate joint $\P(x)$.
-    \item Implement the method of your choice, assuming that the data is stemming from a multivariate normal distribution. \textit{Advice:} For multivariate Gaussian data, the conditional distributions can be derived analytically from mean vector and covariance matrix, see \href{https://en.wikipedia.org/wiki/Multivariate_normal_distribution\#Conditional_distributions}{here}.
-    \item Apply the method to the dataset and model from Exercise 1. Compare the result.
+    \item Implement a linear Gaussian conditional sampler. For conditional sage values the sampler must be able to learn Gaussian conditionals with multivariate conditioning set and multivariate target, whereas for conditional feature importance the target can be assume to be univariate. \textit{Advice:} For multivariate Gaussian data, the conditional distributions can be derived analytically from mean vector and covariance matrix, see \href{https://en.wikipedia.org/wiki/Multivariate_normal_distribution\#Conditional_distributions}{here}.
+    \begin{enumerate}
+        \item First, learn a function that returns the mean and covariance structure given specific values for the conditioning set.
+        \item Then write a function, that takes mean and covariate structure and allows to sample from the respective (multivariate) Gaussian.
+    \end{enumerate}
+    \item Using the sampler, write a function that computes CFI (You can assume that the data is multivariate Gaussian).
+    \item Apply CFI to the dataset and model from Exercise \ref{ex:pfi}. Interpret the result (insights into model and data) and compare the result to PFI.
+    \item Write a function that computes conditional SAGE values.
+    \item Apply the conditional SAGE values with respect to an empty coalition and with respect to all remaining variables to the dataset and model from Exercise \ref{ex:pfi}. Interpret the result (insights into model and data) and compare it to CFI and PFI.
 \end{enumerate}
 }
