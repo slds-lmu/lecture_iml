@@ -154,24 +154,34 @@ Spearman correlation (monotonic), mutual information, or Kernel-based measures (
 
 \begin{frame}{Interpretations with Dependent Features}
 \begin{itemize}
-\item Many interpretation methods create
-%rely on varying feature values and create 
-artificial data points which can be out-of-distribution or located in low-density regions if features are dependent\\
+\item Many interpretation methods are based on 
+%rely on varying feature values and create
+artificially created data points \\
+$\leadsto$ Points can be out-of-distribution or located in low-density regions if features are dependent\\
 $\leadsto$ May produce biased explanations that rely on predictions where model extrapolated
 
 \pause
 \item Highly correlated features contain similar information \\
-$\leadsto$ Can confuse a model so that only one correlated feature is used (even if it is not relevant) \\
-$\leadsto$ Produced explanations are true to the model but not true to the data generating process
+$\leadsto$ Confuses models so that only one feature may be used (even if it is causally irrelevant)
+%Some models might use only one correlated feature (even if it is causally not relevant)
+\\
+%Can confuse a model so that only one correlated feature is used (even if it is not relevant) \\
+$\leadsto$ Produced explanations my be true to the model but not true to the data % generating process
 
 \pause
-\item One might expect that explanations (e.g., feature importance) of correlated features are similar as they share similar information \\
+\item Assume two causally and equally relevant but highly correlated features \\
+$\leadsto$ One might expect that their explanations (e.g., feature importance) will be similar \\
+%One might expect that explanations of two correlated features (e.g., feature importance) are similar as they share similar information \\
 $\leadsto$ Generally not true as the model can learn different relationships
-% \item We need to differentiate between interpretations of a model or reality.
-% \begin{itemize}
-%     \item highly correlated features can confuse the fitted model in the sense that the model effectively uses only one
-% \end{itemize}
-%The latter is distorted by all modeling fallacies involved in predictive modeling, e.g., data quality, under- and overfitting, or model extrapolations.
+
+\pause
+
+\item Be clear about your goal: Looking for interpretations of a model or reality / data?
+%We need to differentiate between interpretations of a model or reality
+\\
+$\leadsto$ Beware of the latter which might be distorted by modeling fallacies, \\
+e.g., due to data quality, under- and overfitting, or model extrapolation
+
 \end{itemize}
 \end{frame}
 
