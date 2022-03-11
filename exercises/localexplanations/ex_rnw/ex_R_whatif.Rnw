@@ -1,0 +1,39 @@
+Counterfactual explanations are a valuable tool to explain predictions of 
+a machine learning. They tell the user how features need to be changed 
+in order to predict a desired outcome. 
+One of the simplest approach to generate counterfactuals is to determine for 
+a given observation $x^\star$ the closest data point which has a prediction equal to 
+the desired outcome. 
+In the following exercise, you should implement the so called WhatIf approach (Wexler et al. 2019). 
+
+\begin{enumerate}[a)]
+  \item Implement the following steps in \texttt{generate\_whatif()}: 
+  \begin{enumerate}
+    \item Subset the \texttt{data} to the observations having a 
+    prediction equal to the desired precition \texttt{y'}. 
+    \item Calculate the pairwise Gower distances between \texttt{x\_interest} and the 
+    remaining data points in \texttt{data}. 
+    \item Return the \texttt{k} nearest data point as a counterfactual for \texttt{x\_interest}
+  \end{enumerate}
+  Try out your function with your own selected data example and ML model. 
+  
+  \item What attributes you now from the lecture (\textit{validity}, \textit{sparsity}, ...)
+  does this approach fulfill. Based on this, derive the advantages and disadvantages of the approach? 
+  
+  \item Complete the function \texttt{evaluate\_cfexp()} to evaluate if counterfactuals are minimial. 
+  Your function should do the following: 
+  
+  \begin{enumerate}
+    \item For each \texttt{counterfactual} do the following: 
+    \item For each feature do the following: 
+    \begin{enumerate}
+    \item Assess whether setting the feature value of the counterfactual 
+    to the value of \texttt{x\_interest} still results in the desired prediction
+    \end{enumerate}
+    \item End for 
+    \item End for - return the number of feature changes still leading to the desired prediction
+  \end{enumerate}
+  
+  Try out your function with the Whatif generated counterfactuals based on 
+  your selected data example. 
+\end{enumerate}

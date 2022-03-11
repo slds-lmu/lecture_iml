@@ -1,0 +1,55 @@
+In the following, you are guided to visualize LIME to interpret a Multi-Layer Perceptron. We use two features and explore LIME on a multi-classification problem.\\
+
+\noindent Associated file: \textit{lime.py} or \textit{lime.R}.
+
+\begin{enumerate}[a)]
+\item Prepare Mesh Data \\
+First of all, we prepare data to visualize the feature space. Theoretically speaking, we create a $N\times N$ grid, and every point in this grid is associated with a value. This value is obtained by the model's predict method.\\
+Span a linear space for $x_i$ and $y_i$ with $0 \leq i \leq N$ in the method \texttt{get\_mesh()}. The first feature is associated with the x-axis, whereas the second feature is to the y-axis. Ignore all other features. Consider the lower and upper bounds using the configspace and ensure the values $z$ are in the correct shape. Equation~\ref{eq:grid} shows the shape more precisely. $\mathcal{M}(x_i, y_j)$ is the prediction from the $i$-th $x$ value and the $j$-th $y$ value. 
+
+\begin{equation}
+z
+=
+\begin{bmatrix}
+\mathcal{M}(x_0, y_0) & \dots & \mathcal{M}(x_N, y_0)\\
+\vdots & \ddots & \vdots\\
+\mathcal{M}(x_0, y_N) & \dots & \mathcal{M}(x_N, y_N)\\
+\end{bmatrix}
+\label{eq:grid}
+\end{equation}
+
+
+\item Plot Color Mesh
+
+After calculating the color values, we want to apply the values in the function \texttt{plot\_mesh()}. Use \texttt{pcolormesh} with \texttt{viridis} as colors and make sure you deactivate the grid.
+
+
+\item Sample Points
+
+Next, we sample points, which are later used to train the local surrogate model. Complete
+\texttt{sample\_points()} by randomly sampling from a uniform distribution. Consider the lower and
+upper bounds from the configspace again. Having a detailed look into the API will save you a lot of time.
+
+
+\item Weight Points
+
+Given a selected point $\hat{x}$ and the sampled points $X$ from the previous task, we now want to weight the points. Use the following equation with $d$ as Euclidean distance to calculate the weight of a single point $x_i \in X$:
+
+\begin{equation}
+    n(x_i) = exp(-d(\hat{x}, x_i)^2/\sigma^2).
+    \label{eq:dist}
+\end{equation}
+
+\noindent To make plotting easier later on, the weights should be normalized between zero and one. Finally, return the normalized weights in \texttt{weight\_points()}.
+
+
+\item Plot Points
+
+Complete \texttt{plot\_points\_in\_mesh()} by adding the sampled (weighted) points into the plot. Make sure that both the selected point (POI) and all classes appear once in the legend (you should not call legend here as it is done in the main function). Should a $y$ value not appear in $colors$ use black as default color. Use red for the selected point. Moreover, the size of the markers should be the weight multiplied by the default marker size.
+
+
+\item Fit Local Surrogate
+
+Finally, fit a decision tree with training data and weights. Return the fitted tree in the function \texttt{fit\_explainer\_model()}. What could be problematic?
+
+\end{enumerate}

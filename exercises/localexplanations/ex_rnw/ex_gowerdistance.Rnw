@@ -1,0 +1,53 @@
+The Gower distance is one of the most popular ways of measuring the similarity or 
+dissimilarity between observations in the presence of mixed-type variables. 
+The Gower distance can be defined as the complement to one of the Gowers similarity 
+coefficient: 
+
+$ d_G(\mathbf{z}, \xv) =  \frac{1}{p}\sum_{j = 1}^{p} \delta_G(z_j, x_j) $ 
+$\textnormal{ with } \delta_G(z_j, x_j) =
+\begin{cases}
+\frac{1}{\widehat{R}_j}|z_j- x_j| & \text{if $x_j$ and $z_j$ are numerical} \\
+\mathbb{I}_{z_j \neq x_j} & \text{if $x_j$ and $z_j$ are categorical}	
+\end{cases}.$
+
+Despite its popularity, the Gower distance has a major drawback. In the following
+exercises, you should identify this problem and construct a solution.  
+
+\begin{enumerate}[a)]
+\item Let us consider the following example that should illustrate the problem.
+We have a dataset with two features - sex and age.
+Sex has the values M = male and F = female, while age could have values between 0 and 100,
+but in this example we only consider 3 different values.
+Table~\ref{tab:probgow} shows the possible feature combinations.
+Derive the Gower distance $d_G$ and feature wise distance $\delta_G$ per row.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr|rrr|r}
+  \hline
+ Sex1 & Sex2 & $\delta_G(Sex1, Sex2)$ & Age1 & Age2 & $\delta_G(Age1, Age2)$ & $d_G$ \\
+  \hline
+ F & F & & 15 & 15 & \\
+ F & F & & 15 & 58 & \\
+ F & F & & 15 & 90 & \\
+ F & M & & 15 & 15 & \\
+ F & M & & 15 & 58 & \\
+ F & M & & 15 & 90 & \\
+   \hline
+\end{tabular}
+\label{tab:probgow}
+\end{table}
+
+\item Imagine that the observations (Sex1, Age1) is the data point we want to
+find counterfactuals for and imagine that all the other observations (Sex2, Age2)
+are the counterfactual candidates.
+Given the fully filled out table, which counterfactuals would you prefer?
+Do you see a tendency towards a group of counterfactuals with respect to the
+type of features?
+
+\item An enhancement of the Gower distance is to use individual weights $w_j$ for the
+different features $j \in \{1, ..., p\}$:
+$ d_G(\mathbf{z}, \xv) =  \frac{1}{p}\sum_{j = 1}^{p} w_j \delta_G(z_j, x_j) $
+Think about possible weighting schemes to solve the above problem.
+
+\end{enumerate}

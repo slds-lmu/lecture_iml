@@ -1,0 +1,63 @@
+\begin{enumerate} [a)]
+  \item Derivation of PD function for $S = \{1\}$ (with $C = \{2\}$) given
+  \begin{equation*}
+  \fh(\xv) = \fh(\xv_1, \xv_2) = \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 + \hat\beta_0.
+  \label{eq:linmod}
+  \end{equation*}
+  
+  $$
+  \begin{aligned}
+  f_{1, PD}(\xv_1) = \E_{\xv_2} \left( \fh(\xv_1, \xv_2) \right) &= \int_{-\infty}^{\infty} \left( \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 + \hat\beta_0 \right) \, d\P(\xv_2) \\
+  &= \hat\beta_1 \xv_1 + \int_{-\infty}^{\infty} \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
+    &= \hat\beta_1 \xv_1 + \int_{-\infty}^{\infty} (\hat\beta_2 + \hat\beta_3 \xv_1) \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
+    &= \hat\beta_1 \xv_1 + (\hat\beta_2 + \hat\beta_3 \xv_1) \cdot \int_{-\infty}^{\infty} \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
+        &= \hat\beta_1 \xv_1 + (\hat\beta_2 + \hat\beta_3 \xv_1) \cdot \E_{\xv_2} (\xv_2) + \hat\beta_0 
+  \end{aligned}
+  $$
+
+  \item PD function for $\hat\beta_0 = 0$, $\hat\beta_1 = -8$, $\hat\beta_2 = 0.2$, $\hat\beta_3 = 16$, $X_1 \sim Unif(-1, 1)$ and  $X_2 \sim B(1, 0.5)$. 
+  $$
+  \begin{aligned}
+  f_{1, PD}(\xv_1) = \hat\beta_1 \xv_1 + (\hat\beta_2 + \hat\beta_3 \xv_1) \cdot \E_{\xv_2} (\xv_2) + \hat\beta_0 
+        &= -8 \xv_1 + (0.2 + 16 \xv_1) \cdot \E_{\xv_2} (\xv_2) + 0 \\
+        &= -8 \xv_1 + (0.2 + 16 \xv_1) \cdot 0.5  + 0 \\
+        &= -8 \xv_1 + 0.1 + 8 \xv_1 \\
+        &= 0.1 + 0 \xv_1
+  \end{aligned}
+  $$
+  
+  \item ICE functions for group $X_2 = 1$ and for group $X_2 = 0$. 
+    $$f_1(\xv_1) = \begin{cases}
+      - 8 \xv_1 + (0.2 + 16 \xv_1) \cdot 1 = 8 \xv_1 + 0.2 & \xv_2 = 1 \\
+      - 8 \xv_1 + (0.2 + 16 \xv_1) \cdot 0 = - 8 \xv_1 & \xv_2 = 0
+    \end{cases}$$
+    
+  The lightgreen dots correspond to group $X_2 = 1$, the lightblue dots to group $X_2 = 0$.
+  
+<<fig.height=3, fig.width=6, echo = FALSE, warning=FALSE,message=FALSE>>=
+library(mlr3)
+library(iml)
+library(ggplot2)
+set.seed(1000)
+n = 700
+x1 = runif(n, -1, 1)
+x2 = rbinom(n, size = 1, prob = 0.5)
+y = - 8*x1 + 0.2*x2 + ifelse(x2 == 1, 16*x1, 0) 
+dat = data.frame(x1, x2, y)
+
+# fit linear model
+mod = lm(y~x1+x2+x1:x2, data = dat)
+pred = Predictor$new(mod, data = dat[-which(names(dat) == "y")], y = dat$y)
+
+# pdp
+pdp = FeatureEffect$new(pred, "x1", method = "pdp")
+p1 = pdp$plot()
+p1 = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
+  theme_bw() +
+  scale_x_continuous(name = expression(x[1])) + 
+  geom_point(data = dat[dat$x2 == 1,], aes(x = x1, y = y), color = "lightgreen", alpha = 0.5) + 
+  geom_point(data = dat[dat$x2 == 0,], aes(x = x1, y = y), color = "lightblue", alpha = 0.5)
+p1
+@
+  
+\end{enumerate}

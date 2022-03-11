@@ -1,0 +1,77 @@
+\begin{enumerate}[a)]
+  \item Calculation of Pearson correlation coefficient of $x_1$ and $x_2$
+  $$
+  \rho(x_1, x_2) = \frac{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_1})(x_2^{(i)} - \bar{x_2})}{\sqrt{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_1})} \sqrt{\sum_{i = 1}^n (x_2^{(i)} - \bar{x_2})}} \\
+  $$ 
+   
+  given the dataset
+  <<echo=FALSE, results='asis'>>=
+library(ggplot2)
+set.seed(1234L)
+x1 = seq(-1, 1, 0.2)
+x2 = x1^2+rnorm(length(x1), sd = 0.04)
+y = 5*x1 + -2*x2 + rnorm(length(x1))
+d = data.frame(y, x1, x2)
+library(xtable)
+print(xtable(t(d), digits = 2))
+@
+  
+ The mean values of $x_1$ and $x_2$ are
+ $$\bar{x_1} = (-1.0 + -0.8 + -0.6 + -0.4 + -0.2 + 0.0 + 0.2 + 0.4 + 0.6 + 0.8 + 1.0)/11  = 0$$ 
+ $$\bar{x_2} = (0.95 + 0.65 + 0.4 + 0.07 + 0.06 + 0.02 + 0.02 + 0.14 + 0.34 + 0.6 + 0.98)/11 = 0.384$$
+ 
+ The individual differences to the means are
+ \begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrrrrrrrrr}
+  \hline
+ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & $\sum_{i = 1}^n$ \\
+  \hline
+  x1 & -1.00 & -0.80 & -0.60 & -0.40 & -0.20 & 0.00 & 0.20 & 0.40 & 0.60 & 0.80 & 1.00 & $\approx$ 0\\
+  x2 & 0.57 & 0.27 & 0.02 & -0.32 & -0.33 & -0.36 & -0.37 & -0.25 & -0.05 & 0.22 & 0.60 & $\approx$ 0\\
+   \hline
+\end{tabular}
+\end{table}
+  
+     $$ 
+    \begin{aligned}
+  \rho(x_1, x_2) & = \frac{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})(x_1^{(i)} - \bar{x_2})}{\sqrt{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})} \sqrt{\sum_{i = 1}^n (x_1^{(i)} - \bar{x_2})}} \\
+  & = \frac{-0.95 + -0.52 + -0.24 + -0.028 + -0.012 + 0 + 0.04 + 0.056 + 0.204 + 0.48 + 0.98}{\approx 0}
+    \end{aligned}
+  $$ 
+  
+  The Pearson correlation coefficient is close to 0 - reflecting that there is no \textbf{linear} relationship between $x_1$ and $x_2$.
+  
+  \item  The scatter plot reveals that there is a strong non-linear/quadratic relationship between $x_1$ and $x_2$. 
+  
+  \begin{center}
+ <<fig.height=3, fig.width=4, echo = FALSE, warning=FALSE,message=FALSE,out.width='3in'>>=
+ggplot(d, aes(x = x1, y = x2)) + 
+  geom_point() +
+  theme_bw()
+@
+  \end{center}
+ 
+  \item The p-value of \Sexpr{2.79e-05} (but also the adjusted $R^2$ value) reveals that there is a strong relationship between $x_1$ and $x_2$.
+  The p-value does not specify the direction of the relationship.
+  
+  \item 
+  \begin{enumerate}
+  \item 
+  Both PDP and the ALE plots show a strong linear effect of $x_1$, 
+  where higher values of $x_1$ lead to higher values of predicted value.
+  The PDP and ALe plot of $x_2$ show a strong decreasing effect of $x_2$ on the prediction. 
+  The PDP of $x_2$ shows a steep jump for large values of $x_2$, while 
+  the ALE plot shows a strong linear effect over the whole value range of $x_2$.
+  \item 
+  PDPs assume that the feature are uncorrelated. We know from the
+  GAM output above - as well as the scatter plot - that $x_1$ and $x_2$ are
+  highly correlated. Since PDPs extrapolate over predictions of artificial points that 
+  are out of distribution, the interpretations might be misleading - especially in areas
+  with low data density (high values of $x_2$) and if the model contains interactions.
+  ALE on the other hand, does not predict in regions that are far away from the 
+  training data and therefore do not suffer from the extrapolation issue of 
+  PDPs. 
+  \end{enumerate}
+\end{enumerate}
+  
