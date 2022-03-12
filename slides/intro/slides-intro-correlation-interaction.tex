@@ -101,7 +101,7 @@
 \textbf{Correlation:} Often Pearson correlation $\rho$ is meant, which only measures linear relationship %between pairs of features
 
 \textbf{Example:} Scatterplot with multivariate distribution (contour lines) and their marginal densities
-
+\vspace{5pt}
 \begin{columns}[totalwidth=\textwidth]
 \begin{column}{0.5\linewidth}
 \centering
@@ -137,29 +137,19 @@ $X_1$, $X_2 \sim N(0,1)$ with $\rho(X_1, X_2) = 0.8$
 
 %\textbf{Definition:}
 \begin{itemize}
-\item Definition: $X_j$, $X_k$ independent $\Leftrightarrow$ joint distribution is product of marginals:
-$$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$$
+\item Definition: $X_j$, $X_k$ independent $\Leftrightarrow$ joint distribution is product of marginals:\\ \vspace{5pt}
+\centerline{$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$}
+\vspace{5pt}
 \item Equivalent definition (knowing $X_k$ does not tell us anything about $X_j$ and vice versa): \\
-\medskip
+\vspace{5pt}
 \phantom{AAA} $\P(X_j|X_k) = \P(X_j) \text{ and } \P(X_k|X_j) = \P(X_k)$ \hfill (follows from conditional probability) \phantom{AAA}
+\vspace{5pt}
 %$$\P(X_j|X_k) = \P(X_j) \hfill \text{(knowing $X_k$ does not tell us anything about $X_j$ and vice versa)}$$
-\medskip
-\item \textbf{N.B.:} $X_j$, $X_k$ independent $\Rightarrow$ $\rho(X_j, X_k) = 0$ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  independent
-%\item Auf einer slide eklären, visuell und mathematisch
-\item General dependence structure difficult to measure but many different measures exist, e.g., \\
-Spearman correlation (monotonic), mutual information, or Kernel-based measures (HSCI)
-\end{itemize}
+%\medskip
 
-\centering
-
-
-\end{frame}
-
-
-\begin{frame}{Correlation and Dependence}
-
-
-\begin{columns}[c, totalwidth=\textwidth]
+\only<1>{
+\textbf{Example:} Independent $\Rightarrow$ Conditional distributions at different vertical and horizontal slices (after normalizing area under curve to 1) match their marginal distributions
+\begin{columns}[c, totalwidth=\linewidth]
 \begin{column}{0.5\textwidth}
 \includegraphics[width=\textwidth]{slides/intro/figure/independent_slice.pdf}
 \end{column}
@@ -167,6 +157,14 @@ Spearman correlation (monotonic), mutual information, or Kernel-based measures (
 \includegraphics[width=\textwidth]{slides/intro/figure/dependent_slice.pdf}
 \end{column}
 \end{columns}
+}
+
+\pause
+\item \textbf{N.B.:} $X_j$, $X_k$ independent $\Rightarrow$ $\rho(X_j, X_k) = 0$ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  independent
+%\item Auf einer slide eklären, visuell und mathematisch
+\item General dependence structure difficult to measure but many different measures exist, e.g., \\
+Spearman correlation (monotonic), mutual information, or Kernel-based measures (HSCI)
+\end{itemize}
 
 
 \end{frame}
@@ -223,6 +221,34 @@ e.g., due to data quality, under- and overfitting, or model extrapolation
 
 \end{itemize}
 \end{frame}
+
+
+
+\begin{frame}{Extrapolation}
+\begin{itemize}
+%\itemsep1em
+\item Predictions in regions with a low density of training points are subject to a high uncertainty
+\item Essentially, we are interested in the prediction uncertainty\\
+%, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty. 
+$\leadsto$ Models are rarely capable of quantifying prediction uncertainty
+\item There is no consensus definition of when a model extrapolates and to what degree \\
+$\leadsto$ Severity of extrapolation depends on model\\
+$\leadsto$ Some models might extrapolate more than others
+\item Density of training data might serve as proxy to identify regions where extrapolation is likely\\
+$\leadsto$ Density estimation in many dimensions is often infeasible
+\end{itemize}
+
+\end{frame}
+% \begin{frame}{Extrapolation}
+% \begin{itemize}
+% %\itemsep1em
+% \item Predictions of an ML model in regions with a low density of training points are subject to a high variance.
+% \item Essentially we are interested in the prediction uncertainty, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty. Unfortunately, virtually no ML models are capable of quantifying prediction uncertainty.
+% \item There is no consensus definition of when a model extrapolates and to what degree. Furthermore, the severity of the problem depends on the model itself. Some models might extrapolate more reliably than others.
+% \item Theoretically, we could use the training density as a proxy. However, density estimation in many dimensions is often infeasible.
+% \end{itemize}
+
+% \end{frame}
 
 %%% dann das gleiche für interactions
 
@@ -287,30 +313,38 @@ Shape of the prediction function for a two-way interaction:
 \end{frame}
 
 
-\begin{frame}{Extrapolation}
+% \begin{frame}{Pitfalls of Interpretation Methods}
+% \begin{itemize}
+% %\itemsep1em
+% \item Many methods in IML are theoretically defined for uncorrelated features, e.g., the PD or the PFI.
+% \item In practice, the features are usually correlated, but methods are applied regardless of potential misinterpretations.
+% \item Many people call for a more careful approach to conduct model interpretations, either by using intrinsically interpretable models (Rudin, 2019), or by avoiding feature permutations (Hooker, 2021).
+% \item There are many potential pitfalls to consider when interpreting ML models (Molnar, 2021).
+% \\
+% $\rightarrow$ Know the theory and be careful!
+
+% \footnote[frame]{Molnar, Christoph \& König, Gunnar \& Herbinger, Julia \& Freiesleben, Timo \& Dandl, Susanne \& Scholbeck, Christian \& Casalicchio, Giuseppe \& Grosse-Wentrup, Moritz \& Bischl, Bernd. (2020). Pitfalls to Avoid when Interpreting Machine Learning Models.}
+% \footnote[frame]{Rudin, C. Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. Nat Mach Intell 1, 206–215 (2019).}
+% \footnote[frame]{Hooker, Giles \& Mentch, Lucas \& Zhou, Siyu. (2021). Unrestricted permutation forces extrapolation: variable importance requires at least one more model, or there is no free variable importance. Statistics and Computing. 31. 10.1007/s11222-021-10057-z.}
+% \end{itemize}
+
+% \end{frame}
+
+\begin{frame}[t]{Pitfalls and Best Practices \citebutton{Molnar et. al (2021)}{https://arxiv.org/abs/2007.04131v2}}
 \begin{itemize}
-%\itemsep1em
-\item Predictions of an ML model in regions with a low density of training points are subject to a high variance.
-\item Essentially we are interested in the prediction uncertainty, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty. Unfortunately, virtually no ML models are capable of quantifying prediction uncertainty.
-\item There is no consensus definition of when a model extrapolates and to what degree. Furthermore, the severity of the problem depends on the model itself. Some models might extrapolate more reliably than others.
-\item Theoretically, we could use the training density as a proxy. However, density estimation in many dimensions is often infeasible.
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Pitfalls of Interpretation Methods}
-\begin{itemize}
-%\itemsep1em
-\item Many methods in IML are theoretically defined for uncorrelated features, e.g., the PD or the PFI.
-\item In practice, the features are usually correlated, but methods are applied regardless of potential misinterpretations.
-\item Many people call for a more careful approach to conduct model interpretations, either by using intrinsically interpretable models (Rudin, 2019), or by avoiding feature permutations (Hooker, 2021).
-\item There are many potential pitfalls to consider when interpreting ML models (Molnar, 2021).
-\\
-$\rightarrow$ Know the theory and be careful!
-
-\footnote[frame]{Molnar, Christoph \& König, Gunnar \& Herbinger, Julia \& Freiesleben, Timo \& Dandl, Susanne \& Scholbeck, Christian \& Casalicchio, Giuseppe \& Grosse-Wentrup, Moritz \& Bischl, Bernd. (2020). Pitfalls to Avoid when Interpreting Machine Learning Models.}
-\footnote[frame]{Rudin, C. Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. Nat Mach Intell 1, 206–215 (2019).}
-\footnote[frame]{Hooker, Giles \& Mentch, Lucas \& Zhou, Siyu. (2021). Unrestricted permutation forces extrapolation: variable importance requires at least one more model, or there is no free variable importance. Statistics and Computing. 31. 10.1007/s11222-021-10057-z.}
+    \item \textbf{Proper training and evaluation}: 
+    To gain insights into data generating process, deployed model should at least generalize well to unseen data (garbage in, garbage out)
+    %Model interpretation is only as good as the underlying model (garbage in, garbage out).
+    \item \textbf{Avoid unnecessary complexity}: Prefer simple interpretable models and use them as baseline
+    \item \textbf{Quantify uncertainty}: Interpretation methods are often (statistical) estimators \\
+    $\leadsto$ Beware of uncertainty, we may need confidence intervals
+    %To avoid interpretation of noise, include uncertainty estimates for the interpretations, e.g.,  confidence intervals for feature importance.
+    \item \textbf{Careful with causality}: 
+     Do you want to understand the model or the nature of DGP?\\
+     $\leadsto$ Your goal should guide the choice of interpretation method
+     %Causal interpretation requires assumptions about relationships in the data and a corresponding model considerations (e.g., including confounders into the model).
+    \item \textbf{Consider feature dependence}: Some interpretation methods suffer when features are dependent. Check presence of dependencies and use suitable methods.
+    \item \textbf{Be aware of simplifications}: Interpretation methods map from complex models to low-dim. explanations. $\Rightarrow$ Information loss, e.g., some interpretation methods hide interactions.
 \end{itemize}
 
 \end{frame}
