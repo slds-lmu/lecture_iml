@@ -7,14 +7,14 @@ theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 
 layout <- "
-AAAA##
-AAAABB
-AAAABB
-AAAABB
-AAAACC
-AAAACC
-AAAACC
-AAAA##
+AAA#
+AAAB
+AAAB
+AAAB
+AAAC
+AAAC
+AAAC
+AAA#
 "
 
 dind = function(x, y) dnorm(x) * dlnorm(y)
@@ -128,5 +128,5 @@ plot2 = p + p1 + p2 + plot_layout(design = layout) +
   plot_annotation(title = expression('Dependent')) & # ~P(X[1]~"|"~X[2])!=P(X[1])
   theme(legend.position = 'right', plot.title = element_text(hjust = 0.5))
 
-ggsave(filename = "slides/intro/figure/independent_slice.pdf", plot1, width = 7, height = 3)
-ggsave(filename = "slides/intro/figure/dependent_slice.pdf", plot2, width = 7, height = 3)
+ggsave(filename = "slides/intro/figure/independent_slice.pdf", plot1, width = 7, height = 3.5)
+ggsave(filename = "slides/intro/figure/dependent_slice.pdf", plot2, width = 7, height = 3.5)
