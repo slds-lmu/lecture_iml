@@ -5,7 +5,7 @@ theme_set(theme_bw())
 x1 = seq(from = 0, to = 20, length.out = 51)
 x2 = seq(from = 0, to = 20, length.out = 51)
 f = function(x1, x2){
-  2 + x1^2 - x2 + (x1 * x2)
+  2 + x1^2 + x2 + (x1 * x2)
 }
 dat = expand.grid(x1 = x1, x2 = x2)
 dat$y = f(dat$x1, dat$x2)
