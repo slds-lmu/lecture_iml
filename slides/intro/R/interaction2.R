@@ -2,10 +2,10 @@ library(iml)
 library(ggplot2)
 theme_set(theme_bw())
 
-x1 = seq(from = 0, to = 20, length.out = 51)
-x2 = seq(from = 0, to = 20, length.out = 51)
+x1 = seq(from = -10, to = 10, length.out = 51)
+x2 = seq(from = -10, to = 10, length.out = 51)
 f = function(x1, x2){
-  2 + x1^2 + x2 + (x1 * x2)
+  2 + x1^2 - x2^2 + (x1 * x2)
 }
 dat = expand.grid(x1 = x1, x2 = x2)
 dat$y = f(dat$x1, dat$x2)
@@ -79,7 +79,7 @@ fanova$.value = fanova$.value12 - fanova$.value1 - fanova$.value
 pdp12$results = fanova[order(fanova$x2, fanova$x1), c("x1", "x2", ".value", ".type")]
 
 x1val = 5
-x2val = 15
+x2val = 10
 digits = 1
 f1 = pdp1$results$.value[round(pdp1$results$x1, digits) == x1val]
 f2 = pdp2$results$.value[round(pdp2$results$x2, digits) == x2val]
@@ -126,5 +126,5 @@ p12 = pdp12$plot(rug = FALSE) + geom_contour(aes(z = .value), color = "black") +
 (p1 / p2) | p12
 #(p1 + p2) / p12 + patchwork::plot_layout(heights = c(1,2.5))
 
-ggsave("slides/intro/figure/interaction2.pdf", height = 5, width = 10,
+ggsave("slides/intro/figure/interaction2.pdf", height = 4, width = 8,
   ((p1 / p2) | p12) + patchwork::plot_layout(heights = c(1,1.5)))
