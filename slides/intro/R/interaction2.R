@@ -97,8 +97,8 @@ p1 = pdp1$plot(rug = FALSE) +
   scale_y_continuous(latex2exp::TeX(r'($g_{1}$ values)')) +
   geom_vline(xintercept = x1val, lty = 2, col = 2) +
   geom_hline(yintercept = f1, lty = 2, col = 2) +
-  geom_text(aes(x = x1val, y = f1, label = lab1),
-    col = 2, hjust = 1.1, vjust = -1, parse = TRUE)
+  geom_label(aes(x = x1val, y = f1, label = lab1),
+    col = 2, hjust = 1.1, vjust = -0.1, parse = TRUE)
 
 lab2 = paste("g[2] ==", round(f2, 2))
 p2 = pdp2$plot(rug = FALSE) +
@@ -107,8 +107,8 @@ p2 = pdp2$plot(rug = FALSE) +
   scale_y_continuous(latex2exp::TeX(r'($g_{2}$ values)')) +
   geom_vline(xintercept = x2val, lty = 2, col = 2) +
   geom_hline(yintercept = f2, lty = 2, col = 2) +
-  geom_text(aes(x = x2val, y = f2, label = lab2),
-    col = 2, hjust = 1.1, vjust = -1, parse = TRUE)
+  geom_label(aes(x = x2val, y = f2, label = lab2),
+    col = 2, hjust = 1.1, vjust = -0.1, parse = TRUE)
 
 lab12 = paste("g[12] ==", round(f12, 2))
 p12 = pdp12$plot(rug = FALSE) + geom_contour(aes(z = .value), color = "black") +
@@ -120,11 +120,11 @@ p12 = pdp12$plot(rug = FALSE) + geom_contour(aes(z = .value), color = "black") +
   scale_y_continuous(latex2exp::TeX(r'(Feature $x_2$)')) +
   geom_vline(xintercept = x1val, lty = 2, col = 2) +
   geom_hline(yintercept = x2val, lty = 2, col = 2) +
-  geom_text(aes(x = x1val, y = x2val, label = lab12),
-    col = 2, hjust = 1.1, vjust = -1, parse = TRUE)
+  geom_label(aes(x = x1val, y = x2val, label = lab12),
+    col = 2, hjust = 1.1, vjust = 1.1, parse = TRUE)
 
 (p1 / p2) | p12
 #(p1 + p2) / p12 + patchwork::plot_layout(heights = c(1,2.5))
 
-ggsave("slides/intro/figure/interaction2.pdf", height = 4, width = 8,
-  ((p1 / p2) | p12) + patchwork::plot_layout(heights = c(1,1.5)))
+ggsave("slides/intro/figure/interaction2.pdf", height = 3, width = 8,
+  ((p1 / p2) | p12) + patchwork::plot_layout(heights = c(1,2)))
