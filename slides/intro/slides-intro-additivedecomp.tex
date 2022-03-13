@@ -20,22 +20,40 @@
 \lecturechapter{Additive Decomposition}
 \lecture{Interpretable Machine Learning}
  
-\begin{frame}{High-Dimensional Model Representation}
+\begin{frame}{High-Dimensional Model Representation \citebutton{Sobol (2003)}{https://doi.org/10.1016/S0951-8320(02)00229-6}}
+%\citebutton{Li et al. (2001)}{https://doi.org/10.1021/jp010450t}
 
 \begin{itemize}
-\itemsep1em
-\item
-HDMR decomposes model into sum of effect terms of increasing order:
-\begin{align*}
-\hat{f}(x) &= g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \\
-&\phantom{{}={}} + \;\dots\; + g_{\{1,\ldots,p\}}(x_1, \ldots,x_p)
-\end{align*}
-\item Univariate terms $g_{\{j\}} \hat = $ first-order or main effects
+%\itemsep1em
+%\item Prediction function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ produces output from $p$-dimensional input space
+%decomposed into a hierarchical 
+\item \textbf{High-Dimensional Model Representation (HDMR):} Prediction function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ as function expansion of low dimensional independent terms of increasing order:
+%\vspace{5pt}
+% \centerline{$\fh(\xv) = g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \dots + g_{\{1, 2\}}(x_1, x_2) + \dots + g_{\{1,\ldots,p\}}(x_1, \ldots, x_p)$}
+%\vspace{5pt}
+\begin{equation*}
+\begin{split}
+\fh(\xv) =  %g_{\{0\}} +
+\textstyle\sum_{S \subseteq \{1,\ldots,p\}} g_{S}(x_S) = \; & g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \dots + g_{\{p\}}(x_p) + \\
+& g_{\{1, 2\}}(x_1, x_2) + \dots + g_{\{p-1, p\}}(x_{p-1}, x_p) + \dots + \\
+& g_{\{1,\ldots,p\}}(x_1, \ldots, x_p)
+\end{split}
+\end{equation*}
+\vspace{-5pt}
+\begin{itemize}
+\item Univariate terms $g_{\{j\}} \hat = $ first-order or main effect of $j$-th feature alone
 \item Bivariate terms $g_{\{j, k\}} \hat = $ second-order effects, etc.
-\item Features need to be independent to make HDMR unique
-\item Different techniques to estimate additive decomposition exist, e.g.:
+\end{itemize}
+%effect terms of increasing order 
+%HDMR decomposes model into sum of effect terms of increasing order:
+% \begin{align*}
+% \fh(\xv) &= g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \\
+% &\phantom{{}={}} + \;\dots\; + g_{\{1,\ldots,p\}}(x_1, \ldots,x_p)
+% \end{align*}
+%\item Features need to be independent to make HDMR unique
+\item Different techniques to estimate the above additive decomposition exist, e.g.:
 		\begin{itemize}
-			\item recursive expectations (via partial dependence) 
+			\item recursive expectations (via partial dependence functions) 
 			\item accumulated local effects (ALE)
 		\end{itemize}
 \end{itemize}
@@ -43,15 +61,20 @@ HDMR decomposes model into sum of effect terms of increasing order:
 
 \begin{frame}{High-Dimensional Model Representation}
 
-Recursive estimation of effects via PDPs (see later):
+Recursive estimation of independent components:
+
+$$g_{\{S\}} = \mathbb{E}_{x_{-S}}\left[\widehat{f}(x) \; \vert  \; x_S \right] - \sum_{V \subset S} g_S(x_S)$$
+
+Examples:
 \begin{align*}
  g_{\{0\}} &= \mathbb{E}_X\left[\widehat{f}(x)\right] \\
- g_{\{1\}}(x_1) &= \mathbb{E}_{X_{-1}}\left[\widehat{f}(x) \; \vert  \; X_1 \right] - g_{\{0\}} \\
- g_{\{2\}}(x_2) &= \mathbb{E}_{X_{-2}}\left[\widehat{f}(x) \; \vert  \; X_2 \right] - g_{\{0\}} \\
- g_{\{1, 2\}}(x_1, x_2) &= \mathbb{E}_{X_{-\{1,2\}}}\left[\widehat{f}(x) \; \vert \; X_1, X_2 \right] - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
+ g_{\{1\}}(x_1) &= \mathbb{E}_{x_{-1}}\left[\widehat{f}(x) \; \vert  \; x_1 \right] - g_{\{0\}} \\
+ g_{\{2\}}(x_2) &= \mathbb{E}_{x_{-2}}\left[\widehat{f}(x) \; \vert  \; x_2 \right] - g_{\{0\}} \\
+ g_{\{1, 2\}}(x_1, x_2) &= \mathbb{E}_{x_{-\{1,2\}}}\left[\widehat{f}(x) \; \vert \; x_1, x_2 \right] - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
  &\vdots \\
- g_{\{1, \dots, p\}}(x) &= \widehat{f}(x) - \dots - g_{\{1, 2\}}(x_1, x_2) \\
- &\phantom{{}={}} - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
+ g_{\{1, \dots, p\}}(x) &= \widehat{f}(x) - \dots - g_{\{1, 2\}}(x_1, x_2) %\\
+ %&\phantom{{}={}} 
+ - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
 \end{align*}
 
 \end{frame}
