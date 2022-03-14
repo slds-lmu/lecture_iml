@@ -123,8 +123,10 @@ p12 = pdp12$plot(rug = FALSE) + geom_contour(aes(z = .value), color = "black") +
   geom_label(aes(x = x1val, y = x2val, label = lab12),
     col = 2, hjust = 1.1, vjust = 1.1, parse = TRUE) #+ theme(legend.position = "bottom")
 
+dat2 = pdp12$results
+dat2$y = f(dat2$x1, dat2$x2)
 lab0 = paste("hat(f) ==", f(x1val, x2val))
-p0 = ggplot(data = dat, aes(x = x1, y = x2, z = y)) +
+p0 = ggplot(data = dat2, aes(x = x1, y = x2, z = y)) +
   geom_tile(aes(fill = y)) + geom_contour(color = "black") +
   scale_fill_gradient2(expression("value"), midpoint = f12, low = 3, mid = "white", high = 4, space = "Lab") +
   geom_vline(xintercept = x1val, lty = 1, col = 2, lwd = 1) +
