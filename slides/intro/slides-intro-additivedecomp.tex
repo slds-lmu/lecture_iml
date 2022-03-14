@@ -3,6 +3,8 @@
 \usepackage{../../style/lmu-lecture}
 % Defines macros and environments
 \input{../../style/common.tex}
+\newcommand{\open}{\{}
+\newcommand{\close}{\}}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -20,70 +22,85 @@
 \lecturechapter{Additive Decomposition}
 \lecture{Interpretable Machine Learning}
  
-\begin{frame}{High-Dimensional Model Representation \citebutton{Sobol (2003)}{https://doi.org/10.1016/S0951-8320(02)00229-6}}
+\begin{frame}{High-Dimensional Model Representation  \citebutton{Sobol (1993)}{https://doi.org/10.1016/S0951-8320(02)00229-6}
+\citebutton{Sobol (2003)}{http://www.andreasaltelli.eu/file/repository/sobol1993.pdf}}
 %\citebutton{Li et al. (2001)}{https://doi.org/10.1021/jp010450t}
 
 \begin{itemize}
 %\itemsep1em
 %\item Prediction function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ produces output from $p$-dimensional input space
 %decomposed into a hierarchical 
-\item \textbf{High-Dimensional Model Representation (HDMR):} Prediction function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ as function expansion of low dimensional independent terms of increasing order:
+\item \textbf{High-Dimensional Model Representation (HDMR):} Expansion of prediction function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ into independent summands of different dimensions w.r.t. input features:
+%\item \textbf{High-Dimensional Model Representation (HDMR)} of prediction function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ as function expansion of low dimensional independent terms of increasing order:
 %\vspace{5pt}
-% \centerline{$\fh(\xv) = g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \dots + g_{\{1, 2\}}(x_1, x_2) + \dots + g_{\{1,\ldots,p\}}(x_1, \ldots, x_p)$}
+% \centerline{$\fh(\xv) = g_{\open  0  \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \dots + g_{\open 1, 2 \close}(x_1, x_2) + \dots + g_{\open 1,\ldots,p \close}(x_1, \ldots, x_p)$}
 %\vspace{5pt}
 \begin{equation*}
 \begin{split}
-\fh(\xv) =  %g_{\{0\}} +
-\textstyle\sum_{S \subseteq \{1,\ldots,p\}} g_{S}(x_S) = \; & g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \dots + g_{\{p\}}(x_p) + \\
-& g_{\{1, 2\}}(x_1, x_2) + \dots + g_{\{p-1, p\}}(x_{p-1}, x_p) + \dots + \\
-& g_{\{1,\ldots,p\}}(x_1, \ldots, x_p)
+\fh(\xv) =  %g_{\open  0  \close} +
+\textstyle\sum_{S \subseteq \{1,\ldots,p\}} g_{S}(x_S) = \; & g_{\open 0 \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \dots + g_{\open p \close}(x_p) + \\
+& g_{\open 1, 2 \close}(x_1, x_2) + \dots + g_{\open p-1, p \close}(x_{p-1}, x_p) + \dots + \\
+& g_{\open 1,\ldots,p \close}(x_1, \ldots, x_p)
 \end{split}
 \end{equation*}
-\vspace{-5pt}
+\vspace{-5pt}\pause
 \begin{itemize}
-\item Univariate terms $g_{\{j\}} \hat = $ first-order or main effect of $j$-th feature alone
-\item Bivariate terms $g_{\{j, k\}} \hat = $ second-order effects, etc.
+\item $g_{\open  0  \close} \hat = $ Constant mean (intercept) %$\mathbb{E}_X (\fh(x)) $
+\item Univariate terms $g_{\open j \close} \hat = $ first-order or main effect of $j$-th feature w.r.t. $\fh(\xv)$
+%\item Bivariate terms $g_{\open j, k \close} \hat = $ second-order effect of features $j$ and $k$ w.r.t. $\fh(\xv)$%, etc.
+\item General $|S|$-order effects $g_{S}(x_S)$ depend only on features included in $S$ %$x_j$ for all $j \in S$
 \end{itemize}
 %effect terms of increasing order 
 %HDMR decomposes model into sum of effect terms of increasing order:
 % \begin{align*}
-% \fh(\xv) &= g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \\
-% &\phantom{{}={}} + \;\dots\; + g_{\{1,\ldots,p\}}(x_1, \ldots,x_p)
+% \fh(\xv) &= g_{\open  0  \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) \\
+% &\phantom{{}={}} + \;\dots\; + g_{\open 1,\ldots,p \close}(x_1, \ldots,x_p)
 % \end{align*}
 %\item Features need to be independent to make HDMR unique
+\pause
 \item Different techniques to estimate the above additive decomposition exist, e.g.:
 		\begin{itemize}
-			\item recursive expectations (via partial dependence functions) 
-			\item accumulated local effects (ALE)
+			\item recursive expectations (via partial dependence) $\leadsto$ functional ANOVA decomposition
+			\item accumulated local effect (ALE) decomposition
 		\end{itemize}
 \end{itemize}
 \end{frame}
 
 \begin{frame}{High-Dimensional Model Representation}
 
-Recursive estimation of independent components:
+Estimation of independent components via recursive expectations (where $-S = \{1, \ldots, p \} \setminus S$):
 
-$$g_{\{S\}} = \mathbb{E}_{x_{-S}}\left[\widehat{f}(x) \; \vert  \; x_S \right] - \sum_{V \subset S} g_S(x_S)$$
+$$g_{\open S \close}(x_S) = \mathbb{E}_{X_{-S}}\left[\fh(x) \; \vert  \; x_S \right] - \sum_{V \subset S} g_V(x_V)$$
 
-Examples:
+\begin{itemize}
+    \item Expectation integrates $\fh(x)$ over all features except $x_S$
+    \item Subtract all components $g_V$ with $V \subset S$ to remove all lower-order effects and center the effect
+\end{itemize}
+\pause
+Example:
 \begin{align*}
- g_{\{0\}} &= \mathbb{E}_X\left[\widehat{f}(x)\right] \\
- g_{\{1\}}(x_1) &= \mathbb{E}_{x_{-1}}\left[\widehat{f}(x) \; \vert  \; x_1 \right] - g_{\{0\}} \\
- g_{\{2\}}(x_2) &= \mathbb{E}_{x_{-2}}\left[\widehat{f}(x) \; \vert  \; x_2 \right] - g_{\{0\}} \\
- g_{\{1, 2\}}(x_1, x_2) &= \mathbb{E}_{x_{-\{1,2\}}}\left[\widehat{f}(x) \; \vert \; x_1, x_2 \right] - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
+ g_{\open  0  \close} &= \mathbb{E}_X\left[\fh(x)\right] \\
+ g_{\open 1 \close}(x_1) &= \mathbb{E}_{X_{-1}}\left[\fh(x) \; \vert  \; x_1 \right] - g_{\open  0  \close} \text{ and } g_{\open 2 \close}(x_2) = \mathbb{E}_{X_{-2}}\left[\fh(x) \; \vert  \; x_2 \right] - g_{\open  0  \close}  \\
+ %g_{\open 2 \close}(x_2) &= \mathbb{E}_{X_{-2}}\left[\fh(x) \; \vert  \; x_2 \right] - g_{\open  0  \close} \\
+ g_{\open 1, 2 \close}(x_1, x_2) &= \mathbb{E}_{X_{-\open 1,2 \close}}\left[\fh(x) \; \vert \; x_1, x_2 \right] - g_{\open 2 \close}(x_2) - g_{\open 1 \close}(x_1) - g_{\open  0  \close}\\
  &\vdots \\
- g_{\{1, \dots, p\}}(x) &= \widehat{f}(x) - \dots - g_{\{1, 2\}}(x_1, x_2) %\\
+ g_{\open 1, \dots, p \close}(x) &= \fh(x) - \dots - g_{\open 1, 2 \close}(x_1, x_2) %\\
  %&\phantom{{}={}} 
- - g_{\{2\}}(x_2) - g_{\{1\}}(x_1) - g_{\{0\}}\\
+ - g_{\open 2 \close}(x_2) - g_{\open 1 \close}(x_1) - g_{\open  0  \close}\\
 \end{align*}
 
 \end{frame}
 
 \begin{frame}{High-Dimensional Model Representation}
 Example:
-$f(x) = 2 + x_1^2 + x_2^2 + x_1 \cdot x_2$
+
+\begin{itemize}
+    \item $\fh(x) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$, with $x_1 = 5$ and $x_2 = 10$ $\Rightarrow$ $\fh(x) = -23$
+    \item HDMR: $g_{\open 0 \close} = 2$, $g_{\open 1 \close} = -9.67$, $g_{\open 2 \close} = -65.33$, $g_{\open 1,2 \close} = 50$ $\Rightarrow$ $\fh(x) = -23$
+\end{itemize} 
+
 \begin{figure}
-\includegraphics[width = 0.5\textwidth]{figure/interaction2}
+\includegraphics[width = 0.7 \textwidth]{figure/interaction2}
 \end{figure}
 \end{frame}
 
@@ -105,13 +122,13 @@ $f(x) = 2 + x_1^2 + x_2^2 + x_1 \cdot x_2$
 \begin{itemize}
 \item After $\hat{f}(x)$ has been decomposed, we can conduct a functional analysis of variance (fANOVA):
 \begin{align*}
-Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}} + g_{\{1\}}(x_1) + g_{\{2\}}(x_2) + \;\dots\; + g_{\{1, 2\}}(x_1, x_2) \right. \\
-&\phantom{{}={}} \left. + \;\dots\; + g_{\{1,\ldots,p\}}(x) \right]
+Var\left[\hat{f}(x)\right] &= Var\left[g_{\open  0  \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) \right. \\
+&\phantom{{}={}} \left. + \;\dots\; + g_{\open 1,\ldots,p \close}(x) \right]
 \end{align*}
 \item If features are independent $\Rightarrow$ Variance can be additively decomposed without covariances:
 \begin{align*}
-Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}}\right] + Var\left[g_{\{1\}}(x_1)\right] + Var\left[g_{\{2\}}(x_2)\right] \\
-&\phantom{{}={}} + Var\left[g_{\{1, 2\}}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\{1,\ldots,p\}}(x)\right]
+Var\left[\hat{f}(x)\right] &= Var\left[g_{\open  0  \close}\right] + Var\left[g_{\open 1 \close}(x_1)\right] + Var\left[g_{\open 2 \close}(x_2)\right] \\
+&\phantom{{}={}} + Var\left[g_{\open 1, 2 \close}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\open 1,\ldots,p \close}(x)\right]
 \end{align*}
 \end{itemize}
 \end{frame}
@@ -121,13 +138,13 @@ Var\left[\hat{f}(x)\right] &= Var\left[g_{\{0\}}\right] + Var\left[g_{\{1\}}(x_1
 \begin{itemize}
 \item Dividing by the prediction variance, yields fraction of variance explained by each term:
 \begin{align*}
-1 &= \frac{Var\left[g_{\{0\}}\right]}{\predvar} + \frac{Var\left[g_{\{1\}}(x_1)\right]}{\predvar} + \frac{Var\left[g_{\{2\}}(x_2)\right]}{\predvar} \\
-&\phantom{{}={}} + \frac{Var\left[g_{\{1, 2\}}(x_1, x_2)\right]}{\predvar} + \;\dots\; + \frac{Var\left[g_{\{1,\ldots,p\}}(x)\right]}{\predvar}
+1 &= \frac{Var\left[g_{\open  0  \close}\right]}{\predvar} + \frac{Var\left[g_{\open 1 \close}(x_1)\right]}{\predvar} + \frac{Var\left[g_{\open 2 \close}(x_2)\right]}{\predvar} \\
+&\phantom{{}={}} + \frac{Var\left[g_{\open 1, 2 \close}(x_1, x_2)\right]}{\predvar} + \;\dots\; + \frac{Var\left[g_{\open 1,\ldots,p \close}(x)\right]}{\predvar}
 \end{align*}
 
 \item Fraction of variance explained by a term is the Sobol index:
 $$
-S_j = \frac{Var\left[g_{\{j\}}(x_j)\right]}{Var\left[\hat{f}(x)\right]}
+S_j = \frac{Var\left[g_{\open j \close}(x_j)\right]}{Var\left[\hat{f}(x)\right]}
 $$
 \end{itemize}
 
