@@ -39,22 +39,22 @@ pred = Predictor$new(predict.function = pred.fun, data = dat, y = "y")
 # p1 = ale1$plot(rug = FALSE) +
 #   ggtitle(expression(paste(f[1], " main effect of ", X[1]))) +
 #   scale_x_continuous(latex2exp::TeX(r'(Feature $X_1$)')) +
-#   geom_vline(xintercept = x1val, lty = 2, col = 2) +
-#   geom_hline(yintercept = f1, lty = 2, col = 2)
+#   geom_vline(xintercept = x1val, lty = 1, col = 2) +
+#   geom_hline(yintercept = f1, lty = 1, col = 2)
 #
 # p2 = ale2$plot(rug = FALSE) +
 #   ggtitle(expression(paste(f[2], " main effect of ", X[2]))) +
 #   scale_x_continuous(latex2exp::TeX(r'(Feature $X_2$)')) +
-#   geom_vline(xintercept = x2val, lty = 2, col = 2) +
-#   geom_hline(yintercept = f2, lty = 2, col = 2)
+#   geom_vline(xintercept = x2val, lty = 1, col = 2) +
+#   geom_hline(yintercept = f2, lty = 1, col = 2)
 #
 # p12 = ale12$plot(rug = FALSE) + geom_contour(aes(z = .ale), color = "black") +
 #   #scale_fill_continuous("value", low = "blue",  high = "yellow") +
 #   ggtitle(expression(paste(f[12], " interaction between ", X[1], " and ", X[2]))) +
 #   scale_x_continuous(latex2exp::TeX(r'(Feature $X_1$)')) +
 #   scale_y_continuous(latex2exp::TeX(r'(Feature $X_2$)')) +
-#   geom_vline(xintercept = x1val, lty = 2, col = 2) +
-#   geom_hline(yintercept = x2val, lty = 2, col = 2)
+#   geom_vline(xintercept = x1val, lty = 1, col = 2) +
+#   geom_hline(yintercept = x2val, lty = 1, col = 2)
 #
 # (p1 + p2) / p12 + patchwork::plot_layout(heights = c(1,2.5))
 
@@ -95,8 +95,8 @@ p1 = pdp1$plot(rug = FALSE) +
   ggtitle(expression(paste(g[1], " main effect of ", X[1]))) +
   scale_x_continuous(latex2exp::TeX(r'(Feature $x_1$)')) +
   scale_y_continuous(latex2exp::TeX(r'($g_{1}$ values)')) +
-  geom_vline(xintercept = x1val, lty = 2, col = 2) +
-  geom_hline(yintercept = f1, lty = 2, col = 2) +
+  geom_vline(xintercept = x1val, lty = 1, col = 2, lwd = 1) +
+  geom_hline(yintercept = f1, lty = 1, col = 2, lwd = 1) +
   geom_label(aes(x = x1val, y = f1, label = lab1),
     col = 2, hjust = 1.1, vjust = -0.1, parse = TRUE)
 
@@ -105,26 +105,37 @@ p2 = pdp2$plot(rug = FALSE) +
   ggtitle(expression(paste(g[2], " main effect of ", X[2]))) +
   scale_x_continuous(latex2exp::TeX(r'(Feature $x_2$)')) +
   scale_y_continuous(latex2exp::TeX(r'($g_{2}$ values)')) +
-  geom_vline(xintercept = x2val, lty = 2, col = 2) +
-  geom_hline(yintercept = f2, lty = 2, col = 2) +
+  geom_vline(xintercept = x2val, lty = 1, col = 2, lwd = 1) +
+  geom_hline(yintercept = f2, lty = 1, col = 2, lwd = 1) +
   geom_label(aes(x = x2val, y = f2, label = lab2),
     col = 2, hjust = 1.1, vjust = -0.1, parse = TRUE)
 
-lab12 = paste("g[12] ==", round(f12, 2))
+lab12 = paste("g[1,2] ==", round(f12, 2))
 p12 = pdp12$plot(rug = FALSE) + geom_contour(aes(z = .value), color = "black") +
   #scale_fill_continuous("value", low = "blue",  high = "yellow") +
   scale_fill_gradient2(expression("value"), midpoint = f12, low = 3, mid = "white",
     high = 4, space = "Lab") +
-  ggtitle(expression(paste(g[12], " interaction between ", X[1], " and ", X[2]))) +
+  ggtitle(expression(paste(g["1,2"], " interaction between ", X[1], " and ", X[2]))) +
   scale_x_continuous(latex2exp::TeX(r'(Feature $x_1$)')) +
   scale_y_continuous(latex2exp::TeX(r'(Feature $x_2$)')) +
-  geom_vline(xintercept = x1val, lty = 2, col = 2) +
-  geom_hline(yintercept = x2val, lty = 2, col = 2) +
+  geom_vline(xintercept = x1val, lty = 1, col = 2, lwd = 1) +
+  geom_hline(yintercept = x2val, lty = 1, col = 2, lwd = 1) +
   geom_label(aes(x = x1val, y = x2val, label = lab12),
-    col = 2, hjust = 1.1, vjust = 1.1, parse = TRUE)
+    col = 2, hjust = 1.1, vjust = 1.1, parse = TRUE) #+ theme(legend.position = "bottom")
 
-(p1 / p2) | p12
+lab0 = paste("hat(f) ==", f(x1val, x2val))
+p0 = ggplot(data = dat, aes(x = x1, y = x2, z = y)) +
+  geom_tile(aes(fill = y)) + geom_contour(color = "black") +
+  scale_fill_gradient2(expression("value"), midpoint = f12, low = 3, mid = "white", high = 4, space = "Lab") +
+  geom_vline(xintercept = x1val, lty = 1, col = 2, lwd = 1) +
+  geom_hline(yintercept = x2val, lty = 1, col = 2, lwd = 1) +
+  geom_label(aes(x = x1val, y = x2val, label = lab0),
+    col = 2, hjust = 1.1, vjust = 1.1, parse = TRUE) +
+  ggtitle(expression(paste(hat(f)(x), " = ", g[1](x[1]), "+", g[2](x[2]), "+", g["1,2"](x[1], x[2])))) + theme(legend.position = "none")
+
+(res = (p0 | (p1 / p2) | p12) +
+    patchwork::plot_layout(heights = c(1, 1, 1.25))) # & theme(legend.position = "bottom") , guides = "collect"
 #(p1 + p2) / p12 + patchwork::plot_layout(heights = c(1,2.5))
 
-ggsave("slides/intro/figure/interaction2.pdf", height = 3, width = 8,
-  ((p1 / p2) | p12) + patchwork::plot_layout(heights = c(1,2)))
+ggsave("slides/intro/figure/interaction2.pdf",
+  height = 4.5, width = 11, res)
