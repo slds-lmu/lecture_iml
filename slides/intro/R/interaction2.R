@@ -2,8 +2,8 @@ library(iml)
 library(ggplot2)
 theme_set(theme_bw())
 
-x1 = seq(from = -10, to = 10, length.out = 51)
-x2 = seq(from = -10, to = 10, length.out = 51)
+x1 = seq(from = -10, to = 10, length.out = 21)
+x2 = seq(from = -10, to = 10, length.out = 21)
 f = function(x1, x2){
   2 + x1^2 - x2^2 + (x1 * x2)
 }
