@@ -33,28 +33,28 @@
 \begin{vbframe}{From Game Theory to Machine Learning}
 \begin{itemize}
     \itemsep1em
-    \item The features $\xi_j, j \in \pset$ represent the agents.
-    \item The game corresponds to the prediction $\fh(x^{(i)}_1, x^{(i)}_2, \ldots, x^{(i)}_p)$ for a single data instance.
+    \item The features $x_j, j \in \pset$ represent the agents.
+    \item The game corresponds to the prediction $\fh(x_1, x_2, \ldots, x_p)$ for a single data instance $\xv$.
     \item The features collude to produce a prediction.
     \item The only issue is: How do we produce a prediction with a subset of features without changing the predictive model?
-    \\ $\Rightarrow$ Partial dependence: $\fh_{S}(\xv_S^{(i)}) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
-    \item  The value function / payout of coalition $S$ for observation $\xv^{(i)}$ is
-    $$v(S) =  \fh_{S} (\xi_S) - \E (\fh(\xi)),$$ 
-    where $\xi_S = \{x_j^{(i)}\}_{j \in S}$ and $\fh_S: \Xspace_S \mapsto \Yspace$. \\ The subtraction of $\E(\fh(\xv))$ is necessary so that $v$ is a value function with $v(\emptyset) = 0$.
+    \\ $\Rightarrow$ Partial dependence: $\fh_{S}(\xv_S) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
+    \item  The value function / payout of coalition $S$ for observation $\xv$ is
+    $$v(S) =  \fh_{S} (\xv_S) - \E_{\xv}(\fh(\xv)),$$ 
+    where $\xv_S = \{x_j\}_{j \in S}$ and $\fh_S: \Xspace_S \mapsto \Yspace$. \\ The subtraction of $\E_{\xv}(\fh(\xv))$ is necessary so that $v$ is a value function with $v(\emptyset) = 0$.
 \end{itemize}
 \end{vbframe}
 
 % \begin{vbframe}{Shapley Values}
-%   We can use Shapley values to explain individual predictions $\fh(\xi)$ of a machine learning model $\fh$:
+%   We can use Shapley values to explain individual predictions $\fh(\xv)$ of a machine learning model $\fh$:
 % \begin{itemize}
-%   \item Players $\hat{=}$ feature values of $i$-th observation $\xi_j, j \in \pset$.
-%   \item Features cooperate to produce a prediction $\fh(x^{(i)}_1, x^{(i)}_2, \ldots, x^{(i)}_p)$.
-%   \item The value function / payout of coalition $S$ for observation $\xv^{(i)}$ is
-%     $$v(S) =  \fh_{S} (\xi_S) - \E (\fh(\xi)),$$ 
-%     where $\xi_S = \{x_j^{(i)}\}_{j \in S}$ and $\fh_S: \Xspace_S \mapsto \Yspace$.
-% \item The marginal prediction $\fh_S$ is defined as $\fh_{S}(\xv_S^{(i)}) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
+%   \item Players $\hat{=}$ feature values of $i$-th observation $x_j, j \in \pset$.
+%   \item Features cooperate to produce a prediction $\fh(x_1, x_2, \ldots, x_p)$.
+%   \item The value function / payout of coalition $S$ for observation $\xv$ is
+%     $$v(S) =  \fh_{S} (\xv_S) - \E_{\xv}(\fh(\xv)),$$ 
+%     where $\xv_S = \{x_j\}_{j \in S}$ and $\fh_S: \Xspace_S \mapsto \Yspace$.
+% \item The marginal prediction $\fh_S$ is defined as $\fh_{S}(\xv_S) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
 % \item We have already seen the marginal prediction in action in the PDP.
-% \item The subtraction of $\E(\fh(\xv))$ is necessary so that $v$ is a value function with $v(\emptyset) = 0$.
+% \item The subtraction of $\E_{\xv}(\fh(\xv))$ is necessary so that $v$ is a value function with $v(\emptyset) = 0$.
 % \item By using the marginal prediction, we have defined what it means for features to be \enquote{missing} for the prediction: We remove it by integrating over its distribution.
 % \end{itemize}
 % \begin{center}
@@ -70,13 +70,13 @@
 % \end{vbframe}
 
 \begin{vbframe}{Shapley Value - Definition}
-  Using the order definition, the Shapley value for feature $j$ and a given data point $\xi$ can be computed as:
+  Using the order definition, the Shapley value for feature $j$ and a given data point $\xv$ can be computed as:
 
-     $$ \phiij  = \frac{1}{p!} \sum_{\Scupj} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
+     $$ \phi_j  = \frac{1}{p!} \sum_{\Scupj} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
 \begin{itemize}
-    \item The term $\E(\fh(\xv))$ drops due to the subtraction of value functions.
-  \item Interpretation of Shapley value $\phiij$ for feature $j$ and observation $\xi$:
-  The feature value $\xi_j$ contributed $\phiij$ towards the prediction $\fh(\xi)$ compared to the average prediction for the dataset.
+    \item The term $\E_{\xv}(\fh(\xv))$ drops due to the subtraction of value functions.
+  \item Interpretation of Shapley value $\phi_j$ for feature $j$ and observation $\xv$:
+  The feature value $x_j$ contributed $\phi_j$ towards the prediction $\fh(\xv)$ compared to the average prediction for the dataset.
    \item Note: Marginal contributions and Shapley values can be negative.
 \end{itemize}
 \lz
@@ -95,11 +95,11 @@ Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Ex
   \begin{itemize}
   \itemsep1em
     \item \textbf{Efficiency}: Feature contributions add up to the (centered) prediction. That means, unlike, e.g., LIME, we get a dense attribution, and not a sparse one.
-      $\sum\nolimits_{j=1}^p\phi_j=\hat{f}(x)-E_X(\fh(X))$
+      $\sum\nolimits_{j=1}^p\phi_j=\fh(\xv)-\E_{\xv}(\fh(X))$
     \item \textbf{Symmetry}: Two features that contribute the same to the prediction get the same payout. This ensures that, for example, interaction effects between two features are fairly divided. \\
       $\fh_{S\cup\{j\}}(\xv_{\Scupj}) = \fh_{\Scupk}(\xv_{\Scupk})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_j=\phi_k$
     \item \textbf{Dummy / Null Player}: The Shapley value of a feature that does not influence the prediction is zero. This means that if a feature was not selected by the model (e.g., tree or LASSO) the Shapley value is zero.  \\
-      $\fh_{\Scupj}(\Scupj)=\fhS(S)$ for all $S \subseteq P$ then $\phi_j=0$
+      $\fh_{\Scupj}(\xv_{\Scupj})=\fhS(\xv_S)$ for all $S \subseteq P$ then $\phi_j=0$
     \item \textbf{Additivity}:  For a prediction with combined payouts, the
       payout is the sum of payouts: $\phi_j(v_1) + \phi_j(v_2)$. This means we can combine the Shapley values for model ensembles.
   \end{itemize}
@@ -121,21 +121,21 @@ Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Ex
 \newcommand{\xk}{\mathbf{x}^{(k)}}
 
 \begin{vbframe}{Estimation Algorithm}
-Estimation of $\phi_j$ for model $\fh$, observation $\xi$, and sample size $M$:
+Estimation of $\phi_j$ for model $\fh$, observation $\xv$, and sample size $M$:
 \vspace{0.25cm}
   \begin{enumerate}
       \item For m in 1 to M, \textbf{do}:
       \begin{enumerate}
         \item Select random permutation $\pi \in \Pi$.
         \item Select random data point $\xv^{(k)} \in X$.
-        \item Order $\xi$ according to $\pi$: $\xi_{\pi} = (x^{(i)}_{\pi(1)}, \ldots, x^{(i)}_{\pi(j)}, \ldots, x^{(i)}_{\pi(p)})$.
+        \item Order $\xv$ according to $\pi$: $\xv_{\pi} = (x_{\pi(1)}, \ldots, x_{\pi(j)}, \ldots, x_{\pi(p)})$.
         \item Order $\xk$ according to $\pi$: $\xk_{\pi} = (x^{(k)}_{\pi(1)}, \ldots, x^{(k)}_{\pi(j)}, \ldots, x^{(k)}_{\pi(p)})$.
         \item Construct two instances:
           \begin{itemize}
-            \item $\mathbf{x}_{+j} = (x^{(i)}_{\pi(1)}, \ldots, x^{(i)}_{\pi(j - 1)}, x^{(i)}_{\pi(j)}, x^{(k)}_{\pi(j + 1)}, \ldots, x^{(k)}_{\pi(p)}) $
-            \item $\mathbf{x}_{-j} = (x^{(i)}_{\pi(1)}, \ldots, x^{(i)}_{\pi(j - 1)}, x^{(k)}_{\pi(j)}, x^{(k)}_{\pi(j + 1)}, \ldots, x^{(k)}_{\pi(p)}) $
+            \item $\xv_{+j} = (x_{\pi(1)}, \ldots, x_{\pi(j - 1)}, x_{\pi(j)}, x^{(k)}_{\pi(j + 1)}, \ldots, x^{(k)}_{\pi(p)}) $
+            \item $\xv_{-j} = (x_{\pi(1)}, \ldots, x_{\pi(j - 1)}, x^{(k)}_{\pi(j)}, x^{(k)}_{\pi(j + 1)}, \ldots, x^{(k)}_{\pi(p)}) $
           \end{itemize}
-        \item Compute difference $\phi_j^m = \fh(\mathbf{x}_{+j}) - \fh(\mathbf{x}_{-j})$.
+        \item Compute difference $\phi_j^m = \fh(\xv_{+j}) - \fh(\xv_{-j})$.
       \end{enumerate}
     \item Compute Shapley value $\phi_j = \frac{1}{M}\sum_{m=1}^M \phi_j^m$.
   \end{enumerate}
@@ -166,7 +166,7 @@ An example with $p = 5$ features:
     \begin{itemize}
     \itemsep1em
         \item There are $5! = 120$ orders in total.
-        \item In $(5 - 1)! = 24$ orders, we added feature value $\xi_j$ to the empty set.
+        \item In $(5 - 1)! = 24$ orders, we added feature value $x_j$ to the empty set.
         \item In 24 orders, we added the feature value to the otherwise full feature set.
         \item That means with just two sets, we can already get $\frac{48}{120} = 0.4$ of the contributions to the Shapley value.
         \item Similarly, we could proceed with all coalitions of $\{S: |S| = 1\}$ and $\{S: |S| = p - 1\}$.

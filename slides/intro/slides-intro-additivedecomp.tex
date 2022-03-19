@@ -22,22 +22,17 @@
 \lecturechapter{Additive Decomposition}
 \lecture{Interpretable Machine Learning}
  
-\begin{frame}{High-Dimensional Model Representation \\ \citebutton{Sobol (1993)}{https://doi.org/10.1016/S0951-8320(02)00229-6}
-\citebutton{Li and Rabitz (2011)}{https://doi.org/10.1007/s10910-011-9898-0}
-%\citebutton{Sobol (2003)}{http://www.andreasaltelli.eu/file/repository/sobol1993.pdf}
-}
+\begin{frame}{Functional Decomposition
+%\\
+%\citebutton{Sobol (1993)}{http://www.andreasaltelli.eu/file/repository/sobol1993.pdf}
+% \citebutton{Sobol (2003)}{https://doi.org/10.1016/S0951-8320(02)00229-6}
 %\citebutton{Li et al. (2001)}{https://doi.org/10.1021/jp010450t}
+%\citebutton{Li and Rabitz (2011)}{https://doi.org/10.1007/s10910-011-9898-0}
+\citebutton{Chastaing et al. (2012)}{https://doi.org/10.1214/12-EJS749}
+}
 
-%\begin{itemize}
-%\itemsep1em
-%\item Prediction function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ produces output from $p$-dimensional input space
-%decomposed into a hierarchical 
-%\item 
-\textbf{High-Dimensional Model Representation (HDMR):} Expansion of a square-integrable function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ into sum of components of different dimensions w.r.t. input features:
-%\item \textbf{High-Dimensional Model Representation (HDMR)} of prediction function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ as function expansion of low dimensional independent terms of increasing order:
-%\vspace{5pt}
-% \centerline{$\fh(\xv) = g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \dots + g_{\open 1, 2 \close}(x_1, x_2) + \dots + g_{\open 1,\ldots,p \close}(x_1, \ldots, x_p)$}
-%\vspace{5pt}
+%\textbf{High-Dimensional Model Representation (HDMR):} 
+Suppose we are interested in decomposing a square-integrable function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ into sum of components of different dimensions w.r.t. inputs $x_1, \ldots, x_p$: %
 \begin{equation*}
 \begin{split}
 \fh(\xv) =  %g_{\open \emptyset \close} +
@@ -46,30 +41,56 @@
 & g_{\open 1,\ldots,p \close}(x_1, \ldots, x_p)
 \end{split}
 \end{equation*}
-\vspace{-5pt}%\pause
+%\vspace{-5pt}%\pause
+where 
 \begin{itemize}
 \item $g_{\open \emptyset \close} \hat = $ Constant mean (intercept) %$\mathbb{E}_X (\fh(\xv)) $
 \item $g_{\open j \close} \hat = $ first-order or main effect of $j$-th feature alone on $\fh(\xv)$
 %\item Bivariate terms $g_{\open j, k \close} \hat = $ second-order effect of features $j$ and $k$ w.r.t. $\fh(\xv)$%, etc.
 \item $g_{S}(\xv_S) \hat = $ $|S|$-order effect, depends \textbf{only} on features in $S$ %$x_j$ for all $j \in S$
 \end{itemize}
+\lz
+\textbf{N.B.:} Further constraints are required to obtain an unique and optimal solution for the components. 
 
-\textbf{N.B.:} Further constraints on components required to obtain unique and optimal solution
+%To obtain a unique and optimal solution of components $g$, further constraints must hold
 %Without further constraints on components, there is no unique solution.
 %\end{itemize}
+
+%High-Dimensional Model Representation (HDMR)
+%Functional ANOVA decomposition
+%Sobol-Hoeffding decomposition
 \end{frame}
 
-\begin{frame}{High-Dimensional Model Representation}
+\begin{frame}{Functional Decomposition}
+Assume $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., if $x_1 = 5$ and $x_2 = 10$ $\Rightarrow$ $\fh(\xv) = -23$)
+
+\begin{itemize}
+    \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives
+    \begin{figure}
+    \includegraphics[width = 0.7 \textwidth]{figure/interaction2}
+    \end{figure}
+    \item Checking values of components for $x_1 = 5$ and $x_2 = 10$:\\
+    $g_{\open \emptyset \close} = 2$, $g_{\open 1 \close} = -9.67$, $g_{\open 2 \close} = -65.33$, $g_{\open 1,2 \close} = 50$ $\Rightarrow$ $\fh(\xv) = -23$
+\end{itemize} 
+
+
+\end{frame}
+
+\begin{frame}{Functional Decomposition}
 
 Desirable properties of additive decomposition:
 
 \begin{itemize}
 \item Zero-means property (all components are centered): %\\
-$\mathbb{E}_{X_S} (g_{S}(\xv_S)) = 0, \forall S \neq \emptyset$
+$\mathbb{E}_{X_j} (g_{S}(\xv_S)) = 0, \forall S \neq \emptyset, j \in S$
+%$\mathbb{E}_{X_S} (g_{S}(\xv_S)) = 0, \forall S \neq \emptyset$ 
+% taken from 10.1007/s10910-011-9898-0 and 10.1137/130936233 (Q: Does this hold for arbitary distributions?) if not 
+% 
 \item Orthogonality (components are independent): %\\
-$\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \neq S$
+$\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \neq S$ 
 \item Variance decomposition:
-$ Var[\fh(\xv)] =  \textstyle\sum_{S \subseteq \{1,\ldots,p\}}  Var\left[ g_{S}(\xv_S)\right]$ (under orthogonality)
+$ Var[\fh(\xv)] =  \textstyle\sum_{S \subseteq \{1,\ldots,p\}}  Var\left[ g_{S}(\xv_S)\right]$\\
+$\leadsto$ Only possible under orthogonality of components and if features are independent
 %effect terms of increasing order 
 %HDMR decomposes model into sum of effect terms of increasing order:
 % \begin{align*}
@@ -81,14 +102,18 @@ $ Var[\fh(\xv)] =  \textstyle\sum_{S \subseteq \{1,\ldots,p\}}  Var\left[ g_{S}(
 
 \pause
 
-Different ways to compute components exist, e.g.: % (with slightly different constraints / properties)
+Different ways to compute the components exist, e.g.: % (with slightly different constraints / properties)
 		\begin{itemize}
 			\item %Recursive expectations (via partial dependence functions) \\
 			Functional ANOVA decomposition for \textbf{independent features} \citebutton{Hooker (2004)}{http://portal.acm.org/citation.cfm?doid=1014052.1014122} \\
 			$\leadsto$ By recursive expectations of partial dependence functions\\
 			$\leadsto$ Satisfies all desirable properties
+			% Often defined only for uniform distribution of x but Owen says it also applies to any distribution e.g. in 10.1137/130936233
 			\item Generalized functional ANOVA decomposition for \textbf{dependent features} \citebutton{Hooker (2007)}{http://www.tandfonline.com/doi/abs/10.1198/106186007X237892} \\
 			$\leadsto$ By minimizing squared error and relaxing the orthogonality property
+			% https://epubs.siam.org/doi/abs/10.1137/16M1097717
+			% Hierarchical orthogonality where $\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \subset S$ 
+			% Variance decomposition only with covariance component \citebutton{Chastaing et al. (2012)}{https://doi.org/10.1214/12-EJS749}
 			\item Accumulated local effect (ALE) decomposition (via finite differences) \citebutton{Zhu and Apley (2020)}{https://doi.org/10.1111/rssb.12377}
 		\end{itemize}
 %\item N.B.: Without further constraints, components are not unique
@@ -123,20 +148,6 @@ $$g_{S}(\xv_S) = \mathbb{E}_{X_{-S}}\left[\fh(\xv) \; \vert  \; x_S \right] - \s
 
 \end{frame}
 
-\begin{frame}{Functional ANOVA - Example}
-Assume $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., if $x_1 = 5$ and $x_2 = 10$ $\Rightarrow$ $\fh(\xv) = -23$)
-
-\begin{itemize}
-    \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives
-    \begin{figure}
-    \includegraphics[width = 0.7 \textwidth]{figure/interaction2}
-    \end{figure}
-    \item Checking values of components for $x_1 = 5$ and $x_2 = 10$:\\
-    $g_{\open \emptyset \close} = 2$, $g_{\open 1 \close} = -9.67$, $g_{\open 2 \close} = -65.33$, $g_{\open 1,2 \close} = 50$ $\Rightarrow$ $\fh(\xv) = -23$
-\end{itemize} 
-
-
-\end{frame}
 
 % \begin{frame}{High-Dimensional Model Representation}
 
