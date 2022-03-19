@@ -90,6 +90,19 @@ f0 + f1 + f2 + f12
 f(x1val, x2val)
 
 
+
+lab0 = paste("g[0] ==", round(f0, 2))
+p0 = ggplot(data = NULL) +
+  #geom_hline(yintercept = f0) + ylim(c(-10,10)) +
+  geom_segment(aes(x = min(x1), xend = max(x1), y = f0, yend = f0)) + ylim(c(-10,10)) +
+  ggtitle(expression(paste(g[0], " constant mean "))) +
+  scale_x_continuous(latex2exp::TeX(r'(Feature $x_1$ (or $x_2$))')) +
+  scale_y_continuous(latex2exp::TeX(r'($g_{0}$ value)')) +
+  #geom_vline(xintercept = x1val, lty = 1, col = 2, lwd = 1) +
+  #geom_hline(yintercept = f1, lty = 1, col = 2, lwd = 1) +
+  geom_label(aes(x = 0, y = f0, label = lab0),
+    col = 2, hjust = 1.1, vjust = -0.1, parse = TRUE)
+
 lab1 = paste("g[1] ==", round(f1, 2))
 p1 = pdp1$plot(rug = FALSE) +
   ggtitle(expression(paste(g[1], " main effect of ", X[1]))) +
@@ -121,23 +134,70 @@ p12 = pdp12$plot(rug = FALSE) + geom_contour(aes(z = .value), color = "black") +
   geom_vline(xintercept = x1val, lty = 1, col = 2, lwd = 1) +
   geom_hline(yintercept = x2val, lty = 1, col = 2, lwd = 1) +
   geom_label(aes(x = x1val, y = x2val, label = lab12),
-    col = 2, hjust = 1.1, vjust = 1.1, parse = TRUE) #+ theme(legend.position = "bottom")
+    col = 2, hjust = 1.1, vjust = 1.1, parse = TRUE) + theme(legend.position = "none")
+#+ theme(legend.position = "bottom")
 
 dat2 = pdp12$results
 dat2$y = f(dat2$x1, dat2$x2)
-lab0 = paste("hat(f) ==", f(x1val, x2val))
-p0 = ggplot(data = dat2, aes(x = x1, y = x2, z = y)) +
+labf = paste("hat(f) ==", f(x1val, x2val))
+f = ggplot(data = dat2, aes(x = x1, y = x2, z = y)) +
   geom_tile(aes(fill = y)) + geom_contour(color = "black") +
   scale_fill_gradient2(expression("value"), midpoint = f12, low = 3, mid = "white", high = 4, space = "Lab") +
   geom_vline(xintercept = x1val, lty = 1, col = 2, lwd = 1) +
   geom_hline(yintercept = x2val, lty = 1, col = 2, lwd = 1) +
-  geom_label(aes(x = x1val, y = x2val, label = lab0),
+  geom_label(aes(x = x1val, y = x2val, label = labf),
     col = 2, hjust = 1.1, vjust = 1.1, parse = TRUE) +
-  ggtitle(expression(paste(hat(f)(x), " = ", g[1](x[1]), "+", g[2](x[2]), "+", g["1,2"](x[1], x[2])))) + theme(legend.position = "none")
+  ggtitle(expression(paste(hat(f)(x), " = ", g[0], " + ", g[1](x[1]), " + ", g[2](x[2]), " + ", g["1,2"](x[1], x[2])))) +
+  #theme(legend.position = "none") +
+  NULL
 
-(res = (p0 | (p1 / p2) | p12) +
-    patchwork::plot_layout(heights = c(1, 1, 1.25))) # & theme(legend.position = "bottom") , guides = "collect"
+#(res = (f | (p1 / p2) | p12) +
+#    patchwork::plot_layout(heights = c(1, 1, 1.25))) # & theme(legend.position = "bottom") , guides = "collect"
 #(p1 + p2) / p12 + patchwork::plot_layout(heights = c(1,2.5))
 
+#(res = (f | p0 | p1 | p2 | p12) +
+#    patchwork::plot_layout(heights = c(1, 1, 1, 1, 1.25)))
+
+(res = (f | (p0 + p1) / (p2 | p12)) +
+    patchwork::plot_layout(widths = c(1, 1.75), guides = "collect"))
+
 ggsave("slides/intro/figure/interaction2.pdf",
-  height = 4.5, width = 11, res)
+  height = 5, width = 12, res)
+
+#
+# persp3D(
+#   z=matrix(dat$y, ncol = length(unique(dat$x1))),
+#   theta = -45, , phi = 25, d = 5
+# )
+#
+# persp3D(
+#   z=matrix(pdp1$results$.value,
+#     ncol = length(unique(pdp1$results$x1)),
+#     nrow = length(unique(pdp2$results$x2))),
+#   theta = -45, , phi = 25, d = 5
+# )
+#
+# persp3D(
+#   z = matrix(pdp2$results$.value,
+#     ncol = length(unique(pdp1$results$x1)),
+#     nrow = length(unique(pdp2$results$x2))),
+#   theta = -45, , phi = 25, d = 5
+# )
+#
+# persp3D(
+#   x = unique(pdp1$results$x1),
+#   y = unique(pdp2$results$x2),
+#   z = matrix(f0,
+#     ncol = length(unique(pdp1$results$x1)),
+#     nrow = length(unique(pdp2$results$x2)))
+#   #,theta = -45, , phi = 25, d = 5
+# )
+#
+# persp3D(
+#   x = unique(pdp12$results$x1),
+#   y = unique(pdp12$results$x2),
+#   z = matrix(pdp12$results$.value,
+#     ncol = length(unique(pdp12$results$x1)),
+#     nrow = length(unique(pdp12$results$x2)))
+#   #, theta = -45, , phi = 25, d = 5
+# )
