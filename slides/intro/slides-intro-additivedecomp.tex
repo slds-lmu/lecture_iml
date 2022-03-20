@@ -27,12 +27,12 @@
 %\citebutton{Sobol (1993)}{http://www.andreasaltelli.eu/file/repository/sobol1993.pdf}
 % \citebutton{Sobol (2003)}{https://doi.org/10.1016/S0951-8320(02)00229-6}
 %\citebutton{Li et al. (2001)}{https://doi.org/10.1021/jp010450t}
-%\citebutton{Li and Rabitz (2011)}{https://doi.org/10.1007/s10910-011-9898-0}
+\citebutton{Li and Rabitz (2011)}{https://doi.org/10.1007/s10910-011-9898-0}
 \citebutton{Chastaing et al. (2012)}{https://doi.org/10.1214/12-EJS749}
 }
 
 %\textbf{High-Dimensional Model Representation (HDMR):} 
-Suppose we are interested in decomposing a square-integrable function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ into sum of components of different dimensions w.r.t. inputs $x_1, \ldots, x_p$: %
+For interpretation purposes, one might be interested in decomposing a square-integrable function $\fh: \mathbb{R}^p \mapsto \mathbb{R}$ into sum of components of different dimensions w.r.t. inputs $x_1, \ldots, x_p$: %
 \begin{equation*}
 \begin{split}
 \fh(\xv) =  %g_{\open \emptyset \close} +
@@ -50,9 +50,11 @@ where
 \item $g_{S}(\xv_S) \hat = $ $|S|$-order effect, depends \textbf{only} on features in $S$ %$x_j$ for all $j \in S$
 \end{itemize}
 \lz
-\textbf{N.B.:} Further constraints are required to obtain an unique and optimal solution for the components. 
-
-%To obtain a unique and optimal solution of components $g$, further constraints must hold
+\textbf{N.B.:} %Further constraints are required to obtain an unique and optimal solution for the components
+A unique solution for the components only exists under certain assumptions
+%and constraints
+%independent inputs and a \textit{vanishing condition}
+%$$\mathbb{E}_{X_j} (g_{S}(\xv_S)) = \int g_{S}(\xv_S) d \mathbb{P}(x_j) = 0, \forall j \in S, \forall S \subseteq \{1, \ldots, p\}$$
 %Without further constraints on components, there is no unique solution.
 %\end{itemize}
 
@@ -61,67 +63,110 @@ where
 %Sobol-Hoeffding decomposition
 \end{frame}
 
-\begin{frame}{Functional Decomposition}
-Assume $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., if $x_1 = 5$ and $x_2 = 10$ $\Rightarrow$ $\fh(\xv) = -23$)
+\begin{frame}{Functional Decomposition -- Assumptions}
+Under independent inputs, the \textit{vanishing condition} is required to obtain a unique solution:
+$$\mathbb{E}_{X_j} (g_{S}(\xv_S)) = \int g_{S}(\xv_S) d \mathbb{P}(x_j) = 0, \forall j \in S, \forall S \subseteq \{1, \ldots, p\}$$
+
+\pause 
+
+Vanishing condition has the following implications:
 
 \begin{itemize}
-    \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives
-    \begin{figure}
-    \includegraphics[width = 0.7 \textwidth]{figure/interaction2}
-    \end{figure}
-    \item Checking values of components for $x_1 = 5$ and $x_2 = 10$:\\
-    $g_{\open \emptyset \close} = 2$, $g_{\open 1 \close} = -9.67$, $g_{\open 2 \close} = -65.33$, $g_{\open 1,2 \close} = 50$ $\Rightarrow$ $\fh(\xv) = -23$
-\end{itemize} 
-
-
-\end{frame}
-
-\begin{frame}{Functional Decomposition}
-
-Desirable properties of additive decomposition:
-
-\begin{itemize}
-\item Zero-means property (all components are centered): %\\
-$\mathbb{E}_{X_j} (g_{S}(\xv_S)) = 0, \forall S \neq \emptyset, j \in S$
-%$\mathbb{E}_{X_S} (g_{S}(\xv_S)) = 0, \forall S \neq \emptyset$ 
-% taken from 10.1007/s10910-011-9898-0 and 10.1137/130936233 (Q: Does this hold for arbitary distributions?) if not 
-% 
-\item Orthogonality (components are independent): %\\
-$\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \neq S$ 
-\item Variance decomposition:
-$ Var[\fh(\xv)] =  \textstyle\sum_{S \subseteq \{1,\ldots,p\}}  Var\left[ g_{S}(\xv_S)\right]$\\
-$\leadsto$ Only possible under orthogonality of components and if features are independent
-%effect terms of increasing order 
-%HDMR decomposes model into sum of effect terms of increasing order:
-% \begin{align*}
-% \fh(\xv) &= g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) \\
-% &\phantom{{}={}} + \;\dots\; + g_{\open 1,\ldots,p \close}(x_1, \ldots,x_p)
-% \end{align*}
-%\item Features need to be independent to make HDMR unique
+    \item Marginal effect of $x_j, \forall j \in S$ on component $g_S(\xv_S)$ is zero (vanishes)\\
+    $\leadsto$ Makes sure that component $g_S(\xv_S)$ does not contain effects of $x_j, \forall j \in S$
+    \item Components are orthogonal (i.e., mutually independent and uncorrelated):
+    $$\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \neq S$$
+    \item Variance can be decomposed:
+$ Var[\fh(\xv)] =  \textstyle\sum_{S \subseteq \{1,\ldots,p\}}  Var\left[ g_{S}(\xv_S)\right]$
 \end{itemize}
 
-\pause
+\pause 
 
-Different ways to compute the components exist, e.g.: % (with slightly different constraints / properties)
-		\begin{itemize}
-			\item %Recursive expectations (via partial dependence functions) \\
-			Functional ANOVA decomposition for \textbf{independent features} \citebutton{Hooker (2004)}{http://portal.acm.org/citation.cfm?doid=1014052.1014122} \\
-			$\leadsto$ By recursive expectations of partial dependence functions\\
-			$\leadsto$ Satisfies all desirable properties
-			% Often defined only for uniform distribution of x but Owen says it also applies to any distribution e.g. in 10.1137/130936233
-			\item Generalized functional ANOVA decomposition for \textbf{dependent features} \citebutton{Hooker (2007)}{http://www.tandfonline.com/doi/abs/10.1198/106186007X237892} \\
-			$\leadsto$ By minimizing squared error and relaxing the orthogonality property
-			% https://epubs.siam.org/doi/abs/10.1137/16M1097717
-			% Hierarchical orthogonality where $\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \subset S$ 
-			% Variance decomposition only with covariance component \citebutton{Chastaing et al. (2012)}{https://doi.org/10.1214/12-EJS749}
-			\item Accumulated local effect (ALE) decomposition (via finite differences) \citebutton{Zhu and Apley (2020)}{https://doi.org/10.1111/rssb.12377}
-		\end{itemize}
-%\item N.B.: Without further constraints, components are not unique
+\textbf{N.B.:} For dependent inputs, \citebutton{Hooker (2007)}{http://www.tandfonline.com/doi/abs/10.1198/106186007X237892} showed the existence of a unique solution for the components under a ``relaxed vanishing condition'' which leads to a ``hierarchical orthogonality''
+$$\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \subset S$$
+$\leadsto$ Only components are orthogonal where features involved in $g_{V}(\xv_V)$ also appear in $g_{S}(\xv_S)$
+%Only components where all features involved in one component $g_{V}(\xv_V)$ also appear in the other component $g_{S}(\xv_S)$ are orthogonal
+\end{frame}
 
+\begin{frame}{Functional Decomposition -- Example}
+\textbf{Example:} $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., if $x_1 = 5$ and $x_2 = 10$ $\Rightarrow$ $\fh(\xv) = -23$)
+
+\begin{itemize}
+    \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives:
+    \begin{columns}[c, totalwidth=\linewidth]
+    \begin{column}{0.75\textwidth}
+        \includegraphics[width = \textwidth]{figure/interaction2}
+    \end{column}
+    \begin{column}{0.25\textwidth}
+    For $x_1 = 5$ and $x_2 = 10$:\\
+    \begin{itemize}
+        \item $g_{\open \emptyset \close} = 2$
+        \item $g_{\open 1 \close}(x_1) = -9.67$
+        \item $g_{\open 2 \close}(x_2) = -65.33$
+        \item $g_{\open 1,2 \close}(x_1, x_2) = 50$
+        \item[$\Rightarrow$] $\fh(\xv) = -23$
+    \end{itemize}
+    \end{column}
+    \end{columns}
+
+    % \begin{figure}
+    % \includegraphics[width = 0.8 \textwidth]{figure/interaction2}
+    % \end{figure}
+    \item Vanishing condition means:
+    \begin{itemize}
+        \item $g_1$ and $g_2$ are mean-centered w.r.t. marginal distribution of $x_1$ and $x_2$
+        \item Integral of $g_{1,2}$ over marginal distribution $x_1$ (or $x_2$) is 0
+        %, i.e., for each slice at $x_1$ (and $x_2$), the integral of $g_{1,2}$ 
+    \end{itemize}
+\end{itemize} 
 \end{frame}
 
 
-\begin{frame}{Functional ANOVA}
+% \begin{frame}{Functional Decomposition}
+
+% Desirable properties of additive decomposition:
+
+% \begin{itemize}
+% \item Zero-means property (all components are centered): %\\
+% $\mathbb{E}_{X_j} (g_{S}(\xv_S)) = 0, \forall S \neq \emptyset, j \in S$
+% %$\mathbb{E}_{X_S} (g_{S}(\xv_S)) = 0, \forall S \neq \emptyset$ 
+% % taken from 10.1007/s10910-011-9898-0 and 10.1137/130936233 (Q: Does this hold for arbitary distributions?) if not 
+% % 
+% \item Orthogonality (components are independent): %\\
+% $\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \neq S$ 
+% \item Variance decomposition:
+% $ Var[\fh(\xv)] =  \textstyle\sum_{S \subseteq \{1,\ldots,p\}}  Var\left[ g_{S}(\xv_S)\right]$\\
+% $\leadsto$ Only possible under orthogonality of components and if features are independent
+% %effect terms of increasing order 
+% %HDMR decomposes model into sum of effect terms of increasing order:
+% % \begin{align*}
+% % \fh(\xv) &= g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) \\
+% % &\phantom{{}={}} + \;\dots\; + g_{\open 1,\ldots,p \close}(x_1, \ldots,x_p)
+% % \end{align*}
+% %\item Features need to be independent to make HDMR unique
+% \end{itemize}
+
+% \pause
+
+% Different ways to compute the components exist, e.g.: % (with slightly different constraints / properties)
+% 		\begin{itemize}
+% 			\item %Recursive expectations (via partial dependence functions) \\
+% 			Functional ANOVA decomposition for \textbf{independent features} \citebutton{Hooker (2004)}{http://portal.acm.org/citation.cfm?doid=1014052.1014122} \\
+% 			$\leadsto$ By recursive expectations of partial dependence functions\\
+% 			$\leadsto$ Satisfies all desirable properties
+% 			% Often defined only for uniform distribution of x but Owen says it also applies to any distribution e.g. in 10.1137/130936233
+% 			\item Generalized functional ANOVA decomposition for \textbf{dependent features} \citebutton{Hooker (2007)}{http://www.tandfonline.com/doi/abs/10.1198/106186007X237892} \\
+% 			$\leadsto$ By minimizing squared error and relaxing the orthogonality property
+% 			% https://epubs.siam.org/doi/abs/10.1137/16M1097717
+% 			% Hierarchical orthogonality where $\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \subset S$ 
+% 			% Variance decomposition only with covariance component \citebutton{Chastaing et al. (2012)}{https://doi.org/10.1214/12-EJS749}
+% 			\item Accumulated local effect (ALE) decomposition (via finite differences) \citebutton{Zhu and Apley (2020)}{https://doi.org/10.1111/rssb.12377}
+% 		\end{itemize}
+% %\item N.B.: Without further constraints, components are not unique
+
+% \end{frame}
+
+\begin{frame}{Functional Decomposition -- Computation}
 
 Computation of components via recursive expectations (where $-S = \{1, \ldots, p \} \setminus S$):
 
@@ -165,14 +210,15 @@ $$g_{S}(\xv_S) = \mathbb{E}_{X_{-S}}\left[\fh(\xv) \; \vert  \; x_S \right] - \s
 \begin{frame}{Variance decomposition}
 
 \begin{itemize}
-\item Decomposition of $\hat{f}(\xv)$ allows to conduct functional analysis of variance (fANOVA):
-$$ Var\left[\hat{f}(\xv)\right] = Var\left[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \right]$$
+\item Decomposition of $\hat{f}(\xv)$ allows to conduct functional analysis of variance (fANOVA)
+%$$ Var\left[\hat{f}(\xv)\right] = Var\left[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \right]$$
 % \begin{align*}
 % Var\left[\hat{f}(\xv)\right] &= Var\left[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) \right. \\
 % &\phantom{{}={}} \left. + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \right]
 % \end{align*}
-\item If features are independent $\Rightarrow$ Variance can be additively decomposed without covariances:
-$$Var\left[\hat{f}(\xv)\right] = Var\left[g_{\open \emptyset \close}\right] + Var\left[g_{\open 1 \close}(x_1)\right] + \;\dots\; + Var\left[g_{\open 1, 2 \close}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\open 1,\ldots,p \close}(\xv)\right]$$
+\item If features are independent, variance can be additively decomposed without covariances:
+ \begin{align*}Var\left[\hat{f}(\xv)\right] &=  Var\left[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \right] \\
+&= Var\left[g_{\open \emptyset \close}\right] + Var\left[g_{\open 1 \close}(x_1)\right] + \;\dots\; + Var\left[g_{\open 1, 2 \close}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\open 1,\ldots,p \close}(\xv)\right]\end{align*}
 % \begin{align*}
 % Var\left[\hat{f}(\xv)\right] &= Var\left[g_{\open \emptyset \close}\right] + Var\left[g_{\open 1 \close}(x_1)\right] + Var\left[g_{\open 2 \close}(x_2)\right] \\
 % &\phantom{{}={}} + Var\left[g_{\open 1, 2 \close}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\open 1,\ldots,p \close}(\xv)\right]
@@ -191,10 +237,12 @@ $$Var\left[\hat{f}(\xv)\right] = Var\left[g_{\open \emptyset \close}\right] + Va
 + \frac{Var\left[g_{\open 1, 2 \close}(x_1, x_2)\right]}{\predvar} + \;\dots\; + \frac{Var\left[g_{\open 1,\ldots,p \close}(\xv)\right]}{\predvar}
 \end{align*}
 
-\item Fraction of variance explained by a component $g_{\open S \close}(\xv_S)$ is the Sobol index:
-$$
-S_S = \frac{Var\left[g_{\open S \close}(\xv_S)\right]}{Var\left[\hat{f}(\xv)\right]}
-$$
+\item Fraction of variance explained by a component $g_{\open V \close}(\xv_V)$ is the Sobol index:
+$
+S_V = \frac{Var\left[g_{\open V \close}(\xv_V)\right]}{Var\left[\hat{f}(\xv)\right]}
+$\\
+$\leadsto$ Importance measure of component $g_{\open V \close}(\xv_V)$\\
+$\leadsto$ Small $S_V$ values $\Rightarrow$ Component $g_{\open V \close}$ does not explain much of total variance of $\fh$
 \end{itemize}
 
 \end{frame}
