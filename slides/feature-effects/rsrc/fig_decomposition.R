@@ -78,9 +78,9 @@ fanova$.value = fanova$.value12 - fanova$.value1 - fanova$.value
 
 pdp12$results = fanova[order(fanova$x2, fanova$x1), c("x1", "x2", ".value", ".type")]
 
-x1val = 5
-x2val = 10
 digits = 1
+x1val = round(pdp1$results$x1, digits)[16]
+x2val = round(pdp2$results$x2, digits)[21]
 f1 = pdp1$results$.value[round(pdp1$results$x1, digits) == x1val]
 f2 = pdp2$results$.value[round(pdp2$results$x2, digits) == x2val]
 f12 = pdp12$results$.value[round(pdp12$results$x1, digits) == x1val & round(pdp12$results$x2, digits) == x2val]
@@ -161,7 +161,7 @@ f = ggplot(data = dat2, aes(x = x1, y = x2, z = y)) +
 (res = (f | (p0 + p1) / (p2 | p12)) +
     patchwork::plot_layout(widths = c(1, 1.75), guides = "collect"))
 
-ggsave("slides/intro/figure/interaction2.pdf",
+ggsave("slides/feature-effects/figure/decomposition.pdf",
   height = 5, width = 12, res)
 
 #
@@ -201,3 +201,21 @@ ggsave("slides/intro/figure/interaction2.pdf",
 #     nrow = length(unique(pdp12$results$x2)))
 #   #, theta = -45, , phi = 25, d = 5
 # )
+library(mgcv)
+mod = lm(.value ~ x1*x2, data = pdp12$results)
+  #gam(.value ~ s(x1, x2), data = pdp12$results)
+
+dat = expand.grid(x1 = x1, x2 = x2)
+dat$y = predict(mod, newdata = dat)
+
+scatterplot3d(pdp12$results$x1, pdp12$results$x2, pdp12$results$.value)
+scatterplot3d(dat$x1, dat$x2, dat$y)
+
+pred.fun = function(model = NULL, newdata) {
+  predict(mod, newdata = newdata)
+}
+
+pred = Predictor$new(predict.function = pred.fun, data = dat, y = "y")
+
+FeatureEffect$new(pred, feature = "x1",
+  method = "pdp", grid.size = 21)$plot()
