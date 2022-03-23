@@ -34,7 +34,12 @@
     
   The lightgreen dots correspond to group $X_2 = 1$, the lightblue dots to group $X_2 = 0$.
   
-<<fig.height=3, fig.width=6, echo = FALSE, warning=FALSE,message=FALSE>>=
+   \item The example illustrates that by averaging of ICE curves for a PD plot, 
+   we might obfuscate heterogeneous effects and interactions. 
+   Therefore, it is highly recommended to plot PD plots and ICE curves together. 
+  
+\begin{center}
+<<fig-1-ex-pdpinteractions, fig.height=3, fig.width=5, echo = FALSE, warning=FALSE,message=FALSE>>=
 library(mlr3)
 library(iml)
 library(ggplot2)
@@ -55,9 +60,10 @@ p1 = pdp$plot()
 p1 = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
   theme_bw() +
   scale_x_continuous(name = expression(x[1])) + 
-  geom_point(data = dat[dat$x2 == 1,], aes(x = x1, y = y), color = "lightgreen", alpha = 0.5) + 
-  geom_point(data = dat[dat$x2 == 0,], aes(x = x1, y = y), color = "lightblue", alpha = 0.5)
+  geom_line(data = dat[dat$x2 == 1,], aes(x = x1, y = y), color = "lightgreen", lwd =2) + 
+  geom_line(data = dat[dat$x2 == 0,], aes(x = x1, y = y), color = "lightblue", lwd = 2)
 p1
 @
+\end{center}
   
 \end{enumerate}

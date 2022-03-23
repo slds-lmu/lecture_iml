@@ -15,13 +15,15 @@ Let us assume that we fitted the following linear regression model with two feat
   are $\hat\beta_0 = 0$, $\hat\beta_1 = -8$, $\hat\beta_2 = 0.2$ and $\hat\beta_3 = 16$.
   Furthermore, $X_1 \sim Unif(-1, 1)$ is uniformly distributed between -1 and 1, 
   and $X_2 \sim B(1, 0.5)$ origins from a Bernoulli distribution. 
-  Derive the exact PD function of feature $X = \{1\}$ using your derived function of a).
-  \item The following plot displays the derived PDP of b) and the ICE values of $X_1$. 
-  The coloring reflects if the derived ICE value originates from an observation with 
-  $x_2 = 1$ or $x_2 = 0$.
-  Derive the conditional expectation functions for group $X_2 = 1$ and for group $X_2 = 0$ using Equation~\ref{eq:linmod} given the estimated coefficient values of b). 
+  Derive the exact PD function of feature $X_1$ using your derived function of a).
+  \item The following plot displays the ICE curves of $X_1$. 
+  Please note that since $X_2$ is binary, we do not receive $n$ individual ICE curves, but indeed 
+  only two unique ones. 
+  Derive the conditional expectation functions of $X_1$ for group $X_2 = 1$ and for group $X_2 = 0$ using Equation~\ref{eq:linmod} given the estimated coefficient values of b). 
   Which color coding (lightgreen or lightblue) reflects the group $X_2 = 1$, which one group $X_2 = 0$?
-
+  \item Add the PDP you derived in b) to the plot. 
+  Use this example to explain briefly why it is advisable to display not only the PDP but also the ICE curves, 
+  when visualizing the feature effects of a specific model. 
 \begin{center}
 <<fig-1-ex-pdpinteractions, fig.height=3, fig.width=5, echo = FALSE, warning=FALSE,message=FALSE>>=
 library(mlr3)
@@ -39,13 +41,13 @@ mod = lm(y~x1+x2+x1:x2, data = dat)
 pred = Predictor$new(mod, data = dat[-which(names(dat) == "y")], y = dat$y)
 
 # pdp
-pdp = FeatureEffect$new(pred, "x1", method = "pdp")
+pdp = FeatureEffect$new(pred, "x1", method = "ice")
 p1 = pdp$plot()
 p1 = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
   theme_bw() +
   scale_x_continuous(name = expression(x[1])) + 
-  geom_point(data = dat[dat$x2 == 1,], aes(x = x1, y = y), color = "lightgreen", alpha = 0.5) + 
-  geom_point(data = dat[dat$x2 == 0,], aes(x = x1, y = y), color = "lightblue", alpha = 0.5)
+  geom_line(data = dat[dat$x2 == 1,], aes(x = x1, y = y), color = "lightgreen", lwd =2) + 
+  geom_line(data = dat[dat$x2 == 0,], aes(x = x1, y = y), color = "lightblue", lwd = 2) 
 p1
 @
 \end{center}

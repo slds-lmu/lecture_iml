@@ -8,7 +8,13 @@ reveals a slightly higher risk for this group.
 \item 
 The ALE is faster to compute and unbiased. Unbiasedness means that it does 
 not suffer from the extrapolation problem which is especially aparent in PDPs 
-when features are correlated and interaction terms are part of the ML model. 
+when features are correlated and interaction terms are part of the ML model.
+% SAY in CLASS:
+% Since \texttt{personal\_status\_sex} is a categorical feature, we cannot 
+% use the Pearson correlation coefficients (even for 
+% numerical features it is not always a good idea (see in-class exercise)). 
+% For two categorical features we can use a $\Chi^2$-test 
+% and for categorical vs. a numerical features we could rely on a one-way ANOVA F-test. 
 \item 
 The following code computes the pairwise sum of the absolute differences of relative 
 frequencies in the categories of a categorical feature $x_j$ based on a 
@@ -17,21 +23,24 @@ feature $x_k$
 <<echo=TRUE, results='hide'>>=
 get_diff_cat <- function(feature.k, feature.j) {
   
-  #'  Calculates the pairwise distances of classes of j of a feature k 
+  #'  Calculates the pairwise distances of classes of j of a categorical feature k 
   #'  
   #'  @param feature.k (character|factor): vector of values of categorical 
   #'  feature for which relative frequencies per class are calculated 
-  #'  @param feature.j (character|factor: vector of values of categorical feature 
-  #'  for which similarity based on feature k should be assessed. 
+  #'  @param feature.j (character|factor): vector of values of categorical 
+  #'  feature for which similarity based on feature k should be assessed. 
   #'      
   #'  Returns:
   #'      a data.frame with three columns: 
-  #'      * column1: name of the first class
-  #'      * column2: name of the second class 
+  #'      * class1: name of the first class
+  #'      * class2: name of the second class 
   #'      * dist: the distributional distance between the two classes for feature k
-  x.count <- as.numeric(table(feature.j))
+  
+  # set up data.frame which we will fill later
   dists <- expand.grid(unique(feature.j), unique(feature.j))
   colnames(dists) <- c("class1", "class2")
+  # get relative frequency table
+  x.count <- as.numeric(table(feature.j))
   A <- table(feature.j, feature.k) / x.count
   dists$dist <- rowSums(abs(A[dists[, "class1"], ] - A[dists[, "class2"], ])) / 2
   return(dists)
@@ -44,5 +53,16 @@ For our task at hand, we obtain the following distances
 data = read.csv("credit.csv")
 get_diff_cat(feature.k = data[,"employment_duration"], feature.j = data[,"personal_status_sex"])
 @
+
+Overall, we obtain the following ordering of \texttt{personal\_status\_sex}: 
+<<echo=TRUE, results='markup'>>=
+source("sol_catale.R")
+credit  = data.frame(read.csv("credit.csv"))
+order_levels(credit, "personal_status_sex")
+@
+The ordering seems to be feasible, since categories including females are close to each other 
+and also categories with males. 
+Also the ordering of males according to their relationship status seems to make sense, since typically 
+the process is: single, then married and then divorced :-). 
 
 \end{enumerate}

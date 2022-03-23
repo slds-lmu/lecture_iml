@@ -1,17 +1,33 @@
 
-In this exercise we use the German Credit dataset and a random forest model 
+In this exercise, we use the German Credit dataset and a random forest model 
 to predict whether a customer is a high or low risk for a bank. 
 The dataset could be found in \textit{credit.csv}. 
-The following table gives an overview of the data
+The following table gives an overview: 
 
 <<echo=FALSE, results='hide',warnings=FALSE, message=FALSE>>=
 library(mlr3learners)
 library(xtable)
 task = tsk("german_credit")
 task$select(cols = c("age", "amount", "duration", "credit_history", "employment_duration", "personal_status_sex", "purpose"))
-print(xtable(mlr::summarizeColumns(task$data())[, -c(3, 5:9)], digits = 2))
-# write.csv(task$data(), "credit.csv")
 @
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rllrr}
+  \hline
+ & name & type & mean & nlevs \\ 
+  \hline
+1 & credit\_risk & factor &  &   2 \\ 
+  2 & age & integer & 35.55 &   0 \\ 
+  3 & amount & integer & 3271.26 &   0 \\ 
+  4 & credit\_history & factor &  &   5 \\ 
+  5 & duration & integer & 20.90 &   0 \\ 
+  6 & employment\_duration & factor &  &   5 \\ 
+  7 & personal\_status\_sex & factor &  &   4 \\ 
+  8 & purpose & factor &  &  10 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
 Since the decision of whether a person gets a loan can have serious implications
 on the person's life, banks are subordinate to regulations and must disclose 
@@ -25,9 +41,10 @@ and to explain specific decisions.
 Since the regulations require that the model does not discriminate against 
 certain demographic groups, you want to evaluate the feature effect of
 \texttt{personal\_status\_sex}. 
-Your colleague provides the following partial dependence plot. 
-Interpet the plot with respect to the effect the personal status and sex has on the prediction. 
+Your colleague provides the following in Figure~\ref{fig:pdp} to the effect the personal status and sex has on the prediction. 
 
+
+\begin{figure}[ht]
 <<fig.height=4, fig.width=8,echo=FALSE, results='asis',warnings=FALSE,message=FALSE>>=
 library(ranger)
 set.seed(1234)
@@ -40,13 +57,14 @@ pred = Predictor$new(learn, data = task$data(), y = "credit_risk")
 plot(iml::FeatureEffect$new(predictor = pred, feature = "personal_status_sex", method = "pdp")) + 
   theme(axis.text.x = element_text(angle = 50, hjust=1))
 @
+\end{figure}
 
 \item You also request an ALE plot from your colleague. 
-Give reasons why and in which situation inspecting the ALE plot besides the PDP is advisable?
+Give reasons why and in which situations inspecting the ALE plot besides the PDP is advisable?
 
 \item 
 Because the ALE models accumulates effects in a specific direction, the feature values must have an order by definition. However, there is no natural order to categorical/nominal features like \texttt{personal\_status\_sex}. 
-In order to derive an artificial order, Molnar 2022 proposes to order the categories of the features $x_s$ according to their similarity based on other features in $x_c \in X_C$. 
+In order to derive an artificial order, Molnar 2022 (Chapter 8.2)\footnote{https://christophm.github.io/interpretable-ml-book/ale.html} proposes to order the categories of the features $x_s$ according to their similarity based on other features in $x_c \in X_C$. 
 \begin{enumerate}[1)]
   \item For each feature $x_c \in X_C$ do the following: 
   \begin{enumerate}
@@ -63,11 +81,21 @@ In order to derive an artificial order, Molnar 2022 proposes to order the catego
 \end{enumerate}
 An illustrative example is also given in Molnar (2022) in Chapter 8.2 on ALE.
 
-Your task is now to implement the computation of the distance of distribution for a \textbf{categorical} feature $x_c$ in 
+Your colleague implemented some parts of this code in \textit{catale.R}, 
+but he needs your help with implementing the computation of the distance of 
+distribution for a \textbf{categorical} feature $x_c$ in 
 \texttt{get\_diff\_cat()}. 
-Test your function on the credit dataset using \texttt{personal\_status\_sex} as $x_s$ 
-and, for example, \texttt{employment\_duration} as $x_c$.
-In the end, your returned \texttt{data.frame} should look similar to this: 
+
+\begin{itemize}
+  \item Have a look on the function \texttt{order\_levels()} and \texttt{get\_diff\_numeric()}. 
+  At the end of the script, some examples are given.  
+  \item Implement the missing rows in \texttt{get\_diff\_cat()}.
+  \textit{Hint:} The command \texttt{expand.grid(levels(feature.j), levels(feature.j))} creates the first two columns in 
+your resulting dataset - the pairwise class combinations for $x_s$.
+  \item Test your function with the provided example code (end of script). 
+  Your returned \texttt{data.frame} for \texttt{personal\_status\_sex} as $x_s$ 
+  and, for example, \texttt{employment\_duration} as $x_c$, should look 
+  similar to this: 
 
 \begin{table}[ht]
 \centering
@@ -83,7 +111,7 @@ male : divorced/separated & male : married/widowed & 0.19 \\
 \end{tabular}
 \end{table}
 
-\textit{Hint:} Use \texttt{expand.grid(levels(feature.j), levels(feature.j))} to get the first two columns in 
-your resulting dataset - the pairwise class combinations for $x_s$.
-
+\item How did your function order the levels of \texttt{personal\_status\_sex}? 
+Does this order make sense to you? 
+\end{itemize}
 \end{enumerate}
