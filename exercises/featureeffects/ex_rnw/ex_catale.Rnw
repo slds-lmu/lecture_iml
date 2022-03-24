@@ -1,5 +1,5 @@
 
-In this exercise, we use the German Credit dataset and a random forest model 
+In this exercise, we use the German Credit dataset and a random forest 
 to predict whether a customer is a high or low risk for a bank. 
 The dataset could be found in \textit{credit.csv}. 
 The following table gives an overview: 
@@ -31,7 +31,7 @@ task$select(cols = c("age", "amount", "duration", "credit_history", "employment_
 
 Since the decision of whether a person gets a loan can have serious implications
 on the person's life, banks are subordinate to regulations and must disclose 
-the underlying mechanism of their used model. 
+the underlying mechanism of their used model to authorities. 
 Since looking on the single trees is not feasible to uncover the internals of a random forest,
 (model-agnostic) interpretation methods should help to unfold the underlying mechanisms
 and to explain specific decisions. 
@@ -41,7 +41,7 @@ and to explain specific decisions.
 Since the regulations require that the model does not discriminate against 
 certain demographic groups, you want to evaluate the feature effect of
 \texttt{personal\_status\_sex}. 
-Your colleague provides the following in Figure~\ref{fig:pdp} to the effect the personal status and sex has on the prediction. 
+Your colleague provides Figure~\ref{fig:pdp}. Interprete the PDP.
 
 
 \begin{figure}[ht]
@@ -57,6 +57,8 @@ pred = Predictor$new(learn, data = task$data(), y = "credit_risk")
 plot(iml::FeatureEffect$new(predictor = pred, feature = "personal_status_sex", method = "pdp")) + 
   theme(axis.text.x = element_text(angle = 50, hjust=1))
 @
+\caption{PDP of \texttt{personal\_status\_sex}}
+\label{fig:pdp}
 \end{figure}
 
 \item You also request an ALE plot from your colleague. 
@@ -64,15 +66,16 @@ Give reasons why and in which situations inspecting the ALE plot besides the PDP
 
 \item 
 Because the ALE models accumulates effects in a specific direction, the feature values must have an order by definition. However, there is no natural order to categorical/nominal features like \texttt{personal\_status\_sex}. 
-In order to derive an artificial order, Molnar 2022 (Chapter 8.2)\footnote{https://christophm.github.io/interpretable-ml-book/ale.html} proposes to order the categories of the features $x_s$ according to their similarity based on other features in $x_c \in X_C$. 
+In order to derive an artificial order, Molnar 2022 (Chapter 8.2)\footnote{https://christophm.github.io/interpretable-ml-book/ale.html} proposes to order the categories of the features $x_s$ according to their similarity based on other features in $x_c \in X_C$. In detail, the approach has the following steps: 
+
 \begin{enumerate}[1)]
   \item For each feature $x_c \in X_C$ do the following: 
   \begin{enumerate}
     \item Get the empirical distribution: \\
-     For numeric feature $x_c$, estimate the cumulative distribution function for each category of $x_s$ separately and derive its values at predefined points (e.g., at the quartiles or deciles of $x_c$). 
+     For numeric feature $x_c$, estimate the cumulative distribution function for each category of $x_s$ separately and derive its values at predefined points (e.g., at deciles of $x_c$). 
      For categorical feature $x_c$ derive the relative frequency tables for each category of $x_s$ separately.
     \item Compute the pairwise distances of distributions for the categories of $x_s$:\\ 
-    For numeric feature $x_c$ the distance is equal to the absolute maximum point-wise distance of the two empirical distribution functions. For categorical feature $x_c$ the distance is equal to the sum of the absolute difference of both relative frequency tables.   
+    For numeric feature $x_c$, the distance is equal to the absolute maximum point-wise distance of the two empirical distribution functions. For categorical feature $x_c$, the distance is equal to the sum of the absolute difference of both relative frequency tables.   
   \end{enumerate}
   \item end for
   \item Sum up over the pairwise distances of the distributions between features $x_c$ in $X_C$. 
@@ -88,13 +91,14 @@ distribution for a \textbf{categorical} feature $x_c$ in
 
 \begin{itemize}
   \item Have a look on the function \texttt{order\_levels()} and \texttt{get\_diff\_numeric()}. 
-  At the end of the script, some examples are given.  
+  Locate the steps of above's  algorithmic description in the underlying code.
+  At the end of the script examples are given to run the code.  
   \item Implement the missing rows in \texttt{get\_diff\_cat()}.
   \textit{Hint:} The command \texttt{expand.grid(levels(feature.j), levels(feature.j))} creates the first two columns in 
 your resulting dataset - the pairwise class combinations for $x_s$.
   \item Test your function with the provided example code (end of script). 
   Your returned \texttt{data.frame} for \texttt{personal\_status\_sex} as $x_s$ 
-  and, for example, \texttt{employment\_duration} as $x_c$, should look 
+  and \texttt{employment\_duration} as $x_c$, should look 
   similar to this: 
 
 \begin{table}[ht]
