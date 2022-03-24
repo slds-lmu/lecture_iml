@@ -21,7 +21,7 @@ names(df_permuted) = c("x1", "x2")
 
 # PLOT -------------------------------------------------------------------------
 
-pgrid = p + ylim(-10, 11) +
+pgrid = p + ylim(-8, 6) +
   geom_point(data = df_observed, aes(x1, x2, col = "observed data points"),
              size = 1.5) +
   geom_point(data = df_permuted, aes(x1, x2, col = "artificial data points \n(created by equidistant grid)"),
@@ -35,13 +35,13 @@ pgrid = p + ylim(-10, 11) +
     label = paste0("extrapolation area"), parse = F, col = "#56B4E9") +
   scale_color_manual(values = c(2,1)) +
   labs(colour = "Data Points") +
-  theme(legend.position = c(0.32, 0.85), legend.title = element_blank())
+  theme(legend.position = "bottom", legend.title = element_blank())
 
 df_observed$x2_perm = sample(df_observed$x2)
 
 df_long = rbind(cbind(df_observed[,c("x1","x2")], group = 1:nrow(df_observed)), cbind(setNames(df_observed[,c("x1","x2_perm")], c("x1", "x2")), group = 1:nrow(df_observed)))
 
-ppermute = p + ylim(-10, 11) +
+ppermute = p + ylim(-8, 6) +
   geom_point(data = df_observed, aes(x1, x2, col = "observed data points"),
     size = 1.5) +
   geom_point(data = df_observed, aes(x1, x2_perm,
@@ -57,7 +57,7 @@ ppermute = p + ylim(-10, 11) +
   geom_polygon(aes(x = c(-3.5,5,5), y = c(-7,3,-7)), colour = "#56B4E9", fill = NA) +
   scale_color_manual(values = c(2,1)) +
   labs(colour = "Data Points") +
-  theme(legend.position = c(0.3, 0.85), legend.title = element_blank())
+  theme(legend.position =  "bottom", legend.title = element_blank())
 
 ggsave("slides/intro/figure/extrapolation.pdf", pgrid + ppermute,
-  width = 8, height = 3)
+  width = 10, height = 3)
