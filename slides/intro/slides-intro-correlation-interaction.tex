@@ -111,7 +111,6 @@
 
 \textbf{Correlation:} Often Pearson's correlation is meant, which only measures \textbf{linear relationship} %between pairs of features
 
-$$\rho(X_1, X_2) = \dfrac{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-\bar{x}_2)}}{\sqrt{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1)^2 \sum_{i=1}^{n}{(x_2^{(i)}-\bar{x}_2)^2 }}}}$$
 
 %\dfrac{s_{X_1 X_2}}{s_{X_1} \cdot s_{X_2}} \text{ with }
 
@@ -121,18 +120,23 @@ $$\rho(X_1, X_2) = \dfrac{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-
 %     \item Sample standard deviation $s_{X_1}$ and $s_{X_2}$ of $X_1$ and $X_2$
 % \end{itemize}
 
-\begin{columns}[totalwidth=\textwidth]
+\begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.5\linewidth}
+\includegraphics[width = \textwidth]{figure/pearson_cor}
 \end{column}
 \begin{column}{0.5\linewidth}
 
-Geometric interpretation of $s_{X_1 X_2}$:
+$$\rho(X_1, X_2) = \tfrac{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-\bar{x}_2)}}{\sqrt{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1)^2 \sum_{i=1}^{n}{(x_2^{(i)}-\bar{x}_2)^2 }}}} \in [-1, 1]$$
+Geometric interpretation of numerator in $\rho$:
 \begin{itemize}
-    \item Average of rectangle's area with width $x_i - \bar{x}$ and height $y_i - \bar{y}$
-    \item Area enters $s_{XY}$ with positive (\textbf{+}) or negative (\textbf{-}) sign, depending on point position
+    \item Sum of rectangle's area with width $x_1^{(i)}-\bar{x}_1$ and height $x_2^{(i)}-\bar{x}_2$
+    \item Areas enter this sum with positive (\textbf{+}) or negative (\textbf{-}) sign, depending on point position
+    \item $\rho = 0$ if area of all rectangles cancels out
 \end{itemize}
 \end{column}
 \end{columns}
+
+\smallskip
 
 \textbf{But:} Pearson's $\rho$ does not measure non-linear dependencies, e.g., $\rho = 0$ but dependent:
 
