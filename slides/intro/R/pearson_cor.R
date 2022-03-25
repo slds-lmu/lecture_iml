@@ -1,6 +1,7 @@
 # PREREQ -----------------------------------------------------------------------
 library(patchwork)
 library(ggplot2)
+library(ggpubr)
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 # DATA -------------------------------------------------------------------------
@@ -112,6 +113,7 @@ plot = ggplot(bike, aes(x = temp, y = cnt)) +
   geom_text(aes(x = mean((temp)), label = "bar(x)[1]", y = max(cnt)), parse = T, hjust = 1.5, colour = "blue") +
   geom_text(aes(x = min((temp)), label = "bar(x)[2]", y = mean(cnt)), parse = T, vjust = -0.75, colour = "blue") +
   geom_point(aes(x = temp, y = cnt)) +
+  stat_cor(p.accuracy = 0.001, r.accuracy = 0.01, cor.coef.name = expression("Person's "~rho), aes(label = ..r.label..)) +
   geom_point(data = bike[ind,], aes(x = temp, y = cnt, fill = Rectangle_Area), size = 4, col = "black", pch = 21) +
   # geom_rect(aes(xmax = temp[ind.pos1], ymax = cnt[ind.pos1]),
   #   xmin = mean(bike$temp), ymin = mean(bike$cnt),
