@@ -130,4 +130,4 @@ plot = ggplot(bike, aes(x = temp, y = cnt)) +
   labs(x = expression(X[1]~": Temperature in °C"), y = expression(X[2]~": Number of bike rentals"))
 
 ggsave(filename = "slides/intro/figure/pearson_cor.pdf", plot,
-  width = 9, height = 5)
+  width = 9, height = 5.5)
