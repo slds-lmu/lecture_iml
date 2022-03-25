@@ -109,7 +109,40 @@
 
 \begin{frame}{Correlation and Dependence}
 
-\textbf{Correlation:} Often Pearson correlation $\rho$ is meant, which only measures linear relationship %between pairs of features
+\textbf{Correlation:} Often Pearson's correlation is meant, which only measures \textbf{linear relationship} %between pairs of features
+
+$$\rho(X_1, X_2) = \dfrac{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-\bar{x}_2)}}{\sqrt{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1)^2 \sum_{i=1}^{n}{(x_2^{(i)}-\bar{x}_2)^2 }}}}$$
+
+%\dfrac{s_{X_1 X_2}}{s_{X_1} \cdot s_{X_2}} \text{ with }
+
+% \begin{itemize}
+%     \item Sample covariance of $X_1$ and $X_2$:
+%     $s_{X_1 X_2} = \frac{1}{n-1}\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-\bar{x}_2)}$
+%     \item Sample standard deviation $s_{X_1}$ and $s_{X_2}$ of $X_1$ and $X_2$
+% \end{itemize}
+
+\begin{columns}[totalwidth=\textwidth]
+\begin{column}{0.5\linewidth}
+\end{column}
+\begin{column}{0.5\linewidth}
+
+Geometric interpretation of $s_{X_1 X_2}$:
+\begin{itemize}
+    \item Average of rectangle's area with width $x_i - \bar{x}$ and height $y_i - \bar{y}$
+    \item Area enters $s_{XY}$ with positive (\textbf{+}) or negative (\textbf{-}) sign, depending on point position
+\end{itemize}
+\end{column}
+\end{columns}
+
+\textbf{But:} Pearson's $\rho$ does not measure non-linear dependencies, e.g., $\rho = 0$ but dependent:
+
+\centering
+\includegraphics[width = 0.6\textwidth, trim=0 0 0 190px, clip]{figure/dependence_2}
+\end{frame}
+
+
+
+\begin{frame}{Correlation and Dependence}
 
 \textbf{Example:} Scatterplot with multivariate distribution (contour lines) and their marginal densities
 \vspace{5pt}
@@ -127,21 +160,11 @@ $X_1$, $X_2 \sim N(0,1)$ with $\rho(X_1, X_2) = 0.8$
 %\includegraphics[width = 0.7\textwidth]{figure/dependent}
 \end{column}
 \end{columns}
-\includegraphics[width = 0.7\textwidth]{figure/dnorm_correlation.pdf}
+\includegraphics[width = 1\textwidth]{figure/dnorm_correlation.pdf}
 
 % \hspace{40pt} $X_1$, $X_2 \sim N(0,1)$ with $\rho(X_1, X_2) = 0$ \hspace{20pt} $X_1$, $X_2 \sim N(0,1)$ with $\rho(X_1, X_2) = 0.8$
 
-% \centering
-% \includegraphics[width = 0.4\textwidth]{figure/independent}
-% \hspace{20pt}
-% \includegraphics[width = 0.4\textwidth]{figure/dependent}
-
-\textbf{But:} Pearson's $\rho$ does not measure non-linear dependencies, e.g., $\rho = 0$ but dependent:
-
-\centering
-\includegraphics[width = 0.6\textwidth, trim=0 0 0 190px, clip]{figure/dependence_2}
 \end{frame}
-
 
 
 \begin{frame}{Correlation and Dependence}
