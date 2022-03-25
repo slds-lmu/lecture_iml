@@ -100,30 +100,34 @@ ind.neg2 = which(bike$temp < quantile(bike$temp, 0.3) & bike$cnt > quantile(bike
 
 ind = c(ind.pos1, ind.pos2, ind.neg1, ind.neg2)
 
+xlab = c("x[1]^{(i)} - bar(x)[1] > 0", "x[1]^{(i)} - bar(x)[1] < 0", "x[1]^{(i)} - bar(x)[1] > 0", "x[1]^{(i)} - bar(x)[1] < 0")
+ylab = c("x[2]^{(i)} - bar(x)[2] > 0", "x[2]^{(i)} - bar(x)[2] < 0", "x[2]^{(i)} - bar(x)[2] < 0", "x[2]^{(i)} - bar(x)[2] > 0")
+
 plot = ggplot(bike, aes(x = temp, y = cnt)) +
   geom_rect(data = bike[ind,], aes(xmax = temp, ymax = cnt, fill = Rectangle_Area),
     xmin = mean(bike$temp), ymin = mean(bike$cnt),
     alpha = 0.5, colour = "black") +
   geom_hline(yintercept = mean.cnt, linetype = "dashed", colour = "blue", lwd = 2) +
   geom_vline(xintercept = mean.temp, linetype = "dashed", colour = "blue", lwd = 2) +
-  geom_text(aes(x = mean((temp)), label = "bar(x)", y = max(cnt)), parse = T, hjust = 1.5, colour = "blue") +
-  geom_text(aes(x = min((temp)), label = "bar(y)", y = mean(cnt)), parse = T, vjust = -0.75, colour = "blue") +
+  geom_text(aes(x = mean((temp)), label = "bar(x)[1]", y = max(cnt)), parse = T, hjust = 1.5, colour = "blue") +
+  geom_text(aes(x = min((temp)), label = "bar(x)[2]", y = mean(cnt)), parse = T, vjust = -0.75, colour = "blue") +
   geom_point(aes(x = temp, y = cnt)) +
-  geom_point(data = bike[ind,], aes(x = temp, y = cnt, col = Rectangle_Area), size = 4) +
+  geom_point(data = bike[ind,], aes(x = temp, y = cnt, fill = Rectangle_Area), size = 4, col = "black", pch = 21) +
   # geom_rect(aes(xmax = temp[ind.pos1], ymax = cnt[ind.pos1]),
   #   xmin = mean(bike$temp), ymin = mean(bike$cnt),
   #   alpha = 0, colour = "blue", lty = 2, lwd = 2) +
   # geom_rect(aes(xmax = temp[ind.neg1], ymax = cnt[ind.neg1]),
   #   xmin = mean(bike$temp), ymin = mean(bike$cnt),
   #   alpha = 0, colour = "blue", lty = 2, lwd = 2) +
-  #   annotate("label", x = mean(c(bike$temp[ind], mean.temp)),
-  #     y = bike$cnt[ind],
-  #     label = "x[i] - bar(x)", parse = T, colour = negcol, vjust = 1.2) +
-  #   annotate("label", x = bike$temp[ind],
-  #     y = mean(c(bike$cnt[ind], mean.cnt)),
-  #     label = "y[i] - bar(y)", parse = T, colour = negcol, hjust = -0.2)
-  #geom_point(x = mean(bike$temp), y = mean(bike$cnt), colour = "blue") +
-  guides(fill = guide_legend(override.aes = list(alpha = 1)))
+    annotate("label", x = (bike$temp[ind] + mean.temp)/2,
+      y = bike$cnt[ind],
+      label = xlab, parse = T, colour = "black", vjust = 0.1) +
+  annotate("label", x = bike$temp[ind],
+      y = (bike$cnt[ind] + mean.cnt)/2,
+      label = ylab, parse = T, colour = "black", hjust = 0.9) +
+  geom_point(x = mean(bike$temp), y = mean(bike$cnt), colour = "blue") +
+  guides(fill = guide_legend(override.aes = list(alpha = 1))) +
+  labs(x = expression(X[1]~": Temperature in °C"), y = expression(X[2]~": Number of bike rentals"))
 
 ggsave(filename = "slides/intro/figure/pearson_cor.pdf", plot,
-  width = 12, height = 3.8)
+  width = 9, height = 5)
