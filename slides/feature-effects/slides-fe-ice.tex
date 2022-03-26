@@ -28,13 +28,18 @@
 
 \textbf{Question:} How does changing values of a single feature of an observation affect model prediction?
 
-\textbf{Idea:} For observation and feature of interest, change values and visualize how prediction changes\\
-$\Rightarrow$ \textbf{local interpretation method}
+\smallskip
 
-\textbf{Example:} Prediction surface of a model
+\textbf{Idea:} For observation and feature of interest, change values and visualize how prediction changes
 
-\includegraphics[width=\textwidth]{figure/ice_motivation}
+\smallskip
 
+\textbf{Example:} Prediction surface of a model (left), select observation and visualize changes in prediction for different values of feature of interest (here: $x_2$) while keeping $x_1$ fixed $\Rightarrow$ \textbf{local interpretation}
+
+\centering
+\includegraphics[width=0.85\textwidth]{figure/ice_motivation}
+
+$\Rightarrow$ Repeat for all observations and average the curves for global feature effect ($\leadsto$ PD plots)
 \end{frame}
 
 \begin{frame}{Individual Conditional Expectation (ICE) \citebutton{Goldstein et. al (2013)}{https://doi.org/10.1080/10618600.2014.907095}}
@@ -52,17 +57,22 @@ $\Rightarrow$ \textbf{local interpretation method}
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values from the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing values from features addressed by the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
-Partition $\xi$ into $\xi_S$ and $\xi_C$ containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
-\lz
+Partition each observation $\xv$ into $\xv_S$ and $\xv_C$ containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
 
-ICE curves visualize how prediction of observation $\xi$ changes after varying its feature values $\xi_S$ while keeping all other features in $C$ fixed:
+\medskip
+
+ICE curves visualize how prediction of observation $\xi$ changes after varying its feature values using grid points $\xv_S^*$ while keeping all other features in $C$ fixed:
 %by replacing the feature values $\xv_S^{(i)}$ with other values $\xv_S$ while keeping all other features in $\xi_C$ fixed:
 %by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed:
-$$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S, \xi_C) \; \text{ vs. } \; \xv_S$$
+$$\fh_{S}^{(i)}(\xv_S^*) \; \text{ vs. } \; \xv_S^*$$
 
-$\fh_{S}^{(i)}(\xv_S)$ is prediction of $i$-th observation where $\xi_S$ was replaced by $\xv_S$.
+$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S^*, \xi_C)$ is prediction of $i$-th observation where original feature value $\xi_S$ was replaced by $\xv_S^*$.
 
-\textbf{Note:} In practice, $\xv_S$ consists of one or two features ($|S| \leq 2$).
+%Visualize for \textbf{I}ndividual observations and \textbf{C}onditional on all other features how \textbf{E}xpected prediction changes
+
+\medskip
+
+\textbf{N.B.:} In practice, $\xv_S$ consists of one or two features ($|S| \leq 2$).
 
 \end{column}
 \end{columns}
@@ -132,12 +142,12 @@ $\fh_{S}^{(i)}(\xv_S)$ is prediction of $i$-th observation where $\xi_S$ was rep
 \textbf{Grid points:}
 
 %For the $i$-th observation, we
-Sample $n$ grid values $x_S^*$ along feature of interest $x_S$
+Sample grid values $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$ along feature of interest $x_S$
 %(here, grid is $x_S^* = x_1^* \in \{1, 2, 3\}$)
 and replace vector $\xv^{(i)}$ in data with grid
 %h observation with these sampled grid values.
 %$\Rightarrow$ New artificial data points for $i$-th observation.
-\newline $\Rightarrow$ New artificial points for the $i$-th observation.
+\newline $\Rightarrow$ Creates new artificial points for the $i$-th observation
 
 \end{frame}
 
@@ -203,22 +213,28 @@ $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3
 % $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
 % \end{frame}
 
-\begin{frame}{Individual Conditional Expectation (ICE)}
+% \begin{frame}{Individual Conditional Expectation (ICE)}
 
-\begin{columns}[T]
-\begin{column}{0.4\textwidth}
-\includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
-\end{column}
-\begin{column}{0.55\textwidth}
-\includegraphics[page=3, width=0.85\textwidth]{figure/ICE}
-\end{column}
-\end{columns}
-\vspace*{\topsep}
+% % \begin{columns}[T]
+% % \begin{column}{0.4\textwidth}
+% % \includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+% % \end{column}
+% % \begin{column}{0.55\textwidth}
+% % \includegraphics[page=3, width=0.85\textwidth]{figure/ICE}
+% % \end{column}
+% % \end{columns}
+% % \vspace*{\topsep}
 
-\textbf{Interpretation:}
+% \begin{itemize}
+%     \item \textbf{Interpretation:} \textbf{ICE} curve visualizes for \textbf{I}ndividual observations and \textbf{C}onditional on all other features (by keeping all other features constant) how \textbf{E}xpected prediction changes
+%     \item
+%     \item For global view, repeat procedure for all observations
+% \end{itemize}
 
-Resulting \textbf{ICE} curve visualizes for \textbf{I}ndividual observations and \textbf{C}onditional on all other features (by keeping all other features constant) how \textbf{E}xpected prediction changes.
-\end{frame}
+% % \textbf{Definition:}
+
+% % ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$.
+% \end{frame}
 
 \begin{frame}{Individual Conditional Expectation (ICE)}
 
@@ -256,23 +272,23 @@ ICE curve for $i=2$ connects all predictions at grid values associated to $i$-th
 ICE curve for $i=3$ connects all predictions at grid values associated to $i$-th observation.
 %The ICE curve of observation $i=3$ connects all predictions at the corresponding grid values associated to the $i$-th observation.
 
-\textbf{Definition:}
+% \textbf{Definition:}
 
-ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$.
+% ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$.
 \end{frame}
 
 
-\begin{frame}{Comments}
+\begin{frame}{Comments on Grid values}
 \begin{itemize}
 %\item ICE curves show how different feature values of an observation affect its prediction \newline $\Rightarrow$ \textbf{local interpretation method}
 \item Plotting ICE curves involves generating grid values $x_S^*$ that are visualized on the x-axis
-Common choices for grid values are
+\item Common choices for grid values are
 \begin{itemize}
 \item equidistant grid values within feature range
 \item randomly sampled values or quantile values of observed feature values
 \end{itemize}
 \item Except equidistant grid, the other two options preserve (approximately) the marginal distribution of feature of interest
-$\Rightarrow$ Avoids unrealistic feature values for distributions with outliers
+$\Rightarrow$ Avoids unrealistic feature values for distributions with outliers %or dependencies
 
 \vspace{3pt}
 \centering
