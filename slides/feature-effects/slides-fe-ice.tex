@@ -23,7 +23,18 @@
 
 
 \begin{frame}{Motivation}
-2-d
+%ICE curves show how different feature values of an observation affect its model prediction \newline $\Rightarrow$ \textbf{local interpretation method}
+%From a local perspective, one might be interested in how changing feature values of an observation affect model prediction
+
+\textbf{Question:} How does changing values of a single feature of an observation affect model prediction?
+
+\textbf{Idea:} For observation and feature of interest, change values and visualize how prediction changes\\
+$\Rightarrow$ \textbf{local interpretation method}
+
+\textbf{Example:} Prediction surface of a model
+
+\includegraphics[width=\textwidth]{figure/ice_motivation}
+
 \end{frame}
 
 \begin{frame}{Individual Conditional Expectation (ICE) \citebutton{Goldstein et. al (2013)}{https://doi.org/10.1080/10618600.2014.907095}}
@@ -31,10 +42,10 @@
 %Consider an index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
 %\lz
 \begin{columns}[T]
-\begin{column}{0.18\textwidth} % 0.2 4.26cm
+\begin{column}{0.16\textwidth} % 0.2 4.26cm
 \includegraphics[page=1, trim=0cm 0.35cm 4.53cm 0.35cm, clip, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
-\begin{column}{0.82\textwidth}
+\begin{column}{0.84\textwidth}
 
 %%%
 
@@ -134,10 +145,14 @@ and replace vector $\xv^{(i)}$ in data with grid
 
 \begin{columns}[T]
 \begin{column}{0.4\textwidth}
-\includegraphics[page=3, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+\includegraphics<1>[page=3, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+\includegraphics<2>[page=4, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+\includegraphics<3>[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=1, width=0.85\textwidth]{figure/ICE}
+\includegraphics<1>[page=1, width=0.85\textwidth]{figure/ICE}
+\includegraphics<2>[page=2, width=0.85\textwidth]{figure/ICE}
+\includegraphics<3>[page=3, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
 \vspace*{\topsep}
@@ -150,43 +165,43 @@ $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3
 
 \end{frame}
 
-\begin{frame}{Individual Conditional Expectation (ICE)}
+% \begin{frame}{Individual Conditional Expectation (ICE)}
 
-\begin{columns}[T]
-\begin{column}{0.4\textwidth}
-\includegraphics[page=4, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
-\end{column}
-\begin{column}{0.55\textwidth}
-\includegraphics[page=2, width=0.85\textwidth]{figure/ICE}
-\end{column}
-\end{columns}
-\vspace*{\topsep}
+% \begin{columns}[T]
+% \begin{column}{0.4\textwidth}
+% \includegraphics[page=4, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+% \end{column}
+% \begin{column}{0.55\textwidth}
+% \includegraphics[page=2, width=0.85\textwidth]{figure/ICE}
+% \end{column}
+% \end{columns}
+% \vspace*{\topsep}
 
-\textbf{Predict and visualize:}
+% \textbf{Predict and visualize:}
 
-For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
+% For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
 
-$$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
-\end{frame}
+% $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
+% \end{frame}
 
-\begin{frame}{Individual Conditional Expectation (ICE)}
+% \begin{frame}{Individual Conditional Expectation (ICE)}
 
-\begin{columns}[T]
-\begin{column}{0.4\textwidth}
-\includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
-\end{column}
-\begin{column}{0.55\textwidth}
-\includegraphics[page=3, width=0.85\textwidth]{figure/ICE}
-\end{column}
-\end{columns}
-\vspace*{\topsep}
+% \begin{columns}[T]
+% \begin{column}{0.4\textwidth}
+% \includegraphics[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+% \end{column}
+% \begin{column}{0.55\textwidth}
+% \includegraphics[page=3, width=0.85\textwidth]{figure/ICE}
+% \end{column}
+% \end{columns}
+% \vspace*{\topsep}
 
-\textbf{Predict and visualize:}
+% \textbf{Predict and visualize:}
 
-For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
+% For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
 
-$$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
-\end{frame}
+% $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
+% \end{frame}
 
 \begin{frame}{Individual Conditional Expectation (ICE)}
 
@@ -249,7 +264,7 @@ ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{
 
 \begin{frame}{Comments}
 \begin{itemize}
-\item ICE curves show how different feature values of an observation affect its prediction \newline $\Rightarrow$ \textbf{local interpretation method}
+%\item ICE curves show how different feature values of an observation affect its prediction \newline $\Rightarrow$ \textbf{local interpretation method}
 \item Plotting ICE curves involves generating grid values $x_S^*$ that are visualized on the x-axis
 Common choices for grid values are
 \begin{itemize}
