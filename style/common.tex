@@ -219,15 +219,24 @@ shorten >=2pt,}
 \renewcommand*{\footnotelayout}{\tiny}
 \renewcommand*{\thefootnote}{} %\fnsymbol{footnote}
 
+% https://tex.stackexchange.com/questions/638616/beamer-frametitle-always-uppercase-for-text-but-not-for-href-or-url
+\usepackage{textcase}
+
 % https://stackoverflow.com/questions/377301/is-there-a-latex-command-to-make-text-all-lower-caps
-\usepackage[overload]{textcase}
+%\usepackage[overload]{textcase}
 %\setbeamertemplate{frametitle}{\MakeTextUppercase{\insertframetitle}}
 %\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
-\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\setbeamertemplate{frametitle}{\MakeTextUppercase{\insertframetitle}}
 \newcommand{\citebutton}[2]{%
-%\href{#2}{\footnotesize\color{black!60}[#1]}
-\resizebox{!}{9pt}{\beamergotobutton{\href{#2}{#1}}}% \MakeLowercase
+\NoCaseChange{\resizebox{!}{9pt}{\protect\beamergotobutton{\href{#2}{#1}}}}%
 }
+
+%\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+%\newcommand{\citebutton}[2]{%
+%\href{#2}{\footnotesize\color{black!60}[#1]}
+%\resizebox{!}{9pt}{\beamergotobutton{\lowercase{\href{#2}}{#1}}}% \MakeLowercase
+%}
 %\newcommand{\lit}[2]{\href{#2}{\footnotesize\color{black!60}[#1]}}
 
 \newcommand{\lit}[2]{\href{#2}{\footnotesize\color{black!60}[#1]}}
