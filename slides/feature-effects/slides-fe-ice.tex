@@ -57,7 +57,7 @@ $\Rightarrow$ Repeat for all observations and average the curves for global feat
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values from the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing values from features addressed by the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
-Partition each observation $\xv$ into $\xv_S$ and $\xv_C$ containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
+Partition each observation $\xv$ into $\xv_S$ (features of interest) and $\xv_C$ containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
 
 \medskip
 
@@ -66,7 +66,7 @@ ICE curves visualize how prediction of observation $\xi$ changes after varying i
 %by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed:
 $$\fh_{S}^{(i)}(\xv_S^*) \; \text{ vs. } \; \xv_S^*$$
 
-$\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S^*, \xi_C)$ is prediction of $i$-th observation where original feature value $\xi_S$ was replaced by $\xv_S^*$.
+where $\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S^*, \xi_C)$ is prediction of $i$-th observation in which original feature value $\xi_S$ was replaced by $\xv_S^*$.
 
 %Visualize for \textbf{I}ndividual observations and \textbf{C}onditional on all other features how \textbf{E}xpected prediction changes
 
@@ -127,7 +127,7 @@ $\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S^*, \xi_C)$ is prediction of $i$-th observation
 % aa
 % \end{frame}
 
-\begin{frame}{Individual Conditional Expectation (ICE)}
+\begin{frame}{ICE Curves - Illustration}
 
 \begin{columns}[T]
 \begin{column}{0.4\textwidth}
@@ -139,7 +139,7 @@ $\fh_{S}^{(i)}(\xv_S) = \fh(\xv_S^*, \xi_C)$ is prediction of $i$-th observation
 \end{columns}
 \vspace*{\topsep}
 
-\textbf{Grid points:}
+\textbf{1. Step - Grid points:}
 
 %For the $i$-th observation, we
 Sample grid values $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$ along feature of interest $x_S$
@@ -151,7 +151,7 @@ and replace vector $\xv^{(i)}$ in data with grid
 
 \end{frame}
 
-\begin{frame}{Individual Conditional Expectation (ICE)}
+\begin{frame}{ICE Curves - Illustration}
 
 \begin{columns}[T]
 \begin{column}{0.4\textwidth}
@@ -167,7 +167,7 @@ and replace vector $\xv^{(i)}$ in data with grid
 \end{columns}
 \vspace*{\topsep}
 
-\textbf{Predict and visualize:}
+\textbf{2. Step - Predict and visualize:}
 
 For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
 
@@ -236,46 +236,48 @@ $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3
 % % ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$.
 % \end{frame}
 
-\begin{frame}{Individual Conditional Expectation (ICE)}
+\begin{frame}{ICE Curves - Illustration}
 
 \begin{columns}[T]
 \begin{column}{0.4\textwidth}
-\includegraphics[page=6, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+\includegraphics<1>[page=6, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+\includegraphics<2>[page=7, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
-\includegraphics[page=4, width=0.85\textwidth]{figure/ICE}
+\includegraphics<1>[page=4, width=0.85\textwidth]{figure/ICE}
+\includegraphics<2>[page=5, width=0.85\textwidth]{figure/ICE}
 \end{column}
 \end{columns}
 \vspace*{\topsep}
 
-\textbf{Repeat for other observations:}
+\textbf{3. Step - Repeat for other observations:}
 
-ICE curve for $i=2$ connects all predictions at grid values associated to $i$-th observation.
+ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid values associated to $i$-th observation.
 \end{frame}
 
-\begin{frame}{Individual Conditional Expectation (ICE)}
+% \begin{frame}{ICE Curves - Illustration}
 
-\begin{columns}[T]
-\begin{column}{0.4\textwidth}
-\includegraphics[page=7, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
-\end{column}
-\begin{column}{0.55\textwidth}
-%\begin{center}
-\includegraphics[page=5, width=0.85\textwidth]{figure/ICE}
-%\end{center}
-\end{column}
-\end{columns}
-\vspace*{\topsep}
+% \begin{columns}[T]
+% \begin{column}{0.4\textwidth}
+% \includegraphics[page=7, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+% \end{column}
+% \begin{column}{0.55\textwidth}
+% %\begin{center}
+% \includegraphics[page=5, width=0.85\textwidth]{figure/ICE}
+% %\end{center}
+% \end{column}
+% \end{columns}
+% \vspace*{\topsep}
 
-\textbf{Repeat for other observations:}
+% \textbf{3. Step - Repeat for other observations:}
 
-ICE curve for $i=3$ connects all predictions at grid values associated to $i$-th observation.
-%The ICE curve of observation $i=3$ connects all predictions at the corresponding grid values associated to the $i$-th observation.
+% ICE curve for $i=3$ connects all predictions at grid values associated to $i$-th observation.
+% %The ICE curve of observation $i=3$ connects all predictions at the corresponding grid values associated to the $i$-th observation.
 
-% \textbf{Definition:}
+% % \textbf{Definition:}
 
-% ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$.
-\end{frame}
+% % ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$.
+% \end{frame}
 
 
 \begin{frame}{Comments on Grid values}
