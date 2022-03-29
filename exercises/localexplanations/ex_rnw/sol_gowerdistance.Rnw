@@ -1,63 +1,42 @@
 \begin{enumerate} [a)]
-  \item Derivation of PD function for $S = \{1\}$ (with $C = \{2\}$) given
-  \begin{equation*}
-  \fh(\xv) = \fh(\xv_1, \xv_2) = \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 + \hat\beta_0.
-  \label{eq:linmod}
-  \end{equation*}
+  \item Derivation of Gower and feature-wise distances: 
   
-  $$
-  \begin{aligned}
-  f_{1, PD}(\xv_1) = \E_{\xv_2} \left( \fh(\xv_1, \xv_2) \right) &= \int_{-\infty}^{\infty} \left( \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 + \hat\beta_0 \right) \, d\P(\xv_2) \\
-  &= \hat\beta_1 \xv_1 + \int_{-\infty}^{\infty} \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
-    &= \hat\beta_1 \xv_1 + \int_{-\infty}^{\infty} (\hat\beta_2 + \hat\beta_3 \xv_1) \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
-    &= \hat\beta_1 \xv_1 + (\hat\beta_2 + \hat\beta_3 \xv_1) \cdot \int_{-\infty}^{\infty} \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
-        &= \hat\beta_1 \xv_1 + (\hat\beta_2 + \hat\beta_3 \xv_1) \cdot \E_{\xv_2} (\xv_2) + \hat\beta_0 
-  \end{aligned}
-  $$
+  \begin{table}[ht]
+\centering
+\begin{tabular}{ccc|ccc|c}
+  \hline
+  Sex$^{(1)}$ & Sex$^{(2)}$ & $\delta_G(\textnormal{Sex}^{(1)}, \textnormal{Sex}^{(2)})$ & Age$^{(1)}$ & Age$^{(2)}$ & $\delta_G(\textnormal{Age}^{(1)}, \textnormal{Age}^{(2)})$ & $d_G(\xv^{(1)}, \xv^{(2)}$ \\
+  \hline
+ F & F & 0 & 15 & 15 & 0 & 0\\
+ F & F & 0 & 15 & 58 & $ = \frac{1}{90-15}|15-58|= 0.573$ & 0.287\\
+ F & F & 0 & 15 & 90 & 1& 0.5\\
+ F & M & 1 & 15 & 15 & 0 & 0.5\\
+ F & M & 1 & 15 & 58 & 0.573 & 0.787\\
+ F & M & 1 & 15 & 90 & 1& 1\\
+   \hline
+\end{tabular}
+\label{tab:probgow}
+\end{table}
 
-  \item PD function for $\hat\beta_0 = 0$, $\hat\beta_1 = -8$, $\hat\beta_2 = 0.2$, $\hat\beta_3 = 16$, $X_1 \sim Unif(-1, 1)$ and  $X_2 \sim B(1, 0.5)$. 
-  $$
-  \begin{aligned}
-  f_{1, PD}(\xv_1) = \hat\beta_1 \xv_1 + (\hat\beta_2 + \hat\beta_3 \xv_1) \cdot \E_{\xv_2} (\xv_2) + \hat\beta_0 
-        &= -8 \xv_1 + (0.2 + 16 \xv_1) \cdot \E_{\xv_2} (\xv_2) + 0 \\
-        &= -8 \xv_1 + (0.2 + 16 \xv_1) \cdot 0.5  + 0 \\
-        &= -8 \xv_1 + 0.1 + 8 \xv_1 \\
-        &= 0.1 + 0 \xv_1
-  \end{aligned}
-  $$
-  
-  \item ICE functions for group $X_2 = 1$ and for group $X_2 = 0$. 
-    $$f_1(\xv_1) = \begin{cases}
-      - 8 \xv_1 + (0.2 + 16 \xv_1) \cdot 1 = 8 \xv_1 + 0.2 & \xv_2 = 1 \\
-      - 8 \xv_1 + (0.2 + 16 \xv_1) \cdot 0 = - 8 \xv_1 & \xv_2 = 0
-    \end{cases}$$
-    
-  The lightgreen dots correspond to group $X_2 = 1$, the lightblue dots to group $X_2 = 0$.
-  
-<<fig.height=3, fig.width=6, echo = FALSE, warning=FALSE,message=FALSE>>=
-library(mlr3)
-library(iml)
-library(ggplot2)
-set.seed(1000)
-n = 700
-x1 = runif(n, -1, 1)
-x2 = rbinom(n, size = 1, prob = 0.5)
-y = - 8*x1 + 0.2*x2 + ifelse(x2 == 1, 16*x1, 0) 
-dat = data.frame(x1, x2, y)
+\item 
+The table shows that the Gower distance tends to favor the observations sharing the same sex.
+Two units having the same sex but largely differ in their age are considered closer than two units having the same age but a different gender. A feature-wise distance of 1 is only achieved for age if it has extreme values (90), which is rarely the case, since 
+many other values could be achieved in between. While the only possible flip in sex from 
+female to male, always leads to the maximum feature-wise distance of 1.
+Outliers in age, could further aggrevate this issue.
 
-# fit linear model
-mod = lm(y~x1+x2+x1:x2, data = dat)
-pred = Predictor$new(mod, data = dat[-which(names(dat) == "y")], y = dat$y)
+\item 
+Possible weighting schemes: 
+\begin{itemize}
+  \item Weight categorical features by their number of categories, such that
+  changes in categorical features with many classes lead to lower distances. 
+  \item Weight categorical features with the average standard deviation of numerical features. If numerical features have a high standard deviation, categorical features
+  receive higher weights, and therefore dominate the distance calculation. 
+  For low standard deviations, numeric features dominate the distance calculation.\\
+  Source: Huang, Zhexue. 1998. “Extensions to the K-Means Algorithm for Clustering Large Data Sets with Categorical Values.” Data Mining and Knowledge Discovery 2 (3). Springer: 283–304.
+  \item Use exercise 3 of exercise sheet 1 to find a ranking of the nominal scaled features. 
+  Rank them and treat them as numerical features , where $R_j$ is equal to the maximum rank.
+  \item ...
+\end{itemize}
 
-# pdp
-pdp = FeatureEffect$new(pred, "x1", method = "pdp")
-p1 = pdp$plot()
-p1 = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
-  theme_bw() +
-  scale_x_continuous(name = expression(x[1])) + 
-  geom_point(data = dat[dat$x2 == 1,], aes(x = x1, y = y), color = "lightgreen", alpha = 0.5) + 
-  geom_point(data = dat[dat$x2 == 0,], aes(x = x1, y = y), color = "lightblue", alpha = 0.5)
-p1
-@
-  
 \end{enumerate}

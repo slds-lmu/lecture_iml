@@ -1,13 +1,11 @@
 The Gower distance is one of the most popular ways of measuring the similarity or 
-dissimilarity between observations in the presence of mixed-type variables. 
-The Gower distance can be defined as the complement to one of the Gowers similarity 
-coefficient: 
+dissimilarity between observations in the presence of mixed-type variables
 
-$ d_G(\mathbf{z}, \xv) =  \frac{1}{p}\sum_{j = 1}^{p} \delta_G(z_j, x_j) $ 
+$ d_G(\xv^{(1)}, \xv^{(2)}) =  \frac{1}{p}\sum_{j = 1}^{p} \delta_G(x_j^{(1)}, x_j^{(2)}) $ 
 $\textnormal{ with } \delta_G(z_j, x_j) =
 \begin{cases}
-\frac{1}{\widehat{R}_j}|z_j- x_j| & \text{if $x_j$ and $z_j$ are numerical} \\
-\mathbb{I}_{z_j \neq x_j} & \text{if $x_j$ and $z_j$ are categorical}	
+\frac{1}{\widehat{R}_j}|x_j^{(1)}- x_j^{(2)}| & \text{if $x_j$ is numerical} \\
+\mathbb{I}_{x_j^{(1)} \neq x_j^{(2)}} & \text{if $x_j$ is categorical}	
 \end{cases}.$
 
 Despite its popularity, the Gower distance has a major drawback. In the following
@@ -23,23 +21,23 @@ Derive the Gower distance $d_G$ and feature wise distance $\delta_G$ per row.
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{rrr|rrr|r}
+\begin{tabular}{ccc|ccc|c}
   \hline
- Sex1 & Sex2 & $\delta_G(Sex1, Sex2)$ & Age1 & Age2 & $\delta_G(Age1, Age2)$ & $d_G$ \\
+ Sex$^{(1)}$ & Sex$^{(2)}$ & $\delta_G(\textnormal{Sex}^{(1)}, \textnormal{Sex}^{(2)})$ & Age$^{(1)}$ & Age$^{(2)}$ & $\delta_G(\textnormal{Age}^{(1)}, \textnormal{Age}^{(2)})$ & $d_G(\xv^{(1)}, \xv^{(2)}$ \\
   \hline
- F & F & & 15 & 15 & \\
- F & F & & 15 & 58 & \\
- F & F & & 15 & 90 & \\
- F & M & & 15 & 15 & \\
- F & M & & 15 & 58 & \\
- F & M & & 15 & 90 & \\
+ F & F & & 15 & 15 & &\\
+ F & F & & 15 & 58 & &\\
+ F & F & & 15 & 90 & &\\
+ F & M & & 15 & 15 & &\\
+ F & M & & 15 & 58 & &\\
+ F & M & & 15 & 90 & &\\
    \hline
 \end{tabular}
 \label{tab:probgow}
 \end{table}
 
-\item Imagine that the observations (Sex1, Age1) is the data point we want to
-find counterfactuals for and imagine that all the other observations (Sex2, Age2)
+\item Imagine that the observations $\xv^{(1)}$ =(Sex$^{(1)}$, Age$^{(1)}$) = (F, 15) is the data point we want to
+find counterfactuals for and imagine that all the other observations (Sex$^{(2)}$, Age$^{(2)}$)
 are the counterfactual candidates.
 Given the fully filled out table, which counterfactuals would you prefer?
 Do you see a tendency towards a group of counterfactuals with respect to the
@@ -47,7 +45,7 @@ type of features?
 
 \item An enhancement of the Gower distance is to use individual weights $w_j$ for the
 different features $j \in \{1, ..., p\}$:
-$ d_G(\mathbf{z}, \xv) =  \frac{1}{p}\sum_{j = 1}^{p} w_j \delta_G(z_j, x_j) $
+$ d_G(\xv^{(1)}, \xv^{(2)}) =  \frac{1}{p}\sum_{j = 1}^{p} w_j \delta_G(x_j^{(1)}, x_j^{(2)}) $
 Think about possible weighting schemes to solve the above problem.
 
 \end{enumerate}
