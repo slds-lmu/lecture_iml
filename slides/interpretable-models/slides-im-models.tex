@@ -13,9 +13,10 @@
 
 \newcommand{\titlefigure}{figure/whitebox}
 \newcommand{\learninggoals}{
-\item What characteristics does an interpretable model have?
-\item Why should we use interpretable models at all?
-\item Examples for interpretable models.}
+\item What characteristics do different interpretable models have?
+\item How can we interpret these models?
+%\item Why should we use interpretable models at all?
+\item Examples for different interpretable models.}
 
 \lecturechapter{Interpretable Models}
 \lecture{Interpretable Machine Learning}
@@ -23,8 +24,9 @@
 
 
 
-\begin{frame}[c]{Linear Regression}
+\begin{frame}[c]{Linear Regression - Characteristics}
 
+%\textbf{Model formula}
     %$$\mathbb{E}_Y(Y \vert X) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p + \epsilon = X^T\mathbf{\beta} + \epsilon$$
 \begin{align*}
 y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
@@ -33,14 +35,24 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
 
     \begin{itemize}
         %\item $\mathbb{E}_Y(Y \vert X)$ expected value of target given features $X$
-        \item $y$ target / output
-        \item $\beta_i$ weight/coefficient of input feature $x_i$ $\leadsto$ model consists of $p+1$ weights $\beta_i$
-        \item $\epsilon$ remaining error (e.g., because of noise)
-        \item Model equation is additive and identical across entire input space
-        \pause
+        %\item $y$ target / output
+        \item $\beta_j$ weight of input feature $x_j$ $\leadsto$ model consists of $p+1$ weights $\beta_j$ (including intercept)
+        %\item $\epsilon$ remaining error (e.g., because of noise)
+        %\item Model equation is additive and identical across entire input space
+        %\pause
         \item Polynomial regression extends equation above by higher order main effects which have their own weights (e.g., $\beta_{x_j^2} \cdot x_j^2$) and interaction effects (e.g., 2-way interaction: $\beta_{x_i, x_j} \cdot x_i \cdot x_j$)
-        \item Note: For inference-based metrics (t-statistic, p-values, confidence intervals) to be valid, the error term needs to be normally distributed, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$\\
-$\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data
+    \end{itemize}
+   \vspace*{0.2cm} 
+    \textbf{Model assumptions}
+    \begin{itemize}
+    \item Predictions are a \textbf{linear} combination of features - model equation is additive% and identical across entire input space
+    \item error term and with that the target outcome given the features are \textbf{normally} distributed, i.e., 
+    \centerline{$\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$ with \textbf{constant variance}}\\
+    $\leadsto$ if violated, inference-based metrics (t-statistic, p-values, confidence intervals) are invalid
+    %\item Error terms are assumed to have a \textbf{constant variance} over the entire feature space %(homoscedasticity)
+    \item Further assumptions: Observations are independent of each other, features are fixed (free of measurement errors), no multicollinearity
+       % \item Note: For inference-based metrics (t-statistic, p-values, confidence intervals) to be valid, the error term needs to be normally distributed, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$\\
+%$\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data
         % \item Properties and assumptions:
         % \begin{itemize}
         %     \item linear
@@ -57,27 +69,28 @@ $\leadsto$ Restricts use of LMs in practice as distribution of error is a prior 
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}[c]{Interpretation of Linear Regression}
+\begin{frame}[c]{Linear Regression - Interpretation}
 
 \begin{align*}
 y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
  &= X^T\beta + \epsilon
 \end{align*}
 
-    Let's consider different feature types:
+    Weight interpretation (\textbf{feature effects}) depending on feature types:
     \begin{itemize}
-        \item Numerical: Increase of numerical value will lead to $\beta_i$ times increased output
-        \item Binary: Either weight $\beta_i$ is active or not (multiplication with 1 or 0).
-        \item Categorical: One-hot-encoding of $L-1$ new features for $L$ categories (dummy encoding)
+        \item Numerical: Increasing feature value of $x_j$ by one unit changes predicted outcome by $\beta_j$ c.p.
+        %\item Binary: Either weight $\beta_j$ is active or not (multiplication with 1 or 0) where 0 is regarded as reference category.
+        \item Categorical: One-hot-encoding of $L-1$ new features for $L$ categories (dummy encoding). \\
+        $\leadsto$ Interpretation (for any of the L-1 categories): Predicted outcome changes for category $x_j$ compared to the reference category by $\beta_j$ c.p.
         \item Intercept $\beta_0$: Expected baseline prediction if all features are set to 0. %reflects expected features values if features were standardised (0-mean, 1-stdev)
         \item Note: For higher order or interaction effects, coefficients cannot be interpreted in isolation.
     \end{itemize}	
     \pause
-    Feature importance:
+    \textbf{Feature importance}:
     \begin{itemize}
-        \item t-statistic by the estimated weight scaled with its standard error\\ (i.e., less certain about the correct value)
+        \item absolute t-statistic value: estimated weight scaled with its standard error (i.e., how certain are we about the correct value?) -- high absolute t-values indicate that the feature is important
     \end{itemize}
-    $$t_{\beta_i} = \frac{\beta_i}{SE(\beta_i)} $$
+    $$t_{\beta_j} = \frac{\beta_j}{SE(\beta_j)} $$
 \end{frame}
 
 %------------------------------------------------------------------
@@ -105,189 +118,454 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{Linear Regression}
+\begin{frame}{Linear Regression - Example: Main Effects}
 
+\textbf{Bike rental dataset}: predict number of rented bikes depending on 4 numeric features and one categorical feature (season)
+\begin{footnotesize}
+$$
+\hat f = \hat \beta_0 + \hat \beta_1 \mathbbm{1}_{(seas = SPRING)} + \hat \beta_2 \mathbbm{1}_{(seas = SUMMER)} + \hat \beta_3 \mathbbm{1}_{(seas = FALL)} + \hat \beta_4 temp + \hat \beta_5 hum + \hat \beta_6 windspeed + \hat \beta_7 days\_since\_2011
+$$
+\end{footnotesize}
+\vspace*{-0.3cm}
 \begin{columns}[T]
-\begin{column}{0.55\textwidth}
-\tiny
-\verbatiminput{figure/lm_output.txt}
-\end{column}
-\begin{column}{0.45\textwidth}  %%<--- here
-  \includegraphics[width = \textwidth]{figure/lm_effect_plot.png}
+\begin{column}{0.52\textwidth}
+\begin{tiny}
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Weights & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & 3229 & 221 & 15 & 0.00 \\ 
+  seasonSPRING & 862 & 129 & 7 & 0.00 \\ 
+  seasonSUMMER & 42 & 170 & 0 & 0.81 \\ 
+  seasonFALL & 390 & 117 & 3 & 0.00 \\ 
+  temp & 120 & 7 & 17 & 0.00 \\ 
+  hum & -31 & 3 & -12 & 0.00 \\ 
+  windspeed & -57 & 7 & -8 & 0.00 \\ 
+  days\_since\_2011 & 5 & 0 & 27 & 0.00 \\ 
+   \hline
+\end{tabular}
+\end{table}
+\end{tiny}
+\begin{itemize}
+    \item \textbf{Interpretation categorical}: Number of bike rentals in spring increases by 862 compared to winter c.p.
+    \item \textbf{Interpretation numerical}: If the temperature increases by 1 degree Celsius, then the number of bike rentals increases by 120 c.p.
+\end{itemize}
+%\verbatiminput{figure/lm_output.txt}
+\end{column}\hfill
+\begin{column}{0.47\textwidth}  %%<--- here
+  \includegraphics[width = \textwidth]{slides/interpretable-models/figure/plot_lin_effect.pdf}
+  \begin{center}
+    Effect of $i$-th observation $= \beta_j x_j^{(i)}$\\
+    $\leadsto$ better comparability due to different scales
+  \end{center}
+   
 \end{column}
 \end{columns}
 \end{frame}
 
+
+\begin{frame}{Linear Regression - Example: Including Interactions}
+We add an interaction between temperature and season and visualize the marginal effect of temperature with (right) and without (left) interaction.
+\begin{columns}[T]
+\begin{column}{0.25\textwidth}
+\begin{tiny}
+\begin{table}[ht]
+\centering
+\begin{tabular}{rr}
+  \hline
+ & Weights \\ 
+  \hline
+(Intercept) & 3453.88 \\ 
+  seasonSPRING & 1317.00 \\ 
+  seasonSUMMER & 4894.10 \\ 
+  seasonFALL & -114.24 \\ 
+  temp & 160.46 \\ 
+  hum & -37.59 \\ 
+  windspeed & -61.88 \\ 
+  days\_since\_2011 & 4.85 \\ 
+  seasonSPRING:temp & -50.68 \\ 
+  seasonSUMMER:temp & -222.02 \\ 
+  seasonFALL:temp & 27.24 \\ 
+   \hline
+\end{tabular}
+\end{table}
+\end{tiny}
+\end{column}
+\begin{column}{0.7\textwidth}
+\includegraphics[width = \textwidth]{slides/interpretable-models/figure/lm_main_vs_interaction_effects.pdf}
+\end{column}
+\end{columns}
+\vfill
+\textbf{Interpretation}: If temperature increases by 1 degree Celsius, then number of bike rentals increases by 160 in winter and by 110 (160 + (-50)) in spring. In summer it is decreasing by -62 (160 + (-222)).\\\vspace*{0.2cm}
+\textbf{Note:} Value ranges of temperature differ depending on the season $\leadsto$ not acknowledged by LM
+\end{frame}
+
+
+\begin{frame}{Linear Regression - Example: Including Polynomials}
+We add a 2nd order polynomial for termperature to the main effect (left) and main \& interaction effect (right) model.
+\begin{columns}[T]
+\begin{column}{0.25\textwidth}
+\begin{tiny}
+\begin{table}[ht]
+\centering
+\begin{tabular}{rr}
+  \hline
+ & Weights \\ 
+  \hline
+(Intercept) & 3094.14 \\ 
+  seasonSPRING & 619.24 \\ 
+  seasonSUMMER & 284.57 \\ 
+  seasonFALL & 123.14 \\ 
+  hum & -36.38 \\ 
+  windspeed & -65.65 \\ 
+  days\_since\_2011 & 4.68 \\ 
+  poly(temp, 2)1 & 280.15 \\ 
+  poly(temp, 2)2 & -5.58 \\ 
+   \hline
+\end{tabular}
+\end{table}
+   Table: Weights for main effect model
+
+\end{tiny}
+
+\end{column}
+\begin{column}{0.7\textwidth}
+\includegraphics[width = \textwidth]{slides/interpretable-models/figure/poly_main_vs_interaction_effects.pdf}
+\end{column}
+\end{columns}
+\vfill
+\textbf{Interpretation}: Not linear anymore!\\ $\leadsto$ effect size depends on temperature value: $280.2 \cdot temp - 5.6 \cdot temp^2$\\
+$\leadsto$ the more non-linear and interaction effects are added the less interpretable becomes the model
+\end{frame}
+
+
+\begin{frame}{Sparse Linear Regression - LASSO}
+\begin{itemize}
+    \item Sparser models are more interpretable
+    \item LASSO adds an L1-norm penalization term ($\lambda||\beta||_1$) to the optimization problem
+    \item Aim: Feature selection (sparsity) and regularization of feature weights
+    \item The penalization parameter $\lambda$ needs to be chosen (e.g. by CV or depending on the number of features to keep)
+\end{itemize}
+
+
+$$
+min_{\beta} \left(\frac{1}{n} \sum_{i=1}^{n} (y^{(i)} - x^{(i)\top}\beta)^2 + \lambda||\beta||_1\right)
+$$
+\vspace*{0.2cm}\\
+\textbf{Example}
+\vspace*{-0.4cm}
+\begin{columns}
+\begin{column}{0.65\textwidth}
+\begin{itemize}
+    \item we penalize the main effect model with polynomial term for temp
+    \item $\lambda$ is chosen such that 5 features are selected
+    \item may be problematic for categorical features, polynomials and interactions $\leadsto$ group LASSO 
+\end{itemize}
+\end{column}
+\begin{column}{0.35\textwidth}
+\tiny
+\begin{table}[ht]
+\centering
+\begin{tabular}{rr}
+  \hline
+ & beta \\ 
+  \hline
+(Intercept) & 0.00 \\ 
+  seasonSPRING & 489.34 \\ 
+  seasonSUMMER & 0.00 \\ 
+  seasonFALL & 0.00 \\ 
+  hum & -19.44 \\ 
+  windspeed & -35.54 \\ 
+  days\_since\_2011 & 4.71 \\ 
+  poly(temp, 2, raw = TRUE)1 & 109.25 \\ 
+  poly(temp, 2, raw = TRUE)2 & 0.00 \\ 
+   \hline
+\end{tabular}
+\end{table}
+\end{column}
+\end{columns}
+
+\end{frame}
 %------------------------------------------------------------------
 %------------------------------------------------------------------
-	
-\begin{frame}{Logistic Regression}
+\begin{frame}{Generalized Linear Model (GLM) - Characteristics}
 
-    $$P(y = 1) =\frac{1}{1 + \exp(-( \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p ))} $$
-
+\textbf{Problem}: Target variable given the features are not normally distributed $\leadsto$ linear regression is not suitable
+\begin{itemize}
+    \item Target is categorical (e.g. medical diagnosis)
+    \item Target is a count variable (e.g. number of sold products)
+    \item time until an event occurs (e.g. time until death)
+\end{itemize}
+\medskip
+\textbf{Solution}: GLMs - extend LMs by allowing other distributions from the exponential family
+$$g(\mathrm{E}_Y (y\mid x)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p$$
+\vspace*{-0.4cm}
     \begin{itemize}
-        \item Probabilistic \alert{classification} model relates
-        \item Typically, we set the threshold to $0.5$ to predict 
+        \item Link function $g$ links weighted sum (linear predictor) to specified distribution
+        \item Link function and probability distribution need to be specified by the user
+        \item LM is a special case by choosing the identity function for $g$ and the Gaussian distribution
+        \item Interpretation depends on specified link function and distribution
+        \item Interactions can be manually added in the same way as in the LM
+    \end{itemize}
+    
+ %   \medskip
+ %   Non-Gaussian outputs via Generalized Linear Models (GLMs):
+    
+  %  \begin{itemize}
+   %     \item link function $g$ -- can be freely chosen
+    %    \item exponential family defining $\mathrm{E}_Y$ -- can be freely chosen
+     %   \item weighted sum $X^\top W$
+    %\end{itemize}
+    
+    %\medskip 
+    %\pause
+    %Interaction effects via feature engineering:
+    %\begin{itemize}
+    %    \item E.g., feature expansion: $\beta_{x_i,x_j} x_i \cdot x_j$
+    %\end{itemize}
+    
+\end{frame}
+ 	
+\begin{frame}{Logistic Regression - Characteristics}
+
+\begin{itemize}
+    \item Logistic regression models probabilities (between 0 and 1) for binary classification tasks 
+    \item It is a GLM with a Bernoulli distribution and a logit link function
+    \item Logistic regression formula:
+    $$P(y = 1) =\frac{1}{1 + \exp(-( \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p ))} $$
+    \item Typically, we set the threshold to $0.5$ to predict 
         \begin{itemize}
             \item Class 1 if $P(y=1) > 0.5$
             \item Class 0 if $P(y=1) \leq 0.5$
         \end{itemize}
+\end{itemize}
+    
+
+	
+
+\end{frame}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{frame}[c]{Logistic Regression - Interpretation}
+
+    
+    
+    
+    
+
+    \begin{itemize}
+        \item weights relate to formula in log odds - again linear in log odds
+        $$log\text{ }odds = \log \left(\frac{P(y = 1)}{P(y=0)}\right) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p  $$
+        \item Odds can be caulculated by 
+        $$odds = \left(\frac{P(y = 1)}{P(y=0)}\right) = \exp(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p)  $$
+        \item[$\leadsto$] change by one unit changes the odds ratio by a \alert{factor} of $\exp(\beta_J)$
+        $$odds\text{ }ratio = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_j (x_j+1) + \ldots + \beta_p x_p)}{\exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_j x_j + \ldots + \beta_p x_p)} = \exp{(\beta_j)} $$
+        \item Interpretation for different feature types is the same as for linear regression (however, linear interpretation only possible for log odds $\leadsto$ difficult to comprehend)
     \end{itemize}	
 
 \end{frame}
 
-%------------------------------------------------------------------
-%------------------------------------------------------------------
+\begin{frame}{Logistic Regression - Example}
 
-\begin{frame}[c]{Interpretation of Logistic Regression}
-
-    $$\log \left(\frac{P(y = 1)}{P(y=0)}\right) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p  $$
-
-    \begin{itemize}
-        \item weights relate to log odds-ratio
-        \item Again linear in log odds-ratio
-        \item[$\leadsto$] change by one unit changes the odds ratio by a \alert{factor} of $\exp(\beta_i)$.
-        \medskip
-        \pause
-        \item Interpretation for different feature types is the same as for linear regression
-    \end{itemize}	
-
-\end{frame}
-
-%------------------------------------------------------------------
-%------------------------------------------------------------------
-
-\begin{frame}{GLM and Interactions}
-
-    \begin{itemize}
-        \item Linear models are often too restrictive for many applications
-    \end{itemize}
-    
-    \medskip
-    Non-Gaussian outputs via Generalized Linear Models (GLMs):
-    $$g(\mathrm{E}_Y (y\mid x)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p$$
-    \begin{itemize}
-        \item link function $g$ -- can be freely chosen
-        \item exponential family defining $\mathrm{E}_Y$ -- can be freely chosen
-        \item weighted sum $X^\top W$
-    \end{itemize}
-    
-    \medskip 
-    \pause
-    Interaction effects via feature engineering:
-    \begin{itemize}
-        \item E.g., feature expansion: $\beta_{x_i,x_j} x_i \cdot x_j$
-    \end{itemize}
-    
-\end{frame}
-
-%------------------------------------------------------------------
-%------------------------------------------------------------------
-
-\begin{frame}{Generalized Additive Models (GAMs)}
-
-Non-Linear relations can be addressed by:
-    \begin{itemize}
-        \item feature transformations (e.g., exp or log)
-        \item Categorization of features (i.e., intervals / buckets of feature values)
-        \item GAMs:
-    \end{itemize}
-    
-    $$g(\mathrm{E}_Y (y\mid x)) = \beta_0 + f_1(x_1) + f_2(x_2) + \ldots + f_p(x_p)$$
-    
-    \begin{itemize}
-        \item instead of $\beta_i x_i$ use flexible functions $f_i(x_i)$ $\leadsto$ splines
-    \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------
-%------------------------------------------------------------------
-
-\begin{frame}{Decision Trees}
-
-\begin{columns}
-
-\begin{column}{0.3\textwidth}
-
-   \begin{tikzpicture}
-   \usetikzlibrary{arrows}
-    \usetikzlibrary{shapes}
-     \tikzset{treenode/.style={draw, circle, font=\small}}
-     \tikzset{line/.style={draw, thick}}
-     \node [treenode, draw=red] (a0) {$a_0$};
-     \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
-     \node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
-     
-     \node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
-     \node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
-     
-     \node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
-     \node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
-     
-     \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
-     \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
-     
-     \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};;
-     \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
-     
-          
-     \path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};;
-     \path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
-     
-   \end{tikzpicture}
-
-\end{column}
-
-\begin{column}{0.7\textwidth}
-
-Properties:
 \begin{itemize}
-    \item able to model non-linear effects
-    \item terminal nodes (aka leaf nodes) can have several observations and predicts the mean outcome over these
-    \item Applicable to regression and classification
+    \item Create a binary target variable for bike rental data (Class 1: high number of bike rentals - more than the 70\% quantile of given lables and Class 0: low to medium number of bike rentals)
+    \item Fit a logistic regression with Bernoulli distribution and logit link
 \end{itemize}
 
-Interpretation:
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\begin{table}[ht]
+\centering
+\tiny
+\begin{tabular}{rrrrr}
+  \hline
+ & Weights & Std. Error & z value & Pr($>$$|$z$|$) \\ 
+  \hline
+(Intercept) & -8.5 & 1.2 & -7.1 & 0.00 \\ 
+  seasonSPRING & 1.7 & 0.6 & 2.9 & 0.00 \\ 
+  seasonSUMMER & -0.9 & 0.8 & -1.1 & 0.26 \\ 
+  seasonFALL & -0.6 & 0.6 & -1.2 & 0.25 \\ 
+  temp & 0.3 & 0.0 & 7.4 & 0.00 \\ 
+  hum & -0.1 & 0.0 & -5.0 & 0.00 \\ 
+  windspeed & -0.1 & 0.0 & -3.0 & 0.00 \\ 
+  days\_since\_2011 & 0.0 & 0.0 & 11.6 & 0.00 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\textbf{Interpretation}
 \begin{itemize}
-    \item directly by following the tree (i.e., sequence of rules)
-    \item Feature importance by (scaled) score of much the splitting criterion was reduced compared to the parent
+    %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
+    \item If the temperature increases by 1 degree Celsius then the odds for high number of bike rentals increase by the factor $\exp (0.3) = 1.3$ c.p.
 \end{itemize}
-
 \end{column}
-
+\hfill
+\begin{column}{0.5\textwidth}
+\includegraphics[width = \textwidth]{slides/interpretable-models/figure/logistic_maginal_temp.pdf}
+\end{column}
 \end{columns}
 
 \end{frame}
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
 
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}[c]{Decision Rules}
+\begin{frame}{Generalized Additive Models (GAMs) - Characteristics}
 
-\texttt{IF COND$_1$ AND COND$_2$ AND ... THEN value}
+\textbf{Problem}: Relationship between features and the target variable is not linear $\leadsto$ standard linear regression is not suitable 
 
-\begin{itemize}
-    \item \texttt{COND$_i$} can be of the form \texttt{feature <op> value} where \texttt{<op>} can be for example $\{=, <, > \}$
-\end{itemize}
-
-\pause
 \medskip
+\textbf{Solution}: 
+ \begin{itemize}
+        \item feature transformations (e.g., exp or log)
+        \item Categorization of features (i.e., intervals / buckets of feature values)
+        \item GAMs:
+        $$g(\mathrm{E}_Y (y\mid x)) = \beta_0 + f_1(x_1) + f_2(x_2) + \ldots + f_p(x_p)$$
+    
+    \begin{itemize}
+        \item instead of $\beta_j x_j$ use flexible functions $f_j(x_j)$ $\leadsto$ splines
+        \item preserves additive structure of feature effects but does also allow nonlinear effects
+        \item smoothness parameter to control flexibility (prevent overfitting) needs to be tuned
+    \end{itemize}
+    \end{itemize}
+    
+    
 
-Properties:
-\begin{description}
-    \item{Support} Fraction of observations to support appliance of rule
-    \item{Accuracy} for predicting the correct class under the condition(s)
-\end{description}
-
-$\leadsto$ often trade-off between these two
-
-\pause
-\medskip
-
-$\leadsto$ many different ways to learn a set of rules (incl. a default rule if none of the rules are met)
+   
 
 \end{frame}
+
+
+\begin{frame}{Generalized Additive Models (GAMs) - Example}
+    \begin{itemize}
+    \item Fit a GAM with smooth splines for all four numeric features of bike rental data 
+\end{itemize}
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\begin{table}[ht]
+\centering
+\tiny
+\begin{tabular}{rrrrr}
+  \hline
+ & edf & Ref.df & F & p-value \\ 
+  \hline
+s(temp) & 5.8 & 7.0 & 57.2 & 0.00 \\ 
+  s(hum) & 4.0 & 5.1 & 68.0 & 0.00 \\ 
+  s(windspeed) & 1.7 & 2.1 & 50.1 & 0.00 \\ 
+  s(days\_since\_2011) & 8.3 & 8.8 & 154.4 & 0.00 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+\textbf{Interpretation}
+\begin{itemize}
+    %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
+    \item edf (effective degrees of freedom) represents complexity of the smooth
+    \item Interpretation needs to be done visually and relative to the average prediction\\
+    $\leadsto$ more flexibility and better model fit but less interpretability
+\end{itemize}
+\end{column}
+\hfill
+\begin{column}{0.5\textwidth}
+\includegraphics[width = \textwidth]{slides/interpretable-models/figure/gam_effects.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{frame}{Decision Trees - Characteristics \& Interpretation}
+
+\textbf{Problem}: Relationship between features and target are nonlinear or feature interactions are present
+
+\medskip
+\textbf{Solution}: Decision tree: Splitting data in different subsets depending on cutoff values in features
+$$
+\hat f(x) = \sum_{m=1}^M c_m \mathbbm{1}_{\{x \in \mathcal{R}_m\}}\text{ ,  where $\mathcal{R}_m$ is the $m$-th leaf node of the tree}
+$$
+
+\begin{itemize}
+    \item Determination of split point (CART): at split point that minimizes the variance of $y$ (regression) or the Gini index (classification)
+    \item Able to handle mixed feature space
+\end{itemize}
+
+
+\textbf{Interpretation}
+\begin{itemize}
+    \item Directly by following the tree (i.e., sequence of rules)
+    \item Feature importance by (scaled) score of how much the splitting criterion (e.g. variance) was reduced compared to the parent
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{Decision Trees - Example}
+\begin{itemize}
+    \item Fit a decision tree with tree depth of 3
+    \item E.g., the mean prediction for days the first 105 days since 2011 is 1798
+    \item The feature days\_since\_2011 shows the highest feature importance (explains most of the variance)
+\end{itemize}
+\begin{columns}[T]
+\begin{column}{0.4\textwidth}
+\begin{table}[ht]
+\centering
+\begin{tabular}{lr}
+  \hline
+Feature & Importance \\ 
+  \hline
+days\_since\_2011 & 68.03 \\ 
+  temp & 20.54 \\ 
+  season & 6.56 \\ 
+  hum & 3.58 \\ 
+  windspeed & 1.29 \\ 
+   \hline
+\end{tabular}
+\end{table}
+\end{column}
+\begin{column}{0.6\textwidth}
+  \includegraphics[width = \textwidth]{slides/interpretable-models/figure/tree.pdf} 
+\end{column}
+\end{columns}
+ 
+\end{frame}
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+%\begin{frame}[c]{Decision Rules}
+
+%\texttt{IF COND$_1$ AND COND$_2$ AND ... THEN value}
+
+%\begin{itemize}
+%    \item \texttt{COND$_i$} can be of the form \texttt{feature <op> value} where \texttt{<op>} can be for example $\{=, <, > \}$
+%\end{itemize}
+
+%\pause
+%\medskip
+
+%Properties:
+%\begin{description}
+%    \item{Support} Fraction of observations to support appliance of rule
+%    \item{Accuracy} for predicting the correct class under the condition(s)
+%\end{description}
+
+%$\leadsto$ often trade-off between these two
+
+%\pause
+%\medskip
+
+%$\leadsto$ many different ways to learn a set of rules (incl. a default rule if none of the rules are met)
+
+%\end{frame}
 
 %------------------------------------------------------------------
 %------------------------------------------------------------------
@@ -300,8 +578,10 @@ $\leadsto$ many different ways to learn a set of rules (incl. a default rule if 
     \item Allows for feature interactions and non-linearities
 \end{itemize}
 
+\textbf{Decision Rules}
+
 \textbf{NaiveBayes}
-$$P (C_k \mid x ) = \frac{1}{Z} P(C_k) \prod_{i=1}^{n} P(x_i \mid C_k) $$
+%$$P (C_k \mid x ) = \frac{1}{Z} P(C_k) \prod_{i=1}^{n} P(x_i \mid C_k) $$
 \begin{itemize}
     \item product of probabilities for a class on the value of each feature
     \item strong independence assumption
@@ -313,6 +593,8 @@ $$P (C_k \mid x ) = \frac{1}{Z} P(C_k) \prod_{i=1}^{n} P(x_i \mid C_k) $$
     \item (closely related to case-based reasoning)
     \item Average of of the outcome of neighbors -- local explanation
 \end{itemize}
+
+\textbf{Model-based Boosting}
 
 \end{frame}
 

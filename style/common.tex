@@ -1,4 +1,5 @@
-\usepackage[]{graphicx}\usepackage[]{color}
+\usepackage[]{graphicx}
+\usepackage[]{color}
 % maxwidth is the original width if it is less than linewidth
 % otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -11,6 +12,8 @@
 }
 \makeatother
 %\usepackage[fontsize=10.5pt]{scrextend}
+\definecolor{ggred}{rgb}{0.973, 0.463, 0.427}
+\definecolor{ggblue}{rgb}{0, 0.749, 0.769}
 \definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
 \newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
 \newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
@@ -118,7 +121,7 @@ shorten >=2pt,}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-interpretable.tex}
-\newcommand{\indep}{\perp!!!!\perp}
+\newcommand{\indep}{\perp}
 \newcommand{\Ind}{\mathcal{I}}
 
 %new environments
@@ -216,15 +219,24 @@ shorten >=2pt,}
 \renewcommand*{\footnotelayout}{\tiny}
 \renewcommand*{\thefootnote}{} %\fnsymbol{footnote}
 
+% https://tex.stackexchange.com/questions/638616/beamer-frametitle-always-uppercase-for-text-but-not-for-href-or-url
+\usepackage{textcase}
+
 % https://stackoverflow.com/questions/377301/is-there-a-latex-command-to-make-text-all-lower-caps
-\usepackage[overload]{textcase}
+%\usepackage[overload]{textcase}
 %\setbeamertemplate{frametitle}{\MakeTextUppercase{\insertframetitle}}
 %\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
-\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+
+\setbeamertemplate{frametitle}{\MakeTextUppercase{\insertframetitle}}
 \newcommand{\citebutton}[2]{%
-%\href{#2}{\footnotesize\color{black!60}[#1]}
-\resizebox{!}{9pt}{\beamergotobutton{\href{#2}{#1}}}% \MakeLowercase
+\NoCaseChange{\resizebox{!}{9pt}{\protect\beamergotobutton{\href{#2}{#1}}}}%
 }
+
+%\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+%\newcommand{\citebutton}[2]{%
+%\href{#2}{\footnotesize\color{black!60}[#1]}
+%\resizebox{!}{9pt}{\beamergotobutton{\lowercase{\href{#2}}{#1}}}% \MakeLowercase
+%}
 %\newcommand{\lit}[2]{\href{#2}{\footnotesize\color{black!60}[#1]}}
 
 \newcommand{\lit}[2]{\href{#2}{\footnotesize\color{black!60}[#1]}}

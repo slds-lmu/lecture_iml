@@ -11,14 +11,14 @@
 \newtcolorbox{BlueBox}[2][]{%
    enhanced,
    colback   = blue!5!white,
-   colframe  = blue!65!black, 
-   arc       = 1mm, 
-   outer arc = 1mm, 
+   colframe  = blue!65!black,
+   arc       = 1mm,
+   outer arc = 1mm,
    fonttitle = \Large\slshape\textbf,
-   center title, 
+   center title,
    title     = #2,
    #1}
-   
+
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
@@ -28,8 +28,8 @@
 
 \newcommand{\titlefigure}{figure/open_blackbox}
 \newcommand{\learninggoals}{
-\item Understand feature correlations and interactions
-\item What are general pitfalls of interpretation methods?}
+\item Feature dependencies and interactions
+\item General pitfalls of interpretation methods}
 
 \lecturechapter{General Pitfalls}
 \lecture{Interpretable Machine Learning}
@@ -109,45 +109,88 @@
 
 \begin{frame}{Correlation and Dependence}
 
-\textbf{Correlation:} Often Pearson correlation $\rho$ is meant, which only measures linear relationship %between pairs of features
+By \textbf{correlation} often Pearson's correlation is meant (measures only \textbf{linear relationship}) %between pairs of features
 
-\textbf{Example:} Scatterplot with multivariate distribution (contour lines) and their marginal densities
-\vspace{5pt}
-\begin{columns}[totalwidth=\textwidth]
+
+%\dfrac{s_{X_1 X_2}}{s_{X_1} \cdot s_{X_2}} \text{ with }
+
+% \begin{itemize}
+%     \item Sample covariance of $X_1$ and $X_2$:
+%     $s_{X_1 X_2} = \frac{1}{n-1}\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-\bar{x}_2)}$
+%     \item Sample standard deviation $s_{X_1}$ and $s_{X_2}$ of $X_1$ and $X_2$
+% \end{itemize}
+
+\begin{columns}[c, totalwidth=\textwidth]
 \begin{column}{0.5\linewidth}
-\centering
-$X_1$, $X_2 \sim N(0,1)$ with $\rho(X_1, X_2) = 0$
-
-\includegraphics[width = 0.7\textwidth]{figure/independent}
+\includegraphics[width = \textwidth]{figure/pearson_cor}
 \end{column}
 \begin{column}{0.5\linewidth}
-\centering
-$X_1$, $X_2 \sim N(0,1)$ with $\rho(X_1, X_2) = 0.8$
 
-\includegraphics[width = 0.7\textwidth]{figure/dependent}
+\centerline{$\rho(X_1, X_2) = \tfrac{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-\bar{x}_2)}}{\sqrt{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1)^2 \sum_{i=1}^{n}{(x_2^{(i)}-\bar{x}_2)^2 }}}} \in [-1, 1]$}
+
+\medskip
+
+Geometric interpretation of $\rho$:
+\begin{itemize}
+    \item Numerator is sum of rectangle's area with width $x_1^{(i)}-\bar{x}_1$ and height $x_2^{(i)}-\bar{x}_2$
+    \item Areas enter numerator with positive (\textbf{+}) or negative (\textbf{-}) sign, depending on point position
+    \item Denominator scales the sum to $ [-1, 1]$
+    %\item $\rho = 0$ if area of all rectangles cancels out\\
+    %$\leadsto$ $X_1, X_2$ uncorrelated
+\end{itemize}
 \end{column}
 \end{columns}
 
-% \hspace{40pt} $X_1$, $X_2 \sim N(0,1)$ with $\rho(X_1, X_2) = 0$ \hspace{20pt} $X_1$, $X_2 \sim N(0,1)$ with $\rho(X_1, X_2) = 0.8$
+\medskip
+\pause
+\begin{itemize}
+    \item $\rho = 0$ if area of rectangles of all points cancels out
+    $\leadsto$ $X_1, X_2$ uncorrelated
+    \item $\rho > 0$ if {\color{ggblue}positive areas} dominate {\color{ggred}negative areas} 
+    $\leadsto$ $X_1, X_2$ positive correlated
+    \item $\rho = 0$ if {\color{ggred}negative areas} dominate {\color{ggblue}positive areas} 
+    $\leadsto$ $X_1, X_2$ negative correlated
+\end{itemize}
+%\textbf{But:} Pearson's $\rho$ does not measure non-linear dependencies, e.g., $\rho = 0$ but dependent:
 
-% \centering
-% \includegraphics[width = 0.4\textwidth]{figure/independent}
-% \hspace{20pt}
-% \includegraphics[width = 0.4\textwidth]{figure/dependent}
-
-\textbf{But:} Pearson's $\rho$ does not measure non-linear dependencies, e.g., $\rho = 0$ but dependent:
-
-\centering
-\includegraphics[width = 0.6\textwidth, trim=0 0 0 190px, clip]{figure/dependence_2}
 \end{frame}
 
+
+
+\begin{frame}{Correlation and Dependence}
+
+Scatterplot with multivariate distribution (contour lines) and marginal density $X_1$, $X_2 \sim N(0,1)$ 
+
+\begin{center}
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+ $\rho(X_1, X_2) = 0$
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+ $\rho(X_1, X_2) = 0.8$
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+ $\rho(X_1, X_2) = -0.8$
+\end{minipage}
+\includegraphics[width = 0.9\textwidth]{figure/dnorm_correlation.pdf}
+\end{center}
+
+\pause
+
+Examples with Pearson's correlation $\rho = 0$ but non-linear dependencies:
+
+\centering
+\includegraphics[width = 0.65\textwidth, trim=0 0 0 190px, clip]{figure/dependence_2}
+\end{frame}
 
 
 \begin{frame}{Correlation and Dependence}
 \textbf{Dependence:} Describes general dependence structure of features (e.g., non-linear relationships)
 
 %\textbf{Definition:}
-\begin{itemize}
+\begin{itemize}[<+->]
 \item Definition: $X_j$, $X_k$ independent $\Leftrightarrow$ joint distribution is product of marginals:\\ \vspace{5pt}
 \centerline{$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$}
 \vspace{5pt}
@@ -157,25 +200,33 @@ $X_1$, $X_2 \sim N(0,1)$ with $\rho(X_1, X_2) = 0.8$
 \vspace{5pt}
 %$$\P(X_j|X_k) = \P(X_j) \hfill \text{(knowing $X_k$ does not tell us anything about $X_j$ and vice versa)}$$
 %\medskip
-\pause
-\only<2>{
-\textbf{Example:} Independent $\Rightarrow$ Conditional distributions at different vertical and horizontal slices (after normalizing area under curve to 1) match their marginal distributions
-\begin{columns}[c, totalwidth=\linewidth]
-\begin{column}{0.5\textwidth}
-\includegraphics[width=\textwidth]{slides/intro/figure/independent_slice.pdf}
+\item Measuring complex dependencies is difficult but different measures exist, e.g., \\
+$\leadsto$ Spearman correlation (measures monotonic dependencies via ranks) \\
+$\leadsto$ Information-theoretical measures like mutual information \\
+$\leadsto$ Kernel-based measures like Hilbert-Schmidt Independence Criterion (HSIC)
+% nice further reading https://jejjohnson.github.io/research_journal/appendix/similarity/hsic/
+\item \textbf{N.B.:} $X_j$, $X_k$ independent $\Rightarrow$ $\rho(X_j, X_k) = 0$ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  independent
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Correlation and Dependence}
+	
+\textbf{Example:}
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.49\linewidth}
+\includegraphics[width=\linewidth]{figure/independent_slice.pdf}
+Conditional distributions at different vertical and horizontal slices (after normalizing area to 1) match their marginal distributions
+\medskip
+
+$\Rightarrow$ $\P(X_1|X_2) = \P(X_1) \text{ and } \P(X_2|X_1) = \P(X_2)$
 \end{column}
-\begin{column}{0.5\textwidth}
-\includegraphics[width=\textwidth]{slides/intro/figure/dependent_slice.pdf}
+\hfill
+\begin{column}{0.49\linewidth}
+\includegraphics[width=\linewidth]{figure/dependent_slice.pdf}
+Conditional distributions do not match their marginal distributions
 \end{column}
 \end{columns}
-}
-
-\pause
-\item \textbf{N.B.:} $X_j$, $X_k$ independent $\Rightarrow$ $\rho(X_j, X_k) = 0$ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  independent
-%\item Auf einer slide eklären, visuell und mathematisch
-\item General dependence structure difficult to measure but many different measures exist, e.g., \\
-Spearman correlation (monotonic), mutual information, or Kernel-based measures (HSCI)
-\end{itemize}
 
 
 \end{frame}
@@ -184,21 +235,24 @@ Spearman correlation (monotonic), mutual information, or Kernel-based measures (
 
 \begin{frame}{Interpretations with Dependent Features}
 \begin{itemize}
-\item Many interpretation methods are based on 
-%rely on varying feature values and create
-artificially created data points \\
-$\leadsto$ Points can be out-of-distribution or located in low-density regions if features are dependent\\
-$\leadsto$ May produce biased explanations that rely on predictions where model will extrapolate\\
-\only<1>{\centering\includegraphics[width=0.8\textwidth]{figure/extrapolation}}
+
+\item Be clear about interpretation goal: Explain model or underlying relationship in data?
+%We need to differentiate between interpretations of a model or reality
+\\
+$\leadsto$ Latter might be distorted by modeling fallacies, 
+e.g., 
+%due to bad data quality, 
+under- and overfitting or extrapolation
+
 \pause
 \item Highly correlated features contain similar information \\
-$\leadsto$ May confuse model so that only one feature is used (even if it is a causally irrelevant one)
+$\leadsto$ Confuses model so that only one feature may be used (even if it is a causally irrelevant)
 %Some models might use only one correlated feature (even if it is causally not relevant)
 \\
 %Can confuse a model so that only one correlated feature is used (even if it is not relevant) \\
-$\leadsto$ Produced explanations can be misleading (may be true to the model but not true to the data) % generating process
+$\leadsto$ Produced explanations can be misleading (true to the model, but not to the data) % generating process
 \\
-$\leadsto$ Even for causally and equally relevant features, produced explanations can be very different
+$\leadsto$ Even for causally and equally relevant features, explanations can be very different
 %Even for two causally and equally relevant correlated features it is not guaranteed that their explanations will be similar
 % \pause
 % \item Assume two causally and equally relevant but highly correlated features \\
@@ -210,7 +264,7 @@ $\leadsto$ Even for causally and equally relevant features, produced explanation
 % \begin{tikzpicture}[remember picture,overlay,shift=(current page.center)] %opacity=.2,text opacity=1
 % \node[fill=white, opacity=1,text opacity=1] at (current page.center) {\includegraphics[width=0.6\textwidth]{figure/ridge_lasso}};
 % \end{tikzpicture}
-\pause 
+\pause
 
 % \only<3>{
 %  \begin{BlueBox}{Example}
@@ -225,24 +279,16 @@ $\leadsto$ Even for causally and equally relevant features, produced explanation
 % \end{BlueBox}
 % }
 
-\only<3>{\colorbox{blue!20}{\begin{columns}[c, totalwidth=\linewidth]
+%\only<3>{
+\colorbox{blue!20}{\begin{columns}[c, totalwidth=\linewidth]
 \begin{column}{0.5\linewidth}
 \includegraphics[trim=0px 110px 30px 0px, clip, width=\linewidth]{figure/ridge_lasso}
 \end{column}
 \begin{column}{0.5\linewidth}
 \includegraphics[trim=0px 0px 0px 115px, clip, width=\linewidth]{figure/ridge_lasso}
 \end{column}
-\end{columns}}}
-
-
-
-\pause
-
-\item Be clear about interpretation goal: Explaining the model or underlying relationship in data?
-%We need to differentiate between interpretations of a model or reality
-\\
-$\leadsto$ Beware of the latter which might be distorted by modeling fallacies, \\
-e.g., due to data quality, under- and overfitting, or model extrapolation
+\end{columns}}
+%}
 
 \end{itemize}
 \end{frame}
@@ -250,17 +296,30 @@ e.g., due to data quality, under- and overfitting, or model extrapolation
 
 
 \begin{frame}{Extrapolation}
+%\begin{center}
+\centerline{\includegraphics[width=0.8\textwidth]{figure/extrapolation}}
+%\end{center}
+
 \begin{itemize}
 %\itemsep1em
-\item Predictions in regions with no or few training points are subject to a high uncertainty\\
+\item Many interpretation methods are based on
+%rely on varying feature values and create
+artificially created data points \\
+$\leadsto$ Many of these points can lie in low-density regions if features are dependent\\
+$\leadsto$ Model predictions in such regions are subject to a high uncertainty\\ % in regions with no or few training data
+$\leadsto$ Explanations may be biased as they rely on predictions where model extrapolated\\
+\pause
+%\item 
 %\item Essentially, we are interested in the prediction uncertainty\\
-%, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty. 
-$\leadsto$ Models are rarely capable of quantifying prediction uncertainty
+%, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty.
+%$\leadsto$ Models are rarely able to quantify uncertainty of predictions %Models are rarely capable of quantifying prediction uncertainty
 \item There is no definition of when a model extrapolates and to what degree \\
-$\leadsto$ Severity of extrapolation depends on model, some extrapolate more than others %\\
+$\leadsto$ Severity of extrapolation depends on model, some extrapolate more than others \\
+$\leadsto$ Training density might serve as proxy to identify regions where extrapolation is likely \\
+\phantom{$\leadsto$} But: Density estimation in many dimensions is often infeasible
 %$\leadsto$ Some models might extrapolate more than others
-\item Density of training data might serve as proxy to identify regions where extrapolation is likely\\
-$\leadsto$ Density estimation in many dimensions is often infeasible
+%\item Density of training data might serve as proxy to identify regions where extrapolation is likely\\
+%$\leadsto$ Density estimation in many dimensions is often infeasible
 \end{itemize}
 
 \end{frame}
@@ -323,11 +382,11 @@ $\leadsto$ Density estimation in many dimensions is often infeasible
 %\itemsep2em
 \item While feature dependencies concern data distribution, feature interactions occur in structure of model or DGP (e.g., functional relationship between $X$ and $\fh(X)$ or $X$ and $f(X)$)\\
 $\leadsto$ Feature dependencies may lead to feature interactions in a model
-
+\pause
 %\item Although correlation concerns the data and interactions the model, they are often connected as correlations in the training data are identified by the learning algorithm.
 \item Number of potential interactions in a model increases exponentially with number of features \\
 $\leadsto$ Interactions are difficult to identify, especially if feature dependencies are also present
-
+\pause
 \item With interactions present, a feature's effect on the prediction depends on other features\\
 $\leadsto$
 $\fh(x) = x_1 x_2$ $\Rightarrow$ Effect of $x_1$ on $\fh$ depends on $x_2$ and vice versa
@@ -343,18 +402,18 @@ $\fh(x) = x_1 x_2$ $\Rightarrow$ Effect of $x_1$ on $\fh$ depends on $x_2$ and v
      \node [treenode, draw=red] (a0) {};
      \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {};
      \node [treenode, below=0.75cm of a0, xshift=1cm]  (a2) {};
-     
+
      %\node [treenode, below=0.75cm of a2, xshift=-1cm] (a3) {};
      %\node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {};
- 
+
      \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<3$};
      \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq3$};
-     
+
      \path (a1.south) -- +(0,0) -|  (a1.south) node [midway, below] {$f_1(x_1)$};
      \path (a2.south) -- +(0,0) -|  (a2.south) node [midway, below] {$f_1(x_1)$};
     %  \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_2<6$};;
     %  \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_2\geq6$};
-     
+
    \end{tikzpicture}\\
    No interaction
 \end{column}
@@ -369,25 +428,25 @@ $\fh(x) = x_1 x_2$ $\Rightarrow$ Effect of $x_1$ on $\fh$ depends on $x_2$ and v
      \node [treenode, draw=red] (a0) {};
      \node [treenode, below=0.75cm of a0, xshift=-1.5cm]  (a1) {};
      \node [treenode, below=0.75cm of a0, xshift=1.5cm]  (a2) {};
-     
+
      \node [treenode, below=0.75cm of a2, xshift=-0.75cm] (a3) {};
      \node [treenode, below=0.75cm of a2, xshift=0.75cm]  (a4) {};
-     
+
     \node [treenode, below=0.75cm of a1, xshift=-0.75cm] (a5) {};
     \node [treenode, below=0.75cm of a1, xshift=0.75cm]  (a6) {};
-     
+
      \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<3$};
      \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq3$};
-     
+
      \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_2<6$};;
      \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_2\geq6$};
-     
+
     \path [line] (a1.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_3<2$};;
     \path [line] (a1.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_3\geq2$};
-    
+
     %\path (a5.south) -- +(0,0) -|  (a5.south) node [midway, below] {$f_{1,3}(x_1,x_3)$};
     %\path (a6.south) -- +(0,0) -|  (a6.south) node [midway, below] {$f_{1,3}(x_1,x_3)$};
-     
+
     %\path (a3.south) -- +(0,0) -|  (a3.south) node [midway, below] {$f_{1,2}(x_1,x_2)$};
     %\path (a3.south) -- +(0,0) -|  (a4.south) node [midway, below] {$f_{1,2}(x_1,x_2)$};
     \path (a3) edge [bend right, draw=white] node [below] {$f_{1,2}(x_1,x_2)$} (a4);
@@ -405,42 +464,84 @@ No interactions: $x_2$ and $x_3$\phantom{,}
 \begin{frame}{Feature Interactions \citebutton{Friedman and Popescu (2008)}{https://doi.org/10.1214/07-AOAS148}}
 
 %A function $f(\xv)$ is said to exhibit an interaction between two of its variables $x_j$ and $x_k$ if the difference in the value of $f(\xv)$ as a result of changing the value of $x_j$ depends on the value of $x_k$. For numeric variables, this can be expressed as
-A function $f(\xv)$ contains an interaction between $x_j$ and $x_k$ if a difference in $f(\xv)$ values due to changes in $x_j$ will also depend on $x_k$, i.e.: %, for numeric features:
-$$\mathbb{E}_X \left[ \frac{\partial^2 f(\xv)}{\partial x_j \partial x_k} \right]^2 > 0$$
+\textbf{Definition:} A function $f(\xv)$ contains an interaction between $x_j$ and $x_k$ if a difference in $f(\xv)$-values due to changes in $x_j$ will also depend on $x_k$, i.e.: %, for numeric features:
+\medskip
+\centerline{$\mathbb{E} \left[ \frac{\partial^2 f(\xv)}{\partial x_j \partial x_k} \right]^2 > 0$}
+\medskip
 $\Rightarrow$ If $x_j$ and $x_k$ do no interact, $f(\xv)$ is a sum of two functions, each independent from $x_j$ and $x_k$:
 % $f_{-j}$ and $f_{-k}$ that do not depend on $x_j$ and $x_k$, respectively:
-$$f(\xv) = f_{-j}(x_1, \ldots, x_{j-1}, x_{j+1}, \ldots, x_p) + f_{-k}(x_1, \ldots, x_{k-1}, x_{k+1}, \ldots, x_p)$$
+
+\medskip
+
+\centerline{$f(\xv) = f_{-j}(x_1, \ldots, x_{j-1}, x_{j+1}, \ldots, x_p) + f_{-k}(x_1, \ldots, x_{k-1}, x_{k+1}, \ldots, x_p)$}
+
+\medskip\pause
+
 \begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.5\textwidth}
-Example:
+Example ($f(\xv)$ not separable):
+\medskip
+
+\centerline{$f(\xv) = x_1 + x_2 + x_1 \cdot x_2$}
+\medskip
+$\mathbb{E} \left[ \tfrac{\partial^2 (x_1 + x_2 + x_1 \cdot x_2)}{\partial x_1 \partial x_2} \right]^2 = \mathbb{E} \left[ \tfrac{\partial (1 + x_2)}{\partial x_2} \right]^2 = 1 > 0$\\
+\medskip
+$\Rightarrow$ interaction between $x_1$ and $x_2$ 
 \end{column}
+\pause
 \begin{column}{0.5\textwidth}
-Counterexample:
+Example ($f(\xv)$ separable):
+\setlength{\abovedisplayskip}{0pt}
+\setlength{\belowdisplayskip}{0pt}
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+\medskip
+\begin{align*}
+	f(\xv) &= x_1 + x_2 + \log(x_1 \cdot x_2)\\
+	       &= x_1 + x_2 + \log(x_1) + \log(x_2)\\
+	       &= f_1(x_1) + f_2(x_2), \text{ with }
+\end{align*}
+
+\medskip
+
+$f_1(x_1) = x_1 + \log(x_1)$ and $f_2(x_2) = x_2 + \log(x_2)$
+
+\medskip
+
+$\Rightarrow$ no interactions, also $\mathbb{E} \left[ \tfrac{\partial^2 f(\xv)}{\partial x_1 \partial x_2} \right]^2 = 0$
+\end{column} 
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Feature Interactions}
+
+\begin{columns}[c, totalwidth=\textwidth]
+\begin{column}{0.3\textwidth}
+Interaction:
+\begin{itemize}
+	\item Effect of $x_1$ on $f(\xv)$ varies for different $x_2$ values (and vice versa)
+	\item[$\Rightarrow$] Different slopes
+	%At different horizontal (blue) or vertical (black) slices
+	%Changing $x_1$-values by holding $x_2$-values fixed
+\end{itemize}
+
+\vspace{20pt}
+
+No interaction:
+\begin{itemize}
+	\item Effect of $x_1$ on $f(\xv)$ stays the same for different $x_2$ values (and vice versa)
+	\item[$\Rightarrow$] Parallel lines at different horizontal (blue) or vertical (black) slices
+\end{itemize}
+
+\end{column}
+\begin{column}{0.7\textwidth}
+	\includegraphics[width = \textwidth]{figure/interaction_separable}
 \end{column}
 \end{columns}
 
-Higher-order interactions:
-
-Shape of the prediction function for a two-way interaction:
-
-\begin{figure}
-\includegraphics[width = 0.5\textwidth]{figure/interaction}
-\end{figure}
 \end{frame}
-
-
-\begin{frame}{Feature Interactions \citebutton{Friedman and Popescu (2008)}{https://doi.org/10.1214/07-AOAS148}}
-
-
-Higher-order interactions:
-
-Shape of the prediction function for a two-way interaction:
-
-\begin{figure}
-\includegraphics[width = 0.5\textwidth]{figure/interaction}
-\end{figure}
-\end{frame}
-
 
 % \begin{frame}{Pitfalls of Interpretation Methods}
 % \begin{itemize}
@@ -461,22 +562,22 @@ Shape of the prediction function for a two-way interaction:
 
 \begin{frame}[t]{Pitfalls and Best Practices \citebutton{Molnar et. al (2021)}{https://arxiv.org/abs/2007.04131v2}}
 \begin{itemize}
-    \item \textbf{Proper training and evaluation}: 
+    \item \textbf{Proper training and evaluation}:
     To gain insights into data generating process, deployed model should at least generalize well to unseen data (garbage in, garbage out)
     %Model interpretation is only as good as the underlying model (garbage in, garbage out).
     \item \textbf{Avoid unnecessary complexity}: Prefer simple interpretable models and use them as baseline
     \item \textbf{Quantify uncertainty}: Interpretation methods are often (statistical) estimators \\
     $\leadsto$ Beware of uncertainty, we may need confidence intervals
     %To avoid interpretation of noise, include uncertainty estimates for the interpretations, e.g.,  confidence intervals for feature importance.
-    \item \textbf{Careful with causality}: 
+    \item \textbf{Careful with causality}:
      Do you want to understand the model or the nature of DGP?\\
      $\leadsto$ Your goal should guide the choice of interpretation method
      %Causal interpretation requires assumptions about relationships in the data and a corresponding model considerations (e.g., including confounders into the model).
     \item \textbf{Consider dependencies}: Some interpretation methods suffer when features are dependent\\
     $\leadsto$ Check presence of dependencies and use suitable methods
-    \item \textbf{Beware of simplifications}: 
+    \item \textbf{Beware of simplifications}:
     % Interpretation methods map complex models to low-dim. explanations
-    % Interpretation methods 
+    % Interpretation methods
     Mapping of complex models to low-dim. explanations\\
     $\leadsto$ Information loss, e.g., some interpretation methods hide interactions
 \end{itemize}

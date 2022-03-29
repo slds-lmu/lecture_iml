@@ -33,13 +33,23 @@ y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
 %\item A change in $x_1$ by $\Delta x_1$ results in a change in $y$ by $\Delta y = \Delta x_1 \cdot \beta_1$
 \item Default interpretations correspond to $\Delta x_1 = 1$, i.e., $\Delta y = \beta$
 \item All under "ceteris paribus", i.e., all remaining features are kept constant
-\item For polynomial models with higher-order or interaction terms, interpretations via single coefficients are not possible anymore:
-\begin{equation}
-y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1 \cdot x_2 + \epsilon
-\label{eq:poly_model}
-\end{equation}
-\item Marginal effect of feature $x_1$ varies across different values for feature $x_2$ (and vice versa)\\
-$\Rightarrow$ Interaction depends on values of an other feature
+\item For polynomial models with higher-order or interaction terms, interpretations via single coefficients are not possible anymore, e.g.:
+%\begin{equation*}
+
+\medskip
+
+\centerline{$y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1 \cdot x_2 + \epsilon$}
+
+\medskip
+
+%\label{eq:poly_model}
+%\end{equation*}
+\begin{itemize}
+%
+\item Marginal effect of feature $x_1$ varies across different values for feature $x_2$ (and vice versa)
+\item Interaction depends on values of an other feature
+%\item If $x_1$ changes, $y$ is affected by $\beta_1$ and $\beta_{1,2}$ 
+\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -65,15 +75,18 @@ $\Rightarrow$ Interaction depends on values of an other feature
 \begin{itemize}
 %\itemsep2em
 \item
-Derivative ME: Derivative of $f$ w.r.t. feature. Compute via numeric differentiation.
+Derivative ME: Derivative of $f$ w.r.t. feature. Compute via numeric differentiation
 $$dME_j(x) = \frac{\partial f(x)}{\partial x_j} \approx \frac{f(x + h) - f(x - h)}{2h}$$
-\item For model in Eq. (\ref{eq:poly_model}), the dME of $x_1$ is $dME_1(x) = 2\beta_1 x_1 +  \beta_{1, 2} x_2$
-\item Less known definition based on forward differences: Change in predicted outcome due to a change in feature value (e.g., increasing a feature $x_j$ by $h_j$). $\Rightarrow$ forward ME (fME):
+\item Less known definition based on forward differences: Change in predicted outcome due to a change in feature value (e.g., increasing a feature $x_j$ by $h_j$) $\Rightarrow$ forward ME (fME):
 \begin{equation*}
 fME_j(x, h_j) = f(x_1, \dots, x_j + h_j, \dots, x_p) - f(x)
 \end{equation*}
-\item For model in Eq. (\ref{eq:poly_model}), the fME of $x_1$ with step size $h_1 = 1$ is
+\item Example: For model equation $y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1 \cdot x_2 + \epsilon$
+\begin{itemize}
+\item dME of $x_1$ is $dME_1(x) = 2\beta_1 x_1 +  \beta_{1, 2} x_2$
+\item fME of $x_1$ with step size $h_1 = 1$ is
 $fME_1(x, h_1) = 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1$
+\end{itemize}
 \end{itemize}
 \end{frame}
 
