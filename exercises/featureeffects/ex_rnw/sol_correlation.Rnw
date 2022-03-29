@@ -15,16 +15,16 @@ d = data.frame(y, x1, x2)
 library(xtable)
 print(xtable(t(d), digits = 2))
 @
-  \begin{table}[h]
+ \begin{table}[ht]
 \centering
-\begin{tabular}{rrrrrrrrrrrr|rr}
-  \hline
- & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & $\sum_{i = 1}^n$ & $\frac{1}{n}\sum_{i = 1}^n$ \\ 
+\begin{tabular}{rrrrrrrrrrrr|r}
 \hline
-y & -7.90 & -6.08 & -3.74 & -1.18 & -1.23 & -0.55 & 0.05 & 0.88 & 4.74 & 2.93 & 2.55 & -9.53 & -0.87\\ 
-  x1 & -1.00 & -0.80 & -0.60 & -0.40 & -0.20 & 0.00 & 0.20 & 0.40 & 0.60 & 0.80 & 1.00 & 0 & 0\\ 
-  x2 & 0.95 & 0.65 & 0.40 & 0.07 & 0.06 & 0.02 & 0.02 & 0.14 & 0.34 & 0.60 & 0.98 & 4.23 & 0.38\\ 
-   \hline
+& 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & $\sum_{i = 1}^n$ \\ 
+\hline
+y & -7.90 & -6.08 & -3.74 & -1.18 & -1.23 & -0.55 & 0.05 & 0.88 & 4.74 & 2.93 & 2.55 & -9.53\\ 
+x1 & -1.00 & -0.80 & -0.60 & -0.40 & -0.20 & 0.00 & 0.20 & 0.40 & 0.60 & 0.80 & 1.00 & 0 \\ 
+x2 & 0.95 & 0.65 & 0.40 & 0.07 & 0.06 & 0.02 & 0.02 & 0.14 & 0.34 & 0.60 & 0.98 & 4.23 \\ 
+\hline
 \end{tabular}
 \end{table}
  
@@ -43,14 +43,15 @@ y & -7.90 & -6.08 & -3.74 & -1.18 & -1.23 & -0.55 & 0.05 & 0.88 & 4.74 & 2.93 & 
   
      $$ 
     \begin{aligned}
-  \rho(x_1, x_2) & = \frac{\sum_{i = 1}^n (x_1^{(i)} - \overline{x_1})(x_2^{(i)} - \overline{x_2})}{\sqrt{\sum_{i = 1}^n (x_1^{(i)} - \overline{x_1})} \sqrt{\sum_{i = 1}^n (x_2^{(i)} - \overline{x_2})}} \\
+  \rho(x_1, x_2) & = \frac{\sum_{i = 1}^n (x_1^{(i)} - \overline{x_1})(x_2^{(i)} - \overline{x_2})}{\sqrt{\sum_{i = 1}^n (x_1^{(i)} - \overline{x_1})^2} \sqrt{\sum_{i = 1}^n (x_2^{(i)} - \overline{x_2})^2}} \\
   & = \frac{-0.57 + -0.22 + -0.01 + 0.12 + -0.06 + 0 + -0.07 + -0.1 + -0.02 + 0.18 + 0.6}{2.41} = \frac{-0.03}{2.41} = -0.01
     \end{aligned}
   $$ 
   
   The Pearson correlation coefficient is close to 0 - reflecting that there is no \textbf{linear} relationship between $x_1$ and $x_2$.
   
-  \item  The scatter plot reveals that there is a strong non-linear/quadratic relationship between $x_1$ and $x_2$. 
+  \item  The scatter plot reveals that there is a strong non-linear/quadratic relationship between $x_1$ and $x_2$. The Pearson correlation coefficients is not suitable
+  for detecting non-linear relationships.
   
   \begin{center}
  <<fig.height=3, fig.width=4, echo = FALSE, warning=FALSE,message=FALSE,out.width='3in'>>=
@@ -66,9 +67,9 @@ ggplot(d, aes(x = x1, y = x2)) +
   \item 
   \begin{enumerate}
   \item 
-  Both PDP and the ALE plots show a strong linear effect of $x_1$, 
+  Both PDP and ALE plots show a strong linear effect of $x_1$, 
   where higher values of $x_1$ lead to higher values of predicted value.
-  The PDP and ALe plot of $x_2$ show a strong decreasing effect of $x_2$ on the prediction. 
+  The PDP and ALE plot of $x_2$ show a strong decreasing effect of $x_2$ on the prediction. 
   The PDP of $x_2$ shows a steep jump for large values of $x_2$, while 
   the ALE plot shows a strong linear effect over the whole value range of $x_2$.
   \item 
