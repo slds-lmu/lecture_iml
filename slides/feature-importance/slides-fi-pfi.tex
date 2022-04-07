@@ -201,20 +201,21 @@ As we calculate the feature importance for one feature at a time $|S| = 1$.}\par
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Permutation Feature Importance}
+\begin{vbframe}{Comments on PFI}
  \begin{itemize}
  \itemsep1em
-  \item Interpretation: PFI is the increase of the model error when the feature's information is destroyed.
-  \item Results can be unreliable due to random permutations. \\
-  $\Rightarrow$ Solution: Average results over multiple repetitions.
-  \item Permuting features despite correlation with other features can lead to unrealistic combinations of feature values (since under dependence $\P(x_j,x_{-j}) \neq \P(x_j) \P(x_{-j})$).
-  \item Feature importance automatically includes the importance of interaction effects with other features.
-  \item The interpretation strongly depends on whether training or test data is used.\\
+  \item Interpretation: PFI is the increase of model error when feature's information is destroyed
+  \item Results can be unreliable due to random permutations \\
+  $\Rightarrow$ Solution: Average results over multiple repetitions
+  \item Permuting features despite correlation with other features can lead to unrealistic combinations of feature values (since under dependence $\P(x_j,x_{-j}) \neq \P(x_j) \P(x_{-j})$)
+  \item PFI automatically includes importance of interaction effects with other features \\
+  $\Rightarrow$ Permutation also destroys information of interactions where permuted feature is involved
+  \item Interpretation of PFI depends on whether training or test data is used
  \end{itemize}
 \end{vbframe}
 
 %TODO: Simplify example
-\begin{vbframe}{Permutation Feature Importance: Extrapolation}
+\begin{vbframe}{Comments on PFI - Extrapolation}
  
  \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
 A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
@@ -232,7 +233,7 @@ $\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the fea
 
  \end{vbframe}
 
-\begin{vbframe}{Permutation Feature Importance: Interactions}
+\begin{vbframe}{Comments on PFI - Interactions}
 
 \textbf{Example:} Let $x_1, \dots, x_4$ be independently and uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$.\\
 A linear model is fit yielding $\fh(x) \approx x_1 x_2 + x_3$.\\
@@ -247,7 +248,7 @@ Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ j
 $\Rightarrow$ PFI does not fairly attribute the performance to the individual features.
 \end{vbframe}
 
-\begin{vbframe}{Permutation Feature Importance: Test versus Training data}
+\begin{vbframe}{Comments on PFI - Test vs. Training data}
 
 \textbf{Example:} $x_1, \dots, x_{20}, y$ are independently sampled from $\mathcal{U} (-10, 10)$. An \texttt{xgboost} model with default hyperparameters is fit on a small training set of $50$ observations. The model overfits heavily.\\
 
