@@ -111,7 +111,7 @@ ggsave("slides/interpretable-models/figure/poly_main_vs_interaction_effects.pdf"
 library("glmnet")
 
 # fit model with L1 regulizer
-X.d = model.matrix(y ~ season + hum + windspeed + days_since_2011 + poly(temp, 2, raw = TRUE), data = X)
+X.d = model.matrix(y ~ season + hum + windspeed + days_since_2011 + poly(temp, 2, raw = TRUE) - 1, data = X)
 l.mod = glmnet(X.d, y, intercept = TRUE)
 coef(l.mod)
 plot(l.mod,  xvar = "lambda", ylab="Weights")
@@ -123,9 +123,9 @@ extract.glmnet.effects = function(betas, best.index) {
 n.features = apply(l.mod$beta, 2, function(x){sum(x!=0)})
 
 # create effect table
-xtable(extract.glmnet.effects(l.mod$beta, max(which(n.features == 5))))
+xtable(extract.glmnet.effects(l.mod$beta, max(which(n.features == 4))))
 
-
+l.mod$beta
 
 
 ####################################################################################################
@@ -224,3 +224,26 @@ pfe = plotPEUni(cboost, "days_since_2011") + ylab("Contribution to prediction sc
 ggsave("slides/interpretable-models/figure/compboost_pfe.pdf", pfe, width = 7, height = 4)
 
 
+
+
+set.seed(31415)
+cboost = Compboost$new(data = dat, target = "y", learning_rate = 0.02,
+                       loss = LossQuadratic$new(), oob_fraction = 0.2)
+
+cboost$addBaselearner("temp", "linear", BaselearnerPolynomial)
+cboost$addBaselearner("hum", "linear", BaselearnerPolynomial)
+cboost$addBaselearner("windspeed", "linear", BaselearnerPolynomial)
+cboost$addBaselearner("days_since_2011", "linear", BaselearnerPolynomial)
+cboost$addBaselearner("season", "ridge", BaselearnerCategoricalRidge, df = 4)
+
+cboost$train(100L, trace = 100L)
+coefs = cboost$getEstimatedCoef()
+df = data.frame("Feature"=names(coefs), "Intercept" = NA, "Slope" = NA)
+for(i in 1:length(coefs)){
+  if(length(as.numeric(coefs[[i]])) > 1) df[i, 2:3] = as.numeric(coefs[[i]])
+  else df[i, 2] = as.numeric(coefs[[i]])
+}
+xtable(df)
+
+plot_base = plotBaselearnerTraces(cboost) + theme_bw()
+ggsave("slides/interpretable-models/figure/compboost_base_linear.pdf", plot_base, width = 5, height = 4)
