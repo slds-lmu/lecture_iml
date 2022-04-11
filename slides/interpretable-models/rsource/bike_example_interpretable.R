@@ -111,7 +111,7 @@ ggsave("slides/interpretable-models/figure/poly_main_vs_interaction_effects.pdf"
 library("glmnet")
 
 # fit model with L1 regulizer
-X.d = model.matrix(y ~ season + hum + windspeed + days_since_2011 + poly(temp, 2, raw = TRUE) - 1, data = X)
+X.d = model.matrix(y ~ season + hum + windspeed + days_since_2011 + poly(temp, 2, raw = TRUE), data = X)
 l.mod = glmnet(X.d, y, intercept = TRUE)
 coef(l.mod)
 plot(l.mod,  xvar = "lambda", ylab="Weights")
@@ -123,10 +123,11 @@ extract.glmnet.effects = function(betas, best.index) {
 n.features = apply(l.mod$beta, 2, function(x){sum(x!=0)})
 
 # create effect table
-xtable(extract.glmnet.effects(l.mod$beta, max(which(n.features == 4))))
+tab = extract.glmnet.effects(l.mod$beta, max(which(n.features == 5)))
 
-l.mod$beta
-
+# adjust intercept (stored in a0)
+tab$beta[1] = l.mod$a0[ max(which(n.features == 5))]
+xtable(tab)
 
 ####################################################################################################
 # LOGISTIC REGRESSION EXAMPLE
@@ -225,7 +226,7 @@ ggsave("slides/interpretable-models/figure/compboost_pfe.pdf", pfe, width = 7, h
 
 
 
-
+# Linear baselearner example
 set.seed(31415)
 cboost = Compboost$new(data = dat, target = "y", learning_rate = 0.02,
                        loss = LossQuadratic$new(), oob_fraction = 0.2)
@@ -246,4 +247,4 @@ for(i in 1:length(coefs)){
 xtable(df)
 
 plot_base = plotBaselearnerTraces(cboost) + theme_bw()
-ggsave("slides/interpretable-models/figure/compboost_base_linear.pdf", plot_base, width = 5, height = 4)
+ggsave("slides/interpretable-models/figure/compboost_base_linear.pdf", plot_base, width = 7, height = 4)
