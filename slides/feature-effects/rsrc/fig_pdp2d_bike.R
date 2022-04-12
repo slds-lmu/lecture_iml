@@ -13,6 +13,7 @@ pdp.2feature = FeatureEffect$new(pred.bike, feature = c("temp", "hum"), method =
 
 pdp2d_bike = pdp.2feature$plot() +
   geom_point(data = bike, mapping = aes(x = temp, y = hum), alpha = 0.5) +
-  ylab("Humidity") + xlab("Temperature")
+  ylab("Humidity") + xlab("Temperature") + 
+  scale_fill_viridis_b()
 
 ggsave("slides/feature-effects/figure/pdp2d_bike.pdf", height = 4, width = 6, pdp2d_bike)
