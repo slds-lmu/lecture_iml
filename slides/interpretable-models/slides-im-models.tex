@@ -282,15 +282,15 @@ $$
   \hline
  & beta \\ 
   \hline
-(Intercept) & 0.00 \\ 
+(Intercept) & 2665.50 \\ 
   seasonSPRING & 489.34 \\ 
   seasonSUMMER & 0.00 \\ 
   seasonFALL & 0.00 \\ 
   hum & -19.44 \\ 
   windspeed & -35.54 \\ 
   days\_since\_2011 & 4.71 \\ 
-  poly(temp, 2, raw = TRUE)1 & 109.25 \\ 
-  poly(temp, 2, raw = TRUE)2 & 0.00 \\ 
+  poly(temp, 2)1 & 109.25 \\ 
+  poly(temp, 2)2 & 0.00 \\ 
    \hline
 \end{tabular}
 \end{table}
@@ -512,7 +512,7 @@ $$
     \item Determination of split point (CART): at split point that minimizes the variance of $y$ (regression) or the Gini index (classification)
     \item Able to handle mixed feature space
 \end{itemize}
-
+\medskip
 \pause
 \textbf{Interpretation}
 \begin{itemize}
@@ -614,22 +614,23 @@ $$
 \end{frame}
 
 
-\begin{frame}{Model-Based Boosting - Characteristics}
+\begin{frame}{Model-Based Boosting - Characteristics \& Example}
 
 Simplest case: Use linear models as base learners on single features
 $$
-b_j(x_j, \theta) = x_j\theta \hspace*{0.2cm}\text{ for } j = 1,\ldots p
+b_j(x_j, \theta) = x_j\theta \hspace*{0.2cm}\text{ for } j = 1,\ldots p \hspace*{0.3cm} \leadsto \text{ordinary linear regression}
 $$
-$\leadsto$ Ordinary linear regression
+
 \begin{itemize}
 \item Converges to same solution as ML estimate
 \item Specifying loss function and link function according to exponential family leads to boosting which is equivalent to a (regularized) GLM
+\item Early stopping allows feature selection
 
 \end{itemize}
-
+\pause
 \begin{columns}[T]
 \begin{column}{0.4\textwidth}
-\footnotesize
+\scriptsize
   \begin{table}[ht]
 \centering
 \begin{tabular}{rlrr}
@@ -643,9 +644,13 @@ days\_since\_2011\_linear & -1188.81 & 3.23 \\
    \hline
 \end{tabular}
 \end{table}
+\begin{itemize}
+    \item Linear base learners for numeric features and categorical base learner for season
+    \item 3 base learners selected after 100 iterations
+\end{itemize}
 \end{column}
-\begin{column}{0.6\textwidth}
-  \includegraphics[width =0.9 \textwidth]{figure/compboost_base_linear.pdf} 
+\begin{column}{0.55\textwidth}
+  \includegraphics[width = .95 \textwidth]{figure/compboost_base_linear.pdf} 
 \end{column}
 \end{columns}
 \end{frame}
