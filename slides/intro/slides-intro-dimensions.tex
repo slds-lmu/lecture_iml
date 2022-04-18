@@ -17,9 +17,9 @@
 \newcommand{\titlefigure}{figure/open_blackbox}
 \newcommand{\learninggoals}{
 %\item What is interpretable machine learning (IML) and Explainable Artificial Intelligence (XAI)?
-\item Different types of explanations
 %: feature attribution vs. data attribution vs. counterfactual explanations
 \item Intrinsic vs. model-agnostic methods
+\item Different types of explanations
 \item Local vs. global methods
 \item Model or Learner explanations -- with or without refits
 }
@@ -244,11 +244,11 @@
 		\\
 		%Input: feature $\rightarrow$ Output: target
 		$\leadsto$ Vary feature values, inspect how model prediction, model variance or model error changes
-
+\pause
 	\item
 		\textbf{Data attribution:}
 		Identify training instances that are most responsible for a decision
-
+\pause
 	\item
 	   \textbf{Counterfactual explanations:}
 	   Identify smallest necessary change in feature values so that a desired outcome is predicted
@@ -271,7 +271,7 @@
 		\includegraphics[page=1, width=\textwidth]{figure/feature-effect}
 	\end{center}
 	\begin{itemize}
-		\item Methods: ICE, PD, ALE
+		\item Model-agnostic methods: ICE curves, PD plots $\hdots$
 		\item Pendant in linear models: Regression coefficient $\beta_j$
 	\end{itemize}
 \end{frame}
@@ -284,8 +284,8 @@
 	\end{center}
 	\begin{itemize}
 		%\itemsep1em
-		\item Methods: PFI, FANOVA
-		\item Pendant in linear models: t-statistic
+		\item Model-agnostic methods: PFI, $\hdots$
+		\item Pendant in linear models: t-statistic, p-value (significant effect)
 	\end{itemize}
 
 \end{frame}
@@ -311,7 +311,10 @@
 \end{frame}
 
 \begin{frame}{Explanation using Counterfactuals}
-    A counterfactual is small ``imperceptible'' change in $x$. What if a small difference $ |x - x'| \leq \epsilon$ to $x$ causes a large change in the model output ?
+    A counterfactual is small ``imperceptible'' change in $x$ causing a different prediction.\\
+    $\leadsto$ What if a small difference $ |x - x'| \leq \epsilon$ to $x$ causes a large change in the model output ?
+    
+    \textbf{Example} (loan application):
 	\begin{center}
 	\includegraphics[page=1, width=0.7\textwidth]{figure/counterfactual.pdf}
 	\end{center}
@@ -320,18 +323,18 @@
 
 
 \begin{frame}{Global vs. Local}
-Global interpretation methods explain model behavior for the entire input space by considering all available observations:
+Global interpretation methods explain the model behavior for the entire input space by considering all available observations:
 	\begin{itemize}
 		\item Permutation Feature Importance (PFI)
-		\item Partial Dependence (PD)
+		\item Partial Dependence (PD) plots
 		\item Functional ANOVA (FANOVA)
-		\item Accumulated Local Effects (ALE)
+		\item Accumulated Local Effect (ALE) plots
 		\item ...
 	\end{itemize}
 \bigskip
 Local interpretation methods explain the model behavior for single data instances:
 	\begin{itemize}
-		\item Individual Conditional Expectation (ICE)
+		\item Individual Conditional Expectation (ICE) curves
 		\item Local Interpretable Model-Agnostic Explanations (LIME)
 		\item Shapley values
 		\item ...
@@ -372,8 +375,8 @@ Local interpretation methods explain the model behavior for single data instance
 \begin{frame}{Fixed Model vs. Refits}
 	\begin{itemize}
 		\itemsep1em
-		\item Most methods we will discuss analyze a fixed, trained model (e.g., Partial dependence plot)
-		\item Some methods require refitting the model (e.g., PIMP)
+		\item Most methods we will discuss analyze a fixed, trained model (e.g., PD plots, PFI)
+		\item Some methods require refitting of the model (e.g., PIMP)
 		\item Trained model $\Rightarrow$ Model is the object of analysis
 		\item Refitting $\Rightarrow$ Learning process is the object of analysis
 		\item Advantage of refitting: It includes information about the variability in the learning process

@@ -13,12 +13,11 @@
 
 \newcommand{\titlefigure}{figure/whitebox}
 \newcommand{\learninggoals}{
-\item What characteristics do different interpretable models have?
-\item How can we interpret these models?
-%\item Why should we use interpretable models at all?
-\item Examples for different interpretable models.}
+\item Examples of popular interpretable models
+\item Properties of some interpretable models
+\item How can we interpret them?}
 
-\lecturechapter{Interpretable Models}
+\lecturechapter{Overview of Interpretable Models}
 \lecture{Interpretable Machine Learning}
 
 
@@ -36,23 +35,24 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
     \begin{itemize}
         %\item $\mathbb{E}_Y(Y \vert X)$ expected value of target given features $X$
         %\item $y$ target / output
-        \item $\beta_j$ weight of input feature $x_j$ $\leadsto$ model consists of $p+1$ weights $\beta_j$ (including intercept)
+        \item $\beta_j$: weight of input feature $x_j$ $\leadsto$ model consists of $p+1$ weights $\beta_j$ (including intercept $\beta_0$)
         %\item $\epsilon$ remaining error (e.g., because of noise)
         %\item Model equation is additive and identical across entire input space
         %\pause
-        \item Polynomial regression extends equation above by higher order main effects which have their own weights (e.g., $\beta_{x_j^2} \cdot x_j^2$) and interaction effects (e.g., 2-way interaction: $\beta_{x_i, x_j} \cdot x_i \cdot x_j$)
+        \item Polynomial regression extends equation above by \textbf{higher order main effects} which have their own weights (e.g., $\beta_{x_j^2} \cdot x_j^2$) and \textbf{interaction effects} (e.g., 2-way interaction: $\beta_{x_i, x_j} \cdot x_i \cdot x_j$)
     \end{itemize}
    \vspace*{0.2cm} 
    \pause
     \textbf{Model assumptions}
     \begin{itemize}
     \item Predictions are a \textbf{linear} combination of features - model equation is additive% and identical across entire input space
-    \item Error term and target outcome given the features are \textbf{normally} distributed, i.e., 
-    \centerline{$\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$ with \textbf{constant variance}}\\
+    \item Error term and target outcome given the features are \textbf{normally} distributed, i.e.,\\
+    \centerline{$\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$ with \textbf{constant variance} (homoscedastic)}
     $\leadsto$ if violated, inference-based metrics (t-statistic, p-values, confidence intervals) are invalid
     %\item Error terms are assumed to have a \textbf{constant variance} over the entire feature space %(homoscedasticity)
-    \item Further assumptions: Observations are independent of each other, features are fixed (free of measurement errors), no multicollinearity
-       % \item Note: For inference-based metrics (t-statistic, p-values, confidence intervals) to be valid, the error term needs to be normally distributed, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$\\
+    \item Further assumptions: Observations are independent of each other (i.e., no repeated measurements), features are fixed (free of measurement errors), no multicollinearity
+    % free of measurement error assumption: https://indigo.uic.edu/articles/thesis/Measurement_Error_in_Generalized_Linear_Models/17025971/1/files/31488719.pdf
+    % \item Note: For inference-based metrics (t-statistic, p-values, confidence intervals) to be valid, the error term needs to be normally distributed, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$\\
 %$\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data
         % \item Properties and assumptions:
         % \begin{itemize}
@@ -77,21 +77,27 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
  &= X^T\beta + \epsilon
 \end{align*}
 
-    Weight interpretation (\textbf{feature effects}) depending on feature types:
+    Interpretation of weights (\textbf{feature effects}) depend on type of feature:
     \begin{itemize}
-        \item Numerical: Increasing feature value of $x_j$ by one unit changes predicted outcome by $\beta_j$ c.p.
-        %\item Binary: Either weight $\beta_j$ is active or not (multiplication with 1 or 0) where 0 is regarded as reference category.
-        \item Categorical: One-hot-encoding of $L-1$ new features for $L$ categories (dummy encoding) \\
-        $\leadsto$ Interpretation (for any of the L-1 categories): Predicted outcome changes for category $x_j$ compared to the reference category by $\beta_j$ c.p.\pause
+        \item Numerical $x_j$: Increasing feature value of $x_j$ by one unit changes predicted outcome by $\beta_j$ c.p.
+        \pause
+        \item Binary $x_j$: Weight $\beta_j$ is active or not (multiplication with 1 or 0) where 0 is reference category
+        \item %Categorical: One-hot-encoding of $L-1$ new features for $L$ categories (dummy encoding) \\
+        Categorical $x_j$ with $L$ categories: Create one-hot-encoded features $x_{j,1}, \hdots, x_{j,L-1}$ for $L-1$ categories (each having its own weight), left out category is reference ($\hat =$ dummy encoding)\\
+        $\leadsto$ Interpretation:
+        For category $l$, prediction changes by $\beta_{j,l}$ compared to reference cat.,  c.p.\pause
+        % (for any of the $L-1$ categories):
+        %Predicted outcome changes for $l$-th category compared to the reference category by its weight $\beta_{j,l}$ c.p.\pause
+        %Predicted outcome changes for category $x_{j,l}$ compared to the reference category by $\beta_j$ c.p.\pause
         \item Intercept $\beta_0$: Expected baseline prediction if all features are set to 0 %reflects expected features values if features were standardised (0-mean, 1-stdev)
-        \item Note: For higher order or interaction effects, coefficients cannot be interpreted in isolation
+        \item Note: For higher order or interaction effects, weights cannot be interpreted in isolation
     \end{itemize}	
     \pause
     \textbf{Feature importance}:
     \begin{itemize}
-        \item Absolute t-statistic value: Estimated weight scaled with its standard error (i.e., how certain are we about the correct value?) -- high absolute t-values indicate that the feature is important
+        \item Absolute t-statistic value: Estimated weight scaled with its standard error (how certain are we about correct value) -- high absolute t-values indicate important (i.e. significant) features
     \end{itemize}
-    $$t_{\beta_j} = \frac{\beta_j}{SE(\beta_j)} $$
+    $$t_{\hat\beta_j} = \left| \tfrac{\hat\beta_j}{SE(\hat\beta_j)} \right|$$
 \end{frame}
 
 %------------------------------------------------------------------

@@ -12,7 +12,7 @@
 \begin{document}
 
 % TODO
-\newcommand{\titlefigure}{figure_man/molnar-shapplot.png}
+\newcommand{\titlefigure}{slides/shapley/figure_man/exSHAP.png}
 \newcommand{\learninggoals}{
 \item Get an intuition of additive feature attributions
 \item Understand the concept of Kernel SHAP
@@ -23,6 +23,96 @@
 \lecturechapter{SHAP (SHapley Additive exPlanation) Values}
 \lecture{Interpretable Machine Learning}
 
+\begin{vbframe}{Example}
+
+Given the following example from the bike sharing data set
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l rrrrr || r}
+  \hline
+  && temperature & humidity & windspeed & year & prediction\\ 
+  \hline
+ example $x_{ex}$ && 24.27 & 58.5 & 13.96 & 2011 & 6825 \\ 
+ \hline
+\end{tabular}
+\end{table}
+
+we are searching for Shapley values such that
+\begin{equation}
+\begin{array}{lllllcr}
+\phi_0 &+ \phi_{temp} &+ \phi_{hum} &+ \phi_{windspeed} &+ \phi_{yr} & = &\hat{y} \\
+4469 &+ 1809 &+ 450 &+ 241 &- 144 & = & 6825
+\end{array}
+\end{equation}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\columnwidth]{slides/shapley/figure_man/exSHAP.png}
+\end{figure}
+\end{vbframe}
+
+
+\begin{vbframe}{Coalition Mapping}
+We define a coalition $z^{\prime}$, by describing a function 
+
+$$
+h\left(z^{\prime}\right)=z \text { where } h:\{0,1\}^{M} \rightarrow \mathbb{R}^{p}
+$$
+\vspace{0.5cm}
+
+\begin{onlyenv}<1>
+$h_{x}$ represent a function that maps 1’s to the corresponding value from the instance x that we want to explain:. $h_{x}$ connects our coalition vector to the underlying data.
+\end{onlyenv}
+
+\begin{onlyenv}<2->
+\begin{tikzpicture}
+\centering
+
+\node<2> (tab1) {%
+  \begin{tabular}{l |cccc}
+  & temp & hum & windspeed & yr\\
+  \hline 
+  $x_{ex}$ & 24.7 & 58.5 & 13.96 & 2011\\
+  \\
+  \\
+  \end{tabular}};
+\node<3-> (tab1) {%
+  \begin{tabular}{l |cccc}
+  & temp & hum & windspeed & yr\\
+  \hline 
+  $x_{ex}$ & 24.7 & 58.5 & 13.96 & 2011\\
+  $z_{temp, yr}$ & 24.7 & $\varnothing$ & $\varnothing$ & 2011\\
+  $z_{yr}$ & $\varnothing$ & $\varnothing$ & $\varnothing$ & 2011\\
+  \end{tabular}};
+\node<2> [right=of tab1] (tab2) {%
+  \begin{tabular}{l |cccc}
+  & temp & hum & windspeed & yr\\
+  \hline 
+  $x^{\prime}$ & 1 & 1 & 1 & 1 \\
+  \\
+  \\
+  \end{tabular}};
+\node<3-> [right=of tab1] (tab2) {%
+  \begin{tabular}{l |cccc}
+  & temp & hum & windspeed & yr\\
+  \hline 
+  $x^{\prime}$ & 1 & 1 & 1 & 1 \\
+  $z^{\prime}_{temp, yr}$ & 1 & 0 & 0 & 1 \\
+  $z^{\prime}_{yr}$ & 0 & 0 & 0 & 1 \\
+  \end{tabular}};
+\draw<2->[->]
+(tab2.north) to[out=150,in=30] node[below]{$h(\cdot)$} (tab1.north) ;
+\node<2-> [below=of tab1] (eq) 
+  {$\begin{array}{lllllcr}
+\hat{y} & = & \phi_0 &+ \phi_{temp} &+ \phi_{hum} &+ \phi_{windspeed} &+ \phi_{yr}  \\
+6825 & = & 4469 &+ 1809 &+ 450 &+ 241 &- 144 
+\end{array}$};
+
+
+\end{tikzpicture}
+\end{onlyenv}
+\end{vbframe}
 
 \begin{vbframe}{Shapley Values in ML - A short Recap}
   
@@ -120,7 +210,7 @@ node[pos=0.5,below=15pt,black]{\textbf{Additive Feature Attribution}};
 \begin{itemize}
     \item Looks like a linear model?
     \item Let $z^{\prime} \in \{0, 1\}^M$ be the coalition vector, indicating if feature $j$ contributes to the prediction.
-    \item Let $h_{x}$ represent a function that maps 1’s to the corresponding value from the instance x that we want to explain: $h_{x}\left(z^{\prime}\right)=z \text { where } h_{x}:\{0,1\}^{M} \rightarrow \mathbb{R}^{p}$. $h_{x}$ connects our coalition vector to the underlying data.
+
 \end{itemize}
 
 \end{vbframe}
@@ -233,15 +323,6 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
  \begin{vbframe}{Linear Model and Coefficients}
 
  \end{vbframe}
- 
-\begin{vbframe}{Example}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.7\columnwidth]{slides/shapley/figure_man/molnar-shapplot.png}
-\end{figure}
-
-\end{vbframe}
 
 \begin{vbframe}{Properties}
 
