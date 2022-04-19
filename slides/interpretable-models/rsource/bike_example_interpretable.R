@@ -5,7 +5,7 @@ library(xtable)
 library(ggeffects)
 load("data/bike.RData")
 source("slides/interpretable-models/rsource/helper.R")
-
+theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 ####################################################################################################
 # LINEAR REGRESSION EXAMPLE
@@ -22,11 +22,11 @@ mod = lm(y ~ ., data = dat, x = TRUE)
 
 # Effect Table
 lm_summary = summary(mod)$coefficients
-xtable(lm_summary, digits = c(0,0,0,0,2))
+xtable(lm_summary, digits = c(1,1,1,1,2))
 
 # Effect Plot
 p_lin_effect = effect_plot(mod, dat) + scale_x_discrete("")
-ggsave("slides/interpretable-models/figure/plot_lin_effect.pdf", p_lin_effect, width = 5, height = 3)
+ggsave("slides/interpretable-models/figure/plot_lin_effect.pdf", p_lin_effect, width = 5, height = 1.75)
 
 
 
