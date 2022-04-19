@@ -1,6 +1,7 @@
 \documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
 
 \usepackage{../../style/lmu-lecture}
+\usepackage{siunitx}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -438,7 +439,10 @@ From Consistency the Shapley \textbf{Axioms of Linearity, Dummy and Symmetry} fo
 \begin{vbframe}{Tree SHAP}
 
 TreeSHAP is a fast model specific exact calculation of Shapley values for tree based models
+
+\begin{onlyenv}<1-3>
 \vspace{0.5cm}
+Consider following Tree:
 
 \textbf{Cases}
 Consider the following cases of feature subset S
@@ -450,7 +454,7 @@ Consider the following cases of feature subset S
     \end{onlyenv}
     \begin{onlyenv}<2>
     \item S is empty -
-    use the weighted average of predictions of all terminal nodes. \\
+    use the weighted average of predictions of all terminal nodes in the decision tree. \\
      
     \end{onlyenv}
     \begin{onlyenv}<3>
@@ -458,6 +462,21 @@ Consider the following cases of feature subset S
     ignore predictions of unreachable nodes \& average the predictions item from the remaining terminal nodes weighted by  sizes
     \end{onlyenv}
 \end{itemize}
+
+Given instance $x_{ey}$ and the displayed tree
+\begin{table}
+\begin{columns}[T]
+\begin{column}{0.3\textwidth}
+\centering
+\begin{tabular}{l |rrr}
+  \hline
+  & temp & year & $\fh$\\ 
+  \hline
+ $x_{ex}$ & 24.27 & 2011 & 6825 \\ 
+ \hline
+\end{tabular}
+\end{column}
+\begin{column}{0.7\textwidth}
 \begin{tikzpicture}[
     node/.style={%
       draw=blue,
@@ -468,10 +487,10 @@ Consider the following cases of feature subset S
   ]
 \centering
     \node [node, label=below:{n=10}] (A) {year $>$ 2011};
-    \path (A) ++(7:6cm) node [node, label=below:{n=5}] (B) {count = 3200};
-    \path (A) ++(-7:6cm) node [node, label=below:{n=5}] (C) {temp $>$ 30};
-    \path (C) ++(7:6cm) node [node, label=below:{n=3}] (D) {count = 6850};
-    \path (C) ++(-7:6cm) node [node, label=below:{n=2}] (E) {count = 5400};
+    \path (A) ++(7:3.8cm) node [node, label=below:{n=5}] (B) {count = 3200};
+    \path (A) ++(-7:3.8cm) node [node, label=below:{n=5}] (C) {temp $>$ 30};
+    \path (C) ++(14:3.8cm) node [node, label=below:{n=3}] (D) {count = 6850};
+    \path (C) ++(0:3.8cm) node [node, label=below:{n=2}] (E) {count = 5400};
     
 
     \draw (A) -- (B) node [left,pos=0.5] {no}(A);
@@ -480,35 +499,35 @@ Consider the following cases of feature subset S
     \draw (C) -- (E) node [right,pos=0.5] {yes}(A);
     
 \end{tikzpicture}
-Given instance 
-\begin{table}[h]
-\centering
-\begin{tabular}{l |rrr}
-  \hline
-  & temperature & year & prediction\\ 
-  \hline
- $x_{ex}$ & 24.27 & 2011 & 6825 \\ 
- \hline
-\end{tabular}
+\end{column}
+\end{columns}
 \end{table}
-\begin{onlyenv}<1>
-$$
-S = \varnothing \rightarrow \phi_0 = \frac{3200*5 + 6850*3 +5400*2}{10}= 3775
-$$
-\end{onlyenv}
-
 
 \begin{onlyenv}<1>
 $$
-z^{\prime}_1 = (0, 0) \rightarrow \phi_0 = \frac{3200*5 + 6850*3 +5400*2}{10}= 3775
+S = \varnothing \rightarrow z^{\prime} = (0, 0) \rightarrow \phi_0 = \frac{3200*5 + 6850*3 +5400*2}{10}= 3775
 $$
 \end{onlyenv}
 
 \begin{onlyenv}<2>
 $$
-S = \varnothing \rightarrow \phi_{year, temp}
+S = \{x_{temp}, x_{year}\} \rightarrow z^{\prime} = (1, 1)  \rightarrow \phi_{year, temp} = 6850
 $$
 \end{onlyenv}
+
+\begin{onlyenv}<3>
+$$
+S = \{x_{temp}\} \rightarrow z^{\prime} = (0, 1)  \rightarrow \phi_{\cdot, temp} = \frac{3200*5 + 3* 6850}{8} = 3625
+$$
+\end{onlyenv}
+\end{onlyenv}
+
+\begin{onlyenv}<4>
+\textbf{Complexity:}
+
+
+\end{onlyenv}
+
 
 \end{vbframe}
 
