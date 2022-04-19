@@ -127,50 +127,75 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
 
 \begin{frame}{Linear Regression - Example: Main Effects}
 
-\textbf{Bike rental dataset}: predict number of rented bikes depending on 4 numeric features and one categorical feature (season)
-\begin{footnotesize}
-$$
-\hat f = \hat \beta_0 + \hat \beta_1 \mathbbm{1}_{(seas = SPRING)} + \hat \beta_2 \mathbbm{1}_{(seas = SUMMER)} + \hat \beta_3 \mathbbm{1}_{(seas = FALL)} + \hat \beta_4 temp + \hat \beta_5 hum + \hat \beta_6 windspeed + \hat \beta_7 days\_since\_2011
-$$
-\end{footnotesize}
-\vspace*{-0.3cm}
-\pause
-\begin{columns}[T]
+\textbf{Bike data}: predict number of rented bikes using 4 numeric and 1 categorical feature (season)
+% \begin{footnotesize}
+% $$
+% \hat y = \hat \beta_0 + \hat \beta_1 \mathbbm{1}_{(seas = SPRING)} + \hat \beta_2 \mathbbm{1}_{(seas = SUMMER)} + \hat \beta_3 \mathbbm{1}_{(seas = FALL)} + \hat \beta_4 temp + \hat \beta_5 hum + \hat \beta_6 windspeed + \hat \beta_7 days\_since\_2011
+% $$
+% \end{footnotesize}
+\begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.52\textwidth}
+%\vspace*{-0.3cm}
+\begin{align*}
+\hat y = 
+& \hat \beta_0 + 
+\hat \beta_1 \mathbbm{1}_{x_{season} = SPRING} +
+\hat \beta_2 \mathbbm{1}_{x_{season} = SUMMER} +\\
+& 
+\hat \beta_3 \mathbbm{1}_{x_{season} = FALL} + 
+\hat \beta_4 x_{temp} + 
+\hat \beta_5 x_{hum} + \\
+& 
+\hat \beta_6 x_{windspeed} + 
+\hat \beta_7 x_{days\_since\_2011}
+\end{align*}
+\end{column}
+\begin{column}{0.47\textwidth}
+  \centering
 \begin{tiny}
 \begin{table}[ht]
-\centering
 \begin{tabular}{rrrrr}
   \hline
- & Weights & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\
+
   \hline
-(Intercept) & 3229 & 221 & 15 & 0.00 \\ 
-  seasonSPRING & 862 & 129 & 7 & 0.00 \\ 
-  seasonSUMMER & 42 & 170 & 0 & 0.81 \\ 
-  seasonFALL & 390 & 117 & 3 & 0.00 \\ 
-  temp & 120 & 7 & 17 & 0.00 \\ 
-  hum & -31 & 3 & -12 & 0.00 \\ 
-  windspeed & -57 & 7 & -8 & 0.00 \\ 
-  days\_since\_2011 & 5 & 0 & 27 & 0.00 \\ 
+(Intercept) & 3229.3 & 220.6 & 14.6 & 0.00 \\ 
+  seasonSPRING & 862.0 & 129.0 & 6.7 & 0.00 \\ 
+  seasonSUMMER & 41.6 & 170.2 & 0.2 & 0.81 \\ 
+  seasonFALL & 390.1 & 116.6 & 3.3 & 0.00 \\ 
+  temp & 120.5 & 7.3 & 16.5 & 0.00 \\ 
+  hum & -31.1 & 2.6 & -12.1 & 0.00 \\ 
+  windspeed & -56.9 & 7.1 & -8.0 & 0.00 \\ 
+  days\_since\_2011 & 4.9 & 0.2 & 26.9 & 0.00 \\
    \hline
 \end{tabular}
 \end{table}
 \end{tiny}
+\end{column}
+\end{columns}
+%\vspace*{-0.3cm}
 \pause
-\begin{itemize}
-    \item \textbf{Interpretation categorical}: Number of bike rentals in spring increases by 862 compared to winter (which is reference category) c.p.
-    \item \textbf{Interpretation numerical}: If the temperature increases by 1 degree Celsius, then the number of bike rentals increases by 120 c.p.
-\end{itemize}
-%\verbatiminput{figure/lm_output.txt}
-\end{column}\hfill
-\pause
-\begin{column}{0.47\textwidth}  %%<--- here
-  \includegraphics[width = \textwidth]{figure/plot_lin_effect.pdf}
+
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.47\textwidth}
+
+\includegraphics[width = \textwidth]{figure/plot_lin_effect.pdf}
   \begin{center}
    % Effect of $i$-th observation $= \beta_j x_j^{(i)}$\\
-    $\leadsto$ Better comparability due to different scales
+    Weights multiplied by actual feature value better comparable due to different scales
+    %$\leadsto$ Better comparability due to different scales
   \end{center}
-   
+%\pause
+%\verbatiminput{figure/lm_output.txt}
+\end{column}\hfill
+\begin{column}{0.52\textwidth}  %%<--- here
+
+\begin{itemize}
+    \item \textbf{Interpretation categorical}: Number of bike rentals in spring increases by 862 compared to winter (which is reference category) c.p.
+    \item \textbf{Interpretation numerical}: If the temperature increases by 1 degree Celsius, the number of bike rentals increases by 120.5 c.p.
+    \item \textbf{Interpretation intercept}:
+    If all feature values are 0 (i.e. season is winter), the expected number of bike rentals is 3229.3
+\end{itemize}
 \end{column}
 \end{columns}
 \end{frame}
