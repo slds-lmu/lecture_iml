@@ -2,8 +2,8 @@ library(dplyr)
 library(knitr)
 library(ggpubr)
 library(xtable)
-library("ggeffects")
-load("slides/interpretable-models/rsource/bike.RData")
+library(ggeffects)
+load("data/bike.RData")
 source("slides/interpretable-models/rsource/helper.R")
 
 
@@ -44,24 +44,24 @@ p = ggplot(pred, aes(x, predicted)) +
   geom_point(data = dat, aes(x = temp, y = y), alpha = 0.25) +
   geom_line(col = "blue", size = 1) +
   #geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1) +
-  labs(x = "Temperature in ?C", y = "Marginal Effect on \n 'number of bike rentals'") +
+  labs(x = "Temperature in °C", y = "Marginal Effect on \n 'number of bike rentals'") +
   theme(axis.text.y = element_text(angle = 90, vjust = 0, hjust = 0.5),
-        plot.title = element_text(hjust = 0.5)) +
+    plot.title = element_text(hjust = 0.5)) +
   theme_bw()
 ggsave("slides/interpretable-models/figure/main_effect_lm_temp.pdf", p, width = 4, height = 3)
 
 
 # create plot with comparison of only main effect and including interaction effects
-p1 = p + ggtitle("Main Effect") 
+p1 = p + ggtitle("Main Effect")
 
 pred = ggpredict(mod_int, terms = c("temp","season"))
 p2 = ggplot(pred, aes(x, predicted, colour = group)) +
   geom_point(data = dat, aes(x = temp, y = y, col = season), alpha = 0.25) +
   geom_line(size = 1) +
   #geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1) +
-  labs(x = "Temperature in ?C", y = "", col = "Season") +
+  labs(x = "Temperature in °C", y = "", col = "Season") +
   theme(axis.text.y = element_text(angle = 90, vjust = 0, hjust = 0.5),
-        plot.title = element_text(hjust = 0.5)) +
+    plot.title = element_text(hjust = 0.5)) +
   ggtitle("Main & Interaction Effects") +
   theme_bw()
 
@@ -82,9 +82,9 @@ p3 = ggplot(pred3, aes(x, predicted)) +
   geom_point(data = dat, aes(x = temp, y = y), alpha = 0.25) +
   geom_line(col = "blue", size = 1) +
   #geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1) +
-  labs(x = "Temperature in ?C", y = "", col = "Season") +
+  labs(x = "Temperature in °C", y = "", col = "Season") +
   theme(axis.text.y = element_text(angle = 90, vjust = 0, hjust = 0.5),
-        plot.title = element_text(hjust = 0.5)) +
+    plot.title = element_text(hjust = 0.5)) +
   ggtitle("Main Effect") +
   theme_bw()
 
@@ -94,9 +94,9 @@ p4 = ggplot(pred4, aes(x, predicted, colour = group)) +
   geom_point(data = dat, aes(x = temp, y = y, col = season), alpha = 0.25) +
   geom_line(size = 1) +
   #geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1) +
-  labs(x = "Temperature in ?C", y = "", col = "Season") +
+  labs(x = "Temperature in °C", y = "", col = "Season") +
   theme(axis.text.y = element_text(angle = 90, vjust = 0, hjust = 0.5),
-        plot.title = element_text(hjust = 0.5)) +
+    plot.title = element_text(hjust = 0.5)) +
   ggtitle("Main & Interaction Effects") +
   theme_bw()
 
@@ -151,9 +151,9 @@ p1 = ggplot(pred, aes(x, predicted)) +
   geom_point(data = dat, aes(x = temp, y = y), alpha = 0.25) +
   geom_line(col = "blue", size = 1) +
   geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1) +
-  labs(x = "Temperature in ?C", y = "Marginal Effect on \n 'Class 1: high number of bike rentals'") +
+  labs(x = "Temperature in °C", y = "Marginal Effect on \n 'Class 1: high number of bike rentals'") +
   theme(axis.text.y = element_text(angle = 90, vjust = 0, hjust = 0.5),
-        plot.title = element_text(hjust = 0.5))
+    plot.title = element_text(hjust = 0.5))
 ggsave("slides/interpretable-models/figure/logistic_maginal_temp.pdf", p1, width = 5, height = 3)
 
 
@@ -202,11 +202,11 @@ xtable(data.frame(tree$variable.importance/sum(tree$variable.importance)*100))
 #devtools::install_github("schalkdaniel/compboost")
 library(compboost)
 
-# fit compboost model with linear and centered splines for numeric features and categorical 
+# fit compboost model with linear and centered splines for numeric features and categorical
 # base learner for season
 set.seed(31415)
 cboost = Compboost$new(data = dat, target = "y", learning_rate = 0.02,
-                       loss = LossQuadratic$new(), oob_fraction = 0.2)
+  loss = LossQuadratic$new(), oob_fraction = 0.2)
 
 cboost$addComponents("temp", df = 4)
 cboost$addComponents("hum", df = 4)
@@ -229,7 +229,7 @@ ggsave("slides/interpretable-models/figure/compboost_pfe.pdf", pfe, width = 7, h
 # Linear baselearner example
 set.seed(31415)
 cboost = Compboost$new(data = dat, target = "y", learning_rate = 0.02,
-                       loss = LossQuadratic$new(), oob_fraction = 0.2)
+  loss = LossQuadratic$new(), oob_fraction = 0.2)
 
 cboost$addBaselearner("temp", "linear", BaselearnerPolynomial)
 cboost$addBaselearner("hum", "linear", BaselearnerPolynomial)
