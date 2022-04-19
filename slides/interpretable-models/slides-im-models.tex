@@ -156,7 +156,7 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
 \begin{table}[ht]
 \begin{tabular}{rrrrr}
   \hline
- & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\
+ & Weights & Std. Error & t value & Pr($>$$|$t$|$) \\
 
   \hline
 (Intercept) & 3229.3 & 220.6 & 14.6 & 0.00 \\ 
@@ -182,7 +182,7 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
 \includegraphics[width = \textwidth]{figure/plot_lin_effect.pdf}
   \begin{center}
    % Effect of $i$-th observation $= \beta_j x_j^{(i)}$\\
-    Weights multiplied by actual feature value better comparable due to different scales
+    Weights multiplied by actual feature value are better comparable due to different scales
     %$\leadsto$ Better comparability due to different scales
   \end{center}
 %\pause
@@ -194,7 +194,7 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
     \item \textbf{Interpretation categorical}: Number of bike rentals in spring increases by 862 compared to winter (which is reference category) c.p.
     \item \textbf{Interpretation numerical}: If the temperature increases by 1 degree Celsius, the number of bike rentals increases by 120.5 c.p.
     \item \textbf{Interpretation intercept}:
-    If all feature values are 0 (i.e. season is winter), the expected number of bike rentals is 3229.3
+    If all feature values are 0 (i.e., season is winter), the expected number of bike rentals is 3229.3
 \end{itemize}
 \end{column}
 \end{columns}
@@ -202,7 +202,7 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
 
 
 \begin{frame}{Linear Regression - Example: Including Interactions}
-\textbf{Update}: Add interaction between temperature and season and visualize marginal effect of temperature% with (right) and without (left) interaction.
+\textbf{Update}: Interaction between temperature and season affects marginal effect of temperature% with (right) and without (left) interaction.
 \begin{columns}[T]
 \begin{column}{0.25\textwidth}
 \begin{tiny}
@@ -212,17 +212,18 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
   \hline
  & Weights \\ 
   \hline
-(Intercept) & 3453.88 \\ 
-  seasonSPRING & 1317.00 \\ 
-  seasonSUMMER & 4894.10 \\ 
-  seasonFALL & -114.24 \\ 
-  temp & 160.46 \\ 
-  hum & -37.59 \\ 
-  windspeed & -61.88 \\ 
-  days\_since\_2011 & 4.85 \\ 
-  seasonSPRING:temp & -50.68 \\ 
-  seasonSUMMER:temp & -222.02 \\ 
-  seasonFALL:temp & 27.24 \\ 
+(Intercept) & 3453.9 \\ 
+  seasonSPRING & 1317.0 \\ 
+  seasonSUMMER & 4894.1 \\ 
+  seasonFALL & -114.2 \\ 
+  temp & 160.5 \\ 
+  hum & -37.6 \\ 
+  windspeed & -61.9 \\ 
+  days\_since\_2011 & 4.9 \\
+  \hline
+  seasonSPRING:temp & -50.7 \\ 
+  seasonSUMMER:temp & -222.0 \\ 
+  seasonFALL:temp & 27.2 \\ 
    \hline
 \end{tabular}
 \end{table}
@@ -234,13 +235,14 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
 \end{columns}
 \vfill
 \pause
-\textbf{Interpretation}: If temperature increases by 1 degree Celsius, then number of bike rentals increases by 160 in winter and by 110 (160 + (-50)) in spring. In summer it is decreasing by -62 (160 + (-222)).\\\vspace*{0.2cm}
-\textbf{Note:} Value ranges of temperature differ depending on the season $\leadsto$ not acknowledged by LM
+\textbf{Interpretation}: If \code{temp} increases by 1 $^{\circ}$C, the number of bike rentals increases by 160.5 in winter, by 109.8 (= 160.5 - 50.7) in spring, and decreases by -61.5 (= 160.5 - 222) in summer.\\\vspace*{0.2cm}
+\textbf{Note:} Temperature ranges (on x-axis) depend on season $\leadsto$ not acknowledged by LM.
+%Value ranges of temperature differ depending on the season $\leadsto$ not acknowledged by LM
 \end{frame}
 
 
 \begin{frame}{Linear Regression - Example: Including Polynomials}
-\textbf{Update}: Add 2nd order polynomial for temperature to main effect (left) and main \& interaction effect (right) model.
+\textbf{Update}: Add 2nd order polynomial for \code{temp} (left) and interaction with \code{season} (right).
 \begin{columns}[T]
 \begin{column}{0.25\textwidth}
 \begin{tiny}
@@ -250,15 +252,15 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
   \hline
  & Weights \\ 
   \hline
-(Intercept) & 3094.14 \\ 
-  seasonSPRING & 619.24 \\ 
-  seasonSUMMER & 284.57 \\ 
-  seasonFALL & 123.14 \\ 
-  hum & -36.38 \\ 
-  windspeed & -65.65 \\ 
-  days\_since\_2011 & 4.68 \\ 
-  poly(temp, 2)1 & 280.15 \\ 
-  poly(temp, 2)2 & -5.58 \\ 
+(Intercept) & 3094.1 \\ 
+  seasonSPRING & 619.2 \\ 
+  seasonSUMMER & 284.6 \\ 
+  seasonFALL & 123.1 \\ 
+  hum & -36.4 \\ 
+  windspeed & -65.7 \\ 
+  days\_since\_2011 & 4.7 \\ 
+  poly(temp, 2)1 & 280.2 \\ 
+  poly(temp, 2)2 & -5.6 \\ 
    \hline
 \end{tabular}
 \end{table}
@@ -274,7 +276,7 @@ y &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon \\
 \vfill
 \pause
 \textbf{Interpretation}: Not linear anymore!\\ 
-$\leadsto$ Effect size depends on temperature value: $280.2 \cdot temp - 5.6 \cdot temp^2$\\
+$\leadsto$ Effect size depends on temperature value: $280.2 \cdot x_{temp} - 5.6 \cdot x_{temp}^2$\\
 $\leadsto$ BUT: Needs to be manually specified!\\
 $\leadsto$ The more non-linear and interaction effects are added, the less interpretable becomes the model
 \end{frame}
@@ -282,27 +284,25 @@ $\leadsto$ The more non-linear and interaction effects are added, the less inter
 
 \begin{frame}{Sparse Linear Regression - LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
 \begin{itemize}
-    \item Sparser models are more interpretable
+    \item Sparser models (with fewer features) are more interpretable
     \item LASSO adds an L1-norm penalization term  ($\lambda||\beta||_1$) to the optimization problem
     \item Aim: Feature selection (sparsity) and regularization of feature weights
-    \item Penalization parameter $\lambda$ must be chosen (e.g. by CV %or depending on the number of features to keep
-    )
+    \item Penalization parameter $\lambda$ must be chosen (e.g., by CV) %or depending on the number of features to keep
 \end{itemize}
-
-
 $$
 min_{\beta} \bigg(\underbrace{\frac{1}{n} \sum_{i=1}^{n} (y^{(i)} - x^{(i)\top}\beta)^2}_\text{Least square estimate for LM} + \lambda||\beta||_1\bigg)
 $$
-\vspace*{0.2cm}\\
-\textbf{Example}
-\vspace*{-0.4cm}
+%\vspace*{0.2cm}\\
+%\vspace*{-0.4cm}
 \pause
-\begin{columns}
+\begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.65\textwidth}
+\textbf{Example}
 \begin{itemize}
-    \item Penalize main effect model with polynomial term for temp
-    \item $\lambda$ is chosen such that 5 features are selected
-    \item May be problematic for categorical features, polynomials and interactions $\leadsto$ group LASSO \lit{Yuan and Lin (2006)}{https://doi.org/10.1111/j.1467-9868.2005.00532.x}
+    \item Penalize model with main effects and interaction between \code{temp} and \code{season}
+    \item $\lambda$ is chosen such that 6 features are selected (not zero)
+    \item May be problematic for categorical features as only weights of single categories (due to dummy encoding) are selected out instead of the whole categorical feature\\ %, polynomials and interactions
+    $\leadsto$ group LASSO \lit{Yuan and Lin (2006)}{https://doi.org/10.1111/j.1467-9868.2005.00532.x}
 \end{itemize}
 \end{column}
 \begin{column}{0.35\textwidth}
@@ -311,20 +311,40 @@ $$
 \centering
 \begin{tabular}{rr}
   \hline
- & beta \\ 
+ & Weights \\ 
   \hline
-(Intercept) & 2665.50 \\ 
-  seasonSPRING & 489.34 \\ 
-  seasonSUMMER & 0.00 \\ 
-  seasonFALL & 0.00 \\ 
-  hum & -19.44 \\ 
-  windspeed & -35.54 \\ 
-  days\_since\_2011 & 4.71 \\ 
-  poly(temp, 2)1 & 109.25 \\ 
-  poly(temp, 2)2 & 0.00 \\ 
+(Intercept) & 3135.2 \\ 
+  seasonSPRING & 767.4 \\ 
+  seasonSUMMER & 0.0 \\ 
+  seasonFALL & 0.0 \\ 
+  temp & 116.7 \\ 
+  hum & -28.9 \\ 
+  windspeed & -50.5 \\ 
+  days\_since\_2011 & 4.8 \\ 
+  seasonSPRING:temp & 0.0 \\ 
+  seasonSUMMER:temp & 0.0 \\ 
+  seasonFALL:temp & 30.2 \\ 
    \hline
 \end{tabular}
 \end{table}
+% \begin{table}[ht]
+% \centering
+% \begin{tabular}{rr}
+%   \hline
+%  & Weights \\ 
+%   \hline
+% (Intercept) & 2665.50 \\ 
+%   seasonSPRING & 489.34 \\ 
+%   seasonSUMMER & 0.00 \\ 
+%   seasonFALL & 0.00 \\ 
+%   hum & -19.44 \\ 
+%   windspeed & -35.54 \\ 
+%   days\_since\_2011 & 4.71 \\ 
+%   poly(temp, 2)1 & 109.25 \\ 
+%   poly(temp, 2)2 & 0.00 \\ 
+%   \hline
+% \end{tabular}
+% \end{table}
 \end{column}
 \end{columns}
 
@@ -333,11 +353,11 @@ $$
 %------------------------------------------------------------------
 \begin{frame}{Generalized Linear Model (GLM) - Characteristics}
 
-\textbf{Problem}: Target variable given the features not normally distributed $\leadsto$ LM not suitable
+\textbf{Problem}: Target variable given the features not always normally distributed $\leadsto$ LM not suitable
 \begin{itemize}
-    \item Target is categorical (e.g. medical diagnosis)
-    \item Target is count variable (e.g. number of sold products)
-    \item Time until an event occurs (e.g. time until death)
+    \item Target is categorical (e.g., disease classification)
+    \item Target is count variable (e.g., number of sold products)
+    \item Time until an event occurs (e.g., time until death)
 \end{itemize}
 \medskip
 \pause
@@ -345,7 +365,7 @@ $$
 $$g(\mathrm{E}_Y (y\mid x)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p$$
 \vspace*{-0.4cm}
     \begin{itemize}
-        \item Link function $g$ links weighted sum (linear predictor) to specified distribution
+        \item Link function $g$ links weighted sum of features (linear predictor) to specified distribution
         \item Link function and probability distribution need to be specified by the user
         \item LM is a special case by choosing the identity function for $g$ and the Gaussian distribution
         \item Interpretation depends on specified link function and distribution
@@ -377,7 +397,7 @@ $$g(\mathrm{E}_Y (y\mid x)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \be
     \item GLM with Bernoulli distribution and logit link function
     \item Logistic regression formula:
     $$P(y = 1) =\frac{1}{1 + \exp(-( \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p ))} $$
-    \item Typically, we set the threshold to $0.5$ to predict 
+    \item Typically, we set the threshold to $0.5$ to predict classes, e.g.,
         \begin{itemize}
             \item Class 1 if $P(y=1) > 0.5$
             \item Class 0 if $P(y=1) \leq 0.5$
@@ -400,12 +420,12 @@ $$g(\mathrm{E}_Y (y\mid x)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \be
     
 
     \begin{itemize}
-        \item Weights relate to formula in log odds - again linear in log odds
+        \item Weights relate to formula in log odds, effects are again linear (but w.r.t. log odds)
         $$log\text{ }odds = \log \left(\frac{P(y = 1)}{P(y=0)}\right) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p  $$
         \pause
         \item Odds can be caulculated by 
         $$odds = \left(\frac{P(y = 1)}{P(y=0)}\right) = \exp(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p)  $$
-        \item[$\leadsto$] Change by one unit changes the odds ratio by a \alert{factor} of $\exp(\beta_J)$
+        \item[$\leadsto$] Changing $x_j$ by one unit, changes the odds ratio by a \alert{factor} of $\exp(\beta_J)$
         $$odds\text{ }ratio = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_j (x_j+1) + \ldots + \beta_p x_p)}{\exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_j x_j + \ldots + \beta_p x_p)} = \exp{(\beta_j)} $$
         \pause
         \item Interpretation for different feature types is the same as for linear regression (however, linear interpretation only possible for log odds $\leadsto$ difficult to comprehend)
@@ -517,7 +537,7 @@ s(temp) & 5.8 & 7.0 & 57.2 & 0.00 \\
     %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
     \item Edf (effective degrees of freedom) represents complexity of the smooth
     \item Interpretation needs to be done visually and relative to average prediction\\
-    $\leadsto$ more flexibility and better model fit but less interpretability
+    $\leadsto$ more flexibe and better model fit but less interpretable than single weights
 \end{itemize}
 \end{column}
 \hfill
@@ -536,19 +556,19 @@ s(temp) & 5.8 & 7.0 & 57.2 & 0.00 \\
 \pause
 \textbf{Solution}: Decision tree \lit{Breiman et al. (1984)}{https://doi.org/10.1201/9781315139470} -- Split data in different subsets depending on cutoff values in features 
 $$
-\hat f(x) = \sum_{m=1}^M c_m \mathbbm{1}_{\{x \in \mathcal{R}_m\}}\text{ ,  where $\mathcal{R}_m$ is the $m$-th leaf node of the tree}
+\hat f(x) = \sum_{m=1}^M c_m \mathbbm{1}_{\{x \in \mathcal{R}_m\}}\text{ ,  where $c_m$ is a constant and $\mathcal{R}_m$ the $m$-th leaf node of the tree}
 $$
 
 \begin{itemize}
-    \item Determination of split point (CART): at split point that minimizes the variance of $y$ (regression) or the Gini index (classification)
-    \item Able to handle mixed feature space
+    \item Finding best split point (CART): Greedy search for the point that minimizes the variance of $y$ (regression) or the Gini index (classification)
+    \item Able to handle mixed feature spaces and missing values
 \end{itemize}
 \medskip
 \pause
 \textbf{Interpretation}
 \begin{itemize}
-    \item Directly by following the tree (i.e., sequence of rules)
-    \item Feature importance by (scaled) score of how much splitting criterion (e.g. variance) is reduced compared to parent
+    \item Directly by following the tree structure (i.e., sequence of decision rules)
+    \item Feature importance by (scaled) score of how much splitting criterion (e.g. variance) is reduced compared to a parent node
 \end{itemize}
 
 
@@ -557,9 +577,9 @@ $$
 
 \begin{frame}{Decision Trees - Example}
 \begin{itemize}
-    \item Fit decision tree with tree depth of 3 on bike rental data
+    \item Fit decision tree with tree depth of 3 on bike data
     \item E.g., mean prediction for the first 105 days since 2011 is 1798
-    \item The feature days\_since\_2011 shows highest feature importance (explains most of variance)
+    \item Feature \code{days\_since\_2011} shows highest feature importance (explains most of variance)
 \end{itemize}
 \begin{columns}[T]
 \begin{column}{0.4\textwidth}
@@ -616,36 +636,39 @@ days\_since\_2011 & 68.03 \\
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}{Model-Based Boosting - Characteristics}
+\begin{frame}{Componentwise Gradient Boosting - Characteristics}
 
 \begin{itemize}
 %\setlength\itemsep{2em}
-\item
-Boosting iteratively combines weak base learners to create a powerful ensemble model
-\item
-Idea: Combine boosting with interpretable base learners (e.g., single feature LM) 
+\item<1-> Recall: Boosting iteratively combines weak base learners to create a powerful ensemble model
+\item<1->
+Idea: Boosting with gradient descent using interpretable base learners (e.g., use base learners with single features in each iteration $\leadsto$ coordinate gradient descent)
 %The resulting ensemble is also interpretable.
-\item
+%\pause
+\item<2->
 Two linear base learners $b_j(x, \theta)$ and $b_j(x, \theta^{\star})$ of the same type, but distinct parameter vectors $\theta$ and $\theta^{\star}$ can be combined in a base learner of the same type:
-$$
-b_j(x, \theta) + b_j(x, \theta^{\star}) = b_j(x, \theta + \theta^{\star})
-$$
-\item In each iteration, a selection of base learners is trained on pseudo residuals. The one with the best fit is added to the previously computed model:
+$$b_j(x, \theta) + b_j(x, \theta^{\star}) = b_j(x, \theta + \theta^{\star})$$
+%\pause
+\item<3-> In each iteration, a set of base learners is fitted on pseudo residuals. The one with the best fit is added to the previously computed model:
 \medskip
 \begin{align*}
-\widehat{f}^{[1]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) \\
-\widehat{f}^{[2]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) + \beta b_3(x_3, \theta^{[2]})\\
-\widehat{f}^{[3]}(x) &= f_0 + \beta b_3(x_3, \theta^{[1]}) + \beta b_3(x_3, \theta^{[2]}) + \beta b_1(x_1, \theta^{[3]}) \\
-&= f_0 + \beta \left(b_3(x_3, \theta^{[1]} + \theta^{[2]}) + b_1(x_1, \theta^{[3]})\right)
+\widehat{f}^{[1]}(x) &= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} \\
+\widehat{f}^{[2]}(x) &= \widehat{f}^{[1]}(x) + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} 
+%= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})}
+\\
+\widehat{f}^{[3]}(x) &= \widehat{f}^{[2]}(x) + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
+%= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
+= \hat{f}_0 + \nu \left(\textcolor{blue}{b_3(x_3, \theta^{[1]} + \theta^{[2]})} + \textcolor{orange}{b_1(x_1, \theta^{[3]})}\right) 
+\\
+&= \hat{f}_0 + \textcolor{blue}{\hat{f}_3(x_3)} + \textcolor{orange}{\hat{f}_1(x_1)}
 \end{align*}
-
-\item Final model has additive structure (as GAMs), where each component function is interpretable
+\item<3-> Final model has additive structure (as GAMs), where each component function is interpretable
 
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Model-Based Boosting - Characteristics \& Example}
+\begin{frame}{Componentwise Gradient Boosting - Example}
 
 Simplest case: Use linear models as base learners on single features
 $$
@@ -653,8 +676,10 @@ b_j(x_j, \theta) = x_j\theta \hspace*{0.2cm}\text{ for } j = 1,\ldots p \hspace*
 $$
 
 \begin{itemize}
-\item Converges to same solution as ML estimate
-\item Specifying loss function and link function according to exponential family leads to boosting which is equivalent to a (regularized) GLM
+\item Converges to same solution as least square estimate of LMs
+\item Specifying loss function and link function according to exponential family 
+%leads to boosting which 
+is equivalent to a (regularized) GLM
 \item Early stopping allows feature selection
 
 \end{itemize}
@@ -692,7 +717,7 @@ days\_since\_2011\_linear & -1188.81 & 3.23 \\
 
 
 
-\begin{frame}{Model-Based Boosting - Example \& Interpretation}
+\begin{frame}{Componentwise Gradient Boosting - Interpretation}
 
 \begin{itemize}
     \item Fit a model-based boosting model on bike rental data \lit{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}

@@ -523,9 +523,14 @@ $$
 \end{onlyenv}
 
 \begin{onlyenv}<4>
+\vspace{1.5cm}
 \textbf{Complexity:}
+\begin{itemize}
+    \item Complexity of exact KernelSHAP: $\mathcal{O}(TLD^2)$
+    \item Complexity of TreeSHAP: $\mathcal{O}(TL2M)$
+\end{itemize}
 
-
+T is the number of trees, L is the maximum number of leaves in any tree and D the maximal depth of any tree
 \end{onlyenv}
 
 
@@ -569,27 +574,33 @@ $$
 \begin{onlyenv}<1>
 \textbf{Advantages}
 
-Since SHAP computes Shapley values, all the advantages of Shapley values apply: SHAP has a solid theoretical foundation in game theory. The prediction is fairly distributed among the feature values. We get contrastive explanations that compare the prediction with the average prediction.
-
-SHAP connects LIME and Shapley values. This is very useful to better understand both methods. It also helps to unify the field of interpretable machine learning.
-
-SHAP has a fast implementation for tree-based models. I believe this was key to the popularity of SHAP, because the biggest barrier for adoption of Shapley values is the slow computation.
-
-The fast computation makes it possible to compute the many Shapley values needed for the global model interpretations. The global interpretation methods include feature importance, feature dependence, interactions, clustering and summary plots. With SHAP, global interpretations are consistent with the local explanations, since the Shapley values are the “atomic unit” of the global interpretations. If you use LIME for local explanations and partial dependence plots plus permutation feature importance for global explanations, you lack a common foundation.
+\begin{itemize}
+    \item All the advantages of Shapley values
+    \begin{itemize}
+        \item \textbf{solid theoretical foundation} in game theory
+        \item prediction is \textbf{fairly distributed} among the feature values
+        \item \textbf{contrastive explanations} that compare the prediction with the average prediction.
+    \end{itemize} 
+    \item unify the field of interpretable machine learning in the class of additive feature attribution methods
+    \item has a fast implementation for tree-based models
+    \item various global interpretation methods
+\end{itemize}
 \end{onlyenv}
 
 \begin{onlyenv}<2>
 \textbf{Disadvantages}
 
-KernelSHAP is slow. This makes KernelSHAP impractical to use when you want to compute Shapley values for many instances. Also all global SHAP methods such as SHAP feature importance require computing Shapley values for a lot of instances.
+\begin{itemize}
+    \item KernelSHAP is slow
+    \item KernelSHAP ignores feature dependence
+    \item TreeSHAP can produce unintuitive feature attributions
+    \item disadvantages of Shapley values also apply to SHAP:
+    \begin{itemize}
+        \item Shapley values can be misinterpreted and access to data is needed to compute them for new data
+    \end{itemize}
+    \item It is possible to create intentionally misleading interpretations with SHAP, which can hide biases
+\end{itemize}
 
-KernelSHAP ignores feature dependence. Most other permutation based interpretation methods have this problem. By replacing feature values with values from random instances, it is usually easier to randomly sample from the marginal distribution. However, if features are dependent, e.g. correlated, this leads to putting too much weight on unlikely data points. TreeSHAP solves this problem by explicitly modeling the conditional expected prediction.
-
-TreeSHAP can produce unintuitive feature attributions. While TreeSHAP solves the problem of extrapolating to unlikely data points, it does so by changing the value function and therefore slightly changes the game. TreeSHAP changes the value function by relying on the conditional expected prediction. With the change in the value function, features that have no influence on the prediction can get a TreeSHAP value different from zero.
-
-The disadvantages of Shapley values also apply to SHAP: Shapley values can be misinterpreted and access to data is needed to compute them for new data (except for TreeSHAP).
-
-It is possible to create intentionally misleading interpretations with SHAP, which can hide biases 72. If you are the data scientist creating the explanations, this is not an actual problem (it would even be an advantage if you are the evil data scientist who wants to create misleading explanations). For the receivers of a SHAP explanation, it is a disadvantage: they cannot be sure about the truthfulness of the explanation.
 
 \end{onlyenv}
 
