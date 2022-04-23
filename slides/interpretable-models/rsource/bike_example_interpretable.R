@@ -32,7 +32,7 @@ ggsave("slides/interpretable-models/figure/plot_lin_effect.pdf", p_lin_effect, w
 
 ### EXAMPLE WITH INTERACTIONS
 mod_int = lm(y ~ . + temp*season, data = dat, x = TRUE)
-xtable(data.frame(mod_int$coefficients))
+xtable(data.frame(mod_int$coefficients), digits = 1)
 
 
 # Comparison of effects of temperature without and with interaction
@@ -52,7 +52,7 @@ ggsave("slides/interpretable-models/figure/main_effect_lm_temp.pdf", p, width = 
 
 
 # create plot with comparison of only main effect and including interaction effects
-p1 = p + ggtitle("Main Effect")
+p1 = p + ggtitle("Main Effect") + xlim(-10,40) + ylim(0, 10000)
 
 pred = ggpredict(mod_int, terms = c("temp","season"))
 p2 = ggplot(pred, aes(x, predicted, colour = group)) +
@@ -63,9 +63,10 @@ p2 = ggplot(pred, aes(x, predicted, colour = group)) +
   theme(axis.text.y = element_text(angle = 90, vjust = 0, hjust = 0.5),
     plot.title = element_text(hjust = 0.5)) +
   ggtitle("Main & Interaction Effects") +
+  xlim(-10,40) + ylim(0, 10000) +
   theme_bw()
 
-p = ggarrange(p1,p2)
+p = ggarrange(p1,p2, widths = c(1, 1.2))
 ggsave("slides/interpretable-models/figure/lm_main_vs_interaction_effects.pdf", p, width = 8, height = 3)
 
 
@@ -74,7 +75,7 @@ ggsave("slides/interpretable-models/figure/lm_main_vs_interaction_effects.pdf", 
 mod_poly = lm(y ~ season + hum + windspeed + days_since_2011 + poly(temp, 2, raw = TRUE), data = dat)
 
 # create effect table
-xtable(data.frame(mod_poly$coefficients))
+xtable(data.frame(mod_poly$coefficients), digits = 1)
 
 # create plot with comparison of only main effect and including interaction effects
 pred3 = ggpredict(mod_poly, terms = c("temp"))
@@ -82,16 +83,16 @@ p3 = ggplot(pred3, aes(x, predicted)) +
   geom_point(data = dat, aes(x = temp, y = y), alpha = 0.25) +
   geom_line(col = "blue", size = 1) +
   #geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1) +
-  labs(x = "Temperature in °C", y = "", col = "Season") +
+  labs(x = "Temperature in °C", y = "Marginal Effect on \n 'number of bike rentals'", col = "Season") +
   theme(axis.text.y = element_text(angle = 90, vjust = 0, hjust = 0.5),
     plot.title = element_text(hjust = 0.5)) +
-  ggtitle("Main Effect") +
+  ggtitle("Main Effect") + xlim(-10,40) + ylim(0, 10000) +
   theme_bw()
 
 mod_poly_int = lm(y ~ season*temp + hum + windspeed + days_since_2011 + poly(temp, 2, raw = TRUE), data = dat)
 pred4 = ggpredict(mod_poly_int, terms = c("temp", "season"))
 p4 = ggplot(pred4, aes(x, predicted, colour = group)) +
-  geom_point(data = dat, aes(x = temp, y = y, col = season), alpha = 0.25) +
+  geom_point(data = dat, aes(x = temp, y = y, col = season), alpha = 0.25) + xlim(-10,40) + ylim(0, 10000) +
   geom_line(size = 1) +
   #geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1) +
   labs(x = "Temperature in °C", y = "", col = "Season") +
@@ -100,7 +101,7 @@ p4 = ggplot(pred4, aes(x, predicted, colour = group)) +
   ggtitle("Main & Interaction Effects") +
   theme_bw()
 
-p = ggarrange(p3,p4)
+p = ggarrange(p3,p4, widths = c(1, 1.2))
 ggsave("slides/interpretable-models/figure/poly_main_vs_interaction_effects.pdf", p, width = 8, height = 3)
 
 
@@ -111,7 +112,7 @@ ggsave("slides/interpretable-models/figure/poly_main_vs_interaction_effects.pdf"
 library("glmnet")
 
 # fit model with L1 regulizer
-X.d = model.matrix(y ~ season + hum + windspeed + days_since_2011 + poly(temp, 2, raw = TRUE), data = X)
+X.d = model.matrix(y ~ . + temp*season, data = X)
 l.mod = glmnet(X.d, y, intercept = TRUE)
 coef(l.mod)
 plot(l.mod,  xvar = "lambda", ylab="Weights")
@@ -123,11 +124,11 @@ extract.glmnet.effects = function(betas, best.index) {
 n.features = apply(l.mod$beta, 2, function(x){sum(x!=0)})
 
 # create effect table
-tab = extract.glmnet.effects(l.mod$beta, max(which(n.features == 5)))
+tab = extract.glmnet.effects(l.mod$beta, max(which(n.features == 6)))
 
 # adjust intercept (stored in a0)
-tab$beta[1] = l.mod$a0[ max(which(n.features == 5))]
-xtable(tab)
+tab$beta[1] = l.mod$a0[ max(which(n.features == 6))]
+xtable(tab, digits = 1)
 
 ####################################################################################################
 # LOGISTIC REGRESSION EXAMPLE
@@ -172,6 +173,7 @@ xtable(gam_summary, digits = c(0,1,1,1,2))
 
 # create effect plot
 pdf("slides/interpretable-models/figure/gam_effects.pdf", width = 6, height = 5)
+par(mar = c(4,4,1,1))
 plot(mod_gam, pages=1, shade = TRUE)
 dev.off()
 
@@ -199,14 +201,85 @@ xtable(data.frame(tree$variable.importance/sum(tree$variable.importance)*100))
 ####################################################################################################
 # COMPBOOST EXAMPLE
 ####################################################################################################
-#devtools::install_github("schalkdaniel/compboost")
+#remotes::install_github("schalkdaniel/compboost", "dev")
 library(compboost)
+
+# Linear baselearner example
+set.seed(31415)
+cboost = Compboost$new(data = dat, target = "y", learning_rate = 0.1, loss = LossQuadratic$new())
+
+cboost$addBaselearner("temp", "linear", BaselearnerPolynomial, intercept = T)
+cboost$addBaselearner("hum", "linear", BaselearnerPolynomial, intercept = T)
+cboost$addBaselearner("windspeed", "linear", BaselearnerPolynomial, intercept = T)
+cboost$addBaselearner("days_since_2011", "linear", BaselearnerPolynomial, intercept = T)
+cboost$addBaselearner("season", "ridge", BaselearnerCategoricalRidge, df = 4)
+# cboost$addIntercept()
+# cboost$addBaselearner("temp", "linear", BaselearnerPolynomial, intercept = FALSE)
+# cboost$addBaselearner("hum", "linear", BaselearnerPolynomial, intercept = FALSE)
+# cboost$addBaselearner("windspeed", "linear", BaselearnerPolynomial, intercept = FALSE)
+# cboost$addBaselearner("days_since_2011", "linear", BaselearnerPolynomial, intercept = FALSE)
+# cboost$addBaselearner("season", "ridge", BaselearnerCategoricalRidge, df = 4)
+
+library(data.table)
+cboost$train(20L, trace = 20L)
+coefs = cboost$getCoef()
+
+intercept = sapply(coefs, function(x) ifelse(length(x) <= 2, x[1], NA))
+slope = vapply(coefs, function(x) {
+  if(length(x) > 2) {
+    return(paste0(rownames(x), ": ", round(x, digits = 1), collapse = ", "))
+    #return(setNames(x[1:length(x)], rownames(x)))
+  } else {
+    if(length(x) == 2) {
+      return(as.character(round(x[2], digits = 1)))
+    } else {
+      return(NA_character_)
+    }
+  }}, character(1))
+
+df = data.frame(
+  "Feature" = gsub("_linear|_ridge","", names(coefs)),
+  "Intercept" = intercept,
+  "Weights" = slope)
+row.names(df) = df$Feature
+df$Feature = NULL
+xtable(df)
+
+
+
+cboost$train(1000L, trace = 1000L)
+coefs = cboost$getCoef()
+
+intercept = sapply(coefs, function(x) ifelse(length(x) <= 2, x[1], NA))
+slope = vapply(coefs, function(x) {
+  if(length(x) > 2) {
+    return(paste0(rownames(x), ": ", round(x, digits = 1), collapse = ", "))
+    #return(setNames(x[1:length(x)], rownames(x)))
+  } else {
+    if(length(x) == 2) {
+      return(as.character(round(x[2], digits = 1)))
+    } else {
+      return(NA_character_)
+    }
+  }}, character(1))
+
+df = data.frame(
+  "Feature" = gsub("_linear|_ridge","", names(coefs)),
+  "Intercept" = intercept,
+  "Weights" = slope)
+row.names(df) = df$Feature
+df$Feature = NULL
+xtable(df)
+
+
+plot_base = plotBaselearnerTraces(cboost) + theme_bw()
+ggsave("slides/interpretable-models/figure/compboost_base_linear.pdf", plot_base, width = 7, height = 3)
 
 # fit compboost model with linear and centered splines for numeric features and categorical
 # base learner for season
 set.seed(31415)
-cboost = Compboost$new(data = dat, target = "y", learning_rate = 0.02,
-  loss = LossQuadratic$new(), oob_fraction = 0.2)
+cboost = Compboost$new(data = dat, target = "y", learning_rate = 0.1,
+  loss = LossQuadratic$new())#, oob_fraction = 0.2)
 
 cboost$addComponents("temp", df = 4)
 cboost$addComponents("hum", df = 4)
@@ -214,37 +287,13 @@ cboost$addComponents("windspeed", df = 4)
 cboost$addComponents("days_since_2011", df = 4)
 cboost$addBaselearner("season", "ridge", BaselearnerCategoricalRidge, df = 4)
 
-cboost$train(500L, trace = 100L)
+cboost$train(1000L, trace = 1000L)
 
 # create feature importance plot
 fi = plotFeatureImportance(cboost) + theme_bw()
 ggsave("slides/interpretable-models/figure/compboost_pfi.pdf", fi, width = 6, height = 3.5)
 
 # create effect plot for days_since_2011
+#plotBaselearnerTraces(cboost, n_legend = 10) + theme_bw()
 pfe = plotPEUni(cboost, "days_since_2011") + ylab("Contribution to prediction scores") + theme_bw()
 ggsave("slides/interpretable-models/figure/compboost_pfe.pdf", pfe, width = 7, height = 4)
-
-
-
-# Linear baselearner example
-set.seed(31415)
-cboost = Compboost$new(data = dat, target = "y", learning_rate = 0.02,
-  loss = LossQuadratic$new(), oob_fraction = 0.2)
-
-cboost$addBaselearner("temp", "linear", BaselearnerPolynomial)
-cboost$addBaselearner("hum", "linear", BaselearnerPolynomial)
-cboost$addBaselearner("windspeed", "linear", BaselearnerPolynomial)
-cboost$addBaselearner("days_since_2011", "linear", BaselearnerPolynomial)
-cboost$addBaselearner("season", "ridge", BaselearnerCategoricalRidge, df = 4)
-
-cboost$train(100L, trace = 100L)
-coefs = cboost$getEstimatedCoef()
-df = data.frame("Feature"=names(coefs), "Intercept" = NA, "Slope" = NA)
-for(i in 1:length(coefs)){
-  if(length(as.numeric(coefs[[i]])) > 1) df[i, 2:3] = as.numeric(coefs[[i]])
-  else df[i, 2] = as.numeric(coefs[[i]])
-}
-xtable(df)
-
-plot_base = plotBaselearnerTraces(cboost) + theme_bw()
-ggsave("slides/interpretable-models/figure/compboost_base_linear.pdf", plot_base, width = 7, height = 4)
