@@ -35,6 +35,6 @@ dens = ggplot(data = bike) + geom_density(aes(x = cnt))
 
 plot = append(plot, list(dens), after = 0)
 
-res = ggarrange(plotlist = plot, common.legend = TRUE)
+res = ggarrange(plotlist = plot, common.legend = TRUE, legend = "right")
 
-ggsave("slides/intro/figure/intro_bike.pdf", res, width = 9, height = 6)
+ggsave("slides/intro/figure/intro_bike.pdf", res, width = 10, height = 5)
