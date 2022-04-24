@@ -13,46 +13,46 @@
 
 \newcommand{\titlefigure}{figure/feature-effect}
 \newcommand{\learninggoals}{
-\item Intro to feature effects
-\item ICE plots
+\item Global Feature Effects
+\item Local Feature Effects
 %\item Understand how to interpret ICE curves and PD plots
 }
 
-\lecturechapter{Feature Effects}
+\lecturechapter{Introduction to Feature Effects}
 \lecture{Interpretable Machine Learning}
 
-\begin{frame}{Feature Effects - Global View}
+% \begin{frame}{Feature Effects - Global View}
 
-%Here,
+% %Here,
 
-%Here, the marginal effect of a feature $x_j$ does not vary across observations and is quantified by its associated coefficient $\hat\beta_j$. %, which explains how a feature affects the model prediction.
+% %Here, the marginal effect of a feature $x_j$ does not vary across observations and is quantified by its associated coefficient $\hat\beta_j$. %, which explains how a feature affects the model prediction.
 
-%The $\hat\beta$-coefficients are constant across different observations.
-%It is sufficient to consider a feature's $\hat\beta$ coefficient as marginal effect as it provides an understanding how a feature affects the model prediction. % on average.
+% %The $\hat\beta$-coefficients are constant across different observations.
+% %It is sufficient to consider a feature's $\hat\beta$ coefficient as marginal effect as it provides an understanding how a feature affects the model prediction. % on average.
 
-%\lz
-% \textbf{Example}: %Visualizing the marginal effect of a LM (left) and a GAM (right) with a single feature (temperature) to predict the number of bike rentals.
-% Feature effect of LM (left) visualizes relationship of a single feature (here: temperature) on prediction (here: number of bike rentals) while ignoring all other features.
-% GAM (right) replaces linear terms $x_j\hat\beta_j$ of LM by non-linear functions $f_j(x_j)$ estimated via splines.
-%Marginal effects of a LM with features temperature (\texttt{temp}) and \texttt{season} to predict the number of bike rentals (\texttt{cnt}).
+% %\lz
+% % \textbf{Example}: %Visualizing the marginal effect of a LM (left) and a GAM (right) with a single feature (temperature) to predict the number of bike rentals.
+% % Feature effect of LM (left) visualizes relationship of a single feature (here: temperature) on prediction (here: number of bike rentals) while ignoring all other features.
+% % GAM (right) replaces linear terms $x_j\hat\beta_j$ of LM by non-linear functions $f_j(x_j)$ estimated via splines.
+% %Marginal effects of a LM with features temperature (\texttt{temp}) and \texttt{season} to predict the number of bike rentals (\texttt{cnt}).
 
-\centering
-%\includegraphics[width=0.75\textwidth, trim=0cm 0.56cm 0cm 0.08cm, clip]{figure_man/lm_main_effects}
+% \centering
+% %\includegraphics[width=0.75\textwidth, trim=0cm 0.56cm 0cm 0.08cm, clip]{figure_man/lm_main_effects}
 
-\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\phantom{\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}}
+% \includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\phantom{\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}}
 
-LM without interaction: $\hat\beta_j$ is linear effect of feature $x_j$ (applies globally to all observations):
-%the prediction of any observation $\xi$ is %can be expressed by %explained by its marginal feature effects
-%prediction of an observation $\xi$ can be explained by the individual main effects, e.g.:
-$$\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$$ % + \dots + x_p\hat\beta_p.$$
+% LM without interaction: $\hat\beta_j$ is linear effect of feature $x_j$ (applies globally to all observations):
+% %the prediction of any observation $\xi$ is %can be expressed by %explained by its marginal feature effects
+% %prediction of an observation $\xi$ can be explained by the individual main effects, e.g.:
+% $$\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$$ % + \dots + x_p\hat\beta_p.$$
 
-%\phantom{\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}}\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}
+% %\phantom{\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}}\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}
 
-% \begin{tabular}{c@{}c}
-%  \includegraphics[width=0.4\textwidth,trim=0cm 0.1cm 10.4cm 0cm,clip]{figure/lm_main_effects}\pause% 
-% &\includegraphics[width=0.4\textwidth,trim=10cm 0.1cm 0.4cm 0cm 0,clip]{figure/lm_main_effects}
-% \end{tabular}
-\end{frame}
+% % \begin{tabular}{c@{}c}
+% %  \includegraphics[width=0.4\textwidth,trim=0cm 0.1cm 10.4cm 0cm,clip]{figure/lm_main_effects}\pause% 
+% % &\includegraphics[width=0.4\textwidth,trim=10cm 0.1cm 0.4cm 0cm 0,clip]{figure/lm_main_effects}
+% % \end{tabular}
+% \end{frame}
 
 
 \begin{frame}{Feature Effects - Global View}
@@ -60,13 +60,26 @@ $$\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$$ % + \dots + x_p\hat\beta_p.$$
 \centering
 %\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\phantom{\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}}
 
-\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}
+\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\invisible<1>{\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}}
 
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.49\linewidth}
 LM without interaction: $\hat\beta_j$ is linear effect of feature $x_j$ (applies globally to all observations):
-$$\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$$% + \dots + x_p\hat\beta_p.$$
-
-GAM without interaction: $\hat{h}_j(x_j)$ is non-linear effect of feature $x_j$  (applies globally):
-$$\fh(\xv) = \hat\beta_0 + \hat{h}_j(x_1)$$% + \dots + \hat{h}_p(x_p).$$
+\begin{itemize}
+    \item Model equation: $\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$
+    \item Single value $\hat\beta_1$ describes global effect
+\end{itemize}
+%$$% + \dots + x_p\hat\beta_p.$$
+\end{column}\pause
+\begin{column}{0.49\linewidth}
+GAM without interaction: $\fh_j(x_j)$ is non-linear effect of feature $x_j$  (applies globally):
+\begin{itemize}
+    \item Model equation: $\fh(\xv) = \hat\beta_0 + \fh_j(x_1)$
+    \item Curve $\fh_1$ describes global effect
+\end{itemize}
+%$$% + \dots + \hat{h}_p(x_p).$$
+\end{column}
+\end{columns}
 
 \end{frame}
 
@@ -77,9 +90,10 @@ $$\fh(\xv) = \hat\beta_0 + \hat{h}_j(x_1)$$% + \dots + \hat{h}_p(x_p).$$
 
 \begin{itemize}
     \item Interactions: Feature effect is modified by other features and varies across observations \\ 
-    $\Rightarrow$ Example: effect of temperature varies across seasons
-    \item ML models estimate non-linear effects and interactions \\
-    $\Rightarrow$ Need for local feature effect methods
+    $\Rightarrow$ Effect of temperature varies across seasons\\
+    $\Rightarrow$ Multiple values / curves needed to describe global effect
+    \item ML models often model non-linear effects and complex interactions \\
+    $\Rightarrow$ Need for local feature effect methods, e.g., analyze effect for individual observations
 \end{itemize}
 
 
@@ -117,7 +131,7 @@ $$\fh(\xv) = \hat\beta_0 + \hat{h}_j(x_1)$$% + \dots + \hat{h}_p(x_p).$$
 \textbf{Feature effects} visualize or quantify marginal contribution of a feature of interest w.r.t. predictions %marginal contribution of a feature to the model \textbf{prediction}. % $\hat{y} = \fh(\xi[])$. effect (e.g., the average relationship) between a
 \begin{itemize}
 %\tightlist
-\item Methods: PD plots (global), ICE curves (local), ALE plots (global), AME (global)
+\item Methods: ICE curves (local curves), PD and ALE plots (global curves), AME (global value)
 \item Similar to regression coefficients (LMs) or Splines (GAMs)
 \end{itemize}
 
