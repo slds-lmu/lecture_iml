@@ -15,6 +15,7 @@ pdp = FeatureEffect$new(pred.bike, "hum", method = "pdp+ice", center.at = min(bi
 pmin = pdp$plot() + scale_x_continuous('Humidity in % (hum)') + scale_y_continuous('Predicted bike rentals')
 
 pres = p + ggtitle("ICE plot") +
-  pmin + ggtitle("c-ICE plot at x* = min(hum)") #+
+  pmin + ggtitle("c-ICE plot at x* = min(hum)") +
+  scale_y_continuous('Predicted bike rentals centered at x*')
 
 ggsave("slides/feature-effects/figure/cICE.pdf", pres, width = 8, height = 3)
