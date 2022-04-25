@@ -28,16 +28,28 @@
 
 \textbf{Solution:} Center ICE curves at fixed reference value $x^* \sim \P(\xv_S)$, often $x^* = \min(\xv_S)$
 
+
+\begin{columns}[c]
+\begin{column}{0.4\textwidth}
+\centering
 $$\begin{aligned}
 \fh_{S, cICE}^{(i)}(\xv_S)
 &= \fh(\xv_S, \xi_C) - \fh(x^*, \xi_C) \\
 &= \fh_{S}^{(i)}(\xv_S) - \fh_{S}^{(i)}(x^*)
 \end{aligned}$$
-
+Visualize $\fh_{S, cICE}^{(i)}(\xv_S)$ vs. $\xv_S$
+\end{column}
+\begin{column}{0.59\textwidth}
 \begin{center}
 %\vspace{-0.3cm}
-\includegraphics[width=0.6\textwidth]{figure/cICE}
+\includegraphics[width=\textwidth]{figure/cICE}
 \end{center}
+\end{column}
+\end{columns}
+
+
+
+
 %\vspace{-0.4cm}
 
 Interpretation of PDP at 98 \% humidity: On average, the expected number of bike rentals decreases by 1000 bikes compared to a humidity of 1 \%.
@@ -53,7 +65,7 @@ Interpretation of PDP at 98 \% humidity: On average, the expected number of bike
 \begin{itemize}
 \item Centered ICE plots are useful for categorical features and can be interpreted as in LMs
 \item The reference category is $x^* =$ SPRING
-\item Golden crosses refer to average expected number of bike rentals if we jump from SPRING to any other season
+\item Golden crosses: Average number of bike rentals if we jump from SPRING to any other season
 \end{itemize}
 
 \end{frame}
@@ -86,23 +98,31 @@ Interpretation of PDP at 98 \% humidity: On average, the expected number of bike
 % \includegraphics[width=0.8\textwidth]{figure_man/extrapolation01.png}
 % \end{center}
 
+Extrapolation can cause issues in regions with few observations or if features are correlated
+ 
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \centering
-\includegraphics[width=0.9\textwidth]{figure/ale_scatter_grid}
+\includegraphics[width=0.8\textwidth]{figure/ale_scatter_grid}
 \end{column}
 \begin{column}{0.5\textwidth}
 \centering
-\includegraphics[width=0.9\textwidth]{figure/ale_pdplot}
+\includegraphics[width=0.8\textwidth]{figure/ale_pdplot}
 \end{column}
 \end{columns}
 
 \begin{itemize}
-\item The features $x_1$ and $x_2$ are strongly correlated
+\item \textbf{Example:} Features $x_1$ and $x_2$ are strongly correlated
 \item \textbf{Black points:} Observed points of the original data
-\item \textbf{\textcolor{red}{Red:}} Grid points used to calculate the ICE and PD curves
+\item \textbf{\textcolor{red}{Red:}} Grid points used to calculate the ICE and PD curves (several unrealistic values)\\ %combination of feature values
+$\Rightarrow$ %Unrealistic combination of feature values are used, e.g., the
+PD plot at $x_1=0$ averages predictions over the whole marginal distribution of feature $x_2$\\
+$\Rightarrow$ May be problematic if model behaves strange outside training distribution
+%can bias ICE and PD curves Be careful with interpretations 
+%\item For correlated features and in regions with few observations with care
+%Extrapolation: interpret curves for highly correlated features and in feature regions with few observations with care
 \end{itemize}
-$\Rightarrow$ Unrealistic combination of feature values are used, e.g., the PD plot at $x_1=0$ averages predictions over the whole marginal distribution of feature $x_2$
+
 %
 % \framebreak
 %
@@ -148,9 +168,8 @@ $\Rightarrow$ Unrealistic combination of feature values are used, e.g., the PD p
 % % Apley, D. W., \& Zhu, J. (2020). Visualizing the effects of predictor variables in black box supervised learning models. Journal of the Royal Statistical Society: Series B, 82(4), 1059-1086. \par}
 % \end{frame}
 
-\begin{frame}{Comments}
+\begin{frame}{Interactions}
 \begin{itemize}
-\item Extrapolation: interprete curves for highly correlated features and in feature regions with few observations with care
 %\lz
 %\item Accumulated Local Effects (ALE) plots are a novel alternative to PD plots developed by Apley (2016) that do not suffer from extrapolation in case of correlated features.
 
