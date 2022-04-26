@@ -76,109 +76,524 @@ $$
 \end{vbframe}
 
 
-\begin{vbframe}
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\columnwidth]{figure/shapley2shap.pdf}
-\end{figure}
-
-\end{vbframe}
-
-
-
-\begin{vbframe}{Example}
-
-Given the following example from the bike sharing data set
-
-\begin{table}[h]
-\centering
-\begin{tabular}{l rrrrr || r}
-  \hline
-  && temperature & humidity & windspeed & year & prediction\\ 
-  \hline
- example $x_{ex}$ && 24.27 & 58.5 & 13.96 & 2011 & 6825 \\ 
- \hline
-\end{tabular}
-\end{table}
-
-we are searching for Shapley values such that
-\begin{equation}
-\begin{array}{lllllcr}
-\phi_0 &+ \phi_{temp} &+ \phi_{hum} &+ \phi_{windspeed} &+ \phi_{yr} & = &\hat{y} \\
-4469 &+ 1809 &+ 450 &+ 241 &- 144 & = & 6825
-\end{array}
-\end{equation}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\columnwidth]{slides/shapley/figure_man/exSHAP.png}
-\end{figure}
-\end{vbframe}
-
-
-\begin{vbframe}{Coalition Mapping}
-We define a coalition $z^{\prime}$, by describing a function 
-
-$$
-h\left(z^{\prime}\right)=z \text { where } h:\{0,1\}^{M} \rightarrow \mathbb{R}^{p}
-$$
-
-
-\begin{onlyenv}<1>
-\vspace{1cm}
+\begin{vbframe}{From Shapley to SHAP}
+\textbf{Example continued}: Same calculation can be done for temperature and windspeed:
 \begin{itemize}
-    \item Coalition $z^{\prime} \in \{0, 1\}^M$ is the  vector, indicating if feature $j$ contributes to the prediction 
-    \item $h(\cdot)$ represent a function that maps 1’s to the corresponding value from the instance x that we want to explain: $h(\cdot)$ connects our coalition vector to the underlying data 
+    \item $\phi_{temp} = \ldots = -1654$
+    \item $\phi_{ws} = \ldots = -323$
 \end{itemize}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\textbf{Remember}: Shapley values explain the difference between actual and average prediction:
+\begin{eqnarray*}
+\color{orange}{2573} \color{black}- \color{blue}{4515} \color{black} = &34 - 1654 - 323 &= - 1942\\
+\fh(x^{(i)}) - E(\fh) =& \phi_{hum} + \phi_{temp} + \phi_{ws}&\\
+\end{eqnarray*}
+$\leadsto$ can be rewritten to
+$$
+\fh(x^{(i)}) = \underbrace{E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws}
+$$
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\columnwidth]{figure/shapley2shap.pdf}
+\end{figure}
+\end{column}
+\end{columns}
+
+
+
+
+\end{vbframe}
+
+\begin{vbframe}{SHAP Definition}
+\textbf{Aim}: 
+Find an additive combination that explains the prediction of an instance $\xv$ by computing the contribution of each feature to the prediction.
+\vspace{1cm}
+\begin{exampleblock}{}
+\[
+g\left(\tikzmark{z} z^{\prime}\right)=
+\tikzmark{ph0}\phi_{0}+\sum_{j=1}^{M}
+\tikzmark{phj} \phi_{j} z_{j}^{\prime}
+\]
+\begin{tikzpicture}[
+  remember picture,
+  overlay,
+  expl/.style={draw=blue,fill=white,rounded corners,text width=3cm},
+  arrow/.style={blue,ultra thick,->,>=latex}
+]
+\node<1-3>[expl] 
+  (zex) 
+  at (2,1.5cm)
+  {$z^{\prime}$:\textbf{Coalition} \\ simplified features};
+\node<2-3>[expl] 
+  (ph0ex) 
+  at (5,-.5cm)
+  {$\phi_0$: \textbf{Null Output} \\ Average Model Baseline};
+\node<3>[expl] 
+  (phjex) 
+  at (12,0cm)
+  {$\phi_j$: \textbf{Attribution} \\ How much does feature $j$ change the output};
+
+\draw<1-4>[arrow]
+  (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.5ex]{pic cs:z});  
+\draw<2-3>[arrow]
+  (ph0ex.east) to[out=180,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:ph0});  
+\draw<3>[arrow]
+  (phjex.west) to[out=90,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:phj});
+ \node<4>[expl] 
+  (zex)  
+  at (2,1cm)
+  {$g(z^{\prime})$:\textbf{Marginal Contribution} \\ Contribution of coalition $z^{\prime}$ to the prediction};
+\node<4>[expl] 
+  (phjsh) 
+  at (11,1.5cm)
+  {$\phi_j$: \textbf{Shapley Values}};
+\draw<4>[arrow]
+  (phjsh.west) to[out=90,in=90] ([xshift= 1ex, yshift=1ex]{pic cs:phj}); 
+\draw<4> [
+    thick,
+    decoration={
+        brace,
+        mirror,
+        raise=0.5cm
+    },
+    decorate
+] (7,0.7) -- (9.5,0.7)
+node[pos=0.5,below=15pt,black]{\textbf{Additive Feature Attribution}};
+\end{tikzpicture}
+\end{exampleblock}
+\begin{onlyenv}<4>
+\vspace{1cm}
+\textbf{Problem}\\
+How do we estimate the Shapley values $\phi_j$?
 \end{onlyenv}
 
-\begin{onlyenv}<2->
+\end{vbframe}
+
+
+
+%\begin{vbframe}{Example}
+
+%Given the following example from the bike sharing data set
+
+%\begin{table}[h]
+%\centering
+%\begin{tabular}{l rrrrr || r}
+%  \hline
+%  && temperature & humidity & windspeed & year & prediction\\ 
+%  \hline
+% example $x_{ex}$ && 24.27 & 58.5 & 13.96 & 2011 & 6825 \\ 
+% \hline
+%\end{tabular}
+%\end{table}
+
+%we are searching for Shapley values such that
+%\begin{equation}
+%\begin{array}{lllllcr}
+%\phi_0 &+ \phi_{temp} &+ \phi_{hum} &+ \phi_{windspeed} &+ \phi_{yr} & = &\hat{y} \\
+%4469 &+ 1809 &+ 450 &+ 241 &- 144 & = & 6825
+%\end{array}
+%\end{equation}
+
+%\begin{figure}
+ %   \centering
+ %   \includegraphics[width=\columnwidth]{slides/shapley/figure_man/exSHAP.png}
+%\end{figure}
+%\end{vbframe}
+
+\begin{vbframe}{Kernel SHAP - In 5 Steps}
+
+\textbf{Definition:} A kernel-based, model-agnostic method to compute SHAP values via local surrogate models\\
+\vspace{1cm}
+\begin{enumerate}
+    \item Sample Coalitions 
+    %\begin{onlyenv}<1>
+   % $$z_{k}^{\prime} \in\{0,1\}^{M}, \quad k \in\{1, \ldots, K\}$$
+    %\end{onlyenv}
+    
+    \item Transfer Coalitions into feature space \& get predictions by applying ML model
+    
+ %   \begin{onlyenv}<2>
+  %  $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
+   % \end{onlyenv}
+    
+    \item Compute weights through Kernel
+ %   \begin{onlyenv}<3>
+ %   $$\pi_{x}\left(z^{\prime}\right)=\frac{(M-1)}{\left(\begin{array}{c} M \\\left|z^{\prime}\right|\end{array}\right)\left|z^{\prime}\right|\left(M-\left|z^{\prime}\right|\right)}$$
+ %   \end{onlyenv}
+    
+    \item Fit a weighted linear model 
+  %  \begin{onlyenv}<4>
+  %  $$L\left(\hat{f}, g, \pi_{x}\right)=\sum_{z^{\prime} \in Z}\left[\hat{f}\left(h_{x}\left(z^{\prime}\right)\right)-g\left(z^{\prime}\right)\right]^{2} \pi_{x}\left(z^{\prime}\right)$$
+  %  \end{onlyenv}
+
+    \item Return shapley values
+%    \begin{onlyenv}<5>
+%    $$(\phi_1, \ldots, \phi_M)$$
+%    \end{onlyenv}
+    
+    
+\end{enumerate}
+
+\end{vbframe}
+
+\begin{vbframe}{Kernel SHAP - In 5 Steps}
+
+
+\textbf{Step 1: Sample coalitions}
+\begin{itemize}
+    \item Sample K coalitions of the simplified feature space
+    $$z_{k}^{\prime} \in\{0,1\}^{p}, \quad k \in\{1, \ldots, K\}$$
+    \item for our example we receive in total 8 coalitions
+\end{itemize}
+
+\begin{table}[]
+    \centering
+     \begin{tabular}{l |cccc}
+  Coalition &  hum & temp & ws \\
+  \hline 
+  $z^{\prime}_{0}$ & 0 & 0 & 0  \\
+   $z^{\prime}_{hum}$ & 1 & 0 & 0  \\
+    $z^{\prime}_{temp}$ & 0 & 1 & 0  \\
+     $z^{\prime}_{ws}$ & 0 & 0 & 1  \\
+     $z^{\prime}_{hum, temp}$ & 1 & 1 & 0  \\
+     $z^{\prime}_{temp, ws}$ & 0 & 1 & 1  \\
+     $z^{\prime}_{hum, ws}$ & 1 & 0 & 1  \\
+  $z^{\prime}_{hum, temp, ws}$ & 1 & 1 & 1  \\
+  
+ 
+  \end{tabular}
+\end{table}
+
+\end{vbframe}
+
+\begin{vbframe}{Kernel SHAP - In 5 Steps}
+
+
+\textbf{Step 2: Transfer Coalitions into feature space \& get predictions by applying ML model}
+\begin{itemize}
+   % \item $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
+    \item We define a coalition $z^{\prime}$, by describing a function 
+$h\left(z^{\prime}\right)=x^\prime \text { where } h:\{0,1\}^{p} \rightarrow \mathbb{R}^{p}$
+ \item $h(\cdot)$ maps 1’s to the corresponding value from the instance x that we want to explain
+    \item it maps 0’s to the values of another instance that we sample from the data
+\end{itemize}
+
+
 \begin{tikzpicture}
 \centering
 
-\node<2> (tab1) {%
-  \begin{tabular}{l |cccc}
-  Instance & temp & hum & ws & yr\\
+
+\node (tab1) {%
+       \begin{tabular}{l |cccc}
+  Coalition &  hum & temp & ws \\
   \hline 
-  $x_{ex}$ & 24.7 & 58.5 & 13.96 & 2011\\
-  \\
-  \\
+  $z^{\prime}_{0}$ & $\varnothing$ & $\varnothing$ &$\varnothing$  \\
+   $z^{\prime}_{hum}$ & 51.6 & $\varnothing$ & $\varnothing$  \\
+    $z^{\prime}_{temp}$ & $\varnothing$ & 5.1 & $\varnothing$  \\
+     $z^{\prime}_{ws}$ & $\varnothing$ & $\varnothing$ & 17.0  \\
+     $z^{\prime}_{hum, temp}$ & 51.6 & 5.1 & $\varnothing$  \\
+     $z^{\prime}_{temp, ws}$ &$\varnothing$ & 5.1 & 17.0  \\
+     $z^{\prime}_{hum, ws}$ & 51.6 & $\varnothing$ & 17.0  \\
+  $z^{\prime}_{hum, temp, ws}$ &51.6 & 5.1 & 17.0   \\
+  
+ 
   \end{tabular}};
-\node<3-> (tab1) {%
-  \begin{tabular}{l |cccc}
-  Instance & temp & hum & ws & yr\\
+
+\node [left=of tab1] (tab2) {%
+     \begin{tabular}{l |cccc}
+  Coalition &  hum & temp & ws \\
   \hline 
-  $x_{ex}$ & 24.7 & 58.5 & 13.96 & 2011\\
-  $z_{temp, yr}$ & 24.7 & $\varnothing$ & $\varnothing$ & 2011\\
-  $z_{yr}$ & $\varnothing$ & $\varnothing$ & $\varnothing$ & 2011\\
+  $z^{\prime}_{0}$ & 0 & 0 & 0  \\
+   $z^{\prime}_{hum}$ & 1 & 0 & 0  \\
+    $z^{\prime}_{temp}$ & 0 & 1 & 0  \\
+     $z^{\prime}_{ws}$ & 0 & 0 & 1  \\
+     $z^{\prime}_{hum, temp}$ & 1 & 1 & 0  \\
+     $z^{\prime}_{temp, ws}$ & 0 & 1 & 1  \\
+     $z^{\prime}_{hum, ws}$ & 1 & 0 & 1  \\
+  $z^{\prime}_{hum, temp, ws}$ & 1 & 1 & 1  \\
+  
+ 
   \end{tabular}};
-\node<2> [left=of tab1] (tab2) {%
-  \begin{tabular}{l |cccc}
-  Coalition & temp & hum & ws & yr\\
-  \hline 
-  $x^{\prime}$ & 1 & 1 & 1 & 1 \\
-  \\
-  \\
-  \end{tabular}};
-\node<3-> [left=of tab1] (tab2) {%
-  \begin{tabular}{l |cccc}
-  Coalition & temp & hum & ws & yr\\
-  \hline 
-  $x^{\prime}$ & 1 & 1 & 1 & 1 \\
-  $z^{\prime}_{temp, yr}$ & 1 & 0 & 0 & 1 \\
-  $z^{\prime}_{yr}$ & 0 & 0 & 0 & 1 \\
-  \end{tabular}};
-\draw<2->[->]
+\draw[->]
 (tab2.north) to[out=30,in=150] node[below]{$h(\cdot)$} (tab1.north) ;
 \end{tikzpicture}
-\end{onlyenv}
-\begin{onlyenv}<3->
+
+
+   
+
+
+
+
+\end{vbframe}
+
+
+\begin{vbframe}{Kernel SHAP - In 5 Steps}
+
+
+\textbf{Step 2: Transfer Coalitions into feature space \& get predictions by applying ML model}
 \begin{itemize}
-    \item $h(\cdot)$ maps 1’s to the corresponding value from the instance x that we want to explain
-    \item<4> it maps 0’s to the values of another instance that we sample from the data
-    \item<4>  we equate “feature value is absent” with “feature value is replaced by random feature value from data”
+   % \item $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
+   \item absent feature values are replaced by feature values of a \color{orange}{random instance} \color{black} of the dataset (permuted) $\leadsto$ permute feature values several times
+   \item predict with ML model on this dataset $\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$
 \end{itemize}
+
+
+\begin{tikzpicture}
+\centering
+
+
+\node (tab1) {%
+       \begin{tabular}{l |ccc | c}
+  Coalition &  hum & temp & ws & $\hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$\\
+  \hline 
+  $x^{\prime}_{0}$ & \color{orange}{64.3} & \color{orange}{28.0} & \color{orange}{14.5} & 6211 \\
+   $x^{\prime}_{hum}$ & 51.6 & \color{orange}{28.0} & \color{orange}{14.5} & 5586  \\
+    $x^{\prime}_{temp}$ & \color{orange}{64.3} & 5.1 & \color{orange}{14.5}  & 3295\\
+     $x^{\prime}_{ws}$ & \color{orange}{64.3} & \color{orange}{28.0} & 17.0 &5762 \\
+     $x^{\prime}_{hum, temp}$ & 51.6 & 5.1 & \color{orange}{14.5}  & 2616\\
+     $x^{\prime}_{temp, ws}$ &\color{orange}{64.3} & 5.1 & 17.0  & 2900\\
+     $x^{\prime}_{hum, ws}$ & 51.6 & \color{orange}{28.0} & 17.0 & 5411 \\
+  $x^{\prime}_{hum, temp, ws}$ &51.6 & 5.1 & 17.0 & 2573  \\
+  
+ 
+  \end{tabular}};
+
+\node [left=of tab1] (tab2) {%
+     \begin{tabular}{l |cccc}
+  Coalition &  hum & temp & ws \\
+  \hline 
+  $z^{\prime}_{0}$ & 0 & 0 & 0  \\
+   $z^{\prime}_{hum}$ & 1 & 0 & 0  \\
+    $z^{\prime}_{temp}$ & 0 & 1 & 0  \\
+     $z^{\prime}_{ws}$ & 0 & 0 & 1  \\
+     $z^{\prime}_{hum, temp}$ & 1 & 1 & 0  \\
+     $z^{\prime}_{temp, ws}$ & 0 & 1 & 1  \\
+     $z^{\prime}_{hum, ws}$ & 1 & 0 & 1  \\
+  $z^{\prime}_{hum, temp, ws}$ & 1 & 1 & 1  \\
+  
+ 
+  \end{tabular}};
+\draw[->]
+(tab2.north) to[out=30,in=150] node[below]{$h(\cdot)$} (tab1.north) ;
+\end{tikzpicture}
+
+
+   
+
+
+
+
+\end{vbframe}
+
+\begin{vbframe}{Kernel shap - in 5 steps}
+\textbf{Step 3: Compute weights through Kernel}\\\medskip
+\textbf{Intuition}: We learn most about individual features if we can study their effects in isolation or at maximal interaction:
+Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the largest weights
+
+\begin{onlyenv}<1>
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\columnwidth]{slides/shapley/figure_man/kernel-weights.pdf}
+\end{figure}
 \end{onlyenv}
+
+
+\begin{onlyenv}<2>
+\vspace{1cm}
+\begin{exampleblock}{}
+\[
+\tikzmark{pi}\pi_{x}\left(z^{\prime}\right)=\frac{(
+\tikzmark{M}p-1)}{\left(\begin{array}{c} p \\\left|z^{\prime}\right|\end{array}\right)\left|
+\tikzmark{z}z^{\prime}\right|\left(p-\left|z^{\prime}\right|\right)}
+\]
+\begin{tikzpicture}[
+  remember picture,
+  overlay,
+  expl/.style={draw=blue,fill=white,rounded corners,text width=3cm},
+  arrow/.style={blue,ultra thick,->,>=latex}
+]
+\node[expl] 
+  (piex) 
+  at (4,0cm)
+  {$\pi_x(z^{\prime})$: kernel weight for coalition $z^{\prime}$};
+\node[expl] 
+  (Mex) 
+  at (13,2cm)
+  {p: Number of features in x};
+\node[expl] 
+  (zex) 
+  at (8,-1cm)
+  {$\mid z^{\prime}\mid$: coalition size / sum of 1s in $z^{\prime}$};
+\draw[arrow]
+  (piex.west) to[out=180,in=135] ([xshift= 0.5ex, yshift=2ex]{pic cs:pi}); 
+\draw[arrow]
+  (Mex.west) to[out=180,in=135] ([xshift= 0.5ex, yshift=2ex]{pic cs:M}); 
+\draw[arrow]
+  (zex.north) to[out=180,in=250] ([xshift= 0.5ex, yshift=-1ex]{pic cs:z}); 
+\end{tikzpicture}
+\end{exampleblock}
+\end{onlyenv}
+
+
+%\begin{onlyenv}<3>
+
+%$$\pi_{x}\left(z^{\prime}\right)=\frac{(M-1)}{\left(\begin{array}{c} M \\\left|z^{\prime}\right|\end{array}\right)\left|z^{\prime}\right|\left(M-\left|z^{\prime}\right|\right)}$$
+
+%\begin{itemize}
+%    \item If a coalition consists of a single feature, we can learn about this feature’s isolated main effect on the prediction
+%    \item If a coalition consists of all but one feature, we can learn about this feature’s total effect (main effect plus feature interactions)
+%    \item If a coalition consists of half the features, we learn little about an individual feature’s contribution, as there are many possible coalitions with half of the features
+%\end{itemize}
+%\end{onlyenv}
+
+%\begin{onlyenv}<4>
+%\vspace{1cm}
+%\textbf{Limited Budget $K$}: Can we be a bit smarter about the sampling of coalitions, than just randomly drawing?
+%\begin{itemize}
+%    \item The smallest and largest coalitions take up most of the weight\\ We get better Shapley value estimates by using some of the sampling budget K to include these high-weight coalitions
+%    \item We start with all possible coalitions with 1 and M-1 features, which makes 2 times M coalitions in total\\ When we have enough budget left (current budget is K - 2M), we can include coalitions with 2 features and with M-2 features and so on.
+%    \item From the remaining coalition sizes, we sample with readjusted weights
+%\end{itemize}
+%\end{onlyenv}
+  
+\end{vbframe}
+
+
+\begin{vbframe}{Kernel shap - in 5 steps}
+\textbf{Step 3: Compute weights through Kernel}\\\medskip
+\textbf{Purpose}: to include this knowledge in the local surrogate model (linear regression), we calculate weights for each coalition which are the instances of the linear regression
+\only<1>{    $$\pi_{x}\left(z^{\prime}\right)=\frac{(p-1)}{\left(\begin{array}{c} p \\|z^{\prime}|\end{array}\right)|z^{\prime}|(p-|z^{\prime}|)} \leadsto \pi_x\left(z^{\prime} = (1,0,0)\right)=\frac{(3-1)}{\left(\begin{array}{c} 3 \\1\end{array}\right)1\left(3-1\right)} = \frac{1}{3}$$
+}
+
+\begin{table}[]
+    \centering
+        \begin{tabular}{l |ccc|c}
+  Coalition &  hum & temp & ws & weight \\
+  \hline 
+  $z^{\prime}_{0}$ & 0 & 0 & 0 & $\infty$ \\
+   $z^{\prime}_{hum}$ & 1 & 0 & 0 & 0.33 \\
+    $z^{\prime}_{temp}$ & 0 & 1 & 0 & 0.33 \\
+     $z^{\prime}_{ws}$ & 0 & 0 & 1 & 0.33 \\
+     $z^{\prime}_{hum, temp}$ & 1 & 1 & 0 & 0.33 \\
+     $z^{\prime}_{temp, ws}$ & 0 & 1 & 1 &0.33 \\
+     $z^{\prime}_{hum, ws}$ & 1 & 0 & 1 & 0.33 \\
+  $z^{\prime}_{hum, temp, ws}$ & 1 & 1 & 1 & $\infty$ \\
+  
+ 
+  \end{tabular}
+\end{table}
+\medskip
+\only<2>{
+$\leadsto$ weights for empty and full set are infinity and not used as instances for the linear regression\\ $\leadsto$ instead constraints are used such that properties (local accuracy and missingness) are satisfied
+}
+
+  
+\end{vbframe}
+
+%\begin{vbframe}{Coalition Mapping}
+%We define a coalition $z^{\prime}$, by describing a function 
+
+%$$
+%h\left(z^{\prime}\right)=z \text { where } h:\{0,1\}^{M} \rightarrow \mathbb{R}^{p}
+%$$
+
+
+%\begin{onlyenv}<1>
+%\vspace{1cm}
+%\begin{itemize}
+%    \item Coalition $z^{\prime} \in \{0, 1\}^M$ is the  vector, indicating if feature $j$ contributes to the prediction 
+%    \item $h(\cdot)$ represent a function that maps 1’s to the corresponding value from the instance x that we want to explain: $h(\cdot)$ connects our coalition vector to the underlying data 
+%\end{itemize}
+%\end{onlyenv}
+
+%\begin{onlyenv}<2->
+%\begin{tikzpicture}
+%\centering
+
+%\node<2> (tab1) {%
+%  \begin{tabular}{l |cccc}
+%  Instance & temp & hum & ws & yr\\
+%  \hline 
+%  $x_{ex}$ & 24.7 & 58.5 & 13.96 & 2011\\
+ % \\
+ % \\
+  %\end{tabular}};
+%\node<3-> (tab1) {%
+%  \begin{tabular}{l |cccc}
+%  Instance & temp & hum & ws & yr\\
+%  \hline 
+%  $x_{ex}$ & 24.7 & 58.5 & 13.96 & 2011\\
+%  $z_{temp, yr}$ & 24.7 & $\varnothing$ & $\varnothing$ & 2011\\
+%  $z_{yr}$ & $\varnothing$ & $\varnothing$ & $\varnothing$ & 2011\\
+%  \end{tabular}};
+%\node<2> [left=of tab1] (tab2) {%
+%  \begin{tabular}{l |cccc}
+%  Coalition & temp & hum & ws & yr\\
+%  \hline 
+%  $x^{\prime}$ & 1 & 1 & 1 & 1 \\
+%  \\
+%  \\
+%  \end{tabular}};
+%\node<3-> [left=of tab1] (tab2) {%
+%  \begin{tabular}{l |cccc}
+%  Coalition & temp & hum & ws & yr\\
+%  \hline 
+%  $x^{\prime}$ & 1 & 1 & 1 & 1 \\
+%  $z^{\prime}_{temp, yr}$ & 1 & 0 & 0 %& 1 \\
+%  $z^{\prime}_{yr}$ & 0 & 0 & 0 & 1 %\\
+%  \end{tabular}};
+%\draw<2->[->]
+%(tab2.north) to[out=30,in=150] node[below]{$h(\cdot)$} (tab1.north) ;
+%\end{tikzpicture}
+%\end{onlyenv}
+%\begin{onlyenv}<3->
+%\begin{itemize}
+%    \item $h(\cdot)$ maps 1’s to the %corresponding value from the instance x that we want to explain
+%    \item<4> it maps 0’s to the values of another instance that we sample from the data
+%    \item<4>  we equate “feature value is absent” with “feature value is replaced by random feature value from data”
+%\end{itemize}
+%\end{onlyenv}
+%\end{vbframe}
+
+
+\begin{vbframe}{Kernel shap - in 5 steps}
+\textbf{Step 4: Fit a weighted linear model}\\\medskip
+\textbf{Aim}: Estimate a weighted linear model with Shapley values being the coefficients $\phi_j$
+\[
+g\left(z^{\prime}\right)=
+\phi_{0}+\sum_{j=1}^{p}
+ \phi_{j} z_{j}^{\prime}
+\]
+\only<1>{
+and minimize by WLS using the weights of step 3
+    $$L\left(\hat{f}, g, \pi_{x}\right)=\sum_{z^{\prime} \in Z}\left[\hat{f}\left(h_{x}\left(z^{\prime}\right)\right)-g\left(z^{\prime}\right)\right]^{2} \pi_{x}\left(z^{\prime}\right)$$
+
+with $\phi_0 = E(\fh)$ and $\phi_p = \fh(x) - \sum_{j=0}^{p-1} \phi_j$ we receive a $p-1$ dimensional linear regression problem
+}
+
+\only<2>{
+\begin{table}[]
+    \centering
+        \begin{tabular}{l |ccc|c|c}
+  Coalition &  hum & temp & ws & weight & $\fh$\\
+  \hline 
+   $z^{\prime}_{hum}$ & 1 & 0 & 0 & 0.33 & 4635\\
+    $z^{\prime}_{temp}$ & 0 & 1 & 0 & 0.33 & 3087\\
+     $z^{\prime}_{ws}$ & 0 & 0 & 1 & 0.33 & 4359\\
+     $z^{\prime}_{hum, temp}$ & 1 & 1 & 0 & 0.33 & 3060\\
+     $z^{\prime}_{temp, ws}$ & 0 & 1 & 1 &0.33 & 2623\\
+     $z^{\prime}_{hum, ws}$ & 1 & 0 & 1 & 0.33 & 4450\\
+  
+ 
+  \end{tabular}
+\end{table}
+}
+
+  
 \end{vbframe}
 
 \begin{vbframe}{Marginal Contribution}
@@ -252,178 +667,8 @@ $$
 
 \end{vbframe}
 
-\begin{vbframe}{SHAP Definition}
-Find an additive combination that explains the prediction of an instance $\xv$ by computing the contribution of each feature to the prediction.
-\vspace{1cm}
-\begin{exampleblock}{}
-\[
-g\left(\tikzmark{z} z^{\prime}\right)=
-\tikzmark{ph0}\phi_{0}+\sum_{j=1}^{M}
-\tikzmark{phj} \phi_{j} z_{j}^{\prime}
-\]
-\begin{tikzpicture}[
-  remember picture,
-  overlay,
-  expl/.style={draw=blue,fill=white,rounded corners,text width=3cm},
-  arrow/.style={blue,ultra thick,->,>=latex}
-]
-\node<1-3>[expl] 
-  (zex) 
-  at (2,1.5cm)
-  {$z^{\prime}$:\textbf{Coalition} \\ simplified features};
-\node<2-3>[expl] 
-  (ph0ex) 
-  at (5,-.5cm)
-  {$\phi_0$: \textbf{Null Output} \\ Average Model Baseline};
-\node<3>[expl] 
-  (phjex) 
-  at (12,0cm)
-  {$\phi_j$: \textbf{Attribution} \\ How much does feature $j$ change the output};
-
-\draw<1-4>[arrow]
-  (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.5ex]{pic cs:z});  
-\draw<2-3>[arrow]
-  (ph0ex.east) to[out=180,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:ph0});  
-\draw<3>[arrow]
-  (phjex.west) to[out=90,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:phj});
- \node<4>[expl] 
-  (zex)  
-  at (2,1cm)
-  {$g(z^{\prime})$:\textbf{Marginal Contribution} \\ Contribution of coalition $z^{\prime}$ to the prediction};
-\node<4>[expl] 
-  (phjsh) 
-  at (11,1.5cm)
-  {$\phi_j$: \textbf{Sahpley Values}};
-\draw<4>[arrow]
-  (phjsh.west) to[out=90,in=90] ([xshift= 1ex, yshift=1ex]{pic cs:phj}); 
-\draw<4> [
-    thick,
-    decoration={
-        brace,
-        mirror,
-        raise=0.5cm
-    },
-    decorate
-] (7,0.7) -- (9.5,0.7)
-node[pos=0.5,below=15pt,black]{\textbf{Additive Feature Attribution}};
-\end{tikzpicture}
-\end{exampleblock}
-\begin{onlyenv}<4>
-\vspace{1cm}
-\textbf{Problem}\\
-How do we estimate the Shapley values $\phi_i$?
-\end{onlyenv}
-
-\end{vbframe}
 
 
-\begin{vbframe}{Kernel SHAP - In 5 Steps}
-
-\textbf{Definition:} A kernel based, model agnostic alternative for Shapley values using local surrogate models\\
-\vspace{1cm}
-\begin{enumerate}
-    \item Sample Coalitions 
-    \begin{onlyenv}<1>
-    $$z_{k}^{\prime} \in\{0,1\}^{M}, \quad k \in\{1, \ldots, K\}$$
-    \end{onlyenv}
-    
-    \item Transfer Coalitions into feature space \& get predictions by applying the model
-    
-    \begin{onlyenv}<2>
-    $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
-    \end{onlyenv}
-    
-    \item Compute weights through Kernel
-    \begin{onlyenv}<3>
-    $$\pi_{x}\left(z^{\prime}\right)=\frac{(M-1)}{\left(\begin{array}{c} M \\\left|z^{\prime}\right|\end{array}\right)\left|z^{\prime}\right|\left(M-\left|z^{\prime}\right|\right)}$$
-    \end{onlyenv}
-    
-    \item Fit a weighted linear model by optimizing Loss
-    \begin{onlyenv}<4>
-    $$L\left(\hat{f}, g, \pi_{x}\right)=\sum_{z^{\prime} \in Z}\left[\hat{f}\left(h_{x}\left(z^{\prime}\right)\right)-g\left(z^{\prime}\right)\right]^{2} \pi_{x}\left(z^{\prime}\right)$$
-    \end{onlyenv}
-
-    \item Return shapley values
-    \begin{onlyenv}<5>
-    $$(\phi_1, \ldots, \phi_M)$$
-    \end{onlyenv}
-    
-    
-\end{enumerate}
-
-\end{vbframe}
-
-\begin{vbframe}{The SHAP Kernel}
-\textbf{Intuition}: We learn most about individual features if we can study their effects in isolation or at maximal interaction:\\
-Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the largest weights
-
-\begin{onlyenv}<1>
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\columnwidth]{slides/shapley/figure_man/kernel-weights.pdf}
-\end{figure}
-\end{onlyenv}
-
-
-\begin{onlyenv}<2>
-\vspace{1cm}
-\begin{exampleblock}{}
-\[
-\tikzmark{pi}\pi_{x}\left(z^{\prime}\right)=\frac{(
-\tikzmark{M}M-1)}{\left(\begin{array}{c} M \\\left|z^{\prime}\right|\end{array}\right)\left|
-\tikzmark{z}z^{\prime}\right|\left(M-\left|z^{\prime}\right|\right)}
-\]
-\begin{tikzpicture}[
-  remember picture,
-  overlay,
-  expl/.style={draw=blue,fill=white,rounded corners,text width=3cm},
-  arrow/.style={blue,ultra thick,->,>=latex}
-]
-\node[expl] 
-  (piex) 
-  at (4,0cm)
-  {$\pi_x(z^{\prime})$: kernel weight for coalition $z^{\prime}$};
-\node[expl] 
-  (Mex) 
-  at (13,2cm)
-  {M: Amount of features in x};
-\node[expl] 
-  (zex) 
-  at (8,-1cm)
-  {$\mid z^{\prime}\mid$: coalition size / sum of 1s in $z^{\prime}$};
-\draw[arrow]
-  (piex.west) to[out=180,in=135] ([xshift= 0.5ex, yshift=2ex]{pic cs:pi}); 
-\draw[arrow]
-  (Mex.west) to[out=180,in=135] ([xshift= 0.5ex, yshift=2ex]{pic cs:M}); 
-\draw[arrow]
-  (zex.north) to[out=180,in=250] ([xshift= 0.5ex, yshift=-1ex]{pic cs:z}); 
-\end{tikzpicture}
-\end{exampleblock}
-\end{onlyenv}
-
-
-\begin{onlyenv}<3>
-
-$$\pi_{x}\left(z^{\prime}\right)=\frac{(M-1)}{\left(\begin{array}{c} M \\\left|z^{\prime}\right|\end{array}\right)\left|z^{\prime}\right|\left(M-\left|z^{\prime}\right|\right)}$$
-
-\begin{itemize}
-    \item If a coalition consists of a single feature, we can learn about this feature’s isolated main effect on the prediction
-    \item If a coalition consists of all but one feature, we can learn about this feature’s total effect (main effect plus feature interactions)
-    \item If a coalition consists of half the features, we learn little about an individual feature’s contribution, as there are many possible coalitions with half of the features
-\end{itemize}
-\end{onlyenv}
-
-\begin{onlyenv}<4>
-\vspace{1cm}
-\textbf{Limited Budget $K$}: Can we be a bit smarter about the sampling of coalitions, than just randomly drawing?
-\begin{itemize}
-    \item The smallest and largest coalitions take up most of the weight\\ We get better Shapley value estimates by using some of the sampling budget K to include these high-weight coalitions
-    \item We start with all possible coalitions with 1 and M-1 features, which makes 2 times M coalitions in total\\ When we have enough budget left (current budget is K - 2M), we can include coalitions with 2 features and with M-2 features and so on.
-    \item From the remaining coalition sizes, we sample with readjusted weights
-\end{itemize}
-\end{onlyenv}
-  
-\end{vbframe}
 
 
 \begin{vbframe}{Properties}
