@@ -100,23 +100,9 @@ $$\textstyle\fh_{1, PD}(x_1^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_1^*, \xv_{2, 3}^
 }
 
 
-
-
-
-
-
-
-
-
 \frame{
 \frametitle{Interpretation: PD and ICE}
-\begin{center}
-\includegraphics[width=0.65\textwidth]{figure/pdp_bike}
-\end{center}
 
-
-\begin{onlyenv}
-\only<1>{
 If feature varies:\\
 \begin{itemize}
 \item
@@ -125,9 +111,15 @@ If feature varies:\\
 \item
   \textbf{PD:} How does \textbf{average effect / expected prediction} change? \(\Rightarrow\) \textbf{global} interpretation
 \end{itemize}
-}
 
-\only<2>{
+\begin{columns}[c]
+\begin{column}{0.6\textwidth}
+\begin{center}
+\includegraphics[width=\textwidth]{figure/pdp_bike}
+\end{center}
+\end{column}
+\pause
+\begin{column}{0.4\textwidth}
 Insights from bike sharing data:
 \begin{itemize}
 %  \item Averaging ICE curves yields PD plot (yellow curve)
@@ -135,13 +127,13 @@ Insights from bike sharing data:
   \item Warmer $\Rightarrow$ more rented bikes
   \item Too hot $\Rightarrow$ slightly less bikes 
 \end{itemize}
-}
-\end{onlyenv}
+\end{column}
+\end{columns}
 }
 
 
 \frame{
-\frametitle{Categorical Features}
+\frametitle{Interpretation: Categorical Features}
 
 \begin{center}
 \includegraphics[width=0.9\textwidth]{figure/pdp_ice_cat}
@@ -239,7 +231,9 @@ $\Rightarrow$ May be problematic if model behaves strange outside training distr
 %\lz
 %\item Accumulated Local Effects (ALE) plots are a novel alternative to PD plots developed by Apley (2016) that do not suffer from extrapolation in case of correlated features.
 
-\item PD plots: averaging of ICE curves might \textbf{obfuscate} heterogeneous effects and interactions \newline \(\Rightarrow\) Ideally plot ICE curves and PD plots together
+\item PD plots: averaging of ICE curves might \textbf{obfuscate} heterogeneous effects and interactions \\ 
+\(\Rightarrow\) Ideally plot ICE curves and PD plots together to uncover this fact\\
+\(\Rightarrow\) Different shapes of ICE curves suggest interaction (but does not tell with which  feature)
 
 \begin{center}\includegraphics[width=0.5\textwidth]{figure/pdp_xor.pdf} \end{center}
 \end{itemize}
@@ -268,6 +262,51 @@ $\Rightarrow$ May be problematic if model behaves strange outside training distr
 \end{frame}
 
 
+\begin{frame}{Centered ICE Plot (c-ICE)}
+
+\textbf{Issue:} Difficult to identify heterogenous ICE curves if curves have different intercepts (are stacked)
+%When ICE curves start at different intercepts (are stacked), it is difficult to identify heterogenous predictions.
+
+\textbf{Solution:} Center ICE curves at fixed reference value $x^* \sim \P(\xv_S)$, often $x^* = \min(\xv_S)$\\
+$\Rightarrow$ Easier to identify heterogenous shapes with c-ICE curves
+
+\begin{columns}[c]
+\begin{column}{0.4\textwidth}
+\centering
+$$\begin{aligned}
+\fh_{S, cICE}^{(i)}(\xv_S)
+&= \fh(\xv_S, \xi_C) - \fh(x^*, \xi_C) \\
+&= \fh_{S}^{(i)}(\xv_S) - \fh_{S}^{(i)}(x^*)
+\end{aligned}$$
+Visualize $\fh_{S, cICE}^{(i)}(x_S^*)$ vs. $x_S^*$
+\end{column}
+\begin{column}{0.59\textwidth}
+\begin{center}
+%\vspace{-0.3cm}
+\includegraphics[width=\textwidth]{figure/cICE}
+\end{center}
+\end{column}
+\end{columns}
+
+%\vspace{-0.4cm}
+
+Interpretation (yellow curve in c-ICE plot): On average, the number of bike rentals at $\sim 98$ \% humidity decreased by 1000 bikes compared to a humidity of 1 \%
+\end{frame}
+
+
+\begin{frame}{Centered ICE Plot (c-ICE)}
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figure/cICEcat}
+\end{center}
+
+\begin{itemize}
+\item Centered ICE plots are useful for categorical features and can be interpreted as in LMs
+\item The reference category is $x^* =$ SPRING
+\item Golden crosses: Average number of bike rentals if we jump from SPRING to any other season
+\end{itemize}
+
+\end{frame}
 
 
 \endlecture
