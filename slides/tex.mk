@@ -1,15 +1,19 @@
 TSLIDES = $(shell find . -maxdepth 1 -iname "slides-*.tex")
 TPDFS = $(TSLIDES:%.tex=%.pdf)
 
-all: texclean $(TPDFS) copy texclean 
+all: texclean $(TPDFS) texclean pax copy
 
 $(TPDFS): %.pdf: %.tex
 	latexmk -pdf $<
 
-copy: 
-	cp *.pdf ../../slides-pdf
-	
-texclean: 
+copy:
+	cp -u *.pdf ../../slides-pdf
+	cp -u *.pax ../../slides-pdf
+
+pax:
+	pdfannotextractor *.pdf
+
+texclean:
 	rm -rf *.out
 	rm -rf *.dvi
 	rm -rf *.log
