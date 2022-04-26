@@ -82,13 +82,17 @@ p2d = pdp.2feature$results
 
 # PLOT -------------------------------------------------------------------------
 
+#min = round_any(min(pdp.2feature$results$.value), 500, f = floor)
+#max = round_any(max(pdp.2feature$results$.value), 500, f = ceiling)
+
 pdp2d_bike = pdp.2feature$plot() +
   geom_point(data = bike, mapping = aes(x = temp, y = hum), alpha = 0.5) +
   ylab("Humidity") + xlab("Temperature") +
-  scale_fill_viridis_b("Predicted number of bike rentals") +
+  scale_fill_viridis_b("Predicted number \nof bike rentals", n.breaks = 5) +
   ggtitle("2-dim PDP") +
-  theme(legend.position = "bottom") +
-  guides(fill = guide_legend(title.position = "top", title.hjust = 0.5)) +
+  theme(legend.position = "bottom", legend.key.width = unit(1,"cm")) +
+  #guides(fill = guide_legend(title.position = "top", title.hjust = 0.5)) +
+  #guides(fill = guide_legend(direction = "horizontal")) +
   NULL #+
   #geom_hline(yintercept = quantile(p2d$hum, type = 1), col = 1:5) +
   #geom_vline(xintercept = quantile(p2d$temp, type = 1), col = 1:5)
