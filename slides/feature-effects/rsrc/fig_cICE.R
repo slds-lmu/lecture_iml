@@ -8,6 +8,7 @@ theme_set(theme_bw())
 # DATA -------------------------------------------------------------------------
 
 pdp = FeatureEffect$new(pred.bike, "hum", method = "pdp+ice")
+pdpt = FeatureEffect$new(pred.bike, "temp", method = "pdp+ice")
 
 # PLOT -------------------------------------------------------------------------
 
@@ -15,8 +16,15 @@ p = pdp$plot() + scale_x_continuous('Humidity in % (hum)') + scale_y_continuous(
 pdp = FeatureEffect$new(pred.bike, "hum", method = "pdp+ice", center.at = min(bike$hum))
 pmin = pdp$plot() + scale_x_continuous('Humidity in % (hum)') + scale_y_continuous('Predicted bike rentals')
 
-pres = p + ggtitle("ICE plot") +
-  pmin + ggtitle("c-ICE plot at x* = min(hum)") +
-  scale_y_continuous('Predicted bike rentals centered at x*')
+pt = pdpt$plot() + scale_x_continuous('Temperature in °C (temp)') + scale_y_continuous('Predicted bike rentals')
+pdpt = FeatureEffect$new(pred.bike, "temp", method = "pdp+ice", center.at = min(bike$temp))
+pmint = pdpt$plot() + scale_x_continuous('Temperature in °C (temp)') + scale_y_continuous('Predicted bike rentals')
 
-ggsave("slides/feature-effects/figure/cICE.pdf", pres, width = 8, height = 3)
+pres = p + ggtitle("ICE plot (hum)") +
+  pmin + ggtitle("c-ICE plot at x' = min(hum)") +
+  scale_y_continuous("Predicted bike rentals centered at x'")
+prest = pt + ggtitle("ICE plot (temp)") +
+  pmint + ggtitle("c-ICE plot at x' = min(temp)") +
+  scale_y_continuous("Predicted bike rentals centered at x'")
+
+ggsave("slides/feature-effects/figure/cICE.pdf", pres / prest, width = 8, height = 6)
