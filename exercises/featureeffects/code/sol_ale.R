@@ -89,10 +89,10 @@ calculate_ale = function(model, X, s, n_intervals = 100, centered = False) {
     }
     # Return the final results of bounds and
     # centered_ale/uncentered_ale as a list.
-    return(list(bounds = bounds, centered_ale = centered_ale))
+    return(list(bounds = bounds, ale = centered_ale))
   }
   else{
-    return(finalResult = list(bounds = bounds, uncentered_ale = uncentered_ale))
+    return(finalResult = list(bounds = bounds, ale = uncentered_ale))
   }
 }
 

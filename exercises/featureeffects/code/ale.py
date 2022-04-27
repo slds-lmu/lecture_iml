@@ -22,12 +22,7 @@ def get_bounds(X, s, n_intervals=100):
         bounds (list): Values of bounds with `n_intervals`+1 entries.
     """
     
-    x_s = X[:, s]
-    x_s_min = np.min(x_s)
-    x_s_max = np.max(x_s)
-    bounds = list(np.linspace(x_s_min, x_s_max, n_intervals+1))
-    
-    return bounds
+    return None
 
 
 def calculate_ale(model, X, s, n_intervals=100, centered=False):
@@ -46,55 +41,7 @@ def calculate_ale(model, X, s, n_intervals=100, centered=False):
         ale (list with `n_intervals` entries): Values of ALE.
     """
 
-    x_s = X[:, s]
-    bounds = get_bounds(X, s, n_intervals)
-    
-    uncentered_ale = []
-    
-    # i1 = z_{k-1}
-    # i2 = z_k
-    for i1, i2 in zip(bounds, bounds[1:]):
-        # Get ids in between the interval
-        if i1 == bounds[0]:
-            # Make sure to include the point on the first intervall too
-            idx = np.where((x_s >= i1) & (x_s <= i2))[0]
-        else:
-            idx = np.where((x_s > i1) & (x_s <= i2))[0]
-            
-        if len(idx) == 0:
-            uncentered_ale.append(0)
-            continue
-        
-        # Now we replace the values at position s one time with smallest value
-        # and one time with the highest value in this interval.
-        X_min = X[idx, :]
-        X_max = X[idx, :]
-        X_min[:, s] = i1
-        X_max[:, s] = i2
-        
-        # And get the new predictions
-        y_min = model.predict(X_min)
-        y_max = model.predict(X_max)
-        
-        # Calculate difference now
-        diff = y_max - y_min
-        uncentered_ale_k = np.sum(diff) / len(idx)
-        uncentered_ale.append(uncentered_ale_k)
-    
-    # Now accumulate
-    uncentered_ale = np.cumsum(uncentered_ale)
-    
-    if centered:
-        # Center ALE here
-        centered_ale = []
-        mean_uncentered_ale = np.sum(uncentered_ale) / len(uncentered_ale)
-        for uncentered_ale_k in uncentered_ale:
-            centered_ale_k = uncentered_ale_k - mean_uncentered_ale
-            centered_ale.append(centered_ale_k)
-            
-        return bounds, centered_ale
-    else:
-        return bounds, uncentered_ale
+    return None, None
 
 
 def prepare_ale(model, X, s, n_intervals=100, centered=False):
@@ -113,10 +60,8 @@ def prepare_ale(model, X, s, n_intervals=100, centered=False):
         x (list or 1D np.ndarray): Centers of two bounds. `n_intervals` entries.
         y (list or 1D np.ndarray): ALE values. `n_intervals` entries.
     """
-    bounds, y = calculate_ale(model, X, s, n_intervals, centered)
-    x = [(i1+i2)/2 for i1, i2 in zip(bounds, bounds[1:])]
-    
-    return x, y
+
+    return None, None
         
         
 if __name__ == "__main__":
@@ -124,7 +69,7 @@ if __name__ == "__main__":
     (X_train, y_train), (X_test, y_test) = dataset.get_data()
     
     from sklearn import ensemble
-    model = ensemble.RandomForestRegressor()
+    model = ensemble.RandomForestRegressor(random_state=0)
     model.fit(X_train, y_train)
     X = dataset.X
     s = 1

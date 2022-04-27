@@ -37,12 +37,11 @@ Since looking on the single trees is not feasible to uncover the internals of a 
 and to explain specific decisions. 
 
 \begin{enumerate}[a)]
-\item Your colleague already fitted a random forest model. 
+\item 
 Since the regulations require that the model does not discriminate against 
 certain demographic groups, you want to evaluate the feature effect of
-\texttt{personal\_status\_sex}. 
+\texttt{personal\_status\_sex} of the fitted forest model. 
 Your colleague provides Figure~\ref{fig:pdp}. Interprete the PDP.
-
 
 \begin{figure}[ht]
 <<fig.height=4, fig.width=8,echo=FALSE, results='asis',warnings=FALSE,message=FALSE>>=
@@ -62,11 +61,14 @@ plot(iml::FeatureEffect$new(predictor = pred, feature = "personal_status_sex", m
 \end{figure}
 
 \item You also request an ALE plot from your colleague. 
-Give reasons why and in which situations inspecting the ALE plot besides the PDP is advisable?
+Give reasons why and in which situations inspecting ALE plots besides PDPs is advisable?
 
 \item 
 Because the ALE models accumulates effects in a specific direction, the feature values must have an order by definition. However, there is no natural order to categorical/nominal features like \texttt{personal\_status\_sex}. 
-In order to derive an artificial order, Molnar 2022 (Chapter 8.2)\footnote{https://christophm.github.io/interpretable-ml-book/ale.html} proposes to order the categories of the features $x_s$ according to their similarity based on other features in $x_c \in X_C$. In detail, the approach has the following steps: 
+In order to derive an artificial order, Molnar 2022 (Chapter 8.2)\footnote{https://christophm.github.io/interpretable-ml-book/ale.html} proposes to order the categories of the features $x_s$ according to their similarity based on other/remaining features $x_c \in X_C$. 
+Read the corresponding subsection in Molnar 2022.
+
+In detail, the approach has the following steps: 
 
 \begin{enumerate}[1)]
   \item For each feature $x_c \in X_C$ do the following: 
@@ -74,15 +76,14 @@ In order to derive an artificial order, Molnar 2022 (Chapter 8.2)\footnote{https
     \item Get the conditional empirical distributions of $x_c$ given the categories of $x_s$: \\
      For numeric feature $x_c$, estimate the cumulative distribution function for each category of $x_s$ separately and derive its values at predefined points (e.g., at deciles of $x_c$). 
      For categorical feature $x_c$ derive the relative frequency tables for each category of $x_s$ separately.
-    \item Compute the pairwise distances of distributions for the categories of $x_s$:\\ 
+    \item Compute the pairwise distances of distributions for each pair of categories of $x_s$:\\ 
     For numeric feature $x_c$, the distance is equal to the absolute maximum point-wise distance of the two empirical distribution functions. For categorical feature $x_c$, the distance is equal to the sum of the absolute difference of both relative frequency tables.   
   \end{enumerate}
   \item end for
-  \item Sum up over the pairwise distances of the distributions between features $x_c$ in $X_C$. 
+  \item Sum up the pairwise distances of the distributions over features $x_c$ in $X_C$ for each class pair of $x_s$. 
   \item Reduce the resulting distance matrix to a single dimension using multi-dimensional scaling.
   \item Order the categories of $x_s$ according to the obtained similarity values.
 \end{enumerate}
-An illustrative example is also given in Molnar (2022) in Chapter 8.2 on ALE.
 
 Your colleague implemented some parts of this code in \textit{catale.R}, 
 but he needs your help with implementing the computation of the distance of 
@@ -92,7 +93,7 @@ distribution for a \textbf{categorical} feature $x_c$ in
 \begin{itemize}
   \item Have a look on the function \texttt{order\_levels()} and \texttt{get\_diff\_numeric()}. 
   Locate the steps of above's  algorithmic description in the underlying code.
-  At the end of the script examples are given to run the code.  
+  At the end of the script examples are given to run the code. 
   \item Implement the missing rows in \texttt{get\_diff\_cat()}.
   \textit{Hint:} The command \texttt{expand.grid(levels(feature.j), levels(feature.j))} creates the first two columns in 
 your resulting dataset - the pairwise class combinations for $x_s$.
