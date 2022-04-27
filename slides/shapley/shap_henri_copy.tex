@@ -52,7 +52,7 @@
   \textbf{Example:} 
   \begin{itemize}
       \item train random forest on bike rental dataset with features humidity, temperature and windspeed
-      \item calculate Shapley value for observation $i$ with $\fh(x^{(i)}) = \color{orange}{2573}$
+      \item calculate Shapley value for instance $\xv$ with $\fh(\xv) = \color{orange}{2573}$
       \item $E(\fh) = \color{blue}{4515}$
   \end{itemize}
   \textbf{Exact Shapley calculation for humidity:} 
@@ -108,9 +108,9 @@ $$
 
 \end{vbframe}
 
-\begin{vbframe}{SHAP Definition}
+\begin{vbframe}{SHAP Definition \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
 \textbf{Aim}: 
-Find an additive combination that explains the prediction of an instance $\xv$ by computing the contribution of each feature to the prediction.
+Find an additive combination that explains the prediction of an instance $\xv$ by computing the contribution of each feature to the prediction. 
 \vspace{1cm}
 \begin{exampleblock}{}
 \[
@@ -246,23 +246,23 @@ How do we estimate the Shapley values $\phi_j$?
 \textbf{Step 1: Sample coalitions}
 \begin{itemize}
     \item Sample K coalitions of the simplified feature space
-    $$z_{k}^{\prime} \in\{0,1\}^{p}, \quad k \in\{1, \ldots, K\}$$
+    $$\mathbf{z}_{k}^{\prime} \in\{0,1\}^{p}, \quad k \in\{1, \ldots, K\}$$
     \item For our example we receive in total 8 coalitions (without sampling)
 \end{itemize}
 
 \begin{table}[]
     \centering
      \begin{tabular}{l |cccc}
-  Coalition &  hum & temp & ws \\
+  Coalition (S) & $\mathbf{z}_{k}^{\prime}$ &  hum & temp & ws \\
   \hline 
-  $z^{\prime}_{0}$ & 0 & 0 & 0  \\
-   $z^{\prime}_{hum}$ & 1 & 0 & 0  \\
-    $z^{\prime}_{temp}$ & 0 & 1 & 0  \\
-     $z^{\prime}_{ws}$ & 0 & 0 & 1  \\
-     $z^{\prime}_{hum, temp}$ & 1 & 1 & 0  \\
-     $z^{\prime}_{temp, ws}$ & 0 & 1 & 1  \\
-     $z^{\prime}_{hum, ws}$ & 1 & 0 & 1  \\
-  $z^{\prime}_{hum, temp, ws}$ & 1 & 1 & 1  \\
+  $\varnothing$ & $z^{\prime}_{1}$ & 0 & 0 & 0  \\
+  hum & $\mathbf{z}^{\prime}_{2}$ & 1 & 0 & 0  \\
+  temp &  $\mathbf{z}^{\prime}_{3}$ & 0 & 1 & 0  \\
+  ws &   $\mathbf{z}^{\prime}_{4}$ & 0 & 0 & 1  \\
+  hum, temp & $\mathbf{z}^{\prime}_{5}$ & 1 & 1 & 0  \\
+  temp, ws & $\mathbf{z}^{\prime}_{6}$ & 0 & 1 & 1  \\
+  hum, ws &   $\mathbf{z}^{\prime}_{7}$ & 1 & 0 & 1  \\
+  hum, temp, ws & $\mathbf{z}^{\prime}_{8}$ & 1 & 1 & 1  \\
   
  
   \end{tabular}
@@ -747,9 +747,9 @@ From Consistency the Shapley \textbf{Axioms of Linearity, Dummy and Symmetry} fo
 
 \end{vbframe}
 
-\begin{vbframe}{Tree SHAP}
+\begin{vbframe}{Tree SHAP \citebutton{Lundberg et al 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
 
-TreeSHAP is a fast model specific exact calculation of Shapley values for tree based models
+TreeSHAP is a fast model specific exact calculation of Shapley values for tree based models 
 
 \begin{onlyenv}<1-3>
 \vspace{0.5cm}
@@ -847,7 +847,7 @@ T is the number of trees, L is the maximum number of leaves in any tree and D th
 
 \end{vbframe}
 
- \begin{vbframe}{Global SHAP}
+ \begin{vbframe}{Global SHAP \citebutton{Lundberg et al 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
 \textbf{Idea: }
 \begin{itemize}
     \item Run SHAP for every instance and thereby get a matrix of Shapley values
