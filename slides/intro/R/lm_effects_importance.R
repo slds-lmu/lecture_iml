@@ -3,12 +3,13 @@ library(mgcViz)
 library(mgcv)
 library(rpart)
 library(rpart.plot)
+library(mboost)
 
-data_bike = read.csv("slides/intro/R/day.csv")
-data_bike$cnt = as.numeric(data_bike$cnt)
-str(data_bike)
+load("data/bike.RData")
+bike$cnt = as.numeric(bike$cnt)
+str(bike)
 
-lm_mod = lm(cnt ~ (hum + temp)^2, data = data_bike)
+lm_mod = lm(cnt ~ (hum + temp)^2, data = bike)
 sink(file = "slides/intro/figure/lm_output.txt")
 summary(lm_mod)
 sink(file = NULL)
@@ -17,7 +18,7 @@ plot(Effect(c("temp"), lm_mod), type = "response")
 dev.off()
 
 
-glm_mod = glm(cnt ~ (hum + temp)^2, data = data_bike, family = Gamma(link = "inverse"))
+glm_mod = glm(cnt ~ (hum + temp)^2, data = bike, family = Gamma(link = "inverse"))
 sink(file = "slides/intro/figure/glm_output.txt")
 summary(glm_mod)
 sink(file = NULL)
@@ -26,7 +27,7 @@ plot(Effect(c("temp"), glm_mod), type = "response")
 dev.off()
 
 
-gam_mod = mgcv::gam(cnt ~ s(hum, temp), data = data_bike, family = gaussian)
+gam_mod = mgcv::gam(cnt ~ s(hum, temp), data = bike, family = gaussian)
 sink(file = "slides/intro/figure/gam_output.txt")
 summary(gam_mod)
 sink(file = NULL)
@@ -38,7 +39,7 @@ dev.off()
 
 
 
-mboost_mod = mboost(cnt ~ bols(hum) + bols(temp) + bspatial(hum, temp), data = data_bike)
+mboost_mod = mboost(cnt ~ bols(hum) + bols(temp) + bspatial(hum, temp), data = bike)
 sink(file = "slides/intro/figure/mboost_output.txt")
 summary(mboost_mod)
 sink(file = NULL)
@@ -47,7 +48,7 @@ plot(mboost_mod)
 dev.off()
 
 
-rpart_mod = rpart(cnt ~ hum + temp, data = data_bike)
+rpart_mod = rpart(cnt ~ hum + temp, data = bike)
 sink(file = "slides/intro/figure/rpart_output.txt")
 rpart_mod$call
 sink(file = NULL)

@@ -31,7 +31,7 @@
 \item Feature dependencies and interactions
 \item General pitfalls of interpretation methods}
 
-\lecturechapter{General Pitfalls}
+\lecturechapter{Correlation, Interaction and Pitfalls}
 \lecture{Interpretable Machine Learning}
 %
 % \begin{frame}{Interpretable ML}
@@ -221,7 +221,7 @@ Conditional distributions at different vertical and horizontal slices (after nor
 
 $\Rightarrow$ $\P(X_1|X_2) = \P(X_1) \text{ and } \P(X_2|X_1) = \P(X_2)$
 \end{column}
-\hfill
+\hfill\pause
 \begin{column}{0.49\linewidth}
 \includegraphics[width=\linewidth]{figure/dependent_slice.pdf}
 Conditional distributions do not match their marginal distributions
@@ -236,17 +236,17 @@ Conditional distributions do not match their marginal distributions
 \begin{frame}{Interpretations with Dependent Features}
 \begin{itemize}
 
-\item Be clear about interpretation goal: Explain model or underlying relationship in data?
-%We need to differentiate between interpretations of a model or reality
-\\
-$\leadsto$ Latter might be distorted by modeling fallacies, 
-e.g., 
-%due to bad data quality, 
-under- and overfitting or extrapolation
+% \item Be clear about interpretation goal: Explain model or underlying relationship in data?
+% %We need to differentiate between interpretations of a model or reality
+% \\
+% $\leadsto$ Latter might be distorted by modeling fallacies, 
+% e.g., 
+% %due to bad data quality, 
+% under- and overfitting or extrapolation
 
-\pause
+%\pause
 \item Highly correlated features contain similar information \\
-$\leadsto$ Confuses model so that only one feature may be used (even if it is a causally irrelevant)
+$\leadsto$ Confuses model so that only one feature may be used (even if it is causally irrelevant)
 %Some models might use only one correlated feature (even if it is causally not relevant)
 \\
 %Can confuse a model so that only one correlated feature is used (even if it is not relevant) \\
@@ -295,7 +295,7 @@ $\leadsto$ Even for causally and equally relevant features, explanations can be 
 
 
 
-\begin{frame}{Extrapolation}
+\begin{frame}{Extrapolation due to Dependencies}
 %\begin{center}
 \centerline{\includegraphics[width=0.8\textwidth]{figure/extrapolation}}
 %\end{center}
@@ -307,7 +307,7 @@ $\leadsto$ Even for causally and equally relevant features, explanations can be 
 artificially created data points \\
 $\leadsto$ Many of these points can lie in low-density regions if features are dependent\\
 $\leadsto$ Model predictions in such regions are subject to a high uncertainty\\ % in regions with no or few training data
-$\leadsto$ Explanations may be biased as they rely on predictions where model extrapolated\\
+$\leadsto$ Explanations may be biased as they often rely on predictions where model extrapolated\\
 \pause
 %\item 
 %\item Essentially, we are interested in the prediction uncertainty\\
@@ -380,7 +380,7 @@ $\leadsto$ Training density might serve as proxy to identify regions where extra
 \begin{frame}{Feature Interactions}
 \begin{itemize}
 %\itemsep2em
-\item While feature dependencies concern data distribution, feature interactions occur in structure of model or DGP (e.g., functional relationship between $X$ and $\fh(X)$ or $X$ and $f(X)$)\\
+\item While feature dependencies concern data distribution, feature interactions occur in structure of model or DGP (e.g., functional relationship between $X$ and $\fh(X)$ or $X$ and $Y = f(X)$)\\
 $\leadsto$ Feature dependencies may lead to feature interactions in a model
 \pause
 %\item Although correlation concerns the data and interactions the model, they are often connected as correlations in the training data are identified by the learning algorithm.
@@ -389,7 +389,7 @@ $\leadsto$ Interactions are difficult to identify, especially if feature depende
 \pause
 \item With interactions present, a feature's effect on the prediction depends on other features\\
 $\leadsto$
-$\fh(x) = x_1 x_2$ $\Rightarrow$ Effect of $x_1$ on $\fh$ depends on $x_2$ and vice versa
+$\fh(\xv) = x_1 x_2$ $\Rightarrow$ Effect of $x_1$ on $\fh$ depends on $x_2$ and vice versa
 
 \begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.5\textwidth}
@@ -561,7 +561,7 @@ No interaction:
 % \end{frame}
 
 \begin{frame}[t]{Pitfalls and Best Practices \citebutton{Molnar et. al (2021)}{https://arxiv.org/abs/2007.04131v2}}
-\begin{itemize}
+\begin{itemize}[<+->]
     \item \textbf{Proper training and evaluation}:
     To gain insights into data generating process, deployed model should at least generalize well to unseen data (garbage in, garbage out)
     %Model interpretation is only as good as the underlying model (garbage in, garbage out).

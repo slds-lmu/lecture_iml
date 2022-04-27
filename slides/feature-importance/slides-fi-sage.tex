@@ -36,16 +36,24 @@
 
 % CHALLENGE
 \begin{vbframe}{Challenge: Fair Attribution of Importance}
-\textbf{Recap:} Data: $x_1, \dots, x_4$ uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$. Model: $\fh(x) \approx x_1 x_2 + x_3$.\\
+\begin{columns}[T]
+\begin{column}{0.54\textwidth}
+\textbf{Recap:} 
+\begin{itemize}
+\item Data: $x_1, \dots, x_4$ uniformly sampled from $[-1, 1]$ 
+\item DGP: $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$
+\item Model: $\fh(x) \approx x_1 x_2 + x_3$
+\end{itemize}
 
-\begin{figure}
+Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ jointly, all three are considered equally relevant by PFI.
+\end{column}
+\begin{column}{0.45\textwidth}
 \centering
-  \includegraphics[width=0.5\linewidth]{figure_man/pfi_interactions.pdf}
-\end{figure}
-
-Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ jointly, all three are considered equally relevant by PFI.\\
+  \includegraphics[width=\linewidth]{figure_man/pfi_interactions.pdf}
+\end{column}
+\end{columns}
 \lz
-Why? PFI assesses importance given that all remaining covariates are preserved. If we were to first permute $x_1$ and then $x_2$, the permutation of $x_2$ would have no effect on the performance (and vice versa).
+\textbf{Reason:} PFI assesses importance given that all remaining features are preserved. If first permute $x_1$ and then $x_2$, permutation of $x_2$ would have no effect on the performance (and vice versa).
 \end{vbframe}
 
 
@@ -85,7 +93,7 @@ Contribution of feature $x_j$ over coalition $x_S$:  $v_{\fh}(S \cup \{j\}) - v_
 
 \end{vbframe}
 
-\begin{vbframe}[allowframebreaks]{SAGE Removal and Value function}
+\begin{vbframe}{SAGE Removal and Value function}
 
 Depending on whether conditional or marginal resampling is used, the interpretation of SAGE value functions differ.\\
 \lz
@@ -100,15 +108,18 @@ Depending on whether conditional or marginal resampling is used, the interpretat
   \item under model optimality, links to mutual information or the conditional variance can be drawn
 \end{itemize}
 
-\framebreak
+\end{vbframe}
+
+\begin{vbframe}{SAGE Removal and Value function}
 
 When the loss-optimal model $f^*$ is inspected using \textit{conditional-sampling} based SAGE value functions, interesting links exist.
 \begin{itemize}
   \item \textbf{for cross-entropy loss:} the value function $v_{f^*}(S) = I(y;x_S)$ corresponds to the mutual information and the surplus contribution of a feature $x_j$ $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = I(y,x_i|x_S)$ to the conditional mutual information
   \item \textbf{for MSE loss:} the value function $v_{f^*}(S) = Var(y) - \E[Var(y|x_S)]$ corresponds to the expected reduction in variance given knowledge of the features $x_S$ and the surplus contribution $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = \E[Var(y|x_S)] - \E[Var(y|x_{S \cup {j}})]$ to the respective reduction over $x_S$
 \end{itemize}
+\end{vbframe}
 
-\framebreak
+\begin{vbframe}{SAGE Removal and Value function}
 
 \textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). The prediction model is defined as  $\fh \approx 0.95 x_3 + 0.05 x_2$. 
 %
