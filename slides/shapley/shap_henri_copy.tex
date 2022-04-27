@@ -1,5 +1,5 @@
 \documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
-
+\newcommand{\btVFill}{\vskip0pt plus 1filll}
 \usepackage{../../style/lmu-lecture}
 \usepackage{siunitx}
 % Defines macros and environments
@@ -88,11 +88,11 @@ $$
 \textbf{Remember}: Shapley values explain the difference between actual and average prediction:
 \begin{eqnarray*}
 \color{orange}{2573} \color{black}- \color{blue}{4515} \color{black} = &34 - 1654 - 323 &= - 1942\\
-\fh(x^{(i)}) - E(\fh) =& \phi_{hum} + \phi_{temp} + \phi_{ws}&\\
+\fh(\xv) - E(\fh) =& \phi_{hum} + \phi_{temp} + \phi_{ws}&\\
 \end{eqnarray*}
 $\leadsto$ can be rewritten to
 $$
-\fh(x^{(i)}) = \underbrace{E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws}
+\fh(\xv) = \underbrace{E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws}
 $$
 \end{column}
 \begin{column}{0.5\textwidth}
@@ -110,13 +110,19 @@ $$
 
 \begin{vbframe}{SHAP Definition \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
 \textbf{Aim}: 
-Find an additive combination that explains the prediction of an instance $\xv$ by computing the contribution of each feature to the prediction. 
-\vspace{1cm}
+Find an additive combination that explains the prediction of an instance $\xv$ by computing the contribution of each feature to the prediction. \\\medskip
+\only<1-3>{\textbf{Definition}
+\begin{itemize}
+    \item We define a simplified (binary) coalition feature space $\mathbf{Z}^\prime$ with $K$ rows and $p$ columns 
+    \item $\mathbf{z}^{\prime (k)} = \{z^{\prime (k)}_1, \ldots, z^{\prime (k)}_p\}$ with $k \in \{1,\ldots, K\}$ indexes the $k$-th coalition 
+\end{itemize}
+}
+\vspace{0.5cm}
 \begin{exampleblock}{}
 \[
-g\left(\tikzmark{z} z^{\prime}\right)=
-\tikzmark{ph0}\phi_{0}+\sum_{j=1}^{M}
-\tikzmark{phj} \phi_{j} z_{j}^{\prime}
+g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
+\tikzmark{ph0}\phi_{0}+\sum_{j=1}^{p}
+\tikzmark{phj} \phi_{j} z_{j}^{\prime (k)}
 \]
 \begin{tikzpicture}[
   remember picture,
@@ -127,18 +133,18 @@ g\left(\tikzmark{z} z^{\prime}\right)=
 \node<1-3>[expl] 
   (zex) 
   at (2,1.5cm)
-  {$z^{\prime}$:\textbf{Coalition} \\ simplified features};
+  {$\mathbf{z}^{\prime (k)}$:\textbf{Coalition} \\ simplified features};
 \node<2-3>[expl] 
   (ph0ex) 
   at (5,-.5cm)
-  {$\phi_0$: \textbf{Null Output} \\ Average Model Baseline};
+  {$\phi_0$: \textbf{Null Output} \\ Average Model Baseline ($\mathbb{E}(\fh))$};
 \node<3>[expl] 
   (phjex) 
   at (12,0cm)
-  {$\phi_j$: \textbf{Attribution} \\ How much does feature $j$ change the output};
+  {$\phi_j$: \textbf{Attribution} \\ How much does feature $j$ change the output for coaltion $k$};
 
 \draw<1-4>[arrow]
-  (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.5ex]{pic cs:z});  
+  (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.4ex]{pic cs:zp});  
 \draw<2-3>[arrow]
   (ph0ex.east) to[out=180,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:ph0});  
 \draw<3>[arrow]
@@ -146,7 +152,7 @@ g\left(\tikzmark{z} z^{\prime}\right)=
  \node<4>[expl] 
   (zex)  
   at (2,1cm)
-  {$g(z^{\prime})$:\textbf{Marginal Contribution} \\ Contribution of coalition $z^{\prime}$ to the prediction};
+  {$g(\mathbf{z}^{\prime (k)})$:\textbf{Marginal Contribution} \\ Contribution of coalition $\mathbf{z}^{\prime (k)}$ to the prediction};
 \node<4>[expl] 
   (phjsh) 
   at (11,1.5cm)
@@ -206,7 +212,7 @@ How do we estimate the Shapley values $\phi_j$?
 
 \begin{vbframe}{Kernel SHAP - In 5 Steps}
 
-\textbf{Definition:} A kernel-based, model-agnostic method to compute Shapley values via local surrogate models\\
+\textbf{Definition:} A kernel-based, model-agnostic method to compute Shapley values via local surrogate models (e.g. linear model)\\
 \vspace{1cm}
 \begin{enumerate}
     \item Sample coalitions 
@@ -246,23 +252,23 @@ How do we estimate the Shapley values $\phi_j$?
 \textbf{Step 1: Sample coalitions}
 \begin{itemize}
     \item Sample K coalitions of the simplified feature space
-    $$\mathbf{z}_{k}^{\prime} \in\{0,1\}^{p}, \quad k \in\{1, \ldots, K\}$$
-    \item For our example we receive in total 8 coalitions (without sampling)
+    $$\mathbf{z}^{\prime (k)} \in\{0,1\}^{p}, \quad k \in\{1, \ldots, K\}$$
+    \item For our example we receive in total $2^p = 2^3 = 8$ coalitions (without sampling)
 \end{itemize}
 
 \begin{table}[]
     \centering
-     \begin{tabular}{l |cccc}
-  Coalition (S) & $\mathbf{z}_{k}^{\prime}$ &  hum & temp & ws \\
+     \begin{tabular}{l |c|ccc}
+  Coalition  & $\mathbf{z}^{\prime (k)}$ &  hum & temp & ws \\
   \hline 
-  $\varnothing$ & $z^{\prime}_{1}$ & 0 & 0 & 0  \\
-  hum & $\mathbf{z}^{\prime}_{2}$ & 1 & 0 & 0  \\
-  temp &  $\mathbf{z}^{\prime}_{3}$ & 0 & 1 & 0  \\
-  ws &   $\mathbf{z}^{\prime}_{4}$ & 0 & 0 & 1  \\
-  hum, temp & $\mathbf{z}^{\prime}_{5}$ & 1 & 1 & 0  \\
-  temp, ws & $\mathbf{z}^{\prime}_{6}$ & 0 & 1 & 1  \\
-  hum, ws &   $\mathbf{z}^{\prime}_{7}$ & 1 & 0 & 1  \\
-  hum, temp, ws & $\mathbf{z}^{\prime}_{8}$ & 1 & 1 & 1  \\
+  $\varnothing$ & $\mathbf{z}^{\prime (1)}$ & 0 & 0 & 0  \\
+  hum & $\mathbf{z}^{\prime (2)}$ & 1 & 0 & 0  \\
+  temp &  $\mathbf{z}^{\prime (3)}$ & 0 & 1 & 0  \\
+  ws &   $\mathbf{z}^{\prime (4)}$ & 0 & 0 & 1  \\
+  hum, temp & $\mathbf{z}^{\prime (5)}$ & 1 & 1 & 0  \\
+  temp, ws & $\mathbf{z}^{\prime (6)}$ & 0 & 1 & 1  \\
+  hum, ws &   $\mathbf{z}^{\prime (7)}$ & 1 & 0 & 1  \\
+  hum, temp, ws & $\mathbf{z}^{\prime (8)}$ & 1 & 1 & 1  \\
   
  
   \end{tabular}
@@ -276,10 +282,8 @@ How do we estimate the Shapley values $\phi_j$?
 \textbf{Step 2: Transfer Coalitions into feature space \& get predictions by applying ML model}
 \begin{itemize}
    % \item $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
-    \item We define a coalition $z^{\prime}$, by describing a function 
-$h\left(z^{\prime}\right)=x^\prime \text { where } h:\{0,1\}^{p} \rightarrow \mathbb{R}^{p}$
- \item $h(\cdot)$ maps 1’s to the corresponding value from the instance x that we want to explain
-    \item It maps 0’s to the values of another instance that we sample from the data
+   \item $\mathbf{z}^{\prime (k)}$: 1 if features are in coalition $S$, 0 otherwise
+   \item To calculate predictions for these coalitions we need to define a function which maps the binary feature space back to the original feature space
 \end{itemize}
 
 
@@ -289,37 +293,37 @@ $h\left(z^{\prime}\right)=x^\prime \text { where } h:\{0,1\}^{p} \rightarrow \ma
 
 \node (tab1) {%
        \begin{tabular}{l |cccc}
-  Coalition &  hum & temp & ws \\
+  $\xv^{coalition}$ &  hum & temp & ws \\
   \hline 
-  $z^{\prime}_{0}$ & $\varnothing$ & $\varnothing$ &$\varnothing$  \\
-   $z^{\prime}_{hum}$ & 51.6 & $\varnothing$ & $\varnothing$  \\
-    $z^{\prime}_{temp}$ & $\varnothing$ & 5.1 & $\varnothing$  \\
-     $z^{\prime}_{ws}$ & $\varnothing$ & $\varnothing$ & 17.0  \\
-     $z^{\prime}_{hum, temp}$ & 51.6 & 5.1 & $\varnothing$  \\
-     $z^{\prime}_{temp, ws}$ &$\varnothing$ & 5.1 & 17.0  \\
-     $z^{\prime}_{hum, ws}$ & 51.6 & $\varnothing$ & 17.0  \\
-  $z^{\prime}_{hum, temp, ws}$ &51.6 & 5.1 & 17.0   \\
+  $\xv^{\{\varnothing\}}$ & $\varnothing$ & $\varnothing$ &$\varnothing$  \\
+   $\xv^{\{hum\}}$ & 51.6 & $\varnothing$ & $\varnothing$  \\
+    $\xv^{\{temp\}}$ & $\varnothing$ & 5.1 & $\varnothing$  \\
+     $\xv^{\{ws\}}$ & $\varnothing$ & $\varnothing$ & 17.0  \\
+     $\xv^{\{hum, temp\}}$ & 51.6 & 5.1 & $\varnothing$  \\
+     $\xv^{\{temp, ws\}}$ &$\varnothing$ & 5.1 & 17.0  \\
+     $\xv^{\{hum, ws\}}$ & 51.6 & $\varnothing$ & 17.0  \\
+  $\xv^{\{hum, temp, ws\}}$ &51.6 & 5.1 & 17.0   \\
   
  
   \end{tabular}};
 
 \node [left=of tab1] (tab2) {%
-     \begin{tabular}{l |cccc}
-  Coalition &  hum & temp & ws \\
+     \begin{tabular}{l |c|ccc}
+  Coalition & $\mathbf{z}^{\prime (k)}$ &  hum & temp & ws \\
   \hline 
-  $z^{\prime}_{0}$ & 0 & 0 & 0  \\
-   $z^{\prime}_{hum}$ & 1 & 0 & 0  \\
-    $z^{\prime}_{temp}$ & 0 & 1 & 0  \\
-     $z^{\prime}_{ws}$ & 0 & 0 & 1  \\
-     $z^{\prime}_{hum, temp}$ & 1 & 1 & 0  \\
-     $z^{\prime}_{temp, ws}$ & 0 & 1 & 1  \\
-     $z^{\prime}_{hum, ws}$ & 1 & 0 & 1  \\
-  $z^{\prime}_{hum, temp, ws}$ & 1 & 1 & 1  \\
-  
+  $\varnothing$ & $\mathbf{z}^{\prime (1)}$ & 0 & 0 & 0  \\
+  hum & $\mathbf{z}^{\prime (2)}$ & 1 & 0 & 0  \\
+  temp &  $\mathbf{z}^{\prime (3)}$ & 0 & 1 & 0  \\
+  ws &   $\mathbf{z}^{\prime (4)}$ & 0 & 0 & 1  \\
+  hum, temp & $\mathbf{z}^{\prime (5)}$ & 1 & 1 & 0  \\
+  temp, ws & $\mathbf{z}^{\prime (6)}$ & 0 & 1 & 1  \\
+  hum, ws &   $\mathbf{z}^{\prime (7)}$ & 1 & 0 & 1  \\
+  hum, temp, ws & $\mathbf{z}^{\prime (8)}$ & 1 & 1 & 1  \\
+   
  
   \end{tabular}};
 \draw[->]
-(tab2.north) to[out=30,in=150] node[below]{$h(\cdot)$} (tab1.north) ;
+(tab2.north) to[out=10,in=170] node[below]{} (tab1.north) ;
 \end{tikzpicture}
 
 
@@ -337,8 +341,12 @@ $h\left(z^{\prime}\right)=x^\prime \text { where } h:\{0,1\}^{p} \rightarrow \ma
 \textbf{Step 2: Transfer Coalitions into feature space \& get predictions by applying ML model}
 \begin{itemize}
    % \item $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
-   \item Absent feature values are replaced by feature values of a \color{orange}{random instance} \color{black} of the dataset (permuted) $\leadsto$ permute feature values several times
-   \item Predict with ML model on this dataset $\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$
+    \item Define 
+$h_x\left(\mathbf{z}^{\prime (k)}\right)=\mathbf{z}^{(k)} \text { where } h_x:\{0,1\}^{p} \rightarrow \mathbb{R}^{p}$
+ which maps 1’s to feature values of instance $\xv$ for features in $S$ and 0's to feature values of a \color{orange}{randomly sampled instance} \color{black}for features in $C = S^\complement$
+  % \item Absent feature values are replaced by feature values of a \color{orange}{random instance} \color{black} of the dataset (permuted) $\leadsto$ permute feature values several times
+  (feature values are permuted multiple times) 
+   \item Predict with ML model on this dataset $\hat{f}: \hat{f}\left(h_{x}\left(\mathbf{z}^{\prime (k)}\right)\right)$
 \end{itemize}
 
 
@@ -348,37 +356,36 @@ $h\left(z^{\prime}\right)=x^\prime \text { where } h:\{0,1\}^{p} \rightarrow \ma
 
 \node (tab1) {%
        \begin{tabular}{l |ccc | c}
-  Coalition &  hum & temp & ws & $\hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$\\
+  $\mathbf{z}^{(k)}$ &  hum & temp & ws & $\hat{f}\left(h_{x}\left(\mathbf{z}^{\prime (k)}\right)\right)$\\
   \hline 
-  $x^{\prime}_{0}$ & \color{orange}{64.3} & \color{orange}{28.0} & \color{orange}{14.5} & 6211 \\
-   $x^{\prime}_{hum}$ & 51.6 & \color{orange}{28.0} & \color{orange}{14.5} & 5586  \\
-    $x^{\prime}_{temp}$ & \color{orange}{64.3} & 5.1 & \color{orange}{14.5}  & 3295\\
-     $x^{\prime}_{ws}$ & \color{orange}{64.3} & \color{orange}{28.0} & 17.0 &5762 \\
-     $x^{\prime}_{hum, temp}$ & 51.6 & 5.1 & \color{orange}{14.5}  & 2616\\
-     $x^{\prime}_{temp, ws}$ &\color{orange}{64.3} & 5.1 & 17.0  & 2900\\
-     $x^{\prime}_{hum, ws}$ & 51.6 & \color{orange}{28.0} & 17.0 & 5411 \\
-  $x^{\prime}_{hum, temp, ws}$ &51.6 & 5.1 & 17.0 & 2573  \\
+  $\mathbf{z}^{(1)}$ & \color{orange}{64.3} & \color{orange}{28.0} & \color{orange}{14.5} & 6211 \\
+   $\mathbf{z}^{(2)}$ & 51.6 & \color{orange}{28.0} & \color{orange}{14.5} & 5586  \\
+    $\mathbf{z}^{(3)}$ & \color{orange}{64.3} & 5.1 & \color{orange}{14.5}  & 3295\\
+     $\mathbf{z}^{(4)}$ & \color{orange}{64.3} & \color{orange}{28.0} & 17.0 &5762 \\
+     $\mathbf{z}^{(5)}$ & 51.6 & 5.1 & \color{orange}{14.5}  & 2616\\
+     $\mathbf{z}^{(6)}$ &\color{orange}{64.3} & 5.1 & 17.0  & 2900\\
+     $\mathbf{z}^{(7)}$ & 51.6 & \color{orange}{28.0} & 17.0 & 5411 \\
+  $\mathbf{z}^{(8)}$ &51.6 & 5.1 & 17.0 & 2573  \\
   
  
   \end{tabular}};
 
 \node [left=of tab1] (tab2) {%
-     \begin{tabular}{l |cccc}
-  Coalition &  hum & temp & ws \\
+     \begin{tabular}{l |c|ccc}
+  Coalition & $\mathbf{z}^{\prime (k)}$ &  hum & temp & ws \\
   \hline 
-  $z^{\prime}_{0}$ & 0 & 0 & 0  \\
-   $z^{\prime}_{hum}$ & 1 & 0 & 0  \\
-    $z^{\prime}_{temp}$ & 0 & 1 & 0  \\
-     $z^{\prime}_{ws}$ & 0 & 0 & 1  \\
-     $z^{\prime}_{hum, temp}$ & 1 & 1 & 0  \\
-     $z^{\prime}_{temp, ws}$ & 0 & 1 & 1  \\
-     $z^{\prime}_{hum, ws}$ & 1 & 0 & 1  \\
-  $z^{\prime}_{hum, temp, ws}$ & 1 & 1 & 1  \\
+  $\varnothing$ & $\mathbf{z}^{\prime (1)}$ & 0 & 0 & 0  \\
+  hum & $\mathbf{z}^{\prime (2)}$ & 1 & 0 & 0  \\
+  temp &  $\mathbf{z}^{\prime (3)}$ & 0 & 1 & 0  \\
+  ws &   $\mathbf{z}^{\prime (4)}$ & 0 & 0 & 1  \\
+  hum, temp & $\mathbf{z}^{\prime (5)}$ & 1 & 1 & 0  \\
+  temp, ws & $\mathbf{z}^{\prime (6)}$ & 0 & 1 & 1  \\
+  hum, ws &   $\mathbf{z}^{\prime (7)}$ & 1 & 0 & 1  \\
+  hum, temp, ws & $\mathbf{z}^{\prime (8)}$ & 1 & 1 & 1  \\
   
- 
   \end{tabular}};
 \draw[->]
-(tab2.north) to[out=30,in=150] node[below]{$h(\cdot)$} (tab1.north) ;
+(tab2.north) to[out=10,in=170] node[below]{$h_x(\mathbf{z}^{\prime (k)})$} (tab1.north) ;
 \end{tikzpicture}
 
 
@@ -398,7 +405,8 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 \begin{onlyenv}<1>
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\columnwidth]{slides/shapley/figure_man/kernel-weights.pdf}
+    \includegraphics[width=0.4\columnwidth]{slides/shapley/figure_man/kernel-weights.pdf}
+    \caption{Examplary dependence between kernel weights and coalition size for a data set p = 10 features}   
 \end{figure}
 \end{onlyenv}
 
@@ -407,9 +415,9 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 \vspace{1cm}
 \begin{exampleblock}{}
 \[
-\tikzmark{pi}\pi_{x}\left(z^{\prime}\right)=\frac{(
-\tikzmark{M}p-1)}{\left(\begin{array}{c} p \\\left|z^{\prime}\right|\end{array}\right)\left|
-\tikzmark{z}z^{\prime}\right|\left(p-\left|z^{\prime}\right|\right)}
+\tikzmark{pi}\pi_{x}\left(\mathbf{z}^{\prime (k)}\right)=\frac{(
+\tikzmark{M}p-1)}{\left(\begin{array}{c} p \\\left|\mathbf{z}^{\prime (k)}\right|\end{array}\right)\left|
+\tikzmark{z}\mathbf{z}^{\prime (k)}\right|\left(p-\left|\mathbf{z}^{\prime (k)}\right|\right)}
 \]
 \begin{tikzpicture}[
   remember picture,
@@ -420,15 +428,15 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 \node[expl] 
   (piex) 
   at (4,0cm)
-  {$\pi_x(z^{\prime})$: kernel weight for coalition $z^{\prime}$};
+  {$\pi_x(\mathbf{z}^{\prime (k)})$: kernel weight for coalition $\mathbf{z}^{\prime (k)}$};
 \node[expl] 
   (Mex) 
   at (13,2cm)
-  {p: Number of features in x};
+  {p: Number of features in $\xv$};
 \node[expl] 
   (zex) 
   at (8,-1cm)
-  {$\mid z^{\prime}\mid$: coalition size / sum of 1s in $z^{\prime}$};
+  {$\mid \mathbf{z}^{\prime (k)}\mid$: coalition size / sum of 1s in $\mathbf{z}^{\prime (k)}$};
 \draw[arrow]
   (piex.west) to[out=180,in=135] ([xshift= 0.5ex, yshift=2ex]{pic cs:pi}); 
 \draw[arrow]
@@ -467,22 +475,22 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 \begin{vbframe}{Kernel shap - in 5 steps}
 \textbf{Step 3: Compute weights through Kernel}\\\medskip
 \textbf{Purpose}: to include this knowledge in the local surrogate model (linear regression), we calculate weights for each coalition which are the instances of the linear regression
-\only<1>{    $$\pi_{x}\left(z^{\prime}\right)=\frac{(p-1)}{\left(\begin{array}{c} p \\|z^{\prime}|\end{array}\right)|z^{\prime}|(p-|z^{\prime}|)} \leadsto \pi_x\left(z^{\prime} = (1,0,0)\right)=\frac{(3-1)}{\left(\begin{array}{c} 3 \\1\end{array}\right)1\left(3-1\right)} = \frac{1}{3}$$
+\only<1>{    $$\pi_{x}\left(\mathbf{z}^{\prime}\right)=\frac{(p-1)}{\left(\begin{array}{c} p \\|\mathbf{z}^{\prime}|\end{array}\right)|\mathbf{z}^{\prime}|(p-|\mathbf{z}^{\prime}|)} \leadsto \pi_x\left(\mathbf{z}^{\prime} = (1,0,0)\right)=\frac{(3-1)}{\left(\begin{array}{c} 3 \\1\end{array}\right)1\left(3-1\right)} = \frac{1}{3}$$
 }
 
 \begin{table}[]
     \centering
-        \begin{tabular}{l |ccc|c}
-  Coalition &  hum & temp & ws & weight \\
+        \begin{tabular}{l |c|ccc|c}
+ Coalition & $\mathbf{z}^{\prime (k)}$ &  hum & temp & ws & weight\\
   \hline 
-  $z^{\prime}_{0}$ & 0 & 0 & 0 & $\infty$ \\
-   $z^{\prime}_{hum}$ & 1 & 0 & 0 & 0.33 \\
-    $z^{\prime}_{temp}$ & 0 & 1 & 0 & 0.33 \\
-     $z^{\prime}_{ws}$ & 0 & 0 & 1 & 0.33 \\
-     $z^{\prime}_{hum, temp}$ & 1 & 1 & 0 & 0.33 \\
-     $z^{\prime}_{temp, ws}$ & 0 & 1 & 1 &0.33 \\
-     $z^{\prime}_{hum, ws}$ & 1 & 0 & 1 & 0.33 \\
-  $z^{\prime}_{hum, temp, ws}$ & 1 & 1 & 1 & $\infty$ \\
+  $\varnothing$ & $\mathbf{z}^{\prime (1)}$ & 0 & 0 & 0 & $\infty$ \\
+  hum & $\mathbf{z}^{\prime (2)}$ & 1 & 0 & 0 & 0.33 \\
+  temp &  $\mathbf{z}^{\prime (3)}$ & 0 & 1 & 0 & 0.33 \\
+  ws &   $\mathbf{z}^{\prime (4)}$ & 0 & 0 & 1 & 0.33  \\
+  hum, temp & $\mathbf{z}^{\prime (5)}$ & 1 & 1 & 0 & 0.33 \\
+  temp, ws & $\mathbf{z}^{\prime (6)}$ & 0 & 1 & 1 & 0.33 \\
+  hum, ws &   $\mathbf{z}^{\prime (7)}$ & 1 & 0 & 1 & 0.33 \\
+  hum, temp, ws & $\mathbf{z}^{\prime (8)}$ & 1 & 1 & 1 & $\infty$ \\
   
  
   \end{tabular}
@@ -565,17 +573,17 @@ $\leadsto$ weights for empty and full set are infinity and not used as instances
 \textbf{Step 4: Fit a weighted linear model}\\\medskip
 \textbf{Aim}: Estimate a weighted linear model with Shapley values being the coefficients $\phi_j$
 $$
-g\left(z^{\prime}\right)=
+g\left(\mathbf{z}^{\prime (k)}\right)=
 \phi_{0}+\sum_{j=1}^{p}
- \phi_{j} z_{j}^{\prime} \only<2>{\leadsto g\left(z^{\prime}\right)=
+ \phi_{j} z_{j}^{\prime (k)} \only<2>{\leadsto g\left(\mathbf{z}^{\prime (k)}\right)=
 4515 +
- 34 \cdot z_{hum}^{\prime} - 1654 \cdot z_{temp}^{\prime} - 323 \cdot z_{ws}^{\prime} }
+ 34 \cdot z_{1}^{\prime (k)} - 1654 \cdot z_{2}^{\prime (k)} - 323 \cdot z_{3}^{\prime (k)} }
 $$
 
 
 \only<1>{
 and minimize by WLS using the weights $\pi_{x}$ of step 3
-    $$L\left(\hat{f}, g, \pi_{x}\right)=\sum_{z^{\prime} \in Z}\left[\hat{f}\left(h_{x}\left(z^{\prime}\right)\right)-g\left(z^{\prime}\right)\right]^{2} \pi_{x}\left(z^{\prime}\right)$$
+    $$L\left(\hat{f}, g, \pi_{x}\right)=\sum_{k = 1}^K\left[\hat{f}\left(h_{x}\left(\mathbf{z}^{\prime (k)}\right)\right)-g\left(\mathbf{z}^{\prime (k)}\right)\right]^{2} \pi_{x}\left(\mathbf{z}^{\prime (k)}\right)$$
 
 with $\phi_0 = E(\fh)$ and $\phi_p = \fh(x) - \sum_{j=0}^{p-1} \phi_j$ we receive a $p-1$ dimensional linear regression problem
 }
@@ -584,14 +592,14 @@ with $\phi_0 = E(\fh)$ and $\phi_p = \fh(x) - \sum_{j=0}^{p-1} \phi_j$ we receiv
 \begin{table}[]
     \centering
         \begin{tabular}{l |ccc|c|c}
-  Coalition &  hum & temp & ws & weight & $\fh$\\
+  $\mathbf{z}^{\prime (k)}$ &  hum & temp & ws & weight & $\fh$\\
   \hline 
-   $z^{\prime}_{hum}$ & 1 & 0 & 0 & 0.33 & 4635\\
-    $z^{\prime}_{temp}$ & 0 & 1 & 0 & 0.33 & 3087\\
-     $z^{\prime}_{ws}$ & 0 & 0 & 1 & 0.33 & 4359\\
-     $z^{\prime}_{hum, temp}$ & 1 & 1 & 0 & 0.33 & 3060\\
-     $z^{\prime}_{temp, ws}$ & 0 & 1 & 1 &0.33 & 2623\\
-     $z^{\prime}_{hum, ws}$ & 1 & 0 & 1 & 0.33 & 4450\\
+   $\mathbf{z}^{\prime (2)}$ & 1 & 0 & 0 & 0.33 & 4635\\
+    $\mathbf{z}^{\prime (3)}$ & 0 & 1 & 0 & 0.33 & 3087\\
+     $\mathbf{z}^{\prime (4)}$ & 0 & 0 & 1 & 0.33 & 4359\\
+     $\mathbf{z}^{\prime (5)}$ & 1 & 1 & 0 & 0.33 & 3060\\
+     $\mathbf{z}^{\prime (6)}$ & 0 & 1 & 1 &0.33 & 2623\\
+     $\mathbf{z}^{\prime (7)}$ & 1 & 0 & 1 & 0.33 & 4450\\
   
  
   \end{tabular}
@@ -607,7 +615,7 @@ with $\phi_0 = E(\fh)$ and $\phi_p = \fh(x) - \sum_{j=0}^{p-1} \phi_j$ we receiv
 \textbf{Step 5: Return SHAP values}\\\medskip
 \textbf{Intuition}: Estimated Kernel SHAP values are equivalent to Shapley values 
 $$
-\fh(x^{(i)}) = \underbrace{E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws} = 4515 + 34 \cdot 1 - 1654 \cdot 1 - 323 \cdot 1 = 2573
+g(\mathbf{z}^{\prime (8)}) = \fh(h_x(\mathbf{z}^{\prime (8)}) ) = 4515 + 34 \cdot 1 - 1654 \cdot 1 - 323 \cdot 1 = \underbrace{E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws} = \fh(\xv) = 2573
 $$
 
 \begin{figure}
@@ -858,21 +866,32 @@ T is the number of trees, L is the maximum number of leaves in any tree and D th
 $$
 \Phi =
 \begin{bmatrix}
-    \phi_{11} & \phi_{12} & \phi_{13} & \dots  & \phi_{1M} \\
-    \phi_{21} & \phi_{22} & \phi_{23} & \dots  & \phi_{2M} \\
+    \phi_{11} & \phi_{12} & \phi_{13} & \dots  & \phi_{1p} \\
+    \phi_{21} & \phi_{22} & \phi_{23} & \dots  & \phi_{2p} \\
     \vdots & \vdots & \vdots & \ddots & \vdots \\
-    \phi_{n1} & \phi_{n2} & \phi_{n3} & \dots  & \phi_{nM} \\
+    \phi_{n1} & \phi_{n2} & \phi_{n3} & \dots  & \phi_{np} \\
 \end{bmatrix}
 $$
 
  \end{vbframe}
 
  \begin{vbframe}{Feature Importance}
- 
+
+\begin{onlyenv}<1>
 \textbf{Idea:} Average the Shapley values of each feature over all instances. This corresponds to calculating column-wise averages in $\Phi$
 $$
 I_{j}=\frac{1}{n} \sum_{i=1}^{n}\left|\phi_{j}^{(i)}\right|
 $$
+\end{onlyenv}
+
+\begin{onlyenv}<2>
+\textbf{Interpretation:}\\
+The average contribution of the features temperature and year to an individual prediction is higher than 1000 rentals\\
+The other features impact is less than 400 bike rentals in average\\
+\end{onlyenv}
+
+
+\btVFill
 
 \begin{figure}
     \centering
@@ -882,13 +901,23 @@ $$
 \end{vbframe}
  
 \begin{vbframe}{Summary Plot}
-
+\begin{onlyenv}<1>
 Combines feature importance with feature effects
 \begin{itemize}
     \item Each point is a Shapley value for a feature and an instance
     \item The color represents the value of the feature from low to high
     \item Overlapping points are jittered in y-axis direction
 \end{itemize}
+\end{onlyenv}
+
+\begin{onlyenv}<2>
+\textbf{Interpretation:}\\
+Low temperatures have a negative impact while high temperatures lead to more bike rentals \\
+Year is divided in two point clouds, we can guess that each cloud resembles a year\\
+A high humidity has a huge, negative impact on the bike rental, while low humidity has a rather minor positive impact on bike rentals
+\end{onlyenv}
+
+\btVFill
 
 \begin{figure}
     \centering
@@ -898,7 +927,20 @@ Combines feature importance with feature effects
 \end{vbframe} 
 
 \begin{vbframe}{Dependence Plot}
+
+\begin{onlyenv}<1>
 Simply plot a point with the feature value on the x-axis and the corresponding Shapley value on the y-axis
+\end{onlyenv}
+
+\begin{onlyenv}<2>
+\textbf{Interpretation:}\\
+Increasing temperatures induce increasing bike rentals until $25^\circ\text{C}$ \\
+If it gets too hot, the bike rentals will decrease
+
+\end{onlyenv}
+
+
+\btVFill
 
 \begin{figure}
     \centering
