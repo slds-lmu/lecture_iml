@@ -22,11 +22,11 @@
 
 \begin{frame}{Partial Dependence (PD) \citebutton{Friedman (2001)}{https://www.jstor.org/stable/2699986}}
 
-\textbf{Definition:} PD function is expectation of $\fh(x_S, \xv_C)$ w.r.t. marginal distribution of features $\xv_C$:
-$$f_{S, PD}(x_S) = \E_{\xv_C} \left( \fh(x_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_C) \, d\P(\xv_C)$$
+\textbf{Definition:} PD function is expectation of $\fh(\xv_S, \xv_C)$ w.r.t. marginal distribution of features $\xv_C$:
+$$f_{S, PD}(\xv_S) = \E_{\xv_C} \left( \fh(\xv_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(\xv_S, \xv_C) \, d\P(\xv_C)$$
 
-\textbf{Estimation:} For a grid value $x_S^*$, average ICE curves point-wise at $x_S^*$ over all observed $\xv_C^{(i)}$:
-$$\fh_{S, PD}(x_S^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_S^*, \xv_C^{(i)})$$
+\textbf{Estimation:} For a grid value $\xv_S^*$, average ICE curves point-wise at $\xv_S^*$ over all observed $\xv_C^{(i)}$:
+$$\fh_{S, PD}(\xv_S^*) = \frac{1}{n} \sum_{i=1}^n \fh(\xv_S^*, \xv_C^{(i)})$$
 
 %Within the SIPA framework, the partial dependence builds the \textbf{Aggregation} step.
 
@@ -95,7 +95,7 @@ $\Rightarrow$ PD plot visualizes the function $f_{1, PD}(\xv_1) = \hat\beta_1 \x
 \end{columns}
 %\end{onlyenv}
 
-Estimate PD function by \textbf{point-wise} average of ICE curves at grid value \fcolorbox{red}{white}{$x_S^* = x_1^* = \only<1>{1}\only<2>{2}\only<3>{3}$}:
+Estimate PD function by \textbf{point-wise} average of ICE curves at grid value \fcolorbox{red}{white}{$\xv_S^* = x_1^* = \only<1>{1}\only<2>{2}\only<3>{3}$}:
 $$\textstyle\fh_{1, PD}(x_1^*) = \frac{1}{n} \sum_{i=1}^n \fh(x_1^*, \xv_{2, 3}^{(i)})$$
 }
 
@@ -267,18 +267,24 @@ $\Rightarrow$ May be problematic if model behaves strange outside training distr
 \textbf{Issue:} Difficult to identify heterogenous ICE curves if curves have different intercepts (are stacked)
 %When ICE curves start at different intercepts (are stacked), it is difficult to identify heterogenous predictions.
 
-\textbf{Solution:} Center ICE curves at fixed reference value $x^* \sim \P(\xv_S)$, often $x^* = \min(\xv_S)$\\
+\textbf{Solution:} Center ICE curves at fixed reference value $x' \sim \P(\xv_S)$, often $x' = \min(\xv_S)$\\
 $\Rightarrow$ Easier to identify heterogenous shapes with c-ICE curves
 
 \begin{columns}[c]
 \begin{column}{0.4\textwidth}
-\centering
+%\centering
 $$\begin{aligned}
 \fh_{S, cICE}^{(i)}(\xv_S)
 &= \fh(\xv_S, \xi_C) - \fh(x^*, \xi_C) \\
 &= \fh_{S}^{(i)}(\xv_S) - \fh_{S}^{(i)}(x^*)
 \end{aligned}$$
-Visualize $\fh_{S, cICE}^{(i)}(x_S^*)$ vs. $x_S^*$
+
+$\Rightarrow$ Visualize $\fh_{S, cICE}^{(i)}(\xv_S^*)$ vs. grid point $\xv_S^*$
+
+\lz
+
+\textbf{Interpretation} (yellow curve in c-ICE): 
+On average, the number of bike rentals at $\sim 97$ \% humidity decreased by 1000 bikes compared to a humidity of 0 \%
 \end{column}
 \begin{column}{0.59\textwidth}
 \begin{center}
@@ -290,7 +296,6 @@ Visualize $\fh_{S, cICE}^{(i)}(x_S^*)$ vs. $x_S^*$
 
 %\vspace{-0.4cm}
 
-Interpretation (yellow curve in c-ICE plot): On average, the number of bike rentals at $\sim 98$ \% humidity decreased by 1000 bikes compared to a humidity of 1 \%
 \end{frame}
 
 
@@ -302,7 +307,7 @@ Interpretation (yellow curve in c-ICE plot): On average, the number of bike rent
 
 \begin{itemize}
 \item Centered ICE plots are useful for categorical features and can be interpreted as in LMs
-\item The reference category is $x^* =$ SPRING
+\item The reference category is $x' =$ SPRING
 \item Golden crosses: Average number of bike rentals if we jump from SPRING to any other season
 \end{itemize}
 

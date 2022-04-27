@@ -390,9 +390,10 @@ $h\left(z^{\prime}\right)=x^\prime \text { where } h:\{0,1\}^{p} \rightarrow \ma
 \end{vbframe}
 
 \begin{vbframe}{Kernel shap - in 5 steps}
-\textbf{Step 3: Compute weights through Kernel}\\\medskip
+\textbf{Step 3: Compute weights through Kernel \only<2>{\citebutton{see shapley\_kernel\_proof.pdf}{https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Supplemental.zip}}}\\\medskip
 \textbf{Intuition}: We learn most about individual features if we can study their effects in isolation or at maximal interaction:
-Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the largest weights
+Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the largest weights 
+
 
 \begin{onlyenv}<1>
 \begin{figure}
@@ -439,26 +440,26 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 \end{onlyenv}
 
 
-\begin{onlyenv}<3>
+% \begin{onlyenv}<3>
 
-$$\pi_{x}\left(z^{\prime}\right)=\frac{(M-1)}{\left(\begin{array}{c} M \\\left|z^{\prime}\right|\end{array}\right)\left|z^{\prime}\right|\left(M-\left|z^{\prime}\right|\right)}$$
+% $$\pi_{x}\left(z^{\prime}\right)=\frac{(M-1)}{\left(\begin{array}{c} M \\\left|z^{\prime}\right|\end{array}\right)\left|z^{\prime}\right|\left(M-\left|z^{\prime}\right|\right)}$$
 
-\begin{itemize}
-    \item If a coalition consists of a single feature, we can learn about this feature’s isolated main effect on the prediction
-    \item If a coalition consists of all but one feature, we can learn about this feature’s total effect (main effect plus feature interactions)
-    \item If a coalition consists of half the features, we learn little about an individual feature’s contribution, as there are many possible coalitions with half of the features
-\end{itemize}
-\end{onlyenv}
+% \begin{itemize}
+%     \item If a coalition consists of a single feature, we can learn about this feature’s isolated main effect on the prediction
+%     \item If a coalition consists of all but one feature, we can learn about this feature’s total effect (main effect plus feature interactions)
+%     \item If a coalition consists of half the features, we learn little about an individual feature’s contribution, as there are many possible coalitions with half of the features
+% \end{itemize}
+% \end{onlyenv}
 
-\begin{onlyenv}<4>
-\vspace{1cm}
-\textbf{Limited Budget $K$}: Can we be a bit smarter about the sampling of coalitions, than just randomly drawing?
-\begin{itemize}
-    \item The smallest and largest coalitions take up most of the weight\\ We get better Shapley value estimates by using some of the sampling budget K to include these high-weight coalitions
-    \item We start with all possible coalitions with 1 and M-1 features, which makes 2 times M coalitions in total\\ When we have enough budget left (current budget is K - 2M), we can include coalitions with 2 features and with M-2 features and so on.
-    \item From the remaining coalition sizes, we sample with readjusted weights
-\end{itemize}
-\end{onlyenv}
+% \begin{onlyenv}<4>
+% \vspace{1cm}
+% \textbf{Limited Budget $K$}: Can we be a bit smarter about the sampling of coalitions, than just randomly drawing?
+% \begin{itemize}
+%     \item The smallest and largest coalitions take up most of the weight\\ We get better Shapley value estimates by using some of the sampling budget K to include these high-weight coalitions
+%     \item We start with all possible coalitions with 1 and M-1 features, which makes 2 times M coalitions in total\\ When we have enough budget left (current budget is K - 2M), we can include coalitions with 2 features and with M-2 features and so on.
+%     \item From the remaining coalition sizes, we sample with readjusted weights
+% \end{itemize}
+% \end{onlyenv}
   
 \end{vbframe}
 
