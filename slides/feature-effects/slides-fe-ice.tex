@@ -94,14 +94,14 @@ where $\fh_{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_C)$ is prediction of $i$-th obs
 
 % \begin{frame}{Individual Conditional Expectation (ICE)}
 %
-% Steps to create an ICE curve of an observation regarding a single feature $x_S$ according to the \textbf{SIPA} framework:
+% Steps to create an ICE curve of an observation regarding a single feature $\xv_S$ according to the \textbf{SIPA} framework:
 %
 % \begin{enumerate}
-% \item \textbf{Sampling:} Choose grid points along $x_S$.
+% \item \textbf{Sampling:} Choose grid points along $\xv_S$.
 % \item For each grid point:
 % \begin{itemize}
-% \item \textbf{Intervention:} Replace the original feature value $x_S$ with the current grid value.
-% \item \textbf{Prediction:} Get the model prediction with replaced feature value $x_S$.
+% \item \textbf{Intervention:} Replace the original feature value $\xv_S$ with the current grid value.
+% \item \textbf{Prediction:} Get the model prediction with replaced feature value $\xv_S$.
 % \end{itemize}
 % \item \textbf{Aggregation:} none.
 % \item \textbf{Visualization:} Draw a curve per observation with the grid points on the x-axis and the prediction on the y-axis.
@@ -140,12 +140,12 @@ where $\fh_{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_C)$ is prediction of $i$-th obs
 \textbf{1. Step - Grid points:}
 
 %For the $i$-th observation, we
-Sample grid values $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$ along feature of interest $x_S$
-%(here, grid is $x_S^* = x_1^* \in \{1, 2, 3\}$)
+Sample grid values $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$ along feature of interest $\xv_S$
+%
 and replace vector $\xv^{(i)}$ in data with grid
 %h observation with these sampled grid values.
 %$\Rightarrow$ New artificial data points for $i$-th observation.
-\newline $\Rightarrow$ Creates new artificial points for the $i$-th observation
+\newline $\Rightarrow$ Creates new artificial points for the $i$-th observation (here: $\xv_S^* = x_1^* \in \{1, 2, 3\}$ is a scalar)
 
 \end{frame}
 
@@ -167,7 +167,7 @@ and replace vector $\xv^{(i)}$ in data with grid
 
 \textbf{2. Step - Predict and visualize:}
 
-For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
+For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(\xv_S^*)$ vs. grid values $\xv_S^*$:
 
 $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
 
@@ -187,7 +187,7 @@ $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3
 
 % \textbf{Predict and visualize:}
 
-% For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
+% For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(\xv_S^*)$ vs. grid values $\xv_S^*$:
 
 % $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
 % \end{frame}
@@ -206,7 +206,7 @@ $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3
 
 % \textbf{Predict and visualize:}
 
-% For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(x_S^*)$ vs. grid values $x_S^*$:
+% For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(\xv_S^*)$ vs. grid values $\xv_S^*$:
 
 % $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
 % \end{frame}
@@ -231,7 +231,7 @@ $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3
 
 % % \textbf{Definition:}
 
-% % ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$.
+% % ICE curves involve plotting the pairs $ \{(\xv_S^{*^{(k)}}, \fh_{S}^{(i)}(\xv_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$.
 % \end{frame}
 
 \begin{frame}{ICE Curves - Illustration}
@@ -274,14 +274,14 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
 
 % % \textbf{Definition:}
 
-% % ICE curves involve plotting the pairs $ \{(x_S^{*^{(k)}}, \fh_{S}^{(i)}(x_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $x_S^{*^{(1)}}, \dots, x_S^{*^{(g)}}$.
+% % ICE curves involve plotting the pairs $ \{(\xv_S^{*^{(k)}}, \fh_{S}^{(i)}(\xv_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$.
 % \end{frame}
 
 
 \begin{frame}{Comments on Grid values}
 \begin{itemize}
 %\item ICE curves show how different feature values of an observation affect its prediction \newline $\Rightarrow$ \textbf{local interpretation method}
-\item Plotting ICE curves involves generating grid values $x_S^*$ that are visualized on the x-axis
+\item Plotting ICE curves involves generating grid values $\xv_S^*$ that are visualized on the x-axis
 \item Common choices for grid values are
 \begin{itemize}
 \item equidistant grid values within feature range
