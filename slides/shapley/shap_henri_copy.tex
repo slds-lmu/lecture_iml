@@ -94,6 +94,7 @@ $\leadsto$ can be rewritten to
 $$
 \fh(\xv) = \underbrace{E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws}
 $$
+%N.B.: This reminds us of a LM with weights $\phi_j$ multiplied by a binary feature value indicating weather a feature is included in a considered coalition.
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{figure}
@@ -113,11 +114,12 @@ $$
 Find an additive combination that explains the prediction of an instance $\xv$ by computing the contribution of each feature to the prediction. \\\medskip
 \only<1-3>{\textbf{Definition}
 \begin{itemize}
-    \item We define a simplified (binary) coalition feature space $\mathbf{Z}^\prime$ with $K$ rows and $p$ columns 
-    \item $\mathbf{z}^{\prime (k)} = \{z^{\prime (k)}_1, \ldots, z^{\prime (k)}_p\}$ with $k \in \{1,\ldots, K\}$ indexes the $k$-th coalition 
+    \item Define simplified (binary) coalition feature space $\mathbf{Z}^\prime \in \{0,1\}^{K \times p}$ with $K$ rows and $p$ columns 
+    \item Rows are referred to as $\mathbf{z}^{\prime (k)} = \{z^{\prime (k)}_1, \ldots, z^{\prime (k)}_p\}$ with $k \in \{1,\ldots, K\}$ (indexes $k$-th coalition)
+    \item Columns are referred to as $\mathbf{z}_j$ with $j \in \{1, \ldots, p\}$ being the index of the original feature
 \end{itemize}
 }
-\vspace{0.5cm}
+%\vspace{0.5cm}
 \begin{exampleblock}{}
 \[
 g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
@@ -133,7 +135,7 @@ g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
 \node<1-3>[expl] 
   (zex) 
   at (2,1.5cm)
-  {$\mathbf{z}^{\prime (k)}$:\textbf{Coalition} \\ simplified features};
+  {$\mathbf{z}^{\prime (k)}$: \textbf{Coalition} \\ simplified features};
 \node<2-3>[expl] 
   (ph0ex) 
   at (5,-.5cm)
@@ -152,7 +154,7 @@ g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
  \node<4>[expl] 
   (zex)  
   at (2,1cm)
-  {$g(\mathbf{z}^{\prime (k)})$:\textbf{Marginal Contribution} \\ Contribution of coalition $\mathbf{z}^{\prime (k)}$ to the prediction};
+  {$g(\mathbf{z}^{\prime (k)})$: \textbf{Marginal Contribution} \\ Contribution of coalition $\mathbf{z}^{\prime (k)}$ to the prediction};
 \node<4>[expl] 
   (phjsh) 
   at (11,1.5cm)
@@ -251,9 +253,9 @@ How do we estimate the Shapley values $\phi_j$?
 
 \textbf{Step 1: Sample coalitions}
 \begin{itemize}
-    \item Sample K coalitions of the simplified feature space
+    \item Sample K coalitions from the simplified feature space
     $$\mathbf{z}^{\prime (k)} \in\{0,1\}^{p}, \quad k \in\{1, \ldots, K\}$$
-    \item For our example we receive in total $2^p = 2^3 = 8$ coalitions (without sampling)
+    \item For our simple example, we have in total $2^p = 2^3 = 8$ coalitions (without sampling)
 \end{itemize}
 
 \begin{table}[]
@@ -282,8 +284,8 @@ How do we estimate the Shapley values $\phi_j$?
 \textbf{Step 2: Transfer Coalitions into feature space \& get predictions by applying ML model}
 \begin{itemize}
    % \item $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
-   \item $\mathbf{z}^{\prime (k)}$: 1 if features are in coalition $S$, 0 otherwise
-   \item To calculate predictions for these coalitions we need to define a function which maps the binary feature space back to the original feature space
+   \item $\mathbf{z}^{\prime (k)}$ is 1 if features are in coalition $S$, 0 otherwise
+   \item To calculate predictions for these coalitions, we need to define a function which maps the binary feature space back to the original feature space
 \end{itemize}
 
 
@@ -343,7 +345,7 @@ How do we estimate the Shapley values $\phi_j$?
    % \item $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
     \item Define 
 $h_x\left(\mathbf{z}^{\prime (k)}\right)=\mathbf{z}^{(k)} \text { where } h_x:\{0,1\}^{p} \rightarrow \mathbb{R}^{p}$
- which maps 1’s to feature values of instance $\xv$ for features in $S$ and 0's to feature values of a \color{orange}{randomly sampled instance} \color{black}for features in $C = S^\complement$
+ maps 1’s to feature values of instance $\xv$ for features in $S$ and 0's to feature values of a \color{orange}{randomly sampled instance} \color{black}for features in $C = S^\complement$
   % \item Absent feature values are replaced by feature values of a \color{orange}{random instance} \color{black} of the dataset (permuted) $\leadsto$ permute feature values several times
   (feature values are permuted multiple times) 
    \item Predict with ML model on this dataset $\hat{f}: \hat{f}\left(h_{x}\left(\mathbf{z}^{\prime (k)}\right)\right)$
