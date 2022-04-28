@@ -39,7 +39,7 @@ def order_levels(data, feature_name):
       
   # Create a matrix of distances
   dists = dists.pivot(index='class1', columns='class2', values='dist')
-  mds = manifold.MDS(1)
+  mds = manifold.MDS(1, dissimilarity='precomputed')
   scaled = mds.fit_transform(dists)
   
   order = feature_lev[scaled.flatten().argsort()]
@@ -112,17 +112,14 @@ def get_diff_cat(feature_k, feature_j):
   feature_lev = np.unique(feature_j)
   param_grid = {'class1': feature_lev, 'class2' : feature_lev}
   dists = pd.DataFrame(ParameterGrid(param_grid))
+  dists['dist'] = 0
   
   # get relative frequency table
-  xcount = np.unique(feature_j, return_counts = True)[1]
-  A = pd.crosstab(feature_k, feature_j)/xcount
+  ######## TO DO ########
   
   # compute pairwise absolute distances 
-  ecdf_dists = []
-  for i1, i2 in zip(dists.class1.values, dists.class2.values): 
-    print(i1, i2)
-    ecdf_dists.append(sum(abs(A[i1] - A[i2])) / 2)
-  dists["dist"] = ecdf_dists
+  
+  ######## TO DO ########
    
   return(dists)
 
@@ -138,7 +135,7 @@ if __name__ == "__main__":
   get_diff_numeric(feature_k = credit_sub["age"], feature_j = credit_sub["personal_status_sex"])
   # to see what the methods does step by step use debug(order_levels) or debug(get_diff_numeric)
   
-  ## This should work AFTER you have implemented get_diff_cat()
+  ## This should return non-0 dists AFTER you have implemented get_diff_cat()
   order_levels(credit, "personal_status_sex")
   get_diff_cat(feature_k = credit["employment_duration"], feature_j = credit["personal_status_sex"])
 

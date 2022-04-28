@@ -93,7 +93,8 @@ get_diff_cat = function(feature.k, feature.j) {
   A = table(feature.j, feature.k) / x.count
   
   # compute pairwise absolute distances 
-  dists$dist = rowSums(abs(A[dists[, "class1"], ] - A[dists[, "class2"], ])) / 2
+  
+  dists$dist = rowSums(abs(A[as.character(dists[, "class1"]), ] - A[as.character(dists[, "class2"]), ])) / 2
   return(dists)
 }
 

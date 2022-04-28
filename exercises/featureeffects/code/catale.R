@@ -98,7 +98,7 @@ get_diff_cat = function(feature.k, feature.j) {
 }
 
 if (FALSE) {
-  credit = read.csv("credit.csv")
+  credit = read.csv("datasets/credit.csv")
   
   ## This should already work WITHOUT get_diff_cat()
   credit.sub = credit[, c("age", "personal_status_sex")]
