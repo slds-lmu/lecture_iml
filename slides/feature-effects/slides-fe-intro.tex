@@ -91,9 +91,10 @@ GAM without interaction: $\fh_j(x_j)$ is non-linear effect of feature $x_j$  (ap
 \begin{itemize}
     \item Interactions: Feature effect is modified by other features and varies across observations \\ 
     $\Rightarrow$ Effect of temperature varies across seasons\\
-    $\Rightarrow$ Multiple values / curves needed to describe global effect
+    $\Rightarrow$ Multiple values / curves needed to describe effect
     \item ML models often model non-linear effects and complex interactions \\
-    $\Rightarrow$ Need for local feature effect methods, e.g., analyze effect for individual observations
+    $\Rightarrow$ Need for local feature effect methods, e.g., analyze effect for individual observations\\
+    $\Rightarrow$ Analyzing global effects by aggregating local effects
 \end{itemize}
 
 
@@ -131,15 +132,24 @@ GAM without interaction: $\fh_j(x_j)$ is non-linear effect of feature $x_j$  (ap
 \textbf{Feature effects} visualize or quantify marginal contribution of a feature of interest w.r.t. predictions %marginal contribution of a feature to the model \textbf{prediction}. % $\hat{y} = \fh(\xi[])$. effect (e.g., the average relationship) between a
 \begin{itemize}
 %\tightlist
-\item Methods: ICE curves (local curves), PD and ALE plots (global curves), AME (global value)
 \item Similar to regression coefficients (LMs) or Splines (GAMs)
+\item Different aggregation levels for feature effects exist (simplification but information loss)
+\item Methods: \visible<1-3>{ICE curves (local curves)}\visible<2-3>{, PD and ALE plots (global curves)}\visible<3>{, AME (global value)}
 \end{itemize}
 
-\centerline{\includegraphics[width=\textwidth]{figure/feature-effect.pdf}}
+%\centerline{\includegraphics[width=\textwidth]{figure/feature-effect.pdf}}
+\centerline{
+\visible<1-3>{\adjincludegraphics[width=0.32\textwidth, trim={0 0 {.6667\width} 0}, clip]{figure/feature-effect.pdf}}
+\visible<2-3>{\adjincludegraphics[width=0.32\textwidth, trim={{.33\width} 0 {.33\width} 0}, clip]{figure/feature-effect.pdf}}
+\visible<3>{\adjincludegraphics[width=0.32\textwidth, trim={{.6667\width} 0 0 0}, clip]{figure/feature-effect.pdf}}
+}
 
-\centerline{\small \hspace{20px} Individual (curves) \hspace{8px}
-$\xrightarrow[]{\text{aggregate}}$ \hspace{8px} Global (single curve) \hspace{8px}
-$\xrightarrow[]{\text{aggregate}}$ \hspace{8px} Global (single value)}
+%\includegraphics[width=0.33\textwidth, trim=7.4cm 0.1cm 7.4cm 0cm, clip]{figure/feature-effect.pdf}
+%\invisible<1>{\includegraphics[width=0.33\textwidth, trim=14cm 0.1cm 0.4cm 0cm, clip]{figure/feature-effect.pdf}}
+
+\centerline{\small \hspace{30px} \visible<1-3>{Individual (curves) \hspace{6px}}
+\visible<2-3>{$\xrightarrow[\text{curves}]{\text{aggregate}}$ \hspace{6px} Global (single curve)}\visible<3>{\hspace{6px}
+$\xrightarrow[\text{slopes}]{\text{aggregate}}$ \hspace{6px} Global (single value)}}
 
 
 \end{frame}

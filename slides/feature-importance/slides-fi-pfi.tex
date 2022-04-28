@@ -32,42 +32,42 @@
 	
 	% ------------------------------------------------------------------------------
 
-\begin{vbframe}{Permutation Feature Importance Idea \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+% \begin{vbframe}{Permutation Feature Importance Idea \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
 
-In general, feature importance methods share two components
-\lz
-\begin{enumerate}
-  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed or removed.
-  \item \textbf{Performance Comparison:} Compare performance under perturbation/removal with the original model performance.
-\end{enumerate}
-\lz
-\textbf{Permutation Feature Importance Idea:} "Remove" the feature of interest $x_j$ by perturbing it such that it is uninformative. Therefore, resample the variable from its marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.
+% In general, feature importance methods share two components
+% \lz
+% \begin{enumerate}
+%   \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed or removed.
+%   \item \textbf{Performance Comparison:} Compare performance under perturbation/removal with the original model performance.
+% \end{enumerate}
+% \lz
+% \textbf{Permutation Feature Importance Idea:} "Remove" the feature of interest $x_j$ by perturbing it such that it is uninformative. Therefore, resample the variable from its marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.
 
-%\footnote[frame]{\fullcite{Breiman2001rf}}
+% %\footnote[frame]{\fullcite{Breiman2001rf}}
 
-%\framebreak
+% %\framebreak
 
-%\begin{figure}
-%  \includegraphics[width=0.75\textwidth]{figure_man/feature-importance.png}
-%\end{figure}
+% %\begin{figure}
+% %  \includegraphics[width=0.75\textwidth]{figure_man/feature-importance.png}
+% %\end{figure}
 
-%\vspace{-0.2cm}
-%\tiny{Fisher et al. (2018). All models are wrong but many are useful: Variable importance for black-box, proprietary, or misspecified prediction models, using model class reliance. arXiv preprint arXiv:1801.01489 (2018).}
+% %\vspace{-0.2cm}
+% %\tiny{Fisher et al. (2018). All models are wrong but many are useful: Variable importance for black-box, proprietary, or misspecified prediction models, using model class reliance. arXiv preprint arXiv:1801.01489 (2018).}
 
-\end{vbframe}
+% \end{vbframe}
 
-\begin{vbframe}{Permutation Feature Importance}
-\normalsize
+\begin{vbframe}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
 
-Performance-based permutation feature importance (PFI) for features $x_S$ using test data $\D$:
+\textbf{Idea:} "Destroy" feature of interest $x_j$ by perturbing it such that it becomes uninformative, e.g., randomly permute observations in $x_j$ (marginal distribution $\P(x_j)$ stays the same).  %Therefore, resample the variable from its marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.
+
+PFI for features $x_S$ using test data $\D$:
 \begin{itemize}
-  \item Measure the error \color{blue}\textbf{without permuting features}\color{black}.
-  \item Measure the error \color{red}\textbf{with permuted feature values} \color{black} $\pert{x}{}{}_S$
+  \item Measure the error {\color{blue}\textbf{without permuting features}} and {\color{red}\textbf{with permuted feature values}} $\pert{x}{}{}_S$
   \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
 $$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske (\fh, {\color{blue}\D}), \text{ where }
 \riske(\fh, \D) = \frac{1}{n} \sum\nolimits_{(x, y) \in \D}  L(\fh(x), y)$$
 \end{itemize}
-
+\pause
 The data $\D$ where $x_S$ is replaced with $\pert{x}{S}{}$ is denoted as $\pert{\D}{S}{}$.\\
 Example of permuting feature $x_S$ with $S = \{1\}$ and $m=6$:
 
@@ -138,29 +138,32 @@ As we calculate the feature importance for one feature at a time $|S| = 1$.}\par
 \frame{
 \frametitle{Permutation Feature Importance}
 
-  \only<1-3,5-7>{$\hspace{80pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}
-  \only<4>{$\hspace{80pt}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})$}
+  \only<1-4>{$\hspace{80pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}
+  \only<5-6>{$\hspace{80pt}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})$}
 % $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
 %   \only<5-6>{$\hspace{36pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}
   
   \begin{center}
   \only<1>{\includegraphics[page=2, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
   \only<2>{\includegraphics[page=3, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
-  \only<3-4>{\includegraphics[page=4, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
-  \only<5>{\includegraphics[page=5, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
-  \only<6>{\includegraphics[page=6, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
-  \only<7>{\includegraphics[page=7, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
+  \only<3>{\includegraphics[page=4, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
+  \only<4>{\includegraphics[page=5, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
+  \only<5>{\includegraphics[page=6, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
+  \only<6>{\includegraphics[page=7, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
   \end{center}
   
   \begin{itemize}
-    \only<1-2>{\item[1.]\textbf{Perturbation:} Sample feature values from the distribution of $x_S$ ($P(X_S)$). \newline $\Rightarrow$ Randomly permute feature $x_S$. Replace the original feature with the permuted feature $\pert{x}{}{}_S$ and create data with permuted feature   $\pert{\D}{S}{}$.}
-    \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\pert{\D}{S}{}$.}
-    \only<3-7>{\item[3.] \textbf{Aggregation:}}
+    \only<1-2>{\item[1.]\textbf{Perturbation:} Sample feature values from the distribution of $x_S$ ($P(X_S)$). \newline 
+    $\Rightarrow$ Randomly permute feature $x_S$ \\
+    $\Rightarrow$ Replace original feature with permuted feature $\pert{x}{}{}_S$ and create data $\pert{\D}{S}{}$ containing $\pert{x}{}{}_S$} 
+    \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\pert{\D}{S}{}$}
+    \only<3-6>{\item[3.] \textbf{Aggregation:}}
       \begin{itemize}
-        \item<3-7> Compute the loss for each observation in both data sets.
-        \item<5-> Take the difference of both losses $\Delta L$ for each observation.
-        \item<6-> Average this change in loss across all observations.
-        \item<7-> Also, average over multiple repetitions, if available.
+        \item<3-6> Compute the loss for each observation in both data sets
+        \item<4-> Take the difference of both losses $\Delta L$ for each observation
+        \item<5-> Average this change in loss across all observations
+        \only<5>{\\ Note: This is equivalent to computing $\riske$ on both data sets and taking the difference}
+        \item<6-> Repeat pertubation and average over multiple repetitions%, if available
       \end{itemize}
     % \only<3-4>{\item[3.] \textbf{Aggregation:}
     %   \begin{itemize}
