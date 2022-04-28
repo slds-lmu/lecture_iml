@@ -224,10 +224,11 @@ As we calculate the feature importance for one feature at a time $|S| = 1$.}\par
 A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
  %
 \begin{figure}
-\hfill
-  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
-  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
-  \includegraphics[width=0.4\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
+% \hfill
+%   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
+%   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
+%   \includegraphics[width=0.39\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
+\includegraphics[width=\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}
   \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
 \end{figure}
 % 
@@ -238,17 +239,26 @@ $\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the fea
 
 \begin{vbframe}{Comments on PFI - Interactions}
 
-\textbf{Example:} Let $x_1, \dots, x_4$ be independently and uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$.\\
-A linear model is fit yielding $\fh(x) \approx x_1 x_2 + x_3$.\\
+\textbf{Example:} Let $x_1, \dots, x_4$ be independently and uniformly sampled from $\{-1, 1\}$ and 
+$$y:= x_1 x_2 + x_3 + \epsilon_Y \text{ with } \epsilon_Y \sim N(0, 1)$$
 
-\begin{figure}
-\centering
-  \includegraphics[width=0.5\linewidth]{figure_man/pfi_interactions.pdf}
-\end{figure}
+\begin{columns}[T, totalwidth = \textwidth]
+\begin{column}{0.5\textwidth}
 
+Fitting a LM yields $\fh(x) \approx x_1 x_2 + x_3$.\\
+\lz
 Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ jointly, all three are considered equally relevant.\\
 \lz
 $\Rightarrow$ PFI does not fairly attribute the performance to the individual features.
+
+\end{column}
+\begin{column}{0.5\textwidth}
+\centering
+  \includegraphics[width=\linewidth]{figure_man/pfi_interactions.pdf}
+\end{column}
+\end{columns}
+
+
 \end{vbframe}
 
 \begin{vbframe}{Comments on PFI - Test vs. Training data}
@@ -256,7 +266,7 @@ $\Rightarrow$ PFI does not fairly attribute the performance to the individual fe
 \textbf{Example:} $x_1, \dots, x_{20}, y$ are independently sampled from $\mathcal{U} (-10, 10)$. An \texttt{xgboost} model with default hyperparameters is fit on a small training set of $50$ observations. The model overfits heavily.\\
 
 \begin{figure}
-  \includegraphics[width=0.8\linewidth]{figure_man/pfi_test_vs_train.pdf}
+  \includegraphics[width=0.9\linewidth]{figure_man/pfi_test_vs_train.pdf}
   \caption{While PFI on test data considers all features to be irrelevant, PFI on train data exposes the features on which the model overfit.}
 \end{figure}
 
@@ -346,7 +356,7 @@ PIMP algorithm:
 A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
  %
 \begin{figure}
-  \includegraphics[width=0.45\linewidth]{figure_man/pimp.pdf}
+  \includegraphics[width=\linewidth]{figure_man/pimp.pdf}
   \caption{$H_0$ distribution (100 samples) for each feature as histograms, the true PFI indicated in red. PIMP only considers $x_3$ relevant. Although PFI for $x_1$ and $x_2$ is nonzero, PIMP considers them irrelevant since they are not predictive of $y$. Even after permuting $y$, the model relies on them.}
 \end{figure}
 \end{vbframe}
