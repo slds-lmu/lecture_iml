@@ -4,8 +4,9 @@ library("mlr3verse")
 library("ggplot2")
 library("iml")
 library("dplyr")
+theme_set(theme_bw())
 
-setwd('~/university/phd/2021/teaching/lecture_iml/slides/feature-importance/rsrc')
+#setwd('~/university/phd/2021/teaching/lecture_iml/slides/feature-importance/rsrc')
 
 set.seed(123)
 
@@ -32,12 +33,12 @@ predictor_train = Predictor$new(learner, noise[train_set,], y=target)
 predictor_test = Predictor$new(learner, noise[test_set,], y=target)
 
 imp_test <- FeatureImp$new(predictor_test,loss = "mae", n.repetitions = 10, compare='difference')
-library("ggplot2")
+
 plot(imp_test)
 mean(imp_test$results$importance)
 
 imp_train <- FeatureImp$new(predictor_train,loss = "mae", n.repetitions = 10,  compare='difference')
-library("ggplot2")
+
 plot(imp_train)
 hist(imp_train$results$importance)
 
@@ -52,12 +53,12 @@ type = c(rep('PFI on test data', nvars), rep('PFI on train data', nvars))
 colname = rep(features, 2)
 
 results = data.frame(importance=importance, type=type, q95=q95, q05=q05, colname=colname)
-write.csv(results, 'results.csv')
-results = read.csv('results.csv')
+#write.csv(results, 'results.csv')
+#results = read.csv('results.csv')
 
 
 # TODO add error bars http://www.sthda.com/english/wiki/ggplot2-error-bars-quick-start-guide-r-software-and-data-visualization
-p = ggplot(data=results, aes(x=reorder(colname, -importance), y=importance, fill=reorder(type, -importance))) 
+p = ggplot(data=results, aes(x=reorder(colname, -importance), y=importance, fill=reorder(type, -importance)))
 p = p + geom_bar(stat='identity', position=position_dodge())
 p = p + geom_errorbar(aes(ymin=q05, ymax=q95), width=.2, position=position_dodge(.9))
 p = p + labs(x='Feature', fill='IML method', y='Score')
@@ -65,7 +66,7 @@ p = p + theme_bw()
 p
 
 #ggplot(results, aes(x=type, y=importance)) + geom_boxplot()
-ggsave('../figure_man/pfi_test_vs_train.pdf', width=7, height=1.5)
+ggsave('../figure_man/pfi_test_vs_train.pdf', width=8, height=2)
 
 
 
@@ -93,17 +94,17 @@ learner$model
 predictor_test = Predictor$new(learner, data[test_set,], y='y')
 
 imp_test <- FeatureImp$new(predictor_test,loss = "mae", n.repetitions = 10, compare='difference')
-library("ggplot2")
+
 p = plot(imp_test)
 p
 
-ggsave("../figure_man/pfi_extrapolation.pdf", width=3, height=1.5)
+ggsave("../figure_man/pfi_extrapolation.pdf", width=5, height=3)
 
 
 p2 = ggplot(data, aes(x=x1, y=x2)) + geom_hex() #+ theme_bw()
 p2
 
-ggsave("../figure_man/pfi_hexbin_pre.pdf", width=4, height=3)
+ggsave("../figure_man/pfi_hexbin_pre.pdf", width=6, height=4.5)
 
 
 data_perm = data.frame(data)
@@ -111,7 +112,7 @@ data_perm$x1 = data_perm$x1[sample(nrow(data_perm))]
 
 p3 = ggplot(data_perm, aes(x=x1, y=x2)) + geom_hex() #+ theme_bw()
 p3
-ggsave("../figure_man/pfi_hexbin_post.pdf", width=4, height=3)
+ggsave("../figure_man/pfi_hexbin_post.pdf", width=6, height=4.5)
 
 # interactions
 
@@ -139,7 +140,7 @@ imp_test <- FeatureImp$new(predictor_test,loss = "mae", n.repetitions = 10, comp
 p = plot(imp_test)
 p
 
-ggsave("../figure_man/pfi_interactions.pdf", height=1.5, width=3)
+ggsave("../figure_man/pfi_interactions.pdf", width=5, height=3)
 
 
 # pimp
@@ -168,7 +169,7 @@ learner$model
 predictor_test = Predictor$new(learner, data[test_set,], y='y')
 
 imp_test <- FeatureImp$new(predictor_test,loss = "mae", n.repetitions = 10, compare='difference')
-library("ggplot2")
+
 p = plot(imp_test)
 
 
@@ -178,20 +179,20 @@ df$type = 'H1'
 for (ii in 1:100) {
   y_perm = sample(y, length(y))
   data = data.frame(x1=x1, x2=x2, x3=x3, x4=x4, y=y_perm)
-  
+
   task = TaskRegr$new(id='correlated', backend=data, target='y')
   learner = lrn('regr.lm')
-  
+
   train_set = sample(task$nrow, ntrain)
   test_set = setdiff(seq_len(task$nrow), train_set)
-  
+
   learner$train(task, row_ids = train_set)
   learner$model
-  
+
   predictor_test = Predictor$new(learner, data[test_set,], y='y')
-  
+
   imp_test_perm <- FeatureImp$new(predictor_test,loss = "mae", n.repetitions = 10, compare='difference')
-  
+
   df_tmp = data.frame(imp_test_perm$results[,c('feature', 'importance')])
   df_tmp$type = 'H0'
 
@@ -204,22 +205,23 @@ df_h0 = df[df$type == 'H0', c('feature', 'importance')]
 
 p = ggplot(df_h0, aes(x=importance)) + geom_histogram()
 p = p + geom_vline(data=df_h1, aes(xintercept=importance), colour="red", linetype="dashed")
-p = p + facet_grid(feature ~ .)
+#p = p + facet_grid(feature ~ .)
+p = p + facet_grid(. ~ feature)
 p
 
-ggsave("../figure_man/pimp.pdf", width=6, height=4)
+ggsave("../figure_man/pimp.pdf", width=8, height=2)
 
 
-p2 = ggplot(data, aes(x=x1, y=x2)) + geom_de() #+ theme_bw()
-p2
+#p2 = ggplot(data, aes(x=x1, y=x2)) + geom_de() #+ theme_bw()
+#p2
 
-ggsave("../figure_man/pfi_hexbin_pre.pdf", width=4, height=3)
+#ggsave("../figure_man/pfi_hexbin_pre.pdf", width=4, height=3)
 
 
-data_perm = data.frame(data)
-data_perm$x1 = data_perm$x1[sample(nrow(data_perm))]
-
-p3 = ggplot(data_perm, aes(x=x1, y=x2)) + geom_hex() #+ theme_bw()
-p3
-ggsave("../figure_man/pfi_hexbin_post.pdf", width=4, height=3)
-
+# data_perm = data.frame(data)
+# data_perm$x1 = data_perm$x1[sample(nrow(data_perm))]
+#
+# p3 = ggplot(data_perm, aes(x=x1, y=x2)) + geom_hex() #+ theme_bw()
+# p3
+# ggsave("../figure_man/pfi_hexbin_post.pdf", width=4, height=3)
+#
