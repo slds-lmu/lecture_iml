@@ -39,7 +39,7 @@ def order_levels(data, feature_name):
       
   # Create a matrix of distances
   dists = dists.pivot(index='class1', columns='class2', values='dist')
-  mds = manifold.MDS(1, dissimilarity='precomputed')
+  mds = manifold.MDS(1)
   scaled = mds.fit_transform(dists)
   
   order = feature_lev[scaled.flatten().argsort()]

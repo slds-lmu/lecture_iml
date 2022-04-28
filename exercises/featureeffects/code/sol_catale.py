@@ -138,7 +138,7 @@ if __name__ == "__main__":
   get_diff_numeric(feature_k = credit_sub["age"], feature_j = credit_sub["personal_status_sex"])
   # to see what the methods does step by step use debug(order_levels) or debug(get_diff_numeric)
   
-  ## This should work AFTER you have implemented get_diff_cat()
+  ## This should return non-0 dists AFTER you have implemented get_diff_cat()
   order_levels(credit, "personal_status_sex")
   get_diff_cat(feature_k = credit["employment_duration"], feature_j = credit["personal_status_sex"])
 

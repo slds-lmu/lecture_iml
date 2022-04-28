@@ -109,7 +109,7 @@ if (FALSE) {
   
   ## This should work AFTER you have implemented get_diff_cat()
   order_levels(credit, "personal_status_sex")
-  get_diff_cat(feature.k = credit[, c("employment_duration")], feature.j = credit[,"personal_status_sex"])
+  get_diff_cat(feature.k = credit[,"employment_duration"], feature.j = credit[,"personal_status_sex"])
 }
 
 
