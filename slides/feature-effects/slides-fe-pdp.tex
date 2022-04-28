@@ -248,7 +248,7 @@ $\Rightarrow$ May be problematic if model behaves strange outside training distr
 \end{center}
 
 \begin{itemize}
- \item Humidity and temperature interact with each other (see shape difference on top-right corner)\\
+ \item Humidity and temperature interact with each other at high values (see shape difference on top-right)\\
  $\leadsto$ Shape of ICE curves at different horizontal and vertical slices varies (for high values)
  \item Low to medium humidity and high temperature $\Rightarrow$ many rented bikes
  %Many rented bikesThe number of bike rentals is especially high when humidity is below 75 percent and temperature is between 15 $^{\circ}$C and 27 $^{\circ}$C
@@ -269,7 +269,7 @@ $\Rightarrow$ May be problematic if model behaves strange outside training distr
 
 \textbf{Solution:} Center ICE curves at fixed reference value $x' \sim \P(\xv_S)$, often $x' = \min(\xv_S)$\\
 $\Rightarrow$ Easier to identify heterogenous shapes with c-ICE curves
-
+\vspace{-0.2cm}
 \begin{columns}[c]
 \begin{column}{0.4\textwidth}
 %\centering
@@ -282,8 +282,8 @@ $$\begin{aligned}
 $\Rightarrow$ Visualize $\fh_{S, cICE}^{(i)}(\xv_S^*)$ vs. grid point $\xv_S^*$
 
 \lz
-
-\textbf{Interpretation} (yellow curve in c-ICE): 
+\pause
+\textbf{Interpretation} (yellow curve in c-ICE): \\
 On average, the number of bike rentals at $\sim 97$ \% humidity decreased by 1000 bikes compared to a humidity of 0 \%
 \end{column}
 \begin{column}{0.59\textwidth}
@@ -301,15 +301,28 @@ On average, the number of bike rentals at $\sim 97$ \% humidity decreased by 100
 
 \begin{frame}{Centered ICE Plot (c-ICE)}
 
+For categorical features, c-ICE plots can be interpreted as in LMs due to reference value
+
+\begin{columns}[c]
+\begin{column}{0.44\textwidth}
+
 \begin{center}
-\includegraphics[width=0.6\textwidth]{figure/cICEcat}
+\includegraphics[width=\textwidth]{figure/cICEcat}
 \end{center}
 
+\end{column}
+\begin{column}{0.55\textwidth}
+
+\textbf{Interpretation}: \\
 \begin{itemize}
-\item Centered ICE plots are useful for categorical features and can be interpreted as in LMs
+%\item Centered ICE plots are useful for categorical features and can be interpreted as in LMs
 \item The reference category is $x' =$ SPRING
-\item Golden crosses: Average number of bike rentals if we jump from SPRING to any other season
+\item Golden crosses: Average number of bike rentals if we jump from SPRING to any other season\\
+$\Rightarrow$ Number of bike rentals drops by $\sim 560$ in \code{WINTER} and is slightly higher in \code{SUMMER} and \code{FALL} compared to \code{SPRING}
 \end{itemize}
+
+\end{column}
+\end{columns}
 
 \end{frame}
 

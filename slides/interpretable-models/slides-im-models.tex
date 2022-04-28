@@ -171,7 +171,7 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
 \pause
 
 \begin{columns}[T, totalwidth=\linewidth]
-\begin{column}{0.47\textwidth}
+\begin{column}{0.46\textwidth}
 
 \includegraphics[width = \textwidth]{figure/plot_lin_effect.pdf}
   \begin{center}
@@ -182,11 +182,11 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
 %\pause
 %\verbatiminput{figure/lm_output.txt}
 \end{column}\hfill
-\begin{column}{0.52\textwidth}  %%<--- here
+\begin{column}{0.54\textwidth}  %%<--- here
 
 \begin{itemize}
     \item \textbf{Interpretation categorical}: Bike rentals in \code{SPRING} are by $\hat\beta_1 = 862$ higher than in \code{WINTER} (reference category), c.p.
-    \item \textbf{Interpretation numerical}: Bike rentals increase by  $\hat\beta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
+    \item \textbf{Interpretation numerical}: Bike rentals increase by $\hat\beta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
     %If the temperature increases by 1 degree Celsius, the number of bike rentals increases by 120.5 c.p.
     \item \textbf{Interpretation intercept}:
     If all feature values are 0 (and season is \code{WINTER}), the expected number of bike rentals is $\hat\beta_0 = 3229.3$
@@ -301,7 +301,7 @@ $$
     %only weights of single categories are set to zero (due to dummy encoding) not the whole feature\\
     $\leadsto$ No feature selection of whole categorical features\\
     %May be problematic for categorical features as only weights of single categories are set to zero (due to dummy encoding) instead of the whole categorical feature\\ %, polynomials and interactions
-    $\leadsto$ Solution: group LASSO \lit{Yuan and Lin (2006)}{https://doi.org/10.1111/j.1467-9868.2005.00532.x}
+    $\leadsto$ Solution: group LASSO \citebutton{Yuan and Lin (2006)}{https://doi.org/10.1111/j.1467-9868.2005.00532.x}
 \end{itemize}
 \end{column}
 \begin{column}{0.35\textwidth}
@@ -515,7 +515,7 @@ $$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_
         \item Instead of linear terms $\beta_j x_j$ use flexible functions $f_j(x_j)$ $\leadsto$ splines
         \item Preserves additive structure and allows to model non-linear effects
         \item Splines have a smoothness parameter to control flexibility (prevent overfitting)\\
-        $\leadsto$ Need to be chosen, e.g., via cross-validation
+        $\leadsto$ Needs to be chosen, e.g., via cross-validation
     \end{itemize}
     \end{itemize}
     
@@ -774,7 +774,7 @@ Relative frequency of selected base learners across iterations
 \begin{frame}{Componentwise Gradient Boosting - Interpretation}
 
 \begin{itemize}
-    \item Fit model on bike data with different base learner types \lit{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}
+    \item Fit model on bike data with different base learner types \citebutton{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}
     \item Base learners: linear and centered splines for numeric features, categorical for season
     %and categorical base learner for season
 \end{itemize}
@@ -804,13 +804,13 @@ Relative frequency of selected base learners across iterations
 
 \begin{frame}[c]{Other Interpretable Models}
 
-\textbf{RuleFit} \lit{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
+\textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
 \begin{itemize}
     \item Combination of linear models and decision trees 
     \item Allows for feature interactions and non-linearities
 \end{itemize}
 
-\textbf{Decision Rules} \lit{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
+\textbf{Decision Rules} \citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
 \begin{itemize}
     \item Simple ``if -- then'' statements - very intuitive and easy-to-interpret
     \item Common assumption: only classification tasks and categorical features
