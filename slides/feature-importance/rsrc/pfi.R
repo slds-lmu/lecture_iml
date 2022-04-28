@@ -95,24 +95,30 @@ predictor_test = Predictor$new(learner, data[test_set,], y='y')
 
 imp_test <- FeatureImp$new(predictor_test,loss = "mae", n.repetitions = 10, compare='difference')
 
-p = plot(imp_test)
-p
+p_pfi = plot(imp_test)
+p_pfi
 
-ggsave("../figure_man/pfi_extrapolation.pdf", width=5, height=3)
+#ggsave("../figure_man/pfi_extrapolation.pdf", width=5, height=3)
 
 
-p2 = ggplot(data, aes(x=x1, y=x2)) + geom_hex() #+ theme_bw()
+p2 = ggplot(data, aes(x=x1, y=x2)) + geom_hex(bins = 20) + scale_fill_viridis_c() #+ theme_bw()
 p2
 
-ggsave("../figure_man/pfi_hexbin_pre.pdf", width=6, height=4.5)
+#ggsave("../figure_man/pfi_hexbin_pre.pdf", width=6, height=4.5)
 
 
 data_perm = data.frame(data)
 data_perm$x1 = data_perm$x1[sample(nrow(data_perm))]
 
-p3 = ggplot(data_perm, aes(x=x1, y=x2)) + geom_hex() #+ theme_bw()
+p3 = ggplot(data_perm, aes(x=x1, y=x2)) +
+  geom_hex(bins = 20) + scale_fill_viridis_c() #+ theme_bw()
 p3
-ggsave("../figure_man/pfi_hexbin_post.pdf", width=6, height=4.5)
+
+library(patchwork)
+
+res = p2 + p3 + p_pfi & theme(aspect.ratio=1)#, legend.position = "bottom") #+ plot_layout(guides = 'collect')
+
+ggsave(plot = res, "../figure_man/pfi_hexbin_extrapolation.pdf", width=10, height=3)
 
 # interactions
 
