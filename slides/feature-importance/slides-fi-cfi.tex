@@ -47,7 +47,7 @@
 \lz
 \textbf{Problem:} Under dependent features, permutation leads to extrapolation.\\
 \lz
-\textbf{Conditional Feature Importance Idea:} Resample $x_j$ from the conditional distribution $\P(x_j|x_{-j})$, such that the covariate joint distribution is preserved. (I.e., $\P(x_j|x_{-j}) \P(x_{-j}) = \P(x_j, x_{-j})$).
+\textbf{Conditional Feature Importance Idea:} Resample $x_j$ from the conditional distribution $\P(x_j|x_{-j})$, such that the covariate joint distribution is preserved, i.e., $\P(x_j|x_{-j}) \P(x_{-j}) = \P(x_j, x_{-j})$.
 
 \end{vbframe}
 
@@ -56,19 +56,23 @@
 % RECAP EXTRAPOLATION
 \begin{vbframe}{Recap: Extrapolation in PFI}
  
- \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
-A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
- %
-\begin{figure}
-\hfill
-  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
-  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
-  \includegraphics[width=0.4\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
-  \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ confidence band.}
-\end{figure}
+ \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+ Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+
+%\begin{figure}
+% \hfill
+%   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
+%   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
+%   \includegraphics[width=0.39\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
+\centerline{\includegraphics[width=0.9\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}}
+\centerline{Hexbin plot of $x_1, x_2$ before permuting $x_1$ (left), after permuting $x_1$ (center), and PFI scores (right)}
+\lz
+% \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
+%\end{figure}
 % 
-$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
-$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
+$\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$ and $x_2$ are considered relevant
+%$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 
  \end{vbframe}
 
@@ -93,7 +97,7 @@ $\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the fea
 
 
 % CFI DEFINITION
-\begin{vbframe}{Conditional Feature Importance}
+\begin{vbframe}{Conditional Feature Importance \citebutton{Strobl et al. (2008)}{https://doi.org/10.1186/1471-2105-9-307} \citebutton{Hooker et al. (2021)}{https://arxiv.org/abs/1905.03151}}
 \normalsize
 
 Conditional feature importance (CFI) for features $x_S$ using test data $\D$:
@@ -106,14 +110,14 @@ $$\widehat{CFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh
 
 Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled conditional on the remaining features $x_{-S}$.
 
-\footnote[frame]{\fullcite{Strobl2008}}
+%\footnote[frame]{\fullcite{Strobl2008}}
 
 \end{vbframe}
 
 
 %TODO: What is meant by "mechanistically"?
 % INTERPRETATION OF CFI
-\begin{vbframe}{Implications of CFI}
+\begin{vbframe}{Implications of CFI \citebutton{König et al. (2020)}{https://arxiv.org/abs/2007.08283}}
 
 \textbf{Interpretation:} CFI quantifies the unique contribution of the feature to the performance of the model.\\
 \lz
@@ -127,7 +131,7 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
   \item Why? Then the prediction is not affected by any perturbation of the feature (and consequently the performance is invariant).
 \end{itemize}
 
-\footnote[frame]{\fullcite{konig_relative_2021}}
+%\footnote[frame]{\fullcite{konig_relative_2021}}
 \end{vbframe}
 
 
@@ -175,9 +179,9 @@ $\Rightarrow$ Since $x_1$ can be reconstructed from $x_2$ and vice versa, CFI co
 
  \end{vbframe}
 
-\begin{vbframe}{Bibliography}
-  \printbibliography
-\end{vbframe}
+% \begin{vbframe}{Bibliography}
+%   \printbibliography
+% \end{vbframe}
 
 \endlecture
 \end{document}

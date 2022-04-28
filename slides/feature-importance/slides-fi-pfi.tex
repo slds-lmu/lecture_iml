@@ -220,20 +220,25 @@ As we calculate the feature importance for one feature at a time $|S| = 1$.}\par
 %TODO: Simplify example
 \begin{vbframe}{Comments on PFI - Extrapolation}
  
+%\textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1$, $x_2 := x_1 + \epsilon_1$ are highly correlated ($x_1 \sim N(0,1), \epsilon_1 \sim N(0, 0.01)$). Let $x_3, x_4 \sim N(0,1)$ be noisy features are independent.
+ 
  \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
-A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
- %
-\begin{figure}
+ Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+
+%\begin{figure}
 % \hfill
 %   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
 %   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
 %   \includegraphics[width=0.39\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
-\includegraphics[width=\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}
-  \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
-\end{figure}
+\centerline{\includegraphics[width=0.9\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}}
+\centerline{Hexbin plot of $x_1, x_2$ before permuting $x_1$ (left), after permuting $x_1$ (center), and PFI scores (right)}
+\lz
+% \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
+%\end{figure}
 % 
-$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $\{x: \P(x) > 0\}$ \\
-$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
+$\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$ and $x_2$ are considered relevant
+%$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 
  \end{vbframe}
 
