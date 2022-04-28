@@ -93,7 +93,8 @@ get_diff_cat = function(feature.k, feature.j) {
   A = table(feature.j, feature.k) / x.count
   
   # compute pairwise absolute distances 
-  dists$dist = rowSums(abs(A[dists[, "class1"], ] - A[dists[, "class2"], ])) / 2
+  
+  dists$dist = rowSums(abs(A[as.character(dists[, "class1"]), ] - A[as.character(dists[, "class2"]), ])) / 2
   return(dists)
 }
 
@@ -108,7 +109,7 @@ if (FALSE) {
   
   ## This should work AFTER you have implemented get_diff_cat()
   order_levels(credit, "personal_status_sex")
-  get_diff_cat(feature.k = credit[, c("employment_duration")], feature.j = credit[,"personal_status_sex"])
+  get_diff_cat(feature.k = credit[,"employment_duration"], feature.j = credit[,"personal_status_sex"])
 }
 
 

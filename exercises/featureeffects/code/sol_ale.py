@@ -124,7 +124,7 @@ if __name__ == "__main__":
     (X_train, y_train), (X_test, y_test) = dataset.get_data()
     
     from sklearn import ensemble
-    model = ensemble.RandomForestRegressor()
+    model = ensemble.RandomForestRegressor(random_state=0)
     model.fit(X_train, y_train)
     X = dataset.X
     s = 1

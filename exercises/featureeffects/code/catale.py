@@ -112,17 +112,14 @@ def get_diff_cat(feature_k, feature_j):
   feature_lev = np.unique(feature_j)
   param_grid = {'class1': feature_lev, 'class2' : feature_lev}
   dists = pd.DataFrame(ParameterGrid(param_grid))
+  dists['dist'] = 0
   
   # get relative frequency table
-  xcount = np.unique(feature_j, return_counts = True)[1]
-  A = pd.crosstab(feature_k, feature_j)/xcount
+  ######## TO DO ########
   
   # compute pairwise absolute distances 
-  ecdf_dists = []
-  for i1, i2 in zip(dists.class1.values, dists.class2.values): 
-    print(i1, i2)
-    ecdf_dists.append(sum(abs(A[i1] - A[i2])) / 2)
-  dists["dist"] = ecdf_dists
+  
+  ######## TO DO ########
    
   return(dists)
 
