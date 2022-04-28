@@ -145,8 +145,8 @@ g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
   at (12,0cm)
   {$\phi_j$: \textbf{Attribution} \\ How much does feature $j$ change the output for coaltion $k$};
 
-\draw<1-4>[arrow]
-  (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.4ex]{pic cs:zp});  
+\draw<1-3>[arrow]
+  (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.9ex]{pic cs:zp});  
 \draw<2-3>[arrow]
   (ph0ex.east) to[out=180,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:ph0});  
 \draw<3>[arrow]
@@ -155,12 +155,14 @@ g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
   (zex)  
   at (2,1cm)
   {$g(\mathbf{z}^{\prime (k)})$: \textbf{Marginal Contribution} \\ Contribution of coalition $\mathbf{z}^{\prime (k)}$ to the prediction};
+  \draw<4>[arrow]
+  (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.9ex]{pic cs:zp});  
 \node<4>[expl] 
   (phjsh) 
-  at (11,1.5cm)
+  at (12,1.5cm)
   {$\phi_j$: \textbf{Shapley Values}};
 \draw<4>[arrow]
-  (phjsh.west) to[out=90,in=90] ([xshift= 1ex, yshift=1ex]{pic cs:phj}); 
+  (phjsh.west) to[out=90,in=90] ([xshift= 1ex, yshift=2ex]{pic cs:phj}); 
 \draw<4> [
     thick,
     decoration={
@@ -602,6 +604,8 @@ with $\phi_0 = E(\fh)$ and $\phi_p = \fh(x) - \sum_{j=0}^{p-1} \phi_j$ we receiv
      $\mathbf{z}^{\prime (5)}$ & 1 & 1 & 0 & 0.33 & 3060\\
      $\mathbf{z}^{\prime (6)}$ & 0 & 1 & 1 &0.33 & 2623\\
      $\mathbf{z}^{\prime (7)}$ & 1 & 0 & 1 & 0.33 & 4450\\
+      \multicolumn{1}{c}{} & \multicolumn{3}{c}{\upbracefill}&\multicolumn{1}{c}{} &\multicolumn{1}{c}{\upbracefill}\\[-1ex]
+    \multicolumn{1}{c}{} & \multicolumn{3}{c}{$\scriptstyle input$}&\multicolumn{1}{c}{} &  \multicolumn{1}{c}{$\scriptstyle output$}\\
   
  
   \end{tabular}
@@ -807,17 +811,17 @@ Given instance $x_{ey}$ and the displayed tree
     },
   ]
 \centering
-    \node [node, label=below:{n=10}] (A) {year $>$ 2011};
-    \path (A) ++(7:3.8cm) node [node, label=below:{n=5}] (B) {count = 3200};
-    \path (A) ++(-7:3.8cm) node [node, label=below:{n=5}] (C) {temp $>$ 30};
-    \path (C) ++(14:3.8cm) node [node, label=below:{n=3}] (D) {count = 6850};
-    \path (C) ++(0:3.8cm) node [node, label=below:{n=2}] (E) {count = 5400};
+    \node [node, label=below:{\scriptsize n=10}] (A) {year $>$ 2011};
+    \path (A) ++(7:3.8cm) node [node, label=below:{\scriptsize n=5}] (B) {count = 3200};
+    \path (A) ++(-7:3.8cm) node [node, label=below:{\scriptsize n=5}] (C) {temp $>$ 30};
+    \path (C) ++(14:3.8cm) node [node, label=below:{\scriptsize n=3}] (D) {count = 6850};
+    \path (C) ++(0:3.8cm) node [node, label=below:{\scriptsize n=2}] (E) {count = 5400};
     
 
-    \draw (A) -- (B) node [left,pos=0.5] {no}(A);
-    \draw (A) -- (C) node [right,pos=0.5] {yes}(A);
-    \draw (C) -- (D) node [left,pos=0.5] {no}(A);
-    \draw (C) -- (E) node [right,pos=0.5] {yes}(A);
+    \draw (A) -- node [above] {\scriptsize no}(B);
+    \draw (A) -- node [above, yshift=-0.1cm] {\scriptsize yes}(C) ;
+    \draw (C) -- node [above] {\scriptsize no} (D);
+    \draw (C) -- node [above, yshift=-0.1cm] {\scriptsize yes}(E);
     
 \end{tikzpicture}
 \end{column}
