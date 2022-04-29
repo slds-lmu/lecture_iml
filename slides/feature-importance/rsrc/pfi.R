@@ -114,6 +114,15 @@ p3 = ggplot(data_perm, aes(x=x1, y=x2)) +
   geom_hex(bins = 20) + scale_fill_viridis_c() #+ theme_bw()
 p3
 
+
+# explain conditional permutation scheme
+# data_perm = data.frame(data)
+# data_perm$condition_x2 = findInterval(data_perm$x2, quantile(data_perm$x2, seq(0,1,by=0.1)))
+# data_perm$x1 = data_perm$x1[sample(nrow(data_perm))]
+# p4 = ggplot(data_perm, aes(x=x1, y=x2)) +
+#   geom_hex(bins = 20) + scale_fill_viridis_c() #+ theme_bw()
+# p4
+
 library(patchwork)
 
 res = p2 + p3 + p_pfi & theme(aspect.ratio=1)#, legend.position = "bottom") #+ plot_layout(guides = 'collect')
@@ -182,7 +191,7 @@ p = plot(imp_test)
 df = data.frame(imp_test$results[,c('feature', 'importance')])
 df$type = 'H1'
 
-for (ii in 1:100) {
+for (ii in 1:1000) {
   y_perm = sample(y, length(y))
   data = data.frame(x1=x1, x2=x2, x3=x3, x4=x4, y=y_perm)
 
@@ -205,17 +214,30 @@ for (ii in 1:100) {
   df = rbind(df_tmp, df)
 }
 
+saveRDS(df, file = "slides/feature-importance/rsrc/pimp.Rds")
+df = readRDS("slides/feature-importance/rsrc/pimp.Rds")
+
+library(data.table)
+df_dt = as.data.table(df)
+pvalues = df_dt[,mean(importance[type == "H0"]>importance[type == "H1"]), by = feature]
+
 df_h1 = df[df$type == 'H1', c('feature', 'importance')]
 df_h0 = df[df$type == 'H0', c('feature', 'importance')]
+df_h1 = merge(pvalues, df_h1)
+df_h0 = merge(pvalues, df_h0)
+
+paste0(feature, ", p-value: ", round(V1, 3))
 
 
-p = ggplot(df_h0, aes(x=importance)) + geom_histogram()
-p = p + geom_vline(data=df_h1, aes(xintercept=importance), colour="red", linetype="dashed")
+p = ggplot(df_h0, aes(x=importance)) + geom_histogram()#aes(y = ..density..)) + geom_density(col = "red")
+p = p +
+  geom_vline(data=df_h1, aes(xintercept=importance), colour="red", linetype="dashed")
+  #ggtext::geom_richtext(data=df_h1, aes(x = 0, y = 0, label = paste("p-value:", round(V1, 3))), angle = 0, hjust = 0, vjust = 0)
 #p = p + facet_grid(feature ~ .)
-p = p + facet_grid(. ~ feature)
+p = p + facet_wrap(. ~ paste0(feature, ", p-val: ", round(V1, 3)), scales = "free", nrow = 1)
 p
 
-ggsave("../figure_man/pimp.pdf", width=8, height=2)
+ggsave("../figure_man/pimp.pdf", width=10, height=2.5)
 
 
 #p2 = ggplot(data, aes(x=x1, y=x2)) + geom_de() #+ theme_bw()
