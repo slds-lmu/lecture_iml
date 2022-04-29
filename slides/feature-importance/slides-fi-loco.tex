@@ -34,23 +34,27 @@
 
 %TODO: Remove gray figure background (e.g. theme_bw())
 
-\begin{vbframe}{Reminder: Feature Importance Scheme}
-In general, feature importance methods share two components
-\lz
-\begin{enumerate}
-  \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed/removed.
-  \item \textbf{Performance Comparision:} Compare performance under perturbation/removal with the original model performance.
-\end{enumerate}
-\lz
-Depending on the type of perturbation/removal feature importance methods provide insight into different aspects of model and data.\\
-\lz
-\textbf{LOCO idea:} Simply remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.\\
+% \begin{vbframe}{Reminder: Feature Importance Scheme}
+% In general, feature importance methods share two components
+% \lz
+% \begin{enumerate}
+%   \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed/removed.
+%   \item \textbf{Performance Comparision:} Compare performance under perturbation/removal with the original model performance.
+% \end{enumerate}
+% \lz
+% Depending on the type of perturbation/removal feature importance methods provide insight into different aspects of model and data.\\
+% \lz
+% \textbf{LOCO idea:} Simply remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.\\
 
-\end{vbframe}
+% \end{vbframe}
 
 \begin{vbframe}{Leave One Covariate Out (LOCO) \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173} \citebutton{Tibshirani (2018)}{http://www.stat.cmu.edu/~ryantibs/talks/loco-2018.pdf}}
 % citation of the original LOCO paper
 %
+\textbf{LOCO idea:} Simply remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.
+
+\lz
+
 \textbf{Definition:} Given training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\inducer$ and a model $\fh = \inducer(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
   \begin{enumerate}
     \item learn model on dataset ${\Dtrain}_{,-j}$ where feature $x_j$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$
@@ -69,7 +73,7 @@ $$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
 \begin{figure}
   \centering
   \includegraphics[width=0.65\textwidth]{figure_man/bike_sharing_loco.pdf}
-\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing dataset to optimize MSE. Then LOCO was computed for all features on the training dataset. The year is the most important feature. Without access to the variable, the MSE increases by $10^6$.}
+\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing dataset to optimize MSE. Then LOCO was computed for all features on the training dataset. The year is the most important feature. Without access to year, the MSE increases by $10^6$.}
 \end{figure}
 %
  %\textbf{Interpretation:} $\text{LOCO}_j$ quantifies how important variable $x_j$ is to the generalization performance of the learner on $\Dtrain$.\\
