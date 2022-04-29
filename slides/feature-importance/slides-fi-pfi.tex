@@ -336,13 +336,13 @@ PIMP algorithm:
 		\begin{itemize}
 			\item Permute response vector $y$
 			\item Retrain model with data $\Xmat$ and permuted $y$
-			\item Compute feature importance $PFI_j^m$ for each feature $j$
+			\item Compute feature importance $PFI_j^m$ for each feature $j$ (under $H_0$)
 		\end{itemize}
 	\item Train model with $\Xmat$ and unpermuted $y$.
 	\item For each feature $j \in \{1,\ldots,p\}$:
 		\begin{itemize}
 			\item Fit probability distribution of the feature importance values $PFI_j^m$, $m \in \{1, \ldots, n_{repetitions}\}$ (choice between Gaussian, lognormal, gamma or non-parametric)
-			\item Compute permutation feature importance $PFI_j$ for the model without permutation
+			\item Compute feature importance $PFI_j$ for the model without permutation of $y$ (under $H_1$)
 			\item Retrieve the p-value of $PFI_j$ based on the fitted distribution
 		\end{itemize}
 \end{enumerate}
