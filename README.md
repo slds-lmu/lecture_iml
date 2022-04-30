@@ -1,8 +1,8 @@
-# Introduction to Machine Learning (I2ML)
+# Interpretable Machine Learning (IML)
 
-This Project offers a free, open source introductory and applied overview of supervised machine learning. 
+This Project offers a free, open source introductory and an overview of interpretable machine learning methods. 
 
-Main course site: https://introduction-to-machine-learning.netlify.app/
+Main course site: https://xxx.netlify.app/
 
 
 # Contents, License, Team and Further Info
@@ -19,16 +19,16 @@ See also our [contributing guidelines](CONTRIBUTING.md)
 - Are you an ML expert and like the course, but have some feedback or consider 
   extending it? 
   Write an email to Bernd and Fabian (see [Team page](vignettes/team.Rmd)) or
-  Open an [issue](https://github.com/compstat-lmu/lecture_i2ml/issues).
-- Are you a student taking the lecture - either at the LMU or online - and you 
-  spotted a typo, think we should rephrase something be or even would like to 
+  Open an [issue](https://github.com/slds-lmu/lecture_iml/issues).
+- Are you a student taking the lecture and you spotted a typo, think we 
+  should rephrase something be or even would like to 
   provide a new quiz question or coding example? Please consider providing a 
   pull request. To do so, please check out the *devel* branch of the repo and 
   add your fixes there. Writing an e-mail or opening an 
-  [issue](https://github.com/compstat-lmu/lecture_i2ml/issues) with suggested 
+  [issue](https://github.com/slds-lmu/lecture_iml/issues) with suggested 
   improvements is obviously very welcome as well!
 - You are none of the above but would like to contribute, get in touch / open
-  [issues](https://github.com/compstat-lmu/lecture_i2ml/issues) / create pull
+  [issues](https://github.com/slds-lmu/lecture_iml/issues) / create pull
   requests! We are happy about any help.
 
 ## License
