@@ -16,7 +16,7 @@
     \newcommand{\learninggoals}{
     	\item Extrapolation and Conditional Sampling
     	\item Conditional Feature Importance (CFI)
-    	\item Interpretation of CFI}
+    	\item Interpretation of CFI and difference to PFI}
 	% Set style/preamble.Rnw as parent.
 	
 	% Load all R packages and set up knitr
@@ -48,6 +48,8 @@
 \textbf{Problem:} Under dependent features, permutation leads to extrapolation.\\
 \lz
 \textbf{Conditional Feature Importance Idea:} Resample $x_j$ from the conditional distribution $\P(x_j|x_{-j})$, such that the covariate joint distribution is preserved, i.e., $\P(x_j|x_{-j}) \P(x_{-j}) = \P(x_j, x_{-j})$.
+
+\includegraphics[width=0.25\linewidth]{figure_man/conditional_sampling.pdf}
 
 \end{frame}
 
@@ -121,14 +123,15 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 % INTERPRETATION OF CFI
 \begin{frame}{Implications of CFI \citebutton{König et al. (2020)}{https://arxiv.org/abs/2007.08283}}
 
-\textbf{Interpretation:} CFI quantifies the unique contribution of the feature to the performance of the model.\\
+\textbf{Interpretation:} CFI quantifies a feature's unique contribution to the model performance.\\
 \lz
-\textbf{Entanglement with the data:} If the feature does not contribute unique information about $y$, i.e. $x_S \indep y | x_{-S}$, CFI is zero.\\
+\textbf{Entanglement with data:} If feature $x_S$ does not contribute unique information about $y$, i.e., $x_S \indep y | x_{-S}$, CFI is zero.\\
 \begin{itemize}
-  \item Why? Under the conditional independence $\P(\pert{x}{S}{-S}, y) = \P(x,y)$ and therefore no prediction-relevant information is destroyed.
+  \item Why? Under the conditional independence $\P(\pert{x}{S}{-S}, y) = \P(x,y)$\\
+  $\leadsto$ no prediction-relevant information is destroyed
 \end{itemize}
 \lz
-\textbf{Entanglement with the model:} If the model does mechanistically use a feature, CFI is zero.\\
+\textbf{Entanglement with model:} If the model does mechanistically use a feature, CFI is zero.\\
 \begin{itemize}
   \item Why? Then the prediction is not affected by any perturbation of the feature (and consequently the performance is invariant).
 \end{itemize}
@@ -143,20 +146,21 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 Can we gain insight into whether..
 
 \begin{enumerate}
-    \item the feature $x_j$ is causal for the prediction?
+    \item<1-3> the feature $x_j$ is causal for the prediction?
     \begin{itemize}
-      \item Nonzero CFI implies that the model relies on $x_j$.
-      \item The contraposition does not hold.
+      \item $CFI_j \neq 0$ $\Rightarrow$ model relies on $x_j$ (contraposition does not hold)
     \end{itemize}
-    \item the variable $x_j$ contains prediction-relevant information?
+    \item<2-3> the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
-      \item If $x_S \not \indep y$ but $x_S \indep y | x_{-S}$ CFI is zero.
-      \item If a feature is not exploited by the model, CFI is zero, irrespective of whether the feature is useful or not.
+      \item If $x_j \not \indep y$ but $x_j \indep y | x_{-j}$ (e.g., $x_j$ and $x_{-j}$ share information) $\Rightarrow$ $CFI_j = 0$
+      \item  $x_{j}$ is not exploited by model (regardless of whether it is useful for $y$ or not) $\Rightarrow$ $CFI_j = 0$
+      %\item If a feature is not exploited by the model, CFI is zero, irrespective of whether the feature is useful or not.
     \end{itemize}
-    \item Does the model require access to $x_j$ to achieve it's prediction performance?
+    \item<3> Does the model require access to $x_j$ to achieve it's prediction performance?
 \begin{itemize}
-      \item Nonzero CFI implies that the feature contributes unique information (meaning $x_S \not \indep y | x_{-S}$).
-      \item Only uncovers the relationships that were exploited by the model.
+      \item $CFI_j \neq 0 \Rightarrow$ $x_j$ contributes unique information (meaning $x_j \not \indep y | x_{-j}$)
+      %Nonzero CFI implies that the feature contributes unique information (meaning $x_S \not \indep y | x_{-S}$).
+      \item Only uncovers the relationships that were exploited by the model
     \end{itemize}
 \end{enumerate}
 \end{frame}
@@ -166,7 +170,7 @@ Can we gain insight into whether..
 \begin{frame}{Comparison: PFI and CFI}
  
  \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
-A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
+ Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.%\\
  %
 \begin{figure}
 \hfill
@@ -175,8 +179,10 @@ A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
   \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left). PFI and CFI (right).}
 \end{figure}
 % 
-$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
-$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+%$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
+%$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant \\
+$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
+$\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$, $x_2$ are considered relevant (PFI $> 0$) \\
 $\Rightarrow$ Since $x_1$ can be reconstructed from $x_2$ and vice versa, CFI considers $x_1$ and $x_2$ to be irrelevant
 
  \end{frame}

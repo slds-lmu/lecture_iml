@@ -240,7 +240,7 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
 %\end{figure}
 % 
 $\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
-$\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$ and $x_2$ are considered relevant
+$\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$, $x_2$ are considered relevant (PFI $> 0$)
 %$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 
  \end{frame}
@@ -290,13 +290,13 @@ Can we get insight into whether ...
 \begin{enumerate}
     \item<1-> the feature $x_j$ is causal for the prediction?
     \begin{itemize}
-      \item PFI $> 0$ $\Rightarrow$ model relies on $x_j$
+      \item $PFI_j \neq 0$ $\Rightarrow$ model relies on $x_j$
       \item As the training vs test data example demonstrates, the contraposition does not hold
     \end{itemize}
     \item<2-> the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
-      \item PFI $> 0$ $\Rightarrow$ feature is dependent of $y$ or it's covariates $x_{-j}$ or both (due to extrapolation)
-      \item PFI $= 0$ $\Rightarrow$ feature is not exploited by the model (regardless of whether it is useful or not) %irrespective of whether the feature is useful or not
+      \item $x_{j}$ is dependent of $y$ or it's covariates $x_{-j}$ or both (due to extrapolation) $\Rightarrow$ $PFI_j > 0$ 
+      \item $x_{j}$ is not exploited by model (regardless of whether it is useful for $y$ or not) $\Rightarrow$ $PFI_j = 0$  %irrespective of whether the feature is useful or not
     \end{itemize}
     \item<3-> the model requires access to $x_j$ to achieve it's prediction performance?    
     \begin{itemize}
@@ -355,7 +355,8 @@ PIMP algorithm:
 $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$, 
 $x_1$, $x_2$ highly correlated but independent of $y$, 
 $x_4$ is independent of $y$ and all other variables.
-Fitting a \texttt{lm} yields $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+%Fitting a \texttt{lm} yields $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
 %
 %\begin{figure}
   \includegraphics[width=\linewidth]{figure_man/pimp.pdf}
