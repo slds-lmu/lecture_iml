@@ -13,6 +13,10 @@ copy:
 pax:
 	pdfannotextractor *.pdf
 
+delete:
+	rm -rf slides-*.pdf
+	rm -rf slides-*.pax
+
 texclean:
 	rm -rf *.out
 	rm -rf *.dvi

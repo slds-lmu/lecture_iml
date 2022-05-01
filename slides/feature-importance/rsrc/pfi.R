@@ -100,12 +100,10 @@ p_pfi
 
 #ggsave("../figure_man/pfi_extrapolation.pdf", width=5, height=3)
 
-
 p2 = ggplot(data, aes(x=x1, y=x2)) + geom_hex(bins = 20) + scale_fill_viridis_c() #+ theme_bw()
 p2
 
 #ggsave("../figure_man/pfi_hexbin_pre.pdf", width=6, height=4.5)
-
 
 data_perm = data.frame(data)
 data_perm$x1 = data_perm$x1[sample(nrow(data_perm))]
@@ -114,14 +112,24 @@ p3 = ggplot(data_perm, aes(x=x1, y=x2)) +
   geom_hex(bins = 20) + scale_fill_viridis_c() #+ theme_bw()
 p3
 
-
-# explain conditional permutation scheme
-# data_perm = data.frame(data)
-# data_perm$condition_x2 = findInterval(data_perm$x2, quantile(data_perm$x2, seq(0,1,by=0.1)))
-# data_perm$x1 = data_perm$x1[sample(nrow(data_perm))]
+#
+# # explain conditional permutation scheme
+# data_perm = data
+# breaks = quantile(data_perm$x2, seq(0,1,by=0.1))
+# breaks = seq(min(data_perm$x2), max(data_perm$x2), length = 20)
+# data_perm$condition_x2 = findInterval(data_perm$x2, breaks)
+# dlist = split(data_perm, data_perm$condition_x2)
+# dlist = lapply(dlist, function(x) {
+#   x$x1 = x$x1[sample(nrow(x))]
+#   return(x)
+# })
+# data_perm = data.table::rbindlist(dlist)
+#
+# #data_perm[, x1_sample := sample(x1), by = condition_x2]
+# #data_perm$x1 = data_perm$x1[sample(nrow(data_perm))]
 # p4 = ggplot(data_perm, aes(x=x1, y=x2)) +
 #   geom_hex(bins = 20) + scale_fill_viridis_c() #+ theme_bw()
-# p4
+# p4 + geom_hline(yintercept = breaks)
 
 library(patchwork)
 
