@@ -32,7 +32,7 @@
 	
 	% ------------------------------------------------------------------------------
 
-% \begin{vbframe}{Permutation Feature Importance Idea \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+% \begin{frame}{Permutation Feature Importance Idea \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
 
 % In general, feature importance methods share two components
 % \lz
@@ -54,9 +54,9 @@
 % %\vspace{-0.2cm}
 % %\tiny{Fisher et al. (2018). All models are wrong but many are useful: Variable importance for black-box, proprietary, or misspecified prediction models, using model class reliance. arXiv preprint arXiv:1801.01489 (2018).}
 
-% \end{vbframe}
+% \end{frame}
 
-\begin{vbframe}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+\begin{frame}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
 
 \textbf{Idea:} "Destroy" feature of interest $x_j$ by perturbing it such that it becomes uninformative, e.g., randomly permute observations in $x_j$ (marginal distribution $\P(x_j)$ stays the same).  %Therefore, resample the variable from its marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.
 
@@ -81,7 +81,7 @@ Example of permuting feature $x_S$ with $S = \{1\}$ and $m=6$:
 The $S$ in $x_S$ refers to a \textbf{S}ubset of features for which we are interested in their effect on the prediction.\\
 Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\par}
 
-\end{vbframe}
+\end{frame}
 
 
 
@@ -190,7 +190,7 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
   \end{itemize}
 }
 
-\begin{vbframe}{Example: Bike Sharing Dataset}
+\begin{frame}{Example: Bike Sharing Dataset}
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{figure_man/bike-sharing02.png}
@@ -204,9 +204,9 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
  \item Destroying information about \code{yr} by permuting it increases mean absolute error of model by 816
  \item $5 \%$ and $95 \%$ quantile of repetitions due multiple permutations are shown as error bars
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Comments on PFI}
+\begin{frame}{Comments on PFI}
  \begin{itemize}[<+->]
  \itemsep1em
   \item Interpretation: PFI is the increase of model error when feature's information is destroyed
@@ -218,10 +218,10 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
   $\Rightarrow$ Importance of all interactions with the permuted feature are contained in PFI score %Not only importance of permuted feature is contained but also importance of all interactions with that feature
   \item Interpretation of PFI depends on whether training or test data is used
  \end{itemize}
-\end{vbframe}
+\end{frame}
 
 %TODO: Simplify example
-\begin{vbframe}{Comments on PFI - Extrapolation}
+\begin{frame}{Comments on PFI - Extrapolation}
  
 %\textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1$, $x_2 := x_1 + \epsilon_1$ are highly correlated ($x_1 \sim N(0,1), \epsilon_1 \sim N(0, 0.01)$). Let $x_3, x_4 \sim N(0,1)$ be noisy features are independent.
  
@@ -243,9 +243,9 @@ $\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction $\fh(\xv)$ for $
 $\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$ and $x_2$ are considered relevant
 %$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 
- \end{vbframe}
+ \end{frame}
 
-\begin{vbframe}{Comments on PFI - Interactions}
+\begin{frame}{Comments on PFI - Interactions}
 
 \textbf{Example:} Let $x_1, \dots, x_4$ be independently and uniformly sampled from $\{-1, 1\}$ and 
 $$y:= x_1 x_2 + x_3 + \epsilon_Y \text{ with } \epsilon_Y \sim N(0, 1)$$
@@ -267,9 +267,9 @@ $\Rightarrow$ PFI does not fairly attribute the performance to the individual fe
 \end{columns}
 
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Comments on PFI - Test vs. Training data}
+\begin{frame}{Comments on PFI - Test vs. Training data}
 
 \textbf{Example:} $x_1, \dots, x_{20}, y$ are independently sampled from $\mathcal{U} (-10, 10)$. An \texttt{xgboost} model with default hyperparameters is fit on a small training set of $50$ observations. The model overfits heavily.\\
 
@@ -281,9 +281,9 @@ $\Rightarrow$ PFI does not fairly attribute the performance to the individual fe
 Why? PFI can only be nonzero if the permutation breaks a dependence in the data. Spurious correlations help the model perform on train data, but are not present in the test data.\\
 $\Rightarrow$ If you are interested in which features help the model to generalize, apply PFI on test data.
   
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Implications of PFI}
+\begin{frame}{Implications of PFI}
 
 Can we get insight into whether ...
 
@@ -303,10 +303,10 @@ Can we get insight into whether ...
       \item As the extrapolation example demonstrates, such insight is not possible
 \end{itemize}
 \end{enumerate}
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Testing Importance (PIMP) \citebutton{Altmann et al. (2010)}{https://doi.org/10.1093/bioinformatics/btq134}}
+\begin{frame}{Testing Importance (PIMP) \citebutton{Altmann et al. (2010)}{https://doi.org/10.1093/bioinformatics/btq134}}
 
 \begin{itemize}[<+->]
   \item PIMP was originally introduced for random forest's built-in permutation feature importance
@@ -326,56 +326,66 @@ Can we get insight into whether ...
 %{\tiny{Altmann, André, et al. "Permutation importance: a corrected feature importance measure." 
 %Bioinformatics 26.10 (2010): 1340-134.}}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Testing Importance (PIMP)}
+\begin{frame}{Testing Importance (PIMP)}
 
 PIMP algorithm:
 \begin{enumerate}
-	\item For $m \in \{1, \ldots, n_{repetitions}\}$:
+	\item<1-3> For $m \in \{1, \ldots, n_{repetitions}\}$:
 		\begin{itemize}
 			\item Permute response vector $y$
 			\item Retrain model with data $\Xmat$ and permuted $y$
 			\item Compute feature importance $PFI_j^m$ for each feature $j$ (under $H_0$)
 		\end{itemize}
-	\item Train model with $\Xmat$ and unpermuted $y$.
-	\item For each feature $j \in \{1,\ldots,p\}$:
+	\item<2-3> Train model with $\Xmat$ and unpermuted $y$
+	\item<3> For each feature $j \in \{1,\ldots,p\}$:
 		\begin{itemize}
 			\item Fit probability distribution of the feature importance values $PFI_j^m$, $m \in \{1, \ldots, n_{repetitions}\}$ (choice between Gaussian, lognormal, gamma or non-parametric)
 			\item Compute feature importance $PFI_j$ for the model without permutation of $y$ (under $H_1$)
 			\item Retrieve the p-value of $PFI_j$ based on the fitted distribution
 		\end{itemize}
 \end{enumerate}
-\end{vbframe}
+\end{frame}
 
 
 %TODO: Simplify or better explain example
-\begin{vbframe}{PIMP for extrapolation example}
-\textbf{Recap:} $x_1$ and $x_2$ are highly correlated but independent of $y$. $x_4$ is independent of all other variables, $x_3$ is only correlated with $y$. A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
- %
-\begin{figure}
+\begin{frame}{PIMP for extrapolation example}
+\textbf{Recall:} 
+$y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$, 
+$x_1$, $x_2$ highly correlated but independent of $y$, 
+$x_4$ is independent of $y$ and all other variables.
+Fitting a \texttt{lm} yields $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+%
+%\begin{figure}
   \includegraphics[width=\linewidth]{figure_man/pimp.pdf}
-  \caption{$H_0$ distribution (1000 samples) for each feature as histograms, the true PFI indicated in red. PIMP only considers $x_3$ relevant. Although PFI for $x_1$ and $x_2$ is nonzero, PIMP considers them irrelevant since they are not predictive of $y$. Even after permuting $y$, the model relies on them.}
-\end{figure}
-\end{vbframe}
+  %\caption{$H_0$ distribution (1000 samples) for each feature as histograms, the true PFI indicated in red. PIMP only considers $x_3$ relevant. Although PFI for $x_1$ and $x_2$ is nonzero, PIMP considers them irrelevant since they are not predictive of $y$. Even after permuting $y$, the model relies on them.}
+%\end{figure}
 
-\begin{vbframe}{Digression: Multiple testing problem \citebutton{Romano et al. (2010)}{https://doi.org/10.1057/978-1-349-95121-5_2914-1}}
 \begin{itemize}
+    \item Histograms: $H_0$ distribution of PFI scores after permuting $y$ (1000 repetitions)
+    \item Red: PFI score estimated on unpermuted $y$ (under $H_1$) $\leadsto$ compare against $H_0$ distribution
+    \item Results: Although PFI for $x_1$ and $x_2$ is nonzero (red), PIMP considers them not significantly relevant (p-value > 0.05) 
+    %since they are not predictive of $y$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Digression: Multiple testing problem \citebutton{Romano et al. (2010)}{https://doi.org/10.1057/978-1-349-95121-5_2914-1}}
+\begin{itemize}[<+->]
   \item When should we reject the $H_0$-hypothesis for a feature? 
-  \item The larger $p$, the more tests need to be performed by PIMP
-  \item This can lead to the \textbf{multiple testing problem}: If one does not take the multiplicity of tests into account, then the probability that some of the true null hypotheses are rejected (type-I error) by chance alone may be unduly large.
-  \item Accounting for multiplicity of individual tests can be achieved by controlling
-  an appropriate error rate like the \textbf{familywise error rate} (FWE, the probability of at least one type-I error)
-  \item One classical method to control the FWE is the \textbf{Bonferroni correction} which rejects a null hypothesis if its p-value is smaller than $\alpha/p$ with $p$ as the number of tests
-  \item We refer to other lectures or the statistics literature for more details
+  \item The larger number of features, the more tests need to be performed by PIMP\\
+  $\leadsto$ \textbf{Multiple testing problem}: If multiplicity of tests is not taken into account, the probability that some of the true $H_0$-hypothesis is rejected (type-I error) by chance may be large
+  \item Accounting for multiplicity of individual tests can be achieved by controlling an appropriate error rate, e.g., the \textbf{family-wise error rate} (FWE: probability of at least one type-I error)
+  \item One classical method to control the FWE is the \textbf{Bonferroni correction} which rejects a null hypothesis if its p-value is smaller than $\alpha/m$ with $m$ as the number of performed parallel tests
+  %\item We refer to other lectures or the statistics literature for more details
   \end{itemize} 
 
   %\footnote[frame]{\fullcite{romano2010multiple}}
   %{\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
-\end{vbframe}
-% \begin{vbframe}
+\end{frame}
+% \begin{frame}
 %   \printbibliography
-% \end{vbframe}
+% \end{frame}
 
 \endlecture
 \end{document}

@@ -34,7 +34,7 @@
 
 %TODO: Remove gray figure background (e.g. theme_bw())
 
-% \begin{vbframe}{Reminder: Feature Importance Scheme}
+% \begin{frame}{Reminder: Feature Importance Scheme}
 % In general, feature importance methods share two components
 % \lz
 % \begin{enumerate}
@@ -46,9 +46,9 @@
 % \lz
 % \textbf{LOCO idea:} Simply remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.\\
 
-% \end{vbframe}
+% \end{frame}
 
-\begin{vbframe}{Leave One Covariate Out (LOCO) \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173} \citebutton{Tibshirani (2018)}{http://www.stat.cmu.edu/~ryantibs/talks/loco-2018.pdf}}
+\begin{frame}{Leave One Covariate Out (LOCO) \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173} \citebutton{Tibshirani (2018)}{http://www.stat.cmu.edu/~ryantibs/talks/loco-2018.pdf}}
 % citation of the original LOCO paper
 %
 \textbf{LOCO idea:} Simply remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.
@@ -66,9 +66,9 @@ The method can be generalized to other loss functions and aggregations. If we us
 %
 $$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
 %\footnote[frame]{\fullcite{lei_distribution-free_2018}\\ \fullcite{tibshirani_loco_2018}}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Bike Sharing Example}
+\begin{frame}{Bike Sharing Example}
 %
 \begin{figure}
   \centering
@@ -78,9 +78,9 @@ $$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
 %
  %\textbf{Interpretation:} $\text{LOCO}_j$ quantifies how important variable $x_j$ is to the generalization performance of the learner on $\Dtrain$.\\
 %
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Interpretation of LOCO}
+\begin{frame}{Interpretation of LOCO}
 
 \textbf{Interpretation:} LOCO estimates the generalization error of the learner on a reduced dataset $\D_{-j}$.\\
 \lz
@@ -99,9 +99,9 @@ Can we get insight into whether ...
       \item Approximately. It provides insight into whether the \textit{learner} requires access to $x_j$.
     \end{itemize}
 \end{enumerate}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Interpretation of LOCO}
+\begin{frame}{Interpretation of LOCO}
 
 \begin{figure}
 \centering
@@ -126,13 +126,10 @@ Setting: Linear gaussian data generating process with correlation matrix as depi
 \lz
 $\Rightarrow$ At the example of $x_2$ we see that: We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient $1.86$) (1). We also can't infer (2), e.g. $corr(x_2, y) = 0.69$ but $\text{LOCO}_2 \approx 0$.\\
 $\Rightarrow$ We can get insight into (3). Since $x_2$ and $x_1$ are highly correlated, they can take each others place, which is not the case for $x_3$.
-\framebreak
-
-
-\end{vbframe}
+\end{frame}
 
 %TODO: Why only?
-\begin{vbframe}{Pros and Cons}
+\begin{frame}{Pros and Cons}
   Pros:
   \begin{itemize}
     \item Requires (only?) one resampling set per feature for evaluation
@@ -146,11 +143,11 @@ $\Rightarrow$ We can get insight into (3). Since $x_2$ and $x_1$ are highly corr
     \item Model training is a random process, so estimates can be noisy (which is problematic for inference about model and data).
     \item Requires re-fitting the learner for each feature $\rightarrow$ computationally intensive
   \end{itemize}
-\end{vbframe}
+\end{frame}
 
-%\begin{vbframe}{Bibliography}
+%\begin{frame}{Bibliography}
 %  \printbibliography
-%\end{vbframe}
+%\end{frame}
 
 \endlecture
 \end{document}

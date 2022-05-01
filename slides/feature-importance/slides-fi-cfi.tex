@@ -41,7 +41,7 @@
 %TODO: Conditioning on everything is not a good idea: CFI=0 for highly correlated variables? Other examples? Relative Importance (Gunnar)?
 
 % CFI IDEA
-\begin{vbframe}{Conditional Feature Importance Idea}
+\begin{frame}{Conditional Feature Importance Idea}
 
 \textbf{Permutation Feature Importance Idea:} Replace the feature of interest $x_j$ with an independent sample from the marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.\\
 \lz
@@ -49,12 +49,12 @@
 \lz
 \textbf{Conditional Feature Importance Idea:} Resample $x_j$ from the conditional distribution $\P(x_j|x_{-j})$, such that the covariate joint distribution is preserved, i.e., $\P(x_j|x_{-j}) \P(x_{-j}) = \P(x_j, x_{-j})$.
 
-\end{vbframe}
+\end{frame}
 
 
 %TODO: Changed in PFI slides? Also change here!
 % RECAP EXTRAPOLATION
-\begin{vbframe}{Recap: Extrapolation in PFI}
+\begin{frame}{Recap: Extrapolation in PFI}
  
  \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
  Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
@@ -74,12 +74,12 @@ $\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction $\fh(\xv)$ for $
 $\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$ and $x_2$ are considered relevant
 %$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 
- \end{vbframe}
+ \end{frame}
 
 
  
  % CONDITIONAL SAMPLING PRESERVES THE JOINT
- \begin{vbframe}{Conditional Sampling preserves the Joint}
+ \begin{frame}{Conditional Sampling preserves the Joint}
  
  Let $\pert{x}{S}{-S} = (\pert{x}{S}{-S}_S, x_{-S})$ be the feature vector where feature values $x_S$ were replaced with an independent sample from $\P(x_S|x_{-S})$ while all other remaining feature values $x_{-S}$ stay the same. %We partition $\pert{x}{S}{-S}$ into $(\pert{x}{S}{-S}_S, x_{-S})$ containing features indexed by $S$ and the remaining features by $-S$). 
  Using the definition of conditional probability:
@@ -94,12 +94,12 @@ Consequence: The joint distribution is preserved in the perturbed dataset.\\
 $\Rightarrow$ CFI only evaluates the model within the observational covariate distribution\\
  \lz
  \textbf{Note:} That does not imply $\P(x,y) = \P(\pert{x}{S}{-S}, y)$! In the perturbed data, the relationship between $x_j$ and $y$ may still be destroyed.\\
- \end{vbframe}
+ \end{frame}
 
 
 
 % CFI DEFINITION
-\begin{vbframe}{Conditional Feature Importance \citebutton{Strobl et al. (2008)}{https://doi.org/10.1186/1471-2105-9-307} \citebutton{Hooker et al. (2021)}{https://arxiv.org/abs/1905.03151}}
+\begin{frame}{Conditional Feature Importance \citebutton{Strobl et al. (2008)}{https://doi.org/10.1186/1471-2105-9-307} \citebutton{Hooker et al. (2021)}{https://arxiv.org/abs/1905.03151}}
 \normalsize
 
 Conditional feature importance (CFI) for features $x_S$ using test data $\D$:
@@ -114,12 +114,12 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 
 %\footnote[frame]{\fullcite{Strobl2008}}
 
-\end{vbframe}
+\end{frame}
 
 
 %TODO: What is meant by "mechanistically"?
 % INTERPRETATION OF CFI
-\begin{vbframe}{Implications of CFI \citebutton{König et al. (2020)}{https://arxiv.org/abs/2007.08283}}
+\begin{frame}{Implications of CFI \citebutton{König et al. (2020)}{https://arxiv.org/abs/2007.08283}}
 
 \textbf{Interpretation:} CFI quantifies the unique contribution of the feature to the performance of the model.\\
 \lz
@@ -134,11 +134,11 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 \end{itemize}
 
 %\footnote[frame]{\fullcite{konig_relative_2021}}
-\end{vbframe}
+\end{frame}
 
 
 % IMPLICATIONS OF CFI
-\begin{vbframe}{Implications of CFI}
+\begin{frame}{Implications of CFI}
 
 Can we gain insight into whether..
 
@@ -159,11 +159,11 @@ Can we gain insight into whether..
       \item Only uncovers the relationships that were exploited by the model.
     \end{itemize}
 \end{enumerate}
-\end{vbframe}
+\end{frame}
 
 %TODO: Better example? 
 % RECAP EXTRAPOLATION
-\begin{vbframe}{Comparison: PFI and CFI}
+\begin{frame}{Comparison: PFI and CFI}
  
  \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
 A \texttt{lm} is fit, yielding $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.\\
@@ -179,11 +179,11 @@ $\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 
 $\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 $\Rightarrow$ Since $x_1$ can be reconstructed from $x_2$ and vice versa, CFI considers $x_1$ and $x_2$ to be irrelevant
 
- \end{vbframe}
+ \end{frame}
 
-% \begin{vbframe}{Bibliography}
+% \begin{frame}{Bibliography}
 %   \printbibliography
-% \end{vbframe}
+% \end{frame}
 
 \endlecture
 \end{document}

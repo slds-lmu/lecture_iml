@@ -35,7 +35,7 @@
 	% ------------------------------------------------------------------------------
 
 % CHALLENGE
-\begin{vbframe}{Challenge: Fair Attribution of Importance}
+\begin{frame}{Challenge: Fair Attribution of Importance}
 \begin{columns}[T]
 \begin{column}{0.54\textwidth}
 \textbf{Recap:} 
@@ -54,10 +54,10 @@ Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ j
 \end{columns}
 \lz
 \textbf{Reason:} PFI assesses importance given that all remaining features are preserved. If first permute $x_1$ and then $x_2$, permutation of $x_2$ would have no effect on the performance (and vice versa).
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Challenge: Fair attribution of importance}
+\begin{frame}{Challenge: Fair attribution of importance}
 
 \textbf{Observation:} Feature importance attribution can be regarded as cooperative game, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
 \lz
@@ -69,11 +69,11 @@ In order to compute SAGE, approximate Shapley values $\phi_j$ as for SHAP, repla
 
 \footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
   
-\end{vbframe}
+\end{frame}
 
 
 % SAGE IDEA
-\begin{vbframe}{SAGE Removal and Value function}
+\begin{frame}{SAGE Removal and Value function}
   
  \textbf{Removal Idea:} In order to deprive the model of the non-coalition features $-S$, marginalize the prediction function over the dropped features.
 
@@ -91,9 +91,9 @@ Value function:  $ v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S})$\\
 Contribution of feature $x_j$ over coalition $x_S$:  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S)$\\
 \lz
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{SAGE Removal and Value function}
+\begin{frame}{SAGE Removal and Value function}
 
 Depending on whether conditional or marginal resampling is used, the interpretation of SAGE value functions differ.\\
 \lz
@@ -108,18 +108,18 @@ Depending on whether conditional or marginal resampling is used, the interpretat
   \item under model optimality, links to mutual information or the conditional variance can be drawn
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{SAGE Removal and Value function}
+\begin{frame}{SAGE Removal and Value function}
 
 When the loss-optimal model $f^*$ is inspected using \textit{conditional-sampling} based SAGE value functions, interesting links exist.
 \begin{itemize}
   \item \textbf{for cross-entropy loss:} the value function $v_{f^*}(S) = I(y;x_S)$ corresponds to the mutual information and the surplus contribution of a feature $x_j$ $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = I(y,x_i|x_S)$ to the conditional mutual information
   \item \textbf{for MSE loss:} the value function $v_{f^*}(S) = Var(y) - \E[Var(y|x_S)]$ corresponds to the expected reduction in variance given knowledge of the features $x_S$ and the surplus contribution $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = \E[Var(y|x_S)] - \E[Var(y|x_{S \cup {j}})]$ to the respective reduction over $x_S$
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{SAGE Removal and Value function}
+\begin{frame}{SAGE Removal and Value function}
 
 \textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). The prediction model is defined as  $\fh \approx 0.95 x_3 + 0.05 x_2$. 
 %
@@ -130,9 +130,9 @@ When the loss-optimal model $f^*$ is inspected using \textit{conditional-samplin
 While the conditional $v(j)$ are nonzero for features that are not used by $\fh$, marginal $v(j)$ are only nonzero for features that are used by $\fh$. 
 Since for conditional $v$ the difference $v(-j \cup j) - v(-j)$ quantifies the unique contribution of $x_j$ over remaining variables $-j$ and $y \indep x_1, x_2 | x_3$, only $v(\{1,2,3\}) - v(\{1, 2\})$ is nonzero.
 %
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{SAGE interpretation}
+\begin{frame}{SAGE interpretation}
 
 The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
 %
@@ -152,9 +152,9 @@ The Shapley axioms can be translated into properties of SAGE. The interpretation
   \end{tabular}
 \end{table}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{SAGE interpretation}
+\begin{frame}{SAGE interpretation}
 %
 The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
 %
@@ -174,9 +174,9 @@ The Shapley axioms can be translated into properties of SAGE. The interpretation
   \end{tabular}
 \end{table}
 %
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Interaction Example Revisited}
+\begin{frame}{Interaction Example Revisited}
 
 \textbf{Recap:} Data: $x_1, \dots, x_4$ uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$. Model: $\fh(x) \approx x_1 x_2 + x_3$.\\
 %
@@ -186,10 +186,10 @@ The Shapley axioms can be translated into properties of SAGE. The interpretation
 %
 While PFI regards $x_1, x_2$ to be equally important as $x_3$, marginal SAGE fairly divides the contribution of the interaction $x_1$ and $x_2$.
   
-\end{vbframe}
+\end{frame}
 
 
-%\begin{vbframe}{Implications marginal SAGE}
+%\begin{frame}{Implications marginal SAGE}
 %
 %Can we gain insight into whether...
 %
@@ -208,9 +208,9 @@ While PFI regards $x_1, x_2$ to be equally important as $x_3$, marginal SAGE fai
 %\end{itemize}
 %\end{enumerate}
 %
-%\end{vbframe}
+%\end{frame}
 %
-%\begin{vbframe}{Implications conditional SAGE}
+%\begin{frame}{Implications conditional SAGE}
 %
 %Can we gain insight into whether...
 %
@@ -229,12 +229,12 @@ While PFI regards $x_1, x_2$ to be equally important as $x_3$, marginal SAGE fai
 %    \end{itemize}
 %\end{itemize}
 %
-%\end{vbframe}
+%\end{frame}
 
 
-\begin{vbframe}
+\begin{frame}
   \printbibliography
-\end{vbframe}
+\end{frame}
 
 \endlecture
 \end{document}
