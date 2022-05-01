@@ -78,7 +78,7 @@ pplot_cond = p_scatter +
 
 res = ((pplot_marg + pplot_cond) / (p1 + p2) + plot_layout(heights = c(2, 1))) & theme(plot.margin = unit(c(0,0,0,0), "pt"))
 
-ggsave('slides/feature-importance/figure_man/conditional_sampling.pdf', width=9, height=3)
+ggsave('slides/feature-importance/figure_man/conditional_sampling.pdf', width=7, height=4)
 
 # # explain conditional permutation scheme
 # p2 = ggplot(data, aes(x=x1, y=x2)) + geom_hex(bins = 20) + scale_fill_viridis_c() #+ theme_bw()
