@@ -155,7 +155,7 @@ p1 = ggplot(pred, aes(x, predicted)) +
   labs(x = "Temperature in °C", y = "Marginal Effect on \n 'Class 1: high number of bike rentals'") +
   theme(axis.text.y = element_text(angle = 90, vjust = 0, hjust = 0.5),
     plot.title = element_text(hjust = 0.5))
-ggsave("slides/interpretable-models/figure/logistic_maginal_temp.pdf", p1, width = 5, height = 3)
+ggsave("slides/interpretable-models/figure/logistic_marginal_temp.pdf", p1, width = 5, height = 3)
 
 
 
