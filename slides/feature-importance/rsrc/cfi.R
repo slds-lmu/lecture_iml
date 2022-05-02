@@ -19,7 +19,7 @@ y = x3 + rnorm(n, sd=0.1)
 
 data = data.frame(x1=x1, x2=x2, x3=x3, x4=x4, y=y)
 
-write.csv(data, 'extrapolation.csv')
+write.csv(data, 'slides/feature-importance/rsrc/extrapolation.csv')
 
 lp = 'slides/feature-importance/pysrc/'
 

@@ -4,14 +4,14 @@ library("mlr3learners")
 library("ggplot2")
 library("data.table")
 
-setwd('~/university/phd/2021/teaching/lecture_iml/slides/feature-importance/rsrc')
+#setwd('~/university/phd/2021/teaching/lecture_iml/slides/feature-importance/rsrc')
 
 
 target = "cnt"
 nruns = 30
 
 set.seed(123)
-load("bike.RData")
+load("data/bike.RData")
 bike = na.omit(bike)
 
 
@@ -28,34 +28,34 @@ test_set = setdiff(seq_len(task$nrow), train_set)
 df = data.frame(perf_pre=double(), perf_post=double(), score=double(), feature=character())
 
 for (i in c(1:nruns)) {
-  
+
   learner = lrn(lrn_type)
   learner$train(task, row_ids = train_set)
   prediction = learner$predict(task, row_ids = test_set)
   prediction$score()
-  
+
   perf_pre = prediction$score()
-  
+
   cols = colnames(bike)
   features = cols[1:10]
-  
+
   for (f in features){
     # compute new performance
     rmd = cols[cols != f]
     bike_tmp = data.frame(bike)
     bike_tmp = bike_tmp[,rmd]
-    
+
     task_partial = TaskRegr$new(id = 'full', backend = bike_tmp, target = target)
     learner_partial = lrn(lrn_type)
-    
+
     learner_partial$train(task_partial, row_ids = train_set)
     prediction = learner_partial$predict(task, row_ids = test_set)
     perf_post = prediction$score()
-    
+
     row = c(unname(as.list(c(perf_pre, perf_post, perf_post - perf_pre))), f)
     names(row) = colnames(df)
     df = rbind(row, df)
-  } 
+  }
 }
 
 dt = data.table(df)
@@ -72,7 +72,7 @@ ggplot(res, aes(y = feature, x = importance)) +
   #scale_x_continuous(sprintf("Feature Importance (loss: %s)", private$loss_string)) +
   #scale_y_discrete("")
 
-ggsave('../figure_man/bike_sharing_loco.pdf', width=8, height=4)
+ggsave('slides/feature-importance/figure_man/bike_sharing_loco.pdf', width=8, height=4)
 
 
 # simulation
@@ -103,29 +103,29 @@ for (i in c(1:nruns)) {
   learner$train(task, row_ids = train_set)
   prediction = learner$predict(task, row_ids = test_set)
   prediction$score()
-  
+
   perf_pre = prediction$score()
-  
+
   cols = colnames(simulation)
   features = cols[cols != target]
-  
+
   for (f in features){
     # compute new performance
     rmd = cols[cols != f]
     sim_tmp = data.frame(simulation)
     sim_tmp = sim_tmp[,rmd]
-    
+
     task_partial = TaskRegr$new(id = 'partial', backend = sim_tmp, target = target)
     learner_partial = lrn(lrn_type)
-    
+
     learner_partial$train(task_partial, row_ids = train_set)
     prediction = learner_partial$predict(task, row_ids = test_set)
     perf_post = prediction$score()
-    
+
     row = c(unname(as.list(c(perf_pre, perf_post, perf_post - perf_pre))), f)
     names(row) = colnames(df)
     df = rbind(row, df)
-  } 
+  }
 }
 
 dt = data.table(df)
@@ -142,8 +142,13 @@ ggplot(res, aes(y = feature, x = importance)) +
 #scale_x_continuous(sprintf("Feature Importance (loss: %s)", private$loss_string)) +
 #scale_y_discrete("")
 
-ggsave('../figure_man/simulation_loco.pdf', width=6, height=3)
+ggsave('slides/feature-importance/figure_man/simulation_loco.pdf', width=6, height=3)
 
-library(corrplot)
-corrplot(cor(simulation))
-ggsave('../figure_man/simulation_loco_corr.pdf', width=3, height=3)
+library(ggcorrplot)
+
+#corrplot(cor(simulation))
+corr = cor(simulation)
+ggcorrplot(corr, #hc.order = TRUE,# type = "lower",
+  lab = TRUE, method = "circle", colors = c("#E46726", "white", "#6D9EC1"))
+
+ggsave('slides/feature-importance/figure_man/simulation_loco_corr.pdf', width = 4, height = 3)
