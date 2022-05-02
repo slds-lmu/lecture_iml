@@ -719,18 +719,18 @@ $$
 
 \textbf{Local Accuracy}
 $$
-f(x)=g\left(x^{\prime}\right)=\phi_{0}+\sum_{j=1}^{p} \phi_{j} x_{i}^{\prime}
+f(\xv)=g\left(\xv^{\prime}\right)=\phi_{0}+\sum_{j=1}^{p} \phi_{j} x_{j}^{\prime}
 $$
 \begin{onlyenv}<1>
-\textbf{Intution:} If the coalition includes all features ($x^{\prime}  \in \{1\}^M $), the attributions $\phi_j$ should sum up with the base line $\phi_0$ to the original model output for observation $f(\xv)$ \\
-Local Accuracy corresponds to the \textbf{Axiom of Efficiency} in Shapley Game Theory 
+\textbf{Intuition:} If the coalition includes all features ($\xv^{\prime}  \in \{1\}^p $), the attributions $\phi_j$ and the null output $\phi_0$ sum up to the original model output $f(\xv)$\\\medskip
+Local accuracy corresponds to the \textbf{axiom of efficiency} in Shapley game theory 
 
 \end{onlyenv}
 
 \begin{onlyenv}<2->
 \textbf{Missingness}
 $$
-x_{i}^{\prime}=0 \Longrightarrow \phi_{i}=0
+x_{j}^{\prime}=0 \Longrightarrow \phi_{j}=0
 $$
 \end{onlyenv}
 
@@ -742,128 +742,128 @@ $$
 \textbf{Consistency} \\
 \end{onlyenv}
 \begin{onlyenv}<3>
-$f_{x}\left(z^{\prime}\right)=f\left(h_{x}\left(z^{\prime}\right)\right) \text { and } z^{\prime}_{\backslash  i} \text{ denote setting } z_{i}^{\prime}=0$ . For any two
-models $f$ and $f^{\prime}$, if
+$\fh_{x}\left(\mathbf{z}^{\prime (k)}\right)=\fh\left(h_{x}\left(\mathbf{z}^{\prime (k)}\right)\right) \text { and } \mathbf{z}^{\prime (k)}_{-j} \text{ denote setting } z_{j}^{\prime (k)}=0$ . For any two
+models $\fh$ and $\fh^{\prime}$, if
 $$
-f_{x}^{\prime}\left(z^{\prime}\right)-f_{x}^{\prime}\left(z^{\prime}_{\backslash i}\right) \geq f_{x}\left(z^{\prime}\right)-f_{x}\left(z^{\prime}_{\backslash i}\right)
+\fh_{x}^{\prime}\left(\mathbf{z}^{\prime (k)}\right)-\fh_{x}^{\prime}\left(\mathbf{z}^{\prime (k)}_{-j}\right) \geq \fh_{x}\left(\mathbf{z}^{\prime (k)}\right)-\fh_{x}\left(\mathbf{z}^{\prime (k)}_{-j}\right)
 $$
-for all inputs $z^{\prime} \in \{0, 1\}^p$, then
+for all inputs $\mathbf{z}^{\prime (k)} \in \{0, 1\}^p$, then
 $$
-\phi_{i}\left(f^{\prime}, x\right) \geq \phi_{i}(f, x)
+\phi_{j}\left(\fh^{\prime}, \mathbf{x}\right) \geq \phi_{j}(\fh, \mathbf{x})
 $$
 \end{onlyenv}
 
 \begin{onlyenv}<4->
 $$
-f_{x}^{\prime}\left(z^{\prime}\right)-f_{x}^{\prime}\left(z^{\prime}_{\backslash i}\right) \geq f_{x}\left(z^{\prime}\right)-f_{x}\left(z^{\prime} _{\backslash i}\right) \Longrightarrow \phi_{i}\left(f^{\prime}, x\right) \geq \phi_{i}(f, x)
+\fh_{x}^{\prime}\left(\mathbf{z}^{\prime (k)}\right)-\fh_{x}^{\prime}\left(\mathbf{z}^{\prime (k)}_{-j}\right) \geq \fh_{x}\left(\mathbf{z}^{\prime (k)}\right)-\fh_{x}\left(\mathbf{z}^{\prime (k)} _{-j}\right) \Longrightarrow \phi_{j}\left(\fh^{\prime}, \xv\right) \geq \phi_{j}(\fh, \xv)
 $$
 
-\textbf{Intution:} If a model changes so that the marginal contribution of a feature value increases or stays the same, the Shapley value also increases or stays the same\\ 
-From Consistency the Shapley \textbf{Axioms of Linearity, Dummy and Symmetry} follow
+\textbf{Intution:} If a model changes so that the marginal contribution of a feature value increases or stays the same, the Shapley value also increases or stays the same\\\medskip 
+From \textbf{consistency} the Shapley \textbf{axioms of linearity, dummy and symmetry} follow
 \end{onlyenv}
 
 
 \end{vbframe}
 
-\begin{vbframe}{Tree SHAP \citebutton{Lundberg et al 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
+%\begin{vbframe}{Tree SHAP \citebutton{Lundberg et al 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
 
-TreeSHAP is a fast model specific exact calculation of Shapley values for tree based models 
+%TreeSHAP is a fast model specific exact calculation of Shapley values for tree based models 
 
-\begin{onlyenv}<1-3>
-\vspace{0.5cm}
-Consider following Tree:
+%\begin{onlyenv}<1-3>
+%\vspace{0.5cm}
+% Consider following Tree:
 
-\textbf{Cases}
-Consider the following cases of feature subset S
+% \textbf{Cases}
+% Consider the following cases of feature subset S
 
-\begin{itemize}
-    \begin{onlyenv}<1>
-    \item  S is the set of all features – 
-    the prediction from the node in which the instance x falls is be the expected prediction.
-    \end{onlyenv}
-    \begin{onlyenv}<2>
-    \item S is empty -
-    use the weighted average of predictions of all terminal nodes in the decision tree. \\
+% \begin{itemize}
+%     \begin{onlyenv}<1>
+%     \item  S is the set of all features – 
+%     the prediction from the node in which the instance x falls is be the expected prediction.
+%     \end{onlyenv}
+%     \begin{onlyenv}<2>
+%     \item S is empty -
+%     use the weighted average of predictions of all terminal nodes in the decision tree. \\
      
-    \end{onlyenv}
-    \begin{onlyenv}<3>
-    \item S contains some, but not all, features -
-    ignore predictions of unreachable nodes \& average the predictions item from the remaining terminal nodes weighted by  sizes
-    \end{onlyenv}
-\end{itemize}
+%     \end{onlyenv}
+%     \begin{onlyenv}<3>
+%     \item S contains some, but not all, features -
+%     ignore predictions of unreachable nodes \& average the predictions item from the remaining terminal nodes weighted by  sizes
+%     \end{onlyenv}
+% \end{itemize}
 
-Given instance $x_{ey}$ and the displayed tree
-\begin{table}
-\begin{columns}[T]
-\begin{column}{0.3\textwidth}
-\centering
-\begin{tabular}{l |rrr}
-  \hline
-  & temp & year & $\fh$\\ 
-  \hline
- $x_{ex}$ & 24.27 & 2011 & 6825 \\ 
- \hline
-\end{tabular}
-\end{column}
-\begin{column}{0.7\textwidth}
-\begin{tikzpicture}[
-    node/.style={%
-      draw=blue,
-      rectangle,
-      fill=white,
-      rounded corners
-    },
-  ]
-\centering
-    \node [node, label=below:{\scriptsize n=10}] (A) {year $>$ 2011};
-    \path (A) ++(7:3.8cm) node [node, label=below:{\scriptsize n=5}] (B) {count = 3200};
-    \path (A) ++(-7:3.8cm) node [node, label=below:{\scriptsize n=5}] (C) {temp $>$ 30};
-    \path (C) ++(14:3.8cm) node [node, label=below:{\scriptsize n=3}] (D) {count = 6850};
-    \path (C) ++(0:3.8cm) node [node, label=below:{\scriptsize n=2}] (E) {count = 5400};
+% Given instance $x_{ey}$ and the displayed tree
+% \begin{table}
+% \begin{columns}[T]
+% \begin{column}{0.3\textwidth}
+% \centering
+% \begin{tabular}{l |rrr}
+%   \hline
+%   & temp & year & $\fh$\\ 
+%   \hline
+%  $x_{ex}$ & 24.27 & 2011 & 6825 \\ 
+%  \hline
+% \end{tabular}
+% \end{column}
+% \begin{column}{0.7\textwidth}
+% \begin{tikzpicture}[
+%     node/.style={%
+%       draw=blue,
+%       rectangle,
+%       fill=white,
+%       rounded corners
+%     },
+%   ]
+% \centering
+%     \node [node, label=below:{\scriptsize n=10}] (A) {year $>$ 2011};
+%     \path (A) ++(7:3.8cm) node [node, label=below:{\scriptsize n=5}] (B) {count = 3200};
+%     \path (A) ++(-7:3.8cm) node [node, label=below:{\scriptsize n=5}] (C) {temp $>$ 30};
+%     \path (C) ++(14:3.8cm) node [node, label=below:{\scriptsize n=3}] (D) {count = 6850};
+%     \path (C) ++(0:3.8cm) node [node, label=below:{\scriptsize n=2}] (E) {count = 5400};
     
 
-    \draw (A) -- node [above] {\scriptsize no}(B);
-    \draw (A) -- node [above, yshift=-0.1cm] {\scriptsize yes}(C) ;
-    \draw (C) -- node [above] {\scriptsize no} (D);
-    \draw (C) -- node [above, yshift=-0.1cm] {\scriptsize yes}(E);
+%     \draw (A) -- node [above] {\scriptsize no}(B);
+%     \draw (A) -- node [above, yshift=-0.1cm] {\scriptsize yes}(C) ;
+%     \draw (C) -- node [above] {\scriptsize no} (D);
+%     \draw (C) -- node [above, yshift=-0.1cm] {\scriptsize yes}(E);
     
-\end{tikzpicture}
-\end{column}
-\end{columns}
-\end{table}
+% \end{tikzpicture}
+% \end{column}
+% \end{columns}
+% \end{table}
 
-\begin{onlyenv}<1>
-$$
-S = \varnothing \rightarrow z^{\prime} = (0, 0) \rightarrow \phi_0 = \frac{3200*5 + 6850*3 +5400*2}{10}= 3775
-$$
-\end{onlyenv}
+% \begin{onlyenv}<1>
+% $$
+% S = \varnothing \rightarrow z^{\prime} = (0, 0) \rightarrow \phi_0 = \frac{3200*5 + 6850*3 +5400*2}{10}= 3775
+% $$
+% \end{onlyenv}
 
-\begin{onlyenv}<2>
-$$
-S = \{x_{temp}, x_{year}\} \rightarrow z^{\prime} = (1, 1)  \rightarrow \phi_{year, temp} = 6850
-$$
-\end{onlyenv}
+% \begin{onlyenv}<2>
+% $$
+% S = \{x_{temp}, x_{year}\} \rightarrow z^{\prime} = (1, 1)  \rightarrow \phi_{year, temp} = 6850
+% $$
+% \end{onlyenv}
 
-\begin{onlyenv}<3>
-$$
-S = \{x_{temp}\} \rightarrow z^{\prime} = (0, 1)  \rightarrow \phi_{\cdot, temp} = \frac{3200*5 + 3* 6850}{8} = 3625
-$$
-\end{onlyenv}
-\end{onlyenv}
+% \begin{onlyenv}<3>
+% $$
+% S = \{x_{temp}\} \rightarrow z^{\prime} = (0, 1)  \rightarrow \phi_{\cdot, temp} = \frac{3200*5 + 3* 6850}{8} = 3625
+% $$
+% \end{onlyenv}
+% \end{onlyenv}
 
-\begin{onlyenv}<4>
-\vspace{1.5cm}
-\textbf{Complexity:}
-\begin{itemize}
-    \item Complexity of exact KernelSHAP: $\mathcal{O}(TLD^2)$
-    \item Complexity of TreeSHAP: $\mathcal{O}(TL2M)$
-\end{itemize}
+% \begin{onlyenv}<4>
+% \vspace{1.5cm}
+% \textbf{Complexity:}
+% \begin{itemize}
+%     \item Complexity of exact KernelSHAP: $\mathcal{O}(TLD^2)$
+%     \item Complexity of TreeSHAP: $\mathcal{O}(TL2M)$
+% \end{itemize}
 
-T is the number of trees, L is the maximum number of leaves in any tree and D the maximal depth of any tree
-\end{onlyenv}
+% T is the number of trees, L is the maximum number of leaves in any tree and D the maximal depth of any tree
+% \end{onlyenv}
 
 
-\end{vbframe}
+% \end{vbframe}
 
  \begin{vbframe}{Global SHAP \citebutton{Lundberg et al 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
 \textbf{Idea: }
@@ -888,16 +888,20 @@ $$
  \begin{vbframe}{Feature Importance}
 
 \begin{onlyenv}<1>
-\textbf{Idea:} Average the Shapley values of each feature over all instances. This corresponds to calculating column-wise averages in $\Phi$
+\textbf{Idea:} Average the absolute Shapley values of each feature over all instances. This corresponds to calculating averages column by column in $\Phi$
 $$
 I_{j}=\frac{1}{n} \sum_{i=1}^{n}\left|\phi_{j}^{(i)}\right|
 $$
 \end{onlyenv}
 
 \begin{onlyenv}<2>
-\textbf{Interpretation:}\\
-The average contribution of the features temperature and year to an individual prediction is higher than 1000 rentals\\
-The other features impact is less than 400 bike rentals in average\\
+\textbf{Interpretation:}
+\begin{itemize}
+    \item The features temperature and year have by far the highest influence on the model's prediction. 
+    \item Compared to Shapley values, no effect direction is provided, but instead a feature ranking similar to PFI. 
+    \item However, Shapley FI is based on the model's predictions only while PFI is based on the model's performance (loss).
+\end{itemize}
+ 
 \end{onlyenv}
 
 
@@ -922,9 +926,12 @@ Combines feature importance with feature effects
 
 \begin{onlyenv}<2>
 \textbf{Interpretation:}\\
-Low temperatures have a negative impact while high temperatures lead to more bike rentals \\
-Year is divided in two point clouds, we can guess that each cloud resembles a year\\
-A high humidity has a huge, negative impact on the bike rental, while low humidity has a rather minor positive impact on bike rentals
+\begin{itemize}
+    \item Low temperatures have a negative impact while high temperatures lead to more bike rentals
+    %\item Year is divided in two point clouds, one for each of the two years year
+    \item A high humidity has a huge, negative impact on the bike rental, while low humidity has a rather minor positive impact on bike rentals
+\end{itemize}
+ 
 \end{onlyenv}
 
 \btVFill
@@ -939,13 +946,21 @@ A high humidity has a huge, negative impact on the bike rental, while low humidi
 \begin{vbframe}{Dependence Plot}
 
 \begin{onlyenv}<1>
-Simply plot a point with the feature value on the x-axis and the corresponding Shapley value on the y-axis
+\begin{itemize}
+    \item Visualize the marginal contribution of a feature similar to the PDP 
+    \item Plot a point with the feature value on the x-axis and the corresponding Shapley value on the y-axis
+\end{itemize}
+
 \end{onlyenv}
 
 \begin{onlyenv}<2>
 \textbf{Interpretation:}\\
-Increasing temperatures induce increasing bike rentals until $25^\circ\text{C}$ \\
-If it gets too hot, the bike rentals will decrease
+\begin{itemize}
+    \item Increasing temperatures induce increasing bike rentals until $25^\circ\text{C}$
+    \item If it gets too hot, the bike rentals decrease
+\end{itemize}
+ 
+
 
 \end{onlyenv}
 
@@ -966,13 +981,13 @@ If it gets too hot, the bike rentals will decrease
 \begin{itemize}
     \item All the advantages of Shapley values
     \begin{itemize}
-        \item \textbf{solid theoretical foundation} in game theory
-        \item prediction is \textbf{fairly distributed} among the feature values
-        \item \textbf{contrastive explanations} that compare the prediction with the average prediction.
+        \item \textbf{Solid theoretical foundation} in game theory
+        \item Prediction is \textbf{fairly distributed} among the feature values
+        \item \textbf{Contrastive explanations} that compare the prediction with the average prediction
     \end{itemize} 
-    \item unify the field of interpretable machine learning in the class of additive feature attribution methods
-    \item has a fast implementation for tree-based models
-    \item various global interpretation methods
+    \item Unify the field of interpretable machine learning in the class of additive feature attribution methods
+    \item Has a fast implementation for tree-based models
+    \item Various global interpretation methods
 \end{itemize}
 \end{onlyenv}
 
@@ -980,10 +995,10 @@ If it gets too hot, the bike rentals will decrease
 \textbf{Disadvantages}
 
 \begin{itemize}
-    \item KernelSHAP is slow
+    \item KernelSHAP is slow (TreeSHAP can be used as a faster alternative for tree-based models \citebutton{Lundberg et al 2018}{https://doi.org/10.48550/arXiv.1802.03888} -- and for an intuitive explanation  \citebutton{see Sukumar: TreeSHAP}{https://medium.com/analytics-vidhya/shap-part-3-tree-shap-3af9bcd7cd9b})
     \item KernelSHAP ignores feature dependence
-    \item TreeSHAP can produce unintuitive feature attributions
-    \item disadvantages of Shapley values also apply to SHAP:
+    %\item TreeSHAP can produce unintuitive feature attributions
+    \item Disadvantages of Shapley values also apply to SHAP:
     \begin{itemize}
         \item Shapley values can be misinterpreted and access to data is needed to compute them for new data
     \end{itemize}
