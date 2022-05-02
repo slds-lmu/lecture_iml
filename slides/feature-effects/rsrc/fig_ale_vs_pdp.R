@@ -191,8 +191,8 @@ res.lm = p + plot_layout(heights = c(3, 2, 2), guides = "collect") & theme(legen
 
 surf = (surf.nn | surf.lm) + plot_layout(guides = "collect") & theme(legend.position = 'bottom')
 
-ggsave("slides/feature-effects/figure/ale_vs_pdp_surf.pdf", surf, width = 9.4, height = 5.5)
+ggsave("slides/feature-effects/figure/ale_vs_pdp_surf.png", surf, width = 9.4, height = 5.5, dpi = 150)
 
-ggsave("slides/feature-effects/figure/ale_vs_pdp_nn.pdf", res.nn, width = 9.4, height = 5.5)
+ggsave("slides/feature-effects/figure/ale_vs_pdp_nn.png", res.nn, width = 9.4, height = 5.5, dpi = 150)
 
-ggsave("slides/feature-effects/figure/ale_vs_pdp_lm.pdf", res.lm, width = 9.4, height = 5.5)
+ggsave("slides/feature-effects/figure/ale_vs_pdp_lm.png", res.lm, width = 9.4, height = 5.5, dpi = 150)

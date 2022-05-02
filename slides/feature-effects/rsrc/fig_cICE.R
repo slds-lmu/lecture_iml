@@ -2,6 +2,7 @@
 
 library(ggplot2)
 library(patchwork)
+library(ggrastr)
 source("slides/feature-effects/rsrc/anova_bike.R")
 theme_set(theme_bw())
 
@@ -26,5 +27,8 @@ pres = p + ggtitle("ICE plot (hum)") +
 prest = pt + ggtitle("ICE plot (temp)") +
   pmint + ggtitle("c-ICE plot at x' = min(temp)") +
   scale_y_continuous("Predicted bike rentals \ncentered at x'")
+
+pres = rasterise(pres, dev = "ragg")
+prest = rasterise(prest, dev = "ragg")
 
 ggsave("slides/feature-effects/figure/cICE.pdf", pres / prest, width = 8, height = 5)
