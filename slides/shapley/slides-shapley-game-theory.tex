@@ -11,10 +11,11 @@
 
 \begin{document}
 
+\newcommand{\titlefigure}{figure/Shapley_1.png}
 \newcommand{\learninggoals}{%
-\item Learn what game theory is.
-\item Understand the concept behind cooperative games.
-\item Understand the Shapley value in game theory.
+\item Learn what game theory is
+\item Understand the concept behind cooperative games
+\item Understand the Shapley value in game theory
 }
 
 \lecturechapter{Shapley Values}
@@ -24,34 +25,38 @@
 % https://pixabay.com/de/vectors/ergebnis-geld-gesch%C3%A4ft-gehalt-5567652/
 
 
-\begin{vbframe}{Game Theory}
-\begin{itemize}
-\itemsep1em
-  \item Game theory is the study of strategic games between players.
-  \item Term \enquote{game} not restricted to actual game (e.g., chess or poker) but to any series of interactions between actors or agents with gains and losses of quantifiable utility value.
-  \item Often used in social context where players correspond to people or organizations, e.g., warfare, provision of public goods, auctions and bargaining, formation of cartels, interrogation practices.
-  \item Example of prisoner's dilemma: Two prisoners A and B are interrogated in two separate rooms with no means of communication between each other.
-    \begin{itemize}
-        \item If they betray each other, each person serves 2 years in prison.
-        \item If one person remains silent and one betrays their partner, person staying silent receives 3 years in prison while betrayer is set free.
-        \item If both remain silent, both serve 1 year in prison.
-    \end{itemize}
-    Conditional on strategy of remaining partner, best personal outcome is achieved by betrayal.
-    \\
-    $\Rightarrow$ Best aggregate outcome not achieved (both staying silent). 
-\end{itemize}
-\end{vbframe}
+% \begin{vbframe}{Game Theory}
+% \begin{itemize}
+% \itemsep1em
+%   \item Game theory is the study of strategic games between players
+%   \item Term \enquote{game} not restricted to actual games (e.g., chess or poker) but to any series of interactions between actors or agents with gains and losses of quantifiable utility value
+%   \item Often used in social context where players correspond to people or organizations, e.g., warfare, provision of public goods, auctions and bargaining, formation of cartels, interrogation practices.
+%   \item Example of prisoner's dilemma: Two prisoners A and B are interrogated in two separate rooms with no means of communication between each other.
+%     \begin{itemize}
+%         \item If they betray each other, each person serves 2 years in prison.
+%         \item If one person remains silent and one betrays their partner, person staying silent receives 3 years in prison while betrayer is set free.
+%         \item If both remain silent, both serve 1 year in prison.
+%     \end{itemize}
+%     Conditional on strategy of remaining partner, best personal outcome is achieved by betrayal.
+%     \\
+%     $\Rightarrow$ Best aggregate outcome not achieved (both staying silent). 
+% \end{itemize}
+% \end{vbframe}
 
 
-\begin{vbframe}{Cooperative Games}
-\begin{itemize}
-\itemsep1em
-  \item Cooperative games: For all possible players $P = \{1, \hdots, p\}$, each subset of players  $\SsubP$ forms a coalition.
-  \item A value function $v(S): 2^{|P|}\mapsto \R$ describes the payout (or gain) achieved by any coalition $\forall S \subseteq P$. The value of the empty coalition must be zero: $v(\emptyset) = 0$.\\
-  \textit{Note:} The payout or gain not necessarily has a positive meaning. In the example on the prisoner's dilemma, the payout is the total number of years spend in prison.
-  \item As some players contribute more than others, we want to fairly divide the total achievable payout $v(P)$ among the players according to a player's individual contribution.
-  \item We call the individual payout per player $\phi_j$, $j \in P$ (later: Shapley value).
-  \item What would be properties of a fair distribution of the payout?
+\begin{vbframe}{Cooperative Games in Game Theory}
+\begin{itemize}[<+->]
+%\itemsep1em
+  \item Game theory is the study of strategic games between players \item \enquote{game} refers to any series of interactions between actors / agents with gains and losses of quantifiable utility value
+  \item Cooperative games: For all possible players $P = \{1, \hdots, p\}$, each subset of players $\SsubP$ forms a coalition -- each coalition $S$ achieves a certain payout
+  %\item A value function $v(S): 2^{|P|}\mapsto \R$ describes the payout (or gain) achieved by any coalition $S \subseteq P$
+  \item A value function $v: 2^{|P|}\mapsto \R$ maps all $2^{|P|}$ possible coalitions to their payout (or gain)
+  \item $v(S)$ is the payout of coalition $S \subseteq P$ (payout of empty coalition must be zero: $v(\emptyset) = 0$)
+  %\\
+  %\textit{Note:} The payout or gain not necessarily has a positive meaning. In the example on the prisoner's dilemma, the payout is the total number of years spend in prison.
+  \item As some players contribute more than others, we want to fairly divide the total achievable payout $v(P)$ among the players according to a player's individual contribution
+  \item We call the individual payout per player $\phi_j$, $j \in P$ (later: Shapley value)
+  %\item What would be properties of a fair distribution of the payout?
 \end{itemize}
 \end{vbframe}
 
@@ -125,26 +130,6 @@
 }
 
 
-\begin{vbframe}{Axioms of Fair Payouts}
- Why is this a fair payout solution?
- \\
- One possibility to define fair payouts are the following axioms for a given value function $v$:
-  \vspace{0.25cm}
-  \begin{itemize}
-  \itemsep1em
-    \item \textbf{Efficiency}: Player contributions add up to the total payout of the game:
-      $\sum\nolimits_{j=1}^p\phi_j = v(P)$
-    \item \textbf{Symmetry}: Players $j,k \in P$ who contribute the same to any coalition get the same payout: \\
-      If $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$, then $\phi_j=\phi_k$
-    \item \textbf{Dummy / Null Player}: The payout is zero for players who don't contribute to the value of any coalition: \\
-      If $v(\Scupj)=v(S)\quad  \forall \quad \SsubP \setminus j$, then $\phi_j=0$
-    \item \textbf{Additivity}: For a game $v$ with combined payouts $v(S) = v_1(S) + v_2(S)$, the payout is the sum of payouts: $\phi_{j,v} = \phi_{j,v_1} + \phi_{j, v_2}$
-  \end{itemize}
-  \vspace{0.5cm}
-  
-
-\end{vbframe}
-
 % \begin{vbframe}{From Game Theory To Machine Learning}
 
 % \begin{figure}
@@ -174,50 +159,79 @@
 
 
 
-% \begin{vbframe}{Definition via orders}
-% The Shapley value was introduced as summation over sets $S$, but it's also possible to define it as a summation of all orders of players.
-% This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from.
-% \begin{itemize}
-%   \item Let $\Pi$ be all possible orders of players ($|P|!$ in total).
-%   \item Then: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
-%   \item $Pre(\tau,j)$ is the set of players before player $j$ in order $\tau$ .
-%   \item For example players a,b,c: $\Pi = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$. If $\tau = (b,a,c)$ and $j=c$, then $Pre(\tau,j) = \{b, a\}$.
-%   \item For the Shapley value computation via order definition, we sum the marginal contribution twice for orders that yield set $S = \{a,b\}$, which in the set definition has the weight $2! (3 - 2 - 1)! = 2 \cdot 0! = 2$.
-%   \item More general, the Shapley value definition via orders is equivalent to the definition via sets, since the number of orders which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$: There are $|S|!$ possible orders of players within coalition $S$ and $(|P| - |S| - 1)!$ possible orders of players without $S$ and $j$.
-%   \item Relevance of the order definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
-% \end{itemize}
+\begin{vbframe}{Definition via orders}
+The Shapley value was introduced as summation over sets $S$, but it's also possible to define it as a summation of all orders of players.
+This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from.
+\begin{itemize}
+  \item Let $\Pi$ be all possible orders of players ($|P|!$ in total).
+  \item Then: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
+  \item $Pre(\tau,j)$ is the set of players before player $j$ in order $\tau$ .
+  \item For example players a,b,c: $\Pi = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$. If $\tau = (b,a,c)$ and $j=c$, then $Pre(\tau,j) = \{b, a\}$.
+  \item For the Shapley value computation via order definition, we sum the marginal contribution twice for orders that yield set $S = \{a,b\}$, which in the set definition has the weight $2! (3 - 2 - 1)! = 2 \cdot 0! = 2$.
+\end{itemize}
 
-%   \begin{tabular}{|c|c|c|c|c|c|c|}
-%     \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{|S|! \text{ permutations}}$}} &
-%     \multicolumn{1}{c}{} &
-%     \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
-%     \hline
-%     $\tau(1)$ & \ldots & $\tau(|S|)$ & $\tau(|S| + 1)$ & $\tau(|S| + 2)$ & \ldots & $\tau(P)$ \\
-%     \hline
-%     \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}} &
-%     \multicolumn{1}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{4em}}^{}$}} &
-%     \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}}\\
-%     \multicolumn{3}{c}{Players before player $j$} & \multicolumn{1}{c}{player $j$} & \multicolumn{3}{c}{Players after player $j$} \\
-%   \end{tabular}
+\end{vbframe}
 
 
-% \end{vbframe}
+\begin{vbframe}{Definition via orders}
 
-% \frame{
-%   \frametitle{Shapley Values - Illustration}
-% The Shapley value of a player $j=2$ is the marginal contribution to the value function when player $2$ enters an abitrary coalition. \\
-% \only<1>{Here, player $2$ enters the coalition after player $1$, resulting in a value change of $v(\{1,2\}) - v(\{1\}) = 24-12 = 12$. Overall, the coalition has a value of $v(\{1,2,3\}) = 36.$}
-% \only<2>{We produce all possible orders of player coalitions and measure the value change if player $2$ enters the coalition.}
-% \begin{center}
-%   \only<1>{
-%     \includegraphics[page=1, width=0.8\textwidth]{figure_man/shapley_feature_effect}
-%   }
-%   \only<2>{
-%     \includegraphics[page=2, width=0.8\textwidth]{figure_man/shapley_feature_effect}
-%   }
-% \end{center}
+\begin{itemize}
+  \item More general, the Shapley value definition via orders is equivalent to the definition via sets, since the number of orders which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$: There are $|S|!$ possible orders of players within coalition $S$ and $(|P| - |S| - 1)!$ possible orders of players without $S$ and $j$.
+  \item Relevance of the order definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
+\end{itemize}
+\centering
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{|S|! \text{ permutations}}$}} &
+    \multicolumn{1}{c}{} &
+    \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
+    \hline
+    $\tau(1)$ & \ldots & $\tau(|S|)$ & $\tau(|S| + 1)$ & $\tau(|S| + 2)$ & \ldots & $\tau(P)$ \\
+    \hline
+    \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}} &
+    \multicolumn{1}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{4em}}^{}$}} &
+    \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}}\\
+    \multicolumn{3}{c}{Players before player $j$} & \multicolumn{1}{c}{player $j$} & \multicolumn{3}{c}{Players after player $j$} \\
+  \end{tabular}
 
-% }
+
+\end{vbframe}
+
+
+\begin{vbframe}{Shapley Values - Illustration}
+The Shapley value of a player $j=2$ is the marginal contribution to the value function when player $2$ enters an abitrary coalition. \\
+\only<1>{Here, player $2$ enters the coalition after player $1$, resulting in a value change of $v(\{1,2\}) - v(\{1\}) = 24-12 = 12$. Overall, the coalition has a value of $v(\{1,2,3\}) = 36.$}
+\only<2>{We produce all possible orders of player coalitions and measure the value change if player $2$ enters the coalition.}
+\begin{center}
+  \only<1>{
+    \includegraphics[page=1, width=0.6\textwidth]{figure_man/shapley_feature_effect}
+  }
+  \only<2>{
+    \includegraphics[page=2, width=0.6\textwidth]{figure_man/shapley_feature_effect}
+  }
+\end{center}
+\end{vbframe}
+
+
+\begin{vbframe}{Axioms of Fair Payouts}
+ Why is this a fair payout solution?
+ \\
+ One possibility to define fair payouts are the following axioms for a given value function $v$:
+  \vspace{0.25cm}
+  \begin{itemize}
+  \itemsep1em
+    \item \textbf{Efficiency}: Player contributions add up to the total payout of the game:
+      $\sum\nolimits_{j=1}^p\phi_j = v(P)$
+    \item \textbf{Symmetry}: Players $j,k \in P$ who contribute the same to any coalition get the same payout: \\
+      If $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$, then $\phi_j=\phi_k$
+    \item \textbf{Dummy / Null Player}: The payout is zero for players who don't contribute to the value of any coalition: \\
+      If $v(\Scupj)=v(S)\quad  \forall \quad \SsubP \setminus j$, then $\phi_j=0$
+    \item \textbf{Additivity}: For a game $v$ with combined payouts $v(S) = v_1(S) + v_2(S)$, the payout is the sum of payouts: $\phi_{j,v} = \phi_{j,v_1} + \phi_{j, v_2}$
+  \end{itemize}
+  \vspace{0.5cm}
+  
+
+\end{vbframe}
+
 % \begin{vbframe}{Proof of Axioms}
 %   The Shapley values fulfills all the 4 axioms.
 %   Symmetry, Dummy and Additivity are relatively easy to proof:

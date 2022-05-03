@@ -2,14 +2,18 @@
 import xgboost
 import numpy as np
 import shap
-import time
 import pyreadr
 import matplotlib.pyplot as plt
+import pandas as pd
+
+
 
 bike_dict = pyreadr.read_r('slides/shapley/rsrc/bike.RData')
 X, y = bike_dict['bike'].drop(columns = 'cnt'), bike_dict['bike']['cnt']
-cols = ['season', 'yr', 'mnth', 'holiday', 'weekday', 'workingday', 'weathersit']
+cols = ['season', 'holiday', "mnth", 'weekday', 'workingday', 'weathersit']
 X[cols] = X[cols].astype('category')
+X["yr"] = pd.to_numeric(X["yr"], errors="coerce")
+
 # train a model with single tree
 Xd = xgboost.DMatrix(X, label=y, enable_categorical=True)
 model = xgboost.train({
@@ -29,6 +33,19 @@ plt.close()
 shap.summary_plot(shap_values, X, show=False)
 plt.savefig('slides/shapley/figure_man/global_shap_jitter.pdf', bbox_inches='tight')
 plt.close()
+# requires  matplotlib version == 3.4.0
+inds = shap.approximate_interactions("temp", shap_values, X)
+
 shap.dependence_plot("temp", shap_values, X, interaction_index=None, show=False)
 plt.savefig('slides/shapley/figure_man/global_shap_depend.pdf', bbox_inches='tight')
 plt.close()
+
+shap.dependence_plot("temp", shap_values, X, interaction_index=inds[0], show=False)
+plt.savefig('slides/shapley/figure_man/global_shap_depend_season.pdf', bbox_inches='tight')
+plt.close()
+
+shap.dependence_plot("temp", shap_values, X, interaction_index=inds[1], show=False)
+plt.savefig('slides/shapley/figure_man/global_shap_depend_year.pdf', bbox_inches='tight')
+plt.close()
+
+shap.dependence_plot("temp", shap_values, X, interaction_index=inds[1], show=True)
