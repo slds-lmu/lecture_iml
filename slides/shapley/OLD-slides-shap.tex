@@ -1,0 +1,94 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\begin{document}
+
+% \newcommand{\titlefigure}{figure/sample-dgp-2d.pdf}
+\newcommand{\learninggoals}{
+\item Understand SHAP as alternative computation of the Shapley value
+\item Learn KernelSHAP
+\item Learn TreeSHAP}
+
+\lecturechapter{SHAP: SHapley Additive exPlanations}
+\lecture{Interpretable Machine Learning}
+
+\begin{vbframe}{SHAP: SHapley Additive exPlanations}
+  \begin{itemize}
+      \item SHAP is an alternative estimation method for the Shapley value and comes in two variants: KernelSHAP and TreeSHAP.
+      \item The model-agnostic KernelSHAP reframes the Shapley value estimation as linear regression model.
+      \item TreeSHAP is a model-specific Shapley value estimation algorithm for tree-based models, such as gradient boosted trees. It provides a computational speedup over other estimation methods.
+  \end{itemize}
+\end{vbframe}
+
+
+\begin{vbframe}{KernelSHAP}
+KernelSHAP treats estimation as a linear model with a specific kernel function to weight the data. TODO: Use some math here
+
+  \begin{itemize}
+    \item Sample coalation vectors.
+    \item Get prediction for each coalition vector by converting to the original feature space.
+    \item Compute the weight for each k with the SHAP kernel $\pi_x(z') = \ldots $.
+    \item Fit weighted linear model.
+    \item The Shapley values are the coefficients of the linear model.
+  \end{itemize}
+
+\framebreak
+
+\begin{itemize}
+  \item Coalition vectors can be created by repeated binary draws from $\{0,1\}$.
+  \item The input features to the model can be different to the variables for which we compute Shapley values.
+  \item For example, for images the features are the pixels, but Shapley values might be computed for bigger patches (= sets of pixels).
+  \item A function $h_x$ has to map from the coalition space to the feature space.
+  \item For tabular data, $h_x$ is the value of instance $x'$ if $z' = 1$ and a random sample from the data donor if $z' = 0$.
+\end{itemize}
+
+\framebreak
+  \begin{itemize}
+      \item The KernelSHAP formulation shows the link to local surrogate models
+      \item In fact KernelSHAP is equivalent to LIME, when LIME uses the same weights.
+      \item KernelSHAP can also be linked to other techniques such as DeepLIFT
+  \end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{TreeSHAP}
+
+  \begin{itemize}
+    \item Fast, model-specific alternativ to KernelSHAP.
+    \item Uses a different definition of the value function, which takes the conditional expectation: $v = \ldots $
+    \item Shapley values that result are to be interpreted in a different way, as the game is different.
+    \item for example Null/Dummy features in the original, marginal game, might not be Null features in the new, conditional formulation of the game.
+
+
+  \framebreak
+    \item The computation of $E$ makes use of the tree strutures:
+      \begin{itemize}
+        \item If $S$ is the full feature set, we follow take the prediction of the respective terminal node
+        \item If $S$ is the empty set, w use the average prediction over all terminal nodes.
+        \item To get the prediction for feature coalition $S$, all terminal nodes where the path \enquote{agrees} with features values in $S$ are used. For example, when $x_1 = 7$ is in $S$, and we have a node in the tree where the cutoff is $x_1 < 5$ and $x_1 >= 5$ then all terminal nodes on the left ($x_1 < 5$) are removed. And we average over all others.
+        \item Problem: Has to be applied for each possible subset $S$.
+        \item Solution: Push down all subsets $S$ at the same time, keep track of number of subsets per node, and their respective weights, which is a bit more complex 
+      \end{itemize}
+
+  \end{itemize}
+
+\end{vbframe}
+
+
+\begin{vbframe}{SHAP for images}
+\end{vbframe}
+
+
+\begin{vbframe}{SHAP for text}
+\end{vbframe}
+
+\endlecture
+\end{document}

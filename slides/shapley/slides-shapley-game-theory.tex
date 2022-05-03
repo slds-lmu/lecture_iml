@@ -100,9 +100,9 @@
 
 \begin{itemize}
     \itemsep2em
-    \item  Imagine we form a coalition one actor at a time. Each agent receives their contribution to the total payout, i.e., the increase in total payout when the agent joins the coalition.
-    \item The Shapley value is the agent's average contribution over all possible formations of coalitions. This means that the order of how the agents joined the coalition matters.
-    \item We weight each contribution proportionally to the number of possible orders of its coalition. The more agents in a coalition, the more possibilities of ordering the agents inside the coalition.
+    \item  Form a coalition one actor at a time -- each agent receives their contribution to the total payout, i.e., the increase in total payout when the agent joins the coalition
+    \item The Shapley value is the agent's average contribution over all possible formations of coalitions $\leadsto$ order of how the agents joined the coalition matters
+    \item Each contribution is weighted proportionally to the number of possible orders of its coalition -- the more agents in a coalition, the more possibilities of ordering the agents inside the coalition
     \item Set definition: $\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$.
     \item Order definition: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
     \\
@@ -163,11 +163,11 @@
 The Shapley value was introduced as summation over sets $S$, but it's also possible to define it as a summation of all orders of players.
 This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from.
 \begin{itemize}
-  \item Let $\Pi$ be all possible orders of players ($|P|!$ in total).
+  \item Let $\Pi$ be all possible orders of players ($|P|!$ in total)
   \item Then: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
-  \item $Pre(\tau,j)$ is the set of players before player $j$ in order $\tau$ .
-  \item For example players a,b,c: $\Pi = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$. If $\tau = (b,a,c)$ and $j=c$, then $Pre(\tau,j) = \{b, a\}$.
-  \item For the Shapley value computation via order definition, we sum the marginal contribution twice for orders that yield set $S = \{a,b\}$, which in the set definition has the weight $2! (3 - 2 - 1)! = 2 \cdot 0! = 2$.
+  \item $Pre(\tau,j)$ is the set of players before player $j$ in order $\tau$ 
+  \item For example players a,b,c: $\Pi = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$. If $\tau = (b,a,c)$ and $j=c$, then $Pre(\tau,j) = \{b, a\}$
+  \item For Shapley value computation via order definition, we sum the marginal contribution twice for orders that yield set $S = \{a,b\}$, which in the set definition has the weight $2! (3 - 2 - 1)! = 2 \cdot 0! = 2$
 \end{itemize}
 
 \end{vbframe}
@@ -176,8 +176,8 @@ This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes fr
 \begin{vbframe}{Definition via orders}
 
 \begin{itemize}
-  \item More general, the Shapley value definition via orders is equivalent to the definition via sets, since the number of orders which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$: There are $|S|!$ possible orders of players within coalition $S$ and $(|P| - |S| - 1)!$ possible orders of players without $S$ and $j$.
-  \item Relevance of the order definition: The Shapley value can be approximated by sampling permutations. Instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values.
+  \item The Shapley value definition via orders is equivalent to the definition via sets, since the number of orders which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$: There are $|S|!$ possible orders of players within coalition $S$ and $(|P| - |S| - 1)!$ possible orders of players without $S$ and $j$
+  \item Relevance of the order definition: The Shapley value can be approximated by sampling permutations $\leadsto$ instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values
 \end{itemize}
 \centering
   \begin{tabular}{|c|c|c|c|c|c|c|}
@@ -198,9 +198,12 @@ This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes fr
 
 
 \begin{vbframe}{Shapley Values - Illustration}
-The Shapley value of a player $j=2$ is the marginal contribution to the value function when player $2$ enters an abitrary coalition. \\
-\only<1>{Here, player $2$ enters the coalition after player $1$, resulting in a value change of $v(\{1,2\}) - v(\{1\}) = 24-12 = 12$. Overall, the coalition has a value of $v(\{1,2,3\}) = 36.$}
-\only<2>{We produce all possible orders of player coalitions and measure the value change if player $2$ enters the coalition.}
+\begin{itemize}
+    \item The Shapley value of a player $j=2$ is the marginal contribution to the value function when player $2$ enters an abitrary coalition
+\only<1>{\item Here, player $2$ enters the coalition after player $1$, resulting in a value change of $v(\{1,2\}) - v(\{1\}) = 24-12 = 12$ with a overall coalition value of $v(\{1,2,3\}) = 36$}
+\only<2>{\item We produce all possible orders of player coalitions and measure the value change if player $2$ enters the coalition}
+\end{itemize}
+
 \begin{center}
   \only<1>{
     \includegraphics[page=1, width=0.6\textwidth]{figure_man/shapley_feature_effect}
