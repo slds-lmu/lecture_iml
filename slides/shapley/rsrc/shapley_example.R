@@ -42,26 +42,26 @@ perm_features = featureImportance:::generatePermutations(names(X))
 # calculate shapley values for all features
 shap_exact = lapply(features, function(x_interest){
   marg_contr = featureImportance:::generateMarginalContribution(x_interest, perm_features)
-  
+
   feat = lapply(marg_contr, function(x){
     #browser()
     data_w_j = as.data.frame(matrix(as.numeric(rep(X[i,],n.perm)), nrow = n.perm, byrow = TRUE, dimnames = list(c(1:n.perm), features)))
     data_wo_j = as.data.frame(matrix(as.numeric(rep(X[i,],n.perm)), nrow = n.perm, byrow = TRUE, dimnames = list(c(1:n.perm), features)))
     mc_with_f = x$with.f
     mc_without_f = x$without.f
-    
+
     # replace feature values which are not in S (and j)
     data_w_j[,setdiff(features,mc_with_f)] = random_sample[,setdiff(features,mc_with_f)]
     data_wo_j[,setdiff(features,mc_without_f)] = random_sample[,setdiff(features,mc_without_f)]
-    
+
     # calculate prediction with ML model for subset including j and without j (value function)
     data_w_j$pred = predict(rf, newdata = data_w_j)
     data_wo_j$pred = predict(rf, newdata = data_wo_j)
-    
+
     # calculate difference between two predictions (marginal contribution of feature j for this coalition)
     mean(data_w_j$pred)-mean(data_wo_j$pred)
-    
-    
+
+
   })
   # since all combinations are calculated here weights are already accounted for and we can calculate the mean to receive
   # shapley value for feature j
@@ -76,10 +76,16 @@ sum(shapley_values) + mean(predict(rf, newdata = random_sample))
 predict(rf, X[i,])
 
 # plot shapley values
-p_shap = ggplot(data = data.frame("feature" = paste(features,"=",round(X[i,],2)), "phi" = shapley_values)) + 
-  geom_bar(aes(x = phi, y = feature), stat = "identity") + 
+p_shap = ggplot(data = data.frame("feature" = paste(features,"=",round(X[i,],2)), "phi" = shapley_values)) +
+  geom_bar(aes(x = phi, y = feature), stat = "identity") +
   ylab("") + ggtitle(paste("Actual prediction: ", round(predict(rf, X[i,]),2), ";\nAverage prediction: ", round(mean(predict(rf, newdata = random_sample)),2)))+
-  theme_bw()                     
+  theme_bw()
+
+# library(fastshap)
+# sh = setNames(as.data.frame(t(shapley_values)), colnames(X))
+# class(sh) = append(class(sh),"explain")
+# mean_pred = mean(predict(rf, newdata = random_sample))
+# force_plot(sh, baseline = mean_pred, feature_values = X[i,])
 
 ggsave("slides/shapley/figure/shapley2shap.pdf", p_shap, width = 4, height = 2.5)
 
@@ -108,10 +114,10 @@ model_matrix = lapply(values, function(x){
   p = length(features)
   n.z = length(x)
   weights = (p-1)/(choose(p, n.z)* n.z* (p-n.z))
-  
-  # return binary feature matrix Z, average prediction for this coaltion and according weights 
+
+  # return binary feature matrix Z, average prediction for this coaltion and according weights
   as.data.frame(matrix(c(as.integer(features %in% x), mean(data_perm$pred), weights), ncol = ncol(data)+1, dimnames = list(NULL, c(features,"pred", "weights"))))
-  
+
 })
 
 model_matrix = do.call("rbind", model_matrix)

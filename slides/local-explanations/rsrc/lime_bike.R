@@ -9,7 +9,7 @@ library(gower)
 
 
 set.seed(123)
-load("bike.RData")
+load("data/bike.RData")
 task = makeRegrTask(data = bike, target = "cnt")
 mod = train("regr.randomForest", task)
 predictor = Predictor$new(mod, data = bike[-which(names(bike) == "cnt")], y = bike$cnt)
@@ -23,7 +23,7 @@ mod = train("regr.randomForest", task)
 pred = Predictor$new(mod, data = bike.x, class = "above")
 lim = LocalModel$new(pred, x.interest = bike.x[1,], k = n_features_lime)
 a = plot(lim)
-a 
+a
 
 ##################################################
 
