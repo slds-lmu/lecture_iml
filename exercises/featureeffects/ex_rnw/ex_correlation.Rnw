@@ -31,7 +31,7 @@ The last column corresponds to the sum of values of each row.
 \item Compute the Pearson correlation of $x_1$ and $x_2$.  
 The formula is: 
 $$ 
-\rho(x_1, x_2) = \frac{\sum_{i = 1}^n (x_1^{(i)} - \overline{x_1})(x_2^{(i)} - \overline{x_2})}{\sqrt{\sum_{i = 1}^n (x_1^{(i)} - \overline{x_1})^2} \sqrt{\sum_{i = 1}^n (x_2^{(i)} - \overline{x_2})^2}}
+\rho(x_1, x_2) = \frac{\sum_{i = 1}^n (x_1^{(i)} - \overline{x}_1)(x_2^{(i)} - \overline{x}_2)}{\sqrt{\sum_{i = 1}^n (x_1^{(i)} - \overline{x}_1)^2} \sqrt{\sum_{i = 1}^n (x_2^{(i)} - \overline{x}_2)^2}}
 $$ 
 To speed up things, the individual differences to the means ($x_1^{(i)} - \overline{x_1}$, $x_2^{(i)} - \overline{x_2}$),  are given in the following table: 
 
@@ -49,17 +49,17 @@ $x_2^{(i)} - \overline{x_2}$ & 0.57 & 0.27 & 0.02 & -0.31 & -0.32 & -0.36 & -0.3
 
 Interprete the results. Based on $\rho(x_1, x_2)$, are $x_1$ and $x_2$ correlated? 
 
-\item The scatter plot of the features $x_1$ and $x_2$ is shown in the following figure: 
+\item Add points ($x_1$, $x_2$) to the following figure: 
 
 \begin{center}
 <<fig.height=3, fig.width=4, echo = FALSE, warning=FALSE,message=FALSE,out.width='3in'>>=
 ggplot(d, aes(x = x1, y = x2)) + 
-  geom_point() +
   theme_bw()
 @
 \end{center}
-Would you still consider the Pearson correlation coefficient a reliable measure to 
-detect correlations for the above use case?
+Based on your drawing, do you consider the Pearson correlation coefficient a reliable measure to 
+detect dependencies for the above use case?
+
 \item One method to detect non-linear relationships is the usage of 
 generalized additive models (GAM).
 The following shows the output of the GAM when $x_2$ depends on a smooth function of $x_1$. 
