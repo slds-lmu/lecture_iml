@@ -15,7 +15,7 @@ get_bounds = function(X, s, n_intervals = 100) {
   return(NULL)
 }
 
-calculate_ale = function(model, X, s, n_intervals = 100, centered = False) {
+calculate_ale = function(model, X, s, n_intervals = 100, centered = FALSE) {
   
   #' Compute the accumulated local effect of a numeric continuous feature.
   #'
@@ -56,7 +56,7 @@ if (FALSE) {
   library(ggplot2)
   
   # Set up your working directory using swd() and get the dataset file. 
-  df = read.csv(file = 'wheat_seeds.csv')
+  df = read.csv(file = 'datasets/wheat_seeds.csv')
   
   # Split the dataset to 70% train data and 30% test data.
   set.seed(100)
