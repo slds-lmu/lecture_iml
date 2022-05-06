@@ -122,7 +122,7 @@ $\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadst
 Consequence: The joint distribution is preserved in the perturbed dataset.\\
 $\Rightarrow$ CFI only evaluates the model within the observational covariate distribution\\
  \lz
- \textbf{Note:} That does not imply $\P(x,y) = \P(\pert{x}{S}{-S}, y)$! In the perturbed data, the relationship between $x_j$ and $y$ may still be destroyed.\\
+ \textbf{Note:} That does not imply $\P(x,y) = \P(\pert{x}{S}{-S}, y)$! In the perturbed data, the relationship between $x_S$ and $y$ may still be destroyed (if $x_S$ is not independent from $y | x_{-S}$).\\
  \end{frame}
 
 
@@ -152,14 +152,16 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 
 \textbf{Interpretation:} CFI quantifies a feature's unique contribution to the model performance.\\
 \lz
-\textbf{Entanglement with data:} If feature $x_S$ does not contribute unique information about $y$, i.e., $x_S \indep y | x_{-S}$, CFI is zero.\\
+\textbf{Entanglement with data:}
 \begin{itemize}
+  \item If feature $x_S$ does not contribute unique information about $y$, i.e., $x_S \indep y | x_{-S}$ $\Rightarrow$ CFI $= 0$
   \item Why? Under the conditional independence $\P(\pert{x}{S}{-S}, y) = \P(x,y)$\\
-  $\leadsto$ no prediction-relevant information is destroyed
+  $\leadsto$ no prediction-relevant information is destroyed by conditional permutation
 \end{itemize}
 \lz
-\textbf{Entanglement with model:} If the model does mechanistically use a feature, CFI is zero.\\
+\textbf{Entanglement with model:}
 \begin{itemize}
+  \item If the model does mechanistically use a feature $\Rightarrow$ CFI $= 0$
   \item Why? Then the prediction is not affected by any perturbation of the feature (and consequently the performance is invariant).
 \end{itemize}
 

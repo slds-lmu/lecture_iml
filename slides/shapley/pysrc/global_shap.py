@@ -8,7 +8,7 @@ import pandas as pd
 
 
 
-bike_dict = pyreadr.read_r('slides/shapley/rsrc/bike.RData')
+bike_dict = pyreadr.read_r('data/bike.RData')
 X, y = bike_dict['bike'].drop(columns = 'cnt'), bike_dict['bike']['cnt']
 cols = ['season', 'holiday', "mnth", 'weekday', 'workingday', 'weathersit']
 X[cols] = X[cols].astype('category')
@@ -40,12 +40,8 @@ shap.dependence_plot("temp", shap_values, X, interaction_index=None, show=False)
 plt.savefig('slides/shapley/figure_man/global_shap_depend.pdf', bbox_inches='tight')
 plt.close()
 
-shap.dependence_plot("temp", shap_values, X, interaction_index=inds[0], show=False)
+
+shap.dependence_plot("temp", shap_values, X, interaction_index=inds[1], show=False)
 plt.savefig('slides/shapley/figure_man/global_shap_depend_season.pdf', bbox_inches='tight')
 plt.close()
 
-shap.dependence_plot("temp", shap_values, X, interaction_index=inds[1], show=False)
-plt.savefig('slides/shapley/figure_man/global_shap_depend_year.pdf', bbox_inches='tight')
-plt.close()
-
-shap.dependence_plot("temp", shap_values, X, interaction_index=inds[1], show=True)

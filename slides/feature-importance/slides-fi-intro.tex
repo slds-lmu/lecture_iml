@@ -167,17 +167,18 @@
 
 \begin{frame}{Motivation}
 \begin{itemize}
-  \item \textbf{Feature effects} describe the relationship of features $x$ with the prediction $\yh$
+  \item<1-3> \textbf{Feature effects} describe the relationship of features $x$ with the prediction $\yh$
   \begin{itemize}
     \item requires one plot per feature
     \item does not take the true target $y$ into account
   \end{itemize}
-  \item \textbf{Feature importance} methods quantify the relevance of features w.r.t. prediction performance
+  \item<2-3> \textbf{Feature importance} methods quantify the relevance of features w.r.t. prediction performance
   \begin{itemize}
     \item condensed to one number per feature
     \item provides insight into the relationship with $y$
   \end{itemize}
-  %\item N.B.: 
+  \item<3> \textbf{N.B.}: 
+  Here, we use the term feature importance to describe loss-based feature importance methods. In the literature, you may find other notions of ``feature importance'' (e.g., variance-based methods derived from feature effect methods, see also \citebutton{Greenwell et al. (2020)}{https://doi.org/10.32614/RJ-2020-013})
 \end{itemize}
 \end{frame}
 
@@ -208,7 +209,7 @@ Feature importance offers a condensed summary of the relevance of features w.r.t
 \end{frame}
 
 \begin{frame}{Feature Importance Scheme}
-Feature importance methods are often based on two concepts
+Loss-based feature importance methods are often based on two concepts
 \lz
 \begin{enumerate}
   \item \textbf{Perturbation/Removal:}\\
@@ -232,18 +233,20 @@ For example, one may be interested in getting insight into whether the ...
 
 \begin{enumerate}
     \item[(1)] feature $x_j$ is causal for the prediction?
-    \begin{itemize}
+    \only<2>{\begin{itemize}
       \item Changing feature value $x_j$ has an effect on prediction $\yh = \fh(x)$
       \item In LM: non-zero coefficient, in ML: present feature effect
-      \item \textbf{Note:} 
-      A feature being causal for prediction $\yh$ does not imply that the underlying variable is causal for the ground truth $y$, e.g.:
+      \item \textbf{Note:} If $x_j$ is causal for prediction $\yh$ $\nRightarrow$ causal for the ground truth $y$, e.g.:
+      %A feature being causal for prediction $\yh$ does not imply that the underlying variable is causal for the ground truth $y$, e.g.:
       \begin{itemize}
           \item A disease symptom may be used in a model to predict disease status \\
           $\leadsto$ causal for prediction $\yh$
           \item But intervening on disease symptom does not have an effect on the disease \\
           $\leadsto$ not causal for the ground truth $y$
       \end{itemize}
-    \end{itemize}
+    \end{itemize}}
+    \item[(2)] feature $x_j$ contains prediction-relevant information about $y$?
+    \item[(3)] model requires access to $x_j$ to achieve it's prediction performance?
 \end{enumerate}
 \end{frame}
 
@@ -319,15 +322,17 @@ Feature importance methods provide condensed insights, but can only highlight ce
 For example, one may be interested in getting insight into whether the ...
 
 \begin{enumerate}
+    \item[(1)] feature $x_j$ is causal for the prediction?
     \item[(2)] feature $x_j$ contains prediction-relevant information about $y$?
     \begin{itemize}
       \item Feature $x_j$ helps to predict the target $y$ (e.g., conditional expectation) w.r.t. performance 
       %, as measured by the difference in expected loss
-      \item e.g. when $\E[y|x_j] \neq \E[y]$ for models that minimize MSE
+      %%\item e.g. when $\E[y|x_j] \neq \E[y]$ for models that minimize MSE
       %\item feature selection terminology: \textit{weak relevance} \citebutton{Pellet (2008)}{https://www.jmlr.org/papers/volume9/pellet08a/pellet08a.pdf}
       \item If $x_j \indep y$ (independent) then $x_j$ and $y$ have zero mutual information (since $\E[y|x_j] = \E[y]$)\\ %and therefore cannot contain 
       $\leadsto$ $x_j$ has no prediction-relevant information
     \end{itemize}
+    \item[(3)] model requires access to $x_j$ to achieve it's prediction performance?
 \end{enumerate}
 \end{frame}
 
@@ -404,10 +409,12 @@ Feature importance methods provide condensed insights, but can only highlight ce
 For example, one may be interested in getting insight into whether the ...
 
 \begin{enumerate}
+    \item[(1)] feature $x_j$ is causal for the prediction?
+    \item[(2)] feature $x_j$ contains prediction-relevant information about $y$?
     \item[(3)] model requires access to $x_j$ to achieve it's prediction performance?
     \begin{itemize}
-      \item Feature $x_{j}$ helps to predict the target $y$, compared to using only $x_{-j}$ w.r.t. performance %, as measured by the difference in expected loss
-      \item e.g. when $\E[y|x_{-j}] \neq \E[y|x_j, x_{-j}]$ for models that minimize MSE
+      \item Feature $x_{j}$ helps to predict the target $y$ w.r.t. performance, compared to using only $x_{-j}$  %, as measured by the difference in expected loss
+      %%\item e.g. when $\E[y|x_{-j}] \neq \E[y|x_j, x_{-j}]$ for models that minimize MSE
       %\item feature selection terminology: \textit{strong relevance} \citebutton{Pellet (2008)}{https://www.jmlr.org/papers/volume9/pellet08a/pellet08a.pdf}
       \item If $x_j \indep y | x_{-j}$ (independent) then $\E[y|x_{-j}] = \E[y|x_j, x_{-j}]$ \\
       $\leadsto$ $x_j$ does not contribute unique prediction-relevant information about $y$

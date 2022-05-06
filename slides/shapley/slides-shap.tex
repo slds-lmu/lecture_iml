@@ -30,18 +30,18 @@
   \textbf{Theory:} Shapley Game Theory \\
   \textbf{Solution:} 
   \begin{itemize}
-    \item Compare feature Coalition $S$ with $\Scupj$ 
-    \item Iterate over possible coaltions to achive the marginal contibution of feature j to sample $\xv$. 
+    \item Compare feature coalition $S$ with $\Scupj$ 
+    \item Iterate over possible coalitions to calculate the marginal contribution of feature $j$ to sample $\xv$. 
 \end{itemize}
 
-     $$ \phi_j  = \frac{1}{p!} \sum_{\Scupj} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
+     $$ \phi_j  = \frac{1}{p!} \sum_{S \subseteq P\setminus \{j\}} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
 
 \textbf{Remember:}
 
 \begin{itemize}
     \item $\fh$ is an arbitrary prediction algorithm
-    \item p denotes the amount of coalitions in S
-    \item Non-existent features in the Coalition are replaced by randomly drawn states from the feature
+    \item $p$ denotes the number of features
+    \item Non-existent features in a coalition are replaced by randomly drawn states from the feature
 \end{itemize}
 
 \end{vbframe}
@@ -52,7 +52,7 @@
   \textbf{Example:} 
   \begin{itemize}
       \item train random forest on bike rental dataset with features humidity, temperature and windspeed
-      \item calculate Shapley value for instance $\xv$ with $\fh(\xv) = \color{orange}{2573}$
+      \item calculate Shapley value for observation $\xv$ with $\fh(\xv) = \color{orange}{2573}$
       \item $E(\fh) = \color{blue}{4515}$
   \end{itemize}
   \textbf{Exact Shapley calculation for humidity:} 
@@ -60,10 +60,10 @@
       \centering
       \begin{tabular}{c|c|c|c|c}
    $S$    &  $\Scupj$  & $\fh_S$ &  $\fh_{\Scupj}$  & weight\\\hline
-     $\varnothing$&    hum  & \color{blue}{4515} & 4635 & $\frac{2}{6}$\\
-       temp &  temp, hum & 3087 & 3060& $\frac{1}{6}$\\
-       ws &  ws, hum & 4359  & 4450 & $\frac{1}{6}$\\
-       temp, ws &  hum, temp, ws & 2623 & \color{orange}{2573} & $\frac{2}{6}$
+     $\varnothing$&    hum  & \color{blue}{4515} & 4635 & $2/6$\\
+       temp &  temp, hum & 3087 & 3060& $1/6$\\
+       ws &  ws, hum & 4359  & 4450 & $1/6$\\
+       temp, ws &  hum, temp, ws & 2623 & \color{orange}{2573} & $2/6$
          
       \end{tabular}
       \label{tab:my_label}
@@ -115,7 +115,7 @@ $$
 
 \begin{vbframe}{SHAP Definition \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
 \textbf{Aim}: 
-Find an additive combination that explains the prediction of an instance $\xv$ by computing the contribution of each feature to the prediction. \\\medskip
+Find an additive combination that explains the prediction of an observation $\xv$ by computing the contribution of each feature to the prediction. \\\medskip
 \only<1-3>{\textbf{Definition}
 \begin{itemize}
     \item Define simplified (binary) coalition feature space $\mathbf{Z}^\prime \in \{0,1\}^{K \times p}$ with $K$ rows and $p$ columns 
@@ -351,8 +351,8 @@ How do we estimate the Shapley values $\phi_j$?
    % \item $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
     \item Define 
 $h_x\left(\mathbf{z}^{\prime (k)}\right)=\mathbf{z}^{(k)} \text { where } h_x:\{0,1\}^{p} \rightarrow \mathbb{R}^{p}$
- maps 1’s to feature values of instance $\xv$ for features part of the $k$-th coalition and 0's to feature values of a \color{orange}{randomly sampled instance} \color{black}for features absent in the $k$-th coalition
-  % \item Absent feature values are replaced by feature values of a \color{orange}{random instance} \color{black} of the dataset (permuted) $\leadsto$ permute feature values several times
+ maps 1’s to feature values of observation $\xv$ for features part of the $k$-th coalition and 0's to feature values of a \color{orange}{randomly sampled observation} \color{black}for features absent in the $k$-th coalition
+  % \item Absent feature values are replaced by feature values of a \color{orange}{random observation} \color{black} of the dataset (permuted) $\leadsto$ permute feature values several times
   (feature values are permuted multiple times) 
    \item Predict with ML model on this dataset $\hat{f}: \hat{f}\left(h_{x}\left(\mathbf{z}^{\prime (k)}\right)\right)$
 \end{itemize}
@@ -414,7 +414,7 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 \begin{figure}
     \centering
     \includegraphics[width=0.4\columnwidth]{slides/shapley/figure_man/kernel-weights.pdf}
-    \caption{Examplary dependence between kernel weights and coalition size for a data set p = 10 features}   
+    %\caption{Examplary dependence between kernel weights and coalition size for a data set p = 10 features}   
 \end{figure}
 \end{onlyenv}
 
@@ -482,7 +482,7 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 
 \begin{vbframe}{Kernel shap - in 5 steps}
 \textbf{Step 3: Compute weights through Kernel}\\\medskip
-\textbf{Purpose}: to include this knowledge in the local surrogate model (linear regression), we calculate weights for each coalition which are the instances of the linear regression
+\textbf{Purpose}: to include this knowledge in the local surrogate model (linear regression), we calculate weights for each coalition which are the observations of the linear regression
 \only<1>{    $$\pi_{x}\left(\mathbf{z}^{\prime}\right)=\frac{(p-1)}{\left(\begin{array}{c} p \\|\mathbf{z}^{\prime}|\end{array}\right)|\mathbf{z}^{\prime}|(p-|\mathbf{z}^{\prime}|)} \leadsto \pi_x\left(\mathbf{z}^{\prime} = (1,0,0)\right)=\frac{(3-1)}{\left(\begin{array}{c} 3 \\1\end{array}\right)1\left(3-1\right)} = \frac{1}{3}$$
 }
 
@@ -505,7 +505,7 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 \end{table}
 \medskip
 \only<2>{
-$\leadsto$ weights for empty and full set are infinity and not used as instances for the linear regression\\ $\leadsto$ instead constraints are used such that properties (local accuracy and missingness) are satisfied
+$\leadsto$ weights for empty and full set are infinity and not used as observations for the linear regression\\ $\leadsto$ instead constraints are used such that properties (local accuracy and missingness) are satisfied
 }
 
   
@@ -523,7 +523,7 @@ $\leadsto$ weights for empty and full set are infinity and not used as instances
 %\vspace{1cm}
 %\begin{itemize}
 %    \item Coalition $z^{\prime} \in \{0, 1\}^M$ is the  vector, indicating if feature $j$ contributes to the prediction 
-%    \item $h(\cdot)$ represent a function that maps 1’s to the corresponding value from the instance x that we want to explain: $h(\cdot)$ connects our coalition vector to the underlying data 
+%    \item $h(\cdot)$ represent a function that maps 1’s to the corresponding value from the observation x that we want to explain: $h(\cdot)$ connects our coalition vector to the underlying data 
 %\end{itemize}
 %\end{onlyenv}
 
@@ -533,7 +533,7 @@ $\leadsto$ weights for empty and full set are infinity and not used as instances
 
 %\node<2> (tab1) {%
 %  \begin{tabular}{l |cccc}
-%  Instance & temp & hum & ws & yr\\
+%  observation & temp & hum & ws & yr\\
 %  \hline 
 %  $x_{ex}$ & 24.7 & 58.5 & 13.96 & 2011\\
  % \\
@@ -541,7 +541,7 @@ $\leadsto$ weights for empty and full set are infinity and not used as instances
   %\end{tabular}};
 %\node<3-> (tab1) {%
 %  \begin{tabular}{l |cccc}
-%  Instance & temp & hum & ws & yr\\
+%  observation & temp & hum & ws & yr\\
 %  \hline 
 %  $x_{ex}$ & 24.7 & 58.5 & 13.96 & 2011\\
 %  $z_{temp, yr}$ & 24.7 & $\varnothing$ & $\varnothing$ & 2011\\
@@ -569,8 +569,8 @@ $\leadsto$ weights for empty and full set are infinity and not used as instances
 %\end{onlyenv}
 %\begin{onlyenv}<3->
 %\begin{itemize}
-%    \item $h(\cdot)$ maps 1’s to the %corresponding value from the instance x that we want to explain
-%    \item<4> it maps 0’s to the values of another instance that we sample from the data
+%    \item $h(\cdot)$ maps 1’s to the %corresponding value from the observation x that we want to explain
+%    \item<4> it maps 0’s to the values of another observation that we sample from the data
 %    \item<4>  we equate “feature value is absent” with “feature value is replaced by random feature value from data”
 %\end{itemize}
 %\end{onlyenv}
@@ -680,7 +680,7 @@ $$
 %  \end{tabular}};
 %\node<3-> [left=of tab2] (tab) {%
 %  \begin{tabular}{l |cccc}
-%  Instance & temp & hum & ws & yr\\
+%  observation & temp & hum & ws & yr\\
 %  \hline 
 %  $x_{ex}$ & 24.7 & 58.5 & 13.96 & %2011\\
 %  $z_{temp, yr}$ & 24.7 & %$\varnothing$ & $\varnothing$ & %2011\\
@@ -706,7 +706,7 @@ $$
 %\begin{onlyenv}<5>
 %\vspace{0.5cm}
 
-%\textbf{Notice:}\\ We created a coalition data set $Z^{\prime}$ here by sampling multiple coalitions from instance $\xv$ that is evaluable with the prediction function $\fh$
+%\textbf{Notice:}\\ We created a coalition data set $Z^{\prime}$ here by sampling multiple coalitions from observation $\xv$ that is evaluable with the prediction function $\fh$
 %\end{onlyenv}
 
 %\end{vbframe}
@@ -779,7 +779,7 @@ From \textbf{consistency} the Shapley \textbf{axioms of linearity, dummy and sym
 % \begin{itemize}
 %     \begin{onlyenv}<1>
 %     \item  S is the set of all features – 
-%     the prediction from the node in which the instance x falls is be the expected prediction.
+%     the prediction from the node in which the observation x falls is be the expected prediction.
 %     \end{onlyenv}
 %     \begin{onlyenv}<2>
 %     \item S is empty -
@@ -792,7 +792,7 @@ From \textbf{consistency} the Shapley \textbf{axioms of linearity, dummy and sym
 %     \end{onlyenv}
 % \end{itemize}
 
-% Given instance $x_{ey}$ and the displayed tree
+% Given observation $x_{ey}$ and the displayed tree
 % \begin{table}
 % \begin{columns}[T]
 % \begin{column}{0.3\textwidth}
@@ -865,11 +865,11 @@ From \textbf{consistency} the Shapley \textbf{axioms of linearity, dummy and sym
 
 % \end{vbframe}
 
- \begin{vbframe}{Global SHAP \citebutton{Lundberg et al 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
+ \begin{vbframe}{Global SHAP \citebutton{Lundberg et al. 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
 \textbf{Idea: }
 \begin{itemize}
-    \item Run SHAP for every instance and thereby get a matrix of Shapley values
-    \item The matrix has one row per data instance and one column per feature
+    \item Run SHAP for every observation and thereby get a matrix of Shapley values
+    \item The matrix has one row per data observation and one column per feature
     \item We can interpret the model globally by analyzing the Shapley values in this matrix
 \end{itemize}
 \vspace{2cm}
@@ -888,7 +888,7 @@ $$
  \begin{vbframe}{Feature Importance}
 
 \begin{onlyenv}<1>
-\textbf{Idea:} Average the absolute Shapley values of each feature over all instances. This corresponds to calculating averages column by column in $\Phi$
+\textbf{Idea:} Average the absolute Shapley values of each feature over all observations. This corresponds to calculating averages column by column in $\Phi$
 $$
 I_{j}=\frac{1}{n} \sum_{i=1}^{n}\left|\phi_{j}^{(i)}\right|
 $$
@@ -897,9 +897,9 @@ $$
 \begin{onlyenv}<2>
 \textbf{Interpretation:}
 \begin{itemize}
-    \item The features temperature and year have by far the highest influence on the model's prediction. 
-    \item Compared to Shapley values, no effect direction is provided, but instead a feature ranking similar to PFI. 
-    \item However, Shapley FI is based on the model's predictions only while PFI is based on the model's performance (loss).
+    \item The features temperature and year have by far the highest influence on the model's prediction
+    \item Compared to Shapley values, no effect direction is provided, but instead a feature ranking similar to PFI
+    \item However, Shapley FI is based on the model's predictions only while PFI is based on the model's performance (loss)
 \end{itemize}
  
 \end{onlyenv}
@@ -918,7 +918,7 @@ $$
 \begin{onlyenv}<1>
 Combines feature importance with feature effects
 \begin{itemize}
-    \item Each point is a Shapley value for a feature and an instance
+    \item Each point is a Shapley value for a feature and an observation
     \item The color represents the value of the feature from low to high
     \item Overlapping points are jittered in y-axis direction
 \end{itemize}
@@ -964,7 +964,7 @@ Combines feature importance with feature effects
 \begin{onlyenv}<3>
 \textbf{Interpretation:}\\
 \begin{itemize}
-    \item We can colour the instances by a second feature to detect interactions
+    \item We can colour the observations by a second feature to detect interactions
     \item Visibly the temperatures interaction with the season is very strong
 \end{itemize}
 \end{onlyenv}
@@ -992,11 +992,6 @@ Combines feature importance with feature effects
 
 \begin{itemize}
     \item All the advantages of Shapley values
-    \begin{itemize}
-        \item \textbf{Solid theoretical foundation} in game theory
-        \item Prediction is \textbf{fairly distributed} among the feature values
-        \item \textbf{Contrastive explanations} that compare the prediction with the average prediction
-    \end{itemize} 
     \item Unify the field of interpretable machine learning in the class of additive feature attribution methods
     \item Has a fast implementation for tree-based models
     \item Various global interpretation methods
@@ -1012,9 +1007,9 @@ Combines feature importance with feature effects
     %\item TreeSHAP can produce unintuitive feature attributions
     \item Disadvantages of Shapley values also apply to SHAP:
     \begin{itemize}
-        \item Shapley values can be misinterpreted and access to data is needed to compute them for new data
+        \item Shapley values can be misinterpreted and access to data is needed to compute them for new data (not if TreeSHAP is used)
     \end{itemize}
-    \item It is possible to create intentionally misleading interpretations with SHAP, which can hide biases
+    \item It is possible to create intentionally misleading interpretations with SHAP, which can hide biases \citebutton{Slack et al. 2020}{https://doi.org/10.1145/3375627.3375830}
 \end{itemize}
 
 

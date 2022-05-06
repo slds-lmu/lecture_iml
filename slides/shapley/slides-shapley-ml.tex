@@ -34,8 +34,8 @@
 \begin{itemize}
     \itemsep1em
     \item The features $x_j, j \in \pset$ represent the agents
-    \item The game corresponds to the prediction $\fh(x_1, x_2, \ldots, x_p)$ for a single data instance $\xv$
-    \item The features collude to produce a prediction
+    \item The game corresponds to the prediction $\fh(x_1, x_2, \ldots, x_p)$ for a single data observation $\xv$
+    \item The features cooperate to produce a prediction
     \item The only issue is: How do we produce a prediction with a subset of features without changing the predictive model?
     \\ $\Rightarrow$ Partial dependence: $\fh_{S}(\xv_S) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
     \item  The value function / payout of coalition $S$ for observation $\xv$ is
@@ -72,7 +72,7 @@
 \begin{vbframe}{Shapley Value - Definition \citebutton{Shapley (1953)}{https://doi.org/10.7249/P0295} \citebutton{Strumbelj et al. (2014)}{https://doi.org/10.1007/s10115-013-0679-x}}
   Using the order definition, the Shapley value for feature $j$ and a given data point $\xv$ can be computed as:
 
-     $$ \phi_j  = \frac{1}{p!} \sum_{\Scupj} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
+     $$ \phi_j  = \frac{1}{p!} \sum_{S \subseteq P\setminus \{j\}} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
 \begin{itemize}
     \item The term $\E_{\xv}(\fh(\xv))$ drops due to the subtraction of value functions
   \item Interpretation of Shapley value $\phi_j$ for feature $j$ and observation $\xv$:
@@ -130,8 +130,9 @@ Estimation of $\phi_j$ for model $\fh$, observation $\xv$, and sample size $M$:
         \item Select random data point $\xv^{(k)} \in X$.
         \item Order $\xv$ according to $\pi$: $\xv_{\pi} = (x_{\pi(1)}, \ldots, x_{\pi(j)}, \ldots, x_{\pi(p)})$.
         \item Order $\xk$ according to $\pi$: $\xk_{\pi} = (x^{(k)}_{\pi(1)}, \ldots, x^{(k)}_{\pi(j)}, \ldots, x^{(k)}_{\pi(p)})$.
-        \item Construct two instances:
+        \item Construct two observations:
           \begin{itemize}
+          \setlength\itemsep{.5em}
             \item $\xv_{+j} = (x_{\pi(1)}, \ldots, x_{\pi(j - 1)}, x_{\pi(j)}, x^{(k)}_{\pi(j + 1)}, \ldots, x^{(k)}_{\pi(p)}) $
             \item $\xv_{-j} = (x_{\pi(1)}, \ldots, x_{\pi(j - 1)}, x^{(k)}_{\pi(j)}, x^{(k)}_{\pi(j + 1)}, \ldots, x^{(k)}_{\pi(p)}) $
           \end{itemize}
@@ -161,10 +162,10 @@ Estimation of $\phi_j$ for model $\fh$, observation $\xv$, and sample size $M$:
 ]
 %%%% Explain Formula I
 \draw<2-3> [draw=white, fill=white, opacity=0.6]
-       (6.2,0) -- (11,0) -- (11,2) -- (6.2,2) --cycle;
+       (5.8,0) -- (11,0) -- (11,2) -- (5.8,2) --cycle;
 \node<2>[expl] 
   (phiex) 
-  at (4,2cm)
+  at (6,2cm)
   {$\phi$: The Shapley value};
 \node<2>[expl] 
   (jex) 
@@ -172,7 +173,7 @@ Estimation of $\phi_j$ for model $\fh$, observation $\xv$, and sample size $M$:
   {for feature $j$};
 \node<3>[expl] 
   (vex) 
-  at (5,0cm)
+  at (5,-0.7cm)
   {$\fh$: pred. function};
 \node<3>[expl] 
   (xex) 
@@ -183,44 +184,44 @@ Estimation of $\phi_j$ for model $\fh$, observation $\xv$, and sample size $M$:
 \draw<2>[arrow]
   (jex.north) to[out=90,in=270] ([yshift=-0.5ex]{pic cs:j});  
 \draw<3>[arrow]
-  (vex.east) to[out=90,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:v});  
+  (vex.east) to[out=0,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:v});  
 \draw<3>[arrow]
-  (xex.west) to[out=180,in=135] ([xshift= 0.5ex, yshift=1ex]{pic cs:x}); 
+  (xex.west) to[out=180,in=135] ([xshift= 1ex, yshift=1ex]{pic cs:x}); 
   
  %%%% Explain Formula II
 \draw<4-5> [draw=white, fill=white, opacity=0.6]
-       (4,0) -- (7.2,0) -- (7.2,2) -- (4,2) --cycle;
+       (4,0) -- (6.8,0) -- (6.8,2) -- (4,2) --cycle;
 \node<4>[expl] 
   (Sex) 
   at (10,2cm)
-  {$x_{S_m}$: A Subset of $x_S$};
+  {$x_{S_m}$: A subset of $x_S$};
 \node<5>[expl] 
   (Sex) 
-  at (13,0.5cm)
+  at (13,1cm)
   {$\fh_{S_m}(x_{S_m})$: The contribution of $x_{S_m}$ to the prediction};
  \node<4>[expl] 
   (SJex) 
-  at (10,-0.5cm)
-  {$x_{S_m \cup j}$: A Subset of $x$ including feature $j$};
+  at (10,-0.8cm)
+  {$x_{S_m \cup j}$: The same subset $x_{S_m}$ but including feature $j$};
   \draw<4>[arrow]
   (Sex.south) to[out=270,in=90] ([xshift= 1ex, yshift=1.5ex]{pic cs:S});
  \draw<5>[arrow]
-  (Sex.west) to[out=90,in=90] ([xshift= 1ex, yshift=1.5ex]{pic cs:S});
+  (Sex.north) to[out=90,in=90] ([xshift= 1ex, yshift=1.5ex]{pic cs:S});
   \draw<4>[arrow]
   (SJex.north) to[out=90,in=270] ([yshift=-0.5ex]{pic cs:SJ}); 
   \draw<5> [decorate,decoration={brace, amplitude=5pt,mirror,raise=4ex}]  (7.4,1.1) --  (10.5,1.1)
   node[midway,yshift=-3.5em]{$:= \Delta(j, S_m)$};
   %%%% Explain Formula III
-  \draw<5-> [draw=white, fill=white, opacity=0.6]
-       (4,0) -- (6.3,0) -- (6.3,2) -- (4,2) --cycle;
-  \draw<5-> [draw=white, fill=white, opacity=0.6]
-        (7.3,0) -- (10.5,0) -- (10.5,2) -- (7.3,2) --cycle;
+  \draw<6> [draw=white, fill=white, opacity=0.6]
+       (4,0) -- (5.7,0) -- (5.7, 2) -- (4,2) --cycle;
+  \draw<6> [draw=white, fill=white, opacity=0.6]
+        (6.8,0) -- (12,0) -- (12,2) -- (6.8,2) --cycle;
   \node<6>[expl] 
   (Mex) 
-  at (10,2cm)
+  at (12,2cm)
   {$\frac{1}{M}\sum$: Average the contribution of feature $j$};
   \draw<6>[arrow]
-  (Mex.west) to[out=180,in=135] ([xshift= 0.5ex, yshift=2ex]{pic cs:M}); 
+  (Mex.west) to[out=180,in=90] ([xshift= 0.5ex, yshift=4ex]{pic cs:M}); 
 \end{tikzpicture}
 \end{exampleblock}
 \vspace{0.5cm}
@@ -248,12 +249,12 @@ Estimation of $\phi_j$ for model $\fh$, observation $\xv$, and sample size $M$:
     %\end{onlyenv}
     \begin{onlyenv}<5>
      \item $\Delta(j, S_m) = \fh_{S \cup j}(x_{S \cup j}) - \fh_S(x_{S})$ is the marginal contribution of player $j$ to coalition $S$
-    \item In this Subset $S_m$ the variable \textit{year} contributes +17 bike rentals compared to a random guess of the variable
+    \item In this subset $S_m$ the variable \textit{year} contributes +17 bike rentals compared to the expected prediction conditioned on features in $S_m$ (and all other features are assumed to be absent)
     \end{onlyenv}
     \begin{onlyenv}<6>
     \item Average the marginal contribution of feature $j$ towards the prediction
     across all randomly drawn feature coalitions $S_1, \ldots , S_M$.
-    \item The resulting Shapley value $\phi_j$ tells us what the payout feature $j$ is, i.e., how the feature \textit{year} contributes to the overall prediction in bicycle counts of a specific observation $\xv$
+    \item The resulting Shapley value $\phi_j$ tells us what the payout of feature $j$ is, i.e., how the feature \textit{year} contributes to the overall prediction in bicycle counts of a specific observation $\xv$
     \end{onlyenv}
 \end{itemize}
 \vspace*{\fill}
@@ -278,7 +279,8 @@ Estimation of $\phi_j$ for model $\fh$, observation $\xv$, and sample size $M$:
   \begin{itemize}
   \itemsep1em
     \item The coalitions with $S = \emptyset$ (i.e., $|S| = 0$) and $S = \{1, \ldots, p\} \setminus j$ have the highest weights in the Shapley value computation $\leadsto$ including them makes Shapley value more stable with fewer samples %Sample weights have to be adapted for the sampled coalitions afterwards.
-    \item Intuition: Adding a feature to the empty coalition gives information about the \textit{pure} first order effect of the feature, which is the effect without any interactions \item Adding the feature value to the complete set of feature values gives us the information about the total effect of a feature, which is the main effect effect all interaction effects with other features
+    \item Intuition: Adding a feature to the empty coalition gives information about the \textit{pure} first order effect of the feature, which is the effect without any interactions 
+    \item Adding the feature value to the complete set of feature values gives us the information about the total effect of a feature, which is the sum of the main effect and all interaction effects with other features
     \item For coalition $S = \emptyset$, there are $0! (|P| - 0 - 1)! = 1 \cdot (|P| - 1)! = (p - 1)!$ orders, which is the same for $S = P \setminus \{j\}$: $|P \setminus \{j\}|! (|P| - |P \setminus \{j\}| - 1)! = (p - 1)! (p - (p-1) - 1)! = (p-1)!$
 \end{itemize}
  \end{vbframe}
@@ -329,9 +331,9 @@ An example with $p = 5$ features:
 \begin{vbframe}{ADVANTAGES AND DISADVANTAGES}
 	\textbf{Advantages:}
 	\begin{itemize}
-		\item 	Shapley values are the only explanation method with a solid
-		theory $\leadsto$ they fulfill various axioms which gives them a reasonable
-		foundation
+	 \item \textbf{Solid theoretical foundation} in game theory
+        \item Prediction is \textbf{fairly distributed} among the feature values
+        \item \textbf{Contrastive explanations} that compare the prediction with the average prediction
 	\end{itemize}
 \vspace{0.25cm}
 	\textbf{Disadvantages:}
@@ -344,7 +346,7 @@ An example with $p = 5$ features:
 		value to the difference between the actual prediction and the mean
 		prediction, given the current set of features
 		\item Like many other IML methods, Shapley values suffer from the
-		inclusion of unrealistic data instances when features are
+		inclusion of unrealistic data observations when features are
 		correlated
 	\end{itemize}
 
