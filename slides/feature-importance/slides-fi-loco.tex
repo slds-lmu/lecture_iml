@@ -51,17 +51,17 @@
 \begin{frame}{Leave One Covariate Out (LOCO) \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173} \citebutton{Tibshirani (2018)}{http://www.stat.cmu.edu/~ryantibs/talks/loco-2018.pdf}}
 % citation of the original LOCO paper
 %
-\textbf{LOCO idea:} Simply remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.
+\textbf{LOCO idea:} Remove the feature from the dataset, refit the model on the reduced dataset, and measure the loss in performance compared to the model fitted on the complete dataset. %Remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.
 
-\lz
+\pause\lz
 
 \textbf{Definition:} Given training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\inducer$ and a model $\fh = \inducer(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
   \begin{enumerate}
-    \item learn model on dataset ${\Dtrain}_{,-j}$ where feature $x_j$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$
-    \item compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |y^{(i)} - \fh_{-j}(x_{-j}^{(i)}) \right | - \left |y^{(i)} - \fh(x^{(i)}) \right | $ with $i \in \Dtest$
+    \item learn model on dataset ${\Dtrain}_{,-j}$ where feature $x_j$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$\pause
+    \item compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |y^{(i)} - \fh_{-j}(x_{-j}^{(i)}) \right | - \left |y^{(i)} - \fh(x^{(i)}) \right | $ with $i \in \Dtest$\pause
     \item yield the importance score $\text{LOCO}_j = \text{med} \left ( \Delta_j  \right )$
   \end{enumerate}
-\lz 
+\lz\pause
 The method can be generalized to other loss functions and aggregations. If we use mean instead of median we can rewrite LOCO as
 %
 $$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
@@ -88,23 +88,23 @@ Can we get insight into whether ...
 \begin{enumerate}
     \item the feature $x_j$ is causal for the prediction $\yh$?
     \begin{itemize}
-      \item In general, no (counterexample on the next slide).
+      \item In general, no (counterexample on the next slide)
     \end{itemize}
     \item the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
-      \item In general, no (counterexample on the next slide).
+      \item In general, no (counterexample on the next slide)
     \end{itemize}
     \item the model requires access to $x_j$ to achieve it's prediction performance?
     \begin{itemize}
-      \item Approximately. It provides insight into whether the \textit{learner} requires access to $x_j$.
+      \item Approximately, it provides insight into whether the \textit{learner} requires access to $x_j$
     \end{itemize}
 \end{enumerate}
 \end{frame}
 
 \begin{frame}{Interpretation of LOCO}
 
-\begin{figure}
-\centering
+%\begin{figure}
+%\centering
 %\hfill
  % \begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=0.6, line width=0.3mm, black, fill=white}]
 %		\node[draw, circle, font=\large] (x1) at  (-.5, 2) {$X_1$};
@@ -115,17 +115,29 @@ Can we get insight into whether ...
 %		\draw[->, black] (x3) -- (y);
 %		\draw[->, black] (x2) -- (y);
 %	\end{tikzpicture} 
-\hfill
-	\includegraphics[width=0.25\linewidth]{figure_man/simulation_corr.pdf} 
+%\hfill
+	\includegraphics[width=0.35\linewidth]{figure_man/simulation_loco_corr.pdf} 
 \hfill
   \includegraphics[width=0.5\linewidth]{figure_man/simulation_loco}
-  \hfill
-\end{figure}
+%\hfill
+%\end{figure}
 
-Setting: Linear gaussian data generating process with correlation matrix as depicted left. A linear model was fit with $\fh(x) = -0.09 - 0.86 x_1 + 1.86 x_2 + 0.96 x_3$.\\
-\lz
-$\Rightarrow$ At the example of $x_2$ we see that: We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient $1.86$) (1). We also can't infer (2), e.g. $corr(x_2, y) = 0.69$ but $\text{LOCO}_2 \approx 0$.\\
-$\Rightarrow$ We can get insight into (3). Since $x_2$ and $x_1$ are highly correlated, they can take each others place, which is not the case for $x_3$.
+% x1 = rnorm(n, mean=0, sd = 5)
+% x2 = rnorm(n, mean=0, sd = 0.1) + x1
+% x3 = rnorm(n, mean=0, sd = 5)
+% y = rnorm(n, mean = 0, sd = 2) + x3 + x2
+
+\textbf{Example:} Sample $1000$ observations with $x_1, x_3 \sim N(0, 5), x_2 = x_1 + \epsilon_2$ with $\epsilon_2 \sim N(0, 0.1)$ and $y = x_2 + x_3 + \epsilon$ with $\epsilon \sim N(0, 2)$. Left: Correlation matrix, Right: LOCO importance for fitted LM on 70\% of the data computed on 30\% remaining observations.
+%Linear Gaussian data generating process with correlation matrix as depicted left.
+%A linear model was fit with $\fh(x) = -0.09 - 0.86 x_1 + 1.86 x_2 + 0.96 x_3$.\\
+
+\lz\pause
+
+$\Rightarrow$ We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient of $x_2$ is $1.86$)\\\pause
+$\Rightarrow$ We also can't infer (2), e.g., $Cor(x_2, y) = 0.69$ but $\text{LOCO}_2 \approx 0$\\\pause
+$\Rightarrow$ We can get insight into (3): $x_2$ and $x_1$ highly correlated with $\text{LOCO}_1 = \text{LOCO}_2  \approx 0$ \\
+\phantom{$\Rightarrow$} $\leadsto$ $x_2$ and $x_1$ can take each others place if one of them is left out (not the case for $x_3$)
+%As $x_2$ and $x_1$ are highly correlated, they can take each others place, which is not the case for $x_3$.
 \end{frame}
 
 %TODO: Why only?
@@ -134,14 +146,14 @@ $\Rightarrow$ We can get insight into (3). Since $x_2$ and $x_1$ are highly corr
   \begin{itemize}
     \item Requires (only?) one resampling set per feature for evaluation
     \item Easy to implement
-    \item Testing framework available in \cite{lei_distribution-free_2018}
+    \item Testing framework available in \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173}
   \end{itemize}
 %
   Cons:
   \begin{itemize}
-    \item Does not provide insight into a specific model, but rather a learner on a specific dataset.
-    \item Model training is a random process, so estimates can be noisy (which is problematic for inference about model and data).
-    \item Requires re-fitting the learner for each feature $\rightarrow$ computationally intensive
+    \item Does not provide insight into a specific model, but rather a learner on a specific dataset
+    \item Model training is a random process, so estimates can be noisy (which is problematic for inference about model and data)
+    \item Requires re-fitting the learner for each feature $\rightarrow$ computationally intensive compared to PFI
   \end{itemize}
 \end{frame}
 
