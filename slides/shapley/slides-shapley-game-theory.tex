@@ -44,7 +44,7 @@
 % \end{frame}
 
 
-\begin{frame}{Cooperative Games in Game Theory}
+\begin{frame}{Cooperative Games in Game Theory \citebutton{Shapley (1951)}{https://www.rand.org/pubs/research_memoranda/RM0670.html}}
 \begin{itemize}[<+->]
 %\itemsep1em
   \item Game theory is the study of strategic games between players, \enquote{game} refers to any series of interactions between actors / agents with gains and losses of quantifiable utility value
@@ -61,95 +61,137 @@
 \end{frame}
 
 \begin{frame}{Cooperative Games without Interactions}
-    \centering
-    \includegraphics[page=1]{figure/Shapley.pdf}
+% Figure Source: https://docs.google.com/presentation/d/1-bK90Gv1vIDr61s1PfgC51Kvic2Avnb7v8PgoO9iN0I/edit?usp=sharing
+\begin{center}
+\includegraphics<1>[page=1, width = 0.8\textwidth]{figure/Shapley.pdf}
+\includegraphics<2>[page=2, width = 0.8\textwidth]{figure/Shapley.pdf}
+
+\only<2>{$\Rightarrow$ Fair Payouts are Trivial Without Interactions}
+\end{center}
 \end{frame}
 
-\begin{frame}{Cooperative Games without Interactions}
+% \begin{frame}{Cooperative Games with Interactions}
+% \begin{center}
+% \includegraphics<1>[page=3, width = 0.8\textwidth]{figure/Shapley.pdf}
 
-% https://docs.google.com/presentation/d/1-bK90Gv1vIDr61s1PfgC51Kvic2Avnb7v8PgoO9iN0I/edit?usp=sharing
+% \only<1>{$\Rightarrow$ Unclear how to fairly distribute payouts when players interact}
 
-% \begin{columns}[T, totalwidth = \linewidth]
-% \begin{column}{0.49\linewidth}
-%     \centering
-%     \includegraphics[width = \linewidth]{figure/Shapley_1.png}
-% \end{column}
-% \begin{column}{0.49\linewidth}
+% \includegraphics<2>[page=4]{figure/Shapley.pdf}
+% \end{center}
+% \end{frame}
 
-% \end{column}
-% \end{columns}
-
-\begin{figure}
-    \centering
-    \includegraphics{figure/Shapley_1.png}
-\end{figure}
-
-% \begin{itemize}
-%     \item Fair payout distribution is simple for games where individual contribution of each player is clear
-%     \item 
-    
-% \end{itemize}
-\end{frame}
-
-\begin{frame}{Fair Payouts are Trivial Without Interactions}
-
-\begin{figure}
-    \centering
-    \includegraphics{figure/Shapley_2.png}
-\end{figure}
-
-\end{frame}
 \begin{frame}{Cooperative Games with Interactions}
+\begin{center}
+\includegraphics[page=3, width = 0.8\textwidth]{figure/Shapley.pdf}
 
-\begin{figure}
-    \centering
-    \includegraphics{figure/Shapley_3.png}
-\end{figure}
-
-\end{frame}
-\begin{frame}{What is a fair payout for player \enquote{yellow}?}
-
-\begin{figure}
-    \centering
-    \includegraphics{figure/Shapley_4.png}
-\end{figure}
-
+$\Rightarrow$ Unclear how to fairly distribute payouts when players interact
+\end{center}
 \end{frame}
 
-\begin{frame}{How to Weight Differences in Payout?}
+\begin{frame}{Cooperative Games with Interactions}
+\textbf{Question:} What is a fair payout for player \enquote{yellow}?\\
+\textbf{Idea:} Compute marginal contribution of the player of interest across different coalitions
 
-\begin{itemize}
-    \itemsep2em
-    \item Form a coalition one player at a time -- each player receives its contribution to the total payout, i.e., the increase in total payout when a player joins a coalition
-    \item The Shapley value is the players' average contribution over all possible formations of coalitions $\leadsto$ order of how players join the coalition matters
-    \item Each contribution is weighted proportionally to the number of possible orders of its coalition -- the more players in a coalition, the more possibilities of ordering the players inside the coalition
-    \item Set definition: $\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$
-    \item Order definition: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
-    \\
-    with $\Pi$ being all possible orders of players and $Pre(\tau,j)$ being the set of players before player $j$ in order $\tau$ 
-    
-    %$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(S_j(\tau) \cup \{j\}) - v(S_j(\tau)))$
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.53\textwidth}
+\includegraphics[page=4, trim=150px 120px 160px 0px, clip]{figure/Shapley.pdf}
+\end{column}
+\begin{column}{0.47\textwidth}
+\includegraphics[page=4, trim=170px 0px 200px 300px, clip]{figure/Shapley.pdf}
+\pause
+\textbf{Note:} Each marginal contribution is weighted w.r.t. number of possible orders of its coalition\\
+$\leadsto$ The more players in a coalition, the
+more possible orderings inside the coalition %more possibilities of ordering the players inside the coalition
+\end{column}
+\end{columns}
+\end{frame}
+
+% \begin{frame}{Cooperative Games without Interactions}
+% \begin{figure}
+%     \centering
+%     \includegraphics{figure/Shapley_1.png}
+% \end{figure}
+% \end{frame}
+
+% \begin{frame}{Fair Payouts are Trivial Without Interactions}
+% \begin{figure}
+%     \centering
+%     \includegraphics{figure/Shapley_2.png}
+% \end{figure}
+
+% \end{frame}
+% \begin{frame}{Cooperative Games with Interactions}
+% \begin{figure}
+%     \centering
+%     \includegraphics{figure/Shapley_3.png}
+% \end{figure}
+%\end{frame}
+
+% \begin{frame}{What is a fair payout for player \enquote{yellow}?}
+
+% \begin{figure}
+%     \centering
+%     \includegraphics{figure/Shapley_4.png}
+% \end{figure}
+
+% \end{frame}
+
+
+
+\begin{frame}{Shapley Value}
+
+This idea refers to the \textbf{Shapley value} which assigns a payout value to each player according to its marginal contribution in all possible coalitions.
+% which  provide a unique solution for the payout attribution problem.
+  
+\begin{itemize}[<+->]
+  %\item Shapley values were proposed by Lloyd Shapley in 1951 for cooperative games (game theory).
+  % given axioms of efficiency, symmetry, dummy and additivity.
+  %\item The \textbf{Shapley value} of player $j$ assigns a payout value according to the marginal contribution of each player in all possible coalitions\\
+  %$\leadsto$ %To compute the Shapley payout for a player $j$, we 
+  \item Let $v(\Scupj) - v(S)$ be the marginal contribution of player $j$ to coalition $S$\\
+  $\leadsto$ measures how much a player $j$ increases the value of a coalition $S$
+  \item Average marginal contributions for all possible coalitions $\SsubPnoj$ \\
+  $\leadsto$ order of how players join the coalition matters $\Rightarrow$ different weights depending on size of $S$\\
+  %$\leadsto$ marginal contributions are weighted differently
+  \item Shapley value via \textbf{set definition} (weighting via multinomial coefficient): 
+  $$\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$$
+  %\item Shapley values are the \textit{only} solution for the attribution with the specified axioms.
+  \item Equivalent Shapley value definition via \textbf{orders}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$$
+    $\leadsto$ $\Pi$: All possible $|P|!$ orders/permutations of players\\
+    $\leadsto$ $Pre(\tau,j)$: For permutation $\tau$, the set of players before player $j$ in order $\tau$ 
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{How to Weight Differences in Payout?}
+% \begin{frame}{How to Weight Differences in Payout?}
 
-\begin{figure}
-    \centering
-    \includegraphics{figure/Shapley_5.png}
-\end{figure}
+% \begin{itemize}
+%     %\itemsep2em
+%     %\item Form a coalition one player at a time -- each player receives its contribution to the total payout, i.e., the increase in total payout when a player joins a coalition
+%     % \item The Shapley value is the players' average contribution over all possible formations of coalitions\\
+%     % $\leadsto$ order of how players join the coalition matters\\
+%     % $\leadsto$ marginal contributions are weighted
+%     %\item Each contribution is weighted proportionally to the number of possible orders of its coalition -- the more players in a coalition, the more possibilities of ordering the players inside the coalition
+%     \item Shapley value via \textbf{set definition} (weighting via multinomial coefficient): 
+%     $$\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$$
+%     \item Shapley value via \textbf{order definition}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$$
+    
+%     with $\Pi$ being all possible $|P|!$ orders/permutations of players and $Pre(\tau,j)$ being the set of players before player $j$ in order $\tau$ 
+    
+%     %$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(S_j(\tau) \cup \{j\}) - v(S_j(\tau)))$
+% \end{itemize}
 
-\end{frame}
+% \end{frame}
 
-\frame{
-\frametitle{How to Weight Differences in Payout?}
-  \begin{center}
-  \only<1>{\includegraphics{figure/Shapley_7.png}}%
-  \only<2>{ \includegraphics{figure/Shapley_8.png}}%
-  \only<3>{ \includegraphics{figure/Shapley_9.png}}%
-  \end{center}
-}
+% \begin{frame}{How to Weight Differences in Payout?}
+
+% \begin{figure}
+%     \centering
+%     \includegraphics{figure/Shapley_5.png}
+% \end{figure}
+
+% \end{frame}
+
 
 
 % \begin{frame}{From Game Theory To Machine Learning}
@@ -181,21 +223,23 @@
 
 
 
-\begin{frame}{Definition via orders}
-The Shapley value was introduced as summation over sets $S$, but it's also possible to define it as a summation of all orders of players.
-This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from.
-\begin{itemize}
-  \item Let $\Pi$ be all possible orders of players ($|P|!$ in total)
-  \item Then: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
-  \item $Pre(\tau,j)$ is the set of players before player $j$ in order $\tau$ 
-  \item For example players a,b,c: $\Pi = \{(a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)\}$. If $\tau = (b,a,c)$ and $j=c$, then $Pre(\tau,j) = \{b, a\}$
-  \item For Shapley value computation via order definition, we sum the marginal contribution twice for orders that yield set $S = \{a,b\}$, which in the set definition has the weight $2! (3 - 2 - 1)! = 2 \cdot 0! = 2$
+\begin{frame}{Shapley Value - Comments on Order Definition}
+The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can be defined as a summation of all orders of players (which explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from).
+\begin{itemize}[<+->]
+  \item Let $\Pi$ be all possible orders of players (we hvve $|P|!$ in total)
+  \item Recall the order definition: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
+  \item $Pre(\tau,j)$ is the set of players before player $j$ in order $\tau$
+  \item Example: Players 1,2,3 $\Rightarrow$ $\Pi = \{(1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)\}$\\
+  $\leadsto$ For permutation $\tau = (2,1,3)$ and player of interest $j=3$ $\Rightarrow$ $Pre(\tau,j) = \{2, 1\}$\\
+  $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=1$ $\Rightarrow$ $Pre(\tau,j) = \{3\}$\\
+  $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=3$ $\Rightarrow$ $Pre(\tau,j) = \emptyset$
+  \item For Shapley value computation via order definition, we sum the marginal contribution twice for orders that yield set $S = \{1,2\}$, which in the set definition has the weight $2! (3 - 2 - 1)! = 2 \cdot 0! = 2$
 \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Definition via orders}
+\begin{frame}{Shapley Value - Comments on Order Definition}
 
 \begin{itemize}
   \item The Shapley value definition via orders is equivalent to the definition via sets, since the number of orders which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$: There are $|S|!$ possible orders of players within coalition $S$ and $(|P| - |S| - 1)!$ possible orders of players without $S$ and $j$
@@ -216,6 +260,22 @@ This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes fr
   \end{tabular}
 
 
+\end{frame}
+
+
+
+\begin{frame}{How to Weight Differences in Payout?}
+%   \begin{center}
+%   \only<1>{\includegraphics{figure/Shapley_7.png}}%
+%   \only<2>{ \includegraphics{figure/Shapley_8.png}}%
+%   \only<3>{ \includegraphics{figure/Shapley_9.png}}%
+%   \end{center}
+  
+\begin{center}
+\includegraphics<1>[page=5, width = 0.8\textwidth]{figure/Shapley.pdf}
+\includegraphics<2>[page=6, width = 0.8\textwidth]{figure/Shapley.pdf}
+\includegraphics<3>[page=7, width = 0.8\textwidth]{figure/Shapley.pdf}
+\end{center}
 \end{frame}
 
 
