@@ -25,7 +25,7 @@
 % https://pixabay.com/de/vectors/ergebnis-geld-gesch%C3%A4ft-gehalt-5567652/
 
 
-% \begin{vbframe}{Game Theory}
+% \begin{frame}{Game Theory}
 % \begin{itemize}
 % \itemsep1em
 %   \item Game theory is the study of strategic games between players
@@ -41,10 +41,10 @@
 %     \\
 %     $\Rightarrow$ Best aggregate outcome not achieved (both staying silent). 
 % \end{itemize}
-% \end{vbframe}
+% \end{frame}
 
 
-\begin{vbframe}{Cooperative Games in Game Theory}
+\begin{frame}{Cooperative Games in Game Theory}
 \begin{itemize}[<+->]
 %\itemsep1em
   \item Game theory is the study of strategic games between players, \enquote{game} refers to any series of interactions between actors / agents with gains and losses of quantifiable utility value
@@ -58,67 +58,84 @@
   \item We call the individual payout per player $\phi_j$, $j \in P$ (later: Shapley value)
   %\item What would be properties of a fair distribution of the payout?
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Cooperative Games without Interactions}
+\begin{frame}{Cooperative Games without Interactions}
 
 % https://docs.google.com/presentation/d/1-bK90Gv1vIDr61s1PfgC51Kvic2Avnb7v8PgoO9iN0I/edit?usp=sharing
+
+% \begin{columns}[T, totalwidth = \linewidth]
+% \begin{column}{0.49\linewidth}
+%     \centering
+%     \includegraphics[width = \linewidth]{figure/Shapley_1.png}
+% \end{column}
+% \begin{column}{0.49\linewidth}
+
+% \end{column}
+% \end{columns}
 
 \begin{figure}
     \centering
     \includegraphics{figure/Shapley_1.png}
 \end{figure}
 
-\end{vbframe}
+\begin{itemize}
+    \item Fair payout distribution is simple for games where individual contribution of each player is clear
+    \item 
+    
+\end{itemize}
+\end{frame}
 
-\begin{vbframe}{Fair Payouts are Trivial Without Interactions}
+\begin{frame}{Fair Payouts are Trivial Without Interactions}
 
 \begin{figure}
     \centering
     \includegraphics{figure/Shapley_2.png}
 \end{figure}
 
-\end{vbframe}
-\begin{vbframe}{Cooperative Games with Interactions}
+\end{frame}
+\begin{frame}{Cooperative Games with Interactions}
 
 \begin{figure}
     \centering
     \includegraphics{figure/Shapley_3.png}
 \end{figure}
 
-\end{vbframe}
-\begin{vbframe}{What is a fair payout for player \enquote{yellow}?}
+\end{frame}
+\begin{frame}{What is a fair payout for player \enquote{yellow}?}
 
 \begin{figure}
     \centering
     \includegraphics{figure/Shapley_4.png}
 \end{figure}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{How to Weight Differences in Payout?}
+\begin{frame}{How to Weight Differences in Payout?}
 
 \begin{itemize}
     \itemsep2em
-    \item  Form a coalition one actor at a time -- each agent receives their contribution to the total payout, i.e., the increase in total payout when the agent joins the coalition
-    \item The Shapley value is the agent's average contribution over all possible formations of coalitions $\leadsto$ order of how the agents joined the coalition matters
-    \item Each contribution is weighted proportionally to the number of possible orders of its coalition -- the more agents in a coalition, the more possibilities of ordering the agents inside the coalition
+    \item Form a coalition one player at a time -- each player receives its contribution to the total payout, i.e., the increase in total payout when a player joins a coalition
+    \item The Shapley value is the players' average contribution over all possible formations of coalitions $\leadsto$ order of how players join the coalition matters
+    \item Each contribution is weighted proportionally to the number of possible orders of its coalition -- the more players in a coalition, the more possibilities of ordering the players inside the coalition
     \item Set definition: $\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$
     \item Order definition: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
     \\
     with $\Pi$ being all possible orders of players and $Pre(\tau,j)$ being the set of players before player $j$ in order $\tau$ 
+    
+    %$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(S_j(\tau) \cup \{j\}) - v(S_j(\tau)))$
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
-% \begin{vbframe}{How to Weight Differences in Payout?}
-%
-% \begin{figure}
-%     \centering
-%     \includegraphics{figure/Shapley_5.png}
-% \end{figure}
-%
-%\end{vbframe}
+\begin{frame}{How to Weight Differences in Payout?}
+
+\begin{figure}
+    \centering
+    \includegraphics{figure/Shapley_5.png}
+\end{figure}
+
+\end{frame}
 
 \frame{
 \frametitle{How to Weight Differences in Payout?}
@@ -130,16 +147,16 @@
 }
 
 
-% \begin{vbframe}{From Game Theory To Machine Learning}
+% \begin{frame}{From Game Theory To Machine Learning}
 
 % \begin{figure}
 %     \centering
 %     \includegraphics{figure/Shapley_5.png}
 % \end{figure}
 
-% \end{vbframe}
+% \end{frame}
 
-% \begin{vbframe}{Shapley Values}
+% \begin{frame}{Shapley Values}
 
 %   Shapley values provide a unique solution to the attribution problem while satisfying all axioms:
 %     \vspace{0.25cm}
@@ -155,11 +172,11 @@
 
 % \footnote{Shapley, Lloyd S. (August 21, 1951). "Notes on the n-Person Game -- II: The Value of an n-Person Game" (PDF). Santa Monica, Calif.: RAND Corporation.}
 
-% \end{vbframe}
+% \end{frame}
 
 
 
-\begin{vbframe}{Definition via orders}
+\begin{frame}{Definition via orders}
 The Shapley value was introduced as summation over sets $S$, but it's also possible to define it as a summation of all orders of players.
 This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from.
 \begin{itemize}
@@ -170,10 +187,10 @@ This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes fr
   \item For Shapley value computation via order definition, we sum the marginal contribution twice for orders that yield set $S = \{a,b\}$, which in the set definition has the weight $2! (3 - 2 - 1)! = 2 \cdot 0! = 2$
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Definition via orders}
+\begin{frame}{Definition via orders}
 
 \begin{itemize}
   \item The Shapley value definition via orders is equivalent to the definition via sets, since the number of orders which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$: There are $|S|!$ possible orders of players within coalition $S$ and $(|P| - |S| - 1)!$ possible orders of players without $S$ and $j$
@@ -194,10 +211,10 @@ This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes fr
   \end{tabular}
 
 
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Shapley Values - Illustration}
+\begin{frame}{Shapley Values - Illustration}
 \begin{itemize}
     \item The Shapley value of a player $j=2$ is the marginal contribution to the value function when player $2$ enters an abitrary coalition
 \only<1>{\item Here, player $2$ enters the coalition after player $1$, resulting in a value change of $v(\{1,2\}) - v(\{1\}) = 24-12 = 12$ with a overall coalition value of $v(\{1,2,3\}) = 36$}
@@ -212,30 +229,30 @@ This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes fr
     \includegraphics[page=2, width=0.6\textwidth]{figure_man/shapley_feature_effect}
   }
 \end{center}
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Axioms of Fair Payouts}
+\begin{frame}{Axioms of Fair Payouts}
  Why is this a fair payout solution?
  \\
  One possibility to define fair payouts are the following axioms for a given value function $v$:
   \vspace{0.25cm}
-  \begin{itemize}
+  \begin{itemize}[<+->]
   \itemsep1em
     \item \textbf{Efficiency}: Player contributions add up to the total payout of the game:
       $\sum\nolimits_{j=1}^p\phi_j = v(P)$
     \item \textbf{Symmetry}: Players $j,k \in P$ who contribute the same to any coalition get the same payout: \\
       If $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$, then $\phi_j=\phi_k$
-    \item \textbf{Dummy / Null Player}: The payout is zero for players who don't contribute to the value of any coalition: \\
+    \item \textbf{Dummy/Null Player}: Payout is 0 for players who don't contribute to the value of any coalition: \\
       If $v(\Scupj)=v(S)\quad  \forall \quad \SsubP \setminus j$, then $\phi_j=0$
     \item \textbf{Additivity}: For a game $v$ with combined payouts $v(S) = v_1(S) + v_2(S)$, the payout is the sum of payouts: $\phi_{j,v} = \phi_{j,v_1} + \phi_{j, v_2}$
   \end{itemize}
   \vspace{0.5cm}
   
 
-\end{vbframe}
+\end{frame}
 
-% \begin{vbframe}{Proof of Axioms}
+% \begin{frame}{Proof of Axioms}
 %   The Shapley values fulfills all the 4 axioms.
 %   Symmetry, Dummy and Additivity are relatively easy to proof:
 % \begin{itemize}
@@ -252,21 +269,21 @@ This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes fr
 %   \begin{itemize}
 %   \item \textbf{Efficiency}: $v(P)$ exactly appears once per player ($=p$ times) for coalition $S = P \setminus \{j\}$ with the weight $\frac{|P - 1|!(|P| - |P - 1| - 1)!}{|P|!} = \frac{1}{p}$ each. The values for all other coalitions $v(S), \SsubP \{j,k\}$ appear with both minus and plus signs that cancel each other out.
 % \end{itemize}
-% \end{vbframe}
+% \end{frame}
 
 
-% \begin{vbframe}{Linearity Axiom Corollary}
+% \begin{frame}{Linearity Axiom Corollary}
 %   \begin{itemize}
 %   \item The Shapley values are also linear:
 %   \item For a game with payout $v(S) = \alpha v_1(S) + v_2(S)$, the Shapley values are $\alpha \phi_{j,v_1} + \phi_{j,v_2}$.
 %   \item The multiplication with $\alpha$ works since we can pull out $\alpha$ from the sum of marginal contributions, so that for $v(S) = \alpha v_1(S)$ the Shapley value is $\alpha \phi_{j,v_1}$.
 %   \item We already know that Shapley values are additive which proofs the linearity.
 %   \end{itemize}
-% \end{vbframe}
+% \end{frame}
 
 
 
-% \begin{vbframe}{Applications of Shapley Value}
+% \begin{frame}{Applications of Shapley Value}
 
 %   \begin{itemize}
 %       \item Game theory
@@ -289,7 +306,7 @@ This also explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes fr
 %   \tiny{Cohen, Shay B., Eytan Ruppin, and Gideon Dror. "Feature Selection Based on the Shapley Value." IJCAI. Vol. 5. 2005.}
 %   % Value of data
 %   \tiny{Ghorbani, Amirata, and James Zou. "Data shapley: Equitable valuation of data for machine learning." International Conference on Machine Learning. PMLR, 2019.}
-% \end{vbframe}
+% \end{frame}
 
 \endlecture
 \end{document}
