@@ -68,7 +68,7 @@
 % N(4, 4), \text{else}
 % \end{cases}
 %\end{align*}
-    \item \textbf{Left:} For $X_2<0.5$, permuting $X_1$ (crosses) preserves joint distribution\\
+    \item \textbf{Left:} For $X_2<0.5$, permuting $X_1$ (crosses) preserves marginal (but not joint) distribution \\
     $\leadsto$ Bottom: Marginal density of $X_1$
     \item \textbf{Right:} Permuting $X_1$ within subgroups $X_2<0.5$ \& $X_2\geq 0.5$ reduces extrapolation\\
     $\leadsto$ Bottom: Density of $X_1$ conditional on groups
@@ -151,17 +151,17 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 \begin{frame}{Implications of CFI \citebutton{König et al. (2020)}{https://arxiv.org/abs/2007.08283}}
 
 \textbf{Interpretation:} CFI quantifies a feature's unique contribution to the model performance.\\
-\lz
+\lz\pause
 \textbf{Entanglement with data:}
 \begin{itemize}
   \item If feature $x_S$ does not contribute unique information about $y$, i.e., $x_S \indep y | x_{-S}$ $\Rightarrow$ CFI $= 0$
   \item Why? Under the conditional independence $\P(\pert{x}{S}{-S}, y) = \P(x,y)$\\
   $\leadsto$ no prediction-relevant information is destroyed by conditional permutation
 \end{itemize}
-\lz
+\lz\pause
 \textbf{Entanglement with model:}
 \begin{itemize}
-  \item If the model does mechanistically use a feature $\Rightarrow$ CFI $= 0$
+  \item If the model does not use a feature $\Rightarrow$ CFI $= 0$
   \item Why? Then the prediction is not affected by any perturbation of the feature (and consequently the performance is invariant).
 \end{itemize}
 

@@ -9,6 +9,7 @@
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
 \date{}
 
+
 \begin{document}
 
 \newcommand{\titlefigure}{figure_man/bike-sharing03.png}
@@ -31,12 +32,12 @@
 \end{frame}
 
 \begin{frame}{From Game Theory to Machine Learning}
-\begin{itemize}
-    \itemsep1em
-    \item The features $x_j, j \in \pset$ represent the agents
-    \item The game corresponds to the prediction $\fh(x_1, x_2, \ldots, x_p)$ for a single data observation $\xv$
+\begin{itemize}[<+->]
+    %\itemsep1em
+    \item The features $x_j, j \in \pset$ represent the players
+    \item The game corresponds to the prediction $\fh(x_1, x_2, \ldots, x_p)$ for a single observation $\xv$
     \item The features cooperate to produce a prediction
-    \item The only issue is: How do we produce a prediction with a subset of features without changing the predictive model?
+    \item Question: How to make a prediction with a subset of features without changing the model?
     \\ $\Rightarrow$ Partial dependence: $\fh_{S}(\xv_S) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
     \item  The value function / payout of coalition $S$ for observation $\xv$ is
     $$v(S) =  \fh_{S} (\xv_S) - \E_{\xv}(\fh(\xv)),$$ 
@@ -70,7 +71,7 @@
 % \end{frame}
 
 \begin{frame}{Shapley Value - Definition \citebutton{Shapley (1953)}{https://doi.org/10.7249/P0295} \citebutton{Strumbelj et al. (2014)}{https://doi.org/10.1007/s10115-013-0679-x}}
-  Using the order definition, the Shapley value for feature $j$ and a given data point $\xv$ can be computed as:
+  Using the order definition, the Shapley value for feature $j$ and a given observation $\xv$ is computed by:
 
      $$ \phi_j  = \frac{1}{p!} \sum_{S \subseteq P\setminus \{j\}} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
 \begin{itemize}

@@ -4,6 +4,8 @@
 % Defines macros and environments
 \input{../../style/common.tex}
 
+\newcommand{\Sm}{S(\tau,j)}%{Pre(\tau,j)} % 
+
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
@@ -168,9 +170,9 @@ This idea refers to the \textbf{Shapley value} which assigns a payout value to e
   \item Shapley value via \textbf{set definition} (weighting via multinomial coefficient): 
   $$\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$$
   %\item Shapley values are the \textit{only} solution for the attribution with the specified axioms.
-  \item Equivalent Shapley value definition via \textbf{orders}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$$
+  \item Equivalent Shapley value definition via \textbf{orders}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
     $\leadsto$ $\Pi$: All possible $|P|!$ orders/permutations of players\\
-    $\leadsto$ $Pre(\tau,j)$: For permutation $\tau$, the set of players before player $j$ in order $\tau$ 
+    $\leadsto$ $\Sm$: The set of players before player $j$ in order $\tau$ 
 \end{itemize}
 
 \end{frame}
@@ -186,9 +188,9 @@ This idea refers to the \textbf{Shapley value} which assigns a payout value to e
 %     %\item Each contribution is weighted proportionally to the number of possible orders of its coalition -- the more players in a coalition, the more possibilities of ordering the players inside the coalition
 %     \item Shapley value via \textbf{set definition} (weighting via multinomial coefficient): 
 %     $$\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$$
-%     \item Shapley value via \textbf{order definition}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$$
+%     \item Shapley value via \textbf{order definition}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
     
-%     with $\Pi$ being all possible $|P|!$ orders/permutations of players and $Pre(\tau,j)$ being the set of players before player $j$ in order $\tau$ 
+%     with $\Pi$ being all possible $|P|!$ orders/permutations of players and $\Sm$ being the set of players before player $j$ in order $\tau$ 
     
 %     %$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(S_j(\tau) \cup \{j\}) - v(S_j(\tau)))$
 % \end{itemize}
@@ -238,13 +240,13 @@ This idea refers to the \textbf{Shapley value} which assigns a payout value to e
 \begin{frame}{Shapley Value - Comments on Order Definition}
 The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can be defined as a summation of all orders of players (which explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from).
 \begin{itemize}[<+->]
-  \item Let $\Pi$ be all possible orders of players (we hvve $|P|!$ in total)
-  \item Recall the order definition: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
-  \item $Pre(\tau,j)$ is the set of players before player $j$ in order $\tau$\\
+  \item Let $\Pi$ be all possible orders of players (we have $|P|!$ in total)
+  \item Recall the order definition: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$
+  \item $\Sm$ is the set of players before player $j$ in order $\tau$\\
   $\Rightarrow$ Example: Players $1,2,3$ $\Rightarrow$ $\Pi = \{(1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)\}$\\
-  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (2,1,3)$ and player of interest $j=3$ $\Rightarrow$ $Pre(\tau,j) = \{2, 1\}$\\
-  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=1$ $\Rightarrow$ $Pre(\tau,j) = \{3\}$\\
-  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=3$ $\Rightarrow$ $Pre(\tau,j) = \emptyset$
+  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (2,1,3)$ and player of interest $j=3$ $\Rightarrow$ $\Sm = \{2, 1\}$\\
+  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=1$ $\Rightarrow$ $\Sm = \{3\}$\\
+  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=3$ $\Rightarrow$ $\Sm = \emptyset$
   \item In order definition, we sum the marginal contribution twice for orders that yield set $S = \{1,2\}$\\
   $\leadsto$ In set definition it has the weight $\tfrac{2! (3 - 2 - 1)!}{3!} = \tfrac{2 \cdot 0!}{6} = \tfrac{2}{6}$
 \end{itemize}
@@ -265,7 +267,7 @@ The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can 
     \multicolumn{1}{c}{} &
     \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
     \hline
-    $\tau(1)$ & \ldots & $\tau(|S|)$ & $\tau(|S| + 1)$ & $\tau(|S| + 2)$ & \ldots & $\tau(P)$ \\
+    $\tau^{(1)}$ & \ldots & $\tau^{(|S|)}$ & $\tau^{(|S| + 1)}$ & $\tau^{(|S| + 2)}$ & \ldots & $\tau^{(P)}$ \\
     \hline
     \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}} &
     \multicolumn{1}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{4em}}^{}$}} &
@@ -273,9 +275,12 @@ The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can 
     \multicolumn{3}{c}{Players before player $j$} & \multicolumn{1}{c}{player $j$} & \multicolumn{3}{c}{Players after player $j$} \\
   \end{tabular}}
   \item<2-> Relevance of the order definition: Approximate Shapley values by sampling permutations \\
-  $\leadsto$ randomly sample a fixed number of $M< |P|!$ permutations and average them 
+  $\leadsto$ randomly sample a fixed number of $M< |P|!$ permutations and average them:
   %to approximate the Shapley values
   %instead of producing all $|P|!$ permutations, a fixed number of $M< |P|!$ permutations can be sampled and averaged to approximate the Shapley values
+  $$\phi_j = \frac{1}{M} \sum_{\tau \in \Pi_M} (v(\Sm \cup \{j\}) - v(\Sm))$$
+    where $\Pi_M \subset \Pi$ is random subset of $\Pi$ containing $M< |P|!$ orders/permutations of players\\
+    %$\leadsto$ $\Sm$: For permutation $\tau$, the set of players before player $j$ in order $\tau$ 
 \end{itemize}
 
 \end{frame}
