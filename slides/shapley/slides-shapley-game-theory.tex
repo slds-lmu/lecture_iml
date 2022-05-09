@@ -94,14 +94,26 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.53\textwidth}
-\includegraphics[page=4, trim=150px 120px 160px 0px, clip]{figure/Shapley.pdf}
+\includegraphics[page=4, trim=150px 120px 160px 10px, clip]{figure/Shapley.pdf}
+
+%\includegraphics[page=4, trim=170px 15px 200px 305px, clip, width = 0.8\textwidth]{figure/Shapley.pdf}
+\scriptsize
+%\hspace{-100px}
+\begin{itemize}
+\itemsep0em
+%\addtolength{\itemindent}{-1cm}
+    \item Compute the total payout of each coalition
+    \item Compute difference in payouts for each coalition with and without player \enquote{yellow} (= marginal contribution)
+    \item Average marginal contributions using appropriate weights
+\end{itemize}
 \end{column}
 \begin{column}{0.47\textwidth}
-\includegraphics[page=4, trim=170px 0px 200px 300px, clip]{figure/Shapley.pdf}
 \pause
 \textbf{Note:} Each marginal contribution is weighted w.r.t. number of possible orders of its coalition\\
-$\leadsto$ The more players in a coalition, the
-more possible orderings inside the coalition %more possibilities of ordering the players inside the coalition
+$\leadsto$ More players in $S$ $\Rightarrow$ more orderings of $S$
+%The more players in a coalition, the more possible orderings inside the coalition %more possibilities of ordering the players inside the coalition
+%\includegraphics[page=15, width = \textwidth, trim=122px 10px 82px 10px, clip]{figure/Shapley.pdf}
+\includegraphics[page=7, width = \textwidth, trim=182px 10px 0px 10px, clip]{figure/Shapley.pdf}
 \end{column}
 \end{columns}
 \end{frame}
@@ -228,12 +240,13 @@ The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can 
 \begin{itemize}[<+->]
   \item Let $\Pi$ be all possible orders of players (we hvve $|P|!$ in total)
   \item Recall the order definition: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(Pre(\tau,j) \cup \{j\}) - v(Pre(\tau,j)))$
-  \item $Pre(\tau,j)$ is the set of players before player $j$ in order $\tau$
-  \item Example: Players 1,2,3 $\Rightarrow$ $\Pi = \{(1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)\}$\\
-  $\leadsto$ For permutation $\tau = (2,1,3)$ and player of interest $j=3$ $\Rightarrow$ $Pre(\tau,j) = \{2, 1\}$\\
-  $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=1$ $\Rightarrow$ $Pre(\tau,j) = \{3\}$\\
-  $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=3$ $\Rightarrow$ $Pre(\tau,j) = \emptyset$
-  \item For Shapley value computation via order definition, we sum the marginal contribution twice for orders that yield set $S = \{1,2\}$, which in the set definition has the weight $2! (3 - 2 - 1)! = 2 \cdot 0! = 2$
+  \item $Pre(\tau,j)$ is the set of players before player $j$ in order $\tau$\\
+  $\Rightarrow$ Example: Players $1,2,3$ $\Rightarrow$ $\Pi = \{(1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)\}$\\
+  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (2,1,3)$ and player of interest $j=3$ $\Rightarrow$ $Pre(\tau,j) = \{2, 1\}$\\
+  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=1$ $\Rightarrow$ $Pre(\tau,j) = \{3\}$\\
+  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=3$ $\Rightarrow$ $Pre(\tau,j) = \emptyset$
+  \item In order definition, we sum the marginal contribution twice for orders that yield set $S = \{1,2\}$\\
+  $\leadsto$ In set definition it has the weight $\tfrac{2! (3 - 2 - 1)!}{3!} = \tfrac{2 \cdot 0!}{6} = \tfrac{2}{6}$
 \end{itemize}
 
 \end{frame}
@@ -242,10 +255,11 @@ The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can 
 \begin{frame}{Shapley Value - Comments on Order Definition}
 
 \begin{itemize}
-  \item The Shapley value definition via orders is equivalent to the definition via sets, since the number of orders which yield the same coalition $S$ is  $|S|!(|P| - |S| - 1)!$: There are $|S|!$ possible orders of players within coalition $S$ and $(|P| - |S| - 1)!$ possible orders of players without $S$ and $j$
-  \item Relevance of the order definition: The Shapley value can be approximated by sampling permutations $\leadsto$ instead of producing all $|P|!$ permutations, a fixed number of $M$ can be sampled and averaged to approximate the Shapley values
-\end{itemize}
-\centering
+  \item<1-> Order and set definition are equivalent
+  \item<1-> Reason: The number of orders which yield the same coalition $S$ is $|S|!(|P| - |S| - 1)!$\\
+  $\Rightarrow$ There are $|S|!$ possible orders of players within coalition $S$\\
+  $\Rightarrow$ There are $(|P| - |S| - 1)!$ possible orders of players without $S$ and $j$
+  \centerline{
   \begin{tabular}{|c|c|c|c|c|c|c|}
     \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{|S|! \text{ permutations}}$}} &
     \multicolumn{1}{c}{} &
@@ -257,14 +271,18 @@ The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can 
     \multicolumn{1}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{4em}}^{}$}} &
     \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}}\\
     \multicolumn{3}{c}{Players before player $j$} & \multicolumn{1}{c}{player $j$} & \multicolumn{3}{c}{Players after player $j$} \\
-  \end{tabular}
-
+  \end{tabular}}
+  \item<2-> Relevance of the order definition: Approximate Shapley values by sampling permutations \\
+  $\leadsto$ randomly sample a fixed number of $M< |P|!$ permutations and average them 
+  %to approximate the Shapley values
+  %instead of producing all $|P|!$ permutations, a fixed number of $M< |P|!$ permutations can be sampled and averaged to approximate the Shapley values
+\end{itemize}
 
 \end{frame}
 
 
-
-\begin{frame}{How to Weight Differences in Payout?}
+% How to weight differences in payout
+\begin{frame}{Weights for Marginal Contribution - Illustration}
 %   \begin{center}
 %   \only<1>{\includegraphics{figure/Shapley_7.png}}%
 %   \only<2>{ \includegraphics{figure/Shapley_8.png}}%
@@ -281,19 +299,30 @@ The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can 
 
 \begin{frame}{Shapley Values - Illustration}
 \begin{itemize}
-    \item The Shapley value of a player $j=2$ is the marginal contribution to the value function when player $2$ enters an abitrary coalition
-\only<1>{\item Here, player $2$ enters the coalition after player $1$, resulting in a value change of $v(\{1,2\}) - v(\{1\}) = 24-12 = 12$ with a overall coalition value of $v(\{1,2,3\}) = 36$}
-\only<2>{\item We produce all possible orders of player coalitions and measure the value change if player $2$ enters the coalition}
+    \item Shapley value of player $j$ is the marginal contribution to the value when it enters any coalition
+    \item Produce all possible joining orders of player coalitions
+%\only<1>{\item Here, player $2$ enters the coalition after player $1$, resulting in a value change of $v(\{1,2\}) - v(\{1\}) = 24-12 = 12$ with a overall coalition value of $v(\{1,2,3\}) = 36$}
+\only<2>{\item Measure and average the difference in payout after player $1$ enters the coalition}
+\only<3>{\item Measure and average the difference in payout after player $2$ enters the coalition}
+\only<4>{\item Measure and average the difference in payouts after player $3$ enters the coalition}
 \end{itemize}
 
 \begin{center}
-  \only<1>{
-    \includegraphics[page=1, width=0.6\textwidth]{figure_man/shapley_feature_effect}
-  }
-  \only<2>{
-    \includegraphics[page=2, width=0.6\textwidth]{figure_man/shapley_feature_effect}
-  }
+\includegraphics<1>[page=9, width = 0.7\textwidth]{figure/Shapley.pdf}
+\includegraphics<2>[page=10, width = 0.7\textwidth]{figure/Shapley.pdf}
+\includegraphics<3>[page=11, width = 0.7\textwidth]{figure/Shapley.pdf}
+\includegraphics<4>[page=12, width = 0.7\textwidth]{figure/Shapley.pdf}
+\includegraphics<5>[page=13, width = 0.7\textwidth]{figure/Shapley.pdf}
 \end{center}
+
+% \begin{center}
+%   \only<1>{
+%     \includegraphics[page=1, width=0.6\textwidth]{figure_man/shapley_feature_effect}
+%   }
+%   \only<2>{
+%     \includegraphics[page=2, width=0.6\textwidth]{figure_man/shapley_feature_effect}
+%   }
+% \end{center}
 \end{frame}
 
 

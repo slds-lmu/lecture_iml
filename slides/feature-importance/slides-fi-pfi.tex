@@ -135,8 +135,7 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
 
 
 
-\frame{
-\frametitle{Permutation Feature Importance}
+\begin{frame}{Permutation Feature Importance}
 
   \only<1-4>{$\hspace{80pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}
   \only<5-6>{$\hspace{80pt}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})$}
@@ -157,9 +156,9 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
     $\Rightarrow$ Randomly permute feature $x_S$ \\
     $\Rightarrow$ Replace original feature with permuted feature $\pert{x}{}{}_S$ and create data $\pert{\D}{S}{}$ containing $\pert{x}{}{}_S$} 
     \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\pert{\D}{S}{}$}
-    \only<3-6>{\item[3.] \textbf{Aggregation:}}
+    \only<3->{\item[3.] \textbf{Aggregation:}}
       \begin{itemize}
-        \item<3-6> Compute the loss for each observation in both data sets
+        \item<3-> Compute the loss for each observation in both data sets
         \item<4-> Take the difference of both losses $\Delta L$ for each observation
         \item<5-> Average this change in loss across all observations
         \only<5>{\\ Note: This is equivalent to computing $\riske$ on both data sets and taking the difference}
@@ -188,7 +187,7 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
     %     \item Also, average over multiple repetitions, if available.
     %   \end{itemize}}
   \end{itemize}
-}
+\end{frame}
 
 \begin{frame}{Example: Bike Sharing Dataset}
 
@@ -227,6 +226,7 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
  
  \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
  Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+\pause
 
 %\begin{figure}
 % \hfill
@@ -235,11 +235,11 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
 %   \includegraphics[width=0.39\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
 \centerline{\includegraphics[width=0.9\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}}
 \centerline{Hexbin plot of $x_1, x_2$ before permuting $x_1$ (left), after permuting $x_1$ (center), and PFI scores (right)}
-\lz
+\lz\pause
 % \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
 %\end{figure}
 % 
-$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
+$\Rightarrow$ $x_1$ and $x_2$ should be irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
 $\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$, $x_2$ are considered relevant (PFI $> 0$)
 %$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 
@@ -278,7 +278,9 @@ $\Rightarrow$ PFI does not fairly attribute the performance to the individual fe
   \caption{While PFI on test data considers all features to be irrelevant, PFI on train data exposes the features on which the model overfitted.}
 \end{figure}
 
-Why? PFI can only be nonzero if the permutation breaks a dependence in the data. Spurious correlations help the model perform on train data, but are not present in the test data.\\
+\pause
+
+Why? PFI can only be nonzero if the permutation breaks a dependence in the data. Spurious correlations help the model perform well on train data, but are not present in the test data.\\
 $\Rightarrow$ If you are interested in which features help the model to generalize, apply PFI on test data.
   
 \end{frame}
