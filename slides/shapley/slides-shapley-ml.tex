@@ -3,6 +3,7 @@
 \usepackage{../../style/lmu-lecture}
 % Defines macros and environments
 \input{../../style/common.tex}
+\newcommand{\Sm}{S_{j}^\tau}%{Pre(\tau,j)} % S(\tau,j)
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -38,10 +39,13 @@
     \item The game corresponds to the prediction $\fh(x_1, x_2, \ldots, x_p)$ for a single observation $\xv$
     \item The features cooperate to produce a prediction
     \item Question: How to make a prediction with a subset of features without changing the model?
-    \\ $\Rightarrow$ Partial dependence: $\fh_{S}(\xv_S) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
+    \\ $\Rightarrow$ Partial dependence: $\fh_{S}(\xv_S) := \int_{X_{-S}} \fh(\xv_S, X_{-S})d \P_{X_{-S}}$
     \item  The value function / payout of coalition $S$ for observation $\xv$ is
-    $$v(S) =  \fh_{S} (\xv_S) - \E_{\xv}(\fh(\xv)),$$ 
-    where $\xv_S = \{x_j\}_{j \in S}$ and $\fh_S: \Xspace_S \mapsto \Yspace$ \\ $\leadsto$ the subtraction of $\E_{\xv}(\fh(\xv))$ is necessary so that $v$ is a value function with $v(\emptyset) = 0$
+    $$v(S) =  \fh_{S} (\xv_S) - \E_{\xv}(\fh(\xv)), \text{ where } \xv_S = \{x_j\}_{j \in S} \text{ and } \fh_S: \Xspace_S \mapsto \Yspace$$
+    $\leadsto$ the subtraction of $\E_{\xv}(\fh(\xv))$ is necessary so that $v$ is a value function with $v(\emptyset) = 0$
+    \centerline{\includegraphics[width=0.5\textwidth, trim=20 0 0 100, clip]{figure_man/shapley_valuefct}}
+    \item For the marginal contribution, we then have $v(\Scupj) - v(S) =  \fh_{\Scupj} (\xv_{\Scupj}) - \fh_{S} (\xv_{S})$\\
+    $\leadsto$ The term $\E_{\xv}(\fh(\xv))$ drops due to the subtraction of value functions
 \end{itemize}
 \end{frame}
 
@@ -53,7 +57,7 @@
 %   \item The value function / payout of coalition $S$ for observation $\xv$ is
 %     $$v(S) =  \fh_{S} (\xv_S) - \E_{\xv}(\fh(\xv)),$$ 
 %     where $\xv_S = \{x_j\}_{j \in S}$ and $\fh_S: \Xspace_S \mapsto \Yspace$.
-% \item The marginal prediction $\fh_S$ is defined as $\fh_{S}(\xv_S) := \int_{X_C} \fh(\xv_S, X_C)d \P_{X_C}$
+% \item The marginal prediction $\fh_S$ is defined as $\fh_{S}(\xv_S) := \int_{X_{-S}} \fh(\xv_S, X_{-S})d \P_{X_{-S}}$
 % \item We have already seen the marginal prediction in action in the PDP.
 % \item The subtraction of $\E_{\xv}(\fh(\xv))$ is necessary so that $v$ is a value function with $v(\emptyset) = 0$.
 % \item By using the marginal prediction, we have defined what it means for features to be \enquote{missing} for the prediction: We remove it by integrating over its distribution.
@@ -73,12 +77,24 @@
 \begin{frame}{Shapley Value - Definition \citebutton{Shapley (1953)}{https://doi.org/10.7249/P0295} \citebutton{Strumbelj et al. (2014)}{https://doi.org/10.1007/s10115-013-0679-x}}
   Using the order definition, the Shapley value for feature $j$ and a given observation $\xv$ is computed by:
 
-     $$ \phi_j  = \frac{1}{p!} \sum_{S \subseteq P\setminus \{j\}} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
+     $$ \phi_j(\xv)  = \frac{1}{|P|!} \sum_{\tau \in \Pi} \underbrace{\fh_{\Sm \cup \{j\}}(\xv_{\Sm \cup \{j\}}) - \fh_{\Sm}(\xv_{\Sm})}_{\text{marginal contribution of feature $j$}} $$ %S \subseteq P\setminus \{j\}
+     
+     
 \begin{itemize}
-    \item The term $\E_{\xv}(\fh(\xv))$ drops due to the subtraction of value functions
-  \item Interpretation of Shapley value $\phi_j$ for feature $j$ and observation $\xv$:
-  The feature value $x_j$ contributed $\phi_j$ towards the prediction $\fh(\xv)$ compared to the average prediction for the dataset.
+    
+  \item Interpretation of Shapley value $\phi_j$ for feature $j$ and observation $\xv$:\\
+  Feature value $x_j$ contributed amount $\phi_j$ to prediction $\fh(\xv)$ compared to the average prediction
    \item Note: Marginal contributions and Shapley values can be negative
+   \item For exact computation of $\phi_j(\xv) $, the PD function 
+   %$\fh_{S}(\xv_S) =  \frac{1}{n} \sum_{i=1}^n \fh_S^{(i)}(\xv_S) = \frac{1}{n} \sum_{i=1}^n \fh(\xv_S, \xv_{-S}^{(i)})$ 
+   $\fh_{S}(\xv_S) = \frac{1}{n} \sum_{i=1}^n \fh(\xv_S, \xv_{-S}^{(i)})$ 
+   for any set of features $S$ can be used which yields
+   %$$ \phi_j(\xv) = \frac{1}{|P|! \cdot n} \sum_{\tau \in \Pi} \sum_{i = 1}^n \fh_{\Sm \cup \{j\}}^{(i)}(\xv_{\Sm \cup \{j\}}) -  \fh_{\Sm }^{(i)}(\xv_{\Sm}) $$
+    $$ \phi_j(\xv) = \frac{1}{|P|! \cdot n} \sum_{\tau \in \Pi} \sum_{i = 1}^n
+   \fh(\xv_{\Sm \cup \{j\}}, \xv_{- \Sm \cup \{j\}}^{(i)}) - \fh(\xv_{\Sm}, \xv_{- \Sm}^{(i)})
+   $$
+   $\leadsto$ Note: $\fh_S$ marginalizes over all other features $-S$ using all observations $i = 1, \ldots, n$
+   
 \end{itemize}
 \lz
 %\tiny
@@ -87,25 +103,6 @@
 %Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Explaining prediction models and individual predictions with feature contributions.$"$
 
 \end{frame}
-
-
-
-\begin{frame}{Revisited: Axioms for Fair Attributions}
-  We take the general axioms for Shapley Values and apply it to predictions:
-  \vspace{0.25cm}
-  \begin{itemize}
-  \itemsep1em
-    \item \textbf{Efficiency}: Feature contributions add up to the (centered) prediction. That means, unlike, e.g., LIME, we get a dense attribution, and not a sparse one.
-      $\sum\nolimits_{j=1}^p\phi_j=\fh(\xv)-\E_{\xv}(\fh(X))$
-    \item \textbf{Symmetry}: Two features that contribute the same to the prediction get the same payout $\leadsto$ interaction effects between two features are fairly divided. \\
-      $\fh_{S\cup\{j\}}(\xv_{\Scupj}) = \fh_{\Scupk}(\xv_{\Scupk})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_j=\phi_k$
-    \item \textbf{Dummy / Null Player}: Shapley value of a feature that does not influence the prediction is zero $\leadsto$ if a feature was not selected by the model (e.g., tree or LASSO) the Shapley value is zero  \\
-      $\fh_{\Scupj}(\xv_{\Scupj})=\fhS(\xv_S)$ for all $S \subseteq P$ then $\phi_j=0$
-    \item \textbf{Additivity}:  For a prediction with combined payouts, the
-      payout is the sum of payouts: $\phi_j(v_1) + \phi_j(v_2)$ $\leadsto$ Shapley values for model ensembles can be combined
-  \end{itemize}
-\end{frame}
-
 
 
 \begin{frame}{Estimation: A practical problem}
@@ -122,113 +119,133 @@
 \newcommand{\xk}{\mathbf{x}^{(k)}}
 
 \begin{frame}{Estimation Algorithm \citebutton{Strumbelj et al. (2014)}{https://doi.org/10.1007/s10115-013-0679-x}}
-Estimation of $\phi_j$ for model $\fh$, observation $\xv$, and sample size $M$:
-\vspace{0.25cm}
-  \begin{enumerate}
-      \item For m in 1 to M, \textbf{do}:
+Estimation of $\phi_j$ for observation $\xv$ of model $\fh$ fitted on data $\D$ using sample size $M$:
+%\vspace{0.25cm}
+  \begin{enumerate}[<+->]
+      \item For $m = 1, \ldots, M$ \textbf{do}:
       \begin{enumerate}
-        \item Select random permutation $\pi \in \Pi$.
-        \item Select random data point $\xv^{(k)} \in X$.
-        \item Order $\xv$ according to $\pi$: $\xv_{\pi} = (x_{\pi(1)}, \ldots, x_{\pi(j)}, \ldots, x_{\pi(p)})$.
-        \item Order $\xk$ according to $\pi$: $\xk_{\pi} = (x^{(k)}_{\pi(1)}, \ldots, x^{(k)}_{\pi(j)}, \ldots, x^{(k)}_{\pi(p)})$.
-        \item Construct two observations:
+        \item Select random permutation of feature indices $\tau = (\tau^{(1)}, \ldots, \tau^{(p)}) \in \Pi$
+        %\item Select random data point $\xv^{(k)} \in X$.
+        \item Select random data point $\mathbf{z}^{(m)} \in \D$%\\
+        %$\leadsto$ used to marginalize over
+        \item Let $S_m := \Sm$ be the set of features before $j$ of order $\tau$ forming a coalition
+        \item Order feature values in $\xv$ according to $\tau$: $\xv_{\tau} = (x_{\tau^{(1)}}, \ldots, x_{\tau^{(j)}}, \ldots, x_{\tau^{(p)}})$
+        \item Order feature values in $\mathbf{z}^{(m)}$ according to $\tau$: $\mathbf{z}_{\tau}^{(m)} = (z_{\tau^{(1)}}^{(m)}, \ldots, z_{\tau^{(j)}}^{(m)}, \ldots, z_{\tau^{(p)}}^{(m)})$
+        \item Construct two observations by replacing feature values from $\xv$ with $\mathbf{z}^{(m)}$:
           \begin{itemize}
           \setlength\itemsep{.5em}
-            \item $\xv_{+j} = (x_{\pi(1)}, \ldots, x_{\pi(j - 1)}, x_{\pi(j)}, x^{(k)}_{\pi(j + 1)}, \ldots, x^{(k)}_{\pi(p)}) $
-            \item $\xv_{-j} = (x_{\pi(1)}, \ldots, x_{\pi(j - 1)}, x^{(k)}_{\pi(j)}, x^{(k)}_{\pi(j + 1)}, \ldots, x^{(k)}_{\pi(p)}) $
+            \item $\xv_{+j}^{(m)} = (\underbrace{x_{\tau^{(1)}}, \ldots, x_{\tau^{(j-1)}}, x_{\tau^{(j)}}}_{\xv_{S_m \cup \{j\}}}, z_{\tau^{(j+1)}}^{(m)} , \ldots, z_{\tau^{(p)}}^{(m)} )$ (with value of feature $j$ from $\xv$)
+            \item $\xv_{-j}^{(m)} = (\underbrace{x_{\tau^{(1)}}, \ldots, x_{\tau^{(j-1)}}}_{\xv_{S_m}}, z_{\tau^{(j)}}^{(m)} , z_{\tau^{(j+1)}}^{(m)} , \ldots, z_{\tau^{(p)}}^{(m)} )$ (without value of feature $j$ from $\xv$)
           \end{itemize}
-        \item Compute difference $\phi_j^m = \fh(\xv_{+j}) - \fh(\xv_{-j})$.
+        \item Compute difference $\phi_j^m = \fh(\xv_{+j}^{(m)}) - \fh(\xv_{-j}^{(m)})$ \\
+        $\leadsto$ Random sample from the marginal contribution of feature $j$ for a sampled coalition
       \end{enumerate}
-    \item Compute Shapley value $\phi_j = \frac{1}{M}\sum_{m=1}^M \phi_j^m$.
+    \item Compute Shapley value $\phi_j = \frac{1}{M}\sum_{m=1}^M \phi_j^m = \frac{1}{M} \sum_{m = 1}^M
+   \fh(\xv_{+j}^{(m)} ) -  \fh(\xv_{-j}^{(m)} ) $
   \end{enumerate}
-
-  Each $\phi_j^m$ is a sample from the marginal contribution for a sampled coalition.
-
+%\pause
+%Each $\phi_j^m$ is a random sample from the marginal contribution of feature $j$ for a sampled coalition introduced by $\tau$.
+   
+   %$$ \phi_j(\xv) = \frac{1}{|P|! \cdot n} \sum_{\tau \in \Pi} \sum_{i = 1}^n  \fh(\xv_{\Sm \cup \{j\}}, \xv_{- \Sm \cup \{j\}}^{(i)}) - \fh(\xv_{\Sm}, \xv_{- \Sm}^{(i)})  $$
+   
    % \vspace{0.25cm}
     %\tiny{Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Explaining prediction models and individual predictions with feature contributions.$"$}
 
 \end{frame}
 
-\begin{frame}{Excursus: SHapley value computation}
+\begin{frame}{Shapley value computation - Illustration}
 
 \begin{exampleblock}{Definition}
-\[
-\tikzmark{phi}\phi_{\tikzmark{j}j}(\tikzmark{v}\fh, \tikzmark{x}\xv)=\frac{1}{M}\tikzmark{M}\sum_{m=1}^M \left[\fh_{S_m \tikzmark{SJ}\cup j}\left(\xv_{S_m \tikzmark{SJ}\cup j} \right)-\fh_{\tikzmark{S}S_m}\left(\xv_{\tikzmark{S}S_m}\right)\right]
-\]
+% \[
+% \tikzmark{phi}\phi_{\tikzmark{j}j}(%\tikzmark{v}\fh,
+% \tikzmark{x}\xv)=\frac{1}{M}\tikzmark{M}\sum_{m=1}^M \left[
+% \fh_{S_m \tikzmark{SJ}\cup j}
+% \left(\xv_{S_m \tikzmark{SJ}\cup j}\right)-
+% \fh_{\tikzmark{S}S_m}\left(\xv_{\tikzmark{S}S_m}\right)\right]
+% \]
+$$
+\tikzmark{phi}\phi_{\tikzmark{j}j}(%\tikzmark{v}\fh,
+\tikzmark{x}\xv)=\frac{1}{M}\tikzmark{M}\sum_{m=1}^M \left[
+\fh(\xv_{+j}\tikzmark{SJ}^{(m)}) -
+\fh(\xv_{-j}\tikzmark{S}^{(m)})\right]
+$$
 \begin{tikzpicture}[
   remember picture,
   overlay,
-  expl/.style={draw=blue,fill=white,rounded corners,text width=3cm},
+  expl/.style={draw=blue,fill=white,rounded corners,text width=3.7cm},
   arrow/.style={blue,ultra thick,->,>=latex}
 ]
 %%%% Explain Formula I
-\draw<2-3> [draw=white, fill=white, opacity=0.6]
-       (5.8,0) -- (11,0) -- (11,2) -- (5.8,2) --cycle;
-\node<2>[expl] 
+% \draw<2-3> [draw=white, fill=white, opacity=0]
+%       (5.8,0) -- (11,0) -- (11,2) -- (5.8,2) --cycle;
+\node<1>[expl] 
   (phiex) 
   at (6,2cm)
-  {$\phi$: The Shapley value};
+  {Shapley value of feat. $j$};
+% \node<2>[expl] 
+%   (jex) 
+%   at (2,0cm)
+%   {for feature $j$};
+% \node<3>[expl] 
+%   (vex) 
+%   at (5,-0.7cm)
+%   {$\fh$: pred. function};
 \node<2>[expl] 
-  (jex) 
-  at (2,0cm)
-  {for feature $j$};
-\node<3>[expl] 
-  (vex) 
-  at (5,-0.7cm)
-  {$\fh$: pred. function};
-\node<3>[expl] 
   (xex) 
   at (6,2cm)
-  {$x$: Input data (a single observation)};
-\draw<2>[arrow]
+  {$\xv$: obs. of interest};
+\draw<1>[arrow]
   (phiex.south) to[out=270,in=90] ([xshift= 1ex, yshift=1.5ex]{pic cs:phi});  
+% \draw<2>[arrow]
+%   (jex.north) to[out=90,in=270] ([yshift=-0.5ex]{pic cs:j});  
+% \draw<3>[arrow]
+%   (vex.east) to[out=0,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:v});  
 \draw<2>[arrow]
-  (jex.north) to[out=90,in=270] ([yshift=-0.5ex]{pic cs:j});  
-\draw<3>[arrow]
-  (vex.east) to[out=0,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:v});  
-\draw<3>[arrow]
   (xex.west) to[out=180,in=135] ([xshift= 1ex, yshift=1ex]{pic cs:x}); 
   
  %%%% Explain Formula II
-\draw<4-5> [draw=white, fill=white, opacity=0.6]
-       (4,0) -- (6.8,0) -- (6.8,2) -- (4,2) --cycle;
-\node<4>[expl] 
+% \draw<3-5> [draw=white, fill=white, opacity=0.6]
+%       (4,0) -- (6.8,0) -- (6.8,2) -- (4,2) --cycle;
+\node<2>[expl] 
   (Sex) 
-  at (10,2cm)
-  {$x_{S_m}$: A subset of $x_S$};
-\node<5>[expl] 
+  at (12,2cm)
+  {$\xv$ with replaced feature values in $S_m$};
+\node<3>[expl] 
   (Sex) 
   at (13,1cm)
-  {$\fh_{S_m}(x_{S_m})$: The contribution of $x_{S_m}$ to the prediction};
- \node<4>[expl] 
+  {Contribution of feature $j$ to coalition $S_m$};
+ \node<2>[expl] 
   (SJex) 
   at (10,-0.8cm)
-  {$x_{S_m \cup j}$: The same subset $x_{S_m}$ but including feature $j$};
-  \draw<4>[arrow]
+  {$\xv$ with replaced feature values in $S_m \cup \{j\}$};
+  \draw<2>[arrow]
   (Sex.south) to[out=270,in=90] ([xshift= 1ex, yshift=1.5ex]{pic cs:S});
- \draw<5>[arrow]
+ \draw<3>[arrow]
   (Sex.north) to[out=90,in=90] ([xshift= 1ex, yshift=1.5ex]{pic cs:S});
-  \draw<4>[arrow]
+  \draw<2>[arrow]
   (SJex.north) to[out=90,in=270] ([yshift=-0.5ex]{pic cs:SJ}); 
-  \draw<5> [decorate,decoration={brace, amplitude=5pt,mirror,raise=4ex}]  (7.4,1.1) --  (10.5,1.1)
-  node[midway,yshift=-3.5em]{$:= \Delta(j, S_m)$};
+  \draw<3> [decorate,decoration={brace, amplitude=5pt,mirror,raise=4ex}]  (7,1.1) --  (10.4,1.1)
+  node[midway,yshift=-3.4em]{\scriptsize $:= \Delta(j, S_m)$};
+  
+  \draw<3> [draw=white, fill=white, opacity=0.6]
+       (4,0) -- (7,0) -- (7, 2) -- (4,2) --cycle;
   %%%% Explain Formula III
-  \draw<6> [draw=white, fill=white, opacity=0.6]
+  \draw<4> [draw=white, fill=white, opacity=0.6]
        (4,0) -- (5.7,0) -- (5.7, 2) -- (4,2) --cycle;
-  \draw<6> [draw=white, fill=white, opacity=0.6]
-        (6.8,0) -- (12,0) -- (12,2) -- (6.8,2) --cycle;
-  \node<6>[expl] 
+  \draw<4> [draw=white, fill=white, opacity=0.6]
+        (7,0) -- (12,0) -- (12,2) -- (7,2) --cycle;
+  \node<4>[expl] 
   (Mex) 
   at (12,2cm)
-  {$\frac{1}{M}\sum$: Average the contribution of feature $j$};
-  \draw<6>[arrow]
+  {average the contributions of feature $j$};
+  \draw<4>[arrow]
   (Mex.west) to[out=180,in=90] ([xshift= 0.5ex, yshift=4ex]{pic cs:M}); 
 \end{tikzpicture}
 \end{exampleblock}
-\vspace{0.5cm}
+%\vspace{0.5cm}
 \begin{itemize}
-    \begin{onlyenv}<2>
-    \item The Shapley value assigns a value to each feature $j$ according to the marginal contribution of each player in all possible coalitions $S$.
+    \begin{onlyenv}<1>
+    \item The Shapley value assigns a value to each feature $j$ according to the marginal contribution of each player in all possible coalitions
     \end{onlyenv}
     %\begin{onlyenv}<3>
     %\item A value function $v(S): 2^{|P|}\mapsto \R$ describes the payout (or gain) achieved by any coalition $\forall S \subseteq P$. The value of the empty coalition must be zero: $v(\emptyset) = 0$.
@@ -248,11 +265,12 @@ Estimation of $\phi_j$ for model $\fh$, observation $\xv$, and sample size $M$:
     %\item Let $S_{\lnot m}$ denote the subset of $P$ that is not in $S_m$.
     %\item Draw the values of all other features $x_{S_{\lnot m}}$ randomly from the set of available values of the regarding feature to calculate $v(x_{S_m})$
     %\end{onlyenv}
-    \begin{onlyenv}<5>
-     \item $\Delta(j, S_m) = \fh_{S \cup j}(x_{S \cup j}) - \fh_S(x_{S})$ is the marginal contribution of player $j$ to coalition $S$
+    \begin{onlyenv}<3>
+     \item $\Delta(j, S_m) = \fh(\xv_{+j}^{(m)}) -
+\fh(\xv_{-j}^{(m)})$ is the marginal contribution of player $j$ to coalition $S_m$
     \item In this subset $S_m$ the variable \textit{year} contributes +17 bike rentals compared to the expected prediction conditioned on features in $S_m$ (and all other features are assumed to be absent)
     \end{onlyenv}
-    \begin{onlyenv}<6>
+    \begin{onlyenv}<4>
     \item Average the marginal contribution of feature $j$ towards the prediction
     across all randomly drawn feature coalitions $S_1, \ldots , S_M$.
     \item The resulting Shapley value $\phi_j$ tells us what the payout of feature $j$ is, i.e., how the feature \textit{year} contributes to the overall prediction in bicycle counts of a specific observation $\xv$
@@ -266,45 +284,69 @@ Estimation of $\phi_j$ for model $\fh$, observation $\xv$, and sample size $M$:
 %\includegraphics<5>[page=2, width=1\textwidth]{figure_man/data_shapley}
 %\includegraphics<6>[page=3, width=1\textwidth]{figure_man/data_shapley}
 %\includegraphics<7>[page=4, width=1\textwidth]{figure_man/data_shapley}
-\includegraphics<5>[page=5, width=1\textwidth]{figure_man/data_shapley}
-\includegraphics<6>[page=6, width=1\textwidth]{figure_man/data_shapley}
+\includegraphics<3>[page=5, width=1\textwidth]{figure_man/data_shapley}
+\includegraphics<4>[page=6, width=1\textwidth]{figure_man/data_shapley}
 \end{center}
 
 \end{frame}
 
-\begin{frame}{Additional Estimation Trick}
 
 
-  The Shapley value can be estimated more efficiently when certain coalitions are always included in the computation, instead of random sampling:
+
+
+\begin{frame}{Revisited: Axioms for Fair Attributions}
+  We take the general axioms for Shapley Values and apply it to predictions:
   \vspace{0.25cm}
-  \begin{itemize}
+  \begin{itemize}[<+->]
   \itemsep1em
-    \item The coalitions with $S = \emptyset$ (i.e., $|S| = 0$) and $S = \{1, \ldots, p\} \setminus j$ have the highest weights in the Shapley value computation $\leadsto$ including them makes Shapley value more stable with fewer samples %Sample weights have to be adapted for the sampled coalitions afterwards.
-    \item Intuition: Adding a feature to the empty coalition gives information about the \textit{pure} first order effect of the feature, which is the effect without any interactions 
-    \item Adding the feature value to the complete set of feature values gives us the information about the total effect of a feature, which is the sum of the main effect and all interaction effects with other features
-    \item For coalition $S = \emptyset$, there are $0! (|P| - 0 - 1)! = 1 \cdot (|P| - 1)! = (p - 1)!$ orders, which is the same for $S = P \setminus \{j\}$: $|P \setminus \{j\}|! (|P| - |P \setminus \{j\}| - 1)! = (p - 1)! (p - (p-1) - 1)! = (p-1)!$
-\end{itemize}
- \end{frame}
-
-\begin{frame}{Additional Estimation Trick}
-An example with $p = 5$ features:
-\vspace{0.25cm}
-    \begin{itemize}
-    \itemsep1em
-        \item There are $5! = 120$ orders in total
-        \item In $(5 - 1)! = 24$ orders, we added feature value $x_j$ to the empty set
-        \item In 24 orders, we added the feature value to the otherwise full feature set
-        \item That means with just two sets, we can already get $\frac{48}{120} = 0.4$ of the contributions to the Shapley value
-        \item Similarly, we could proceed with all coalitions of $\{S: |S| = 1\}$ and $\{S: |S| = p - 1\}$
-        \item When some coalitions are added \enquote{manually}, and the rest are sampled, we have to adapt the weights: Let $w$ be the weight of the \enquote{manually} sampled coalitions, $\hat{\phi}_{j,fixed}$ the part of the Shapley value with only the manual contributions and $\hat{\phi}_{j,sample}$ the Shapley value with the sampled coalitions, then the Shapley value is: $w \cdot \hat{\phi}_{j,fixed} + (1 - w) \hat{\phi}_{j,sample}$
+    \item \textbf{Efficiency}: Feature contributions add up to the (centered) prediction: %. 
+    %That means, unlike, e.g., LIME, we get a dense attribution, and not a sparse one.
+    $\sum\nolimits_{j=1}^p\phi_j=\fh(\xv)-\E_{\xv}(\fh(X))$
+    \item \textbf{Symmetry}: Two features that contribute the same to the prediction get the same payout\\
+    $\leadsto$ interaction effects between features are fairly divided \\
+      $\fh_{S\cup\{j\}}(\xv_{\Scupj}) = \fh_{\Scupk}(\xv_{\Scupk})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_j=\phi_k$
+    \item \textbf{Dummy / Null Player}: Shapley value of a feature that does not influence the prediction is zero $\leadsto$ if a feature was not selected by the model (e.g., tree or LASSO) the Shapley value is zero  \\
+      $\fh_{\Scupj}(\xv_{\Scupj})=\fhS(\xv_S)$ for all $S \subseteq P$ then $\phi_j=0$
+    \item \textbf{Additivity}:  For a prediction with combined payouts, the
+      payout is the sum of payouts: $\phi_j(v_1) + \phi_j(v_2)$ $\leadsto$ Shapley values for model ensembles can be combined
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Additional Estimation Trick}
-      \begin{center}
-        \includegraphics[width=0.5\textwidth]{figure/shapley-weights}
-      \end{center}
-\end{frame}
+
+
+% \begin{frame}{Additional Estimation Trick}
+
+
+%   The Shapley value can be estimated more efficiently when certain coalitions are always included in the computation, instead of random sampling:
+%   \vspace{0.25cm}
+%   \begin{itemize}
+%   \itemsep1em
+%     \item The coalitions with $S = \emptyset$ (i.e., $|S| = 0$) and $S = \{1, \ldots, p\} \setminus j$ have the highest weights in the Shapley value computation $\leadsto$ including them makes Shapley value more stable with fewer samples %Sample weights have to be adapted for the sampled coalitions afterwards.
+%     \item Intuition: Adding a feature to the empty coalition gives information about the \textit{pure} first order effect of the feature, which is the effect without any interactions 
+%     \item Adding the feature value to the complete set of feature values gives us the information about the total effect of a feature, which is the sum of the main effect and all interaction effects with other features
+%     \item For coalition $S = \emptyset$, there are $0! (|P| - 0 - 1)! = 1 \cdot (|P| - 1)! = (p - 1)!$ orders, which is the same for $S = P \setminus \{j\}$: $|P \setminus \{j\}|! (|P| - |P \setminus \{j\}| - 1)! = (p - 1)! (p - (p-1) - 1)! = (p-1)!$
+% \end{itemize}
+%  \end{frame}
+
+% \begin{frame}{Additional Estimation Trick}
+% An example with $p = 5$ features:
+% \vspace{0.25cm}
+%     \begin{itemize}
+%     \itemsep1em
+%         \item There are $5! = 120$ orders in total
+%         \item In $(5 - 1)! = 24$ orders, we added feature value $x_j$ to the empty set
+%         \item In 24 orders, we added the feature value to the otherwise full feature set
+%         \item That means with just two sets, we can already get $\frac{48}{120} = 0.4$ of the contributions to the Shapley value
+%         \item Similarly, we could proceed with all coalitions of $\{S: |S| = 1\}$ and $\{S: |S| = p - 1\}$
+%         \item When some coalitions are added \enquote{manually}, and the rest are sampled, we have to adapt the weights: Let $w$ be the weight of the \enquote{manually} sampled coalitions, $\hat{\phi}_{j,fixed}$ the part of the Shapley value with only the manual contributions and $\hat{\phi}_{j,sample}$ the Shapley value with the sampled coalitions, then the Shapley value is: $w \cdot \hat{\phi}_{j,fixed} + (1 - w) \hat{\phi}_{j,sample}$
+%   \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Additional Estimation Trick}
+%       \begin{center}
+%         \includegraphics[width=0.5\textwidth]{figure/shapley-weights}
+%       \end{center}
+% \end{frame}
 
 \begin{frame}{Bike Sharing Dataset}
 

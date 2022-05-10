@@ -4,7 +4,7 @@
 % Defines macros and environments
 \input{../../style/common.tex}
 
-\newcommand{\Sm}{S(\tau,j)}%{Pre(\tau,j)} % 
+\newcommand{\Sm}{S_{j}^\tau}%{Pre(\tau,j)} % S(\tau,j)
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -152,7 +152,7 @@ $\leadsto$ More players in $S$ $\Rightarrow$ more orderings of $S$
 
 
 
-\begin{frame}{Shapley Value}
+\begin{frame}{Shapley Value - Set definition}
 
 This idea refers to the \textbf{Shapley value} which assigns a payout value to each player according to its marginal contribution in all possible coalitions.
 % which  provide a unique solution for the payout attribution problem.
@@ -170,9 +170,9 @@ This idea refers to the \textbf{Shapley value} which assigns a payout value to e
   \item Shapley value via \textbf{set definition} (weighting via multinomial coefficient): 
   $$\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$$
   %\item Shapley values are the \textit{only} solution for the attribution with the specified axioms.
-  \item Equivalent Shapley value definition via \textbf{orders}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
-    $\leadsto$ $\Pi$: All possible $|P|!$ orders/permutations of players\\
-    $\leadsto$ $\Sm$: The set of players before player $j$ in order $\tau$ 
+%   \item Equivalent Shapley value definition via \textbf{orders}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
+%     $\leadsto$ $\Pi$: All possible $|P|!$ orders/permutations of players\\
+%     $\leadsto$ $\Sm$: The set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$ % j, \dots, 
 \end{itemize}
 
 \end{frame}
@@ -237,18 +237,25 @@ This idea refers to the \textbf{Shapley value} which assigns a payout value to e
 
 
 
-\begin{frame}{Shapley Value - Comments on Order Definition}
-The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can be defined as a summation of all orders of players (which explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from).
+\begin{frame}{Shapley Value - Order Definition}
+The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can be equivalently defined as a summation of all orders of players: 
+%(which explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from):
+
+$$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
+  
 \begin{itemize}[<+->]
-  \item Let $\Pi$ be all possible orders of players (we have $|P|!$ in total)
-  \item Recall the order definition: $\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$
-  \item $\Sm$ is the set of players before player $j$ in order $\tau$\\
-  $\Rightarrow$ Example: Players $1,2,3$ $\Rightarrow$ $\Pi = \{(1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)\}$\\
-  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (2,1,3)$ and player of interest $j=3$ $\Rightarrow$ $\Sm = \{2, 1\}$\\
-  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=1$ $\Rightarrow$ $\Sm = \{3\}$\\
-  \phantom{$\Rightarrow$} $\leadsto$ For permutation $\tau = (3,1,2)$ and player of interest $j=3$ $\Rightarrow$ $\Sm = \emptyset$
-  \item In order definition, we sum the marginal contribution twice for orders that yield set $S = \{1,2\}$\\
-  $\leadsto$ In set definition it has the weight $\tfrac{2! (3 - 2 - 1)!}{3!} = \tfrac{2 \cdot 0!}{6} = \tfrac{2}{6}$
+  \item $\Pi$: All possible orders of players (we have $|P|!$ in total)
+  %\item Recall the order definition: 
+  \item $\Sm$: Set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$  where $\tau^{(i)}$ is $i$-th element \\ % j, \dots, 
+  $\Rightarrow$ Example: Players $1,2,3$ $\Rightarrow$ 
+  \only<3>{$\Pi = \{({\color{red} 1,2},3), (1,3,2), ({\color{red} 2,1},3), (2,3,1), (3,1,2), (3,2,1)\}$}
+  \only<1-2>{$\Pi = \{(1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)\}$}\\
+  \phantom{$\Rightarrow$} $\leadsto$ For order $\tau = (2,1,3)$ and player of interest $j=3$ $\Rightarrow$ $\Sm = \{2, 1\}$\\
+  \phantom{$\Rightarrow$} $\leadsto$ For order $\tau = (3,1,2)$ and player of interest $j=1$ $\Rightarrow$ $\Sm = \{3\}$\\
+  \phantom{$\Rightarrow$} $\leadsto$ For order $\tau = (3,1,2)$ and player of interest $j=3$ $\Rightarrow$ $\Sm = \emptyset$
+  %\item In order definition, we sum the marginal contribution twice for orders that yield set $S = \{1,2\}$\\
+  \item Order definition: Marginal contribution of orders that yield set {\color{red} $S = \{1,2\}$} is summed twice\\
+  $\leadsto$ In set definition, it has the weight $\tfrac{2! (3 - 2 - 1)!}{3!} = \tfrac{2 \cdot 0!}{6} = \tfrac{2}{6}$
 \end{itemize}
 
 \end{frame}
@@ -267,7 +274,7 @@ The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can 
     \multicolumn{1}{c}{} &
     \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
     \hline
-    $\tau^{(1)}$ & \ldots & $\tau^{(|S|)}$ & $\tau^{(|S| + 1)}$ & $\tau^{(|S| + 2)}$ & \ldots & $\tau^{(P)}$ \\
+    $\tau^{(1)}$ & \ldots & $\tau^{(|S|)}$ & $\tau^{(|S| + 1)}$ & $\tau^{(|S| + 2)}$ & \ldots & $\tau^{(p)}$ \\
     \hline
     \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}} &
     \multicolumn{1}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{4em}}^{}$}} &
@@ -279,7 +286,7 @@ The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can 
   %to approximate the Shapley values
   %instead of producing all $|P|!$ permutations, a fixed number of $M< |P|!$ permutations can be sampled and averaged to approximate the Shapley values
   $$\phi_j = \frac{1}{M} \sum_{\tau \in \Pi_M} (v(\Sm \cup \{j\}) - v(\Sm))$$
-    where $\Pi_M \subset \Pi$ is random subset of $\Pi$ containing $M< |P|!$ orders/permutations of players\\
+    where $\Pi_M \subset \Pi$ is a random subset of $\Pi$ containing only $M< |P|!$ orders of players\\
     %$\leadsto$ $\Sm$: For permutation $\tau$, the set of players before player $j$ in order $\tau$ 
 \end{itemize}
 
@@ -343,7 +350,7 @@ The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can 
     \item \textbf{Symmetry}: Players $j,k \in P$ who contribute the same to any coalition get the same payout: \\
       If $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$, then $\phi_j=\phi_k$
     \item \textbf{Dummy/Null Player}: Payout is 0 for players who don't contribute to the value of any coalition: \\
-      If $v(\Scupj)=v(S)\quad  \forall \quad \SsubP \setminus j$, then $\phi_j=0$
+      If $v(\Scupj)=v(S)\quad  \forall \quad \SsubP \setminus \{j\}$, then $\phi_j=0$
     \item \textbf{Additivity}: For a game $v$ with combined payouts $v(S) = v_1(S) + v_2(S)$, the payout is the sum of payouts: $\phi_{j,v} = \phi_{j,v_1} + \phi_{j, v_2}$
   \end{itemize}
   \vspace{0.5cm}
