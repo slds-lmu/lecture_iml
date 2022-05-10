@@ -3,7 +3,18 @@
 \usepackage{../../style/lmu-lecture}
 % Defines macros and environments
 \input{../../style/common.tex}
-\newcommand{\Sm}{S_{j}^\tau}%{Pre(\tau,j)} % S(\tau,j)
+\newcommand{\Sm}{S_m}%{Pre(\tau,j)} % S(\tau,j)
+\newcommand{\Smj}{\Sm \cup \{j\}}
+\newcommand{\minusSmj}{- \{\Sm \cup \{j\} \} }
+\newcommand{\Stau}{S_{j}^\tau}%{Pre(\tau,j)} % S(\tau,j)
+\newcommand{\Stauj}{\Stau \cup \{j\}}
+\newcommand{\minusStauj}{- \{\Stau \cup \{j\} \} }
+
+\newcommand{\xjp}{\xv_{+j}^{(m)}}
+\newcommand{\xjm}{\xv_{-j}^{(m)}}
+%\newcommand{\xjp}{\xv_{\Smj}, \mathbf{z}^{(m)}_{\minusSmj}}
+%\newcommand{\xjm}{\xv_{\Sm}, \mathbf{z}^{(m)}_{- \Sm}}
+
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -77,7 +88,7 @@
 \begin{frame}{Shapley Value - Definition \citebutton{Shapley (1953)}{https://doi.org/10.7249/P0295} \citebutton{Strumbelj et al. (2014)}{https://doi.org/10.1007/s10115-013-0679-x}}
   Using the order definition, the Shapley value for feature $j$ and a given observation $\xv$ is computed by:
 
-     $$ \phi_j(\xv)  = \frac{1}{|P|!} \sum_{\tau \in \Pi} \underbrace{\fh_{\Sm \cup \{j\}}(\xv_{\Sm \cup \{j\}}) - \fh_{\Sm}(\xv_{\Sm})}_{\text{marginal contribution of feature $j$}} $$ %S \subseteq P\setminus \{j\}
+     $$ \phi_j(\xv)  = \frac{1}{|P|!} \sum_{\tau \in \Pi} \underbrace{\fh_{\Smj}(\xv_{\Smj}) - \fh_{\Sm}(\xv_{\Sm})}_{\text{marginal contribution of feature $j$}} $$ %S \subseteq P\setminus \{j\}
      
      
 \begin{itemize}
@@ -89,9 +100,9 @@
    %$\fh_{S}(\xv_S) =  \frac{1}{n} \sum_{i=1}^n \fh_S^{(i)}(\xv_S) = \frac{1}{n} \sum_{i=1}^n \fh(\xv_S, \xv_{-S}^{(i)})$ 
    $\fh_{S}(\xv_S) = \frac{1}{n} \sum_{i=1}^n \fh(\xv_S, \xv_{-S}^{(i)})$ 
    for any set of features $S$ can be used which yields
-   %$$ \phi_j(\xv) = \frac{1}{|P|! \cdot n} \sum_{\tau \in \Pi} \sum_{i = 1}^n \fh_{\Sm \cup \{j\}}^{(i)}(\xv_{\Sm \cup \{j\}}) -  \fh_{\Sm }^{(i)}(\xv_{\Sm}) $$
+   %$$ \phi_j(\xv) = \frac{1}{|P|! \cdot n} \sum_{\tau \in \Pi} \sum_{i = 1}^n \fh_{\Smj}^{(i)}(\xv_{\Smj}) -  \fh_{\Sm }^{(i)}(\xv_{\Sm}) $$
     $$ \phi_j(\xv) = \frac{1}{|P|! \cdot n} \sum_{\tau \in \Pi} \sum_{i = 1}^n
-   \fh(\xv_{\Sm \cup \{j\}}, \xv_{- \Sm \cup \{j\}}^{(i)}) - \fh(\xv_{\Sm}, \xv_{- \Sm}^{(i)})
+   \fh(\xv_{\Stauj}, \xv_{\minusStauj}^{(i)}) - \fh(\xv_{\Stau}, \xv_{- \Stau}^{(i)})
    $$
    $\leadsto$ Note: $\fh_S$ marginalizes over all other features $-S$ using all observations $i = 1, \ldots, n$
    
@@ -124,29 +135,35 @@ Estimation of $\phi_j$ for observation $\xv$ of model $\fh$ fitted on data $\D$ 
   \begin{enumerate}[<+->]
       \item For $m = 1, \ldots, M$ \textbf{do}:
       \begin{enumerate}
-        \item Select random permutation of feature indices $\tau = (\tau^{(1)}, \ldots, \tau^{(p)}) \in \Pi$
+        \item Select random order / permutation of feature indices $\tau = (\tau^{(1)}, \ldots, \tau^{(p)}) \in \Pi$
         %\item Select random data point $\xv^{(k)} \in X$.
+        %\item Let $\Sm := \Sm$ be the set of features before $j$ of order $\tau$ forming a coalition
+        \item Determine coalition $\Sm := \Stau$, i.e., the set of features before feature $j$ in order $\tau$
         \item Select random data point $\mathbf{z}^{(m)} \in \D$%\\
         %$\leadsto$ used to marginalize over
-        \item Let $S_m := \Sm$ be the set of features before $j$ of order $\tau$ forming a coalition
-        \item Order feature values in $\xv$ according to $\tau$: $\xv_{\tau} = (x_{\tau^{(1)}}, \ldots, x_{\tau^{(j)}}, \ldots, x_{\tau^{(p)}})$
-        \item Order feature values in $\mathbf{z}^{(m)}$ according to $\tau$: $\mathbf{z}_{\tau}^{(m)} = (z_{\tau^{(1)}}^{(m)}, \ldots, z_{\tau^{(j)}}^{(m)}, \ldots, z_{\tau^{(p)}}^{(m)})$
-        \item Construct two observations by replacing feature values from $\xv$ with $\mathbf{z}^{(m)}$:
+        %\item Order feature values in $\xv$ according to $\tau$: $\xv_{\tau} = (x_{\tau^{(1)}}, \ldots, x_{\tau^{(j)}}, \ldots, x_{\tau^{(p)}})$
+        %\item Order feature values in $\mathbf{z}^{(m)}$ according to $\tau$: $\mathbf{z}_{\tau}^{(m)} = (z_{\tau^{(1)}}^{(m)}, \ldots, z_{\tau^{(j)}}^{(m)}, \ldots, z_{\tau^{(p)}}^{(m)})$
+        \item Construct two artificial observations by replacing feature values from $\xv$ with $\mathbf{z}^{(m)}$:
           \begin{itemize}
           \setlength\itemsep{.5em}
-            \item $\xv_{+j}^{(m)} = (\underbrace{x_{\tau^{(1)}}, \ldots, x_{\tau^{(j-1)}}, x_{\tau^{(j)}}}_{\xv_{S_m \cup \{j\}}}, z_{\tau^{(j+1)}}^{(m)} , \ldots, z_{\tau^{(p)}}^{(m)} )$ (with value of feature $j$ from $\xv$)
-            \item $\xv_{-j}^{(m)} = (\underbrace{x_{\tau^{(1)}}, \ldots, x_{\tau^{(j-1)}}}_{\xv_{S_m}}, z_{\tau^{(j)}}^{(m)} , z_{\tau^{(j+1)}}^{(m)} , \ldots, z_{\tau^{(p)}}^{(m)} )$ (without value of feature $j$ from $\xv$)
+            \item % 
+            $ \xjp  = (\underbrace{x_{\tau^{(1)}}, \ldots, x_{\tau^{(|\Sm|-1)}}, x_{j}}_{\xv_{\Smj}}, \underbrace{z_{\tau^{(|\Sm|+1)}}^{(m)} , \ldots, z_{\tau^{(p)}}^{(m)}}_{\mathbf{z}^{(m)}_{\minusSmj}} )$
+            takes features $\Smj$ from $\xv$
+            %(with value of feature $j$ from $\xv$)
+            \item % \xjm =
+            $ \xjm = (\underbrace{x_{\tau^{(1)}}, \ldots, x_{\tau^{(|\Sm|-1)}}}_{\xv_{\Sm}}, \underbrace{z_{j}^{(m)} , z_{\tau^{(|\Sm|+1)}}^{(m)} , \ldots, z_{\tau^{(p)}}^{(m)}}_{\mathbf{z}^{(m)}_{-\Sm}} )$
+            takes features $\Sm$ from $\xv$
+            %(without value of feature $j$ from $\xv$)
           \end{itemize}
-        \item Compute difference $\phi_j^m = \fh(\xv_{+j}^{(m)}) - \fh(\xv_{-j}^{(m)})$ \\
+        \item Compute difference $\phi_j^m = \fh(\xjp) - \fh(\xjm)$ \\
         $\leadsto$ Random sample from the marginal contribution of feature $j$ for a sampled coalition
       \end{enumerate}
-    \item Compute Shapley value $\phi_j = \frac{1}{M}\sum_{m=1}^M \phi_j^m = \frac{1}{M} \sum_{m = 1}^M
-   \fh(\xv_{+j}^{(m)} ) -  \fh(\xv_{-j}^{(m)} ) $
+    \item Compute Shapley value $\phi_j = \frac{1}{M}\sum_{m=1}^M \phi_j^m$ %= \frac{1}{M} \sum_{m = 1}^M   \fh(\xjp ) -  \fh(\xjm ) $
   \end{enumerate}
 %\pause
 %Each $\phi_j^m$ is a random sample from the marginal contribution of feature $j$ for a sampled coalition introduced by $\tau$.
    
-   %$$ \phi_j(\xv) = \frac{1}{|P|! \cdot n} \sum_{\tau \in \Pi} \sum_{i = 1}^n  \fh(\xv_{\Sm \cup \{j\}}, \xv_{- \Sm \cup \{j\}}^{(i)}) - \fh(\xv_{\Sm}, \xv_{- \Sm}^{(i)})  $$
+   %$$ \phi_j(\xv) = \frac{1}{|P|! \cdot n} \sum_{\tau \in \Pi} \sum_{i = 1}^n  \fh(\xv_{\Smj}, \xv_{\minusSmj}^{(i)}) - \fh(\xv_{\Sm}, \xv_{- \Sm}^{(i)})  $$
    
    % \vspace{0.25cm}
     %\tiny{Strumbelj, Erik, Igor Kononenko, Erik Strumbelj, and Igor Kononenko. 2014. $"$Explaining prediction models and individual predictions with feature contributions.$"$}
@@ -159,9 +176,9 @@ Estimation of $\phi_j$ for observation $\xv$ of model $\fh$ fitted on data $\D$ 
 % \[
 % \tikzmark{phi}\phi_{\tikzmark{j}j}(%\tikzmark{v}\fh,
 % \tikzmark{x}\xv)=\frac{1}{M}\tikzmark{M}\sum_{m=1}^M \left[
-% \fh_{S_m \tikzmark{SJ}\cup j}
-% \left(\xv_{S_m \tikzmark{SJ}\cup j}\right)-
-% \fh_{\tikzmark{S}S_m}\left(\xv_{\tikzmark{S}S_m}\right)\right]
+% \fh_{\Sm \tikzmark{SJ}\cup j}
+% \left(\xv_{\Sm \tikzmark{SJ}\cup j}\right)-
+% \fh_{\tikzmark{S}\Sm}\left(\xv_{\tikzmark{S}\Sm}\right)\right]
 % \]
 $$
 \tikzmark{phi}\phi_{\tikzmark{j}j}(%\tikzmark{v}\fh,
@@ -209,15 +226,15 @@ $$
 \node<2>[expl] 
   (Sex) 
   at (12,2cm)
-  {$\xv$ with replaced feature values in $S_m$};
+  {$\xv$ with feature values in $\Sm$ (other are replaced)};
 \node<3>[expl] 
   (Sex) 
   at (13,1cm)
-  {Contribution of feature $j$ to coalition $S_m$};
+  {Contribution of feature $j$ to coalition $\Sm$};
  \node<2>[expl] 
   (SJex) 
   at (10,-0.8cm)
-  {$\xv$ with replaced feature values in $S_m \cup \{j\}$};
+  {$\xv$ with feature values in $\Smj$};
   \draw<2>[arrow]
   (Sex.south) to[out=270,in=90] ([xshift= 1ex, yshift=1.5ex]{pic cs:S});
  \draw<3>[arrow]
@@ -225,7 +242,7 @@ $$
   \draw<2>[arrow]
   (SJex.north) to[out=90,in=270] ([yshift=-0.5ex]{pic cs:SJ}); 
   \draw<3> [decorate,decoration={brace, amplitude=5pt,mirror,raise=4ex}]  (7,1.1) --  (10.4,1.1)
-  node[midway,yshift=-3.4em]{\scriptsize $:= \Delta(j, S_m)$};
+  node[midway,yshift=-3.4em]{\scriptsize $:= \Delta(j, \Sm)$};
   
   \draw<3> [draw=white, fill=white, opacity=0.6]
        (4,0) -- (7,0) -- (7, 2) -- (4,2) --cycle;
@@ -247,6 +264,7 @@ $$
     \begin{onlyenv}<1>
     \item The Shapley value assigns a value to each feature $j$ according to the marginal contribution of each player in all possible coalitions
     \end{onlyenv}
+    %\invisible<2>{\item The Shapley value assigns a value to each feature $j$ according to the marginal contribution of each player in all possible coalitions}
     %\begin{onlyenv}<3>
     %\item A value function $v(S): 2^{|P|}\mapsto \R$ describes the payout (or gain) achieved by any coalition $\forall S \subseteq P$. The value of the empty coalition must be zero: $v(\emptyset) = 0$.
     %\item The payout of coalition $S$ for observation $\xv$ is 
@@ -258,25 +276,26 @@ $$
     %\end{onlyenv}
     % Part II
     %\begin{onlyenv}<5>
-    %\item $S_m$ is a randomly selected set of features: $S_m \subseteq P \setminus j$ where $P$ denotes the quantity of all features in $X$
-    %\item Let $x_{S_m}$ be a random chosen subset of features in $x_S$ that is hold fix
+    %\item $\Sm$ is a randomly selected set of features: $\Sm \subseteq P \setminus j$ where $P$ denotes the quantity of all features in $X$
+    %\item Let $x_{\Sm}$ be a random chosen subset of features in $x_S$ that is hold fix
     %\end{onlyenv}
      %   \begin{onlyenv}<6>
-    %\item Let $S_{\lnot m}$ denote the subset of $P$ that is not in $S_m$.
-    %\item Draw the values of all other features $x_{S_{\lnot m}}$ randomly from the set of available values of the regarding feature to calculate $v(x_{S_m})$
+    %\item Let $S_{\lnot m}$ denote the subset of $P$ that is not in $\Sm$.
+    %\item Draw the values of all other features $x_{S_{\lnot m}}$ randomly from the set of available values of the regarding feature to calculate $v(x_{\Sm})$
     %\end{onlyenv}
     \begin{onlyenv}<3>
-     \item $\Delta(j, S_m) = \fh(\xv_{+j}^{(m)}) -
-\fh(\xv_{-j}^{(m)})$ is the marginal contribution of player $j$ to coalition $S_m$
-    \item In this subset $S_m$ the variable \textit{year} contributes +17 bike rentals compared to the expected prediction conditioned on features in $S_m$ (and all other features are assumed to be absent)
+     \item $\Delta(j, \Sm) = \fh(\xjp) -
+\fh(\xjm)$ is the marginal contribution of player $j$ to coalition $\Sm$
+    \item In this subset $\Sm$ the variable \textit{year} contributes +17 bike rentals compared to the expected prediction conditioned on features in $\Sm$ (and all other features are assumed to be absent)
     \end{onlyenv}
     \begin{onlyenv}<4>
     \item Average the marginal contribution of feature $j$ towards the prediction
-    across all randomly drawn feature coalitions $S_1, \ldots , S_M$.
+    across all randomly drawn feature coalitions $S_1, \ldots , \Sm$.
     \item The resulting Shapley value $\phi_j$ tells us what the payout of feature $j$ is, i.e., how the feature \textit{year} contributes to the overall prediction in bicycle counts of a specific observation $\xv$
     \end{onlyenv}
 \end{itemize}
 \vspace*{\fill}
+%\vspace*{30pt}
 \begin{center}
 %\includegraphics<3>[width=0.5\textwidth]{figure_man/shapley_valuefct}
 % Link https://docs.google.com/presentation/d/14FZZ4zk7IBZv6XnQA0wDVfCDhmjzf4np5uVj7KrIxXg/edit#slide=id.p
@@ -284,8 +303,9 @@ $$
 %\includegraphics<5>[page=2, width=1\textwidth]{figure_man/data_shapley}
 %\includegraphics<6>[page=3, width=1\textwidth]{figure_man/data_shapley}
 %\includegraphics<7>[page=4, width=1\textwidth]{figure_man/data_shapley}
-\includegraphics<3>[page=5, width=1\textwidth]{figure_man/data_shapley}
-\includegraphics<4>[page=6, width=1\textwidth]{figure_man/data_shapley}
+\includegraphics<2>[page=13, width=1\textwidth]{figure_man/data_shapley}
+\includegraphics<3>[page=14, width=1\textwidth]{figure_man/data_shapley}
+\includegraphics<4>[page=15, width=1\textwidth]{figure_man/data_shapley}
 \end{center}
 
 \end{frame}
