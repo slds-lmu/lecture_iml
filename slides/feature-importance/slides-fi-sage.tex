@@ -16,9 +16,8 @@
 \begin{document}
 	\newcommand{\titlefigure}{figure_man/feature-importance.png}
     \newcommand{\learninggoals}{
-    	\item Underdstand how PFI is computed
-    	\item Understanding strengths and weaknesses
-    	\item Testing Importance}
+    	\item SAGE
+    	}
 	% Set style/preamble.Rnw as parent.
 	
 	% Load all R packages and set up knitr
@@ -45,7 +44,9 @@
 \item Model: $\fh(x) \approx x_1 x_2 + x_3$
 \end{itemize}
 
-Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ jointly, all three are considered equally relevant by PFI.
+\lz
+
+Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jointly, all three are considered equally relevant by PFI.
 \end{column}
 \begin{column}{0.45\textwidth}
 \centering
@@ -53,11 +54,12 @@ Although $x_3$ alone contributes as much to the performance as $x_1$ and $x_2$ j
 \end{column}
 \end{columns}
 \lz
-\textbf{Reason:} PFI assesses importance given that all remaining features are preserved. If first permute $x_1$ and then $x_2$, permutation of $x_2$ would have no effect on the performance (and vice versa).
+\textbf{Reason:} PFI assesses importance given that all remaining features are preserved. If we first permute $x_1$ and then $x_2$, permutation of $x_2$ would have no effect on the performance (and vice versa).
 \end{frame}
 
 
-\begin{frame}{Challenge: Fair attribution of importance}
+
+\begin{frame}{Challenge: Fair attribution of importance \citebutton{Covert et al. (2020)}{https://proceedings.neurips.cc/paper/2020/file/c7bf0b7c1a86d5eb3be2c722cf2cf746-Paper.pdf}}
 
 \textbf{Observation:} Feature importance attribution can be regarded as cooperative game, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
 \lz
@@ -67,7 +69,7 @@ $\Rightarrow$ SAGE translates SHAP into a global feature importance technique\\
 \lz
 In order to compute SAGE, approximate Shapley values $\phi_j$ as for SHAP, replacing SHAP value functions with SAGE value functions.\\
 
-\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
+%\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
   
 \end{frame}
 
@@ -82,7 +84,7 @@ $$\fh_S(x_S) = \E[\fh(x) | X_S = x_S]$$
 The dropped features can either be sampled from the marginal distribution $\P(x_{-S})$ or the conditional distribution $\P(x_{-S}|x_S)$.\\
 \lz
 
-\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
+%\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
 
 For SAGE, value functions quantify the predictive power of a coalition $S$ in terms of reduction in risk over the mean prediction.\\
 \lz
@@ -232,9 +234,9 @@ While PFI regards $x_1, x_2$ to be equally important as $x_3$, marginal SAGE fai
 %\end{frame}
 
 
-\begin{frame}
-  \printbibliography
-\end{frame}
+% \begin{frame}
+%   \printbibliography
+% \end{frame}
 
 \endlecture
 \end{document}
