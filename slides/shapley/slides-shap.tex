@@ -53,7 +53,7 @@
   \begin{itemize}
       \item train random forest on bike rental dataset with features humidity, temperature and windspeed
       \item calculate Shapley value for observation $\xv$ with $\fh(\xv) = \color{orange}{2573}$
-      \item $E(\fh) = \color{blue}{4515}$
+      \item $\E(\fh) = \color{blue}{4515}$
   \end{itemize}
   \textbf{Exact Shapley calculation for humidity:} 
   \begin{table}[T]
@@ -88,11 +88,11 @@ $$
 \textbf{Remember}: Shapley values explain the difference between actual and average prediction:
 \begin{eqnarray*}
 \color{orange}{2573} \color{black}- \color{blue}{4515} \color{black} = &34 - 1654 - 323 &= - 1942\\
-\fh(\xv) - E(\fh) =& \phi_{hum} + \phi_{temp} + \phi_{ws}&\\
+\fh(\xv) - \E(\fh) =& \phi_{hum} + \phi_{temp} + \phi_{ws}&\\
 \end{eqnarray*}
 $\leadsto$ can be rewritten to
 $$
-\fh(\xv) = \underbrace{E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws}
+\fh(\xv) = \underbrace{\E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws}
 $$
 %N.B.: This reminds us of a LM with weights $\phi_j$ multiplied by a binary feature value indicating weather a feature is included in a considered coalition.
 \end{column}
@@ -143,7 +143,7 @@ g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
 \node<2-3>[expl] 
   (ph0ex) 
   at (5,-.5cm)
-  {$\phi_0$: \textbf{Null Output} \\ Average Model Baseline ($\mathbb{E}(\fh))$};
+  {$\phi_0$: \textbf{Null Output} \\ Average Model Baseline ($\E(\fh))$};
 \node<3>[expl] 
   (phjex) 
   at (12,0cm)
@@ -350,7 +350,7 @@ How do we estimate the Shapley values $\phi_j$?
 \begin{itemize}
    % \item $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
     \item Define 
-$h_x\left(\mathbf{z}^{\prime (k)}\right)=\mathbf{z}^{(k)} \text { where } h_x:\{0,1\}^{p} \rightarrow \mathbb{R}^{p}$
+$h_x\left(\mathbf{z}^{\prime (k)}\right)=\mathbf{z}^{(k)} \text { where } h_x:\{0,1\}^{p} \rightarrow \R^{p}$
  maps 1’s to feature values of observation $\xv$ for features part of the $k$-th coalition and 0's to feature values of a \color{orange}{randomly sampled observation} \color{black}for features absent in the $k$-th coalition
   % \item Absent feature values are replaced by feature values of a \color{orange}{random observation} \color{black} of the dataset (permuted) $\leadsto$ permute feature values several times
   (feature values are permuted multiple times) 
@@ -593,7 +593,7 @@ $$
 and minimize by WLS using the weights $\pi_{x}$ of step 3
     $$L\left(\hat{f}, g, \pi_{x}\right)=\sum_{k = 1}^K\left[\hat{f}\left(h_{x}\left(\mathbf{z}^{\prime (k)}\right)\right)-g\left(\mathbf{z}^{\prime (k)}\right)\right]^{2} \pi_{x}\left(\mathbf{z}^{\prime (k)}\right)$$
 
-with $\phi_0 = E(\fh)$ and $\phi_p = \fh(x) - \sum_{j=0}^{p-1} \phi_j$ we receive a $p-1$ dimensional linear regression problem
+with $\phi_0 = \E(\fh)$ and $\phi_p = \fh(x) - \sum_{j=0}^{p-1} \phi_j$ we receive a $p-1$ dimensional linear regression problem
 }
 
 \only<2>{
@@ -625,7 +625,7 @@ with $\phi_0 = E(\fh)$ and $\phi_p = \fh(x) - \sum_{j=0}^{p-1} \phi_j$ we receiv
 \textbf{Step 5: Return SHAP values}\\\medskip
 \textbf{Intuition}: Estimated Kernel SHAP values are equivalent to Shapley values 
 $$
-g(\mathbf{z}^{\prime (8)}) = \fh(h_x(\mathbf{z}^{\prime (8)}) ) = 4515 + 34 \cdot 1 - 1654 \cdot 1 - 323 \cdot 1 = \underbrace{E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws} = \fh(\xv) = 2573
+g(\mathbf{z}^{\prime (8)}) = \fh(h_x(\mathbf{z}^{\prime (8)}) ) = 4515 + 34 \cdot 1 - 1654 \cdot 1 - 323 \cdot 1 = \underbrace{\E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws} = \fh(\xv) = 2573
 $$
 
 \begin{figure}
