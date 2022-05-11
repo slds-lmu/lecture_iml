@@ -24,7 +24,7 @@
 \lecturechapter{SHAP (SHapley Additive exPlanation) Values}
 \lecture{Interpretable Machine Learning}
 
-\begin{vbframe}{Shapley Values in ML - A short Recap}
+\begin{frame}{Shapley Values in ML - A short Recap}
   
   \textbf{Question:} How much does a feature $j$ contribute to the prediction of a single observation. \\
   \textbf{Theory:} Shapley Game Theory \\
@@ -44,10 +44,10 @@
     \item Non-existent features in a coalition are replaced by randomly drawn states from the feature
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Shapley Values in ML - A short Recap}
+\begin{frame}{Shapley Values in ML - A short Recap}
   
   \textbf{Example:} 
   \begin{itemize}
@@ -73,10 +73,10 @@ $$
 \phi_{hum} = \frac{2}{6} (4635-4515) + \frac{1}{6} (3060-3087) + \frac{1}{6} (4450-4359) + \frac{2}{6} (2573-2623) = 34
 $$
 
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{From Shapley to SHAP}
+\begin{frame}{From Shapley to SHAP}
 \textbf{Example continued}: Same calculation can be done for temperature and windspeed:
 \begin{itemize}
     \item $\phi_{temp} = \ldots = -1654$
@@ -111,9 +111,9 @@ $$
 
 
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{SHAP Definition \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
+\begin{frame}{SHAP Definition \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
 \textbf{Aim}: 
 Find an additive combination that explains the prediction of an observation $\xv$ by computing the contribution of each feature to the prediction. \\\medskip
 \only<1-3>{\textbf{Definition}
@@ -185,11 +185,11 @@ node[pos=0.5,below=15pt,black]{\textbf{Additive Feature Attribution}};
 How do we estimate the Shapley values $\phi_j$?
 \end{onlyenv}
 
-\end{vbframe}
+\end{frame}
 
 
 
-%\begin{vbframe}{Example}
+%\begin{frame}{Example}
 
 %Given the following example from the bike sharing data set
 
@@ -216,9 +216,9 @@ How do we estimate the Shapley values $\phi_j$?
  %   \centering
  %   \includegraphics[width=\columnwidth]{figure_man/exSHAP.png}
 %\end{figure}
-%\end{vbframe}
+%\end{frame}
 
-\begin{vbframe}{Kernel SHAP - In 5 Steps}
+\begin{frame}{Kernel SHAP - In 5 Steps}
 
 \textbf{Definition:} A kernel-based, model-agnostic method to compute Shapley values via local surrogate models (e.g. linear model)\\
 \vspace{1cm}
@@ -252,9 +252,9 @@ How do we estimate the Shapley values $\phi_j$?
     
 \end{enumerate}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Kernel SHAP - In 5 Steps}
+\begin{frame}{Kernel SHAP - In 5 Steps}
 
 
 \textbf{Step 1: Sample coalitions}
@@ -282,9 +282,9 @@ How do we estimate the Shapley values $\phi_j$?
   \end{tabular}
 \end{table}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Kernel SHAP - In 5 Steps}
+\begin{frame}{Kernel SHAP - In 5 Steps}
 
 
 \textbf{Step 2: Transfer Coalitions into feature space \& get predictions by applying ML model}
@@ -340,10 +340,10 @@ How do we estimate the Shapley values $\phi_j$?
 
 
 
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Kernel SHAP - In 5 Steps}
+\begin{frame}{Kernel SHAP - In 5 Steps}
 
 
 \textbf{Step 2: Transfer Coalitions into feature space \& get predictions by applying ML model}
@@ -402,9 +402,9 @@ $h_x\left(\mathbf{z}^{\prime (k)}\right)=\mathbf{z}^{(k)} \text { where } h_x:\{
 
 
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Kernel shap - in 5 steps}
+\begin{frame}{Kernel shap - in 5 steps}
 \textbf{Step 3: Compute weights through Kernel \only<2>{\citebutton{see shapley\_kernel\_proof.pdf}{https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Supplemental.zip}}}\\\medskip
 \textbf{Intuition}: We learn most about individual features if we can study their effects in isolation or at maximal interaction:
 Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the largest weights 
@@ -477,10 +477,10 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 % \end{itemize}
 % \end{onlyenv}
   
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Kernel shap - in 5 steps}
+\begin{frame}{Kernel shap - in 5 steps}
 \textbf{Step 3: Compute weights through Kernel}\\\medskip
 \textbf{Purpose}: to include this knowledge in the local surrogate model (linear regression), we calculate weights for each coalition which are the observations of the linear regression
 \only<1>{    $$\pi_{x}\left(\mathbf{z}^{\prime}\right)=\frac{(p-1)}{\left(\begin{array}{c} p \\|\mathbf{z}^{\prime}|\end{array}\right)|\mathbf{z}^{\prime}|(p-|\mathbf{z}^{\prime}|)} \leadsto \pi_x\left(\mathbf{z}^{\prime} = (1,0,0)\right)=\frac{(3-1)}{\left(\begin{array}{c} 3 \\1\end{array}\right)1\left(3-1\right)} = \frac{1}{3}$$
@@ -509,9 +509,9 @@ $\leadsto$ weights for empty and full set are infinity and not used as observati
 }
 
   
-\end{vbframe}
+\end{frame}
 
-%\begin{vbframe}{Coalition Mapping}
+%\begin{frame}{Coalition Mapping}
 %We define a coalition $z^{\prime}$, by describing a function 
 
 %$$
@@ -574,10 +574,10 @@ $\leadsto$ weights for empty and full set are infinity and not used as observati
 %    \item<4>  we equate “feature value is absent” with “feature value is replaced by random feature value from data”
 %\end{itemize}
 %\end{onlyenv}
-%\end{vbframe}
+%\end{frame}
 
 
-\begin{vbframe}{Kernel shap - in 5 steps}
+\begin{frame}{Kernel shap - in 5 steps}
 \textbf{Step 4: Fit a weighted linear model}\\\medskip
 \textbf{Aim}: Estimate a weighted linear model with Shapley values being the coefficients $\phi_j$
 $$
@@ -618,10 +618,10 @@ with $\phi_0 = E(\fh)$ and $\phi_p = \fh(x) - \sum_{j=0}^{p-1} \phi_j$ we receiv
 
 
   
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Kernel shap - in 5 steps}
+\begin{frame}{Kernel shap - in 5 steps}
 \textbf{Step 5: Return SHAP values}\\\medskip
 \textbf{Intuition}: Estimated Kernel SHAP values are equivalent to Shapley values 
 $$
@@ -633,14 +633,8 @@ $$
     \includegraphics[width=\columnwidth]{figure_man/exSHAP.png}
 \end{figure}
 
-
-
-
-
-
-  
-\end{vbframe}
-%\begin{vbframe}{Marginal Contribution}
+\end{frame}
+%\begin{frame}{Marginal Contribution}
 
 %\begin{itemize}
 %    \begin{onlyenv}<1>
@@ -709,13 +703,13 @@ $$
 %\textbf{Notice:}\\ We created a coalition data set $Z^{\prime}$ here by sampling multiple coalitions from observation $\xv$ that is evaluable with the prediction function $\fh$
 %\end{onlyenv}
 
-%\end{vbframe}
+%\end{frame}
 
 
 
 
 
-\begin{vbframe}{Properties}
+\begin{frame}{Properties}
 
 \textbf{Local Accuracy}
 $$
@@ -763,9 +757,9 @@ From \textbf{consistency} the Shapley \textbf{axioms of linearity, dummy and sym
 \end{onlyenv}
 
 
-\end{vbframe}
+\end{frame}
 
-%\begin{vbframe}{Tree SHAP \citebutton{Lundberg et al 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
+%\begin{frame}{Tree SHAP \citebutton{Lundberg et al 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
 
 %TreeSHAP is a fast model specific exact calculation of Shapley values for tree based models 
 
@@ -863,9 +857,9 @@ From \textbf{consistency} the Shapley \textbf{axioms of linearity, dummy and sym
 % \end{onlyenv}
 
 
-% \end{vbframe}
+% \end{frame}
 
- \begin{vbframe}{Global SHAP \citebutton{Lundberg et al. 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
+ \begin{frame}{Global SHAP \citebutton{Lundberg et al. 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
 \textbf{Idea: }
 \begin{itemize}
     \item Run SHAP for every observation and thereby get a matrix of Shapley values
@@ -883,9 +877,9 @@ $$
 \end{bmatrix}
 $$
 
- \end{vbframe}
+ \end{frame}
 
- \begin{vbframe}{Feature Importance}
+ \begin{frame}{Feature Importance}
 
 \begin{onlyenv}<1>
 \textbf{Idea:} Average the absolute Shapley values of each feature over all observations. This corresponds to calculating averages column by column in $\Phi$
@@ -912,9 +906,9 @@ $$
     \includegraphics[width=0.5\columnwidth]{figure_man/global_shap_fi.pdf}
 \end{figure}
 
-\end{vbframe}
+\end{frame}
  
-\begin{vbframe}{Summary Plot}
+\begin{frame}{Summary Plot}
 \begin{onlyenv}<1>
 Combines feature importance with feature effects
 \begin{itemize}
@@ -941,9 +935,9 @@ Combines feature importance with feature effects
     \includegraphics[width=0.5\columnwidth]{figure_man/global_shap_jitter.pdf}
     
 \end{figure}
-\end{vbframe} 
+\end{frame} 
 
-\begin{vbframe}{Dependence Plot}
+\begin{frame}{Dependence Plot}
 
 \begin{onlyenv}<1>
 \begin{itemize}
@@ -984,9 +978,9 @@ Combines feature importance with feature effects
     \includegraphics[width=0.5\columnwidth]{figure_man/global_shap_depend_season.pdf}
 \end{figure}
 \end{onlyenv}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Discussion}
+\begin{frame}{Discussion}
 \begin{onlyenv}<1>
 \textbf{Advantages}
 
@@ -1015,7 +1009,7 @@ Combines feature importance with feature effects
 
 \end{onlyenv}
 
-\end{vbframe}
+\end{frame}
 
 \endlecture
 \end{document}
