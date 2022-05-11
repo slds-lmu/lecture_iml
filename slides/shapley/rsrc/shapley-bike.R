@@ -25,7 +25,7 @@ mean.pred = round(mean(mod$predict(tsk)$response), 3)
 instance.index = 200
 mean.prediction = mean(pred.bike$predict(bike)[[1]])
 instance.prediction = pred.bike$predict(bike[instance.index,])[[1]]
-shap = Shapley$new(pred.bike, x.interest = bike[instance.index, names(bike) != 'cnt'], sample.size = 300)
+shap = Shapley$new(pred.bike, x.interest = bike[instance.index, names(bike) != 'cnt'], sample.size = 10000)
 strongest.feature = shap$results[shap$results$phi == max(shap$results$phi),]
 p = plot(shap)
 
