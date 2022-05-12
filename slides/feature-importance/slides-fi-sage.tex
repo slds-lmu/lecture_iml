@@ -61,13 +61,24 @@ Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jo
 
 \begin{frame}{Challenge: Fair attribution of importance \citebutton{Covert et al. (2020)}{https://proceedings.neurips.cc/paper/2020/file/c7bf0b7c1a86d5eb3be2c722cf2cf746-Paper.pdf}}
 
-\textbf{Observation:} Feature importance attribution can be regarded as cooperative game, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
+\textbf{Observation:} 
+\begin{itemize}
+    \item Feature importance attribution can be regarded as cooperative game \\
+    $\leadsto$ features jointly contribute to achieve a certain model performance
+    \item Player: features
+    \item Payoff to be fairly distributed: model performance
+    \item Surplus contribution of a feature depends on the coalition of features that were already used
+\end{itemize}
+%, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
 \lz
-\textbf{SAGE Idea:} Leverage game-theoretic Shapley values to compute a fair attribution of importance.\\
-\lz
-$\Rightarrow$ SAGE translates SHAP into a global feature importance technique\\
-\lz
-In order to compute SAGE, approximate Shapley values $\phi_j$ as for SHAP, replacing SHAP value functions with SAGE value functions.\\
+\textbf{SAGE Idea:} %Leverage game-theoretic 
+Use Shapley values to compute a fair attribution of importance (via model performance)\\
+$\Rightarrow$ Global feature importance technique\\
+$\Rightarrow$ Compute approximate Shapley values $\phi_j$ using appropriate value function 
+%\lz
+%$\Rightarrow$ SAGE translates SHAP into a global feature importance technique\\
+%\lz
+%In order to compute SAGE, approximate Shapley values $\phi_j$ as for SHAP, replacing SHAP value functions with SAGE value functions.\\
 
 %\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
   
@@ -77,34 +88,53 @@ In order to compute SAGE, approximate Shapley values $\phi_j$ as for SHAP, repla
 % SAGE IDEA
 \begin{frame}{SAGE Removal and Value function}
   
- \textbf{Removal Idea:} In order to deprive the model of the non-coalition features $-S$, marginalize the prediction function over the dropped features.
+ \textbf{Removal Idea:} %To deprive the model of the non-coalition features $-S$, 
+ To deprive information of the non-coalition features $-S$ from the model, marginalize the prediction function over the features $-S$ to be ``dropped''.
 
 $$\fh_S(x_S) = \E[\fh(x) | X_S = x_S]$$
-  
-The dropped features can either be sampled from the marginal distribution $\P(x_{-S})$ or the conditional distribution $\P(x_{-S}|x_S)$.\\
-\lz
+
+\pause
+
+The ``dropped'' features can be sampled from \\
+\begin{itemize}
+\item the marginal distribution $\P(x_{-S})$
+\item the conditional distribution $\P(x_{-S}|x_S)$
+\end{itemize}
+%\lz
 
 %\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
 
-For SAGE, value functions quantify the predictive power of a coalition $S$ in terms of reduction in risk over the mean prediction.\\
+%For SAGE, value functions quantify the predictive power of a coalition $S$ in terms of reduction in risk over the mean prediction.\\
+\pause
 \lz
-Value function:  $ v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S})$\\
+
+SAGE value function:  $v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S})$\\
+$\leadsto$ Quantify the predictive power of a coalition $S$ in terms of reduction in risk \\
+$\leadsto$ Risk of predictor $\fh_S(x_S)$ is compared to the risk of the mean prediction $\fh_{\emptyset}$
+
+\pause
 \lz
-Contribution of feature $x_j$ over coalition $x_S$:  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S)$\\
+
+Marginal contribution of feature $x_j$ over coalition $x_S$:  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S) = \risk(\fh_{S})-\risk(\fh_{S \cup \{j\}})$\\
+$\leadsto$ Quantifies the added value of feature $j$ when it is added to coalition $S$
 \lz
 
 \end{frame}
 
 \begin{frame}{SAGE Removal and Value function}
 
-Depending on whether conditional or marginal resampling is used, the interpretation of SAGE value functions differ.\\
-\lz
-\textbf{Marginal resampling:} $v(S)$ quantifies the reliance of the model on features $x_S$
+Interpretation of SAGE value functions differ, depending on whether conditional or marginal sampling is used.
+
+\lz\pause
+
+\textbf{Marginal sampling:} $v(S)$ quantifies the reliance of the model on features $x_S$
 \begin{itemize}
   \item features $x_S$ not being causal for the prediction is a sufficient condition for $v(S) = 0$
 \end{itemize}
 
-\textbf{Conditional resampling}: $v(S)$ quantifies the reliance of the model on the information contained in variables $x_S$.
+\lz\pause
+
+\textbf{Conditional sampling}: $v(S)$ quantifies the reliance of the model on the information contained in variables $x_S$
 \begin{itemize}
   \item features $x_S$ not being causal for the prediction is not a sufficient condition for $v(S) = 0$
   \item under model optimality, links to mutual information or the conditional variance can be drawn

@@ -150,19 +150,21 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 % INTERPRETATION OF CFI
 \begin{frame}{Implications of CFI \citebutton{König et al. (2020)}{https://arxiv.org/abs/2007.08283}}
 
-\textbf{Interpretation:} CFI quantifies a feature's unique contribution to the model performance.\\
+\textbf{Interpretation:} Due to the conditional sampling w.r.t. all other features, CFI quantifies a feature's unique contribution to the model performance.\\
 \lz\pause
 \textbf{Entanglement with data:}
 \begin{itemize}
   \item If feature $x_S$ does not contribute unique information about $y$, i.e., $x_S \indep y | x_{-S}$ $\Rightarrow$ CFI $= 0$
   \item Why? Under the conditional independence $\P(\pert{x}{S}{-S}, y) = \P(x,y)$\\
-  $\leadsto$ no prediction-relevant information is destroyed by conditional permutation
+  $\leadsto$ no prediction-relevant information is destroyed by permutation of $x_S$ conditional on $x_{-S}$
 \end{itemize}
 \lz\pause
 \textbf{Entanglement with model:}
 \begin{itemize}
   \item If the model does not use a feature $\Rightarrow$ CFI $= 0$
-  \item Why? Then the prediction is not affected by any perturbation of the feature (and consequently the performance is invariant).
+  \item Why? Then the prediction is not affected by any perturbation of the feature\\
+  $\leadsto$ model performance does not change after conditional permutation
+  %(and consequently the performance is invariant).
 \end{itemize}
 
 %\footnote[frame]{\fullcite{konig_relative_2021}}
@@ -177,7 +179,7 @@ Can we gain insight into whether..
 \begin{enumerate}
     \item<1-3> the feature $x_j$ is causal for the prediction?
     \begin{itemize}
-      \item $CFI_j \neq 0$ $\Rightarrow$ model relies on $x_j$ (contraposition does not hold)
+      \item $CFI_j \neq 0$ $\Rightarrow$ model relies on $x_j$ (contraposition does not hold, see next slide)
     \end{itemize}
     \item<2-3> the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
