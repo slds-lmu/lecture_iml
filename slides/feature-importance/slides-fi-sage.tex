@@ -67,7 +67,7 @@ Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jo
     $\leadsto$ features jointly contribute to achieve a certain model performance
     \item Player: features
     \item Payoff to be fairly distributed: model performance
-    \item Surplus contribution of a feature depends on the coalition of features that were already used
+    \item Marginal contribution of a feature depends on the coalition of features that were already used
 \end{itemize}
 %, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
 \lz
@@ -145,10 +145,23 @@ Interpretation of SAGE value functions differ, depending on whether conditional 
 \begin{frame}{SAGE Removal and Value function}
 
 When the loss-optimal model $f^*$ is inspected using \textit{conditional-sampling} based SAGE value functions, interesting links exist.
-\begin{itemize}
-  \item \textbf{for cross-entropy loss:} the value function $v_{f^*}(S) = I(y;x_S)$ corresponds to the mutual information and the surplus contribution of a feature $x_j$ $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = I(y,x_i|x_S)$ to the conditional mutual information
-  \item \textbf{for MSE loss:} the value function $v_{f^*}(S) = Var(y) - \E[Var(y|x_S)]$ corresponds to the expected reduction in variance given knowledge of the features $x_S$ and the surplus contribution $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = \E[Var(y|x_S)] - \E[Var(y|x_{S \cup {j}})]$ to the respective reduction over $x_S$
-\end{itemize}
+
+\lz\pause
+\textbf{For cross-entropy loss:} 
+  \begin{itemize}
+      \item value function is the mutual information:  $v_{f^*}(S) = I(y;x_S)$
+      \item marginal contribution of a feature $x_j$ is the conditional mutual information: $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = I(y,x_i|x_S)$
+  \end{itemize}
+
+\lz\pause
+
+\textbf{For MSE loss:} 
+    \begin{itemize}
+    \item value function is the expected reduction in variance given knowledge of the features $x_S$: $v_{f^*}(S) = Var(y) - \E[Var(y|x_S)]$
+    \item marginal contribution is the respective reduction over $x_S$:
+    $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = \E[Var(y|x_S)] - \E[Var(y|x_{S \cup {j}})]$
+    \end{itemize}
+    
 \end{frame}
 
 \begin{frame}{SAGE Removal and Value function}
