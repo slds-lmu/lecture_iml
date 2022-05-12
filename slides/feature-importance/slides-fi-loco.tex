@@ -9,7 +9,7 @@
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
 \date{}
 
-\bibliography{feature-importance}
+%\bibliography{feature-importance}
 
 %\usepackage{Sweave}
 \begin{document}
@@ -73,7 +73,7 @@ $$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
 \begin{figure}
   \centering
   \includegraphics[width=0.65\textwidth]{figure_man/bike_sharing_loco.pdf}
-\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing dataset to optimize MSE. Then LOCO was computed for all features on the training dataset. The year is the most important feature. Without access to year, the MSE increases by $10^6$.}
+\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing data (training set) to optimize MSE. Then LOCO was computed for all features on the test data. The year is the most important feature. Without access to year, the MSE increases by $10^6$.}
 \end{figure}
 %
  %\textbf{Interpretation:} $\text{LOCO}_j$ quantifies how important variable $x_j$ is to the generalization performance of the learner on $\Dtrain$.\\
@@ -88,7 +88,7 @@ Can we get insight into whether ...
 \begin{enumerate}
     \item the feature $x_j$ is causal for the prediction $\yh$?
     \begin{itemize}
-      \item In general, no (counterexample on the next slide)
+      \item In general, no also because we refit the model (counterexample on the next slide)
     \end{itemize}
     \item the variable $x_j$ contains prediction-relevant information?
     \begin{itemize}
@@ -103,6 +103,29 @@ Can we get insight into whether ...
 
 \begin{frame}{Interpretation of LOCO}
 
+\begin{columns}[c]
+\begin{column}{0.44\textwidth}
+
+% x1 = rnorm(n, mean=0, sd = 5)
+% x2 = rnorm(n, mean=0, sd = 0.1) + x1
+% x3 = rnorm(n, mean=0, sd = 5)
+% y = rnorm(n, mean = 0, sd = 2) + x3 + x2
+
+\textbf{Example:} Sample $1000$ observations with
+\begin{itemize}
+    \item $x_1, x_3 \sim N(0, 5)$
+    \item $x_2 = x_1 + \epsilon_2$ with $\epsilon_2 \sim N(0, 0.1)$
+    \item $y = x_2 + x_3 + \epsilon$ with $\epsilon \sim N(0, 2)$
+\end{itemize}
+
+$\Rightarrow$ Fitting a LM yields
+$\fh(x) = -0.02 - 1.02 x_1 + 2.05 x_2 + 0.98 x_3$
+
+%Sample $1000$ observations with $x_1, x_3 \sim N(0, 5), x_2 = x_1 + \epsilon_2$ with $\epsilon_2 \sim N(0, 0.1)$ and $y = x_2 + x_3 + \epsilon$ with $\epsilon \sim N(0, 2)$.
+
+\end{column}
+\begin{column}{0.55\textwidth}
+
 %\begin{figure}
 %\centering
 %\hfill
@@ -116,20 +139,20 @@ Can we get insight into whether ...
 %		\draw[->, black] (x2) -- (y);
 %	\end{tikzpicture} 
 %\hfill
-	\includegraphics[width=0.35\linewidth]{figure_man/simulation_loco_corr.pdf} 
+\includegraphics[width=0.5\linewidth]{figure_man/simulation_loco_corr.pdf} 
 \hfill
-  \includegraphics[width=0.5\linewidth]{figure_man/simulation_loco}
+\includegraphics[width=0.4\linewidth]{figure_man/simulation_loco}
 %\hfill
 %\end{figure}
 
-% x1 = rnorm(n, mean=0, sd = 5)
-% x2 = rnorm(n, mean=0, sd = 0.1) + x1
-% x3 = rnorm(n, mean=0, sd = 5)
-% y = rnorm(n, mean = 0, sd = 2) + x3 + x2
+Left: Correlation matrix
 
-\textbf{Example:} Sample $1000$ observations with $x_1, x_3 \sim N(0, 5), x_2 = x_1 + \epsilon_2$ with $\epsilon_2 \sim N(0, 0.1)$ and $y = x_2 + x_3 + \epsilon$ with $\epsilon \sim N(0, 2)$. Left: Correlation matrix, Right: LOCO importance for fitted LM on 70\% of the data computed on 30\% remaining observations.
+Right: LOCO importance for fitted LM on 70\% of the data computed on 30\% remaining observations
 %Linear Gaussian data generating process with correlation matrix as depicted left.
 %A linear model was fit with $\fh(x) = -0.09 - 0.86 x_1 + 1.86 x_2 + 0.96 x_3$.\\
+
+\end{column}
+\end{columns}
 
 \lz\pause
 
