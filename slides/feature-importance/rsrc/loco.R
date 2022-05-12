@@ -4,6 +4,8 @@ library("mlr3learners")
 library("ggplot2")
 library("data.table")
 
+theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
+
 #setwd('~/university/phd/2021/teaching/lecture_iml/slides/feature-importance/rsrc')
 
 
@@ -98,6 +100,7 @@ test_set = setdiff(seq_len(task$nrow), train_set)
 
 df = data.frame(perf_pre=double(), perf_post=double(), score=double(), feature=character())
 
+nruns = 1 # we don't need multiple LM fits on the same data
 for (i in c(1:nruns)) {
   learner = lrn(lrn_type)
   learner$train(task, row_ids = train_set)
@@ -142,7 +145,9 @@ ggplot(res, aes(y = feature, x = importance)) +
 #scale_x_continuous(sprintf("Feature Importance (loss: %s)", private$loss_string)) +
 #scale_y_discrete("")
 
-ggsave('slides/feature-importance/figure_man/simulation_loco.pdf', width=6, height=3)
+learner$model
+
+ggsave('slides/feature-importance/figure_man/simulation_loco.pdf', width=3, height=1)
 
 library(ggcorrplot)
 
@@ -151,4 +156,4 @@ corr = cor(simulation)
 ggcorrplot(corr, #hc.order = TRUE,# type = "lower",
   lab = TRUE, method = "circle", colors = c("#E46726", "white", "#6D9EC1"))
 
-ggsave('slides/feature-importance/figure_man/simulation_loco_corr.pdf', width = 4, height = 3)
+ggsave('slides/feature-importance/figure_man/simulation_loco_corr.pdf', width = 3.5, height = 2.5)
