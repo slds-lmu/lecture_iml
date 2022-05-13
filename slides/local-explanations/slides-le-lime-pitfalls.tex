@@ -36,19 +36,20 @@
 
 \begin{vbframe}[c]{LIME Pitfalls}
   \begin{itemize}
-  	\item LIME is one of the best known interpretable machine learning methods\\ but several papers caution to be careful in their use. 
-  	\item Problems can occur in several places. 
-  	\item These are discussed in more detail in the following. 
+  	\item LIME is one of the best known interpretable machine learning methods\\ but several papers caution to be careful in their use 
+  	\item Problems can occur in several places 
+  	\item These are discussed in more detail in the following 
   \end{itemize}
   
 \end{vbframe}
   
 \begin{vbframe}[c]{LIME Pitfalls: Sampling}
 	\begin{itemize}
-	  \item \textbf{Pitfall}: Common sampling strategies for $\zv \in Z$ do not take the correlation between features into account. 
-      \item \textbf{Implication}:  Unlikely data points might be used to learn local explanation models.
-      \item \textbf{Solution I}: Ideally, local sampler directly on $\Xspace$. Derivation is particularly difficult for high dimensional or mixed feature spaces. 
-      \item \textbf{Solution II}: Use original training data to fit the surrogate model;\\ but this only works well with enough data near $\xv$.
+	\itemsep1em
+	  \item \textbf{Pitfall}: Common sampling strategies for $\zv \in Z$ do not account for correlation between features 
+      \item \textbf{Implication}:  Unlikely data points might be used to learn local explanation models
+      \item \textbf{Solution I}: Ideally, local sampler directly on $\Xspace$ $\leadsto$ derivation is particularly difficult for high dimensional or mixed feature spaces 
+      \item \textbf{Solution II}: Use training data to fit surrogate model (only works well with enough data near $\xv$)
     \end{itemize}
     
 \end{vbframe}
@@ -56,17 +57,17 @@
 \begin{vbframe}[c]{LIME Pitfall: Locality}
 
 	\begin{itemize} 
-     \item \textbf{Pitfall}: Difficult to define locality (= how samples are weighted locally). 
+     \item \textbf{Pitfall}: Difficult to define locality (= how samples are weighted locally) 
      \begin{itemize}
-         \item[$\leadsto$] Huge influence on the local model, but there is no automatic procedure for choosing the neighborhood.
+         \item[$\leadsto$] Huge influence on local model, but there is no automatic procedure for choosing neighborhood
      \end{itemize}
      \item Originally, an exponential kernel as proximity measure between $\xv$ and $\zv$ was used:\\
-     	$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$ where $d$ is a distance measure and $\sigma$ is the kernel width. 
+     	$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$ where $d$ is a distance measure and $\sigma$ is the kernel width 
      	 \begin{center}
      		\includegraphics[width=0.6\textwidth]{figure/lime_locality}
      		\vspace{-0.5cm}
      		
-     		\scriptsize{Linear surrogate models for two different data points based on the same model with one target and one feature. Each line displays one linear surrogate model with a different kernel width. For the data point in the right figure, larger kernel sizes are more severe.}
+     		\scriptsize{Linear surrogate models for two observations based on the same model with one target and one feature. Each line displays one linear surrogate model with different kernel width. In the right figure, larger kernel sizes are more severe.}
      		
      	\end{center}
      \end{itemize}
@@ -78,11 +79,11 @@
          \begin{itemize}
              \item Large kernel width leads to interaction with points further away (unwanted)
              \item Small kernel width leads to small neighborhood\\
-             $\leadsto$ Risk to few data points $\leadsto$ potentially fitting more noise
+             $\leadsto$ Risk of few data points $\leadsto$ potentially fitting more noise
          \end{itemize}
-    	\item \textbf{Solution II}: Gower proximity where no kernel width needs to be specified. 
+    	\item \textbf{Solution II}: Gower proximity where no kernel width needs to be specified 
     	\begin{itemize}
-    	    \item \textbf{Problem}: data points far away receive a weight $ > 0$; their resulting explanations are rather global surrogates than local surrogates.   
+    	    \item \textbf{Problem}: data points far away receive weight $ > 0$ $\leadsto$ resulting explanations are rather global than local surrogates   
     	\end{itemize}
     \end{itemize}
 \vspace{0.3cm}
@@ -94,13 +95,13 @@
 \begin{columns}
 	\begin{column}{0.78\textwidth}
 \begin{itemize}
-	\item \textbf{Problem}: Some features influence the \textbf{global} shape of the black-box model vs. \textbf{Local} features impact predictions for a small area of $\Xspace$. 
-	\item \textbf{Example}: Decision trees; splitting variables close to the root have a more global influence than the ones close to the leaves.
+	\item \textbf{Problem}: Some features influence the \textbf{global} shape of the black-box model vs. \textbf{local} features impact predictions for a small area of $\Xspace$ 
+	\item \textbf{Example}: Decision trees; splitting variables close to the root have a more global influence than the ones close to the leaves
 	\item \textbf{Problem}: Instances for the surrogate model are sampled from the whole input space 
 	\begin{itemize}
-	    \item[$\leadsto$] Hide the features with a local influence for the benefit of features with a global influence even when the kernel width was reduced. 
+	    \item[$\leadsto$] Hide the features with a local influence for the benefit of features with a global influence even when the kernel width was reduced 
 	\end{itemize}
-	\item \textbf{Solution}: Sample new instances $\zv$ around the decision boundary closest from point $\xv$ for higher local accuracy.
+	\item \textbf{Solution}: Sample new instances $\zv$ around the decision boundary closest from point $\xv$ for higher local accuracy
 \end{itemize}
 \end{column}
 \begin{column}{0.2\textwidth}
@@ -125,10 +126,10 @@
 		    \item Green dot: To be explained
 		    \item Background color: Classification of random forest
 		    \item Grey curve: Decision boundary
-		    \item Red dot: Point closest to the border detected by this method. 
+		    \item Red dot: Point closest to the border detected by this method 
 		\end{itemize}
 		\item \textbf{Observation: }The decision boundary of LIME with different kernels (blue and green) do not match the direction of the steeper local boundary. 
-		\item The method \citebutton{Laugel et al. 2018}{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf} (red line) approximates the local border direction better. 
+		\item The method \citebutton{Laugel et al. 2018}{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf} (red line) approximates the local border direction better 
 	\end{itemize}
 \end{column}
 \begin{column}{0.39\textwidth}
@@ -138,7 +139,7 @@
 	\includegraphics[width=1\textwidth]{figure/lime-globallocal2}
 	
 	\vspace{-0.3cm}
-	{Half-moons dataset.}
+	{Half-moons dataset}
 	
 \end{center}
 
@@ -149,9 +150,10 @@
 
 \begin{vbframe}[c]{LIME Pitfalls: Faithfulness}
 \begin{itemize}
+\itemsep1em
 	\item \textbf{Problem}: Trade-off between local fidelity vs. sparsity
-	\item \textbf{Observation I}: Low fidelity $\leadsto$ Unreliable explanations
-	\item \textbf{Observation II}: High fidelity requires more complex models $\leadsto$ surrogate model cannot easily interpreted
+	\item \textbf{Observation I}: Low fidelity $\leadsto$ unreliable explanations
+	\item \textbf{Observation II}: High fidelity requires more complex models $\leadsto$ surrogate model cannot easily be interpreted
 \end{itemize}
 
 \end{vbframe}
@@ -159,7 +161,7 @@
 \begin{vbframe}{LIME Pitfalls: Hiding biases \citebutton{Slack et al. 2020}{https://arxiv.org/abs/1911.02508}}
 
 \begin{itemize}
-	\item \textbf{Problem}: Developer could manipulate their model to hide biases. 
+	\item \textbf{Problem}: Developer could manipulate their model to hide biases 
 	\item \textbf{Insight}: LIME can sample out-of-distribution points
 	\item \textbf{Attack}:
 	\begin{enumerate}
@@ -174,11 +176,11 @@
 
 \begin{vbframe}[c]{LIME Pitfalls: Robustness \citebutton{Alvarez-Melis, D., \& Jaakkola, T. 2018}{https://arxiv.org/abs/1806.08049}}
 \begin{itemize}
-	\item \textbf{Problem}: Instability of explanations. 
-	\item \textbf{Observation}: Explanations of two very close points could vary greatly. 
-	\item \textbf{Rashomon Effect}: There could be more than one explanation for a prediction.
+	\item \textbf{Problem}: Instability of explanations 
+	\item \textbf{Observation}: Explanations of two very close points could vary greatly 
+	\item \textbf{Rashomon Effect}: There could be more than one explanation for a prediction
 	\begin{itemize}
-	    \item[$\leadsto$] For example can happen because of other models $\fh$ (trained on the same data) or other sampled data points $\zv$
+	    \item[$\leadsto$] can happen because of other models $\fh$ (trained on the same data) or other sampled data points $\zv$
 	\end{itemize}
 \end{itemize}
 \vspace{-0.7cm}
@@ -210,9 +212,9 @@
     \begin{column}{0.6\textwidth}
         
         \begin{itemize}
-        	\item \textbf{Problem}: Instability because of specification of superpixels for image data. 
-        	\item \textbf{Observation}: Multiple specification of superpixels exist, influencing both the shape and size. 
-        	\item \textbf{Implication}: The specification of superpixel has a large influence on the explanations. 
+        	\item \textbf{Problem}: Instability because of specification of superpixels for image data 
+        	\item \textbf{Observation}: Multiple specification of superpixels exist, influencing both the shape and size 
+        	\item \textbf{Implication}: The specification of superpixel has a large influence on the explanations 
         	\item \textbf{Attack}: Change superpixels as part of an adversarial attack $\leadsto$ changed explanation
         \end{itemize}
         
