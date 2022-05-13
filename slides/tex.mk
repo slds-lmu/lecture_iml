@@ -1,7 +1,7 @@
 TSLIDES = $(shell find . -maxdepth 1 -iname "slides-*.tex")
 TPDFS = $(TSLIDES:%.tex=%.pdf)
 
-all: texclean $(TPDFS) texclean pax copy
+all: delete $(TPDFS) pax texclean copy
 
 $(TPDFS): %.pdf: %.tex
 	latexmk -pdf $<
