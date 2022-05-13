@@ -15,9 +15,10 @@ where $\pert{\D}{S}{}_{(k)}$ is the dataset where features $S$ were replaced wit
     \item Implement Permutation Feature Importance. Apply Permutation Feature Importance to the model (on test data) and plot the results using a barplot with an error bar indicating the standard deviation. In order to make your code reusable for the upcoming exercises, break down the implementation into three functions:
     \begin{enumerate}
         \item \texttt{pfi\_fname} which returns the PFI for a feature \texttt{fname}
-        \item \texttt{fi\_naive} a function that computes the importances for all features using \texttt{fi\_fname}
+        \item \texttt{fi} a function that computes the importances for all features using a single-feature importance function such as \texttt{pfi\_fname}
         \item \texttt{n\_times} a function that repeats the computation $n$ times and returns mean and standard deviation of the importance values
     \end{enumerate}
+    \textit{Hint: By passing the single-feature importance function as an argument you can reuse \texttt{fi} and \texttt{n\_times} later on for other feature importance method and only have to adjust \texttt{fi\_fname} accordingly. In order to allow for different function signatures you may use \texttt{f(*args, **kwargs)} in python (more info \href{https://realpython.com/python-kwargs-and-args/}{here}) and \texttt{f(...)} in R (more info \href{https://stackoverflow.com/questions/8165837/how-to-pass-a-function-and-its-arguments-through-a-wrapper-function-in-r-simila}{here}).}
     \item Interpret the PFI result. What insight into model and data do we gain?
     \begin{enumerate}
         \item Which features are (mechanistically) used by the model for it's prediction?

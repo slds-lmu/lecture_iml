@@ -38,18 +38,17 @@
 % ------------------------------------------------------------------------------
 \begin{frame}[c]{LIME}
 \begin{itemize}
-		\item Local Interpretable Model-agnostic Explanations (LIME) assume that even if a machine learning model is very complex, the local prediction can be described with a simpler model.
+		\item Local Interpretable Model-agnostic Explanations (LIME) assume that even if a machine learning model is very complex, the local prediction can be described with a simpler model
 		\smallskip\pause
-		\item  Therefore, LIME explains \textbf{individual} predictions of \textbf{any} black-box model by approximating the model \textbf{locally} with an interpretable model.
+		\item  LIME explains \textbf{individual} predictions of \textbf{any} black-box model by approximating the model \textbf{locally} with an interpretable model
 		\smallskip\pause
-		\item These approximations are called local surrogate models. \\
-		Typically, they are linear models or trees as interpretable models by design.
+		\item Called local surrogate models $\leadsto$ often inherently interpretable models such as linear models or trees are chosen
 		\smallskip\pause
-		\item LIME should answer why a machine learning model predicted $y$ for input $\xv$.
+		\item LIME should answer why a machine learning model predicted $y$ for input $\xv$
 		\smallskip\pause
-		\item Since LIME can be applied to any black-box model LIME is model-agnostic.  
+		\item LIME is model-agnostic  
 		\smallskip\pause
-		\item LIME can handle tabular, image and text data. 
+		\item LIME can handle tabular, image and text data 
 \end{itemize}
 \end{frame}
 
@@ -57,48 +56,48 @@
 \begin{frame}[c]{LIME: Characteristics}
 
     \textbf{Definition:}\\
-	LIME provides a local explanation for a black-box model $\fh$ in form of a model $g \in \Gspace$ with $\Gspace$ as the class of potential (interpretable) models.\\[2em]
+	LIME provides a local explanation for a black-box model $\fh$ in form of a model $g \in \Gspace$ with $\Gspace$ as the class of potential (interpretable) models\\[2em]
 	
 	
 	Model $g$ should have two characteristics:
 	\begin{enumerate}
-		\item \textbf{Interpretable}: relation between the input variables and the response are easy to understand.  
-		\item \textbf{Locally faithful / Fidelity}: similar behavior as $\fh$ in the vicinity of the instance being predicted.
+		\item \textbf{Interpretable}: relation between the input variables and the response are easy to understand  
+		\item \textbf{Locally faithful / Fidelity}: similar behavior as $\fh$ in the vicinity of the instance being predicted
 	\end{enumerate}
 	
 	\vspace{2em}
-	Formally, we want to receive a model $g$ with \textbf{minimal complexity and maximal local-fidelity}. 
+	Formally, we want to receive a model $g$ with \textbf{minimal complexity and maximal local-fidelity} 
 \end{frame}
 
 
 \begin{frame}[c]{Model Complexity}
     
-    We can measure the complexity of a model $g$ using $J(g)$. \\[2em]
+    We can measure the complexity of a model $g$ using $J(g)$ \\[2em]
 
  	\textbf{Example: Linear model}\\
- 	Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = s(\thetab^\top \xv)\right\}$ be the class of linear models with $s(\cdot)$ being either the identity function for linear regression or the logistic sigmoid function for logistic regression. \\
- 	Then, $J(g) = \sum_{j = 1}^p \Ind_{\{ \theta_j \neq 0 \}}$ could be the L$_0$ loss, i.e. the number of non-zero coefficients. 
+ 	Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = s(\thetab^\top \xv)\right\}$ be the class of linear models with $s(\cdot)$ being either the identity function for linear regression or the logistic sigmoid function for logistic regression \\
+ 	$\leadsto$ $J(g) = \sum_{j = 1}^p \Ind_{\{ \theta_j \neq 0 \}}$ could be the L$_0$ loss, i.e. the number of non-zero coefficients 
  	\vspace{0.5cm}
  	
  	\textbf{Example: Tree}\\
- 	Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \Ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees (i.e., class of additive model over the leaf-rectangles $Q_m$) then $J(g)$ could measure the number of terminal/leaf nodes.\\
+ 	Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \Ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees (i.e., class of additive model over the leaf-rectangles $Q_m$) then $J(g)$ could measure the number of terminal/leaf nodes\\
  	
 \end{frame}
  
 \begin{frame}{Local model fidelity}
  	\begin{itemize}
- 		\item A model $g$ is locally faithful to $\fh$ w.r.t. a point $\xv$\\ 
- 		if for points $\zv \in \Zspace \subseteq \R^p$ close to $\xv$, the predictions of $g(\zv)$ are close to $\fh(\zv)$. 
- 		\item In an optimization task: the closer $\zv$ is to $\xv$, the closer $g(\xv)$ should be to $\fh(\zv)$.  
+ 		\item $g$ is locally faithful to $\fh$ w.r.t. $\xv$ 
+ 		if for $\zv \in \Zspace \subseteq \R^p$ close to $\xv$, predictions of $g(\zv)$ are close to $\fh(\zv)$ 
+ 		\item In an optimization task: the closer $\zv$ is to $\xv$, the closer $g(\xv)$ should be to $\fh(\zv)$  
  		\pause
  		\item Two required measures:
  		\begin{enumerate}
  			\item A proximity (similarity) measure $\neigh(\zv)$ between $\zv$ and $\xv$, e.g. the exponential kernel:
  			$$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$$ 
- 			with $\sigma$ as the kernel width and $d$ as the Euclidean distance (numeric features) or the Gower distance $d_G$ (mixed features). 
+ 			with $\sigma$ as the kernel width and $d$ as the Euclidean distance (numeric features) or the Gower distance $d_G$ (mixed features) 
  			\pause
  			\item A distance measure or loss function $L(\fh(\zv), g(\zv))$, e.g. the L$_2$ loss/squared error
- 			$$L(\fh(\zv), g(\zv)) = (g(\zv) - \fh(\zv))^2.$$ 
+ 			$$L(\fh(\zv), g(\zv)) = (g(\zv) - \fh(\zv))^2$$ 
  		\end{enumerate}
  		\pause
  		\item Given points $\zv$, we can measure local fidelity of $g$ with respect to $\fh$ in terms of a weighted loss
@@ -113,13 +112,13 @@
 		$$ \argmin_{g \in \Gspace} L(\fh, g, \neigh) + J(g)$$
 		\item In practice:
 		\begin{itemize}
-		    \item LIME only optimizes $L(\fh, g, \neigh)$ (model-fidelity). 	
+		    \item LIME only optimizes $L(\fh, g, \neigh)$ (model-fidelity) 	
 		    \item Users decide threshold on model complexity $J(g)$ beforehand
 		\end{itemize}
 		\item Goal: \textbf{model-agnostic} explainer
 		\begin{itemize}
-    		\item[$\leadsto$] optimize $L(\fh, g, \neigh)$ without making any assumptions about $\fh$. 
-    		\item[$\leadsto$] learn $g$ only approximately.  
+    		\item[$\leadsto$] optimize $L(\fh, g, \neigh)$ without making any assumptions about $\fh$ 
+    		\item[$\leadsto$] learn $g$ only approximately  
 		\end{itemize}
 		\end{itemize}
 \end{frame} 
@@ -128,9 +127,9 @@
 		
 		\textbf{Input}:
 		\begin{itemize}
-		    \item a pre-trained model $\fh$
-		    \item an $\xv$ data points whose prediction $\fh(\xv)$ we want to explain
-		    \item model class $\Gspace$ for local surrogate (to limit the complexity of the explanation)
+		    \item Pre-trained model $\fh$
+		    \item Observation $\xv$ whose prediction $\fh(\xv)$ we want to explain
+		    \item Model class $\Gspace$ for local surrogate (to limit the complexity of the explanation)
 		\end{itemize}
 		
 		\pause
@@ -138,11 +137,11 @@
 		
 		\textbf{Algorithm}:
 		\begin{enumerate}
-    		\item Independently sample new points $\zv \in \Zspace$. 
-    		\item Retrieve predictions $\fh(\zv)$ for obtained points $\zv$. 
-    		\item Weight $\zv \in \Zspace$ by their proximity $\neigh(\zv)$.
-    		\item Train an interpretable surrogate model $g$ on weighted data points $\zv \in \Zspace$.\\ The obtained predictions $\fh(\zv)$ is the target of this model.
-    		\item Return the interpretable model $g$ as the explainer.
+    		\item Independently sample new points $\zv \in \Zspace$ 
+    		\item Retrieve predictions $\fh(\zv)$ for obtained points $\zv$ 
+    		\item Weight $\zv \in \Zspace$ by their proximity $\neigh(\zv)$
+    		\item Train an interpretable surrogate model $g$ on weighted data points $\zv \in \Zspace$\\ $\leadsto$ predictions $\fh(\zv)$ are the target of this model
+    		\item Return the interpretable model $g$ as the explainer
 		\end{enumerate}
 		
 
@@ -153,9 +152,9 @@
 
     	\textbf{Illustration} of LIME based on a classification task:
 		\begin{itemize}
-			\item Light/dark gray background: prediction surface of a classifier.
-			\item Yellow point: $\xv$. 
-			\item $\Gspace$: class of logistic regression models. 
+			\item Light/dark gray background: prediction surface of a classifier
+			\item Yellow point: $\xv$ 
+			\item $\Gspace$: class of logistic regression models 
 		\end{itemize}
 		\begin{center}
 			\includegraphics[width=0.35\textwidth]{figure/lime2}
@@ -168,10 +167,10 @@
 		
 		Strategies for sampling: 
 		\begin{itemize} 
-			\item Uniformly sample new points from the feasible feature range. 
-			\item Use the training data set with or without perturbations.
-			\item Draw samples from the estimated univariate distribution of each feature.
-			\item Create an equidistant grid over the supported feature range.  
+			\item Uniformly sample new points from the feasible feature range 
+			\item Use the training data set with or without perturbations
+			\item Draw samples from the estimated univariate distribution of each feature
+			\item Create an equidistant grid over the supported feature range  
 		\end{itemize}
 		\begin{center}
 			\includegraphics[width=0.4\textwidth]{figure/lime3} \hspace{0.1cm}
@@ -201,7 +200,7 @@
 		
 \begin{frame}[c]{LIME Algorithm: Example (Step 4: Surrogate) \citebutton{Ribeiro. 2016}{https://github.com/marcotcr/lime}}
 		Popular interpretable models include linear models, LASSO, classification/regression trees and\\ decision rules.\\
-		In our example, we fit a \textbf{logistic regression} model. (Consequently, $L(\fh(\zv), g(\zv))$ is the Bernoulli loss.)
+		In our example, we fit a \textbf{logistic regression} model (consequently, $L(\fh(\zv), g(\zv))$ is the Bernoulli loss)
 		\begin{center}
 			\includegraphics[width=0.4\textwidth]{figure/lime5}
 		\end{center}
@@ -211,8 +210,8 @@
 	\begin{itemize}
 		\item Model: SVM with RBF kernel
 		\item $\xv$: first data point of the dataset with $\fh_{bad}(\xv) = 0.658$
-		\item $\zv$: training data. They are weighted by the Gower proximity. 
-		\item Surrogate model $g$: L1-regularized linear model with 5 features. 
+		\item $\zv$: training data $\leadsto$ weighted by the Gower proximity 
+		\item Surrogate model $g$: L1-regularized linear model with 5 features 
 	\end{itemize}
 
     \bigskip
@@ -236,12 +235,12 @@
 
 \begin{center}
 	\includegraphics[width=0.45\textwidth]{figure/lime_credit.pdf}\\
-	{Effects of surrogate model, i.e. $\thetah^T \xv$.}
+	{Effects of surrogate model, i.e. $\thetah^T \xv$}
 \end{center}
 
 \begin{itemize}
-	\item The local model prediction for $\xv$ is $g(\xv) = 0.64$ vs. $\fh(\xv) = 0.658$. 
-	\item $g$ has a local fidelity of $L(\pih, g, \neigh) = 4.82$ with $\neigh(\zv)$ as the Gower proximity and $L(\pih_{bad}(\zv), g(\zv))$ as the euclidean distance. 
+	\item The local model prediction for $\xv$ is $g(\xv) = 0.64$ vs. $\fh(\xv) = 0.658$ 
+	\item $g$ has a local fidelity of $L(\pih, g, \neigh) = 4.82$ with $\neigh(\zv)$ as the Gower proximity and $L(\pih_{bad}(\zv), g(\zv))$ as the euclidean distance 
 \end{itemize}
 
 \end{frame}
@@ -249,7 +248,7 @@
 \begin{frame}[c]{Example on Credit Dataset (cont'd)}
 
 \begin{itemize}	
-	\item 2-dim ICE plots (aka. prediction surface plot) of credit amount and duration show how the surrogate model $g$ linearly approximates the previously nonlinear prediction surface of $\pih_{bad}$. 
+	\item 2-dim ICE plots (aka. prediction surface plot) of credit amount and duration show how the surrogate model $g$ linearly approximates the previously nonlinear prediction surface of $\pih_{bad}$ 
 \end{itemize}
 \vspace{-0.4cm}
  \begin{columns}
@@ -293,8 +292,8 @@
 	\begin{itemize}
 		\item Raw text representations: 
 		\begin{itemize}
-		    \item binary vector indicating the presence or absence of a word 
-		    \item a vector of word counts
+		    \item Binary vector indicating the presence or absence of a word 
+		    \item A vector of word counts
 		\end{itemize}
 		\item Examples for \textit{``This text is the first text."} and \textit{``Finally, this is the last one."}:
 		\begin{center}
@@ -308,20 +307,20 @@
 		\item \textbf{Sampling}: Randomly set the entry of individual words to $0$; equal to removing all occurrences of this word in the text. 
 		\item \textbf{Proximity}: Exponential kernel with cosine distance. 
 		\begin{itemize}
-		    \item neglects words that do not occur in both texts 
-		    \item measures the distance irrespective of the text size.
+		    \item Neglects words that do not occur in both texts 
+		    \item Measures the distance irrespective of the text size
 		\end{itemize}
 	\end{itemize}
 \end{frame}
 	
 \begin{frame}{LIME for Text Data (cont'd) \citebutton{Shen, Ian, (2019)}{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}}	 
 	\begin{itemize}
-		\item Random forest classifier labeling movie reviews from IMDB. 
+		\item Random forest classifier labeling movie reviews from IMDB 
 		\begin{itemize}
 		    \item \textcolor{blue}{0}: negative
 		    \item \textcolor{orange}{1}: positive
 		\end{itemize}
-		\item Surrogate model is a sparse linear model. 
+		\item Surrogate model is a sparse linear model 
 	\end{itemize}
 	
 	\begin{figure}
@@ -331,7 +330,7 @@
 		\end{center}
 	\end{figure}
 	
-	{Words like ``worst`` or ``waste`` indicate a negative review while words like ``best`` or ``great`` indicate a positive review.}
+	{Words like ``worst`` or ``waste`` indicate negative review while words like ``best`` or ``great`` indicate positive review}
 	
 	\end{frame}
 	
@@ -340,16 +339,16 @@
 		\begin{column}{0.67\textwidth}
 			LIME also works for image data:  
 			\begin{itemize}
-				\item \textbf{Idea}: Each instance is represented as a binary vector indicating the presence or absence of superpixels. \citebutton{Achanta et al. 2012}{https://ieeexplore.ieee.org/document/6205760}
-				\item Superpixels are interconnected pixels with similar colors. A single pixel might not change a prediction by much.
-				\item \textbf{Warning}: The size of superpixels needs to be determined before the segmentation takes place.
+				\item \textbf{Idea}: Each observation is represented by a binary vector indicating the presence or absence of superpixels \citebutton{Achanta et al. 2012}{https://ieeexplore.ieee.org/document/6205760}
+				\item Superpixels are interconnected pixels with similar colors (a single pixel might not change a prediction by much)
+				\item \textbf{Warning}: The size of superpixels needs to be determined before the segmentation takes place
 				\item \textbf{Sampling}: Randomly switching some of the super pixels ``off", i.e., by coloring some superpixels uniformly
 			\end{itemize}		
 		\end{column}
 		\begin{column}{0.26\textwidth}  
 			\begin{center}
 				\includegraphics[width=1\textwidth]{figure/superpixel_woman}
-				{Example for superpixels of different sizes.}
+				{Example for superpixels of different sizes}
 			\end{center}
 		\end{column}
 	\end{columns}

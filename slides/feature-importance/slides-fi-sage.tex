@@ -16,7 +16,7 @@
 \begin{document}
 	\newcommand{\titlefigure}{figure_man/feature-importance.png}
     \newcommand{\learninggoals}{
-    	\item SAGE
+    	\item How SAGE fairly distributes importance
     	}
 	% Set style/preamble.Rnw as parent.
 	
@@ -65,16 +65,16 @@ Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jo
 \begin{itemize}
     \item Feature importance attribution can be regarded as cooperative game \\
     $\leadsto$ features jointly contribute to achieve a certain model performance
-    \item Player: features
+    \item Players: features
     \item Payoff to be fairly distributed: model performance
-    \item Marginal contribution of a feature depends on the coalition of features that were already used
+    \item Surplus contribution of a feature depends on the coalition of features that are already accesible by the model
 \end{itemize}
 %, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
 \lz
 \textbf{SAGE Idea:} %Leverage game-theoretic 
 Use Shapley values to compute a fair attribution of importance (via model performance)\\
-$\Rightarrow$ Global feature importance technique\\
-$\Rightarrow$ Compute approximate Shapley values $\phi_j$ using appropriate value function 
+%$\Rightarrow$ Global feature importance technique\\
+%$\Rightarrow$ Compute approximate Shapley values $\phi_j$ using appropriate value function 
 %\lz
 %$\Rightarrow$ SAGE translates SHAP into a global feature importance technique\\
 %\lz
@@ -93,13 +93,6 @@ $\Rightarrow$ Compute approximate Shapley values $\phi_j$ using appropriate valu
 
 $$\fh_S(x_S) = \E[\fh(x) | X_S = x_S]$$
 
-\pause
-
-The ``dropped'' features can be sampled from \\
-\begin{itemize}
-\item the marginal distribution $\P(x_{-S})$
-\item the conditional distribution $\P(x_{-S}|x_S)$
-\end{itemize}
 %\lz
 
 %\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
@@ -108,36 +101,46 @@ The ``dropped'' features can be sampled from \\
 \pause
 \lz
 
-SAGE value function:  $v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S})$\\
+\textbf{SAGE value function:}  $v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S})$, where $\risk(\fh_{S}) = \E_{Y, X_S}[L(y, \fh_S(x_S))]$\\
 $\leadsto$ Quantify the predictive power of a coalition $S$ in terms of reduction in risk \\
 $\leadsto$ Risk of predictor $\fh_S(x_S)$ is compared to the risk of the mean prediction $\fh_{\emptyset}$
+
 
 \pause
 \lz
 
-Marginal contribution of feature $x_j$ over coalition $x_S$:  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S) = \risk(\fh_{S})-\risk(\fh_{S \cup \{j\}})$\\
+\textbf{Surplus contribution of feature $x_j$ over coalition $x_S$:}  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S) = \risk(\fh_{S})-\risk(\fh_{S \cup \{j\}})$\\
 $\leadsto$ Quantifies the added value of feature $j$ when it is added to coalition $S$
-\lz
-
 \end{frame}
 
 \begin{frame}{SAGE Removal and Value function}
 
-Interpretation of SAGE value functions differ, depending on whether conditional or marginal sampling is used.
+For the computation of the marginalized prediction $\fh_S(x_S)$, the ``dropped'' features can be sampled from \\
+\begin{itemize}
+\item the marginal distribution $\P(x_{-S})$ $\Rightarrow$ marginal SAGE
+\item the conditional distribution $\P(x_{-S}|x_S)$ $\Rightarrow$ conditional SAGE
+\end{itemize}
+
+%\lz\pause
+
+%Interpretation of SAGE value functions differ, depending on whether conditional or marginal sampling is used.
 
 \lz\pause
 
-\textbf{Marginal sampling:} $v(S)$ quantifies the reliance of the model on features $x_S$
+\textbf{Interpretation marginal sampling:} $v(S)$ quantifies the reliance of the model on features $x_S$
 \begin{itemize}
   \item features $x_S$ not being causal for the prediction is a sufficient condition for $v(S) = 0$
 \end{itemize}
 
 \lz\pause
 
-\textbf{Conditional sampling}: $v(S)$ quantifies the reliance of the model on the information contained in variables $x_S$
+\textbf{Interpretation conditional sampling}: $v(S)$ quantifies whether variables $x_S$ contains prediction-relevant information (e.g. $y \not \indep x_S$) that is (directly or indirectly) exploited by the model
 \begin{itemize}
   \item features $x_S$ not being causal for the prediction is not a sufficient condition for $v(S) = 0$
-  \item under model optimality, links to mutual information or the conditional variance can be drawn
+  \begin{itemize}
+      \item e.g., if $x_1$ and $x_2$ are perfectly correlated, even if only $x_1$ has nonzero coefficients, both are considered equally important
+  \end{itemize}
+  \item under model optimality, links to mutual information or the conditional variance exist
 \end{itemize}
 
 \end{frame}
@@ -177,50 +180,6 @@ Since for conditional $v$ the difference $v(-j \cup j) - v(-j)$ quantifies the u
 %
 \end{frame}
 
-\begin{frame}{SAGE interpretation}
-
-The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
-%
-\begin{table}
-  \centering
-  \begin{tabular}{l | l }
-  Shapley property $\implies$ & conditional SAGE property \\
-  \hline
-  efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
-  symmetry & $x_j = x_i \implies \phi_i = \phi_j$ \\
-  linearity & $\phi_j$ expecation of per-instance\\
-  & conditional SHAP applied to model loss\\
-  monotonicity & given models $f, f'$, if  $\forall S:$\\
-  &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
-  &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
-  dummy & if $\forall S: \fh(x) \indep x_j | x_S \Rightarrow \phi_j = 0$
-  \end{tabular}
-\end{table}
-
-\end{frame}
-
-\begin{frame}{SAGE interpretation}
-%
-The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
-%
-\begin{table}
-  \centering
-  \begin{tabular}{l | l }
-  Shapley property $\implies$ & marginal SAGE property \\
-  \hline
-  efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
-  symmetry & no intelligible implication \\
-  linearity & $\phi_j$ expecation of per-instance\\
-  & marginal SHAP applied to model loss\\
-  monotonicity & given models $f, f'$, if  $\forall S:$\\
-  &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
-  &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
-  dummy & model invariant to $x_j \Rightarrow \phi_j = 0$\\
-  \end{tabular}
-\end{table}
-%
-\end{frame}
-
 \begin{frame}{Interaction Example Revisited}
 
 \textbf{Recap:} Data: $x_1, \dots, x_4$ uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$. Model: $\fh(x) \approx x_1 x_2 + x_3$.\\
@@ -232,7 +191,6 @@ The Shapley axioms can be translated into properties of SAGE. The interpretation
 While PFI regards $x_1, x_2$ to be equally important as $x_3$, marginal SAGE fairly divides the contribution of the interaction $x_1$ and $x_2$.
   
 \end{frame}
-
 
 %\begin{frame}{Implications marginal SAGE}
 %
@@ -280,6 +238,50 @@ While PFI regards $x_1, x_2$ to be equally important as $x_3$, marginal SAGE fai
 % \begin{frame}
 %   \printbibliography
 % \end{frame}
+
+\begin{frame}{Deep dive: Shapley axioms for SAGE}
+
+The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
+%
+\begin{table}
+  \centering
+  \begin{tabular}{l | l }
+  Shapley property $\implies$ & conditional SAGE property \\
+  \hline
+  efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
+  symmetry & $x_j = x_i \implies \phi_i = \phi_j$ \\
+  linearity & $\phi_j$ expecation of per-instance\\
+  & conditional SHAP applied to model loss\\
+  monotonicity & given models $f, f'$, if  $\forall S:$\\
+  &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
+  &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
+  dummy & if $\forall S: \fh(x) \indep x_j | x_S \Rightarrow \phi_j = 0$
+  \end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{Deep dive: Shapley axioms for SAGE}
+%
+The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
+%
+\begin{table}
+  \centering
+  \begin{tabular}{l | l }
+  Shapley property $\implies$ & marginal SAGE property \\
+  \hline
+  efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
+  symmetry & no intelligible implication \\
+  linearity & $\phi_j$ expecation of per-instance\\
+  & marginal SHAP applied to model loss\\
+  monotonicity & given models $f, f'$, if  $\forall S:$\\
+  &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
+  &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
+  dummy & model invariant to $x_j \Rightarrow \phi_j = 0$\\
+  \end{tabular}
+\end{table}
+%
+\end{frame}
 
 \endlecture
 \end{document}
