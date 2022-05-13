@@ -17,6 +17,9 @@
 	\newcommand{\titlefigure}{figure_man/feature-importance.png}
     \newcommand{\learninggoals}{
     	\item How SAGE fairly distributes importance
+    	\item Definition of SAGE value function
+    	\item Difference SAGE value function and SAGE values
+    	\item Marginal and Conditional SAGE
     	}
 	% Set style/preamble.Rnw as parent.
 	
@@ -59,10 +62,14 @@ Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jo
 
 
 
-\begin{frame}{Challenge: Fair attribution of importance \citebutton{Covert et al. (2020)}{https://proceedings.neurips.cc/paper/2020/file/c7bf0b7c1a86d5eb3be2c722cf2cf746-Paper.pdf}
+\begin{frame}{SAGE Idea \citebutton{Covert et al. (2020)}{https://proceedings.neurips.cc/paper/2020/file/c7bf0b7c1a86d5eb3be2c722cf2cf746-Paper.pdf}
 }
 
-\textbf{Observation:} 
+\textbf{SAGE:} %Leverage game-theoretic 
+Use Shapley values to compute a fair attribution of importance (via model performance)\\
+\lz
+
+\textbf{Idea:} 
 \begin{itemize}
     \item Feature importance attribution can be regarded as cooperative game \\
     $\leadsto$ features jointly contribute to achieve a certain model performance
@@ -71,23 +78,23 @@ Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jo
     \item Surplus contribution of a feature depends on the coalition of features that are already accessible by the model
 \end{itemize}
 %, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
-\lz
-\textbf{SAGE Idea:} %Leverage game-theoretic 
-Use Shapley values to compute a fair attribution of importance (via model performance)\\
+
+
 %$\Rightarrow$ Global feature importance technique\\
 %$\Rightarrow$ Compute approximate Shapley values $\phi_j$ using appropriate value function 
 %\lz
 %$\Rightarrow$ SAGE translates SHAP into a global feature importance technique\\
 %\lz
 %In order to compute SAGE, approximate Shapley values $\phi_j$ as for SHAP, replacing SHAP value functions with SAGE value functions.\\
-% Note: Same idea called SFIMP was introduced in \citebutton{Casalicchio et al. (2020)}{https://arxiv.org/abs/1804.06620}
+\lz
+
 %\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
   
 \end{frame}
 
 
 % SAGE IDEA
-\begin{frame}{SAGE Removal and Value function}
+\begin{frame}{SAGE - Value function}
   
  \textbf{Removal Idea:} %To deprive the model of the non-coalition features $-S$, 
  To deprive information of the non-coalition features $-S$ from the model, marginalize the prediction function over the features $-S$ to be ``dropped''.
@@ -112,11 +119,22 @@ $\leadsto$ Risk of predictor $\fh_S(x_S)$ is compared to the risk of the mean pr
 
 \textbf{Surplus contribution of feature $x_j$ over coalition $x_S$:}  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S) = \risk(\fh_{S})-\risk(\fh_{S \cup \{j\}})$\\
 $\leadsto$ Quantifies the added value of feature $j$ when it is added to coalition $S$
+
+\pause
+\lz
+
+\textbf{Note:} 
+\begin{itemize}
+    \item Same idea (called SFIMP) was proposed in \citebutton{Casalicchio et al. (2018)}{https://arxiv.org/abs/1804.06620}
+    \item Definition based on model refits was proposed in context of feature selection in \citebutton{Cohen et al. (2007)}{https://doi.org/10.1162/neco.2007.19.7.1939}
+\end{itemize}
+
+
 \end{frame}
 
-\begin{frame}{SAGE Removal and Value function}
+\begin{frame}{SAGE - marginal and conditional sampling}
 
-For the computation of the marginalized prediction $\fh_S(x_S)$, the ``dropped'' features can be sampled from \\
+When computing the marginalized prediction $\fh_S(x_S)$, the ``dropped'' features can be sampled from \\
 \begin{itemize}
 \item the marginal distribution $\P(x_{-S})$ $\Rightarrow$ marginal SAGE
 \item the conditional distribution $\P(x_{-S}|x_S)$ $\Rightarrow$ conditional SAGE
@@ -146,29 +164,8 @@ For the computation of the marginalized prediction $\fh_S(x_S)$, the ``dropped''
 
 \end{frame}
 
-\begin{frame}{SAGE Removal and Value function}
 
-When the loss-optimal model $f^*$ is inspected using \textit{conditional-sampling} based SAGE value functions, interesting links exist.
-
-\lz\pause
-\textbf{For cross-entropy loss:} 
-  \begin{itemize}
-      \item value function is the mutual information:  $v_{f^*}(S) = I(y;x_S)$
-      \item marginal contribution of a feature $x_j$ is the conditional mutual information: $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = I(y,x_i|x_S)$
-  \end{itemize}
-
-\lz\pause
-
-\textbf{For MSE loss:} 
-    \begin{itemize}
-    \item value function is the expected reduction in variance given knowledge of the features $x_S$: $v_{f^*}(S) = Var(y) - \E[Var(y|x_S)]$
-    \item marginal contribution is the respective reduction over $x_S$:
-    $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = \E[Var(y|x_S)] - \E[Var(y|x_{S \cup {j}})]$
-    \end{itemize}
-    
-\end{frame}
-
-\begin{frame}{SAGE Removal and Value function}
+\begin{frame}{SAGE - marginal and conditional sampling}
 
 \textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). Assume fitting LM yields $\fh \approx 0.95 x_3 + 0.05 x_2$. 
 %
@@ -188,6 +185,7 @@ When the loss-optimal model $f^*$ is inspected using \textit{conditional-samplin
 %\end{column}
 %\end{columns}
 \end{frame}
+
 
 \begin{frame}{SAGE value functions versus SAGE values}
 
@@ -209,7 +207,7 @@ When the loss-optimal model $f^*$ is inspected using \textit{conditional-samplin
 \textbf{SAGE value approximation:} Average over the contributions for $M$ randomly sampled permutations
 
 \begin{align*}
-    \phi_j = \frac{1}{M} \sum_{m=1}^M v(j \cup \Stauj) - v(\Stau)
+    \phi_j = \frac{1}{M} \sum_{m=1}^M v(\Stauj) - v(\Stau)
 \end{align*}
     
 \end{frame}
@@ -229,25 +227,49 @@ When the loss-optimal model $f^*$ is inspected using \textit{conditional-samplin
 
 \end{frame}
 
+
+\begin{frame}{SAGE Loss functions}
+
+When the loss-optimal model $f^*$ is inspected using \textit{conditional-sampling} based SAGE value functions, interesting links exist.
+
+\lz\pause
+\textbf{For cross-entropy loss:} 
+  \begin{itemize}
+      \item value function is the mutual information:  $v_{f^*}(S) = I(y;x_S)$
+      \item surplus contribution of a feature $x_j$ is the conditional mutual information: $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = I(y,x_i|x_S)$
+  \end{itemize}
+
+\lz\pause
+
+\textbf{For MSE loss:} 
+    \begin{itemize}
+    \item value function is the expected reduction in variance given knowledge of the features $x_S$: $v_{f^*}(S) = Var(y) - \E[Var(y|x_S)]$
+    \item surplus contribution is the respective reduction over $x_S$:
+    $v_{f^*}(S \cup \{j\}) - v_{f^*}(S) = \E[Var(y|x_S)] - \E[Var(y|x_{S \cup {j}})]$
+    \end{itemize}
+    
+\end{frame}
+
+
 \begin{frame}{Implications marginal SAGE values}
 
 Can we gain insight into whether...
 
 \begin{enumerate}
-    \item<1-> the feature $x_j$ is causal for the prediction?    \begin{itemize}
+    \item<1> the feature $x_j$ is causal for the prediction?    \begin{itemize}
       \item for all coalitions, $v(j \cup S) - v(S)$ can only be nonzero if $x_j \rightarrow \fh(x)$ (as for PFI)\\
       $\leadsto$ $\phi_j$ is only nonzero if $x_j$ causal for the prediction
       \item $v(j \cup S) - v(S)$ may be nonzero due to independence $x_j \indep y | x_S$ (as for PFI)\\
       $\leadsto$ $\phi_j$ may be zero although the feature is causal for the prediction
     \end{itemize}
-    \item<2-> the variable $x_j$ contains prediction-relevant information about $y$?
+    \item<2> the variable $x_j$ contains prediction-relevant information about $y$?
     \begin{itemize}
       \item value functions may be nonzero despite independence due to extrapolation (as for PFI)\\
       $\leadsto$ $\phi_j$ may be nonzero without $x_j$ being dependent with $y$
       \item value functions may be zero despite $x_j$ containing prediction-relevant information due to underfitting (as for PFI)\\
       $\leadsto$ $\phi_j$ may be zero although prediction-relevant information contained
     \end{itemize}
-    \item<3-> the model requires access to $x_j$ to achieve it's prediction performance?    
+    \item<3> the model requires access to $x_j$ to achieve it's prediction performance?    
     \begin{itemize}
       \item like PFI, in general marginal value functions do not allow insight into unique contribution $\leadsto$ no insight from $\phi_j$
     \end{itemize}
@@ -260,13 +282,13 @@ Can we gain insight into whether...
 Can we gain insight into whether...
 
 \begin{enumerate}
-    \item<1-> the feature $\xj$ is causal for the prediction?
+    \item<1> the feature $\xj$ is causal for the prediction?
     \begin{itemize}
       \item value functions may be nonzero although feature not directly used by the model\\
       $\leadsto$ nonzero $\phi_j$ does not imply $\xj \rightarrow \hat{y}$
-      \item value functions may be zero although feature used by the model, e.g. if independent with $y$ and all covariates $\leadsto$ zero $\phi_j$ does not imply $\xj \not \rightarrow \hat{y}$
+      \item value functions may be zero although feature may be used by the model, e.g. if feature is independent with $y$ and all other features $\leadsto$ zero $\phi_j$ does not imply $\xj \not \rightarrow \hat{y}$
     \end{itemize}
-    \item<2-> the variable $\xj$ contains prediction-relevant information about $y$?
+    \item<2> the variable $\xj$ contains prediction-relevant information about $y$?
     \begin{itemize}
       \item e.g. for cross-entropy optimal $\fh$, $v(j)$ measures mutual information $I(y;x_j)$\\
       $\leadsto$ prediction-relevance implies nonzero $\phi_j$
@@ -275,7 +297,7 @@ Can we gain insight into whether...
     %   \item $x_j \indep y$ in general does not imply $x_j \indep y | x_S$ and consequently does not imply that $v(j \cup S) - v(S) = 0$\\
     %   $\leadsto$ $\phi_j$ may be nonzero although $\xj \indep y$
     \end{itemize}
-    \item<3-> the model requires access to $x_j$ to achieve it's prediction performance?  
+    \item<3> the model requires access to $x_j$ to achieve it's prediction performance?  
     \begin{itemize}
         \item e.g. for cross-entropy optimal $\fh$, the surplus contribution $v(j \cup -j) - v(-j)$ captures the conditional mutual information $I(y;x_j|x_{-j})$\\
         $\leadsto$ $\phi_j$ is nonzero for features with unique contribution
@@ -299,7 +321,7 @@ The Shapley axioms can be translated into properties of SAGE. The interpretation
   \begin{tabular}{l | l }
   Shapley property $\implies$ & conditional SAGE property \\
   \hline
-  efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
+  efficiency & $\sum_{i=1}^p \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
   symmetry & $x_j = x_i \implies \phi_i = \phi_j$ \\
   linearity & $\phi_j$ expecation of per-instance\\
   & conditional SHAP applied to model loss\\
@@ -321,7 +343,7 @@ The Shapley axioms can be translated into properties of SAGE. The interpretation
   \begin{tabular}{l | l }
   Shapley property $\implies$ & marginal SAGE property \\
   \hline
-  efficiency & $\sum_{i=1}^d \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
+  efficiency & $\sum_{i=1}^p \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
   symmetry & no intelligible implication \\
   linearity & $\phi_j$ expecation of per-instance\\
   & marginal SHAP applied to model loss\\

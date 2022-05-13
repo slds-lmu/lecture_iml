@@ -122,28 +122,41 @@ $$
     \centering
     \includegraphics[width=0.9\columnwidth]{figure/shapley2shap.pdf}
 \end{figure}
-
-
-
-
 \end{column}
 \end{columns}
-
-
-
-
 \end{frame}
+
+
 
 \begin{frame}{SHAP Definition \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
 \textbf{Aim}: 
 Find an additive combination that explains the prediction of an observation $\xv$ by computing the contribution of each feature to the prediction using a (more efficient) estimation procedure. \\\medskip
-\only<1-3>{\textbf{Definition}
+\only<1-4>{\textbf{Definition}
 \begin{itemize}
     \item Define simplified (binary) coalition feature space $\mathbf{Z}^\prime \in \{0,1\}^{K \times p}$ with $K$ rows and $p$ columns 
     \item Rows are referred to as $\mathbf{z}^{\prime (k)} = \{z^{\prime (k)}_1, \ldots, z^{\prime (k)}_p\}$ with $k \in \{1,\ldots, K\}$ (indexes $k$-th coalition)
     \item Columns are referred to as $\mathbf{z}_j$ with $j \in \{1, \ldots, p\}$ being the index of the original feature
 \end{itemize}
 }
+\only<1>{
+\textbf{Example}: 
+\begin{table}[]
+    \centering
+     \begin{tabular}{l |c|ccc}
+  Coalition  & $\mathbf{z}^{\prime (k)}$ &  hum & temp & ws \\
+  \hline 
+  $\varnothing$ & $\mathbf{z}^{\prime (1)}$ & 0 & 0 & 0  \\
+  hum & $\mathbf{z}^{\prime (2)}$ & 1 & 0 & 0  \\
+  temp &  $\mathbf{z}^{\prime (3)}$ & 0 & 1 & 0  \\
+  ws &   $\mathbf{z}^{\prime (4)}$ & 0 & 0 & 1  \\
+  hum, temp & $\mathbf{z}^{\prime (5)}$ & 1 & 1 & 0  \\
+  temp, ws & $\mathbf{z}^{\prime (6)}$ & 0 & 1 & 1  \\
+  hum, ws &   $\mathbf{z}^{\prime (7)}$ & 1 & 0 & 1  \\
+  hum, temp, ws & $\mathbf{z}^{\prime (8)}$ & 1 & 1 & 1  \\
+  \end{tabular}
+\end{table}
+}
+
 %\vspace{0.5cm}
 \begin{exampleblock}{}
 \[
@@ -157,38 +170,38 @@ g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
   expl/.style={draw=blue,fill=white,rounded corners,text width=3cm},
   arrow/.style={blue,ultra thick,->,>=latex}
 ]
-\node<1-3>[expl] 
+\node<2-4>[expl] 
   (zex) 
   at (2,1.5cm)
   {$\mathbf{z}^{\prime (k)}$: \textbf{Coalition} \\ simplified features};
-\node<2-3>[expl] 
+\node<3-4>[expl] 
   (ph0ex) 
   at (5,-.5cm)
   {$\phi_0$: \textbf{Null Output} \\ Average Model Baseline ($\E(\fh))$};
-\node<3>[expl] 
+\node<4>[expl] 
   (phjex) 
   at (12,0cm)
   {$\phi_j$: \textbf{Attribution} \\ How much does feature $j$ change the output for coaltion $k$};
 
-\draw<1-3>[arrow]
+\draw<2-4>[arrow]
   (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.9ex]{pic cs:zp});  
-\draw<2-3>[arrow]
+\draw<3-4>[arrow]
   (ph0ex.east) to[out=180,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:ph0});  
-\draw<3>[arrow]
+\draw<4>[arrow]
   (phjex.west) to[out=90,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:phj});
- \node<4>[expl] 
+ \node<5>[expl] 
   (zex)  
   at (2,1cm)
   {$g(\mathbf{z}^{\prime (k)})$: \textbf{Marginal Contribution} \\ Contribution of coalition $\mathbf{z}^{\prime (k)}$ to the prediction};
-  \draw<4>[arrow]
+  \draw<5>[arrow]
   (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.9ex]{pic cs:zp});  
-\node<4>[expl] 
+\node<5>[expl] 
   (phjsh) 
   at (12,1.5cm)
   {$\phi_j$: \textbf{Shapley Values}};
-\draw<4>[arrow]
+\draw<5>[arrow]
   (phjsh.west) to[out=90,in=90] ([xshift= 1ex, yshift=2ex]{pic cs:phj}); 
-\draw<4> [
+\draw<5> [
     thick,
     decoration={
         brace,
@@ -200,7 +213,7 @@ g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
 node[pos=0.5,below=15pt,black]{\textbf{Additive Feature Attribution}};
 \end{tikzpicture}
 \end{exampleblock}
-\begin{onlyenv}<4>
+\begin{onlyenv}<5>
 \vspace{1cm}
 \textbf{Problem}\\
 How do we estimate the Shapley values $\phi_j$?
