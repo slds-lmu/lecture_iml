@@ -59,7 +59,8 @@ Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jo
 
 
 
-\begin{frame}{Challenge: Fair attribution of importance \citebutton{Covert et al. (2020)}{https://proceedings.neurips.cc/paper/2020/file/c7bf0b7c1a86d5eb3be2c722cf2cf746-Paper.pdf}}
+\begin{frame}{Challenge: Fair attribution of importance \citebutton{Covert et al. (2020)}{https://proceedings.neurips.cc/paper/2020/file/c7bf0b7c1a86d5eb3be2c722cf2cf746-Paper.pdf}
+}
 
 \textbf{Observation:} 
 \begin{itemize}
@@ -67,7 +68,7 @@ Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jo
     $\leadsto$ features jointly contribute to achieve a certain model performance
     \item Players: features
     \item Payoff to be fairly distributed: model performance
-    \item Surplus contribution of a feature depends on the coalition of features that are already accesible by the model
+    \item Surplus contribution of a feature depends on the coalition of features that are already accessible by the model
 \end{itemize}
 %, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
 \lz
@@ -79,7 +80,7 @@ Use Shapley values to compute a fair attribution of importance (via model perfor
 %$\Rightarrow$ SAGE translates SHAP into a global feature importance technique\\
 %\lz
 %In order to compute SAGE, approximate Shapley values $\phi_j$ as for SHAP, replacing SHAP value functions with SAGE value functions.\\
-
+% Note: Same idea called SFIMP was introduced in \citebutton{Casalicchio et al. (2020)}{https://arxiv.org/abs/1804.06620}
 %\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
   
 \end{frame}
@@ -171,13 +172,41 @@ When the loss-optimal model $f^*$ is inspected using \textit{conditional-samplin
 
 \textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). The prediction model is defined as  $\fh \approx 0.95 x_3 + 0.05 x_2$. 
 %
-\begin{figure}
-  \includegraphics[width=0.6\linewidth]{figure_man/sage_variants}
-\end{figure}
-%
-While the conditional $v(j)$ are nonzero for features that are not used by $\fh$, marginal $v(j)$ are only nonzero for features that are used by $\fh$. 
+%\begin{columns}[T]
+%\begin{column}{0.5\textwidth}
+\includegraphics[width=0.6\linewidth]{figure_man/sage_variants}
+%\end{column}
+%\begin{column}{0.5\textwidth}
+Conditional $v(j)$ are nonzero for features that are not used by $\fh$
+
+Marginal $v(j)$ are only nonzero for features that are used by $\fh$
+
 Since for conditional $v$ the difference $v(-j \cup j) - v(-j)$ quantifies the unique contribution of $x_j$ over remaining variables $-j$ and $y \indep x_1, x_2 | x_3$, only $v(\{1,2,3\}) - v(\{1, 2\})$ is nonzero.
-%
+%\end{column}
+%\end{columns}
+\end{frame}
+
+\begin{frame}{SAGE value functions versus SAGE values}
+
+\textbf{SAGE value function $v(S)$}: measure contribution of a specific feature set over the empty coalition
+
+\lz
+
+\textbf{SAGE values $\phi_j$}: fair attribution of importance
+\begin{itemize}
+    \item can be computed by averaging the contribution of $x_j$ over all feature orderings
+    \item for feature permutation $\pi$ and the corresponding feature ordering $(x_{\pi(1)}, \dots, x_{phi(d)})$, for feature $x_j$ the coalition $S(j; \pi)$ is defined as the set of features preceding $x_j$, i.e. $S(j; \pi) := \{i : \pi(i) < \pi(j)\}$
+    \item the contribution of $j$ in an ordering $\pi$ is given as $v(j \cup S(j; \pi)) - v(S(j; \pi))$
+\end{itemize}
+
+\lz
+
+\textbf{SAGE value approximation:} Average over the contributions for $M$ randomly sampled permutations
+
+\begin{align*}
+    \phi_j = \frac{1}{M} \sum_{m=1}^M v(j \cup S(j;\pi_m)) - v(S(j;\pi_m))
+\end{align*}
+    
 \end{frame}
 
 \begin{frame}{Interaction Example Revisited}
@@ -192,48 +221,62 @@ While PFI regards $x_1, x_2$ to be equally important as $x_3$, marginal SAGE fai
   
 \end{frame}
 
-%\begin{frame}{Implications marginal SAGE}
-%
-%Can we gain insight into whether...
-%
-%\begin{enumerate}
-%    \item the feature $x_j$ is causal for the prediction?
-%    \begin{itemize}
-%      \item yes, because of the dummy property nonzero $\phi_j$ implies $x_j \rightarrow \fh(x)$
-%    \end{itemize}
-%    \item the variable $x_j$ contains prediction-relevant information?
-%    \begin{itemize}
-%      \item No, whether a model relies on the feature (to improve the performance).
-%    \end{itemize}
-%    \item the model requires access to $x_j$ to achieve it's prediction performance?    
-%    \begin{itemize}
-%      \item 
-%\end{itemize}
-%\end{enumerate}
-%
-%\end{frame}
-%
-%\begin{frame}{Implications conditional SAGE}
-%
-%Can we gain insight into whether...
-%
-%\begin{itemize}
-%    \item the feature $\xj$ is causal for the prediction?
-%    \begin{itemize}
-%      \item no
-%    \end{itemize}
-%    \item the variable $\xj$ contains prediction-relevant information about $\ydat$?
-%    \begin{itemize}
-%      \item yes
-%    \end{itemize}
-%    \item the model requires access to $x_j$ to achieve it's prediction performance?  
-%    \begin{itemize}
-%        \item no
-%    \end{itemize}
-%\end{itemize}
-%
-%\end{frame}
+\begin{frame}{Implications marginal SAGE values}
 
+Can we gain insight into whether...
+
+\begin{enumerate}
+    \item<1-> the feature $x_j$ is causal for the prediction?    \begin{itemize}
+      \item for all coalitions, $v(j \cup S) - v(S)$ can only be nonzero if $x_j \rightarrow \fh(x)$ (as for PFI)\\
+      $\leadsto$ $\phi_j$ is only nonzero if $x_j$ causal for the prediction
+      \item $v(j \cup S) - v(S)$ may be nonzero due to independence $x_j \indep y | x_S$ (as for PFI)\\
+      $\leadsto$ $\phi_j$ may be zero although the feature is causal for the prediction
+    \end{itemize}
+    \item<2-> the variable $x_j$ contains prediction-relevant information about $y$?
+    \begin{itemize}
+      \item value functions may be nonzero despite independence due to extrapolation (as for PFI)\\
+      $\leadsto$ $\phi_j$ may be nonzero without $x_j$ being dependent with $y$
+      \item value functions may be zero despite $x_j$ containing prediction-relevant information due to underfitting (as for PFI)\\
+      $\leadsto$ $\phi_j$ may be zero although prediction-relevant information contained
+    \end{itemize}
+    \item<3-> the model requires access to $x_j$ to achieve it's prediction performance?    
+    \begin{itemize}
+      \item like PFI, in general marginal value functions do not allow insight into unique contribution $\leadsto$ no insight from $\phi_j$
+    \end{itemize}
+\end{enumerate}
+
+\end{frame}
+%
+\begin{frame}{Implications conditional SAGE values}
+
+Can we gain insight into whether...
+
+\begin{enumerate}
+    \item<1-> the feature $\xj$ is causal for the prediction?
+    \begin{itemize}
+      \item value functions may be nonzero although feature not directly used by the model\\
+      $\leadsto$ nonzero $\phi_j$ does not imply $\xj \rightarrow \hat{y}$
+      \item value functions may be zero although feature used by the model, e.g. if independent with $y$ and all covariates $\leadsto$ zero $\phi_j$ does not imply $\xj \not \rightarrow \hat{y}$
+    \end{itemize}
+    \item<2-> the variable $\xj$ contains prediction-relevant information about $y$?
+    \begin{itemize}
+      \item e.g. for cross-entropy optimal $\fh$, $v(j)$ measures mutual information $I(y;x_j)$\\
+      $\leadsto$ prediction-relevance implies nonzero $\phi_j$
+      \item $x_j \indep y$ does not imply $x_j \indep y | x_S$ and consequently does not imply $v(j \cup S) - v(S) = 0$\\
+      $\leadsto$ $\phi_j$ may be nonzero although $\xj \indep y$
+    %   \item $x_j \indep y$ in general does not imply $x_j \indep y | x_S$ and consequently does not imply that $v(j \cup S) - v(S) = 0$\\
+    %   $\leadsto$ $\phi_j$ may be nonzero although $\xj \indep y$
+    \end{itemize}
+    \item<3-> the model requires access to $x_j$ to achieve it's prediction performance?  
+    \begin{itemize}
+        \item e.g. for cross-entropy optimal $\fh$, the surplus contribution $v(j \cup -j) - v(-j)$ captures the conditional mutual information $I(y;x_j|x_{-j})$\\
+        $\leadsto$ $\phi_j$ is nonzero for features with unique contribution
+        \item $x_j \indep y | x_{-j}$ does not imply conditional independence w.r.t. to arbitrary coalitions $x_j \indep y | x_S$\\
+        $\leadsto$ $\phi_j$ may be nonzero although the features has no unique contribution
+    \end{itemize}
+\end{enumerate}
+
+\end{frame}
 
 % \begin{frame}
 %   \printbibliography
