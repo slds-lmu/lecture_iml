@@ -4,7 +4,7 @@
 % Defines macros and environments
 \input{../../style/common.tex}
 
-\newcommand{\Sm}{S_{j}^\tau}%{Pre(\tau,j)} % S(\tau,j)
+%\newcommand{\Sm}{S_{j}^\tau}%{Pre(\tau,j)} % S(\tau,j)
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -65,10 +65,10 @@
 \begin{frame}{Cooperative Games without Interactions}
 % Figure Source: https://docs.google.com/presentation/d/1-bK90Gv1vIDr61s1PfgC51Kvic2Avnb7v8PgoO9iN0I/edit?usp=sharing
 \begin{center}
-\includegraphics<1>[page=1, width = 0.8\textwidth]{figure/Shapley.pdf}
-\includegraphics<2>[page=2, width = 0.8\textwidth]{figure/Shapley.pdf}
+\includegraphics<1>[page=1, width = 0.8\textwidth]{figure/Shapley.pdf}%
+\includegraphics<2>[page=2, width = 0.8\textwidth]{figure/Shapley.pdf}%
 
-\only<2>{$\Rightarrow$ Fair Payouts are Trivial Without Interactions}
+\visible<2>{$\Rightarrow$ Fair Payouts are Trivial Without Interactions}
 \end{center}
 \end{frame}
 
@@ -170,9 +170,9 @@ This idea refers to the \textbf{Shapley value} which assigns a payout value to e
   \item Shapley value via \textbf{set definition} (weighting via multinomial coefficient): 
   $$\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$$
   %\item Shapley values are the \textit{only} solution for the attribution with the specified axioms.
-%   \item Equivalent Shapley value definition via \textbf{orders}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
+%   \item Equivalent Shapley value definition via \textbf{orders}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stau \cup \{j\}) - v(\Stau))$$
 %     $\leadsto$ $\Pi$: All possible $|P|!$ orders/permutations of players\\
-%     $\leadsto$ $\Sm$: The set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$ % j, \dots, 
+%     $\leadsto$ $\Stau$: The set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$ % j, \dots, 
 \end{itemize}
 
 \end{frame}
@@ -188,9 +188,9 @@ This idea refers to the \textbf{Shapley value} which assigns a payout value to e
 %     %\item Each contribution is weighted proportionally to the number of possible orders of its coalition -- the more players in a coalition, the more possibilities of ordering the players inside the coalition
 %     \item Shapley value via \textbf{set definition} (weighting via multinomial coefficient): 
 %     $$\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$$
-%     \item Shapley value via \textbf{order definition}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
+%     \item Shapley value via \textbf{order definition}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stau \cup \{j\}) - v(\Stau))$$
     
-%     with $\Pi$ being all possible $|P|!$ orders/permutations of players and $\Sm$ being the set of players before player $j$ in order $\tau$ 
+%     with $\Pi$ being all possible $|P|!$ orders/permutations of players and $\Stau$ being the set of players before player $j$ in order $\tau$ 
     
 %     %$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(S_j(\tau) \cup \{j\}) - v(S_j(\tau)))$
 % \end{itemize}
@@ -241,18 +241,19 @@ This idea refers to the \textbf{Shapley value} which assigns a payout value to e
 The Shapley value was introduced as summation over sets $\SsubPnoj$, but it can be equivalently defined as a summation of all orders of players: 
 %(which explains where the factor $\frac{|S|!(|P| - |S| - 1)!}{|P|!}$ comes from):
 
-$$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
+$$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stau \cup \{j\}) - v(\Stau))$$
   
 \begin{itemize}[<+->]
   \item $\Pi$: All possible orders of players (we have $|P|!$ in total)
   %\item Recall the order definition: 
-  \item $\Sm$: Set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$  where $\tau^{(i)}$ is $i$-th element \\ % j, \dots, 
+  \item $\Stau$: Set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$  where $\tau^{(i)}$ is $i$-th element \\ % j, \dots, 
   $\Rightarrow$ Example: Players $1,2,3$ $\Rightarrow$ 
-  \only<3>{$\Pi = \{({\color{red} 1,2},3), (1,3,2), ({\color{red} 2,1},3), (2,3,1), (3,1,2), (3,2,1)\}$}
-  \only<1-2>{$\Pi = \{(1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)\}$}\\
-  \phantom{$\Rightarrow$} $\leadsto$ For order $\tau = (2,1,3)$ and player of interest $j=3$ $\Rightarrow$ $\Sm = \{2, 1\}$\\
-  \phantom{$\Rightarrow$} $\leadsto$ For order $\tau = (3,1,2)$ and player of interest $j=1$ $\Rightarrow$ $\Sm = \{3\}$\\
-  \phantom{$\Rightarrow$} $\leadsto$ For order $\tau = (3,1,2)$ and player of interest $j=3$ $\Rightarrow$ $\Sm = \emptyset$
+  \only<3>{$\Pi = \{({\color{red} 1,2},3), (1,3,2), ({\color{red} 2,1},3), (2,3,1), (3,1,2), (3,2,1)\}$}%
+  \only<1-2>{$\Pi = \{(1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)\}$}%
+  \\
+  \phantom{$\Rightarrow$} $\leadsto$ For order $\tau = (2,1,3)$ and player of interest $j=3$ $\Rightarrow$ $\Stau = \{2, 1\}$\\
+  \phantom{$\Rightarrow$} $\leadsto$ For order $\tau = (3,1,2)$ and player of interest $j=1$ $\Rightarrow$ $\Stau = \{3\}$\\
+  \phantom{$\Rightarrow$} $\leadsto$ For order $\tau = (3,1,2)$ and player of interest $j=3$ $\Rightarrow$ $\Stau = \emptyset$
   %\item In order definition, we sum the marginal contribution twice for orders that yield set $S = \{1,2\}$\\
   \item Order definition: Marginal contribution of orders that yield set {\color{red} $S = \{1,2\}$} is summed twice\\
   $\leadsto$ In set definition, it has the weight $\tfrac{2! (3 - 2 - 1)!}{3!} = \tfrac{2 \cdot 0!}{6} = \tfrac{2}{6}$
@@ -285,9 +286,9 @@ $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
   $\leadsto$ randomly sample a fixed number of $M$ permutations and average them:
   %to approximate the Shapley values
   %instead of producing all $|P|!$ permutations, a fixed number of $M< |P|!$ permutations can be sampled and averaged to approximate the Shapley values
-  $$\phi_j = \frac{1}{M} \sum_{\tau \in \Pi_M} (v(\Sm \cup \{j\}) - v(\Sm))$$
+  $$\phi_j = \frac{1}{M} \sum_{\tau \in \Pi_M} (v(\Stau \cup \{j\}) - v(\Stau))$$
     where $\Pi_M \subset \Pi$ is a random subset of $\Pi$ containing only $M$ orders of players\\
-    %$\leadsto$ $\Sm$: For permutation $\tau$, the set of players before player $j$ in order $\tau$ 
+    %$\leadsto$ $\Stau$: For permutation $\tau$, the set of players before player $j$ in order $\tau$ 
 \end{itemize}
 
 \end{frame}
@@ -302,9 +303,9 @@ $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
 %   \end{center}
   
 \begin{center}
-\includegraphics<1>[page=5, width = 0.8\textwidth]{figure/Shapley.pdf}
-\includegraphics<2>[page=6, width = 0.8\textwidth]{figure/Shapley.pdf}
-\includegraphics<3>[page=7, width = 0.8\textwidth]{figure/Shapley.pdf}
+\includegraphics<1>[page=5, width = 0.8\textwidth]{figure/Shapley.pdf}%
+\includegraphics<2>[page=6, width = 0.8\textwidth]{figure/Shapley.pdf}%
+\includegraphics<3>[page=7, width = 0.8\textwidth]{figure/Shapley.pdf}%
 \end{center}
 \end{frame}
 
@@ -314,17 +315,18 @@ $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Sm \cup \{j\}) - v(\Sm))$$
     \item Shapley value of player $j$ is the marginal contribution to the value when it enters any coalition
     \item Produce all possible joining orders of player coalitions
 %\only<1>{\item Here, player $2$ enters the coalition after player $1$, resulting in a value change of $v(\{1,2\}) - v(\{1\}) = 24-12 = 12$ with a overall coalition value of $v(\{1,2,3\}) = 36$}
-\only<2>{\item Measure and average the difference in payout after player $1$ enters the coalition}
-\only<3>{\item Measure and average the difference in payout after player $2$ enters the coalition}
-\only<4>{\item Measure and average the difference in payouts after player $3$ enters the coalition}
+\only<1>{\item[] \phantom{Measure and average the difference in payout after player $1$ enters the coalition}}%
+\only<2>{\item Measure and average the difference in payout after player $1$ enters the coalition}%
+\only<3>{\item Measure and average the difference in payout after player $2$ enters the coalition}%
+\only<4>{\item Measure and average the difference in payout after player $3$ enters the coalition}%
 \end{itemize}
 
 \begin{center}
-\includegraphics<1>[page=9, width = 0.7\textwidth]{figure/Shapley.pdf}
-\includegraphics<2>[page=10, width = 0.7\textwidth]{figure/Shapley.pdf}
-\includegraphics<3>[page=11, width = 0.7\textwidth]{figure/Shapley.pdf}
-\includegraphics<4>[page=12, width = 0.7\textwidth]{figure/Shapley.pdf}
-\includegraphics<5>[page=13, width = 0.7\textwidth]{figure/Shapley.pdf}
+\includegraphics<1>[page=9, width = 0.7\textwidth]{figure/Shapley.pdf}%
+\includegraphics<2>[page=10, width = 0.7\textwidth]{figure/Shapley.pdf}%
+\includegraphics<3>[page=11, width = 0.7\textwidth]{figure/Shapley.pdf}%
+\includegraphics<4>[page=12, width = 0.7\textwidth]{figure/Shapley.pdf}%
+\includegraphics<5>[page=13, width = 0.7\textwidth]{figure/Shapley.pdf}%
 \end{center}
 
 % \begin{center}

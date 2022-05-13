@@ -3,18 +3,6 @@
 \usepackage{../../style/lmu-lecture}
 % Defines macros and environments
 \input{../../style/common.tex}
-\newcommand{\Sm}{S_m}%{Pre(\tau,j)} % S(\tau,j)
-\newcommand{\Smj}{\Sm \cup \{j\}}
-\newcommand{\minusSmj}{- \{\Sm \cup \{j\} \} }
-\newcommand{\Stau}{S_{j}^\tau}%{Pre(\tau,j)} % S(\tau,j)
-\newcommand{\Stauj}{\Stau \cup \{j\}}
-\newcommand{\minusStauj}{- \{\Stau \cup \{j\} \} }
-
-\newcommand{\xjp}{\xv_{+j}^{(m)}}
-\newcommand{\xjm}{\xv_{-j}^{(m)}}
-%\newcommand{\xjp}{\xv_{\Smj}, \mathbf{z}^{(m)}_{\minusSmj}}
-%\newcommand{\xjm}{\xv_{\Sm}, \mathbf{z}^{(m)}_{- \Sm}}
-
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -50,7 +38,7 @@
     \item Players: Features $x_j, j \in \pset$ which cooperate to produce a prediction\\
     $\leadsto$ How can we make a prediction with a subset of features without changing the model?
     \\ 
-    $\leadsto$ Partial dependence: $\fh_{S}(\xv_S) := \int_{X_{-S}} \fh(\xv_S, X_{-S})d \P_{X_{-S}}$
+    $\leadsto$ PD function: $\fh_{S}(\xv_S) := \int_{X_{-S}} \fh(\xv_S, X_{-S})d \P_{X_{-S}}$ (``removing'' by marginalizing over $-S$)
     \item  Value function / payout of coalition $S$ for observation $\xv$:
     $$v(S) =  \fh_{S} (\xv_S) - \E_{\xv}(\fh(\xv)), \text{ where } \xv_S = \{x_j\}_{j \in S} \text{ and } \fh_S: \Xspace_S \mapsto \Yspace$$
     $\leadsto$ subtraction of $\E_{\xv}(\fh(\xv))$ ensures that $v$ is a value function with $v(\emptyset) = 0$
@@ -136,7 +124,7 @@
 
 \newcommand{\xk}{\mathbf{x}^{(k)}}
 
-\begin{frame}{Estimation Algorithm \citebutton{Strumbelj et al. (2014)}{https://doi.org/10.1007/s10115-013-0679-x}}
+\begin{frame}{Approximation Algorithm \citebutton{Strumbelj et al. (2014)}{https://doi.org/10.1007/s10115-013-0679-x}}
 Estimation of $\phi_j$ for observation $\xv$ of model $\fh$ fitted on data $\D$ using sample size $M$:
 %\vspace{0.25cm}
   \begin{enumerate}[<+->]
@@ -163,8 +151,10 @@ Estimation of $\phi_j$ for observation $\xv$ of model $\fh$ fitted on data $\D$ 
             %(without value of feature $j$ from $\xv$)
           \end{itemize}
         \item Compute difference $\phi_j^m = \fh(\xjp) - \fh(\xjm)$ \\
-        $\hat =$ A random sample from the marginal contribution of feature $j$ to coalition $\Sm$
+        $\leadsto$ $\fh_{\Sm}(\xv_{\Sm})$ is approximated by $\fh(\xv_{-j}^{(m)})$ and  $\fh_{\Smj}(\xv_{\Smj})$ by  $\fh(\xv_{+j}^{(m)})$ over $M$ iters
+        %$\hat =$ A random sample from the marginal contribution of feature $j$ to coalition $\Sm$
         \end{enumerate}
+        
     \item Compute Shapley value $\phi_j = \frac{1}{M}\sum_{m=1}^M \phi_j^m$ %= \frac{1}{M} \sum_{m = 1}^M   \fh(\xjp ) -  \fh(\xjm ) $
   \end{enumerate}
 %\pause
@@ -177,7 +167,7 @@ Estimation of $\phi_j$ for observation $\xv$ of model $\fh$ fitted on data $\D$ 
 
 \end{frame}
 
-\begin{frame}{Shapley value computation - Illustration}
+\begin{frame}{Shapley value approximation - Illustration}
 
 \begin{exampleblock}{Definition}
 % \[

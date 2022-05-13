@@ -29,21 +29,39 @@
 \begin{frame}{Shapley Values in ML - A short Recap}
   
   \textbf{Question:} How much does a feature $j$ contribute to the prediction of a single observation. \\
-  \textbf{Theory:} Shapley Game Theory \\
-  \textbf{Solution:} 
+  \textbf{Idea:} Use Shapley values from cooperative game theory \\
+  \pause
+  \textbf{Procedure:} 
   \begin{itemize}
-    \item Compare feature coalition $S$ with $\Scupj$ 
-    \item Iterate over possible coalitions to calculate the marginal contribution of feature $j$ to sample $\xv$. 
+    \item Compare ``reduced prediction function'' of feature coalition $S$ with $\Scupj$ 
+    \item Iterate over possible coalitions to calculate the marginal contribution of feature $j$ to sample $\xv$
 \end{itemize}
 
-     $$ \phi_j  = \frac{1}{p!} \sum_{S \subseteq P\setminus \{j\}} \underbrace{\fh_{\Scupj}(\xv_{\Scupj}) - \fh_{S}(\xv_{S})}_{\text{marginal contribution of feature $j$}} $$
+$$\phi_j 
+%= \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stauj) - v(\Stau)) 
+= \frac{1}{p!} \sum_{\tau \in \Pi}  \underbrace{\fh_{\Stauj}(\xv_{\Stauj}) - \fh_{\Stau}(\xv_{\Stau})}_{\text{marginal contribution of feature $j$}} $$
 
+\pause
 \textbf{Remember:}
 
 \begin{itemize}
-    \item $\fh$ is an arbitrary prediction algorithm
-    \item $p$ denotes the number of features
-    \item Non-existent features in a coalition are replaced by randomly drawn states from the feature
+    \item $\fh$ is the prediction function, $p$ denotes the number of features
+    \item Non-existent features in a coalition are replaced by values of randomly feature values 
+    \item Recall $\Stau$ defines the coalition as the set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$% states from the feature
+    
+  \centerline{
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    %\multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{|S|! \text{ permutations}}$}} &
+    %\multicolumn{1}{c}{} &
+    %\multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
+    \hline
+    $\tau^{(1)}$ & \ldots & $\tau^{(|S|)}$ & $\tau^{(|S| + 1)}$ & $\tau^{(|S| + 2)}$ & \ldots & $\tau^{(p)}$ \\
+    \hline
+    \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}} &
+    \multicolumn{1}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{4em}}^{}$}} &
+    \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}}\\
+    \multicolumn{3}{c}{$S_j^\tau:$ Players before player $j$} & \multicolumn{1}{c}{player $j$} & \multicolumn{3}{c}{Players after player $j$} \\
+  \end{tabular}}
 \end{itemize}
 
 \end{frame}
@@ -53,10 +71,11 @@
   
   \textbf{Example:} 
   \begin{itemize}
-      \item train random forest on bike rental dataset with features humidity, temperature and windspeed
-      \item calculate Shapley value for observation $\xv$ with $\fh(\xv) = \color{orange}{2573}$
-      \item $\E(\fh) = \color{blue}{4515}$
+      \item Train a random forest on bike sharing data only using features humidity (hum), temperature (temp) and windspeed (ws)
+      \item Calculate Shapley value for an observation $\xv$ with $\fh(\xv) = \color{orange}{2573}$
+      \item Mean prediction is $\E(\fh) = \color{blue}{4515}$
   \end{itemize}
+  \pause
   \textbf{Exact Shapley calculation for humidity:} 
   \begin{table}[T]
       \centering
@@ -117,7 +136,7 @@ $$
 
 \begin{frame}{SHAP Definition \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
 \textbf{Aim}: 
-Find an additive combination that explains the prediction of an observation $\xv$ by computing the contribution of each feature to the prediction. \\\medskip
+Find an additive combination that explains the prediction of an observation $\xv$ by computing the contribution of each feature to the prediction using a (more efficient) estimation procedure. \\\medskip
 \only<1-3>{\textbf{Definition}
 \begin{itemize}
     \item Define simplified (binary) coalition feature space $\mathbf{Z}^\prime \in \{0,1\}^{K \times p}$ with $K$ rows and $p$ columns 
