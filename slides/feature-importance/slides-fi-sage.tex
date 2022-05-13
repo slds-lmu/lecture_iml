@@ -139,7 +139,7 @@ For the computation of the marginalized prediction $\fh_S(x_S)$, the ``dropped''
 \begin{itemize}
   \item features $x_S$ not being causal for the prediction is not a sufficient condition for $v(S) = 0$
   \begin{itemize}
-      \item e.g., if $x_1$ and $x_2$ are perfectly correlated, even if only $x_1$ has nonzero coefficients, both are considered equally important
+      \item e.g., if $x_1$ and $x_2$ are perfectly correlated, even if only $x_1$ has a nonzero coefficient, both are considered equally important
   \end{itemize}
   \item under model optimality, links to mutual information or the conditional variance exist
 \end{itemize}
@@ -170,18 +170,21 @@ When the loss-optimal model $f^*$ is inspected using \textit{conditional-samplin
 
 \begin{frame}{SAGE Removal and Value function}
 
-\textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). The prediction model is defined as  $\fh \approx 0.95 x_3 + 0.05 x_2$. 
+\textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). Assume fitting LM yields $\fh \approx 0.95 x_3 + 0.05 x_2$. 
 %
 %\begin{columns}[T]
 %\begin{column}{0.5\textwidth}
-\includegraphics[width=0.6\linewidth]{figure_man/sage_variants}
+\centerline{\includegraphics[width=0.7\linewidth]{figure_man/sage_variants}}
 %\end{column}
 %\begin{column}{0.5\textwidth}
-Conditional $v(j)$ are nonzero for features that are not used by $\fh$
 
-Marginal $v(j)$ are only nonzero for features that are used by $\fh$
+\begin{itemize}
+    \item Conditional $v(j)$ are nonzero for features that are not used by $\fh$
+    \item Marginal $v(j)$ are only nonzero for features that are used by $\fh$
+    \item For conditional value function $v$, the difference $v(-j \cup j) - v(-j)$ quantifies the unique contribution of $x_j$ over remaining variables $-j$\\
+    $\Rightarrow$ Since $y \indep x_1, x_2 | x_3$, only $v(\{1,2,3\}) - v(\{1, 2\})$ is nonzero (i.e., for feature $j = 3$)
+\end{itemize}
 
-Since for conditional $v$ the difference $v(-j \cup j) - v(-j)$ quantifies the unique contribution of $x_j$ over remaining variables $-j$ and $y \indep x_1, x_2 | x_3$, only $v(\{1,2,3\}) - v(\{1, 2\})$ is nonzero.
 %\end{column}
 %\end{columns}
 \end{frame}
@@ -190,21 +193,23 @@ Since for conditional $v$ the difference $v(-j \cup j) - v(-j)$ quantifies the u
 
 \textbf{SAGE value function $v(S)$}: measure contribution of a specific feature set over the empty coalition
 
-\lz
+\lz\pause
 
 \textbf{SAGE values $\phi_j$}: fair attribution of importance
 \begin{itemize}
     \item can be computed by averaging the contribution of $x_j$ over all feature orderings
-    \item for feature permutation $\pi$ and the corresponding feature ordering $(x_{\pi(1)}, \dots, x_{phi(d)})$, for feature $x_j$ the coalition $S(j; \pi)$ is defined as the set of features preceding $x_j$, i.e. $S(j; \pi) := \{i : \pi(i) < \pi(j)\}$
-    \item the contribution of $j$ in an ordering $\pi$ is given as $v(j \cup S(j; \pi)) - v(S(j; \pi))$
+    %\item for feature permutation $\pi$ and the corresponding feature ordering $(x_{\pi(1)}, \dots, x_{phi(d)})$, for feature $x_j$ the coalition $S(j; \pi)$ is defined as the set of features preceding $x_j$, i.e. $S(j; \pi) := \{i : \pi(i) < \pi(j)\}$
+    %\item the contribution of $j$ in an ordering $\pi$ is given as $v(j \cup S(j; \pi)) - v(S(j; \pi))$
+    \item for feature permutation $\tau$, the contribution of $j$ in the set $\Stau$ is given as $v(j \cup \Stauj) - v(\Stau)$\\
+    Note: $\Stau$ is the set of features preceding $j$ in permutation $\tau$
 \end{itemize}
 
-\lz
+\lz\pause
 
 \textbf{SAGE value approximation:} Average over the contributions for $M$ randomly sampled permutations
 
 \begin{align*}
-    \phi_j = \frac{1}{M} \sum_{m=1}^M v(j \cup S(j;\pi_m)) - v(S(j;\pi_m))
+    \phi_j = \frac{1}{M} \sum_{m=1}^M v(j \cup \Stauj) - v(\Stau)
 \end{align*}
     
 \end{frame}
@@ -214,11 +219,14 @@ Since for conditional $v$ the difference $v(-j \cup j) - v(-j)$ quantifies the u
 \textbf{Recap:} Data: $x_1, \dots, x_4$ uniformly sampled from $\{-1, 1\}$ and $y:= x_1 x_2 + x_3 + \epsilon_Y$ with $\epsilon_Y \sim N(0, 1)$. Model: $\fh(x) \approx x_1 x_2 + x_3$.\\
 %
 \begin{figure}
-  \includegraphics[width=0.7\linewidth]{figure_man/sage_pfi_interactions}
+  \includegraphics[width=0.65\linewidth]{figure_man/sage_pfi_interactions}
 \end{figure}
 %
-While PFI regards $x_1, x_2$ to be equally important as $x_3$, marginal SAGE fairly divides the contribution of the interaction $x_1$ and $x_2$.
-  
+\begin{itemize}
+    \item PFI regards $x_1, x_2$ to be equally important as $x_3$
+    \item Marginal SAGE fairly divides the contribution of the interaction $x_1$ and $x_2$
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}{Implications marginal SAGE values}
