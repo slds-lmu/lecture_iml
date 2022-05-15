@@ -91,35 +91,42 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 		\item Our desired goal is to increase the probability to $[0.5, 1]$
 		\item MOC (with default parameters) found 82 counterfactuals after 200 iterations that met the target
 		\item All counterfactuals proposed changes to credit duration and many of them to credit amount
-		\item We can visualize feature changes with a parallel plot and 2-dim surface plot
-		\item Parallel plot reveals that all counterfactuals had values equal to or smaller than the values of $\xv$
-		\item The surface plot illustrates why these feature changes are recommended 
-		\item Counterfactuals in the lower left corner seem to be in a less favorable region far from $\xv$, but they are in high density areas close to training samples (indicated by histograms)
+% 		\item We can visualize feature changes with a parallel plot and 2-dim surface plot
+% 		\item Parallel plot reveals that all counterfactuals had values equal to or smaller than the values of $\xv$
+% 		\item The surface plot illustrates why these feature changes are recommended 
+% 		\item Counterfactuals in the lower left corner seem to be in a less favorable region far from $\xv$, but they are in high density areas close to training samples (indicated by histograms)
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Example: Credit Data}
-	\begin{columns}
-				\begin{column}{0.5\textwidth}  
-			\begin{center}
-				\includegraphics[width=0.75\textwidth]{figure/counterfactuals_credit_parallel}
-			\end{center}
-		\vspace{-0.2cm}
-			\scriptsize{\textbf{Figure:} Parallel plot. 
-				The grey lines show the feature values of the counterfactuals $\xv'$, the blue line corresponds to the values of $\xv$. Features without proposed changes are omitted. The bold numbers give minima and maxima of numeric features.} 
+\begin{frame}{Example: Credit Data \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
+\begin{itemize}
+	\item<1-> We can visualize feature changes with a parallel plot and 2-dim surface plot
+		\item<1-> Parallel plot reveals that all counterfactuals had values equal to or smaller than the values of $\xv$
+		\item<2-> The surface plot illustrates why these feature changes are recommended 
+		\item<2-> Counterfactuals in the lower left corner seem to be in a less favorable region far from $\xv$, but they are in high density areas close to training samples (indicated by histograms)
+	\end{itemize}
+	\begin{columns}\only<1->{
+	\begin{column}{0.5\textwidth}  
+	\centering
+			%\begin{center}
+		\includegraphics[width=0.65\textwidth]{figure/counterfactuals_credit_parallel}\\
+			%\end{center}
+		%\vspace{-0.2cm}
+			\scriptsize{\textbf{Figure:} Parallel plot: Grey lines show feature values of CEs $\xv'$, blue line are values of $\xv$. Features without proposed changes are omitted. Bold numbers refer to range of numeric features.} 
 			
-		\end{column}
+		\end{column}}
+		\visible<2->{
 		\begin{column}{0.5\textwidth}
-			\begin{center}
-				\includegraphics[width=1\textwidth]{figure/counterfactuals_credit_heat}
-			\end{center}
-		\vspace{-0.2cm}
-			\scriptsize{\textbf{Figure:} Response surface plot. 
-				The white dot is $\xv$, black dots are $\xv'$. The histograms display the marginal distribution of the training data $\Xmat$.} 
-				
+			%\begin{center}
+			\centering
+			\includegraphics[width=0.9\textwidth]{figure/counterfactuals_credit_heat}\\
+			%\end{center}
+		%\vspace{-0.2cm}
+			\scriptsize{\textbf{Figure:} Response surface plot. White dot is $\xv$, black dots are CEs $\xv'$. Histograms show marginal distribution of training data $\Xmat$.} 
 		\end{column}
+		}
 	\end{columns}
-\footnote[frame]{Dandl S., Molnar C., Binder M., Bischl B. (2020) Multi-Objective Counterfactual Explanations. In: Bäck T. et al. (eds) Parallel Problem Solving from Nature – PPSN XVI. PPSN 2020. Lecture Notes in Computer Science, vol 12269. Springer, Cham.}
+%\footnote[frame]{Dandl S., Molnar C., Binder M., Bischl B. (2020) Multi-Objective Counterfactual Explanations. In: Bäck T. et al. (eds) Parallel Problem Solving from Nature – PPSN XVI. PPSN 2020. Lecture Notes in Computer Science, vol 12269. Springer, Cham.}
 \end{frame}
 
 
