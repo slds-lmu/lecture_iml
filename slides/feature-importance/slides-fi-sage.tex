@@ -253,23 +253,23 @@ When the loss-optimal model $f^*$ is inspected using \textit{conditional-samplin
 
 \begin{frame}{Implications marginal SAGE values}
 
-Can we gain insight into whether...
+Can we gain insight into whether the ...
 
 \begin{enumerate}
-    \item<1> the feature $x_j$ is causal for the prediction?    \begin{itemize}
-      \item for all coalitions, $v(j \cup S) - v(S)$ can only be nonzero if $x_j \rightarrow \fh(x)$ (as for PFI)\\
-      $\leadsto$ $\phi_j$ is only nonzero if $x_j$ causal for the prediction
+    \item<1> feature $x_j$ is causal for the prediction?    \begin{itemize}
+      \item for all coalitions $S$, $v(j \cup S) - v(S)$ can only be nonzero if $x_j \rightarrow \fh(x)$ (as for PFI)\\
+      $\leadsto$ $\phi_j$ is only nonzero if $x_j$ is causal for the prediction
       \item $v(j \cup S) - v(S)$ may be nonzero due to independence $x_j \indep y | x_S$ (as for PFI)\\
       $\leadsto$ $\phi_j$ may be zero although the feature is causal for the prediction
     \end{itemize}
-    \item<2> the variable $x_j$ contains prediction-relevant information about $y$?
+    \item<2> feature $x_j$ contains prediction-relevant information about $y$?
     \begin{itemize}
       \item value functions may be nonzero despite independence due to extrapolation (as for PFI)\\
       $\leadsto$ $\phi_j$ may be nonzero without $x_j$ being dependent with $y$
       \item value functions may be zero despite $x_j$ containing prediction-relevant information due to underfitting (as for PFI)\\
       $\leadsto$ $\phi_j$ may be zero although prediction-relevant information contained
     \end{itemize}
-    \item<3> the model requires access to $x_j$ to achieve it's prediction performance?    
+    \item<3> model requires access to $x_j$ to achieve it's prediction performance?    
     \begin{itemize}
       \item like PFI, in general marginal value functions do not allow insight into unique contribution $\leadsto$ no insight from $\phi_j$
     \end{itemize}
@@ -279,16 +279,16 @@ Can we gain insight into whether...
 %
 \begin{frame}{Implications conditional SAGE values}
 
-Can we gain insight into whether...
+Can we gain insight into whether the ...
 
 \begin{enumerate}
-    \item<1> the feature $\xj$ is causal for the prediction?
+    \item<1> feature $\xj$ is causal for the prediction?
     \begin{itemize}
-      \item value functions may be nonzero although feature not directly used by the model\\
+      \item value functions may be nonzero although feature is not directly used by the model\\
       $\leadsto$ nonzero $\phi_j$ does not imply $\xj \rightarrow \hat{y}$
       \item value functions may be zero although feature may be used by the model, e.g. if feature is independent with $y$ and all other features $\leadsto$ zero $\phi_j$ does not imply $\xj \not \rightarrow \hat{y}$
     \end{itemize}
-    \item<2> the variable $\xj$ contains prediction-relevant information about $y$?
+    \item<2> feature $\xj$ contains prediction-relevant information about $y$?
     \begin{itemize}
       \item e.g. for cross-entropy optimal $\fh$, $v(j)$ measures mutual information $I(y;x_j)$\\
       $\leadsto$ prediction-relevance implies nonzero $\phi_j$
@@ -297,7 +297,7 @@ Can we gain insight into whether...
     %   \item $x_j \indep y$ in general does not imply $x_j \indep y | x_S$ and consequently does not imply that $v(j \cup S) - v(S) = 0$\\
     %   $\leadsto$ $\phi_j$ may be nonzero although $\xj \indep y$
     \end{itemize}
-    \item<3> the model requires access to $x_j$ to achieve it's prediction performance?  
+    \item<3> model requires access to $x_j$ to achieve it's prediction performance?  
     \begin{itemize}
         \item e.g. for cross-entropy optimal $\fh$, the surplus contribution $v(j \cup -j) - v(-j)$ captures the conditional mutual information $I(y;x_j|x_{-j})$\\
         $\leadsto$ $\phi_j$ is nonzero for features with unique contribution

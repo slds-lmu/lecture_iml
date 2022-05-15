@@ -39,7 +39,7 @@
 		\item \textbf{Targets:} Most methods focus on classification models, only few cover regression models\\
 		$\leadsto$ so far, all methods remain in the supervised learning paradigm
 		\item \textbf{Data:} Methods mainly focus on tabular data, few on visual/text data, none on audio data
-		\item \textbf{Feature space:} Some methods can only handle numerical features, few can process discrete and continuous feature spaces
+		\item \textbf{Feature space:} Some methods can only handle numerical features, few can process mixed (numerical and discrete) feature spaces
 		\item \textbf{Objectives:} Many methods focus on action guidance, plausibility and sparsity, few on other objectives like fairness or individual preferences
 		\item \textbf{Model access:} Methods either require access to complete model internals, access to gradients, or only to prediction functions $\Rightarrow$ Model-agnostic and model-specific methods exist
 		\item \textbf{Optimization tool:} Gradient-based algorithms (only for differentiable models), mixed-integer programming (only linear), or gradient-free algorithms e.g. Nelder-Mead, genetic algorithm
@@ -51,9 +51,11 @@
 Introduced counterfactual explanations in the context of ML predictions by solving
 		\begin{equation}
 			\argmin_{\xv'} \max_{\lambda} \lambda \underbrace{(\fh(\xv') - y')^2}_{o_1(\fh(\xv'), y')} + \underbrace{\sum\nolimits_{j = 1}^p |x'_j - x_j|/MAD_j}_{o_2(\xv', \xv)}
-			\label{eq:wachter}
+			%\label{eq:wachter}
 		\end{equation}
-	$MAD_j$ is the median absolute deviation of feature $j$. In each iteration, optimisers like ADAM or Nelder-Mead solve Eq.~(\ref{eq:wachter}) for $\xv'$ and then $\lambda$ is increased until a sufficiently close solution is found \\[0.2cm]
+	$MAD_j$ is the median absolute deviation of feature $j$. In each iteration, optimizers like Nelder-Mead solve the equation for $\xv'$ and then $\lambda$ is increased until a sufficiently close solution is found \\[0.2cm]
+	
+	\pause
 	
 	This optimization problem has several shortcomings: 	
 	\begin{itemize}
