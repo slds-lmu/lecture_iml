@@ -38,7 +38,7 @@
 
 % CHALLENGE
 \begin{frame}{Challenge: Fair Attribution of Importance}
-\begin{columns}[T]
+\begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.54\textwidth}
 \textbf{Recap:} 
 \begin{itemize}
@@ -78,7 +78,14 @@ Use Shapley values to compute a fair attribution of importance (via model perfor
     \item Surplus contribution of a feature depends on the coalition of features that are already accessible by the model
 \end{itemize}
 %, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
+%\pause
+\lz
 
+\textbf{Note:} 
+\begin{itemize}
+    \item Same idea (called SFIMP) was proposed in \citebutton{Casalicchio et al. (2018)}{https://arxiv.org/abs/1804.06620}
+    \item Definition based on model refits was proposed in context of feature selection in \citebutton{Cohen et al. (2007)}{https://doi.org/10.1162/neco.2007.19.7.1939}
+\end{itemize}
 
 %$\Rightarrow$ Global feature importance technique\\
 %$\Rightarrow$ Compute approximate Shapley values $\phi_j$ using appropriate value function 
@@ -109,7 +116,7 @@ $$\fh_S(x_S) = \E[\fh(x) | X_S = x_S]$$
 \pause
 \lz
 
-\textbf{SAGE value function:}  $v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S})$, where $\risk(\fh_{S}) = \E_{Y, X_S}[L(y, \fh_S(x_S))]$\\
+\textbf{SAGE value function:}  $$v_{\fh}(S) = \risk(\fh_{\emptyset}) - \risk(\fh_{S}), \text{ where } \risk(\fh_{S}) = \E_{Y, X_S}[L(y, \fh_S(x_S))]$$
 $\leadsto$ Quantify the predictive power of a coalition $S$ in terms of reduction in risk \\
 $\leadsto$ Risk of predictor $\fh_S(x_S)$ is compared to the risk of the mean prediction $\fh_{\emptyset}$
 
@@ -117,17 +124,9 @@ $\leadsto$ Risk of predictor $\fh_S(x_S)$ is compared to the risk of the mean pr
 \pause
 \lz
 
-\textbf{Surplus contribution of feature $x_j$ over coalition $x_S$:}  $v_{\fh}(S \cup \{j\}) - v_{\fh}(S) = \risk(\fh_{S})-\risk(\fh_{S \cup \{j\}})$\\
+\textbf{Surplus contribution of feature $x_j$ over coalition $x_S$:}  
+$$v_{\fh}(S \cup \{j\}) - v_{\fh}(S) = \risk(\fh_{S})-\risk(\fh_{S \cup \{j\}})$$
 $\leadsto$ Quantifies the added value of feature $j$ when it is added to coalition $S$
-
-\pause
-\lz
-
-\textbf{Note:} 
-\begin{itemize}
-    \item Same idea (called SFIMP) was proposed in \citebutton{Casalicchio et al. (2018)}{https://arxiv.org/abs/1804.06620}
-    \item Definition based on model refits was proposed in context of feature selection in \citebutton{Cohen et al. (2007)}{https://doi.org/10.1162/neco.2007.19.7.1939}
-\end{itemize}
 
 
 \end{frame}
@@ -148,16 +147,19 @@ When computing the marginalized prediction $\fh_S(x_S)$, the ``dropped'' feature
 
 \textbf{Interpretation marginal sampling:} $v(S)$ quantifies the reliance of the model on features $x_S$
 \begin{itemize}
-  \item features $x_S$ not being causal for the prediction is a sufficient condition for $v(S) = 0$
+  \item %features $x_S$ not being causal for the prediction is a sufficient condition for $v(S) = 0$
+  features $x_S$ not being causal for the prediction $\Rightarrow$ $v(S) = 0$
 \end{itemize}
 
 \lz\pause
 
 \textbf{Interpretation conditional sampling}: $v(S)$ quantifies whether variables $x_S$ contains prediction-relevant information (e.g. $y \not \indep x_S$) that is (directly or indirectly) exploited by the model
 \begin{itemize}
-  \item features $x_S$ not being causal for the prediction is not a sufficient condition for $v(S) = 0$
+  \item %features $x_S$ not being causal for the prediction is not a sufficient condition for $v(S) = 0$
+  features $x_S$ not being causal for the prediction $\not \Rightarrow$ $v(S) = 0$
   \begin{itemize}
       \item e.g., if $x_1$ and $x_2$ are perfectly correlated, even if only $x_1$ has a nonzero coefficient, both are considered equally important
+      % (see omitted variable bias as in M-plots)
   \end{itemize}
   \item under model optimality, links to mutual information or the conditional variance exist
 \end{itemize}
@@ -167,23 +169,30 @@ When computing the marginalized prediction $\fh_S(x_S)$, the ``dropped'' feature
 
 \begin{frame}{SAGE - marginal and conditional sampling}
 
-\textbf{Example:} $x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). Assume fitting LM yields $\fh \approx 0.95 x_3 + 0.05 x_2$. 
+\textbf{Example:}
+%$x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). Assume fitting LM yields $\fh \approx 0.95 x_3 + 0.05 x_2$. 
 %
-%\begin{columns}[T]
-%\begin{column}{0.5\textwidth}
-\centerline{\includegraphics[width=0.7\linewidth]{figure_man/sage_variants}}
-%\end{column}
-%\begin{column}{0.5\textwidth}
-
+\begin{columns}[T, totalwidth=\textwidth]
+\begin{column}{0.4\textwidth}
 \begin{itemize}
-    \item Conditional $v(j)$ are nonzero for features that are not used by $\fh$
+    \item $y = x_3 + \epsilon_y$\\ $x_1 = \epsilon_1$\\ $x_2 = x_1 + \epsilon_2$\\ $x_3 = x_2 + \epsilon_3$ (all $\epsilon_j$ i.i.d.)
+    \item Causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$
+    \item Fitted LM: $\fh \approx 0.95 x_3 + 0.05 x_2$
+\end{itemize}
+\end{column}
+\pause
+\begin{column}{0.6\textwidth}
+\centerline{\includegraphics[width=\linewidth]{figure_man/sage_variants}}
+\end{column}
+\end{columns}
+\lz
+\begin{itemize}
     \item Marginal $v(j)$ are only nonzero for features that are used by $\fh$
-    \item For conditional value function $v$, the difference $v(-j \cup j) - v(-j)$ quantifies the unique contribution of $x_j$ over remaining variables $-j$\\
+    \item Conditional $v(j)$ are also nonzero for features that are not used by $\fh$ (e.g., due to correlation)
+    \item For conditional value function $v$, the difference $v(-j \cup j) - v(-j)$ quantifies the unique contribution of $x_j$ over remaining features $x_{-j}$\\
     $\Rightarrow$ Since $y \indep x_1, x_2 | x_3$, only $v(\{1,2,3\}) - v(\{1, 2\})$ is nonzero (i.e., for feature $j = 3$)
 \end{itemize}
 
-%\end{column}
-%\end{columns}
 \end{frame}
 
 
