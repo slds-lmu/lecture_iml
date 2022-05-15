@@ -58,7 +58,7 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 	\pause
 	
 	This optimization problem has several shortcomings: 	
-	\begin{itemize}
+	\begin{itemize}[<+->]
 		\item We do not know how to choose $\lambda$ a priori 
 		\item Due to the maximization of $\lambda$ we focus primarily on the minimization of $o_1$ -- only if $\fh(\xv') = y'$, we focus on minimizing $o_2$ 
 		\item The definition of $o_2$ only covers numerical features 
@@ -87,9 +87,9 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 \begin{frame}{Example: Credit Data}
 	\begin{itemize}
 		\item Model: SVM with RBF kernel
-		\item $\xv$ is the first data point of the dataset with $\P(y = good)  = 0.34$ of being a ``good" customer
-		\item Our desired goal is to increase the probability to $[0.5, 1]$
-		\item MOC (with default parameters) found 82 counterfactuals after 200 iterations that met the target
+		\item $\xv$: First data point of credit data with $\P(y = good)  = 0.34$ of being a ``good" customer
+		\item Goal: Increase the probability to $[0.5, 1]$
+		\item MOC (with default parameters) found 69 CEs after 200 iterations that met the target
 		\item All counterfactuals proposed changes to credit duration and many of them to credit amount
 % 		\item We can visualize feature changes with a parallel plot and 2-dim surface plot
 % 		\item Parallel plot reveals that all counterfactuals had values equal to or smaller than the values of $\xv$
@@ -109,20 +109,21 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 	\begin{column}{0.5\textwidth}  
 	\centering
 			%\begin{center}
-		\includegraphics[width=0.65\textwidth]{figure/counterfactuals_credit_parallel}\\
+		\includegraphics[width=0.75\textwidth]{figure/counterfactuals_credit_parallel}\\
 			%\end{center}
 		%\vspace{-0.2cm}
-			\scriptsize{\textbf{Figure:} Parallel plot: Grey lines show feature values of CEs $\xv'$, blue line are values of $\xv$. Features without proposed changes are omitted. Bold numbers refer to range of numeric features.} 
+			\scriptsize{\textbf{Parallel plot:} Grey lines show feature values of CEs $\xv'$, blue line are values of $\xv$. Features without proposed changes are omitted. Bold numbers refer to range of numeric features.} 
 			
 		\end{column}}
 		\visible<2->{
 		\begin{column}{0.5\textwidth}
 			%\begin{center}
 			\centering
-			\includegraphics[width=0.9\textwidth]{figure/counterfactuals_credit_heat}\\
+			\includegraphics[width=\textwidth]{figure/counterfactuals_credit_heat}\\
 			%\end{center}
 		%\vspace{-0.2cm}
-			\scriptsize{\textbf{Figure:} Response surface plot. White dot is $\xv$, black dots are CEs $\xv'$. Histograms show marginal distribution of training data $\Xmat$.} 
+			\scriptsize{\textbf{Surface plot:} White dot is $\xv$, black dots are CEs $\xv'$. \\
+			Histograms show marginal distribution of training data $\Xmat$.} 
 		\end{column}
 		}
 	\end{columns}
@@ -168,7 +169,9 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 \begin{frame}{Problems, Pitfalls, \& Limitations}
 \begin{itemize}[<+->]
     \item \textbf{Illusion of model understanding:} 
-    CEs explain ML decisions by pointing to few specific alternatives which reduces complexity, but is limited in explanatory power $\leadsto$ psychologists showed that even though the perceived model-understanding of end-users increases, the objective model-understanding remains unchanged
+    CEs explain ML decisions by pointing to few specific alternatives which reduces complexity, but is limited in explanatory power\\
+    $\leadsto$ %psychologists showed that even though the perceived model-understanding of end-users increases, the objective model-understanding remained unchanged
+    Psychologists have shown that although perceived model understanding of end-users increases, the objective model understanding remains unchanged
     
     %\item \textbf{Finding the right metric:} Similarity is the crucial concept for finding good CEs. However, our concept of similarity is context and domain dependent. E.g. while L1 can be a reasonable notion for tabular data, it is counterintuitive for image data. Sparsity is often desirable for end-users but not for data scientists searching for biases in the model.
     \item \textbf{Right metric:} Similarity measures are crucial to find good CEs (depends on context/domain)\\
@@ -178,7 +181,8 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
     %\item \textbf{Confusing Model and Real-World:} Explanations of the model do not easily transfer to the process in which a model is applied. This information should be conveyed to the end-user.
     \item \textbf{Confusing Model and Real-World:} Model explanations are not easily transferable to reality\\
     $\leadsto$ This information should be conveyed to the end-user
-    \item \textbf{Disclosing too much information:} CEs can reveal too much information about the model and help potential attackers
+    \item \textbf{Disclosing too much information:} \\
+    CEs can reveal too much information about the model and help potential attackers
     \end{itemize}
 \end{frame}
 
@@ -186,9 +190,12 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 \begin{itemize}[<+->]
     \item \textbf{Rashomon effect:} One, few, all? Which CEs should be shown to the end-user?\\
     $\leadsto$ No universal solution, depends on end-users computational resources and knowledge
-    \item \textbf{Actionability vs. fairness:} Some authors suggest to focus only on the actionability of CEs $\leadsto$ this counteract functions like contestability, e.g., if ethnicity is not permuted in a CE since it is not actionable, this could lead to hiding racial biases in the model
-    \item \textbf{Attacking CEs:} Researchers can create models with great performance, which generate arbitrary explanations specified by the ML developer $\leadsto$ how faithful are CEs to the models underlying mechanism?
-    \item \textbf{Assumption of constant model:} To provide guidance for the future, CEs assume that their underlying model would not change in the future $\leadsto$ in reality this assumption is often violated and CEs are not reliable anymore 
+    \item \textbf{Actionability vs. fairness:} Some authors suggest to focus only on the actionability of CEs\\
+    $\leadsto$ Counteract functions like contestability, e.g., if ethnicity is not permuted in a CE since it is not actionable, this could lead to hiding racial biases in the model
+    \item \textbf{Attacking CEs:} Researchers can create models with great performance, which generate arbitrary explanations specified by the ML developer\\
+    $\leadsto$ how faithful are CEs to the models underlying mechanism?
+    \item \textbf{Assumption of constant model:} To provide guidance for the future, CEs assume that their underlying model would not change in the future\\
+    $\leadsto$ in reality this assumption is often violated and CEs are not reliable anymore 
 \end{itemize}
 
 %	\textbf{Pitfall 3:} Rashomon Effect
