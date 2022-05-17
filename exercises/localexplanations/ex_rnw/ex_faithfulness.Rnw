@@ -1,53 +1,69 @@
-Let us assume that we fitted the following linear regression model with two features: 
 
-\begin{equation}
-  \fh(\xv) = \fh(\xv_1, \xv_2) = \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 + \hat\beta_0.
-  \label{eq:linmod}
-\end{equation}
-
+An insurance company wants to calculate monthly premiums for a disability 
+insurance ("Berufsunfaehigkeitsversicherung") with an ML model based on the 
+age, job type and marital status.
+An appropriate model $\fh$ was already fitted using a large customer dataset but in order 
+to be launched it needs approval by regulators. 
+The regulators put the model to test by using LIME to provide an explanation
+for typical and critical customers. 
+One of these test instances is a 21 year old woman with mainly sedentary work.
 
 \begin{enumerate}[a)]
-  \item Derive the PD function of feature $S = \{1\}$ (with $C = \{2\}$), such 
-  that it includes the expected value of $\xv_2$.\\
-  \textit{Hint:} In the lecture slides we already derived the PD function for a
-  linear regression model without an interaction term. 
-  \item Let us assume that the estimated coefficients in Equation~\ref{eq:linmod}
-  are $\hat\beta_0 = 0$, $\hat\beta_1 = -8$, $\hat\beta_2 = 0.2$ and $\hat\beta_3 = 16$.
-  Furthermore, $X_1 \sim Unif(-1, 1)$ is uniformly distributed between -1 and 1, 
-  and $X_2 \sim B(1, 0.5)$ origins from a Bernoulli distribution. 
-  Derive the exact PD function of feature $X = \{1\}$ using your derived function of a).
-  \item The following plot displays the derived PDP of b) and the ICE values of $X_1$. 
-  The coloring reflects if the derived ICE value originates from an observation with 
-  $x_2 = 1$ or $x_2 = 0$.
-  Derive the conditional expectation functions for group $X_2 = 1$ and for group $X_2 = 0$ using Equation~\ref{eq:linmod} given the estimated coefficient values of b). 
-  Which color coding (lightgreen or lightblue) reflects the group $X_2 = 1$, which one group $X_2 = 0$?
-
-\begin{center}
-<<fig-1-ex-pdpinteractions, fig.height=3, fig.width=5, echo = FALSE, warning=FALSE,message=FALSE>>=
-library(mlr3)
-library(iml)
-library(ggplot2)
-set.seed(1000)
-n = 700
-x1 = runif(n, -1, 1)
-x2 = rbinom(n, size = 1, prob = 0.5)
-y = - 8*x1 + 0.2*x2 + ifelse(x2 == 1, 16*x1, 0) 
-dat = data.frame(x1, x2, y)
-
-# fit linear model
-mod = lm(y~x1+x2+x1:x2, data = dat)
-pred = Predictor$new(mod, data = dat[-which(names(dat) == "y")], y = dat$y)
-
-# pdp
-pdp = FeatureEffect$new(pred, "x1", method = "pdp")
-p1 = pdp$plot()
-p1 = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
-  theme_bw() +
-  scale_x_continuous(name = expression(x[1])) + 
-  geom_point(data = dat[dat$x2 == 1,], aes(x = x1, y = y), color = "lightgreen", alpha = 0.5) + 
-  geom_point(data = dat[dat$x2 == 0,], aes(x = x1, y = y), color = "lightblue", alpha = 0.5)
-p1
+  \item The regulators already generated new instances. For simplicity, 
+  we assume that 3 instances are enough to fit a surrogate model.
+  Fill out the missing fields in the following table:
+  
+  \begin{table}[ht]
+  \centering
+    \begin{tabular}{l|llll|l|l|l|l}
+            & pension & age & job type       & marital status  & $\fh$ & $d(\xv, \cdot)$ & $\phi_{\sigma = 0.05}$ & $\phi_{\sigma = 0.2}$ \\
+            \hline
+    $\xv$   & 1800    &  21 & sedentary      & single          & 30.6    & -    &  - & - \\
+    $\zv_1$ & 1600    &  21 & sedentary      & married         & 25.8    & 0.25 &  0.27 & 0.72 \\
+    $\zv_3$ & 2200    &  32 & sedentary      & married         & 85.2    & 0.32 &  0.12 &  \\
+    $\zv_2$ & 1200    &  23 & physically     & single          & 74.9    & 0.49 &   & 0.30 \\
+    \end{tabular}
+  \end{table}
+  
+ <<echo=FALSE, results='hide',eval=FALSE>>=
+library(StatMatch)
+ x = data.frame(x1 = 1800, x2 = 21, x3 = "sedentary", x4 = "single")
+ z = data.frame(x1 = c(1600, 2200, 12000, 3500, 1000), x2 = c(21, 32, 23, 18, 60), 
+   x3 = c("sedentary", "sedentary", "physically demanding", "emotionally demanding", "sedentary"), 
+   x4 = c("married", "married", "single", "widowed", "divorced"))
+ dist = c(StatMatch::gower.dist(x, z))[1:3]
+ exp_kern = function(d, width) {
+   return(exp(-d^2/width))
+ }
+  exp_kern(dist, 0.2)
+  exp_kern(dist, 0.05)
 @
-\end{center}
-
+  
+  How does the kernel width $\sigma$ influence the proximity measure? 
+  What would happen if the kernel width is set to small?
+  
+  \item The regulatories fit two different surrogate models ($g_1$ and $g_2$) on the re-weighted 
+  data (here, our three observations $\zv$).
+  The following table compares the prediction of $\fh$ to the ones of two surrogate models for all given instances.
+  
+   \begin{table}[ht]
+  \centering
+    \begin{tabular}{l|l|l|l}
+           & $\fh$ & $g_1$ & $g_2$    \\
+           \hline
+    $\xv$   & 30.6    & 34.8 &  31.1  \\
+    $\zv_1$ & 25.8    & 28   &  26.1  \\
+    $\zv_3$ & 85.2    & 105  &  92.7  \\
+    $\zv_2$ & 74.9    & 90   &  68.9  \\
+    \end{tabular}
+  \end{table}
+  
+  Which of the two surrogate models do you prefer? 
+  Compute the local faithfulness. \\
+  \textit{Hint}: consider $L(\fh, g, \phi_{\xv})$ from the lecture.
+  
+  \item The surrogate model $g_1$ corresponds to a linear model using all three features, while 
+  $g_2$ corresponds to a random forest with 500 trees.
+  Would you still prefer the model you chose in b)?
+  
 \end{enumerate}
