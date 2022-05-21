@@ -35,7 +35,7 @@
 	% ------------------------------------------------------------------------------
 
 
-\begin{vbframe}[c]{LIME Pitfalls}
+\begin{frame}[c]{LIME Pitfalls}
   \begin{itemize}
   	\item %Despite being a popular interpretation method, several papers caution to be careful in LIME
   	LIME is one of the best known interpretable ML methods\\ 
@@ -52,9 +52,9 @@
   	%\item These are discussed in more detail in the following 
   \end{itemize}
   
-\end{vbframe}
+\end{frame}
   
-\begin{vbframe}[c]{Pitfall: Sampling}
+\begin{frame}[c]{Pitfall: Sampling}
 	\begin{itemize}
 	\itemsep1em
 	  \item \textbf{Pitfall}: Common sampling strategies for $\zv \in Z$ do not account for correlation between features 
@@ -66,9 +66,9 @@
       $\leadsto$ only works well with enough data near $\xv$
     \end{itemize}
     
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{LIME Pitfall: Locality}
+\begin{frame}[c]{LIME Pitfall: Locality}
 
 	\begin{itemize} 
      \item \textbf{Pitfall}: Difficult to define locality (= how samples are weighted locally) \\
@@ -99,9 +99,9 @@
          \end{itemize}
          \end{column}
      \end{columns}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{LIME Pitfall: Locality \citebutton{Kopper et al. 2019}{https://slds-lmu.github.io/iml_methods_limitations/}}
+\begin{frame}[c]{LIME Pitfall: Locality \citebutton{Kopper et al. 2019}{https://slds-lmu.github.io/iml_methods_limitations/}}
     \begin{itemize} 
          \item \textbf{Solution I}: Kernel width strongly interacts with locality:
          \begin{itemize}
@@ -119,9 +119,9 @@
     \end{itemize}
 \vspace{0.3cm}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{Pitfall: Local vs. Global Features \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
+\begin{frame}[c]{Pitfall: Local vs. Global Features \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
 
 \begin{itemize}%[<+->]
 	\item<1-> \textbf{Problem}: By sampling instances for the surrogate model from the whole input space, the influence of local features is hidden in favor of features with global influence (even if kernel width is reduced)
@@ -134,10 +134,10 @@
 	$\Rightarrow$ Split features close to root have a more global influence than the ones close to leaves
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Pitfall: Local vs. Global Features -- Example \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
+\begin{frame}{Pitfall: Local vs. Global Features -- Example \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
 
 \begin{columns}
 	\begin{column}{0.6\textwidth}
@@ -151,7 +151,7 @@
 		    \item Dark grey curve: Classifier's decision boundary
 		    \item Dotted lines: Local decision boundary
 		\end{itemize}
-		\item \textbf{Observation:} Decision boundaries of LIME with different kernels (blue and green lines) do not match the direction of the local decision boundary\\ (which may appears steeper)
+		\item \textbf{Observation:} Decision boundaries of LIME with different kernels (blue and green lines) do not match the direction of the local decision boundary\\ (which appears steeper)
 	\end{itemize}
 \end{column}
 \begin{column}{0.39\textwidth}
@@ -167,9 +167,9 @@
 	\end{column}
 \end{columns}
 %\footnote[frame]{Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Pitfall: Local vs. Global Features -- Solution \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
+\begin{frame}{Pitfall: Local vs. Global Features -- Solution \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
 \begin{columns}[T, totalwidth=\textwidth]
 	\begin{column}{0.6\textwidth}
 	%\vspace{-.5cm}
@@ -208,10 +208,10 @@
 
 \end{columns}
 %\footnote[frame]{Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.}
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}[c]{Pitfall: Faithfulness}
+\begin{frame}[c]{Pitfall: Faithfulness}
 \begin{itemize}
 %\itemsep1em
 	\item \textbf{Problem}: Trade-off between local fidelity vs. sparsity
@@ -239,28 +239,45 @@
 	\end{itemize}
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Pitfall: Hiding biases \citebutton{Slack et al. 2020}{https://arxiv.org/abs/1911.02508}}
+\begin{frame}{Pitfall: Hiding biases \citebutton{Slack et al. 2020}{https://arxiv.org/abs/1911.02508}}
 
 \begin{itemize}
 	\item \textbf{Problem}: Developer could manipulate their model to hide biases 
-	\item \textbf{Observation}: LIME can sample out-of-distribution points
+	\item \textbf{Observation}: LIME can sample out-of-distribution points (extrapolation)
 	\pause
-	\item \textbf{Attack}:
-	\begin{enumerate}
+	\item \textbf{Attack} with adversarial model:
+	    \begin{enumerate}
 	    \item classifier to discriminate between in-distribution and out-of-distribution data points
 	    \item for in-distribution points, use the original (biased) model
-	    \item for out-of-distribution points, use an unbiased model 
-	    \item[$\leadsto$] LIME samples out-of-distribution points and uses the unbiased model for local explanation $\leadsto$ this hides the bias of the true model
-	\end{enumerate}
-	\item \textbf{Example}: Credit dataset\\
-	 $\leadsto$ biased model trained on feature `gender`\\
-	 $\leadsto$ unbiased model could be trained on features uncorrelated with `gender`
+	    \item for out-of-distribution points produced for local explanation, use an unbiased model
+	    \item[$\leadsto$] LIME samples out-of-distribution points and uses the unbiased model for local explanation\\
+	    \item[$\leadsto$] this hides the bias of the true model
+	    \end{enumerate}
 \end{itemize}
-\end{vbframe}
+\pause
+	\begin{columns}[T, totalwidth=\linewidth]
+	    \begin{column}{0.5\textwidth}
+	    \textbf{Example}: Credit dataset
+	    \begin{itemize}
+	        \item biased model trained on feature `gender`\\
+	        $\leadsto$ used for in-distribution points (realistic values) to make biased / unfair predictions
+	        \item unbiased model trained without `gender`\\
+	        $\leadsto$ used for (extrapolated) LIME samples\\
+	        $\Rightarrow$ produced local explanations seem fair as they are based on unbiased model
+	        %could be trained on features uncorrelated with `gender`
+	    \end{itemize}
+	    \end{column}
+	    \begin{column}{0.5\textwidth}
+	    \centering
+	    \includegraphics[width=\textwidth]{figure/attack_biased_unbiased.jpg}
+	    \citebutton{Vres, Sikonja (2021)}{https://arxiv.org/abs/2101.11702}
+	    \end{column}
+	\end{columns}
+\end{frame}
 
-\begin{vbframe}[c]{Pitfall: Robustness \citebutton{Alvarez-Melis, D., \& Jaakkola, T. 2018}{https://arxiv.org/abs/1806.08049}}
+\begin{frame}[c]{Pitfall: Robustness \citebutton{Alvarez-Melis, D., \& Jaakkola, T. 2018}{https://arxiv.org/abs/1806.08049}}
 \begin{itemize}
 	\item \textbf{Problem}: Instability of explanations 
 	\item \textbf{Observation}: Explanations of two very close points could vary greatly 
@@ -288,9 +305,9 @@
 	\end{center}
 \end{column}
 \end{columns}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Pitfall: Definition of Superpixels \citebutton{Achanta et al. 2012}{https://ieeexplore.ieee.org/document/6205760}}
+\begin{frame}{Pitfall: Definition of Superpixels \citebutton{Achanta et al. 2012}{https://ieeexplore.ieee.org/document/6205760}}
 
 \begin{columns}
     
@@ -315,7 +332,7 @@
     
 \end{columns}
 
-\end{vbframe}
+\end{frame}
 
 
 \endlecture
