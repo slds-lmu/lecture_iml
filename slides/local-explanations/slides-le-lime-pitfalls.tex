@@ -8,6 +8,7 @@
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
 \date{}
+\newcommand{\betah}{\hat{\beta}}
 
 \begin{document}
 	
@@ -37,7 +38,15 @@
 \begin{vbframe}[c]{LIME Pitfalls}
   \begin{itemize}
   	\item LIME is one of the best known interpretable machine learning methods\\ but several papers caution to be careful in their use 
-  	\item Problems can occur in several places 
+  	\item Problems can occur in several places: 
+  	\begin{itemize}
+  	    \item Sampling procedure (extrapolation)
+  	    \item Definition of locality (sensitivity)
+  	    \item Scope of feature effects (local vs. global)
+  	    \item Faithfulness (trade-off with sparsity)
+  	    \item Surrogate model (robustness, biases)
+  	    \item Definition of superpixels (sensitivity)
+  	\end{itemize}
   	\item These are discussed in more detail in the following 
   \end{itemize}
   
@@ -48,7 +57,8 @@
 	\itemsep1em
 	  \item \textbf{Pitfall}: Common sampling strategies for $\zv \in Z$ do not account for correlation between features 
       \item \textbf{Implication}:  Unlikely data points might be used to learn local explanation models
-      \item \textbf{Solution I}: Ideally, local sampler directly on $\Xspace$ $\leadsto$ derivation is particularly difficult for high dimensional or mixed feature spaces 
+      \item \textbf{Solution I}: Ideally, local sampler directly on $\Xspace$\\
+      $\leadsto$ derivation is particularly difficult for high dimensional or mixed feature spaces 
       \item \textbf{Solution II}: Use training data to fit surrogate model (only works well with enough data near $\xv$)
     \end{itemize}
     
@@ -90,46 +100,31 @@
 
 \end{vbframe}
 
-\begin{vbframe}[c]{LIME Pitfalls: Local vs. Global Features \citebutton{Laugel et al. 2018}{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}}
+\begin{vbframe}[c]{LIME Pitfalls: Local vs. Global Features \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
 
-\begin{columns}
-	\begin{column}{0.78\textwidth}
 \begin{itemize}
 	\item \textbf{Problem}: Some features influence the \textbf{global} shape of the black-box model vs. \textbf{local} features impact predictions for a small area of $\Xspace$ 
 	\item \textbf{Example}: Decision trees; splitting variables close to the root have a more global influence than the ones close to the leaves
-	\item \textbf{Problem}: Instances for the surrogate model are sampled from the whole input space 
-	\begin{itemize}
-	    \item[$\leadsto$] Hide the features with a local influence for the benefit of features with a global influence even when the kernel width was reduced 
-	\end{itemize}
-	\item \textbf{Solution}: Sample new instances $\zv$ around the decision boundary closest from point $\xv$ for higher local accuracy
+	\item \textbf{Problem}: By sampling instances for the surrogate model from the whole input space, the influence of local features is hidden for the benefit of features with a global influence (even when the kernel width was reduced) 
 \end{itemize}
-\end{column}
-\begin{column}{0.2\textwidth}
-
-		\includegraphics[width=1\textwidth]{figure/lime_bordersample2}
-		
-		\vspace{-0.3cm}
-		
- 	\end{column}
-\end{columns}
 
 \end{vbframe}
 
 
-\begin{vbframe}{LIME Pitfalls: Local vs. Global Features: Visualization \citebutton{Laugel et al. 2018}{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf}}
+\begin{vbframe}{LIME Pitfalls: Local vs. Global Features: Example \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
 
 \begin{columns}
 	\begin{column}{0.6\textwidth}
 		\begin{itemize}
+		\item Binary classification model
 		\item Given in figure to the right:
 		\begin{itemize}
+		    \item Black and white dots: training data
 		    \item Green dot: To be explained
 		    \item Background color: Classification of random forest
 		    \item Grey curve: Decision boundary
-		    \item Red dot: Point closest to the border detected by this method 
 		\end{itemize}
-		\item \textbf{Observation: }The decision boundary of LIME with different kernels (blue and green) do not match the direction of the steeper local boundary. 
-		\item The method \citebutton{Laugel et al. 2018}{http://webia.lip6.fr/~laugel/files/WHI_ICML_slides.pdf} (red line) approximates the local border direction better 
+		\item \textbf{Observation: }The decision boundary of LIME with different kernels (blue and green lines) do not match the direction of the steeper local boundary. 
 	\end{itemize}
 \end{column}
 \begin{column}{0.39\textwidth}
@@ -137,8 +132,7 @@
 
 	\begin{center}
 	\includegraphics[width=1\textwidth]{figure/lime-globallocal2}
-	
-	\vspace{-0.3cm}
+
 	{Half-moons dataset}
 	
 \end{center}
@@ -148,12 +142,58 @@
 %\footnote[frame]{Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.}
 \end{vbframe}
 
+\begin{vbframe}{LIME Pitfalls: Local vs. Global Features: Solution \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
+\begin{columns}
+	\begin{column}{0.6\textwidth}
+	\vspace{-.5cm}
+		\begin{itemize}
+		\item \textbf{Solution}: Sample new instances $\zv$ around the decision boundary closest from point $\xv$ for higher local accuracy
+		\item The red dot in the figure to the right corresponds to the closest instance from the other class (black cross in the figure below)
+		\item This method (red line) approximates the local border direction better 
+	\end{itemize}
+	\begin{center}
+		\includegraphics[width=1\textwidth]{figure/laugel_method}
+	    {Local surrogate method by Laugel et al.}
+		\vspace{-0.3cm}
+		\end{center}
+\end{column}
+\begin{column}{0.39\textwidth}
+\vspace{0.3cm}
+
+	\begin{center}
+	\includegraphics[width=1\textwidth]{figure/lime-globallocal2}
+	
+	{Half-moons dataset}
+	
+\end{center}
+
+	\end{column}
+
+\end{columns}
+%\footnote[frame]{Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.}
+\end{vbframe}
+
+
 \begin{vbframe}[c]{LIME Pitfalls: Faithfulness}
 \begin{itemize}
 \itemsep1em
 	\item \textbf{Problem}: Trade-off between local fidelity vs. sparsity
 	\item \textbf{Observation I}: Low fidelity $\leadsto$ unreliable explanations
 	\item \textbf{Observation II}: High fidelity requires more complex models $\leadsto$ surrogate model cannot easily be interpreted
+	\item \textbf{Example: Credit data} 
+	\begin{itemize}
+	    \item Original prediction by random forest for one data point $\xv$: $\fh(\xv) = \hat{\P}(y = 1 ~|~ \xv) = 0.143$
+	    \item Regularized linear model with only three selected features (\code{sex}, \code{checking.account}, \code{duration}) $g_{lm}(\xv) = 0.283$
+	    \item Generalized additive model (all 9 features) 
+    \begin{equation*} 
+    \begin{split}
+    g_{gam}(\xv) & = \betah_0 + s_{age}(x_{age}) +s_{credit.amount}(x_{credit.amount}) s_{duration}(x_{duration}) + \betah_{sex = male} \Ind_{sex = male}   \\
+    & + \betah_{job}(x_{job}) + \betah_{housing = own} \Ind_{housing = own} +   \betah_{housing = rent} \Ind_{housing = rent} \\
+    & + \betah_{saving.accounts = moderate} \Ind_{saving.accounts = moderate} + \betah_{saving.accounts = rich} \Ind_{saving.accounts = rich} \\
+    & + ... + \betah_{purpose = radio/TV} \Ind_{purpose = radio/TV}  = 0.148 
+    \end{split}
+    \end{equation*}
+	\end{itemize}
 \end{itemize}
 
 \end{vbframe}
@@ -168,7 +208,7 @@
 	    \item classifier to discriminate between in-distribution and out-of-distribution data points
 	    \item for in-distribution points, use the original (biased) model
 	    \item for out-of-distribution points, use an unbiased model 
-	    \item[$\leadsto$] LIME will sample many points from the unbiased model and the local explanation will hide the bias of the true model
+	    \item[$\leadsto$] LIME samples out-of-distribution points and uses the unbiased model for local explanation $\leadsto$ this hides the bias of the true model
 	\end{enumerate}
 	\item \textbf{Example}: Credit dataset; a biased model trained on Feature `gender`; unbiased model could be trained on features uncorrelated with `gender`
 \end{itemize}
@@ -178,9 +218,8 @@
 \begin{itemize}
 	\item \textbf{Problem}: Instability of explanations 
 	\item \textbf{Observation}: Explanations of two very close points could vary greatly 
-	\item \textbf{Rashomon Effect}: There could be more than one explanation for a prediction
 	\begin{itemize}
-	    \item[$\leadsto$] can happen because of other models $\fh$ (trained on the same data) or other sampled data points $\zv$
+	    \item[$\leadsto$] can happen because of other sampled data points $\zv$
 	\end{itemize}
 \end{itemize}
 \vspace{-0.7cm}
@@ -205,7 +244,7 @@
 \end{columns}
 \end{vbframe}
 
-\begin{vbframe}{LIME Pitfalls: Definition of Superpixels}
+\begin{vbframe}{LIME Pitfalls: Definition of Superpixels \citebutton{Achanta et al. 2012}{https://ieeexplore.ieee.org/document/6205760}}
 
 \begin{columns}
     
