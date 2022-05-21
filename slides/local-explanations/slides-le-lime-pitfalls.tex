@@ -46,7 +46,7 @@
   	    \item Definition of locality (sensitivity)
   	    \item Scope of feature effects (local vs. global)
   	    \item Faithfulness (trade-off with sparsity)
-  	    \item Surrogate model (robustness, biases)
+  	    \item Surrogate model (hiding biases, robustness)
   	    \item Definition of superpixels in case of image data (sensitivity)
   	\end{itemize}
   	%\item These are discussed in more detail in the following 
@@ -259,13 +259,16 @@
 \pause
 	\begin{columns}[T, totalwidth=\linewidth]
 	    \begin{column}{0.5\textwidth}
-	    \textbf{Example}: Credit dataset
+	    \textbf{Example}: Not using `gender` to approve a loan % Credit dataset %
 	    \begin{itemize}
-	        \item biased model trained on feature `gender`\\
-	        $\leadsto$ used for in-distribution points (realistic values) to make biased / unfair predictions
-	        \item unbiased model trained without `gender`\\
-	        $\leadsto$ used for (extrapolated) LIME samples\\
-	        $\Rightarrow$ produced local explanations seem fair as they are based on unbiased model
+	        \item biased model trained on features correlated with `gender` (e.g. duration of parental leave)\\
+	        $\leadsto$ used 
+	        %for in-distribution points (realistic values) 
+	        to make biased / unfair predictions
+	        \item unbiased model trained on features uncorrelated with `gender`\\
+	        $\leadsto$ used to produce explanations based on unbiased predictions to hide bias
+	        %$\leadsto$ used for (extrapolated) LIME samples\\
+	        %$\Rightarrow$ produced local explanations seem fair as they are based on unbiased model
 	        %could be trained on features uncorrelated with `gender`
 	    \end{itemize}
 	    \end{column}
