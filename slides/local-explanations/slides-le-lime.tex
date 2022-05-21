@@ -37,13 +37,13 @@
 % ------------------------------------------------------------------------------
 \begin{frame}[c]{LIME}
 \begin{itemize}
-		\item Local Interpretable Model-agnostic Explanations (LIME) assume that even if a machine learning model is very complex, the local prediction can be described with a simpler model
+		\item Local Interpretable Model-agnostic Explanations (LIME) assume that even if a ML model is very complex, the local prediction can be described with a simpler model
 		\smallskip\pause
 		\item  LIME explains \textbf{individual} predictions of \textbf{any} black-box model by approximating the model \textbf{locally} with an interpretable model
 		\smallskip\pause
 		\item Called local surrogate models $\leadsto$ often inherently interpretable models such as linear models or classification/regression trees are chosen\\
 		\smallskip\pause
-		\item LIME should answer why a machine learning model predicted $\hat y$ for input $\xv$
+		\item LIME should answer why a ML model predicted $\hat y$ for input $\xv$
 		\smallskip\pause
 		\item LIME is model-agnostic and can handle tabular, image and text data 
 \end{itemize}
@@ -67,17 +67,24 @@
 \end{frame}
 
 
-\begin{frame}[c]{Model Complexity}
+\begin{frame}{Model Complexity}
     
-    We can measure the complexity of a model $g$ using $J(g)$ \\[2em]
+    We can measure the complexity of a model $g$ using a complexity measure $J(g)$ \lz
 
  	\textbf{Example: Linear model}\\
- 	Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = s(\thetab^\top \xv)\right\}$ be the class of linear models with $s(\cdot)$ being either the identity function for linear regression or the logistic sigmoid function for logistic regression \\
- 	$\leadsto$ $J(g) = \sum_{j = 1}^p \Ind_{\{ \theta_j \neq 0 \}}$ could be the L$_0$ loss, i.e. the number of non-zero coefficients 
- 	\vspace{0.5cm}
+ 	\begin{itemize}
+ 	    \item Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = s(\thetab^\top \xv)\right\}$ be the class of linear models
+ 	    \item $s(\cdot)$: identity function for linear regression or logistic sigmoid function for logistic regression
+ 	    \item[$\leadsto$] $J(g) = \sum_{j = 1}^p \Ind_{\{ \theta_j \neq 0 \}}$ could be the L$_0$ loss, i.e., the number of non-zero coefficients 
+ 	\end{itemize}
+ 	\lz\pause
  	
  	\textbf{Example: Tree}\\
- 	Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \Ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees (i.e., class of additive model over the leaf-rectangles $Q_m$) then $J(g)$ could measure the number of terminal/leaf nodes\\
+ 	\begin{itemize}
+ 	    \item Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \Ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees\\
+ 	     i.e., the class of additive (constant $c_m$) models over the leaf-rectangles $Q_m$
+ 	    \item[$\leadsto$] $J(g)$ could measure the number of terminal/leaf nodes
+ 	\end{itemize}
  	
 \end{frame}
  
@@ -91,7 +98,7 @@
  		\begin{enumerate}
  			\item A proximity (similarity) measure $\neigh(\zv)$ between $\zv$ and $\xv$, e.g. the exponential kernel:
  			$$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$$ 
- 			with $\sigma$ as the kernel width and $d$ as the Euclidean distance (numeric features) or the Gower distance $d_G$ (mixed features) 
+ 			with $\sigma$ as the kernel width and $d$ as the Euclidean distance (numeric features) or the Gower distance (mixed features) 
  			\pause
  			\item A distance measure or loss function $L(\fh(\zv), g(\zv))$, e.g. the L$_2$ loss/squared error
  			$$L(\fh(\zv), g(\zv)) = (g(\zv) - \fh(\zv))^2$$ 
