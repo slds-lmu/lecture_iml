@@ -93,7 +93,7 @@
          \end{column}
          \begin{column}{0.35\textwidth}
          \begin{itemize}
-             \item Surrogate models for 2 obs. (green) for same model
+             \item Surrogate models for 2 obs. (green points) for same model with one feature $x_1$
              \item Each line refers to a linear surrogate model with different kernel width
              \item Right figure: larger kernel widths influence lines more
          \end{itemize}
@@ -107,7 +107,7 @@
          \begin{itemize}
              \item Large kernel width leads to interaction with points further away (unwanted)
              \item Small kernel width leads to small neighborhood\\
-             $\leadsto$ Risk of few data points\\
+             $\leadsto$ risk of few data points\\
              $\leadsto$ potentially fitting more noise
          \end{itemize}
          \pause
@@ -124,7 +124,8 @@
 \begin{frame}[c]{Pitfall: Local vs. Global Features \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
 
 \begin{itemize}%[<+->]
-	\item<1-> \textbf{Problem}: By sampling instances for the surrogate model from the whole input space, the influence of local features is hidden in favor of features with global influence (even if kernel width is reduced)
+	\item<1-> \textbf{Problem}: \\
+	By sampling obs. for the surrogate model from the whole input space, the influence of local features might be hidden in favor of features with global influence (even for small kernel width)
 	\item<2-> \textbf{Implication}: 
 	\begin{itemize}
 	    \item Some features influence the \textbf{global} shape of the black-box model
@@ -256,8 +257,13 @@
 	    \item[$\leadsto$] this hides the bias of the true model
 	    \end{enumerate}
 \end{itemize}
-\pause
 	\begin{columns}[T, totalwidth=\linewidth]
+		\begin{column}{0.5\textwidth}
+	    \centering
+	    \includegraphics[width=\textwidth]{figure/attack_biased_unbiased.jpg}
+	    \citebutton{Vres, Sikonja (2021)}{https://arxiv.org/abs/2101.11702}
+	    \end{column}
+\pause
 	    \begin{column}{0.5\textwidth}
 	    \textbf{Example}: Not using `gender` to approve a loan % Credit dataset %
 	    \begin{itemize}
@@ -271,11 +277,6 @@
 	        %$\Rightarrow$ produced local explanations seem fair as they are based on unbiased model
 	        %could be trained on features uncorrelated with `gender`
 	    \end{itemize}
-	    \end{column}
-	    \begin{column}{0.5\textwidth}
-	    \centering
-	    \includegraphics[width=\textwidth]{figure/attack_biased_unbiased.jpg}
-	    \citebutton{Vres, Sikonja (2021)}{https://arxiv.org/abs/2101.11702}
 	    \end{column}
 	\end{columns}
 \end{frame}
