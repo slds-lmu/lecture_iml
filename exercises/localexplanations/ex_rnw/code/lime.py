@@ -111,6 +111,7 @@ def plot_points_in_grid(plt, X=[], y=[], weights=None, colors={}, x_interest=Non
                     c='red', s=size, label="POI")
 
 
+
 def sample_points(model, dataset, num_points, seed=0):
     """
     Samples points for the two first features. Uses the bounds from configspace again.
@@ -126,22 +127,7 @@ def sample_points(model, dataset, num_points, seed=0):
         y (np.ndarray): Target values with shape (`num_points`,)
     """
 
-    random.seed(seed)
-
-    hps = dataset.get_configspace().get_hyperparameters_dict()
-    labels = dataset.get_input_labels()
-
-    X = []
-    for _ in range(num_points):
-        X.append((
-            random.uniform(hps[labels[0]].lower, hps[labels[0]].upper),
-            random.uniform(hps[labels[1]].lower, hps[labels[1]].upper)
-        ))
-
-    X = np.array(X)
-    y = model.predict(X)
-
-    return X, y
+    return None
 
 
 def weight_points(x_interest, X, kernel_width=0.2):
@@ -157,19 +143,7 @@ def weight_points(x_interest, X, kernel_width=0.2):
         weights (np.ndarray): Normalized weights between 0..1 with shape (?,).
     """
 
-    weights = []
-    eucl = []
-    for x in X:
-        eucl = sqrt(sum(np.square(x-x_interest)))
-        dist = np.exp(-eucl/(kernel_width*kernel_width))
-        weights.append(dist)
-
-    weights = np.array(weights)
-
-    # Normalize between 0 and 1
-    weights = (weights - min(weights)) / (max(weights) - min(weights))
-
-    return weights
+    return None
 
 
 def fit_explainer_model(X, y, weights=None, seed=0):
@@ -186,10 +160,7 @@ def fit_explainer_model(X, y, weights=None, seed=0):
         model (DecisionTreeRegressor): Fitted explainer model.
     """
 
-    explainer_model = tree.DecisionTreeRegressor(random_state=seed)
-    explainer_model.fit(X, y, sample_weight=weights)
-
-    return explainer_model
+    return None
 
 
 if __name__ == "__main__":

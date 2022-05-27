@@ -88,18 +88,9 @@ sample_points = function(model, dataset, num_points, seed=0) {
   #'  @param seed (int): Seed to feed random.
   #' 
   #' @return dataset (data.frame) of sampled data. 
-
-  set.seed(seed)
-  range_x1 = range(dataset[, 1])
-  range_x2 = range(dataset[, 2])
   
-  x1 = runif(n = num_points, min = range_x1[1], max = range_x1[2])
-  x2 = runif(n = num_points, min = range_x2[1], max = range_x2[2])
-  X = data.frame(x1, x2)
-  names(X) = names(dataset)
-  pred = predict(model, X)
+  return(NULL)
   
-  return(data.frame(X, pred))
 }
 
 
@@ -111,21 +102,9 @@ weight_points = function(x_interest, df, kernel_width=0.2) {
   #' @param kernel_width (float): Kernel width for exponential kernel.
   #' 
   #' @return weights (numeric): Normalized weights between 0..1 for all datapoints in df.
-
-  if ("pred" %in% names(df)) {
-    df = df[names(df) != "pred"]
-  } 
   
-  df = as.matrix(df)
-  weights = apply(df, MARGIN = 1, FUN = function(x) {
-    eucldist = sqrt(sum((x-x_interest)^2))
-    exp(-eucldist/(kernel_width*kernel_width))
-  })
+ return(NULL)
   
-  # Normalize between 0 and 1
-  weights = (weights - min(weights)) / (max(weights) - min(weights))
-  
-  return(weights)
 }
 
 fit_explainer_model = function(df, weights = NULL, seed = 0) {
@@ -136,12 +115,9 @@ fit_explainer_model = function(df, weights = NULL, seed = 0) {
   #' @param seed (int): Seed for the decision tree.
   #' 
   #' @return model (rpart): Fitted explainer model.
-  set.seed(seed)
-  xnam = names(df)[1]
-  ynam = names(df)[2]
-  form = formula(paste("pred ~", xnam, "+", ynam))
-  tree = rpart(form, weights = weights, data = df, method = "class")
-  return(tree)
+  
+  return(NULL)
+  
 }
 
 
@@ -177,32 +153,32 @@ if (FALSE) {
   
   print("Run 'get_grid' ...")
   grid = get_grid(model = mod, dataset = dataset, points_per_feature = points_per_feature)
-
+  
   print("Run `plot_grid` ...")
   plot = plot_grid(grid)
   plot
-
+  
   print("Run `sample_points` ...")
   samp = sample_points(model = mod, dataset = dataset, num_points = n_points)
-
+  
   print("Run `plot_points_in_grid` ...")
   plot_points_in_grid(plt = plot, df = samp, size = .5)
   
   print("Run `weight_points` ...")
   w = weight_points(x_interest = x_interest, df = samp, kernel_width = 0.2)
-
+  
   print("Run `plot_points_in_grid` ...")
   plot_points_in_grid(plt = plot, df = samp, weights = w, x_interest = x_interest)
   
   print("Run `fit_explainer_model` ...")
   explainer = fit_explainer_model(df = samp, weights = w)
-
+  
   print("Compare models ...")
   plt1 = plot_points_in_grid(plt = plot, df = samp, x_interest = x_interest, size = .5)
   grid2 = get_grid(model = explainer, dataset = dataset, points_per_feature = points_per_feature)
   plot2 = plot_grid(grid2)
   plt2 = plot_points_in_grid(plt = plot2, df = samp, x_interest = x_interest, size = .5)
-
+  
   plt1 = plt1 + ggplot2::ggtitle("SVM")
   plt2 = plt2 + ggplot2::ggtitle("Decision Tree Explainer")
   grid.arrange(plt1, plt2, ncol = 2L)
