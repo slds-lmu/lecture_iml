@@ -1,4 +1,4 @@
-#import gower
+import gower
 
 
 
@@ -27,9 +27,8 @@ def generate_whatif(x_interest, model, dataset) :
   
   # Pairwise Gower distances 
   # <FIXME>: enable next rows
-  # dists = gower.gower_matrix(data_x = dataset, data_y = x_interest)
-  # minid = dists.flatten().argsort()[1]
-  minid = 0
+  dists = gower.gower_matrix(data_x = dataset, data_y = x_interest)
+  minid = dists.flatten().argsort()[0]
   
   # Return nearest datapoint
   return  dataset[minid,:].reshape(1, -1)
@@ -52,15 +51,16 @@ def evaluate_counterfactual(counterfactual, x_interest, model) :
 
   pred = model.predict(x_interest)[0]
   feature_ids = []
-  numfeat = counterfactual.shape[0]
+  numfeat = counterfactual.shape[1]
   for i in range(0, numfeat) :
-    if (counterfactual[0, i] == x_interest[0, i]) :
-      next
-    newcf = counterfactual
-    newcf[0, i] = x_interest[0, i]
-    newpred = model.predict(newcf)[0]
-    if (newpred != pred) :
-        feature_ids.append(i)
+    if (counterfactual[0, i] != x_interest[0, i]) :
+      newcf = counterfactual.copy()
+      newcf[0, i] = x_interest[0, i]
+      newpred = model.predict(newcf)[0]
+      if (newpred != pred) :
+          feature_ids.append(i)
+    else : 
+      continue
   return feature_ids
 
 
@@ -71,19 +71,23 @@ if __name__ == "__main__":
   # Create a binary classification task
   y = dataset.y
   y[y == 0] = 1
-  dataset.y = y
   
-  # Train-Test-Split
-  (X_train, y_train), (X_test, y_test) = dataset.get_data()
+  # Reserve first row of dataset for x_interest
+  X = dataset.X
+  x_interest = X[0,:].reshape(1, -1)
+  X = np.delete(X, (0), axis = 0)
+  y = np.delete(y, (0), axis = 0)
   
   # Fit a random forest to the data
   model = ensemble.RandomForestClassifier(random_state=0)
-  model.fit(X_train, y_train)
-  X = dataset.X
+  model.fit(X, y)
+  
+  # Define x_interest, remove it from dataset 
+  
+  model.predict(x_interest)
+ 
   
   # Compute counterfactual for first observation
-  x_interest = X_test[1,:].reshape(1, -1)
-  model.predict(x_interest)
   cf = generate_whatif(x_interest = x_interest, model = model, dataset = X)
   evaluate_counterfactual(counterfactual = cf, x_interest = x_interest, model = model)
   
