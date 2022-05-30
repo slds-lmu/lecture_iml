@@ -50,18 +50,18 @@ def evaluate_counterfactual(counterfactual, x_interest, model) :
   """
 
   pred = model.predict(x_interest)[0]
-  feature_ids = []
+  feature_nams = []
   numfeat = counterfactual.shape[1]
-  for i in range(0, numfeat) :
+  for i, nam in zip(range(0, numfeat), dataset.get_input_labels()) :
     if (counterfactual[0, i] != x_interest[0, i]) :
       newcf = counterfactual.copy()
       newcf[0, i] = x_interest[0, i]
       newpred = model.predict(newcf)[0]
       if (newpred != pred) :
-          feature_ids.append(i)
+          feature_nams.append(nam)
     else : 
       continue
-  return feature_ids
+  return feature_nams
 
 
 if __name__ == "__main__":

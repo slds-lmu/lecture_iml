@@ -1,4 +1,4 @@
-In the following, you are guided to implement LIME to interpret a Support Vector Machine (SVM). We use two features and explore LIME on a multi-classification problem. The associated files with templates and examples for this exercise are \textit{lime.py} or \textit{lime.R} depending on your preferred programming language. 
+In the following, you are guided to implement LIME to interpret a Support Vector Machine (SVM). We use two features and explore LIME on a multi-classification problem with only two (numeric) features. The associated files with templates and an example for this exercise are \textit{lime.py} or \textit{lime.R} depending on your preferred programming language. 
 In these files, helper functions for plotting (\texttt{plot\_grid()} and \texttt{plot\_points\_in\_grid()}) were already implemented.
 
 \begin{enumerate}[a)]
@@ -6,21 +6,21 @@ In these files, helper functions for plotting (\texttt{plot\_grid()} and \texttt
 \item Inspect Implemented Functions \\
 
 First of all, make yourself familiar with the already implemented functions in the template files. 
-
-The function \texttt{get\_grid()} prepares data to visualize the feature space. It create a $N\times N$ grid, and every point in this grid is associated with a value. This value is obtained by the model's predict method.\\
-
-The function \texttt{plot\_grid()}, visualizes the prediction surface. The create plot is an input to the function \texttt{plot\_points\_in\_grid()}, which adds specified data points to the plot. 
+\begin{itemize}
+  \item The function \texttt{get\_grid()} prepares data to visualize the feature space. It create a $N\times N$ grid, and every point in this grid is associated with a value. This value is obtained by the model's predict method.
+  \item The function \texttt{plot\_grid()}, visualizes the prediction surface. 
+  \item The created plot is an input to the function \texttt{plot\_points\_in\_grid()}, which adds committed data points to the plot. 
+\end{itemize}
 
 \item Sample Points
 
-Your first task is to sample points, which are later used to train the local surrogate model. Complete
+Your first implementation task is to sample points, which are later used to train the local surrogate model. Complete
 \texttt{sample\_points()} by randomly sampling from a uniform distribution. Consider the lower and
 upper bounds from the input datapoints. 
 
 \textit{Hint:} In Python, you can use the method \texttt{dataset.get\_configspace().get\_hyperparameters\_dict()} 
 implemented in the file \textit{utils/dataset.py} to retrieve the lower and upper values. 
 For an example, have a look on the already implemented function  \texttt{get\_grid()}.
-
 
 \item Weight Points
 
