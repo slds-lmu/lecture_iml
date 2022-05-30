@@ -14,9 +14,8 @@ generate_whatif = function(x_interest, model, dataset) {
 
   # subset dataset to the observations having a prediction different to x_interest
   pred = predict(model, newdata = x_interest)
-  ytarget = setdiff(model$classes, as.character(pred))
   preddata = predict(model, dataset)
-  idx = which(preddata == ytarget)
+  idx = which(preddata != pred)
   dataset = dataset[idx,]
   
   # Pairwise Gower distances 
