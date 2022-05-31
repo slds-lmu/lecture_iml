@@ -9,7 +9,7 @@ get_grid = function(model, dataset, points_per_feature = 50) {
   
   #' @param model: Classifier which can call a predict method.
   #' @param dataset (data.frame): Input dataset (only contains two features).
-  #' @param points_per_feature: How many points in each dimension.
+  #' @param points_per_feature (integer(1)): How many points in each dimension.
   
   #' @return  Dataframe with three columns: 
   #'      - equidistant grid of first feature
@@ -90,12 +90,11 @@ sample_points = function(model, dataset, num_points, seed=0) {
   #' @return dataset (data.frame) of sampled data. 
   
   return(NULL)
-  
 }
 
 
 weight_points = function(x_interest, df, kernel_width=0.2) {
-  #'For every x in `df` returns a weight depending on the exponential kernel distance to `x_interest`.
+  #' For every x in `df` returns a weight depending on the exponential kernel distance to `x_interest`.
   #' 
   #' @param x_interest (data.frame): Single point (one row dataset) whose prediction we want to explain.
   #' @param df (data.frame): Data which needs to be weighted (later used for surrogate model).
@@ -103,8 +102,7 @@ weight_points = function(x_interest, df, kernel_width=0.2) {
   #' 
   #' @return weights (numeric): Normalized weights between 0..1 for all datapoints in df.
   
- return(NULL)
-  
+  return(NULL)
 }
 
 fit_explainer_model = function(df, weights = NULL, seed = 0) {
@@ -117,7 +115,6 @@ fit_explainer_model = function(df, weights = NULL, seed = 0) {
   #' @return model (rpart): Fitted explainer model.
   
   return(NULL)
-  
 }
 
 

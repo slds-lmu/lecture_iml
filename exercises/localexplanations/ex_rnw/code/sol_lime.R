@@ -9,7 +9,7 @@ get_grid = function(model, dataset, points_per_feature = 50) {
   
   #' @param model: Classifier which can call a predict method.
   #' @param dataset (data.frame): Input dataset (only contains two features).
-  #' @param points_per_feature: How many points in each dimension.
+  #' @param points_per_feature (integer(1)): How many points in each dimension.
   
   #' @return  Dataframe with three columns: 
   #'      - equidistant grid of first feature
@@ -95,16 +95,16 @@ sample_points = function(model, dataset, num_points, seed=0) {
   
   x1 = runif(n = num_points, min = range_x1[1], max = range_x1[2])
   x2 = runif(n = num_points, min = range_x2[1], max = range_x2[2])
-  X = data.frame(x1, x2)
-  names(X) = names(dataset)
-  pred = predict(model, X)
+  Z = data.frame(x1, x2)
+  names(Z) = names(dataset)
+  pred = predict(model, Z)
   
-  return(data.frame(X, pred))
+  return(data.frame(Z, pred))
 }
 
 
 weight_points = function(x_interest, df, kernel_width=0.2) {
-  #'For every x in `df` returns a weight depending on the exponential kernel distance to `x_interest`.
+  #' For every x in `df` returns a weight depending on the exponential kernel distance to `x_interest`.
   #' 
   #' @param x_interest (data.frame): Single point (one row dataset) whose prediction we want to explain.
   #' @param df (data.frame): Data which needs to be weighted (later used for surrogate model).
@@ -140,7 +140,7 @@ fit_explainer_model = function(df, weights = NULL, seed = 0) {
   xnam = names(df)[1]
   ynam = names(df)[2]
   form = formula(paste("pred ~", xnam, "+", ynam))
-  tree = rpart(form, weights = weights, data = df, method = "class")
+  tree = rpart(form, weights = weights, data = df)
   return(tree)
 }
 

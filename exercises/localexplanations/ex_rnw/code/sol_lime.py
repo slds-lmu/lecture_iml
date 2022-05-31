@@ -1,7 +1,7 @@
 import sys
 import os
-import random  # noqa
-sys.path.insert(0, ".")  # noqa
+import random
+sys.path.insert(0, ".")
 
 import matplotlib.pyplot as plt
 from utils.dataset import Dataset
@@ -78,13 +78,13 @@ def plot_grid(u, v, z, labels, title=None, embedded=False):
 
     return plt
 
-def plot_points_in_grid(plt, X=[], y=[], weights=None, colors={}, x_interest=None, size=8):
+def plot_points_in_grid(plt, Z=[], y=[], weights=None, colors={}, x_interest=None, size=8):
     """
-    Given a plot, add scatter points from `X` and `x_interest`.
+    Given a plot, add scatter points from `Z` and `x_interest`.
 
     Parameters:
         plt (matplotlib.pyplot or utils.styled_plot.plt): Plot with color grid.
-        X (np.ndarray): Points with shape (?, 2) which should be added to the plot.
+        Z (np.ndarray): Points with shape (?, 2) which should be added to the plot.
         y (np.ndarray): Target values with shape (?,), of the points added to the plot, determines the colouring of points.
         weights (np.ndarray): Normalized weights with shape (?,), determine the size of points in the plot.
         colors (dict): Returns the color for an y value.
@@ -104,7 +104,7 @@ def plot_points_in_grid(plt, X=[], y=[], weights=None, colors={}, x_interest=Non
         if weights is not None:
             w = weights[idx]
 
-        plt.scatter(X[idx, 0], X[idx, 1], c=color, s=w*size, label=y_)
+        plt.scatter(Z[idx, 0], Z[idx, 1], c=color, s=w*size, label=y_)
 
     if x_interest is not None:
         plt.scatter([x_interest[0]], [x_interest[1]],
@@ -131,26 +131,26 @@ def sample_points(model, dataset, num_points, seed=0):
     hps = dataset.get_configspace().get_hyperparameters_dict()
     labels = dataset.get_input_labels()
 
-    X = []
+    Z = []
     for _ in range(num_points):
-        X.append((
+        Z.append((
             random.uniform(hps[labels[0]].lower, hps[labels[0]].upper),
             random.uniform(hps[labels[1]].lower, hps[labels[1]].upper)
         ))
 
-    X = np.array(X)
-    y = model.predict(X)
+    Z = np.array(Z)
+    y = model.predict(Z)
 
-    return X, y
+    return Z, y
 
 
-def weight_points(x_interest, X, kernel_width=0.2):
+def weight_points(x_interest, Z, kernel_width=0.2):
     """
-    For every x in `X` returns a weight depending on the distance to `x_interest`.
+    For every z in `Z` returns a weight depending on the distance to `x_interest`.
 
     Parameters:
         x_interest (np.ndarray): Single point with shape (2,) whose prediction we want to explain.
-        X (np.ndarray): Points with shape (?, 2), data which needs to be weighted.
+        Z (np.ndarray): Points with shape (?, 2), data which needs to be weighted.
         kernel_width (float): kernel_width value to calculate distance according to exponential kernel.
 
     Returns:
@@ -159,8 +159,8 @@ def weight_points(x_interest, X, kernel_width=0.2):
 
     weights = []
     eucl = []
-    for x in X:
-        eucl = sqrt(sum(np.square(x-x_interest)))
+    for z in Z:
+        eucl = sqrt(sum(np.square(z-x_interest)))
         dist = np.exp(-eucl/(kernel_width*kernel_width))
         weights.append(dist)
 
@@ -172,12 +172,12 @@ def weight_points(x_interest, X, kernel_width=0.2):
     return weights
 
 
-def fit_explainer_model(X, y, weights=None, seed=0):
+def fit_explainer_model(Z, y, weights=None, seed=0):
     """
     Fits a decision tree.
 
     Parameters:
-        X (np.ndarray): Points with shape (?, 2), used to fit surrogate model.
+        Z (np.ndarray): Points with shape (?, 2), used to fit surrogate model.
         y (np.ndarray): Target values with shape (?,).
         weights (np.ndarray): Normalized weights with shape (?,).
         seed (int): Seed for the decision tree.
@@ -187,7 +187,7 @@ def fit_explainer_model(X, y, weights=None, seed=0):
     """
 
     explainer_model = tree.DecisionTreeRegressor(random_state=seed)
-    explainer_model.fit(X, y, sample_weight=weights)
+    explainer_model.fit(Z, y, sample_weight=weights)
 
     return explainer_model
 
@@ -223,35 +223,35 @@ if __name__ == "__main__":
     plt.show()
 
     print("Run `sample_points` ...")
-    X_sampled, y_sampled = sample_points(model, dataset, n_points)
+    Z_sampled, y_sampled = sample_points(model, dataset, n_points)
 
     print("Run `plot_points_in_grid` ...")
     plt = plot_grid(u, v, z, labels=labels, title="SVM + Sampled Points")
-    plot_points_in_grid(plt, X_sampled, y_sampled, colors=colors)
+    plot_points_in_grid(plt, Z_sampled, y_sampled, colors=colors)
     plt.show()
 
     print("Run `weight_points` ...")
-    weights = weight_points(x_interest, X_sampled)
+    weights = weight_points(x_interest, Z_sampled)
 
     print("Run `plot_points_in_grid` ...")
     plt = plot_grid(u, v, z, labels=labels,
                     title="SVM + Weighted Sampled Points")
-    plot_points_in_grid(plt, X_sampled, y_sampled, weights, colors, x_interest)
+    plot_points_in_grid(plt, Z_sampled, y_sampled, weights, colors, x_interest)
     plt.show()
 
     print("Run `fit_explainer_model` ...")
-    explainer = fit_explainer_model(X_sampled, y_sampled, weights)
+    explainer = fit_explainer_model(Z_sampled, y_sampled, weights)
 
     print("Compare models ...")
 
     plt.subplot(1, 2, 1)
     plot_grid(u, v, z, labels=labels, title="SVM", embedded=True)
-    plot_points_in_grid(plt, X_sampled, y_sampled, weights, colors, x_interest)
+    plot_points_in_grid(plt, Z_sampled, y_sampled, weights, colors, x_interest)
 
     plt.subplot(1, 2, 2)
     u2, v2, z2 = get_grid(
         explainer, dataset, points_per_feature=points_per_feature)
     plot_grid(u2, v2, z2, labels=labels, title="Decision Tree", embedded=True)
-    plot_points_in_grid(plt, X_sampled, y_sampled, weights, colors, x_interest)
+    plot_points_in_grid(plt, Z_sampled, y_sampled, weights, colors, x_interest)
 
     plt.show()

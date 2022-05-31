@@ -1,7 +1,3 @@
-\begin{enumerate}[a)]
-\item Implementation of WhatIf: 
-
-<<echo=TRUE, results='hide',message=FALSE>>=
 library("docstring")
 library(StatMatch)
 
@@ -13,9 +9,9 @@ generate_whatif = function(x_interest, model, dataset) {
   #' @param model: Binary classifier which can call a predict method.
   #' @param dataset (data.frame): Input data
   #'
-  #' @return counterfactual (data.frame): data.frame with one row presenting the 
-  #' counterfactuals closest to  `x_interest` with a different prediction.
-  
+  #' @return counterfactual (data.frame): data.frame with one row presenting the counterfactuals
+  #'    closest to  `x_interest` with a different prediction.
+
   # subset dataset to the observations having a prediction different to x_interest
   pred = predict(model, newdata = x_interest)
   preddata = predict(model, dataset)
@@ -29,53 +25,17 @@ generate_whatif = function(x_interest, model, dataset) {
   # Return nearest datapoint
   return(dataset[minid,]) 
 }
-@
 
-Example: 
-
-<<echo = TRUE, results='hide'>>=
-df = read.csv(file = "code/datasets/wheat_seeds.csv")
-table(df$Type)
-
-# Create a binary classification task
-df$Type = as.factor(ifelse(df$Type == "0", 1, df$Type))
-table(df$Type)
-
-# Fit a random forest to the data
-mod = randomForest::randomForest(Type ~ ., data = df)
-df$Type = NULL
-
-# Compute counterfactual for first observation
-x_interest = df[1,]
-cf = generate_whatif(x_interest = x_interest, model = mod, dataset = df)
-cf
-@
-
-<<echo=FALSE,results='asis'>>=
-xtable::xtable(cf)
-@
-
-\item Counterfactuals generated with WhatIf are valid and proximal, since they reflect the closest training datapoint 
-with the desired/different prediction. 
-The counterfactuals are also plausible since by definition they adhere to the data manifold.
-The counterfactuals are not sparse and might propose changes to many features - this is 
-a clear disadvantage of this method. 
-
-\item Evaluation 
-
-<<echo=TRUE, results='hide',message=FALSE>>=
 evaluate_counterfactual = function(counterfactual, x_interest, model) {
   #' Evaluates if counterfactuals are minimal, i.e., if setting one feature to 
   #' the value of x_interest still results in a different prediction than for x_interest.
   #' 
-  #' @param counterfactual (data.frame): Counterfactual of `x_interest`, a single row 
-  #' data set. 
+  #' @param counterfactual (data.frame): Counterfactual of `x_interest`, a single row data set. 
   #' @param x_interest (data.frame): Datapoint of interest, a single row data set. 
   #' @param model: Binary classifier which can call a predict method.
   #'
-  #' @return (list): List with names of features that if set for the 
-  #' counterfactual to the value of `x_interest`, still leads to a different 
-  #' prediction than for x_interest. 
+  #' @return (list): List with names of features that if set for the counterfactual to the value of 
+  #' `x_interest`, still leads to a different prediction than for x_interest. 
   pred = predict(model, newdata = x_interest)
   feature_nams = c()
   for (feature in names(counterfactual)) {
@@ -91,12 +51,22 @@ evaluate_counterfactual = function(counterfactual, x_interest, model) {
   }
   return(feature_nams)
 }
-@
 
-Example: 
 
-<<echo = TRUE>>=
-evaluate_counterfactual(counterfactual = cf, x_interest = x_interest, model = mod)
-@
-
-\end{enumerate}
+if (FALSE) {
+  df = read.csv(file = "wheat_seeds.csv")
+  table(df$Type)
+  
+  # Create a binary classification task
+  df$Type = as.factor(ifelse(df$Type == "0", 1, df$Type))
+  table(df$Type)
+  
+  # Fit a random forest to the data
+  mod = randomForest::randomForest(Type ~ ., data = df)
+  df$Type = NULL
+  
+  # Compute counterfactual for first observation
+  x_interest = df[1,]
+  cf = generate_whatif(x_interest = x_interest, model = mod, dataset = df)
+  evaluate_counterfactual(counterfactual = cf, x_interest = x_interest, model = mod)
+}

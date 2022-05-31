@@ -18,18 +18,7 @@ def generate_whatif(x_interest, model, dataset) :
     than x_interest. 
   """
 
-  # subset dataset to the observations having a prediction different to x_interest
-  pred = model.predict(x_interest)
-  preddata = model.predict(dataset)
-  idx = preddata != pred
-  dataset = dataset[idx,]
-  
-  # Pairwise Gower distances 
-  dists = gower.gower_matrix(data_x = dataset, data_y = x_interest)
-  minid = dists.flatten().argsort()[0]
-  
-  # Return nearest datapoint
-  return dataset[minid,:].reshape(1, -1)
+  return None
 
 
 def evaluate_counterfactual(counterfactual, x_interest, model) :
@@ -46,20 +35,8 @@ def evaluate_counterfactual(counterfactual, x_interest, model) :
    List with indices of features that if set for the counterfactual to the value of 
    `x_interest`, still leads to a different prediction than for x_interest. 
   """
-
-  pred = model.predict(x_interest)[0]
-  feature_nams = []
-  numfeat = counterfactual.shape[1]
-  for i, nam in zip(range(0, numfeat), dataset.get_input_labels()) :
-    if (counterfactual[0, i] != x_interest[0, i]) :
-      newcf = counterfactual.copy()
-      newcf[0, i] = x_interest[0, i]
-      newpred = model.predict(newcf)[0]
-      if (newpred != pred) :
-          feature_nams.append(nam)
-    else : 
-      continue
-  return feature_nams
+  
+  return None
 
 
 if __name__ == "__main__":
