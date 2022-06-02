@@ -52,7 +52,7 @@
 	Counterfactual Explanations provide answers in the form of "What-If"-scenarios.
 	\begin{center}\includegraphics[width=0.6\linewidth, page=2]{figure/counterfactuals_credit.pdf} \end{center}
 
-	``If the person was more skilled and the credit amount had been reduced to \$8.000,\\ his credit would have been granted."  \\[0.2cm]
+	``If the person was more skilled and the credit amount had been reduced to \$8.000,\\ the credit would have been granted."  \\[0.2cm]
 
 \end{frame}
 
@@ -61,10 +61,10 @@
 	\begin{itemize}[<+->]
 	    \item Counterfactual explanations == counterfactuals == CEs
 	    \item Explain particular predictions of an ML model by presenting an alternative input whose prediction equals a desired outcome
-		\item Represent \textbf{close neighbors} of a data point we are interested in,\\ but belonging to the \textbf{desired outcome class}
-		\item Reveal which minimal changes to the input are sufficient to receive a different response\\
+		\item Represent \textbf{close neighbors} of a data point we are interested in,\\ but belonging to the \textbf{desired outcome}
+		\item Reveal which minimal changes to the input are sufficient to receive a different outcome\\
 		$\leadsto$ Useful if there is a chance to change the input features (e.g., by changing behaviour)
-		\item The targeted audience of CEs are often end-users, not ML engineers
+		\item The targeted audience of CEs are often end-users%, not ML engineers
 	\end{itemize}
 \end{frame}
 
@@ -98,8 +98,8 @@ Accoding to \citebutton{Lewis (1973)}{https://doi.org/10.2307/2273738}, a \textb
 \pause
 
 	\begin{itemize}[<+->]
-		\item $S$ must relate to a past event that didn't occur\\ $\leadsto$ counterfactuals run \textbf{contrary} to the \textbf{facts}
-		\item The above statement is true, if in all possible worlds most similar to the actual world where $S$ had been the case, $Q$ would have been the case
+		\item $S$ is an event must relate to a past event that didn't occur\\ $\leadsto$ counterfactuals run \textbf{contrary} to the \textbf{facts}
+		\item Above statement is true, if in all possible worlds most similar to the actual world where $S$ had been the case, $Q$ would have been the case
 		\item A world is similar to another if laws are maximally preserved between the worlds and only a few facts are changed
 %		\item Lewis's proposal is hotly debated in philosophy, particularly his notion of similarity between worlds remains controversial.
 	\end{itemize}
@@ -113,10 +113,10 @@ Accoding to \citebutton{Lewis (1973)}{https://doi.org/10.2307/2273738}, a \textb
 		\item Causal dependence underlies the explanatory power\\
 		$\leadsto$ good CEs point to the critical causal factors that drove the algorithmic decision
 		\item If maximal closeness is relaxed, causally irrelevant factors can become part of the explanation\\
-		$\leadsto$ e.g., decreasing loan amount by \$20.000 and being one year older is recommended by the explainer but only loan amount would be causally relevant
+		$\leadsto$ e.g., decreasing loan amount by \$20.000 and being one year older is recommended by the explainer although only loan amount might be causally relevant
 		%Think of a case when a decrease in amount by \$20.000 and being one year older is recommended by the explainer to receive the loan while changing only the former suffices
 		\item CEs are often contrastive, i.e., they explain a decision by referring to an alternative outcome\\
-		$\leadsto$ e.g., if the loan-applicant was 30 instead of 60 years old, the approved loan would have been over \$100.000 instead of \$40.000%This is also the reason why counterfactuals must be maximally close to initial inputs, otherwise changes are only sufficient but some of them might be unnecessary.
+		$\leadsto$ e.g., if the loan applicant was 30 instead of 60 years old, the approved loan would have been over \$100.000 instead of \$40.000%This is also the reason why counterfactuals must be maximally close to initial inputs, otherwise changes are only sufficient but some of them might be unnecessary.
 %		\item Current research on causality is based on Pearl's (2009) causal graphs. Instead of defining causality in terms of counterfactuals, Pearl's approach turns the story around and necessitates a representation of causal mechanisms to define CEs.
 	\end{itemize}
 %\footnote[frame]{Lewis, David (1973). Counterfactuals. Cambridge, MA: Harvard University Press. ISBN 9780631224952. }
@@ -150,7 +150,7 @@ $$\argmin_{\xv'} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv)$$
 
 	\begin{itemize}
 		\item $\lambda_1$ and $\lambda_2$ balance the two objectives
-		\item Choice of $o_1$ (distance on prediction space) and of $o_2$ (distance on the feature space) is crucial
+		\item Choice of $o_1$ (distance on prediction space) and of $o_2$ (distance on feature space) is crucial
 	\end{itemize}
 \end{frame}
 
@@ -161,6 +161,7 @@ $$\argmin_{\xv'} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv)$$
 		\item Regression: $o_1$ could be the L1-distance $o_1(\fh(\xv'), y') = |\fh(\xv')-y'|$
 		\item Classification:
 		L1-distance for scores and 0-1 Loss for labels, e.g., $o_1(\fh(\xv'), y') = \Ind_{\{ \fh(\xv') \neq y' \}}$
+		\pause
 		\item $o_2$ could be the Gower distance (suitable for mixed feature space):
 		$$o_2(\xv', \xv) = \Gower(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(x'_j, x_j)	\in [0, 1]$$
 		The value of $\delta_G$ depends on the feature type (numerical or categorical):
@@ -188,7 +189,7 @@ $$\argmin_{\xv'} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv)$$
 	\begin{itemize}[<+->]
 		\item End-users often prefer short over long explanations\\
 		$\leadsto$ %changes made to obtain
-		counterfactuals should be \textbf{sparse}
+		counterfactuals should be \textbf{sparse} %(i.e., only few feature values should change)
 		\item Objective $o_2$ can take the number of changed features into account (but does not have to)\\
 		$\leadsto$ e.g., the L0- and the L1-norm (similar to LASSO) can do this
 %		\item There could be a trade-off between the number of features changed and the total amount of change made to obtain a certain prediction.
@@ -203,7 +204,7 @@ $$\argmin_{\xv'} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv)$$
 		\begin{itemize}
 			%\item CEs should suggest alternatives that are plausible -- e.g, it is a bad idea to suggest a loan applicant to raise her income and get unemployed at the same time
 			\item<1-> CEs should suggest plausible alternatives\\
-			$\leadsto$ e.g, not plausible to suggest to raise your income and get unemployed at the same time
+			$\leadsto$ e.g., not plausible to suggest to raise your income and get unemployed at the same time
 			\item<2-> CEs should be realistic and adhere to data manifold or originate from distribution of $\Xspace$\\
 			$\leadsto$ avoid unrealistic combinations of feature values
 			%We desire realistic CEs in the sense that they originate from the distribution of $\Xspace$ or adhere to the data manifold
