@@ -179,19 +179,50 @@ Let $\epsilon>0$, $f:\Xspace \rightarrow \Yspace$ be an ML model and $\xv \in \X
 % \end{vbframe}
 
 
-\begin{vbframe}[c]{Why Do ADE Exist?}
-    Non-exhaustive list of hypotheses:
-    \begin{itemize}
-        \item \textbf{Low-probability spaces hypotheses:} ADEs live in low-probability yet dense spaces in the data manifold that are not well represented in the training samples \citebutton{Szegedy et al. (2013)}{https://arxiv.org/abs/1312.6199}
-        \smallskip
-        \item \textbf{Linearity hypotheses (most popular):} Adversarial examples are omnipresent in the data manifold $\leadsto$ occur, because commonly used models often show linear behavior $\leadsto$ small changes of $\epsilon$ in every feature cause a change of $\epsilon\|\thetab\|_1$ in prediction \citebutton{Goodfellow et al. (2014)}{https://arxiv.org/abs/1412.6572}
-        \smallskip
-        \item \textbf{The boundary tilting hypothesis:} Linearity is neither necessary nor sufficient to explain ADEs $\leadsto$ ADEs mostly result from overfitting the sampled manifold \citebutton{Tanay and Griffin (2016)}{https://arxiv.org/abs/1608.07690}
-        \smallskip
-        \item \textbf{Human-centric hypotheses:} ML models make use of predictive but non-robust features -- meaning they are highly correlated with the prediction target, but not used by humans \citebutton{Ilyas et al. (2019)}{https://papers.nips.cc/paper/2019/hash/e2c420d928d4bf8ce0ff2ec19b371514-Abstract.html}
-    \end{itemize}
+\begin{frame}{Why Do ADE Exist?}
+Non-exhaustive list of hypotheses: \\[0.5cm]
+    
+\only<1>{
+    \textbf{1. Low-probability spaces hypotheses:} ADEs live in low-probability yet dense spaces in the data manifold that are not well represented in the training samples \citebutton{Szegedy et al. (2013)}{https://arxiv.org/abs/1312.6199}
+        
+    \begin{figure}
+        \centering
+        \includegraphics[width = .5\textwidth]{figure/adversarial examples.png}
+        \caption{Binary classification example (dark blue vs. green dots). Dotted line represents the true decision boundary, bold line the trained one. Low probability space close to decision boundary allow for adversarial examples (turquoise dot).}
+    \end{figure}
+}
+    
+\only<2>{
+    \textbf{2. Linearity hypotheses (most popular):} Adversarial examples are omnipresent in the data manifold $\leadsto$ occur, because commonly used models often show linear behavior $\leadsto$ small changes of $\epsilon$ in every feature cause a change of $\epsilon\|\thetab\|_1$ in prediction \citebutton{Goodfellow et al. (2014)}{https://arxiv.org/abs/1412.6572}
 
-\end{vbframe}
+    \vspace{.5cm}
+    
+    \textbf{Example:} linear model
+    
+    Original: $f(\xv) = \xv^T \thetab$ 
+    
+    Small changes: $f(\xv + \epsilon) = (\xv + \epsilon)^T \thetab$
+    
+    Difference: $f(\xv + \epsilon) - f(\xv) = \epsilon \cdot \thetab$
+}
+    
+\only<3>{
+    \textbf{3. The boundary tilting hypothesis:} Linearity is neither necessary nor sufficient to explain ADEs $\leadsto$ ADEs mostly result from overfitting the sampled manifold \citebutton{Tanay and Griffin (2016)}{https://arxiv.org/abs/1608.07690}
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width = .35\textwidth]{figure/tilting_ae.png}
+        \caption{Linear binary classification example. Due to overfitting the decision boundary (red) is close to the manifold of the training data. Techniques like regularization could help to make the decision boundary more robust (green). \citebutton{Kim et al. (2019)}{https://arxiv.org/abs/1903.11626}
+}
+    \end{figure}
+}
+    
+\only<4>{
+    \textbf{4. Human-centric hypotheses:} ML models make use of predictive but non-robust features -- meaning they are highly correlated with the prediction target, but not used by humans \citebutton{Ilyas et al. (2019)}{https://papers.nips.cc/paper/2019/hash/e2c420d928d4bf8ce0ff2ec19b371514-Abstract.html}
+}
+    
+\end{frame}
+
 
 \begin{vbframe}[c]{Ways to Generate ADE}
 Different ways for constructing ADEs:

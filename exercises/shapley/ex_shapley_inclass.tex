@@ -7,6 +7,7 @@
 \input{../../latex-math/ml-interpretable.tex}
 
 \usepackage{hyperref}
+\usepackage{enumitem}
 
 \begin{document}
 
@@ -15,53 +16,62 @@
 \input{ex_tex/ex_inclass.tex}
 
 \aufgabe{Quiz}{
-Some short quiz questions that reflect the background knowledge that is necessary to complete the next exercise
+The first exercise is an in-class quiz.
 \begin{enumerate}
-    \item What hyperparamters for LIME? What do they steer? How should they be set?
-    \item Marginal vs conditional SHAP
-    \item Relevance of dataset for SHAP result (relevant for the marginlization)
-    \item Relevance of the correlation structure (proxy variables? detected?)
+    \item What is the prediction target in contrast to the prediction?
+    \item What is the model's mechanism in contrast to the data generating process (DGP)?
+    \item Yes or No: Shapley values and SHAP values are different names for the same concept.
+    \item What are SHAP value functions $v$ in contrast to SHAP values $\phi$?
+    \item What is the difference between marginal and conditional SHAP?
+    %\item What is the difference between kernel SHAP and tree SHAP?
+    \item Does the dependence structure in the DGP influence the SHAP result?
+    \item What is the motivation of LIME?
+    \item Both SHAP and LIME can be seen as local linear approximations. Name differences between SHAP and LIME.
+    \item Name hyperparameters for LIME. What do they steer?
 \end{enumerate}
-
 }
 
 \dlz
 
 \aufgabe{"Improving" Explanation Results}{
-Your employer, E-Corp, has set up a new special task force, which you are part of. The goal of the task force is to increase the trust of individuals into the AI tools that the company sells to a wide range of businesses, governments and individuals (basically anyone with money).\\
-The task force was set up as a reaction to criticism of its top-selling AI detection system \textit{Saruman's stone}. The goal of the system is to save innocent civilians in AWS\footnote{Here, AWS stands for autonomous weapon sysstems} scenarios. For instance, the "innocent civilian protection system" was employed to protect the president of the USA, Mr. Drumpf, against "enemies of the country" (people in a demonstration). At this event mostly non-white "enemies of the state" were imprisoned by the drones.\\
-As a first measure to increase trust, you were asked to apply common explanation techniques like SHAP and LIME to the aforementioned AI model. In your mission to "increase trust" and "advance the progress of AI", you have the clear task to avoid results that may undermine the progress of E-Corp and Saruman's stone.\\
-The prediction function as well as the underlying dataset are well-kept secrets of the company because E-Corp wants to prevent terrorists from exploiting the knowledge to harm innocent civilians and especially children.\\
-Only you and the other members of the task force get access to the dataset (\texttt{saruman.csv}) and the prediction function.\\
+Your employer, E-Corp, has set up a new special task force, which you are part of. The goal of the task force is to increase the trust of individuals into the AI tools that the company sells to a wide range of businesses, governments and individuals.\\
+The task force was set up as a reaction to criticism of its top-selling AI detection system \textit{Saruman's stone}. The goal of the system is to distinguish innocent civilians from targets in AWS\footnote{Here, AWS stands for autonomous weapon sysstems} scenarios.\\ %For instance, the "innocent civilian protection system" was employed to protect the president of the USA, Mr. Drumpf, against "enemies of the country" (people in a demonstration). At this event mostly non-white "enemies of the state" were imprisoned by the drones.\\
+As a first measure to increase trust, you were asked to apply common explanation techniques like SHAP and LIME to the aforementioned AI model.
+In contrast to the model and the data, which are well kept company secrets,\footnote{E-Corp wants to prevent evil terrorists from exploiting the knowledge to harm innocent civilians and especially children.} the results of your interpretations will be communicated to a board of independent journalists.\\
+In your mission to increase trust and advance the progress of AI you have the clear task to avoid results that may undermine the progress of E-Corp or the adoption of Saruman's stone.\\
 
-$$f(x) = beard + skin + 0.5 clothing + 0.5 arms$$
-
-\textit{beard}, \textit{skin}, \textit{military clothing}, \textit{arms}
+%$$f(x) = 0.1 beard + 0.1 skin + clothing + 0.5 arms$$
+%
+%\textit{beard}, \textit{skin}, \textit{military clothing}, \textit{arms}
 
 Now it is up to you to save AI!
 
 \begin{enumerate}
     \item Build groups of 2-3 people.
-    \item Apply SHAP and LIME to the dataset. Interpret the results. Which conclusions do you draw?
-    \item Since your mission is to increase trust in AI systems, you wonder about ways to "improve" the explanation results. Try to "adjust" the interpretation by modifying the hyperparamters of LIME.
-    \item Congratulations! E-Corp investor Eter Iehl himself called into your special incentive holiday event\footnote{in the seasteading \textit{Ocean Freedom Nation} in Brazil} to give you the \textit{E-Corp ethical AI award} for investigating unfairness. Unfortunately your holiday is interrupted by an unpleasant report in MIT Tech Review. Tinmit Urbeg claims that E-Corp may have cheated by tuning the hyperparameters of LIME to rely on a huge neighborhood! Think of ways to adapt the decision boundary such that LIME provides the desired results despite choosing a small neighborhood.
-    \item You once heard that SHAP relies on unrealistic artificial datapoints, a property that may help to "adjust" the explanations. Add datapoints to the dataset which is used for the generation of the explanation (except that it must contain observation \textit{id 3}) to hide the model's discriminatory behavior.
-    \item Can you think of further ways to "improve" the interpretation?
-    \item Think of further prediction tasks/dataset where an "improvement" of potentially unfavorable explanations is possible.
+    \item Fit a random forest classifier with default hyperparameters on the dataset \texttt{data.csv}.
+    \item Apply SHAP and LIME with default hyperparameters to the dataset. Interpret the results. Which conclusions do you draw (you can use \href{}{shaper} for R and \href{https://github.com/slundberg/shap}{shap} for python)?
+    \item Since your mission is to increase trust in AI systems, you wonder about ways to improve the explanation results. Try to adjust the interpretation by modifying the hyperparameters of LIME.\footnote{If you cannot find hyperparameter configurations for which you get the desired result, you may change the model as well (i.e. reduce the number of estimators or the maximum tree depth).}\\
+    \\
 \end{enumerate}
 
+Congratulations! E-Corp investor Eter Iehl himself called into your special bonus incentive holiday event\footnote{in the seasteading \textit{Ocean Freedom Nation} in Brazil} to give you the \textit{E-Corp ethical AI award} for tackling unfairness in AI. Unfortunately, just a few days later your holiday is interrupted by an unpleasant report in MIT Tech Review. Tinmit Urbeg publicly accuses E-Corp of cheating by tuning the LIME hyperparameters!\\%Think of ways to adapt the decision boundary such that LIME provides the desired results despite choosing a larger neighborhood.
+Eter Iehl is super mad and you have to end the holiday. Sad! But then your supervisor has an idea. She once heard that SHAP relies on unrealistic artificial datapoints...
+\begin{enumerate}[resume]
+    \item  Exploit the extrapolation to adjust the SHAP interpretation such that skin color and beard are considered irrelevant. \textit{Hint: It is sufficient to sketch an approach with pen and paper.}
+    \item Can you think of further ways to "improve" the interpretation?
+\end{enumerate}
 }
 
 \dlz
 
-\aufgabe{Discussion}{
+\aufgabe{Bonus: Discussion}{
 Discuss with your team:
 \begin{enumerate}
-    \item How reliable are local, post-hoc interpretation techniques in auditing AI systems?
-    \item Are local, post-hoc interpretations suitable to assess the fairness of algorithmic decisions?
-    \item Imagine you would be regulating the application of AI. Where do you see the role of interpretable machine learning techniques like LIME and SHAP?
-    \item How would you design the AI auditing process?
+    \item In what sense are local, post-hoc interpretation techniques helpful in auditing AI systems?
+    \item Are local, post-hoc interpretations sufficient to assess the fairness of algorithmic decisions?
+    \item How would you design the AI auditing process? What are pitfalls that you should avoid?
 \end{enumerate}
 }
 
 \end{document}
+ 
