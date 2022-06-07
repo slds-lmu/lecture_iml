@@ -1,27 +1,30 @@
 
 An insurance company wants to calculate monthly premiums for a disability 
-insurance ("Berufsunfaehigkeitsversicherung") with an ML model based on the 
-age, job type and marital status.
+insurance ("Berufsunfähigkeitsversicherung") with an ML model based on the 
+pension, age, job type and marital status.
 An appropriate model $\fh$ was already fitted using a large customer dataset but in order 
 to be launched it needs approval by regulators. 
-The regulators put the model to test by using LIME to provide an explanation
+The regulators put the model to test by using LIME (with exponential kernel) to provide an explanation
 for typical and critical customers. 
 One of these test instances is a 21 year old woman with mainly sedentary work.
 
 \begin{enumerate}[a)]
-  \item The regulators already generated new instances. For simplicity, 
-  we assume that 3 instances are enough to fit a surrogate model.
-  Fill out the missing fields in the following table:
-  
+  \item The regulators already generated new instances to fit the 
+  surrogate model. For simplicity, 
+  we assume that three instances are enough to fit the model.
+  Fill out the missing fields in the following table, where $\phi_{\sigma}(\zv)$ is the 
+  exponential kernel similarity measure for a specific $\sigma$:
+  $\phi_{\sigma}(\zv) = \exp(-d(\xv, \zv)^2/ \sigma^2)$.
+
   \begin{table}[ht]
   \centering
     \begin{tabular}{l|llll|l|l|l|l}
-            & pension & age & job type       & marital status  & $\fh$ & $d(\xv, \cdot)$ & $\phi_{\sigma = 0.05}$ & $\phi_{\sigma = 0.2}$ \\
+            & pension & age & job type       & marital status  & $\fh$ & $d(\xv, \zv_{\cdot})$ & $\phi_{\sigma = 0.15}(\zv_{\cdot})$ & $\phi_{\sigma = 0.5}(\zv_{\cdot})$ \\
             \hline
     $\xv$   & 1800    &  21 & sedentary      & single          & 30.6    & -    &  - & - \\
-    $\zv_1$ & 1600    &  21 & sedentary      & married         & 25.8    & 0.25 &  0.27 & 0.72 \\
-    $\zv_3$ & 2200    &  32 & sedentary      & married         & 85.2    & 0.32 &  0.12 &  \\
-    $\zv_2$ & 1200    &  23 & physically     & single          & 74.9    & 0.49 &   & 0.30 \\
+    $\zv_1$ & 1600    &  21 & sedentary      & married         & 25.8    & 0.25 &  0.06 &  \\
+    $\zv_3$ & 2200    &  32 & sedentary      & married         & 85.2    & 0.32 &  0.01 &  \\
+    $\zv_2$ & 1200    &  23 & physically     & single          & 74.9    & 0.49 &  0.00  & 0.38 \\
     \end{tabular}
   \end{table}
   
@@ -31,18 +34,18 @@ library(StatMatch)
  z = data.frame(x1 = c(1600, 2200, 12000, 3500, 1000), x2 = c(21, 32, 23, 18, 60), 
    x3 = c("sedentary", "sedentary", "physically demanding", "emotionally demanding", "sedentary"), 
    x4 = c("married", "married", "single", "widowed", "divorced"))
- dist = c(StatMatch::gower.dist(x, z))[1:3]
+ dist = round(c(StatMatch::gower.dist(x, z))[1:3],2)
  exp_kern = function(d, width) {
-   return(exp(-d^2/width))
+   return(exp(-d^2/width^2))
  }
-  exp_kern(dist, 0.2)
-  exp_kern(dist, 0.05)
+  exp_kern(dist, 0.15)
+  exp_kern(dist, 0.5)
 @
   
   How does the kernel width $\sigma$ influence the proximity measure? 
-  What would happen if the kernel width is set to small?
+  What would happen if the kernel width is set too small?
   
-  \item The regulatories fit two different surrogate models ($g_1$ and $g_2$) on the re-weighted 
+  \item The regulatories fit two different local surrogate models ($g_1$ and $g_2$) on the re-weighted 
   data (here, our three observations $\zv$).
   The following table compares the prediction of $\fh$ to the ones of two surrogate models for all given instances.
   
@@ -59,11 +62,14 @@ library(StatMatch)
   \end{table}
   
   Which of the two surrogate models do you prefer? 
-  Compute the local faithfulness. \\
+  Compute the local faithfulness for both surrogate models using the weights from a) for $\sigma = 0.15$. \\
   \textit{Hint}: consider $L(\fh, g, \phi_{\xv})$ from the lecture.
   
   \item The surrogate model $g_1$ corresponds to a linear model using all three features, while 
   $g_2$ corresponds to a random forest with 500 trees.
-  Would you still prefer the model you chose in b)?
+  Would you still prefer the model you chose in b)? 
+  
+  \item Discuss whether for the faithfulness assessment in b) it makes sense to use a new sampled dataset 
+  instead of the one the local surrogate model was fitted on.
   
 \end{enumerate}

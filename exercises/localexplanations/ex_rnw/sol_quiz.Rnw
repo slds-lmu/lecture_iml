@@ -1,22 +1,23 @@
 \begin{enumerate}
   \item Which of the following statement(s) is/are correct? 
-  \begin{enumerate}[a)]
-    \item A single ICE curve is a local explanation method.
-    \item Robust local explanation method should return similar explanations for 
-    similar observations.
-    \item Local explanation methods are not suitable to explain deep learning models.
-  \end{enumerate}
-  \item Which of the following statement(s) about LIME is/are correct?  
-        \begin{enumerate}[a)]
-        \item Surrogate models produced by LIME should have the same prediction as the model to be explained for the whole training dataset.
-        \item The choice of the sampling process and the definition of locality are important hyperparameters of LIME that have a large impact on the behavior of the method. 
-        \item If the kernel width for the exponential kernel is set to infinity, all observations receive a proximity measure/weight of $1$ independent of their distance to $\xv$. 
-        \item If the kernel width for the exponential kernel is set to 0, all observations receive a proximity measure/weight of $1$ independent of their distance to $\xv$. 
-  \end{enumerate}
+          \begin{enumerate}
+            \item A single ICE curve is a local explanation method. \textcolor{blue}{Correct}
+            \item Robust local explanation methods should return similar explanations for 
+            similar observations. \textcolor{blue}{Correct}
+            \item Local explanation methods are not suitable to explain deep learning models. \textcolor{blue}{Not correct, we saw an example were LIME as applied to image data.}
+            \item In ordinary Gower's distance all feature receive the same weight. \textcolor{blue}{Correct}
+          \end{enumerate}
+  \item Which of the following statement(s) about local surrogate models is/are correct?  
+            \begin{enumerate}
+                \item Surrogate models produced by LIME should have the same prediction as the model to be explained for the whole training dataset. \textcolor{blue}{Not correct, they should be faithful in the neighborhood of the point of interest, the closer a point is to the point of interest, the closer the prediction of the local surrogate model should be to the original prediction.}
+                \item The choice of the sampling process and the definition of locality are important hyperparameters of LIME that have a large impact on the behavior of the method. \textcolor{blue}{Correct}
+                \item LIME requires the surrogate model to use all available features - a selection of features is not allowed. \textcolor{blue}{Not correct, L0-regularized/LASSO model possible}
+                \item If the kernel width for the exponential kernel is set to infinity, all observations receive a proximity measure/weight of $1$ independent of their distance to $\xv$. \textcolor{blue}{Correct}
+          \end{enumerate}
   \item Which of the following statement(s) about counterfactual explanations is/are correct? 
-    \begin{enumerate}[a)]
-    \item The nearest training datapoint with the desired prediction is a valid counterfactuals that also considers the plausibility constraint.
-    \item Counterfactual explanations are not suitable for people without machine learning knowledge, because reasoning by "What if..." questions are not natural for human beings.
-     \item Domain-knowledge encoded in causal graphs, could help to receive more realistic counterfactuals.
-    \end{enumerate}
+        \begin{enumerate}
+        \item The nearest training datapoint with the desired prediction is a valid counterfactuals that also considers the plausibility constraint. \textcolor{blue}{Correct, see homework sheet 4/exercise 3}
+        \item Counterfactual explanations are not suitable for people without machine learning knowledge, because reasoning by "What if..." questions are not natural for human beings. \textcolor{blue}{Not correct, reasoning of human beings often in the form of counterfactuals.}
+         \item Making use of domain-knowledge encoded in causal graphs, could help to receive more realistic counterfactuals. \textcolor{blue}{Correct}
+        \end{enumerate}
 \end{enumerate}

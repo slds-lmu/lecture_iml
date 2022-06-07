@@ -1,63 +1,48 @@
-\begin{enumerate} [a)]
-  \item Derivation of PD function for $S = \{1\}$ (with $C = \{2\}$) given
-  \begin{equation*}
-  \fh(\xv) = \fh(\xv_1, \xv_2) = \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 + \hat\beta_0.
-  \label{eq:linmod}
-  \end{equation*}
+\begin{enumerate}[a)]
+  \item  Fill out table:
   
-  $$
+  
+  \begin{table}[ht]
+  \centering
+    \begin{tabular}{l|llll|l|l|l|l}
+           & pension & age & job type       & marital status  & $\fh$ & $d(\xv, \zv_{\cdot})$ & $\phi_{\sigma = 0.15}(\zv_{\cdot})$ & $\phi_{\sigma = 0.5}(\zv_{\cdot})$ \\
+            \hline
+    $\xv$   & 1800    &  21 & sedentary      & single          & 30.6    & -    &  - & - \\
+    $\zv_1$ & 1600    &  21 & sedentary      & married         & 25.8    & 0.25 &  0.06 &  0.78\\
+    $\zv_3$ & 2200    &  32 & sedentary      & married         & 85.2    & 0.32 &  0.01 & 0.66 \\
+    $\zv_2$ & 1200    &  23 & physically     & single          & 74.9    & 0.49 &  0.00  & 0.38 \\
+    \end{tabular}
+  \end{table}
+  
+  \begin{itemize}
+    \item The smaller the kernel width $\sigma$ the smaller the proximity measure, the smaller the weight for the sampled data points
+    \item If the kernel is set too small, many or all sampled observations receive a weight close to 0.
+    \item Since there are not many datapoint used to fit the surrogate model, the model might be unstable
+    and not faithful to the original model.
+  \end{itemize}
+
+  \item
+   $$
   \begin{aligned}
-  f_{1, PD}(\xv_1) = \E_{\xv_2} \left( \fh(\xv_1, \xv_2) \right) &= \int_{-\infty}^{\infty} \left( \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 + \hat\beta_0 \right) \, d\P(\xv_2) \\
-  &= \hat\beta_1 \xv_1 + \int_{-\infty}^{\infty} \hat\beta_2 \xv_2 + \hat\beta_3 \xv_1 \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
-    &= \hat\beta_1 \xv_1 + \int_{-\infty}^{\infty} (\hat\beta_2 + \hat\beta_3 \xv_1) \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
-    &= \hat\beta_1 \xv_1 + (\hat\beta_2 + \hat\beta_3 \xv_1) \cdot \int_{-\infty}^{\infty} \xv_2 \, d\P(\xv_2) + \hat\beta_0 \\
-        &= \hat\beta_1 \xv_1 + (\hat\beta_2 + \hat\beta_3 \xv_1) \cdot \E_{\xv_2} (\xv_2) + \hat\beta_0 
+  L(\fh, g_1, \phi_{\xv}) &= \sum_{\zv \in Z} \phi_{\xv}(\zv) L(\fh(\zv), g(\zv))  \\
+  &= 0.06 \cdot (28 - 25.8)^2 + 0.01 \cdot(105 - 85.2)^2 + 0 \\
+  &= 4.21
   \end{aligned}
   $$
 
-  \item PD function for $\hat\beta_0 = 0$, $\hat\beta_1 = -8$, $\hat\beta_2 = 0.2$, $\hat\beta_3 = 16$, $X_1 \sim Unif(-1, 1)$ and  $X_2 \sim B(1, 0.5)$. 
   $$
   \begin{aligned}
-  f_{1, PD}(\xv_1) = \hat\beta_1 \xv_1 + (\hat\beta_2 + \hat\beta_3 \xv_1) \cdot \E_{\xv_2} (\xv_2) + \hat\beta_0 
-        &= -8 \xv_1 + (0.2 + 16 \xv_1) \cdot \E_{\xv_2} (\xv_2) + 0 \\
-        &= -8 \xv_1 + (0.2 + 16 \xv_1) \cdot 0.5  + 0 \\
-        &= -8 \xv_1 + 0.1 + 8 \xv_1 \\
-        &= 0.1 + 0 \xv_1
+  L(\fh, g_2, \phi_{\xv}) & = \sum_{\zv \in Z} \phi_{\xv}(\zv) L(\fh(\zv), g(\zv))  \\
+  &= 0.06 \cdot (26.1 - 25.8)^2 + 0.01 \cdot(92.7 - 85.2)^2 + 0 \\
+  &= 0.57
   \end{aligned}
   $$
-  
-  \item ICE functions for group $X_2 = 1$ and for group $X_2 = 0$. 
-    $$f_1(\xv_1) = \begin{cases}
-      - 8 \xv_1 + (0.2 + 16 \xv_1) \cdot 1 = 8 \xv_1 + 0.2 & \xv_2 = 1 \\
-      - 8 \xv_1 + (0.2 + 16 \xv_1) \cdot 0 = - 8 \xv_1 & \xv_2 = 0
-    \end{cases}$$
-    
-  The lightgreen dots correspond to group $X_2 = 1$, the lightblue dots to group $X_2 = 0$.
-  
-<<fig.height=3, fig.width=6, echo = FALSE, warning=FALSE,message=FALSE>>=
-library(mlr3)
-library(iml)
-library(ggplot2)
-set.seed(1000)
-n = 700
-x1 = runif(n, -1, 1)
-x2 = rbinom(n, size = 1, prob = 0.5)
-y = - 8*x1 + 0.2*x2 + ifelse(x2 == 1, 16*x1, 0) 
-dat = data.frame(x1, x2, y)
+  According to the faithfulness, $g_2$ should be preferred because it has a lower
+  weighted loss.
 
-# fit linear model
-mod = lm(y~x1+x2+x1:x2, data = dat)
-pred = Predictor$new(mod, data = dat[-which(names(dat) == "y")], y = dat$y)
+  \item No, because a random forest is by far less interpretable than a linear model
+  with three features.
 
-# pdp
-pdp = FeatureEffect$new(pred, "x1", method = "pdp")
-p1 = pdp$plot()
-p1 = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
-  theme_bw() +
-  scale_x_continuous(name = expression(x[1])) + 
-  geom_point(data = dat[dat$x2 == 1,], aes(x = x1, y = y), color = "lightgreen", alpha = 0.5) + 
-  geom_point(data = dat[dat$x2 == 0,], aes(x = x1, y = y), color = "lightblue", alpha = 0.5)
-p1
-@
-  
+  \item Yes, because there is a high probability that the random forest overfitted on the sampled data.
+    With a new sampled dataset the faithfulness might be lower for the random forest.
 \end{enumerate}

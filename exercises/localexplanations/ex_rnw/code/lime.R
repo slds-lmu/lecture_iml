@@ -80,14 +80,16 @@ plot_points_in_grid = function(plt, df, weights = NULL, x_interest = NULL, size 
 
 sample_points = function(model, dataset, num_points, seed=0) {
   
-  #' Samples points for the two first features. 
+  #' Samples points for the two first features and uses the model to 
+  #' receive a prediction for these sampled points.
   #' 
   #'  @param model: Classifier which can call a predict method.
   #' 	@param dataset (data.frame): Input dataset (only contains two features).
   #'  @param num_points (int): How many points should be sampled.
   #'  @param seed (int): Seed to feed random.
   #' 
-  #' @return dataset (data.frame) of sampled data. 
+  #' @return dataset (data.frame) of sampled data (feature) plus a column 'pred' with 
+  #' their obtained prediction of the `model`.
   
   return(NULL)
 }

@@ -8,7 +8,7 @@ def generate_whatif(x_interest, model, dataset) :
   i.e., the closest data point with a different prediction.
   Parameter: 
     x_interest (np.array with shape (1, num_features)): Datapoint of interest.
-    model: Binary lassifier which has a predict method.
+    model: Binary classifier which has a predict method.
     dataset (np.array with shape (?, num_features)): Input data
     from which a counterfactual is selected from.
 
@@ -83,10 +83,8 @@ if __name__ == "__main__":
   model.fit(X, y)
   
   # Define x_interest, remove it from dataset 
-  
   model.predict(x_interest)
  
-  
   # Compute counterfactual for first observation
   cf = generate_whatif(x_interest = x_interest, model = model, dataset = X)
   evaluate_counterfactual(counterfactual = cf, x_interest = x_interest, model = model)
