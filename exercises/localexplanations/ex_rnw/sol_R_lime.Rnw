@@ -87,6 +87,7 @@ plot_points_in_grid = function(plt, df, weights = NULL, x_interest = NULL, size 
 Example: 
 
 <<echo=TRUE, results='hide',message=FALSE>>=
+set.seed(2022L)
 library("e1071") # SVM 
 library("gridExtra") # to plot two ggplots next to each other
 
@@ -105,7 +106,7 @@ dataset$Asymmetry.Coeff = min_max_norm(dataset$Asymmetry.Coeff)
 traindata = dataset[sample(seq_len(nrow(dataset)), round(0.6*nrow(dataset)), 
   replace = TRUE),]
 
-# Fit a random forest to the data
+# Fit a svm to the data
 mod = svm(Type ~ ., data = traindata)
 dataset$Type = NULL
 

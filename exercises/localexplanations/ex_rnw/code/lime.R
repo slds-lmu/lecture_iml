@@ -122,6 +122,7 @@ fit_explainer_model = function(df, weights = NULL, seed = 0) {
 
 
 if (FALSE) {
+  set.seed(2022L)
   library("e1071") # SVM 
   library("gridExtra") # to plot two ggplots next to each other
   
@@ -139,7 +140,7 @@ if (FALSE) {
   
   traindata = dataset[sample(seq_len(nrow(dataset)), round(0.6*nrow(dataset)), replace = TRUE),]
   
-  # Fit a random forest to the data
+  # Fit a svm to the data
   mod = svm(Type ~ ., data = traindata)
   dataset$Type = NULL
   
