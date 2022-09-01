@@ -1,0 +1,63 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+% deactivate beamer navigation
+%\setbeamertemplate{navigation symbols}{}
+%\usepackage{geometry}
+%\geometry{papersize={180mm, 135mm}, top=-1.5mm} % 210mm, 297mm
+
+% set path of iml lecture here, e.g., relative to the current dir
+\newcommand{\pathiml}{../../}
+\usepackage{\pathiml/style/lmu-lecture}
+\usepackage{pax}
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+%\useoutertheme{metropolis}
+% remove section slides
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Interpretable Machine Learning: Shapley values}
+    \tableofcontents[currentsection, subsectionstyle=hide]
+  \end{frame}
+}
+% includepdf slides, pagecommad will set counter for framenumber
+\usepackage{pdfpages}
+\includepdfset{trim=0mm 0mm 0mm 0mm, pagecommand={\global\setcounter{framenumber}{\value{page}}}}
+% trim=0mm 6mm 0mm 0mm, offset=0 15,
+% add footer:
+\usepackage{framed, color}
+\usepackage{xcolor}
+%\iffalse
+\setbeamertemplate{footline}[text line]{%
+    \noindent\hspace*{\dimexpr-\oddsidemargin-1in\relax}%
+     \colorbox{white}{
+     \makebox[\dimexpr\paperwidth-2\fboxsep\relax]{
+     \color{black}
+     \begin{minipage}[c][4.5ex][c]{0.5\linewidth}
+       \secname
+     \end{minipage}
+     \hfill\begin{minipage}[c][4.5ex][c]{0.5\linewidth}
+       \flushright
+       \insertframenumber{}~/~\inserttotalframenumber~~
+     \end{minipage}
+     }}%
+  \hspace*{-\paperwidth}
+}
+%\fi
+
+\begin{document}
+\setbeamercolor{background canvas}{bg=}
+
+% General remark: hyperlinks in included pdfs are not clickable anymore in the combined pdf unless you use pax to extract annotations from original files and complile this file locally (see https://tex.stackexchange.com/questions/497624/merging-multiple-pdf-files-without-breaking-hyperlinks)
+
+\section{Shapley Values - Game Theory}
+\includepdf[pages={1-last}]{\pathiml/slides-pdf/slides-shapley-game-theory.pdf}
+
+\section{Shapley Values - Local Feature Effects}
+\includepdf[pages={1-last}]{\pathiml/slides-pdf/slides-shapley-ml.pdf}
+
+\section{Shapley Values - Local Feature Effects with SHAP}
+\includepdf[pages={1-23}]{\pathiml/slides-pdf/slides-shap.pdf}
+
+\section{Shapley Values - Global Feature Effects with SHAP}
+\includepdf[pages={28-last}]{\pathiml/slides-pdf/slides-shap.pdf}
+
+\end{document}
