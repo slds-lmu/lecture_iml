@@ -24,11 +24,11 @@
 
 \begin{frame}{Partial Dependence (PD) \citebutton{Friedman (2001)}{https://www.jstor.org/stable/2699986}}
 
-\textbf{Definition:} PD function is expectation of $\fh(\xv_S, \xv_C)$ w.r.t. marginal distribution of features $\xv_C$:
-$$f_{S, PD}(\xv_S) = \E_{\xv_C} \left( \fh(\xv_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(\xv_S, \xv_C) \, d\P(\xv_C)$$
+\textbf{Definition:} PD function is expectation of $\fh(\xv_S, \xv_{-S})$ w.r.t. marginal distribution of features $\xv_{-S}$:
+$$f_{S, PD}(\xv_S) = \E_{\xv_{-S}} \left( \fh(\xv_S, \xv_{-S}) \right) = \int_{-\infty}^{\infty} \fh(\xv_S, \xv_{-S}) \, d\P(\xv_{-S})$$
 
-\textbf{Estimation:} For a grid value $\xv_S^*$, average ICE curves point-wise at $\xv_S^*$ over all observed $\xv_C^{(i)}$:
-$$\fh_{S, PD}(\xv_S^*) = \frac{1}{n} \sum_{i=1}^n \fh(\xv_S^*, \xv_C^{(i)})$$
+\textbf{Estimation:} For a grid value $\xv_S^*$, average ICE curves point-wise at $\xv_S^*$ over all observed $\xv_{-S}^{(i)}$:
+$$\fh_{S, PD}(\xv_S^*) = \frac{1}{n} \sum_{i=1}^n \fh(\xv_S^*, \xv_{-S}^{(i)})$$
 
 %Within the SIPA framework, the partial dependence builds the \textbf{Aggregation} step.
 
@@ -44,7 +44,7 @@ Assume a linear regression model with two features:
 
 $$\fh(\xv) = \fh(\xv_1, \xv_2) = \hat\beta_1 \xv_1 + \hat\beta_2 \xv_2 + \hat\beta_0$$
 
-PD function for feature of interest $S = \{1\}$ (with $C = \{2\}$) is:
+PD function for feature of interest $S = \{1\}$ (with $-S = \{2\}$) is:
 
 $$
 \begin{aligned}
@@ -277,7 +277,7 @@ $\Rightarrow$ Easier to identify heterogenous shapes with c-ICE curves
 %\centering
 $$\begin{aligned}
 \fh_{S, cICE}^{(i)}(\xv_S)
-&= \fh(\xv_S, \xi_C) - \fh(x^*, \xi_C) \\
+&= \fh(\xv_S, \xi_{-S}) - \fh(x^*, \xi_{-S}) \\
 &= \fh_{S}^{(i)}(\xv_S) - \fh_{S}^{(i)}(x^*)
 \end{aligned}$$
 
