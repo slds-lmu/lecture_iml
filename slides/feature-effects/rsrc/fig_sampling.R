@@ -58,7 +58,7 @@ p = ggplot(data = data, aes(x1, x2)) +
   geom_point(data = data.const, aes(x1, x2), shape = 4, alpha = 0.5, col = "red") +
   facet_grid(~ method) +
   xlab("Feature"~X[S]) +
-  ylab("Feature"~X[C]) +
+  ylab("Feature"~X[-S]) +
   ggtitle("Grid points for"~X[S]~"(red) for highlighted observation (blue)")
 
 

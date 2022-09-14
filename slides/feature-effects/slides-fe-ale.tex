@@ -246,8 +246,8 @@ ALE plots use the idea of integrating partial derivatives. They do not suffer fr
 \lz
 Concept of ALE plots is based on
 \begin{enumerate}[<+->]
-\item estimating local effects $\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}$ (via finite differences) evaluated at certain points $(x_S = z_S, \xv_C)$\label{ref1}
-\item averaging local effects over conditional distribution $\P(\xv_C|x_S)$ similar to M plots\\ %across all values of $\xv_C$, i.e.,
+\item estimating local effects $\frac{\partial \fh(x_S, \xv_{-S})}{\partial x_S}$ (via finite differences) evaluated at certain points $(x_S = z_S, \xv_{-S})$\label{ref1}
+\item averaging local effects over conditional distribution $\P(\xv_{-S}|x_S)$ similar to M plots\\ %across all values of $\xv_{-S}$, i.e.,
 $\Rightarrow$ Avoids extrapolation issue\label{ref2}
 \item integrating averaged local effects up to a specific value $x \sim \P(x_S)$\\ %all values of $z_S$   from $z_0 := \min(x_S)$ u
 $\Rightarrow$ Accumulates local effects to estimate global main effect of $x_S$\\
@@ -272,11 +272,12 @@ $\Rightarrow$ Avoids OVB issue as other unwanted main effects were removed in \e
 \begin{itemize}%[<+->]
 %\item Let $z_0 = \min(x_S)$ be minimum of feature of interest $x_S$.
 %\item All complementary features are denoted by $\xv_C$.
-\item Let $x_S$ be feature of interest with $z_0 = \min(x_S)$ and $\xv_C$ all other features  (complement of $S$)
+\item Let $x_S$ be feature of interest with $z_0 = \min(x_S)$ and $\xv_{-S}$ all other features  (complement of $S$)
 \item Uncentered first order ALE $\tilde{f}_{S, ALE}(x)$ at feature value $x \sim \P(x_S)$ is defined as:  
 $$
 \begin{aligned}
-\tilde{f}_{S, ALE}(x) &= \underbrace{\int_{z_{0}}^{x}}_{ \eqref{ref3}} \underbrace{\E_{\xv_C \vert x_S}}_{\eqref{ref2}} \Bigg(  \underbrace{\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}}_{\eqref{ref1}} \bigg \vert x_S = z_S \Bigg) dz_S = \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}  \frac{\partial \fh(z_S, \xv_C)}{\partial z_S} d\P(\xv_C | z_S) \,   \right) dz_S
+\hspace*{-0.7cm} 
+\tilde{f}_{S, ALE}(x) &= \underbrace{\int_{z_{0}}^{x}}_{ \eqref{ref3}} \underbrace{\E_{\xv_{-S} \vert x_S}}_{\eqref{ref2}} \Bigg(  \underbrace{\frac{\partial \fh(x_S, \xv_{-S})}{\partial x_S}}_{\eqref{ref1}} \bigg \vert x_S = z_S \Bigg) dz_S = \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}  \frac{\partial \fh(z_S, \xv_{-S})}{\partial z_S} d\P(\xv_{-S} | z_S) \,   \right) dz_S
 \end{aligned}
 $$
 \pause
@@ -336,9 +337,9 @@ $$
  \begin{itemize}
   %\item Now let us define it more formalized
   %\item Consider the $i$-th observation $\xi = (x_S^{(i)}, \xi_C)$ for which $x_S^{(i)}$ is located within the $k$-th interval of $\xv_S$, i.e., $x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]$
-  \item For $\xi = (x_S^{(i)}, \xi_C)$, value $x_S^{(i)}$ is located within $k$-th interval of $\xv_S$ ($x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]$)
-  \item Replace $x_S^{(i)}$ by upper/lower interval bound while all other feature values $\xi_C$ are kept constant
-  \item Finite differences correspond to $\fh(z_{k, S}, \xi_C) - \fh(z_{k-1, S}, \xi_C)$
+  \item For $\xi = (x_S^{(i)}, \xi_{-S})$, value $x_S^{(i)}$ is located within $k$-th interval of $\xv_S$ ($x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]$)
+  \item Replace $x_S^{(i)}$ by upper/lower interval bound while all other feature values $\xi_{-S}$ are kept constant
+  \item Finite differences correspond to $\fh(z_{k, S}, \xi_{-S}) - \fh(z_{k-1, S}, \xi_{-S})$
   %and approximates the local effect of the $i$-th observation
 \end{itemize}
 
@@ -349,7 +350,7 @@ $$
 \centerline{\includegraphics[width=0.9\textwidth]{figure/ale_interval}}
 
  \begin{itemize}
-  \item Estimate local effect of $\xv_S$ within each interval by averaging all observation-wise finite differences $\hat = $ Approximation of inner integral that integrates over local effects w.r.t. $\P(\xv_C | z_S)$. %conditional distribution of $\xv_C$ on $\xv_S$
+  \item Estimate local effect of $\xv_S$ within each interval by averaging all observation-wise finite differences $\hat = $ Approximation of inner integral that integrates over local effects w.r.t. $\P(\xv_{-S} | z_S)$. %conditional distribution of $\xv_C$ on $\xv_S$
   \item Sum up local effects of all intervals up to point of interest $\hat = $ Estimates outer integral
 \end{itemize}
 
@@ -444,7 +445,7 @@ $$
 \item Estimated uncentered first order ALE $\hat{\tilde{f}}_{S, ALE}(x)$ at point $x$:
 $$
 \begin{aligned}
-\hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_C) -\fh(z_{k-1, S}, \xi_C)\right]
+\hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_{-S}) -\fh(z_{k-1, S}, \xi_{-S})\right]
 \end{aligned}
 $$
 \item $k_S(x)$ denotes the interval index a feature value $x \in \xv_S$ falls in
@@ -487,7 +488,7 @@ $$
   \begin{enumerate}
     \item Trained model does not predict in regions that are far away from the training data
     %where it was not trained
-    \item We integrate w.r.t. the conditional distribution of $\xv_C$ on $x_S$ instead of the marginal distribution of $\xv_C$, because we only average the finite differences inside a single interval
+    \item We integrate w.r.t. the conditional distribution of $\xv_{-S}$ on $x_S$ instead of the marginal distribution of $\xv_{-S}$, because we only average the finite differences inside a single interval
   \end{enumerate}
 \end{itemize}
 \end{frame}
@@ -530,7 +531,7 @@ Unlike bivariate PD plots, 2nd-order ALE plots only estimate pure interaction be
     \textbf{PD:}
     \centerline{$
     \begin{aligned}
-      \hspace{2cm} f_{S, PD}(x_S) &= \E_{\xv_C} \left( \fh(x_S, \xv_C) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_C) \, d\P(\xv_C)
+      \hspace{2cm} f_{S, PD}(x_S) &= \E_{\xv_{-S}} \left( \fh(x_S, \xv_{-S}) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_{-S}) \, d\P(\xv_{-S})
     \end{aligned}
     $} \\
     \textbf{ALE:}
@@ -539,28 +540,28 @@ Unlike bivariate PD plots, 2nd-order ALE plots only estimate pure interaction be
       \only<1>{\hspace{1cm}
        f_{S, ALE}(x)
 %&= \int_{z_{0}}^{x} \E_{\xv_C \vert x_S} \left(\textcolor{purple}{\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}} \textcolor{blue}{\bigg \vert x_S = z_S} \right) dz_S - const%\\
- &= \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}  \textcolor{purple}{\frac{\partial \fh(z_S, \xv_C)}{\partial z_S}} d \textcolor{blue}{\P(\xv_C | z_S) } \,   \right) dz_S - const
+ &= \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}  \textcolor{purple}{\frac{\partial \fh(z_S, \xv_{-S})}{\partial z_S}} d \textcolor{blue}{\P(\xv_{-S} | z_S) } \,   \right) dz_S - const
 }
     \only<2>{\hspace{1cm}
      f_{S, ALE}(x)
 %&= \textcolor{blue}{\int_{z_{0}}^{x}} \E_{\xv_C \vert x_S} \left(\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right) \textcolor{blue}{dz_S} - const%\\
-  &= \textcolor{blue}{\int_{z_{0}}^{x}} \left( \int_{-\infty}^{\infty}\frac{\partial \fh(z_S, \xv_C)}{\partial z_S} d \P(\xv_C | z_S)  \,   \right) \textcolor{blue}{dz_S} - const
+  &= \textcolor{blue}{\int_{z_{0}}^{x}} \left( \int_{-\infty}^{\infty}\frac{\partial \fh(z_S, \xv_{-S})}{\partial z_S} d \P(\xv_{-S} | z_S)  \,   \right) \textcolor{blue}{dz_S} - const
 }
 \only<3>{\hspace{1cm}
      f_{S, ALE}(x)
 %&= \textcolor{blue}{\int_{z_{0}}^{x}} \E_{\xv_C \vert x_S} \left(\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right) \textcolor{blue}{dz_S} - const%\\
-  &= \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}\frac{\partial \fh(z_S, \xv_C)}{\partial z_S} d \P(\xv_C | z_S)  \,   \right) dz_S - \textcolor{blue}{const}
+  &= \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}\frac{\partial \fh(z_S, \xv_{-S})}{\partial z_S} d \P(\xv_{-S} | z_S)  \,   \right) dz_S - \textcolor{blue}{const}
 }
   \end{aligned}
     $}
     \lz
     \begin{itemize}
-    \item<1-> Recall: PD directly averages predictions over marginal distribution of $\xv_C$
+    \item<1-> Recall: PD directly averages predictions over marginal distribution of $\xv_{-S}$
     \only<1>{
-    \item Difference 1: ALE averages \textcolor{purple}{change of predictions} (via partial derivatives) over \textcolor{blue}{conditional distribution $\P(\xv_C| x_S = z_S)$}
+    \item Difference 1: ALE averages \textcolor{purple}{change of predictions} (via partial derivatives) over \textcolor{blue}{conditional distribution $\P(\xv_{-S}| x_S = z_S)$}
     }
     \only<2-3>{
-    \item Difference 1: ALE averages change of predictions (via partial derivatives) over conditional distribution $\P(\xv_C| x_S = z_S)$
+    \item Difference 1: ALE averages change of predictions (via partial derivatives) over conditional distribution $\P(\xv_{-S}| x_S = z_S)$
     }
     \only<2>{
     \item Difference 2: ALE \textcolor{blue}{integrates partial derivatives of feature $S$ over $z_S$} to isolate effect of feature of interest and to remove main effect of dependent features
