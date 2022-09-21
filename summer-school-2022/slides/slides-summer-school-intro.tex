@@ -1,0 +1,730 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+\tikzset{main node/.style={rectangle,draw,minimum size=1cm,inner sep=4pt},}
+
+\usepackage[export]{adjustbox}
+\usepackage[most]{tcolorbox}
+
+\newtcolorbox{BlueBox}[2][]{%
+   enhanced,
+   colback   = blue!5!white,
+   colframe  = blue!65!black,
+   arc       = 1mm,
+   outer arc = 1mm,
+   fonttitle = \Large\slshape\textbf,
+   center title,
+   title     = #2,
+   #1}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\begin{document}
+
+\newcommand{\titlefigure}{../../slides/intro/figure/open_blackbox}
+\newcommand{\learninggoals}{
+\item Introduction, Motivation, and History
+\item Dimensions of Interpretability
+\item Bike Sharing Dataset}
+
+\lecturechapter{Introduction to Interpretable Machine Learning}
+\lecture{Interpretable Machine Learning}
+
+\begin{frame}{Why Interpretability?}
+
+% 		\begin{itemize}
+% 			\item Machine learning (ML) has a huge potential to aid the decision-making process in various  applications.
+% 			\pause
+% 			\smallskip
+% 			\item ML models often are intransparent black boxes, e.g., XGBoost, RBF SVM, or NNs.
+% 			\begin{itemize}
+% 				\item[$\rightarrow$] too complex to be understood by humans.
+% 			\end{itemize}
+% 			\smallskip
+% 			\item A lack in explanations diminishes trust in the model and creates barriers for adoption, especially in areas with critical decision-making consequences, e.g., medicine.
+% 			\smallskip
+% 			\item Such disciplines often rely on traditional models,\\ e.g., linear models, with less predictive performance.
+% 			\smallskip
+% 			\item Interpretable machine learning (IML) aims to bridge the gap between interpretability and predictive performance.
+% 		\end{itemize}
+
+		\begin{itemize}
+			\item ML: huge potential to aid decision-making process due to its predictive performance
+			\pause
+			%\smallskip
+			\item ML models are often black boxes, e.g., XGBoost, RBF SVM or DNNs
+			\begin{itemize}
+				\item[$\leadsto$] too complex to be understood by humans
+			\end{itemize}
+			\pause
+			%\smallskip
+			\item Lack of explanation
+			\begin{enumerate}
+				\item hurts trust
+				\item creates barriers
+			\end{enumerate}
+			\pause
+			%\smallskip
+		    \item[$\leadsto$] Harder to adapt for critical areas with decisions affecting human life,\\
+		    e.g., medicine or credit scoring
+			\pause
+			%\smallskip
+			\item[$\leadsto$] Many disciplines with required trust rely on traditional models,\\ e.g., linear models, with less predictive performance
+		\end{itemize}
+	\end{frame}
+
+	%-----------------------------------------------------------------------------------------------------------------------------
+
+	\begin{frame}{Brief History of Interpretability}
+		\begin{itemize}
+			\item 18th and 19th century: linear regression models (Gauss, Legendre, Quetelet)
+			\medskip
+			\item 1940s: emergence of sensitivity analysis (SA)
+			\medskip
+			\item Middle of 20th century: Rule-based ML, incl. decision rules and decision trees
+			\medskip
+			\item 2001: built-in feature importance measure of random forests
+			\medskip
+			\item >2010: Explainable AI (XAI) for deep learning
+			\medskip
+			\item >2015: IML as an independent field of research
+		\end{itemize}
+	\end{frame}
+
+	%-----------------------------------------------------------------------------------------------------------------------------
+\begin{frame}{When do we need interpretability?}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+%  \begin{itemize}
+%   \item Debugging machine learning models
+%   \item Increasing trust in models
+%   \item Analyzing newly developed systems with unknown consequences
+%   \item Decisions about humans
+%   \item Models using proxies instead of causal inputs, e.g. predicting flu outbreaks from google searches.
+%   \item When loss function does not cover constraints like fairness (e.g. credit score) or need for insights (e.g. science).
+% \end{itemize}
+\begin{itemize}
+  \item To \textbf{Discover}: Gain insights about data, distribution and model
+  \pause 
+  \item To \textbf{Improve}: Insights help to identify flaws (in data or model), which can be corrected\\
+  $\leadsto$ Global perspective
+  \pause
+  \item To \textbf{Control}: Explaining individual decisions can prevent unwanted actions based on the model\\
+  $\leadsto$ Local perspective
+  \pause 
+  \item To \textbf{Justify}: Investigate if and why biased, unexpected or discriminatory predictions were made, or improve/reject the model\\
+  $\leadsto$ Fairness perspective
+
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}  %%<--- here
+ %\vspace{0.5cm}
+%  \begin{center}
+%  \begin{figure}
+  \includegraphics[width=0.9\textwidth]{../../slides/intro/figure/explain-to}
+   \centering \citebutton{Adadi and Berrada 2018}{https://doi.org/10.1109/ACCESS.2018.2870052}
+%  \end{figure}
+%  \end{center}
+\end{column}
+\end{columns}
+     %\lz
+    %\footnote[frame]{Doshi-Velez, F., \& Kim, B. (2017). Towards A Rigorous Science of Interpretable Machine Learning. arXiv: 1702.08608.}
+    %\footnote[frame]{A. Adadi and M. Berrada, "Peeking Inside the Black-Box: A Survey on Explainable Artificial Intelligence (XAI)," in IEEE Access, vol. 6, pp. 52138-52160, 2018.}
+\end{frame}
+
+
+
+% \begin{frame}{Why is Interpretability Important?}
+
+% 	\begin{itemize}
+% 	    \item Machine learning is (mostly) about discovering patterns in data.
+% 	    \medskip
+% 	    \item Unfortunately, it is not guaranteed that ML will identify the correct patterns.
+
+% 	    \medskip
+% 	    \item We humans might not be able to discover patterns ML models discovered.
+% 	    \begin{itemize}
+% 	        \item Good for science or to get new insights.
+% 	        \item Bad in applications where unexpected behavior is not desired.
+% 	    \end{itemize}
+% 	    \medskip
+
+% 	    \item \alert{How can you check whether the model is correct in its inference?}
+% 	\end{itemize}
+
+% \end{frame}
+
+
+
+\begin{frame}{Need for Interpretability in High-stakes Decisions}
+
+Examples of other critical areas where decisions based on ML models can affect human life 
+    \begin{itemize}
+        %\item Crime predictions (e.g., COMPAS)
+        
+        \item Credit scoring and insurance applications
+        \citebutton{Society of Actuaries}{https://www.soa.org/resources/research-reports/2021/interpretable-machine-learning}
+        \begin{itemize}
+            \item Providing reasons for not granting a loan
+            \item Fraud detection in insurance claims
+        \end{itemize}
+\pause
+        \item Medical applications %\citebutton{Society of Actuaries}{https://www.medrxiv.org/content/10.1101/2020.05.18.20105841v1}
+        \begin{itemize}
+            \item Identification of diseases
+            \item Chance of recovering
+            \item Recommendations of treatments
+        \end{itemize}
+\pause
+        %\item Rating job applications
+
+        \item \ldots
+    \end{itemize}
+    
+    \pause
+    The need for interpretability is also becoming increasingly important from a legal perspective
+    
+    \begin{itemize}
+    \item GDPR requires for some applications that models have to be explainable \citebutton{Goodman \& Flaxman (2017)}{https://doi.org/10.1609/aimag.v38i3.2741}\\
+    $\leadsto$ \textit{EU Regulations on Algorithmic Decision-Making and a ``Right to Explanation''} 
+    
+    \item \textit{Ethics guidelines for trustworthy AI}
+    \citebutton{European Commission (2019)}{https://doi.org/10.2759/346720}
+
+    \end{itemize}
+\end{frame}
+
+
+
+% \begin{frame}{Motivation - Adversarial Examples \citebutton{Goodfellow et al. 2016}{https://arxiv.org/pdf/1412.6572.pdf}}
+
+%     \begin{center}
+%     \includegraphics[width=0.7\textwidth]{figure/panda-airplane.pdf}
+%     \end{center}
+% 	\bigskip
+
+% 	$\rightarrow$ ML Models might not capture human-like understanding
+% \end{frame}
+
+
+% \begin{frame}{Adversarial Noise \citebutton{Goodfellow et al. 2016}{https://arxiv.org/pdf/1412.6572.pdf}}
+%     \begin{center}
+%     \includegraphics[width=0.65\textwidth]{figure/adv-noise.pdf}
+%     % https://arxiv.org/pdf/1412.6572.pdf
+% 	\end{center}
+% 	\normalsize
+% 	%\bigskip
+% 	$\rightarrow$\textbf{Adversarial Noise:} Noise not visible to \textbf{humans} but results in incorrect classification results
+% \end{frame}
+
+% \begin{frame}[c]{Adversarial Examples~\citebutton{Goodfellow et al. 2016}{https://arxiv.org/pdf/1412.6572.pdf}}
+    
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{figure/adv-noise-2.pdf}
+	
+% \end{frame}
+
+% \endlecture
+% 
+% 
+% 
+% \lecturechapter{Dimensions of Interpretability}
+% \lecture{Interpretable Machine Learning}
+%
+% \begin{frame}{Interpretable ML}
+% \begin{itemize}
+% %\itemsep2em
+% \item ML algorithms algorithmically train predictive models with no or little pre-specifications and assumptions about the data.
+% \item Several algorithms such as decision tree learning create interpretable models. However, most algorithms create models which can be considered a black box.
+% \item We use the term black box, although the internal workings of the model are in fact accessible, but too complex for the human mind to comprehend.
+% \end{itemize}
+% \end{frame}
+%
+% \begin{frame}{Explainable AI}
+% \begin{itemize}
+% %\itemsep1em
+% \item IML is often used synonymously with Explainable AI (XAI).
+% \item There is no unified standard for these terminologies. We find that XAI often is specifically concerned with the interpretation of neural networks, whereas IML is used as an encompassing term for everything related to model interpretability.
+% \item The nature of (deep) neural networks allows for powerful model-specific interpretation techniques, e.g., layer-wise relevance propagation (LRP) and saliency maps.
+% \item Also covering model-specific NN methods would exceed the timeframe of this lecture. This lecture will concentrate on model-agnostic techniques, as they are both versatile, and receive a lot of attention in industry and academia.
+% \end{itemize}
+% \end{frame}
+%
+% \begin{frame}{XAI - Saliency Maps}
+%
+% A saliency map is a heatmap indicating pixel influence on the prediction (e.g., a classification of an image): \footnote[frame]{Mundhenk, T., Chen, B.Y., Friedland, G. (2019). Efficient Saliency Maps for Explainable AI. ArXiv, abs/1911.11293.
+% }
+% \medskip
+% \begin{figure}
+% \includegraphics[width = 0.8 \textwidth]{figure/saliencymap}
+% \end{figure}
+% \end{frame}
+%
+% \begin{frame}{What is Interpretability?}
+% \begin{itemize}
+% %\itemsep1em
+% \item There is no scientific consensus on the definition of interpretability.
+% \item We need to differentiate between interpretations of a model or reality. The latter is distorted by all modeling fallacies involved in predictive modeling, e.g., data quality, under- and overfitting, or model extrapolations.
+% \item We use a practical definition of interpretability.
+% Think back to the foundations of statistical modeling:  the linear regression model (LM). The LM, with its known equation of beta coefficients, represents a paradigm for statistical interpretability.
+% \item It follows that it would be beneficial to create techniques that give us an interpretation similar to the one of an LM.
+%
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Dimensions of Interpretability}
+
+% Interpretation methods can be organized in different dimensions, e.g.:
+% \medskip
+% 	\begin{itemize}
+% 		\itemsep1em
+% 		\item Intrinsic vs. model-agnostic interpretability.
+% 		\item Type or style of explanations: \\
+% 		feature attribution vs. data attribution vs. counterfactual explanations.
+%     \item Global vs. local interpretations.
+% 		%\item Feature effects vs. feature importance.
+% 		\item Fixed model analysis vs. model refits.
+% 	\end{itemize}
+% \end{frame}
+
+
+\begin{frame}{Intrinsic vs. Model-Agnostic}
+%	\begin{center}
+%		\includegraphics[width=0.8\textwidth]{figure/overview}
+%	\end{center}
+	\begin{center}
+	    
+		\begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
+                        every label/.append style={align=left, font=\footnotesize, text width=4cm}]
+        \node[main node] (1) { Model Interpretation };
+        \node[main node,
+            label={below: 
+            \tab[0.25cm] - Decision trees \\ 
+            \tab[0.25cm] - Decision rules \\ 
+            \tab[0.25cm] - GLMs}
+            ] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };
+        \node[main node] (3) [below right = 1cm and -0cm of 1] { Black Box Models };
+        \node[main node,
+            label={below: 
+            - Random forest explainer \\ - Visualizing activations of neural networks}
+            ] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };
+        \node[main node, fill=lightgray,
+            label={below:
+            - \textbf{Advantage:} Applicable to any model\\ 
+            - Feature effect methods\\
+            - Feature importance methods}
+            ] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };
+        \draw (1) -- (2);
+        \draw (1) -- (3);
+        \draw (3) -- (4);
+        \draw (3) -- (5);
+
+    \end{tikzpicture}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}{Intrinsic vs. Model-Agnostic}
+		\begin{columns}
+		\begin{column}{0.75\textwidth}
+	\begin{itemize}
+		\item<1-> Intrinsically interpretable models:
+		\medskip
+		
+		\begin{itemize}
+		%\itemsep1em
+			\item Examples: linear model and decision tree
+			\item Interpretable because of simple model structure, \\
+			e.g., weighted combination of feature values or tree structure
+			\item Difficult to interpret with many features / complex interactions
+		\end{itemize}
+		
+	\medskip
+	%\pause
+		\item<2-> Model-agnostic interpretation methods:
+		\medskip
+		\begin{itemize}
+		%\itemsep1em
+			\item Applied after training (post-hoc)
+			\item Work for any model $\leadsto$ only access to data and model required
+			%\item Also work for more complex black box models
+			\item Can also be applied to intrinsically interpretable models,\\ e.g., feature importance for linear model %decision trees
+			\item Different types of explanations:\\
+			feature or data attribution, counterfactual explanations
+		\end{itemize}
+	\end{itemize}
+	\end{column}
+	\begin{column}{0.25\textwidth}
+		
+   \only<1-2>{\begin{tikzpicture}[scale=0.75, transform shape]
+   \usetikzlibrary{arrows}
+    \usetikzlibrary{shapes}
+     \tikzset{treenode/.style={draw, circle, font=\small}}
+     \tikzset{line/.style={draw, thick}}
+     \node [treenode, draw=red] (a0) {$a_0$};
+     \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
+     \node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
+     
+     \node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
+     \node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
+     
+     \node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
+     \node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
+     
+     \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
+     \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
+     
+     \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};;
+     \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
+     
+          
+     \path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};;
+     \path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
+     
+   \end{tikzpicture}}
+	\end{column}
+	\end{columns}
+\end{frame}
+
+% \begin{frame}{Model-Agnostic Interpretability}
+% 	\begin{itemize}
+% 		\itemsep1em
+% 		\item Model-agnostic interpretation methods work for \textbf{any} kind of machine learning model.
+% 		\item Explanation type is not tied to the underlying model type.
+% 		\item Only access to data and trained model is required.\\
+% 		 No further knowledge about the model itself is necessary.
+% 		\item There are multiple types of explanations:\\
+% 		feature attribution, data attribution, or counterfactual explanations.
+% 	\end{itemize}
+% \end{frame}
+
+
+\begin{frame}{Types of Explanations}
+% 	\begin{center}
+% 		\includegraphics[width=\textwidth]{figure/1-attributions.png}
+%     \end{center}
+    \begin{center}
+        \begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
+                            every label/.append style={align=left, font=\footnotesize, text width=4cm}]
+            \node[main node] (1) { Model Interpretation };
+            \node[main node,
+                label={below:
+                \tab[0.5cm] - Saliency Maps\\ %\tab[0.5cm] - Hard Masking \\
+                \tab[0.5cm] - Model-agnostic methods \\ 
+                \tab - SHAP\\ 
+                \tab - LIME}
+                ] (2) [below left = 1.3cm and 1.5cm of 1]  { Feature Attribution };
+            \node[main node, text width=3cm, align=center,
+                label={below: \tab[0.5cm] - Influence Functions\\ \tab[0.5cm] - ... }
+                ] (3) [below = 1.3cm of 1] { Data Attribution };
+            \node[main node,
+                label={below:
+                - Contrastive explanations\\ 
+                - Diverse counterfactuals \\ 
+                - Feasible \& actionable explanations}
+                ] (4) [below right = 1.3cm and 1.5cm of 1] { Counterfactual Explanations };
+            \draw (1) -- (2);
+            \draw (1) -- (3);
+            \draw (1) -- (4);
+    
+        \end{tikzpicture}  
+    \end{center}
+\end{frame}
+
+
+
+\begin{frame}{Types of Explanations}
+
+	The output of an interpretation technique is an \textbf{explanation}, which can be of different types:
+
+    \medskip
+
+	\begin{itemize}
+  \itemsep1em
+	\item
+		\textbf{Feature attribution:} Produce explanations on a per-feature level, \\
+		e.g., feature effects or feature importance
+		%Identifies (a subset of) features that are most responsible for a decision.
+		\\
+		%Input: feature $\rightarrow$ Output: target
+		$\leadsto$ Vary feature values, inspect how model prediction, model variance or model error changes
+\pause
+	\item
+		\textbf{Data attribution:}
+		Identify training instances that are most responsible for a decision
+\pause
+	\item
+	   \textbf{Counterfactual explanations:}
+	   Identify smallest necessary change in feature values so that a desired outcome is predicted
+	   \\
+		%\smallskip
+		%Input: target $\rightarrow$ Output: feature
+		%Vary target, identify how feature needs to be changed
+
+	\end{itemize}
+
+\end{frame}
+
+
+
+% \begin{frame}{Feature Effects vs. Feature Importance}
+% 
+% 	\textbf{Feature Effects} indicate the change in prediction due to changes in feature values.
+% 	\medskip
+% 	\begin{center}
+% 		\includegraphics[page=1, width=0.7\textwidth, trim=0 0 215 0, clip]{figure/feature-effect}
+% 	\end{center}
+% 	\begin{itemize}
+% 		\item Model-agnostic methods: ICE curves, PD plots $\hdots$
+% 		\item Pendant in linear models: Regression coefficient $\beta_j$
+% 	\end{itemize}
+% \end{frame}
+% 
+% \begin{frame}{Feature Effects vs. Feature Importance}
+% 
+% 	\textbf{Feature importance} methods rank features by how much they contribute to the predictive performance or prediction variance of the model.
+% 	\begin{center}
+% 		\includegraphics[page=1, width=0.4\textwidth]{figure/feature-importance}
+% 	\end{center}
+% 	\begin{itemize}
+% 		%\itemsep1em
+% 		\item Model-agnostic methods: PFI, $\hdots$
+% 		\item Pendant in linear models: t-statistic, p-value (significant effect)
+% 	\end{itemize}
+% 
+% \end{frame}
+% 
+% 
+% \begin{frame}{Explanation using training instances~\citebutton{Koh et al. 2017}{https://arxiv.org/pdf/1703.04730.pdf}}
+% 
+% 	\textbf{Data attribution:} Which training instances results in the decision for the instance $x$ of the model?
+% 	\begin{center}
+% 		\includegraphics[page=1, width=0.7\textwidth]{figure/fish-attribution.pdf}
+% 	\end{center}
+% \end{frame}
+% 
+% \begin{frame}{Explanation using training instances~\citebutton{Koh et al. 2017}{https://arxiv.org/pdf/1703.04730.pdf}}
+% 	\textbf{Data attribution:} Which training instances results in the decision for the instance $x$ of the model?
+% 	\begin{center}
+% 		\includegraphics[page=1, width=0.7\textwidth]{figure/prototypes-fish.pdf}
+% 	\end{center}
+% 	\begin{itemize}
+% 		\item Methods:
+% 		Influence functions, prototype generation
+% 	\end{itemize}
+% \end{frame}
+% 
+% \begin{frame}{Explanation using Counterfactuals}
+%     A counterfactual is small ``imperceptible'' change in $x$ causing a different prediction.\\
+%     $\leadsto$ What if a small difference $ |x - x'| \leq \epsilon$ to $x$ causes a large change in the model output ?
+%     
+%     \textbf{Example} (loan application):
+% 	\begin{center}
+% 	\includegraphics[page=1, width=0.7\textwidth]{figure/counterfactual.pdf}
+% 	\end{center}
+% 
+% \end{frame}
+
+
+\begin{frame}{Global vs. Local}
+Global interpretation methods explain the model behavior for the entire input space by considering all available observations:
+	\begin{itemize}
+		\item Permutation Feature Importance (PFI)
+		\item Partial Dependence (PD) plots
+		%\item Functional ANOVA (FANOVA)
+		\item Accumulated Local Effect (ALE) plots
+		\item ...
+	\end{itemize}
+\bigskip
+Local interpretation methods explain the model behavior for single data instances:
+	\begin{itemize}
+		\item Individual Conditional Expectation (ICE) curves
+		\item Local Interpretable Model-Agnostic Explanations (LIME)
+		\item Shapley values, SHAP
+		\item ...
+	\end{itemize}
+\end{frame}
+
+% \begin{frame}{Local vs. Global Explanations}
+% % 	\begin{center}
+% % 		\includegraphics[width=\textwidth]{figure/1-local-global.png}
+% % 		%TODO: Remove ALE from local
+% % 	\end{center}
+
+% \begin{center}
+%     \begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
+%                         every label/.append style={align=left, font=\footnotesize, text width=6cm}]
+%         \node[main node, text width=4cm, align=center] (1) { Model Interpretation };
+%         \node[main node, text width=4cm, align=center, 
+%             label={below:
+%             \tab - Instance wise feature selections \\ 
+%             \tab - Model-agnostic methods \\ \tab[1.5cm] - SHAP\\ 
+%             \tab[1.5cm] - LIME}
+%             ] (2) [below left = 1.3cm and 0cm of 1]  { Local Explanations };
+%         \node[main node,  text width=4cm, align=center, 
+%             label={below:
+%             %Rule-based Explanations\\ 
+%             \tab - Permutation feature importance \\ 
+%             \tab - Functional ANOVA \\ 
+%             \tab - PDP}
+%             ] (3) [below right = 1.3cm and 0cm of 1] { Global Explanations };
+%         \draw (1) -- (2);
+%         \draw (1) -- (3);
+
+%     \end{tikzpicture}  
+% \end{center}
+% \end{frame}
+
+
+\begin{frame}{Fixed Model vs. Refits}
+	\begin{itemize}
+		\itemsep1em
+		\item Most methods we will discuss analyze a fixed, trained model (e.g., PD plots, PFI)
+		\item Some methods require refitting of the model (e.g., PIMP)
+		\item Trained model $\Rightarrow$ Model is the object of analysis
+		\item Refitting $\Rightarrow$ Learning process is the object of analysis
+		\item Advantage of refitting: It includes information about the variability in the learning process
+	\end{itemize}
+\end{frame}
+
+
+% \begin{frame}{Intrinsic and Model-Agnostic Interpretation}
+% \begin{itemize}
+%   \item Intrinsically interpretable models:
+%   \begin{itemize}
+%   \item Examples are linear models and decision trees.
+%   \item They are interpretable because of their simple structures, e.g.,
+%   a weighted combination of feature values or a tree structure.
+%   \item However, they are difficult to interpret with many features or complex interaction terms.
+%   \end{itemize}
+%   \lz
+%   \item Model-agnostic interpretation methods:
+%   \begin{itemize}
+%   \item They are applied after training (post-hoc).
+%   \item They also work for more complex black box models.
+%   \item They can also be applied to intrinsically interpretable models, e.g.
+%     feature importance for decision trees.
+%   \end{itemize}
+% \end{itemize}
+% \end{frame}
+%
+% \begin{frame}{Model-Agnostic Interpretability}
+%  \begin{itemize}
+%   %\itemsep2em
+%   \item Model-agnostic interpretability methods work for \textbf{any} kind of machine learning model.
+%   \item Explanation type is not tied to the underlying model type.
+%   \item Often, only access to data and fitted predictor is required. No further knowledge about the model itself is necessary.
+%   \item We usually distinguish between \textbf{feature effect} and \textbf{feature importance} methods.
+%  \end{itemize}
+% \end{frame}
+%
+%
+% \begin{frame}{Feature Effects vs. Feature Importance}
+% \textbf{Feature effects} indicate the direction and magnitude of a change in predicted outcome due to changes in feature values.
+% \begin{center}
+% \includegraphics[page=1, width=\textwidth]{figure/feature-effects}
+% \end{center}
+%   \begin{itemize}
+%     \item Methods include: Partial Dependence Plots, Individual Conditional Expectation, Accumulated Local Effects (ALE)
+%     \item Pendant in linear models: Regression coefficient $\hat{\theta}_j$
+%   \end{itemize}
+% \framebreak
+%
+% \textbf{Feature importance} methods rank features by how much they contribute to the predictive performance or prediction variance of the model.
+% \begin{columns}
+% \begin{column}{0.6\textwidth}
+% \begin{itemize}
+%     %\itemsep1em
+%     \item Methods include: Permutation Feature Importance, Functional Anova
+%     \item Analog in linear models: Absolute t-statistic $\left|\frac{\hat{\theta}_j}{SE(\hat{\theta}_j)}\right|$
+% \end{itemize}
+% \end{column}
+% \begin{column}{0.4\textwidth}
+% \begin{center}
+% \includegraphics[page=1, width=\textwidth]{figure/feature-importance}
+% \end{center}
+% \end{column}
+% \end{columns}
+% \end{frame}
+%
+%
+% \begin{frame}{Global and Local Interpretability}
+% Global interpretability methods explain the expected model behavior for the entire feature space by considering all available observations (or representative subsets). For example:
+%   \begin{itemize}
+%     \item Permutation Feature Importance
+%     \item Partial Dependence Plot
+%     \item Functional Anova
+%     \item ...
+%   \end{itemize}
+% \lz
+% Local interpretability methods explain single predictions or a group of similar observations. For example:
+%  \begin{itemize}
+%   \item Individual Conditional Expectation (ICE) Plots
+%   \item Local Interpretable Model-Agnostic Explanations (LIME)
+%   \item Shapley Values
+%   \item ...
+%  \end{itemize}
+% \end{frame}
+%
+%
+% \begin{frame}{Fixed model vs. refits}
+%   \begin{itemize}
+%      %\itemsep2em
+%      \item Most methods presented in this lecture analyze a fixed, trained model
+%      (e.g., permutation feature importance).
+%      \item Some methods require refitting the model (e.g., PIMP).
+%      \item Trained model $\Rightarrow$ Model is the object of analysis.
+%      \item Refitting $\Rightarrow$ Learning process is the object of analysis.
+%      \item The advantage of refitting is that it includes information about the variability in the learning process.
+%   \end{itemize}
+% \end{frame}
+
+
+% \endlecture
+% 
+% 
+% 
+% \lecturechapter{Bike Sharing Dataset}
+% \lecture{Interpretable Machine Learning}
+
+\begin{frame}[t]{Bike Sharing Dataset \citebutton{Fanaee-T and Gama (2014)}{https://doi.org/10.1007/s13748-013-0040-3}}
+\begin{itemize}
+\item Daily counts of rented bikes in Washington D.C. from \citebutton{Capital-Bikeshare}{https://capitalbikeshare.com/}
+\item Feature description:
+\begin{itemize}
+\item \code{cnt}: count of total rental bikes (prediction target for regression)
+\item \code{season}: season (1: WINTER, 2: SPRING, 3: SUMMER, 4: FALL)
+\item \code{yr}: year (0: 2011, 1: 2012)
+\item \code{mnth}: month of year (1: JAN, ..., 12: DEC)
+\item \code{holiday}: day is holiday (0: NO HOLIDAY, 1: HOLIDAY)
+\item \code{weekday}: day of the week (1: SUN, 2: MON, ..., 7: SAT)
+\item \code{workingday}: day is not a weekend or holiday (0: NO WORKING DAY, 1: WORKING DAY)
+\item \code{weathersit}: weather situation (1: GOOD, 2: MISTY, 3: RAIN/SNOW/STORM)
+\item \code{temp}: temperature in Celsius
+\item \code{hum}: humidity in percent
+\item \code{windspeed}: wind speed in km/h
+\item \code{days\_since\_2011}: Number of days since January 1st, 2011 (start of historical log)\\
+$\leadsto$ accounts for the trend over time
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{Bike Sharing Dataset - EDA}
+\includegraphics[width=\linewidth]{../../slides/intro/figure/intro_bike}
+\end{frame}
+
+\endlecture
+
+\end{document}
+
+
+
+ 
