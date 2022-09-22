@@ -1,0 +1,193 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\title{iML: Ante-hoc Methods for Neural Networks}
+\subtitle{Learning to explain}
+\begin{document}
+	\maketitle
+	\graphicspath{ {./figure/} }
+	
+\begin{frame}[c]{Instance-wise Feature Selection}
+    \begin{itemize}
+        \item What happens when we do not have explanation data ?
+        \bigskip
+        \item Need to use the task-specific supervision signal to create explanations
+        \bigskip
+        \item Key principle: Given an instance, automatically learn to select features during inference
+from the task-specific supervised signal
+    \end{itemize}
+\end{frame}	
+	
+\begin{frame}{Instance-wise Feature Selection}
+    \begin{itemize}
+        \item Key principle: Given an instance, automatically learn to select features during inference
+        \item The selected features can be implemented as a binary mask over the original feature
+space
+\item Selector network selects the mask, predictor network predicts using the masked input
+    \end{itemize}
+    \begin{figure}
+        \centering
+        \includegraphics[scale=.45]{bild16}
+    \end{figure}
+\end{frame}
+	
+	
+\begin{frame}{Problems in optimisation}
+    \begin{itemize}
+        \item Selector network selects the mask, predictor network predicts using the masked input
+        \item Binary masking introduces discontinuity in the neural network
+\item Discontinuity $\rightarrow$ gradient based optimisation is not possible
+\bigskip
+\item How can we learn parameters of such a network using gradient-based optimisation ?
+    \end{itemize}
+    \begin{figure}
+        \centering
+        \includegraphics[scale=.43]{bild16}
+    \end{figure}
+\end{frame}	
+
+\begin{frame}{Generative masks}
+    \begin{itemize}
+        \item Masks are generated from a probability distribution
+        \item Instance wise feature selection as finding the expectation of the predictor function
+distributed according to human interpretability
+    \end{itemize}
+    \bigskip
+    \begin{equation*}
+             \centering
+        \mathcal{F}(\theta):= \int  p(m;\theta) f(m\odot x;\Phi)dx = \mathbb{E}_{p(m;\theta)}[\mathcal{f}(m\odot x;\Phi)]
+    \end{equation*}
+    
+    
+    
+    %\begin{figure}
+     %   \includegraphics[scale=.4]{bild17}
+    %\end{figure}
+\end{frame}
+	
+	
+\begin{frame}{Instance-wise Feature Selection}
+\begin{itemize}
+    \item The distribution over explanations is parameterised by a neural network
+    \item The predictor network is also parametrised by a neural network
+\end{itemize}
+\bigskip
+\begin{equation*}
+             \centering
+        \mathcal{F}(\theta):= \int p(m;\theta) f(m\odot x;\Phi)dx = \mathbb{E}_{p(m;\theta)}[\mathcal{f}(m\odot x;\Phi)]
+\end{equation*}
+
+\bigskip
+
+%\begin{figure}
+%    \includegraphics[scale=.4]{bild18}
+%\end{figure}
+\begin{itemize}
+    \item Predictor network accepts a masked input
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Monte Carlo Sampling - test}
+ 
+ \begin{align*}
+% \begin{equation*}
+        \mathcal{F}(\theta):&= \int p(m;\theta)\,\,f(m\odot x;\Phi)dx = \mathbb{E}_{p(m;\theta)}[ f(m\odot x;\Phi)]\\
+    \eta &:= \nabla_\theta \mathcal{F}(\theta) = \nabla_\theta \mathbb{E}_{p(x;\theta)}[f(x;\Phi)]\\
+    &= \nabla_\theta \int p(x;\theta)f(x)dx=\int f(x)\nabla_\theta p(x;\theta)dx\\
+    
+    &=\int p(x;\theta)f(x)\nabla_\theta \log p(x;\theta)dx\\
+    %\vcenter{\includegraphics[scale=.5, right]{bild19}}
+    &=\mathbb{E}_{p(x;\theta)}[f(x)\nabla_\theta \log p(x;\theta)] 
+\end{align*}
+
+% \begin{gathered}
+%         \includegraphics[scale=.5]{bild19}
+%     \end{gathered}
+%\hfill
+
+\end{frame}
+
+\begin{frame}{Monte Carlo Estimator}
+   
+\begin{equation*}
+     \mathcal{F}(\theta):= \int \mathcal{p}(m;\theta)\mathcal{f}(m\odot x;\Phi)dx = \mathbb{E}_{p(m;\theta)}[\mathcal{f}(m\odot x;\Phi)
+\end{equation*}
+   
+\begin{align*}
+     \eta := \nabla_\theta \mathcal{F}(\theta) = \nabla_\theta \mathbb{E}_{p(x;\theta)}[\mathcal{f}(x;\Phi)] &= \mathbb{E}_{p(x;\theta)}[f(x)\nabla_\theta \log p(x;\theta)]\\
+     &=\frac{1}{N}\sum\limits_{n=1}^N f(\hat{x}^{(n)})\nabla_\theta \log p(\hat{x}^{(n)};\theta); \quad \hat{x}^{(n)} \sim p(x;\theta)
+\end{align*}
+
+%\begin{figure}
+%\includegraphics[scale=.35]{bild20}
+%\end{figure}
+
+
+    \begin{itemize}
+        \item Sample N masks from the probability ditribution p
+        \item Compute the weighted avg. of the samples where:
+        \begin{itemize}
+            \item weight = derivative of the log prob. of the sample mask
+        \end{itemize}
+        \item update the parameters of the selector network using this weighted average
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Reducing variance}
+  \centering  $\mathcal{F}(\theta):= \int \mathcal{p}(m;\theta)\mathcal{f}(m\odot x;\Phi)dx = \mathbb{E}_{p(m;\theta)}[\mathcal{f}(m\odot x;\Phi)]$
+  \bigskip
+  \begin{itemize}
+      \item Monte Carlo estimators suffer from the problem of high variance
+      \item Solution: introduce a constant baseline value
+  \end{itemize}
+  \bigskip
+ 
+ 
+ \begin{equation*}
+     \eta = \mathbb{E}_{p(x;\theta)}[(f(x) - \beta)\nabla_\theta \log p(x;\theta)]
+ \end{equation*} 
+  
+ % \begin{figure}
+%\includegraphics[scale=.5]{bild21}
+%  \end{figure}
+  
+  
+\end{frame}
+
+\begin{frame}[c]{Conclusion}
+    \begin{itemize}
+        \item Prefer simple models for better interpretability
+        \item Regularisation for enforcing sparsity in the parameter space
+        \item Feature selection for enforcing sparsity in the feature space
+        \item Instance-wise feature selection selects different features based on different instances
+        \item Selector and predictor architecture for instance-wise feature selection
+        \item Optimisation using without explanation data requires tricks like Monte-Carlo sampling
+with gradients
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[c]{References}
+    \begin{itemize}
+        \item “Learning to Explain: An Information-Theoretic Perspective on Model Interpretation” — J.
+Chen, Song, M.J. Wainwright, M. I. Jordan. ICML 2018.
+\begin{itemize}
+    \item \url{http://proceedings.mlr.press/v80/chen18j/chen18j.pdf}
+\end{itemize}
+\bigskip
+\item “Explain and Predict, and then Predict again" — Z Zhang, K Rudra, A Anand. WSDM 2020.
+\begin{itemize}
+    \item \url{https://arxiv.org/pdf/2101.04109.pdf}
+\end{itemize}
+\bigskip
+\item “INVASE: Instance-wise Variable Selection using Neural Networks” J. Yoon, J. Jordon, M.
+Schaar. ICLR 2019.
+\begin{itemize}
+    \item \url{https://openreview.net/pdf?id=BJg_roAcK7}
+\end{itemize}
+    \end{itemize}
+\end{frame}
+\endlecture
+\end{document}	
