@@ -31,7 +31,7 @@
 
 % ------------------------------------------------------------------------------
 
-\begin{vbframe}[c]{Methodological Motivation}
+\begin{frame}[c]{Methodological Motivation}
 
 % Marius: We cannot write such stuff if we want to stay flexible how to combine chunks
 %Except for Shapley values and ICE curves, we focused so far mostly on global explanation methods that explain global model behavior (e.g. PDP, PFI, etc.). However, there are also many methods that explain the \textbf{local} behavior of a model.
@@ -40,7 +40,7 @@
 	    \item Purpose of local explanations:
 	    \begin{itemize}
 	        \item Insight into the driving factors for a \textbf{particular decision}
-	        \item Understand the ML model's decisions in a \textbf{local neighborhood} of a given input (e.g., feature vector)
+	        \item Understand the ML model's decisions in a \textbf{local neighborhood} of a given input\\ (e.g., feature vector)
 	    \end{itemize}
 	    \medskip
 	    \pause
@@ -52,9 +52,9 @@
 		    \item  \textbf{Where} (in which regions in $\Xspace$) does the model fail?
 		\end{itemize}  
 	\end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{Social Motivation}
+\begin{frame}[c]{Social Motivation}
 
 %All these questions can indeed be relevant for the ML modeler. However, unlike in global methods that require expert ML understanding or even domain knowledge, many local methods aim to provide explanations also for laypersons. 
 	\begin{itemize}
@@ -72,10 +72,10 @@
 		\end{itemize}
 
 	\end{itemize}
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}[c]{GDPR: The Right to Explanation}
+\begin{frame}[c]{GDPR: The Right to Explanation}
 
     ``The data subject should have the right not to be subject to a decision, which may include a measure, evaluating personal aspects relating to him or her which is based solely on automated processing and which produces legal effects concerning him or her or similarly significantly affects him or her, such as automatic refusal of an online credit application or e-recruiting practices without any human intervention.
 
@@ -83,10 +83,10 @@ $[\ldots]$
 
 In any case, such processing should be subject to suitable safeguards, which should include specific information to the data subject and the \textbf{right} to obtain human intervention, to express his or her point of view, \textbf{to obtain an explanation of the decision reached after such assessment and to challenge the decision}.
 '' \\[0.2cm] (\href{https://gdpr-text.com/read/recital-71/}{Recital 71, GDPR})
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}[c]{Example: Husky or Wolf?}
+\begin{frame}[c]{Example: Husky or Wolf?}
 	\begin{itemize}
 		\item We trained a model to predict if an image shows a wolf or a husky 
 		\item Below the predictions on six test images are given 
@@ -116,10 +116,10 @@ In any case, such processing should be subject to suitable safeguards, which sho
 	    
 	\end{columns}
 
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}[c]{Example: Husky or Wolf? Using LIME}
+\begin{frame}[c]{Example: Husky or Wolf? Using LIME}
 
 	\begin{columns}
 	
@@ -149,10 +149,10 @@ In any case, such processing should be subject to suitable safeguards, which sho
 
 
 
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}{Example: Loan Application}
+\begin{frame}{Example: Loan Application}
 
 \begin{columns}[c]
     
@@ -179,9 +179,9 @@ In any case, such processing should be subject to suitable safeguards, which sho
     \end{column}
 \end{columns}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{Example: Stop or Right-of-Way?}
+\begin{frame}[c]{Example: Stop or Right-of-Way?}
 
 \begin{columns}[c]
 
@@ -210,22 +210,22 @@ In any case, such processing should be subject to suitable safeguards, which sho
 
 \end{columns}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{Characteristics of Local Explanations}
+\begin{frame}[c]{Characteristics of Local Explanations}
 	\begin{itemize}[<+->]
 		\item \textbf{Explanation scope:} Specific prediction, local environment
 		\item \textbf{Model classes:} Model-agnostic by definition, model-specific for computational reasons\\
 		$\leadsto$ very popular also for deep learning models
 		\item \textbf{Audience:} ML modelers and laypersons
-		\item \textbf{Data types:} Many, including tabular, image, text and audio data
+		\item \textbf{Data types:} Often agnostic, including tabular, image, text and audio data
 		\item \textbf{Methods:} Many, most prominent are counterfactual explanations, shapley values, local interpretable model-agnostic explanations (LIME), adversarial examples, single ICE curve%, anchors
 		%\footnote{For Shapley values and ICE curves see other lectures}
 		\item \textbf{Special:} Due to audience, strong interactions with social sciences and strong connections to cognitive science and neurosciences due to data types
 	\end{itemize}
-\end{vbframe}
+\end{frame}
 
-% \begin{vbframe}{Recap: ICE Curve}
+% \begin{frame}{Recap: ICE Curve}
 % 		\begin{itemize}
 % 		\item Visualize how the model prediction $\fh(\xv)$ of a individual observation $\xv$ change by varying the feature values of one or two features while keeping all other features fixed. 
 % 		\item Warning: Careful interpretation for highly correlated features or feature regions with a few observations. 
@@ -239,9 +239,9 @@ In any case, such processing should be subject to suitable safeguards, which sho
 % 		\includegraphics[width=1\textwidth]{figure/bike-sharing-dataset02.png}
 % 	\end{column}
 % \end{columns}
-% \end{vbframe}
+% \end{frame}
 
-% \begin{vbframe}{Recap: Shapley Values}
+% \begin{frame}{Recap: Shapley Values}
 % 	\begin{itemize}
 % 		\item Shapley values were original proposed in game theory.
 % 		\item They are a local explanation method because they tell us how each feature $x_j$ contributes to the overall prediction $\fh(\xv)$ of a specific observation $\xv$. 
@@ -250,9 +250,9 @@ In any case, such processing should be subject to suitable safeguards, which sho
 % \begin{center}
 % 	\includegraphics[width=0.8\textwidth]{figure/shapley_valuefct}
 % \end{center}
-% \end{vbframe}
+% \end{frame}
 
-\begin{vbframe}{Credit Dataset}
+\begin{frame}{Credit Dataset}
 
 	\begin{itemize}
 		\item We illustrate local explanation methods on the German credit data 
@@ -280,7 +280,7 @@ In any case, such processing should be subject to suitable safeguards, which sho
 				\bottomrule
 			\end{tabular}
 		\end{center}
-\end{vbframe}
+\end{frame}
 
 \endlecture
 \end{document}

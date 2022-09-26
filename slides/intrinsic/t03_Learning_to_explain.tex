@@ -4,12 +4,25 @@
 % Defines macros and environments
 \input{../../style/common.tex}
 
-\title{iML: Ante-hoc Methods for Neural Networks}
-\subtitle{Learning to explain}
+%\title{iML: Ante-hoc Methods for Neural Networks}
+%\subtitle{Learning to explain}
+\title{Interpretable Machine Learning}
+\date{}
+
 \begin{document}
-	\maketitle
+%	\maketitle
 	\graphicspath{ {./figure/} }
-	
+
+\newcommand{\titlefigure}{figure/bild2}
+\newcommand{\learninggoals}{
+\item TBA
+\item TBA
+\item TBA}
+
+\lecturechapter{Learning to Explain}
+\lecture{Interpretable Machine Learning}
+
+ 
 \begin{frame}[c]{Instance-wise Feature Selection}
     \begin{itemize}
         \item What happens when we do not have explanation data ?
@@ -72,12 +85,12 @@ distributed according to human interpretability
 \begin{frame}{Instance-wise Feature Selection}
 \begin{itemize}
     \item The distribution over explanations is parameterised by a neural network
-    \item The predictor network is also parametrised by a neural network
+    \item The predictor network is also parameterised by a neural network
 \end{itemize}
 \bigskip
 \begin{equation*}
              \centering
-        \mathcal{F}(\theta):= \int p(m;\theta) f(m\odot x;\Phi)dx = \mathbb{E}_{p(m;\theta)}[\mathcal{f}(m\odot x;\Phi)]
+    \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
 \end{equation*}
 
 \bigskip
@@ -90,36 +103,40 @@ distributed according to human interpretability
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Monte Carlo Sampling - test}
+\begin{frame}{Monte Carlo Sampling}
  
- \begin{align*}
-% \begin{equation*}
-        \mathcal{F}(\theta):&= \int p(m;\theta)\,\,f(m\odot x;\Phi)dx = \mathbb{E}_{p(m;\theta)}[ f(m\odot x;\Phi)]\\
-    \eta &:= \nabla_\theta \mathcal{F}(\theta) = \nabla_\theta \mathbb{E}_{p(x;\theta)}[f(x;\Phi)]\\
-    &= \nabla_\theta \int p(x;\theta)f(x)dx=\int f(x)\nabla_\theta p(x;\theta)dx\\
-    
-    &=\int p(x;\theta)f(x)\nabla_\theta \log p(x;\theta)dx\\
-    %\vcenter{\includegraphics[scale=.5, right]{bild19}}
-    &=\mathbb{E}_{p(x;\theta)}[f(x)\nabla_\theta \log p(x;\theta)] 
-\end{align*}
+$$
+\mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})] 
+$$
 
-% \begin{gathered}
-%         \includegraphics[scale=.5]{bild19}
-%     \end{gathered}
-%\hfill
 
+    \begin{itemize}
+        \item \textbf{Trick:} $\nabla_{\boldsymbol{\theta}} \log p(\mathbf{x} ; \boldsymbol{\theta})=\frac{\nabla_{\boldsymbol{\theta}} p(\mathbf{x} ; \boldsymbol{\theta})}{p(\mathbf{x} ; \boldsymbol{\theta})}$
+    \end{itemize}
+$$
+\bigskip
+    \begin{aligned}
+        \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,
+        \boldsymbol{\eta}:=\nabla_{\boldsymbol{\theta}} \mathcal{F}(\boldsymbol{\theta}) &=\nabla_{\boldsymbol{\theta}} \mathbb{E}_{p(\mathbf{x} ; \boldsymbol{\theta})}[f(\mathbf{x} ; \boldsymbol{\phi})] \\
+        &=\nabla_{\boldsymbol{\theta}} \int p(\mathbf{x} ; \boldsymbol{\theta}) f(\mathbf{x}) d \mathbf{x}=\int f(\mathbf{x}) \nabla_{\boldsymbol{\theta}} p(\mathbf{x} ; \boldsymbol{\theta}) d \mathbf{x} \\
+        &=\int p(\mathbf{x} ; \boldsymbol{\theta}) f(\mathbf{x}) \nabla_{\boldsymbol{\theta}} \log p(\mathbf{x} ; \boldsymbol{\theta}) d \mathbf{x} \\
+        &=\mathbb{E}_{p(\mathbf{x} ; \boldsymbol{\theta})}\left[f(\mathbf{x}) \nabla_{\boldsymbol{\theta}} \log p(\mathbf{x} ; \boldsymbol{\theta})\right]
+    \end{aligned}
+$$
 \end{frame}
 
 \begin{frame}{Monte Carlo Estimator}
    
 \begin{equation*}
-     \mathcal{F}(\theta):= \int \mathcal{p}(m;\theta)\mathcal{f}(m\odot x;\Phi)dx = \mathbb{E}_{p(m;\theta)}[\mathcal{f}(m\odot x;\Phi)
+     \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
 \end{equation*}
-   
-\begin{align*}
-     \eta := \nabla_\theta \mathcal{F}(\theta) = \nabla_\theta \mathbb{E}_{p(x;\theta)}[\mathcal{f}(x;\Phi)] &= \mathbb{E}_{p(x;\theta)}[f(x)\nabla_\theta \log p(x;\theta)]\\
-     &=\frac{1}{N}\sum\limits_{n=1}^N f(\hat{x}^{(n)})\nabla_\theta \log p(\hat{x}^{(n)};\theta); \quad \hat{x}^{(n)} \sim p(x;\theta)
-\end{align*}
+
+$$
+\begin{aligned}
+\boldsymbol{\eta}:=\nabla_{\boldsymbol{\theta}} \mathcal{F}(\boldsymbol{\theta})=\nabla_{\boldsymbol{\theta}} \mathbb{E}_{p(\mathbf{x} ; \boldsymbol{\theta})}[f(\mathbf{x} ; \boldsymbol{\phi})] &=\mathbb{E}_{p(\mathbf{x} ; \boldsymbol{\theta})}\left[f(\mathbf{x}) \nabla_{\boldsymbol{\theta}} \log p(\mathbf{x} ; \boldsymbol{\theta})\right] \\
+&=\frac{1}{N} \sum_{n=1}^N f\left(\hat{\mathbf{x}}^{(n)}\right) \nabla_{\boldsymbol{\theta}} \log p\left(\hat{\mathbf{x}}^{(n)} ; \boldsymbol{\theta}\right) ; \quad \hat{\mathbf{x}}^{(n)} \sim p(\mathbf{x} ; \boldsymbol{\theta})
+\end{aligned}
+$$
 
 %\begin{figure}
 %\includegraphics[scale=.35]{bild20}
@@ -127,7 +144,7 @@ distributed according to human interpretability
 
 
     \begin{itemize}
-        \item Sample N masks from the probability ditribution p
+        \item Sample N masks from the probability distribution p
         \item Compute the weighted avg. of the samples where:
         \begin{itemize}
             \item weight = derivative of the log prob. of the sample mask
@@ -137,11 +154,15 @@ distributed according to human interpretability
 \end{frame}
 
 \begin{frame}{Reducing variance}
-  \centering  $\mathcal{F}(\theta):= \int \mathcal{p}(m;\theta)\mathcal{f}(m\odot x;\Phi)dx = \mathbb{E}_{p(m;\theta)}[\mathcal{f}(m\odot x;\Phi)]$
+  
+  \begin{equation*}
+     \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
+\end{equation*}
+
   \bigskip
   \begin{itemize}
       \item Monte Carlo estimators suffer from the problem of high variance
-      \item Solution: introduce a constant baseline value
+      \item Solution: introduce a constant baseline value $\beta$
   \end{itemize}
   \bigskip
  

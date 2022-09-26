@@ -146,11 +146,11 @@ Accoding to \citebutton{Lewis (1973)}{https://doi.org/10.2307/2273738}, a \textb
 	\lz\pause
 	Reformulate these two objectives (denoted by $o_1$ and $o_2$) as optimization problem:
 	
-$$\argmin_{\xv'} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv)$$
+$$\argmin_{\xv'} \lambda_1 o_p(\fh(\xv'), y') + \lambda_2 o_f(\xv', \xv)$$
 
 	\begin{itemize}
 		\item $\lambda_1$ and $\lambda_2$ balance the two objectives
-		\item Choice of $o_1$ (distance on prediction space) and of $o_2$ (distance on feature space) is crucial
+		\item Choice of $o_p$ (distance on prediction space) and of $o_f$ (distance on feature space) is crucial
 	\end{itemize}
 \end{frame}
 
@@ -158,12 +158,12 @@ $$\argmin_{\xv'} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv)$$
 \begin{frame}{Mathematical Perspective \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
 	
 	\begin{itemize}
-		\item Regression: $o_1$ could be the L1-distance $o_1(\fh(\xv'), y') = |\fh(\xv')-y'|$
+		\item Regression: $o_p$ could be the L$_1$-distance $o_p(\fh(\xv'), y') = |\fh(\xv')-y'|$
 		\item Classification:
-		L1-distance for scores and 0-1 Loss for labels, e.g., $o_1(\fh(\xv'), y') = \Ind_{\{ \fh(\xv') \neq y' \}}$
+		L$_1$-distance for scores and 0-1 Loss for labels, e.g., $o_p(\fh(\xv'), y') = \Ind_{\{ \fh(\xv') \neq y' \}}$
 		\pause
-		\item $o_2$ could be the Gower distance (suitable for mixed feature space):
-		$$o_2(\xv', \xv) = \Gower(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(x'_j, x_j)	\in [0, 1]$$
+		\item $o_f$ could be the Gower distance (suitable for mixed feature space):
+		$$o_f(\xv', \xv) = \Gower(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(x'_j, x_j)	\in [0, 1]$$
 		The value of $\delta_G$ depends on the feature type (numerical or categorical):
 		\begin{equation*}
 		\delta_G(x'_j, x_j) =
@@ -190,12 +190,12 @@ $$\argmin_{\xv'} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv)$$
 		\item End-users often prefer short over long explanations\\
 		$\leadsto$ %changes made to obtain
 		counterfactuals should be \textbf{sparse} %(i.e., only few feature values should change)
-		\item Objective $o_2$ can take the number of changed features into account (but does not have to)\\
-		$\leadsto$ e.g., the L0- and the L1-norm (similar to LASSO) can do this
+		\item Objective $o_f$ can take the number of changed features into account (but does not have to)\\
+		$\leadsto$ e.g., the L$_0$- and the L$_1$-norm (similar to LASSO) can do this
 %		\item There could be a trade-off between the number of features changed and the total amount of change made to obtain a certain prediction.
-        \item Independently from $o_2$, sparsity can be additionally considered by another objective that counts the number of changed features via the L0-norm:
+        \item Independently from $o_f$, sparsity in the changes can be additionally considered by another objective that counts the number of changed features via the L0-norm:
         %we can also account for sparsity by adding an extra term to our objective that counts the number of changed features via the L0-norm
-        $$o_3(\xv', \xv) = \sum_{j = 1}^p {\Ind}_{\{ x'_j \neq x_j \}}$$
+        $$o_s(\xv', \xv) = \sum_{j = 1}^p {\Ind}_{\{ x'_j \neq x_j \}}$$
 	\end{itemize}
 \end{frame}
 
@@ -244,9 +244,9 @@ To ensure plausibility, $o_4$ could, e.g., be the Gower distance of $\xv'$ to it
 $$o_4(\xv', \Xmat) = \Gower(\xv', \xv^{[1]}) = \frac{1}{p} \sum_{j = 1}^{p}  \delta_G(x_j', x^{[1]}_j)$$
 %\end{itemize}
 
-We can extend the previous optimization problem by adding $o_3$ (for sparsity) and $o_4$ (for plausibility):
+We can extend the previous optimization problem by adding $o_s$ (for sparsity) and $o_4$ (for plausibility):
 
-$$\argmin_{\xv'} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv) + \lambda_3 o_3(\xv', \xv) + \lambda_4 o_4(\xv', \Xmat)$$
+$$\argmin_{\xv'} \lambda_1 o_p(\fh(\xv'), y') + \lambda_2 o_f(\xv', \xv) + \lambda_3 o_s(\xv', \xv) + \lambda_4 o_4(\xv', \Xmat)$$
 
 \end{frame}
 
@@ -281,7 +281,7 @@ $$\argmin_{\xv'} \lambda_1 o_1(\fh(\xv'), y') + \lambda_2 o_2(\xv', \xv) + \lamb
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Remarks: Model or Real-World}
+\begin{frame}[c]{Remarks: Model or Real-World}
 
 	\begin{itemize}[<+->]
 	\item Most CEs provide explanations of model predictions, but CEs might appear to explain the real-world for end-users\\

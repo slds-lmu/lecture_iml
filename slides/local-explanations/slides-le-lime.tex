@@ -11,6 +11,8 @@
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
 \date{}
 
+\newcommand{\gh}{\hat{g}}
+
 \begin{document}
 
 	
@@ -53,7 +55,7 @@
 \begin{frame}[c]{LIME: Characteristics}
 
     \textbf{Definition:}\\
-	LIME provides a local explanation for a black-box model $\fh$ in form of a model $g \in \Gspace$ with $\Gspace$ as the class of potential (interpretable) models\\[2em]
+	LIME provides a local explanation for a black-box model $\fh$ in form of a model $\gh \in \Gspace$ with $\Gspace$ as the class of potential (interpretable) models\\[2em]
 	
 	
 	Model $g$ should have two characteristics:
@@ -63,13 +65,13 @@
 	\end{enumerate}
 	
 	\vspace{2em}
-	Formally, we want to receive a model $g$ with \textbf{minimal complexity and maximal local-fidelity} 
+	Formally, we want to receive a model $\gh$ with \textbf{minimal complexity and maximal local-fidelity} 
 \end{frame}
 
 
 \begin{frame}{Model Complexity}
     
-    We can measure the complexity of a model $g$ using a complexity measure $J(g)$ \lz
+    We can measure the complexity of a model $\gh$ using a complexity measure $J(\gh)$ \lz
 
  	\textbf{Example: Linear model}\\
  	\begin{itemize}
@@ -91,8 +93,8 @@
 \begin{frame}{Local model fidelity}
  	\begin{itemize}
  		\item $g$ is locally faithful to $\fh$ w.r.t. $\xv$ 
- 		if for $\zv \in \Zspace \subseteq \R^p$ close to $\xv$, predictions of $g(\zv)$ are close to $\fh(\zv)$ 
- 		\item In an optimization task: the closer $\zv$ is to $\xv$, the closer $g(\zv)$ should be to $\fh(\xv)$  
+ 		if for $\zv \in \Zspace \subseteq \R^p$ close to $\xv$, predictions of $\gh(\zv)$ are close to $\fh(\zv)$ 
+ 		\item In an optimization task: the closer $\zv$ is to $\xv$, the closer $\gh(\zv)$ should be to $\fh(\zv)$  
  		\pause
  		\item Two required measures:
  		\begin{enumerate}
@@ -100,12 +102,12 @@
  			$$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$$ 
  			with $\sigma$ as the kernel width and $d$ as the Euclidean distance (numeric features) or the Gower distance (mixed features) 
  			\pause
- 			\item A distance measure or loss function $L(\fh(\zv), g(\zv))$, e.g. the L$_2$ loss/squared error
- 			$$L(\fh(\zv), g(\zv)) = (g(\zv) - \fh(\zv))^2$$ 
+ 			\item A distance measure or loss function $L(\fh(\zv), \gh(\zv))$, e.g. the L$_2$ loss/squared error
+ 			$$L(\fh(\zv), \gh(\zv)) = (\gh(\zv) - \fh(\zv))^2$$ 
  		\end{enumerate}
  		\pause
  		\item Given points $\zv$, we can measure local fidelity of $g$ with respect to $\fh$ in terms of a weighted loss
- 		$$ L(\fh, g, \neigh) = \sum_{\zv \in \Zspace} \neigh(\zv) L(\fh(\zv), g(\zv)) $$
+ 		$$ L(\fh, g, \neigh) = \sum_{\zv \in \Zspace} \neigh(\zv) L(\fh(\zv), \gh(\zv)) $$
  		%\item Note that identifying \textbf{locally} faithful explanations that are interpretable is less of a challenge than identifying \textbf{globally} faithful explanations. Yet, global fidelity implies local fidelity but not vice versa.
  	\end{itemize}
 \end{frame}
@@ -113,16 +115,16 @@
 \begin{frame}[c]{Minimization task}
 	\begin{itemize}
 		\item Optimization objective of LIME: 
-		$$ \argmin_{g \in \Gspace} L(\fh, g, \neigh) + J(g)$$
+		$$ \argmin_{g \in \Gspace} L(\fh, \gh, \neigh) + J(g)$$
 		\item In practice:
 		\begin{itemize}
-		    \item LIME only optimizes $L(\fh, g, \neigh)$ (model-fidelity) 	
+		    \item LIME only optimizes $L(\fh, \gh, \neigh)$ (model-fidelity) 	
 		    \item Users decide threshold on model complexity $J(g)$ beforehand
 		\end{itemize}
 		\item Goal: \textbf{model-agnostic} explainer
 		\begin{itemize}
-    		\item[$\leadsto$] optimize $L(\fh, g, \neigh)$ without making any assumptions about $\fh$ 
-    		\item[$\leadsto$] learn $g$ only approximately  
+    		\item[$\leadsto$] optimize $L(\fh, \gh, \neigh)$ without making any assumptions about $\fh$ 
+    		\item[$\leadsto$] learn $\gh$ only approximately  
 		\end{itemize}
 		\end{itemize}
 \end{frame} 
@@ -145,7 +147,7 @@
     		\item Retrieve predictions $\fh(\zv)$ for obtained points $\zv$ 
     		\item Weight $\zv \in \Zspace$ by their proximity $\neigh(\zv)$
     		\item Train an interpretable surrogate model $g$ on weighted data points $\zv \in \Zspace$\\ $\leadsto$ predictions $\fh(\zv)$ are the target of this model
-    		\item Return the interpretable model $g$ as the explainer
+    		\item Return the interpretable model $\gh$ as the explainer
 		\end{enumerate}
 		
 
@@ -215,7 +217,7 @@
 \end{frame}
 		
 \begin{frame}[c]{LIME Algorithm: Example (Step 4: Surrogate) \citebutton{Ribeiro. 2016}{https://github.com/marcotcr/lime}}
-		In our example, we fit a \textbf{logistic regression} model (consequently, $L(\fh(\zv), g(\zv))$ is the Bernoulli loss)
+		In our example, we fit a \textbf{logistic regression} model (consequently, $L(\fh(\zv), \gh(\zv))$ is the Bernoulli loss)
 		\begin{center}
 			\includegraphics[width=0.4\textwidth]{figure/lime5}
 		\end{center}
