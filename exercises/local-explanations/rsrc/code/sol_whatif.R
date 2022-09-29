@@ -54,7 +54,7 @@ evaluate_counterfactual = function(counterfactual, x_interest, model) {
 
 
 if (FALSE) {
-  df = read.csv(file = "datasets/wheat_seeds.csv")
+  df = read.csv(file = "exercises/local-explanations/rsrc/code/datasets/wheat_seeds.csv")
   table(df$Type)
   
   # Create a binary classification task

@@ -13,4 +13,4 @@ mod <- gam(x2 ~ s(x1), data = d)
 
 s <- summary(mod)
 
-capture.output(s, file = "exercises/feature-effects/figure/GAM_Output.txt")
+capture.output(s, file = "GAM_Output.txt")
