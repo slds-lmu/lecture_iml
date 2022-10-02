@@ -10,4 +10,4 @@ plot = plot_points_in_grid(plt = plot, df = samp, weights = w,
                     x_interest = x_interest)
 plot
 
-ggsave('exercises/local-explanations/figure/weight_points()_plot_lime.pdf',width=3.5,height=2.5)
+ggsave('exercises/local-explanations/figure/weight_points_plot_lime.pdf',width=3.5,height=2.5)

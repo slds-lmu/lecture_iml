@@ -5,7 +5,7 @@ source("exercises/feature-effects/rsrc/calculate_ale().R")
 source("exercises/feature-effects/rsrc/prepare_ale().R")
 
 # Set up your working directory using swd() and get the dataset file. 
-df = read.csv(file = 'exercises/feature-effects/rsrc/code/datasets/wheat_seeds.csv')
+df = read.csv(file = 'exercises/feature-effects/rsrc/datasets/wheat_seeds.csv')
 
 # Split the dataset to 70% train data and 30% test data.
 set.seed(100)

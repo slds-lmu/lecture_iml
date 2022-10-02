@@ -2,7 +2,7 @@ set.seed(2022L)
 library("e1071") # SVM 
 library("gridExtra") # to plot two ggplots next to each other
 
-dataset = read.csv(file = "exercises/local-explanations/code/datasets/wheat_seeds.csv")
+dataset = read.csv(file = "exercises/local-explanations/rsrc/datasets/wheat_seeds.csv")
 dataset$Type = as.factor(dataset$Type)
 table(dataset$Type)
 

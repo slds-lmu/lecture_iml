@@ -1,17 +1,3 @@
-\lstset{language=R,
-    basicstyle=\small\ttfamily,
-    stringstyle=\color{DarkGreen},
-    otherkeywords={0,1,2,3,4,5,6,7,8,9},
-    morekeywords={TRUE,FALSE},
-    deletekeywords={data,frame,length,as,character},
-    keywordstyle=\color{blue},
-    commentstyle=\color{Green},
-}
-
-\begin{enumerate}[a)]
-\item Implementation of \texttt{get\_bounds()}
-
-\begin{lstlisting}
 library("docstring")
 
 get_bounds = function(X, s, n_intervals = 100) {
@@ -31,10 +17,8 @@ get_bounds = function(X, s, n_intervals = 100) {
   bounds = seq(x_s_min, x_s_max, length.out = n_intervals + 1)
   
   return(bounds)
-\end{lstlisting}
+}
 
-\item Implementation of \texttt{calculate\_ale()}
-<<echo=TRUE, results='hide'>>=
 calculate_ale = function(model, X, s, n_intervals = 100, centered = FALSE) {
   
   #' Compute the accumulated local effect of a numeric continuous feature.
@@ -111,9 +95,7 @@ calculate_ale = function(model, X, s, n_intervals = 100, centered = FALSE) {
     return(finalResult = list(bounds = bounds, ale = uncentered_ale))
   }
 }
-@
-Implementation of  \texttt{prepare\_ale()}
-<<echo=TRUE, results='hide'>>=
+
 prepare_ale = function(model, X, s, n_intervals = 100, centered = TRUE) {
   #' Uses `calculate_ale` to prepare x and y data, which can be used
   #' by matplotlib directly.
@@ -151,44 +133,42 @@ prepare_ale = function(model, X, s, n_intervals = 100, centered = TRUE) {
   return(finalResult)
   
 }
-@
 
-Example: 
-<<echo=TRUE, results='hide', fig.height=3, fig.width=4,warning=FALSE,message=FALSE>>=
-library(randomForest)
-library(ggplot2)
-
-# Set up your working directory using swd() and get the dataset file. 
-df = read.csv(file = 'code/datasets/wheat_seeds.csv')
-
-# Split the dataset to 70% train data and 30% test data.
-set.seed(100)
-train = sample(nrow(df), 0.7 * nrow(df), replace = FALSE)
-trainData = df[train, ]
-testData = df[-train, ]
-
-# Normalize the target to be between 0 and 1.
-min_max_norm = function(x) {
-  (x - min(x)) / (max(x) - min(x))
+if (FALSE) {
+  library(randomForest)
+  library(ggplot2)
+  
+  # Set up your working directory using swd() and get the dataset file. 
+  df = read.csv(file = 'datasets/wheat_seeds.csv')
+  
+  # Split the dataset to 70% train data and 30% test data.
+  set.seed(100)
+  train = sample(nrow(df), 0.7 * nrow(df), replace = FALSE)
+  trainData = df[train, ]
+  testData = df[-train, ]
+  
+  # Normalize the target to be between 0 and 1.
+  min_max_norm = function(x) {
+    (x - min(x)) / (max(x) - min(x))
+  }
+  
+  trainData$Type = min_max_norm(trainData$Type)
+  
+  # Build a Random Forest model.
+  model = randomForest(Type ~ ., data = trainData, mtry = 4, importance = TRUE)
+  
+  # Use the first feature from the dataset and set up
+  # 4 intervals to test the get_bounds function
+  bounds = get_bounds(df, 1, 4)
+  
+  # Test the calculate_ale function, with centered = FALSE
+  uncentered_ale = calculate_ale(model, df, 1, 4, FALSE)
+  
+  #Test the prepare_ale function, with centered = TRUE
+  prepared_ale = prepare_ale(model, df, 1, 4, TRUE)
+  
+  ggplot(data = prepared_ale, mapping = aes(x = x, y = y)) + 
+    geom_line() + 
+    geom_point()
 }
 
-trainData$Type = min_max_norm(trainData$Type)
-
-# Build a Random Forest model.
-model = randomForest(Type ~ ., data = trainData, mtry = 4, importance = TRUE)
-
-# Use the first feature from the dataset and set up
-# 4 intervals to test the get_bounds function
-bounds = get_bounds(df, 1, 4)
-
-# Test the calculate_ale function, with centered = FALSE
-uncentered_ale = calculate_ale(model, df, 1, 4, FALSE)
-
-#Test the prepare_ale function, with centered = TRUE
-prepared_ale = prepare_ale(model, df, 1, 4, TRUE)
-
-ggplot(data = prepared_ale, mapping = aes(x = x, y = y)) + 
-  geom_line() + 
-  geom_point()
-@
-\end{enumerate}
