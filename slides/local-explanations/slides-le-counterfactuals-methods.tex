@@ -50,7 +50,7 @@
 \begin{frame}{First Optimization Method \citebutton{Wachter et. al (2018)}{http://dx.doi.org/10.2139/ssrn.3063289}}
 Introduced counterfactual explanations in the context of ML predictions by solving
 		\begin{equation}
-			\argmin_{\xv'} \max_{\lambda} \lambda \underbrace{(\fh(\xv') - y')^2}_{o_1(\fh(\xv'), y')} + \underbrace{\sum\nolimits_{j = 1}^p |x'_j - x_j|/MAD_j}_{o_2(\xv', \xv)}
+			\argmin_{\xv'} \max_{\lambda} \lambda \underbrace{(\fh(\xv') - y')^2}_{o_p(\fh(\xv'), y')} + \underbrace{\sum\nolimits_{j = 1}^p |x'_j - x_j|/MAD_j}_{o_f(\xv', \xv)}
 			%\label{eq:wachter}
 		\end{equation}
 	$MAD_j$ is the median absolute deviation of feature $j$. In each iteration, optimizers like Nelder-Mead solve the equation for $\xv'$ and then $\lambda$ is increased until a sufficiently close solution is found \\[0.2cm]
@@ -60,9 +60,9 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 	This optimization problem has several shortcomings: 	
 	\begin{itemize}%[<+->]
 		\item We do not know how to choose $\lambda$ a priori 
-		\item Due to the maximization of $\lambda$, we focus primarily on the minimization of $o_1$\\
-		$\leadsto$ only if $\fh(\xv') = y'$, we focus on minimizing $o_2$ 
-		\item Definition of $o_2$ only covers numerical features 
+		\item Due to the maximization of $\lambda$, we focus primarily on the minimization of $o_p$\\
+		$\leadsto$ only if $\fh(\xv') = y'$, we focus on minimizing $o_f$ 
+		\item Definition of $o_f$ only covers numerical features 
 		\item Other objectives such as sparsity and plausibility of counterfactuals are neglected
 	\end{itemize}
 	
@@ -74,7 +74,7 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 \begin{frame}{Multi-Objective Counterfactual Explanations \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
 	\begin{itemize}
 		\item \textbf{Multi-Objective Counterfactual Explanations (MOC):} Instead of collapsing objectives into a single objective, we could optimize all four objectives simultaneously
-	$$	\argmin_{\xv'} \left(o_1(\fh(\xv'), y'), o_2(\xv', \xv), o_3(\xv', \xv), o_4(\xv', \Xmat) \right). $$
+	$$	\argmin_{\xv'} \left(o_p(\fh(\xv'), y'), o_f(\xv', \xv), o_s(\xv', \xv), o_4(\xv', \Xmat) \right). $$
 		
 		\item Note that weighting parameters like $\lambda$ are not necessary anymore
 		%\item This approach is called Multi-Objective Counterfactual Explanations (MOC) and was developed by Dandl et al. in 2020. 

@@ -13,9 +13,9 @@
 
 \newcommand{\titlefigure}{figure/whitebox}
 \newcommand{\learninggoals}{
-\item Examples of popular interpretable models
-\item Properties of some interpretable models
-\item How can we interpret them?}
+\item Examples and properties of popular interpretable models
+%\item Properties of some interpretable models
+\item Focus on how to interpret them, not on math details}
 
 \lecturechapter{Overview of Interpretable Models}
 \lecture{Interpretable Machine Learning}
@@ -24,30 +24,36 @@
 
 
 \begin{frame}[c]{Linear Regression}
-
+% https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b
+% https://www.statology.org/linear-regression-assumptions/
+% https://link.springer.com/book/10.1007/978-3-642-34333-9
 %\textbf{Model formula}
     %$$\mathbb{E}_Y(Y \vert X) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p + \epsilon = X^T\mathbf{\beta} + \epsilon$$
-$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \pmb\beta + \epsilon$$
 
     \begin{itemize}
         %\item $\mathbb{E}_Y(Y \vert X)$ expected value of target given features $X$
         %\item $y$ target / output
-        \item $\beta_j$: weight of input feature $x_j$ $\leadsto$ model consists of $p+1$ weights $\beta_j$ (including intercept $\beta_0$)
+        \item $\beta_j$: weight of input feature $x_j$ (with intercept $\beta_0$) $\leadsto$ model consists of $p+1$ weights
         %\item $\epsilon$ remaining error (e.g., because of noise)
         %\item Model equation is additive and identical across entire input space
         %\pause
-        \item Polynomial regression extends equation above by \textbf{higher order main effects} which have their own weights (e.g., $\beta_{x_j^2} \cdot x_j^2$) and \textbf{interaction effects} (e.g., 2-way interaction: $\beta_{x_i, x_j} \cdot x_i \cdot x_j$)
+        \item Polynomial regression extends equation above by
+        \begin{itemize}
+        \item \textbf{higher order main effects} which have their own weights (e.g., quadratic: $\beta_{x_j^2} \cdot x_j^2$)
+        \item \textbf{interaction effects} (e.g., 2-way interaction: $\beta_{x_i, x_j} \cdot x_i \cdot x_j$)
+        \end{itemize}
     \end{itemize}
    \vspace*{0.2cm} 
    \pause
     \textbf{Model assumptions}
     \begin{itemize}
-    \item Predictions are a \textbf{linear} combination of features - model equation is additive% and identical across entire input space
-    \item Error term and target outcome given the features are \textbf{normally} distributed, i.e.,\\
-    \centerline{$\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$ with \textbf{constant variance} (homoscedastic)}
+    \item Predictions are a \textbf{linear} combination of features $\leadsto$ model equation is additive% and identical across entire input space
+    \item Error term $\epsilon$ and $y \vert \xv$ are \textbf{normally} distributed with \textbf{constant variance} (homoscedastic), i.e.,\\
+    \centerline{$\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \pmb\beta, \sigma^2)$}
     $\leadsto$ if violated, inference-based metrics (t-statistic, p-values, confidence intervals) are invalid
     %\item Error terms are assumed to have a \textbf{constant variance} over the entire feature space %(homoscedasticity)
-    \item Further assumptions: Observations are independent of each other (i.e., no repeated measurements), features are fixed (free of measurement errors), no multicollinearity
+    \item Further assumptions: Independence of observations (e.g., no autocorrelation), independence of features $x_j$ with error term $\epsilon$, no multicollinearity (see \citebutton{examples with R and Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b})
     % free of measurement error assumption: https://indigo.uic.edu/articles/thesis/Measurement_Error_in_Generalized_Linear_Models/17025971/1/files/31488719.pdf
     % \item Note: For inference-based metrics (t-statistic, p-values, confidence intervals) to be valid, the error term needs to be normally distributed, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$\\
 %$\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data
@@ -69,27 +75,27 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
 
 \begin{frame}[c]{Linear Regression - Interpretation}
 
-$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \pmb\beta + \epsilon$$
 
     Interpretation of weights (\textbf{feature effects}) depend on type of feature:
     \begin{itemize}
-        \item Numerical $x_j$: Increasing feature value of $x_j$ by one unit changes predicted outcome by $\beta_j$ c.p.
+        \item Numerical $x_j$: Increasing $x_j$ by one unit changes predicted outcome by $\beta_j$, c.p.
         \pause
         \item Binary $x_j$: Weight $\beta_j$ is active or not (multiplication with 1 or 0) where 0 is reference category
         \item %Categorical: One-hot-encoding of $L-1$ new features for $L$ categories (dummy encoding) \\
-        Categorical $x_j$ with $L$ categories: Create one-hot-encoded features $x_{j,1}, \hdots, x_{j,L-1}$ for $L-1$ categories (each having its own weight), left out category is reference ($\hat =$ dummy encoding)\\
+        Categorical $x_j$ with $L$ categories: Create $L-1$ one-hot-encoded features $x_{j,1}, \hdots, x_{j,L-1}$ (each having its own weight), left out category level is reference ($\hat =$ dummy encoding)\\
         $\leadsto$ Interpretation:
         For category $l$, prediction changes by $\beta_{j,l}$ compared to reference cat.,  c.p.\pause
         % (for any of the $L-1$ categories):
         %Predicted outcome changes for $l$-th category compared to the reference category by its weight $\beta_{j,l}$ c.p.\pause
         %Predicted outcome changes for category $x_{j,l}$ compared to the reference category by $\beta_j$ c.p.\pause
-        \item Intercept $\beta_0$: Expected baseline prediction if all features are set to 0 %reflects expected features values if features were standardised (0-mean, 1-stdev)
+        \item Intercept $\beta_0$: Expected baseline prediction if all feature values are set to 0 %reflects expected features values if features were standardised (0-mean, 1-stdev)
         \item Note: In case of higher order or interaction effects, weights cannot be interpreted in isolation
     \end{itemize}	
     \pause
     \textbf{Feature importance}:
     \begin{itemize}
-        \item Absolute t-statistic value: Estimated weight scaled with its standard error (how certain are we about correct value) -- high absolute t-values indicate important (i.e. significant) features
+        \item Absolute t-statistic value: Estimated weight scaled with its standard error (reliability of the estimate) -- high absolute t-values indicate important (i.e. significant) features
     \end{itemize}
     $$t_{\hat\beta_j} = \left| \tfrac{\hat\beta_j}{SE(\hat\beta_j)} \right|$$
 \end{frame}
@@ -147,23 +153,30 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
 \begin{column}{0.47\textwidth}
   \centering
 \begin{tiny}
+%\begin{overlayarea}{\textwidth}{\textheight}
 \begin{table}[ht]
+\def\firstrowcolor{}
+\def\secondrowcolor{}
+\def\thirdrowcolor{}
+\only<2>{\def\firstrowcolor{\rowcolor{lightgray}}}
+\only<3>{\def\secondrowcolor{\rowcolor{lightgray}}}
+\only<4>{\def\thirdrowcolor{\rowcolor{lightgray}}}
 \begin{tabular}{rrrrr}
   \hline
  & Weights & Std. Error & t value & Pr($>$$|$t$|$) \\
-
-  \hline
-(Intercept) & 3229.3 & 220.6 & 14.6 & 0.00 \\ 
-  seasonSPRING & 862.0 & 129.0 & 6.7 & 0.00 \\ 
+ \hline
+\firstrowcolor (Intercept) & 3229.3 & 220.6 & 14.6 & 0.00 \\ 
+\secondrowcolor seasonSPRING & 862.0 & 129.0 & 6.7 & 0.00 \\ 
   seasonSUMMER & 41.6 & 170.2 & 0.2 & 0.81 \\ 
   seasonFALL & 390.1 & 116.6 & 3.3 & 0.00 \\ 
-  temp & 120.5 & 7.3 & 16.5 & 0.00 \\ 
+\thirdrowcolor temp & 120.5 & 7.3 & 16.5 & 0.00 \\ 
   hum & -31.1 & 2.6 & -12.1 & 0.00 \\ 
   windspeed & -56.9 & 7.1 & -8.0 & 0.00 \\ 
   days\_since\_2011 & 4.9 & 0.2 & 26.9 & 0.00 \\
    \hline
 \end{tabular}
 \end{table}
+%\end{overlayarea}
 \end{tiny}
 \end{column}
 \end{columns}
@@ -171,25 +184,29 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
 \pause
 
 \begin{columns}[T, totalwidth=\linewidth]
-\begin{column}{0.46\textwidth}
+\begin{column}<5>{0.46\textwidth}
+Visualize contribution to prediction $\hat y$: 
+
+Weights multiplied by actual feature value are better comparable due to different scales
 
 \includegraphics[width = \textwidth]{figure/plot_lin_effect.pdf}
-  \begin{center}
-   % Effect of $i$-th observation $= \beta_j x_j^{(i)}$\\
-    Weights multiplied by actual feature value are better comparable due to different scales
-    %$\leadsto$ Better comparability due to different scales
-  \end{center}
+%   \begin{center}
+%   % Effect of $i$-th observation $= \beta_j x_j^{(i)}$\\
+
+%     %$\leadsto$ Better comparability due to different scales
+%   \end{center}
 %\pause
 %\verbatiminput{figure/lm_output.txt}
 \end{column}\hfill
 \begin{column}{0.54\textwidth}  %%<--- here
 
-\begin{itemize}
+\begin{itemize}[<+->]
+    \item \textbf{Interpretation intercept}:
+    If all feature values are 0 (and season is \code{WINTER} $\hat =$ reference cat.), the expected number of bike rentals is $\hat\beta_0 = 3229.3$
     \item \textbf{Interpretation categorical}: Bike rentals in \code{SPRING} are by $\hat\beta_1 = 862$ higher than in \code{WINTER} (reference category), c.p.
     \item \textbf{Interpretation numerical}: Bike rentals increase by $\hat\beta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
     %If the temperature increases by 1 degree Celsius, the number of bike rentals increases by 120.5 c.p.
-    \item \textbf{Interpretation intercept}:
-    If all feature values are 0 (and season is \code{WINTER}), the expected number of bike rentals is $\hat\beta_0 = 3229.3$
+
 \end{itemize}
 \end{column}
 \end{columns}
@@ -197,7 +214,7 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
 
 
 \begin{frame}{Linear Regression - Example: Including Interactions}
-\textbf{Update}: Interaction between temperature and season affects marginal effect of temperature% with (right) and without (left) interaction.
+\textbf{Update}: Add interaction between temperature and season affects marginal effect of temperature% with (right) and without (left) interaction.
 \begin{columns}[T]
 \begin{column}{0.25\textwidth}
 \begin{tiny}
