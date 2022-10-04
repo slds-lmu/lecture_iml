@@ -1,0 +1,366 @@
+---
+title: "Exercise Shapley"
+output: html_document
+---
+# Libraries
+```{r}
+library(sets)
+library(dplyr)
+library(randomForest)
+```
+
+# Exercise 1: The Shapely Value 
+## 1a)
+```{r}
+payoff <- function(team){
+  #team = set(team)
+  t = 't' %in% team
+  s = 's' %in% team
+  m = 'm' %in% team
+  j = 'j' %in% team
+  l = 'l' %in% team
+  
+  reward = 10*t + 10*m + 2*j + 20*(t & m) + 20*(t & m & s) - 30*((t | m | s) & j)
+  return(reward)
+}
+
+shapley <- function(member,population){
+  remainder = setdiff(population, member)
+  #Use set_power function to get all subsets. 
+  all_sets = set_power(remainder)
+  val = 0
+  F = length(population)
+  for (s in all_sets) {
+    S = length(s)
+    diff = payoff(c(s,member))-payoff(s)
+    factor = factorial(S) * factorial(F-S-1) / factorial(F)
+    val = val + factor * diff
+  }
+  return(val)
+}
+
+```
+
+```{r}
+# Show the Result.
+member = c('t')
+population = c('t','m','s','j','l')
+shapley_Result = shapley(member,population)
+print(shapley_Result)
+
+```
+
+## 1b)
+```{r}
+shapley_perm <- function(member, population,its=10){
+  vals = c()
+  for(ii in 1:its){
+    perm = sample(population)
+    member_ix = match(member,perm)
+    s = perm[1:member_ix-1]
+    diff = payoff(c(s,member))-payoff(s)
+    vals = c(vals,diff)
+  }
+  sum_Val = Reduce("+",vals)
+  val = sum_Val/length(vals)
+  return(val)
+}
+```
+
+```{r}
+# Show the Result.
+shapley_perm_result = shapley_perm(member,population,10000)
+print(shapley_perm_result)
+```
+
+## 1c)
+### Symmtry Check
+```{r}
+symmetry_check <- function(j,k,population){
+  remainder = setdiff(population,c(j,k))
+  all_S = set_power(remainder)
+  surpluss_j = c()
+  surpluss_k = c()
+  for(S in all_S){
+    surplus_j = payoff(c(S,j))-payoff(S)
+    surplus_k = payoff(c(S,k))-payoff(S)
+    surpluss_j = c(surpluss_j,surplus_j)
+    surpluss_k = c(surpluss_k,surplus_j)
+  }
+  equal_surplus = all(surpluss_j == surpluss_k)
+  if(equal_surplus){
+    print("equal surplus")
+    val_j = shapley(j,population)
+    val_k = shapley(k,population)
+    return(val_j==val_k)
+  }
+  else{
+    return(TRUE)
+  }
+}
+```
+
+```{r}
+# Show the Result.
+symmetry_check_result <- symmetry_check('m','t',population)
+print(symmetry_check_result)
+```
+
+### Dummy Property Check
+```{r}
+dummy_check <- function(j,population){
+  remainder = setdiff(population,j)
+  all_S = set_power(remainder)
+  surpluss_j = c()
+  for(S in all_S){
+    surplus_j = payoff(c(S,j))-payoff(S)
+    surpluss_j = c(surpluss_j,surplus_j)
+  }
+  sum_Val = Reduce("+",abs(surpluss_j))
+  has_contribution = sum_Val > 0
+  if(has_contribution){
+    print("has contribution")
+    val_j = shapley(j,population)
+    return(val_j > 0)
+  }
+  else{
+    return(TRUE)
+  }
+  
+}
+```
+
+```{r}
+# Show the Result. 
+dummy_check_result <- dummy_check('l',population)
+print(dummy_check_result)
+```
+
+### Additivity Check 
+```{r}
+shapley_combined <- function(member,population){
+  remainder = setdiff(population,member)
+  #Use set_power function to get all subsets. 
+  all_sets = set_power(remainder)
+  val = 0
+  F = length(population)
+  for (s in all_sets) {
+    S = length(s)
+    diff = (payoff(c(s,member))+ payoff(c(s,member))) - (payoff(s) + payoff(s))
+    factor = factorial(S) * factorial(F-S-1) / factorial(F)
+    val = val + factor * diff
+  }
+  return(val)
+}
+
+additivity_check <- function(population){
+  vals1 = c()
+  vals2 = c()
+  vals_combs = c()
+  for(j in population){
+    val1 = shapley(j,population)
+    vals1 <- c(vals1,val1)
+    val2= shapley(j,population)
+    vals2 <- c(vals2,val1)
+    vals_comb = shapley_combined(j,population)
+    vals_combs <- c(vals_combs,vals_comb)
+  }
+  vals_additive = vals1 + vals2
+  return(all(vals_combs == vals_additive))
+
+}
+```
+
+```{r}
+# Show the Result. 
+additivity_check_result <- additivity_check(population)
+print(additivity_check_result)
+```
+
+### Efficiency Check 
+```{r}
+efficiency_check <- function(population){
+  payoff_total = payoff(population)
+  shapley_vals =c()
+  for(j in population){
+    shapley_val <- shapley(j,population)
+    shapley_vals <- c(shapley_vals,shapley_val)
+  }
+  total_shapley_vals = sum(shapley_vals)
+  pt = round(payoff_total,5)
+  st = round(total_shapley_vals,5)
+  return(pt == st)
+}
+```
+
+```{r}
+# Show the Result 
+efficiency_check_result <- efficiency_check(population)
+print(efficiency_check_result)
+```
+
+# Exercise 2: SHAP
+## 2a)
+```{r}
+library(ranger)
+
+# Read the dataset. 
+df <- read.csv(file = "fifa.csv")
+
+# Change the target value to be used as factors for random forest later. 
+df$Man.of.the.Match <- ifelse(df$Man.of.the.Match=="Yes",TRUE,FALSE)
+
+# Delete all columns with characters.
+df <- df[, !sapply(df, is.character)]
+
+# Delete all columns with NA values.
+df <- df[ , apply(df, 2, function(x) !any(is.na(x)))]
+
+# Split the dataset to 70% train data and 30% test data.
+set.seed(100)
+train = sample(nrow(df), 0.7 * nrow(df), replace = FALSE)
+trainData = df[train,]
+testData = df[-train,]
+
+# Get X_train, X_test, y_train, y_test for later use.
+# Delete all columns with chatacters
+X_train <- trainData[,-which(names(trainData) == "Man.of.the.Match")]
+X_test <- testData[,-which(names(testData) == "Man.of.the.Match")]
+y_train <- factor(trainData[, which(names(trainData) == "Man.of.the.Match")])
+y_test <- factor(testData[, which(names(testData) == "Man.of.the.Match")])
+
+# Implement Random Forest Classifier.
+set.seed(120)
+classifier_RF = ranger(Man.of.the.Match ~ ., trainData)
+classifier_RF
+```
+
+## 2b) 
+```{r}
+m_vfunc = function(J, obs, X, model, nr_samples = 10) {
+  remainder = setdiff(names(X), J)
+  X_tmp <- sample_n(X, nr_samples, replace=TRUE)
+  obs_df = obs[rep(1, nr_samples), ]
+  X_tmp[, J] = obs[, J]
+  pred = predict(model, X_tmp)$predictions
+  return(mean(pred))
+}
+
+m_vfunc(names(X_train)[1:3], X_test[1,], X_train, classifier_RF, nr_samples=1000)
+```
+
+## 2c)
+```{r}
+sample_mask = function(nrow, ncol) {
+  mask_flat = rbinom(nrow*ncol, 1, 0.5)
+  mask = matrix(unlist(mask_flat), nrow=nrow, ncol=ncol)
+  return(mask)
+}
+
+shap_weights = function(mask) {
+  p = ncol(mask)
+  zs = rowSums(mask)
+  nominator = (p - 1)
+  denominator = choose(p, zs) * zs * (p - zs)
+  return(nominator / denominator)
+}
+
+shap_data = function(obs, X, nr_samples, mask) {
+  df_obs = obs[rep(1, nr_samples),]
+  df_background = sample_n(X, nr_samples, replace=TRUE)
+  for (ii in seq(nrow(mask))) {
+    for (jj in seq(ncol(mask))) {
+      if (mask[ii, jj]) {
+        df_background[ii, jj] = df_obs[ii, jj]
+      }
+    }
+  }
+  return(df_background)
+}
+
+kernel_shap = function(obs, X, nr_samples, model) {
+  mask = sample_mask(nr_samples, ncol(X))
+  df = shap_data(obs, X, nr_samples, mask)
+  weights = shap_weights(mask)
+  pred = predict(model, df)$predictions
+  
+  df_shap = as.data.frame(mask)
+  names(df_shap) = names(X)
+  df_shap$pred = pred
+  
+  # since we are in a binary classification scenario we use logreg
+  wls_model = glm(pred ~ ., family=binomial, data=df_shap, weights=weights)
+  shap_vals = wls_model$coefficients
+  return(shap_vals)
+}
+
+
+```
+
+## 2d) 
+```{r}
+# predictor = Predictor$new(classifier_RF, data=X_train, y=y_train)
+# shapley = Shapley$new(predictor, x.interest=X_test[1,])
+# shapley$plot()
+
+obs = X_test[1,]
+shap_vals = kernel_shap(obs, X_train, 1000, classifier_RF)
+```
+
+## 2e) 
+
+Under the most current R version, treeshap does not work. You can either resort to python or downgrade to older versions of R.
+
+SHAP values are expensive to compute. TreeSHAP offers a more efficient implementation that exploits the structure of tree-based models. Advanced knowledge: A further advantage of TreeSHAP is that it resamples the variables such that the joint distribution is preserved.
+```{r}
+# devtools::install_github('ModelOriented/treeshap')
+library(treeshap)
+unified_RF <- ranger.unify(classifier_RF,X_train)
+explainer = treeshap(unified_RF, X_test)
+plot_contribution(explainer, obs=1)
+```
+# Exercise 3: LIME
+## 3a)
+```{r}
+# devtools::install_github("ModelOriented/DALEX")
+# devtools::install_github("ModelOriented/DALEXtra")
+library("DALEX")
+rf_model = randomForest(Man.of.the.Match ~ ., trainData)
+
+model_ex <- DALEX::explain(model = rf_model,  
+                           data = X_train,
+                           y = y_train, 
+                           label = "Random Forest")
+
+
+library("DALEXtra")
+library("iml")
+model_type.dalex_explainer <- DALEXtra::model_type.dalex_explainer
+predict_model.dalex_explainer <- DALEXtra::predict_model.dalex_explainer
+
+iml_obs <- predict_surrogate(explainer = model_ex, 
+                  new_observation = X_test[1,],
+                  type = "lime")
+
+plot(iml_obs)
+```
+## 3b)
+```{r}
+iml_obs <- predict_surrogate(explainer = model_ex, 
+                  new_observation = X_test[1,],
+                  type = "lime",
+                  kernel_width=10)
+
+plot(iml_obs)
+
+iml_obs <- predict_surrogate(explainer = model_ex, 
+                  new_observation = X_test[1,],
+                  type = "lime",
+                  kernel_width=0.001)
+
+plot(iml_obs)
+```
+## 3c)
+Both SHAP and Lime rely on a linear model approximation of the model. For lime, the normal feature values are used, for SHAP a transformed distribution indicating coalition membership for a sample is relied upon. Lime weights the different samples according to their distance to the observation of interest. In contrast, SHAP weights them according to the shapley kernel weights (which simulate sampling random permutations).
+
+
