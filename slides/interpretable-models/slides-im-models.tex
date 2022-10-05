@@ -9,11 +9,16 @@
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
 \date{}
 
+\def\firstrowcolor{}
+\def\secondrowcolor{}
+\def\thirdrowcolor{}
+\def\fourthrowcolor{}
+
 \begin{document}
 
 \newcommand{\titlefigure}{figure/whitebox}
 \newcommand{\learninggoals}{
-\item Examples and properties of popular interpretable models
+\item Examples of popular interpretable models
 %\item Properties of some interpretable models
 \item Focus on how to interpret them, not on math details}
 
@@ -34,7 +39,8 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
     \begin{itemize}
         %\item $\mathbb{E}_Y(Y \vert X)$ expected value of target given features $X$
         %\item $y$ target / output
-        \item $\beta_j$: weight of input feature $x_j$ (with intercept $\beta_0$) $\leadsto$ model consists of $p+1$ weights
+        \item $\beta_j$: weight of input feature $x_j$ (with intercept $\beta_0$)\\
+        $\leadsto$ model consists of $p+1$ weights
         %\item $\epsilon$ remaining error (e.g., because of noise)
         %\item Model equation is additive and identical across entire input space
         %\pause
@@ -46,14 +52,14 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
     \end{itemize}
    \vspace*{0.2cm} 
    \pause
-    \textbf{Model assumptions}
+    \textbf{Model assumptions} \citebutton{Examples with R and Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b}
     \begin{itemize}
     \item Predictions are a \textbf{linear} combination of features $\leadsto$ model equation is additive% and identical across entire input space
     \item Error term $\epsilon$ and $y \vert \xv$ are \textbf{normally} distributed with \textbf{constant variance} (homoscedastic), i.e.,\\
     \centerline{$\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \pmb\beta, \sigma^2)$}
     $\leadsto$ if violated, inference-based metrics (t-statistic, p-values, confidence intervals) are invalid
     %\item Error terms are assumed to have a \textbf{constant variance} over the entire feature space %(homoscedasticity)
-    \item Further assumptions: Independence of observations (e.g., no autocorrelation), independence of features $x_j$ with error term $\epsilon$, no multicollinearity (see \citebutton{examples with R and Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b})
+    \item Further assumptions: Independence of observations (e.g., no autocorrelation), independence of features $x_j$ with error term $\epsilon$, no multicollinearity 
     % free of measurement error assumption: https://indigo.uic.edu/articles/thesis/Measurement_Error_in_Generalized_Linear_Models/17025971/1/files/31488719.pdf
     % \item Note: For inference-based metrics (t-statistic, p-values, confidence intervals) to be valid, the error term needs to be normally distributed, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$\\
 %$\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data
@@ -79,17 +85,20 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
 
     Interpretation of weights (\textbf{feature effects}) depend on type of feature:
     \begin{itemize}
-        \item Numerical $x_j$: Increasing $x_j$ by one unit changes predicted outcome by $\beta_j$, c.p.
+        \item \textbf{Numerical $x_j$}: Increasing $x_j$ by one unit changes outcome by $\beta_j$, ceteris paribus (c.p.)
         \pause
-        \item Binary $x_j$: Weight $\beta_j$ is active or not (multiplication with 1 or 0) where 0 is reference category
+        \item \textbf{Binary $x_j$}: Weight $\beta_j$ is active or not (multiplication with 1 or 0) where 0 is reference category
+        \pause
         \item %Categorical: One-hot-encoding of $L-1$ new features for $L$ categories (dummy encoding) \\
-        Categorical $x_j$ with $L$ categories: Create $L-1$ one-hot-encoded features $x_{j,1}, \hdots, x_{j,L-1}$ (each having its own weight), left out category level is reference ($\hat =$ dummy encoding)\\
+        \textbf{Categorical $x_j$ with $L$ categories}: Create $L-1$ one-hot-encoded features $x_{j,1}, \hdots, x_{j,L-1}$ (each having its own weight), left out category is reference ($\hat =$ dummy encoding)
+        %$x_{j,l}, \forall l \in \{1, \hdots, L-1\}$ (with weight $\beta_{j,l}$), left out category is reference ($\hat =$ dummy encoding)
+        \\
         $\leadsto$ Interpretation:
-        For category $l$, prediction changes by $\beta_{j,l}$ compared to reference cat.,  c.p.\pause
+        Outcome changes by $\beta_{j,l}$ for category $l$ compared to reference cat.,  c.p.\pause
         % (for any of the $L-1$ categories):
         %Predicted outcome changes for $l$-th category compared to the reference category by its weight $\beta_{j,l}$ c.p.\pause
         %Predicted outcome changes for category $x_{j,l}$ compared to the reference category by $\beta_j$ c.p.\pause
-        \item Intercept $\beta_0$: Expected baseline prediction if all feature values are set to 0 %reflects expected features values if features were standardised (0-mean, 1-stdev)
+        \item \textbf{Intercept $\beta_0$}: Expected outcome if all feature values are set to 0 %(baseline) %reflects expected features values if features were standardised (0-mean, 1-stdev)
         \item Note: In case of higher order or interaction effects, weights cannot be interpreted in isolation
     \end{itemize}	
     \pause
@@ -152,18 +161,15 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
 \end{column}
 \begin{column}{0.47\textwidth}
   \centering
-\begin{tiny}
+\begin{scriptsize}
 %\begin{overlayarea}{\textwidth}{\textheight}
-\begin{table}[ht]
-\def\firstrowcolor{}
-\def\secondrowcolor{}
-\def\thirdrowcolor{}
+%\begin{table}[ht]
 \only<2>{\def\firstrowcolor{\rowcolor{lightgray}}}
 \only<3>{\def\secondrowcolor{\rowcolor{lightgray}}}
 \only<4>{\def\thirdrowcolor{\rowcolor{lightgray}}}
 \begin{tabular}{rrrrr}
   \hline
- & Weights & Std. Error & t value & Pr($>$$|$t$|$) \\
+ & Weights & SE & t-stat. & p-val. \\
  \hline
 \firstrowcolor (Intercept) & 3229.3 & 220.6 & 14.6 & 0.00 \\ 
 \secondrowcolor seasonSPRING & 862.0 & 129.0 & 6.7 & 0.00 \\ 
@@ -175,19 +181,20 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
   days\_since\_2011 & 4.9 & 0.2 & 26.9 & 0.00 \\
    \hline
 \end{tabular}
-\end{table}
+%\end{table}
 %\end{overlayarea}
-\end{tiny}
+\end{scriptsize}
 \end{column}
 \end{columns}
 %\vspace*{-0.3cm}
 \pause
 
+\lz
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}<5>{0.46\textwidth}
-Visualize contribution to prediction $\hat y$: 
-
-Weights multiplied by actual feature value are better comparable due to different scales
+\textbf{Vis.}: Boxplot of $\hat\beta_j x_j$-values (scale invariant)\\
+%weights multiplied by actual feature value (better comparable due to different scales)
+$\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 
 \includegraphics[width = \textwidth]{figure/plot_lin_effect.pdf}
 %   \begin{center}
@@ -203,8 +210,8 @@ Weights multiplied by actual feature value are better comparable due to differen
 \begin{itemize}[<+->]
     \item \textbf{Interpretation intercept}:
     If all feature values are 0 (and season is \code{WINTER} $\hat =$ reference cat.), the expected number of bike rentals is $\hat\beta_0 = 3229.3$
-    \item \textbf{Interpretation categorical}: Bike rentals in \code{SPRING} are by $\hat\beta_1 = 862$ higher than in \code{WINTER} (reference category), c.p.
-    \item \textbf{Interpretation numerical}: Bike rentals increase by $\hat\beta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
+    \item \textbf{Interpretation categorical}: Rentals in \code{SPRING} are by $\hat\beta_1 = 862$ higher than in \code{WINTER}, c.p.
+    \item \textbf{Interpretation numerical}: Rentals increase by $\hat\beta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
     %If the temperature increases by 1 degree Celsius, the number of bike rentals increases by 120.5 c.p.
 
 \end{itemize}
@@ -215,10 +222,17 @@ Weights multiplied by actual feature value are better comparable due to differen
 
 \begin{frame}{Linear Regression - Example: Including Interactions}
 \textbf{Update}: Add interaction between temperature and season affects marginal effect of temperature% with (right) and without (left) interaction.
-\begin{columns}[T]
-\begin{column}{0.25\textwidth}
-\begin{tiny}
-\begin{table}[ht]
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.65\linewidth}
+\includegraphics[width = \textwidth]{figure/lm_main_vs_interaction_effects.pdf}
+\end{column}
+\begin{column}{0.35\linewidth}
+\begin{scriptsize}
+%\begin{table}[ht]
+\only<2->{\def\firstrowcolor{\rowcolor{lightgray}}}
+\only<3>{\def\secondrowcolor{\rowcolor{lightgray}}}
+\only<4>{\def\thirdrowcolor{\rowcolor{lightgray}}}
+\only<5>{\def\fourthrowcolor{\rowcolor{lightgray}}}
 \centering
 \begin{tabular}{rr}
   \hline
@@ -228,38 +242,64 @@ Weights multiplied by actual feature value are better comparable due to differen
   seasonSPRING & 1317.0 \\ 
   seasonSUMMER & 4894.1 \\ 
   seasonFALL & -114.2 \\ 
-  temp & 160.5 \\ 
+  \firstrowcolor temp & 160.5 \\ 
   hum & -37.6 \\ 
   windspeed & -61.9 \\ 
   days\_since\_2011 & 4.9 \\
   \hline
-  seasonSPRING:temp & -50.7 \\ 
-  seasonSUMMER:temp & -222.0 \\ 
-  seasonFALL:temp & 27.2 \\ 
+  \secondrowcolor seasonSPRING:temp & -50.7 \\ 
+  \thirdrowcolor seasonSUMMER:temp & -222.0 \\ 
+  \fourthrowcolor seasonFALL:temp & 27.2 \\ 
    \hline
 \end{tabular}
-\end{table}
-\end{tiny}
-\end{column}
-\begin{column}{0.7\textwidth}
-\includegraphics[width = \textwidth]{figure/lm_main_vs_interaction_effects.pdf}
+%\end{table}
+\end{scriptsize}
 \end{column}
 \end{columns}
 \vfill
 \pause
-\textbf{Interpretation}: If \code{temp} increases by 1 $^{\circ}$C, bike rentals increase by 160.5 in \code{WINTER} (reference), by 109.8 (= 160.5 - 50.7) in \code{SPRING}, and decrease by -61.5 (= 160.5 - 222) in \code{SUMMER}.\\\vspace*{0.2cm}
-\textbf{Note:} Temperature ranges (on x-axis) depend on season $\leadsto$ not acknowledged by LM.
+\textbf{Interpretation}: If \code{temp} increases by 1 $^{\circ}$C, bike rentals
+\begin{itemize}[<+->]
+    \item increase by 160.5 in \code{WINTER} (reference)
+    \item increase by 109.8 (= 160.5 - 50.7) in \code{SPRING}
+    \item decrease by -61.5 (= 160.5 - 222) in \code{SUMMER}
+    \item increase by 187.7 (= 160.5 + 27.2) in \code{FALL}
+\end{itemize} %\\\vspace*{0.2cm}
+%\textbf{Note:} Temperature ranges (on x-axis) depend on season $\leadsto$ not acknowledged by LM
 %Value ranges of temperature differ depending on the season $\leadsto$ not acknowledged by LM
 \end{frame}
 
 
 \begin{frame}{Linear Regression - Example: Including Polynomials}
-\textbf{Update}: Add 2nd order polynomial for \code{temp} (left) and interaction with \code{season} (right).
-\begin{columns}[T]
-\begin{column}{0.25\textwidth}
-\begin{tiny}
-\begin{table}[ht]
-\centering
+\textbf{Update}: Add 2nd order polynomial for \code{temp} \only<2>{(left) and interaction with \code{season} (right)}
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.65\linewidth}
+\includegraphics[width=0.5\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}\invisible<1>{\includegraphics[width=0.5\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}}
+%\includegraphics[width = \textwidth]{figure/poly_main_vs_interaction_effects.pdf}
+%\begin{columns}
+%\begin{center}
+%\adjincludegraphics[width=\textwidth, trim={0 0 {.55\width} 0}, clip]{figure/poly_main_vs_interaction_effects.pdf}
+
+\textbf{Interpretation}: Not linear anymore!
+\begin{itemize}
+    \item[$\leadsto$] \code{temp} depends on two weights: $280.2 \cdot x_{temp} - 5.6 \cdot x_{temp}^2$
+    \item<2>[$\leadsto$] Adding more non-linear and interaction effects makes the model more flexible but also less interpretable
+    \item<2>[$\leadsto$] Non-linear and interaction effects need to be specified manually (inconvenient)!
+\end{itemize}
+
+\end{column}
+\begin{column}{0.35\linewidth}
+%\hfill
+\begin{scriptsize}
+% \begin{table}[ht]
+% %\centering
+
+\def\firstrowcolor{\rowcolor{lightgray}}%
+\def\secondrowcolor{\rowcolor{spring}}%
+\def\thirdrowcolor{\rowcolor{summer}}%
+\def\fourthrowcolor{\rowcolor{fall}}%
+
+\only<1>{%
 \begin{tabular}{rr}
   \hline
  & Weights \\ 
@@ -271,26 +311,48 @@ Weights multiplied by actual feature value are better comparable due to differen
   hum & -36.4 \\ 
   windspeed & -65.7 \\ 
   days\_since\_2011 & 4.7 \\ 
-  poly(temp, 2)1 & 280.2 \\ 
-  poly(temp, 2)2 & -5.6 \\ 
+  \firstrowcolor temp & 280.2 \\ 
+  \firstrowcolor temp$^2$ & -5.6 \\ 
+  \hline
+\end{tabular}%
+}
+% \end{table}
+\only<2>{%
+\definecolor{winter}{RGB} {243,117,108}
+\definecolor{spring}{RGB} {121,174,65}
+\definecolor{summer}{RGB} {25,188,195}
+\definecolor{fall}{RGB} {166,128,185}
+
+\def\firstrowcolor{\rowcolor{winter}}%
+\begin{tabular}{rr}
+  \hline
+ & Weights \\ 
+  \hline
+(Intercept) & 3802.1 \\ 
+  seasonSPRING & -1345.1 \\ 
+  seasonSUMMER & -6006.3 \\ 
+  seasonFALL & -681.4 \\ 
+  hum & -38.9 \\ 
+  windspeed & -64.1 \\ 
+  days\_since\_2011 & 4.8 \\ 
+ \firstrowcolor temp & 39.1 \\ 
+ \firstrowcolor temp$^2$ & 8.6 \\ 
+  \hline
+  \hline
+  \secondrowcolor seasonSPRING:temp & 407.4 \\ 
+ \secondrowcolor seasonSPRING:temp$^2$ & -18.7 \\ 
+  \thirdrowcolor seasonSUMMER:temp & 801.1 \\ 
+ \thirdrowcolor seasonSUMMER:temp$^2$ & -27.2 \\ 
+  \fourthrowcolor seasonFALL:temp & 217.4 \\ 
+ \fourthrowcolor seasonFALL:temp$^2$ & -11.3 \\ 
    \hline
-\end{tabular}
-\end{table}
-   Table: Weights for main effect model
-
-\end{tiny}
-
-\end{column}
-\begin{column}{0.7\textwidth}
-\includegraphics[width = \textwidth]{figure/poly_main_vs_interaction_effects.pdf}
+\end{tabular}%
+}%
+%Table: Weights for main effect model
+\end{scriptsize}
+%\end{center}
 \end{column}
 \end{columns}
-\vfill
-\pause
-\textbf{Interpretation}: Not linear anymore!\\ 
-$\leadsto$ Effect of \code{temp} depends two weights: $280.2 \cdot x_{temp} - 5.6 \cdot x_{temp}^2$\\
-$\leadsto$ BUT: Non-linear effect needs to be specified manually (inconvenient)!\\
-$\leadsto$ The more non-linear and interaction effects are added, the less interpretable a model
 \end{frame}
 
 
