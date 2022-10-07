@@ -121,7 +121,7 @@ def get_diff_cat(feature_k, feature_j):
   ecdf_dists = []
   for i1, i2 in zip(dists.class1.values, dists.class2.values): 
     print(i1, i2)
-    ecdf_dists.append(sum(abs(A[i1] - A[i2])) / 2)
+    ecdf_dists.append(sum(abs(A[i1] - A[i2])))
   dists["dist"] = ecdf_dists
    
   return(dists)

@@ -34,7 +34,7 @@
 % https://link.springer.com/book/10.1007/978-3-642-34333-9
 %\textbf{Model formula}
     %$$\mathbb{E}_Y(Y \vert X) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p + \epsilon = X^T\mathbf{\beta} + \epsilon$$
-$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \pmb\beta + \epsilon$$
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \beta + \epsilon$$
 
     \begin{itemize}
         %\item $\mathbb{E}_Y(Y \vert X)$ expected value of target given features $X$
@@ -56,7 +56,7 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
     \begin{itemize}
     \item Predictions are a \textbf{linear} combination of features $\leadsto$ model equation is additive% and identical across entire input space
     \item Error term $\epsilon$ and $y \vert \xv$ are \textbf{normally} distributed with \textbf{constant variance} (homoscedastic), i.e.,\\
-    \centerline{$\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \pmb\beta, \sigma^2)$}
+    \centerline{$\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \beta, \sigma^2)$}
     $\leadsto$ if violated, inference-based metrics (t-statistic, p-values, confidence intervals) are invalid
     %\item Error terms are assumed to have a \textbf{constant variance} over the entire feature space %(homoscedasticity)
     \item Further assumptions: Independence of observations (e.g., no autocorrelation), independence of features $x_j$ with error term $\epsilon$, no multicollinearity 
@@ -81,7 +81,7 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
 
 \begin{frame}[c]{Linear Regression - Interpretation}
 
-$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \pmb\beta + \epsilon$$
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \beta + \epsilon$$
 
     Interpretation of weights (\textbf{feature effects}) depend on type of feature:
     \begin{itemize}
@@ -134,7 +134,7 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{Linear Regression - Example: Main Effects}
+\begin{frame}{Example: Linear Regression - Main Effects}
 
 \textbf{Bike data}: predict number of rented bikes using 4 numeric and 1 categorical feature (season)
 % \begin{footnotesize}
@@ -220,8 +220,8 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 \end{frame}
 
 
-\begin{frame}{Linear Regression - Example: Including Interactions}
-\textbf{Update}: Add interaction between temperature and season affects marginal effect of temperature% with (right) and without (left) interaction.
+\begin{frame}{Example: Linear Regression - Including Interactions}
+\textbf{Example}: Interaction between \code{temp} and \code{season} will affect marginal effect of \code{temp}% with (right) and without (left) interaction.
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.65\linewidth}
 \includegraphics[width = \textwidth]{figure/lm_main_vs_interaction_effects.pdf}
@@ -270,8 +270,8 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 \end{frame}
 
 
-\begin{frame}{Linear Regression - Example: Including Polynomials}
-\textbf{Update}: Add 2nd order polynomial for \code{temp} \only<2>{(left) and interaction with \code{season} (right)}
+\begin{frame}{Linear Regression - Including Polynomials}
+\textbf{Example}: Adding 2nd order polynomial for \code{temp} \only<2>{(left) and interaction with \code{season} (right)}
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.65\linewidth}
 \includegraphics[width=0.5\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}\invisible<1>{\includegraphics[width=0.5\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}}
@@ -283,8 +283,8 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 \textbf{Interpretation}: Not linear anymore!
 \begin{itemize}
     \item[$\leadsto$] \code{temp} depends on two weights: $280.2 \cdot x_{temp} - 5.6 \cdot x_{temp}^2$
-    \item<2>[$\leadsto$] Adding more non-linear and interaction effects makes the model more flexible but also less interpretable
-    \item<2>[$\leadsto$] Non-linear and interaction effects need to be specified manually (inconvenient)!
+    \item<2>[$\leadsto$] Non-linear and interaction effects make the model more flexible but also less interpretable (more weights)
+    \item<2>[$\leadsto$] Non-linear and interaction effects need to be specified manually (inconvenient) - ML models do this automatically
 \end{itemize}
 
 \end{column}
@@ -356,7 +356,7 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 \end{frame}
 
 
-\begin{frame}{Regularizatoin via LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
+\begin{frame}{Regularization via LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
 \begin{itemize}
     \item LASSO adds an $L_1$-norm penalization term ($\lambda||\beta||_1$) to the least squares optimization problem\\
     $\leadsto$ Shrinks some feature weights to zero (feature selection)\\
@@ -374,7 +374,7 @@ $$
 \begin{column}{0.65\textwidth}
 \textbf{Example}
 \begin{itemize}
-    \item LASSO with main effects and interaction \code{temp} and \code{season}
+    \item LASSO with main effects and interaction \code{temp} with \code{season}
     \item $\lambda$ is chosen such that 6 features are selected (not zero)
     \item For categorical features, LASSO shrinks weights of single categories separately (due to dummy encoding)\\
     %only weights of single categories are set to zero (due to dummy encoding) not the whole feature\\
@@ -399,6 +399,7 @@ $$
   hum & -28.9 \\ 
   windspeed & -50.5 \\ 
   days\_since\_2011 & 4.8 \\ 
+  \hline
   seasonSPRING:temp & 0.0 \\ 
   seasonSUMMER:temp & 0.0 \\ 
   seasonFALL:temp & 30.2 \\ 
@@ -440,14 +441,21 @@ $$
 \medskip
 \pause
 \textbf{Solution}: GLMs - extend LMs by allowing other distributions from exponential family
-$$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p$$
-\vspace*{-0.4cm}
+%$$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p$$
+% \begin{align*}
+% &g(\E (y \mid \xv)) = 
+% %\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p = 
+% \xv^\top \beta\\
+% \Leftrightarrow \; & \E (y \mid \xv) = g^{-1}(\xv^\top \beta)
+% \end{align*}
+$$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^{-1}(\xv^\top \beta)$$
+\vspace*{-0.5cm}
     \begin{itemize}[<+->]
         \item Link function $g$ links weighted sum of features (linear predictor) to $\E$ of specified distribution\\
         $\leadsto$ LM is a special case: Gaussian distribution with $g$ as identity function 
         \item Link function $g$ and distribution need to be specified by the user
         \item Interaction and polynomial effects can be manually added in the same way as in LMs
-        \item Note: Interpretation depends on specified link function and distribution
+        \item Note: Interpretation of weights depend on specified link function and distribution
     \end{itemize}
  %   \medskip
  %   Non-Gaussian outputs via Generalized Linear Models (GLMs):
@@ -464,12 +472,15 @@ $$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_
     %\end{itemize}
 \end{frame}
  	
-\begin{frame}{Logistic Regression}
+\begin{frame}{GLM - Logistic Regression}
 \begin{itemize}
-    \item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification 
-    \item Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function: $\log\left(\frac{P(y = 1)}{1 - P(y = 1)}\right)$ 
-    \item Logistic regression formula:
-    $$P(y = 1) =\frac{1}{1 + \exp(-( \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p ))} $$
+    \item Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function: 
+    $$g(x) = \log\left(\frac{x}{1 - x}\right) \; \Rightarrow \; g^{-1}(x) = \frac{1}{1+\exp(-x)} $$
+    \item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification by
+    $$P(y = 1) = g^{-1}(\xv^\top \beta) = \frac{1}{1 + \exp(-( \xv^\top \beta ))} $$
+    %\item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification 
+    %\item Logistic regression formula:
+    %$$P(y = 1) =\frac{1}{1 + \exp(-( \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p ))} $$
     \item Typically, we set the threshold to $0.5$ to predict classes, e.g.,
         \begin{itemize}
             \item Class 1 if $P(y=1) > 0.5$
@@ -508,7 +519,7 @@ $$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}[c]{Logistic Regression - Interpretation}
+\begin{frame}[c]{GLM - Logistic Regression - Interpretation}
 
     \begin{itemize}
         \item Weights $\beta_j$ relate to log odds $\leadsto$ Effects are again linear (but w.r.t. log odds)
@@ -524,7 +535,7 @@ $$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_
 
 \end{frame}
 
-\begin{frame}{Logistic Regression - Example}
+\begin{frame}{GLM - Logistic Regression - Example}
 
 \begin{itemize}
     \item Create a binary target variable for bike rental data:
@@ -559,7 +570,7 @@ $$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_
 \textbf{Interpretation}
 \begin{itemize}
     %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
-    \item If \code{temp} increases by 1$^\circ C$, the odds for ``high number of bike rentals'' increase by the factor $\exp (0.3) = 1.3$ c.p.
+    \item If \code{temp} increases by 1$^\circ C$, the odds for ``high number of bike rentals'' increase by the factor $\exp (0.3) = 1.3$, c.p.
 \end{itemize}
 \end{column}
 \hfill
@@ -577,7 +588,7 @@ $$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}{Generalized Additive Models (GAMs) \citebutton{Hastie and Tibshirani (1986)}{https://www.jstor.org/stable/2245459}}
+\begin{frame}{Generalized Additive Model (GAM) \citebutton{Hastie and Tibshirani (1986)}{https://www.jstor.org/stable/2245459}}
 
 \textbf{Problem}: Relationship between features and target variable not linear $\leadsto$ standard LM not suitable 
 
@@ -605,7 +616,7 @@ $$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_
 \end{frame}
 
 
-\begin{frame}{Generalized Additive Models (GAMs) - Example}
+\begin{frame}{Generalized Additive Model (GAM) - Example}
     \begin{itemize}
     \item Fit a GAM with smooth splines for four numeric features of bike rental data 
 \end{itemize}

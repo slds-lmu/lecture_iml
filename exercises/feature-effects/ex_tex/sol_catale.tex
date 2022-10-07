@@ -16,18 +16,31 @@ when features are correlated and interaction terms are part of the ML model.
 % For two categorical features we can use a $\Chi^2$-test 
 % and for categorical vs. a numerical features we could rely on a one-way ANOVA F-test. 
 \item 
-The following code computes the pairwise sum of the absolute differences of relative 
+The following pseudocode computes the pairwise sum of the absolute differences of relative 
 frequencies in the categories of a categorical feature $x_j$ based on a 
 feature $x_k$
 
-\lstinputlisting{"rsrc/get_diff_cat().R"}
+%\lstinputlisting{"rsrc/get_diff_cat().R"}
+
+\begin{algorithm}[h]
+\caption{\texttt{get\_diff\_cat()}}
+\begin{algorithmic}[1]
+\Require \texttt{feature.k}: values of categorical feature for which relative frequencies per class are calculated
+\Require \texttt{feature.j}: values of categorical feature for which similarity based on \texttt{feature.k} should be assessed
+\State \texttt{dists} $\gets$ unique class combinations of \texttt{feature.j}
+\State \texttt{x.count} $\gets$ number of observations per class of \texttt{feature.j}
+\State \texttt{A} $\gets$ relative cross table of \texttt{feature.j} and \texttt{feature.k} weighted by \texttt{x.count} (per class of \texttt{feature.j} relative frequencies of classes of \texttt{feature.k} should sum up to 1)
+\State \texttt{dist} $\gets$ sum up distances of probability distributions per unique class combination specified in \texttt{dists}
+\State \textbf{return} \texttt{dist}, \texttt{dists}
+\end{algorithmic}
+\end{algorithm}
 
 For our task at hand, we obtain the following distances
-\lstinputlisting{"rsrc/run_get_diff_cat.R"}
+% \lstinputlisting{"rsrc/run_get_diff_cat.R"}
 \lstinputlisting{"rsrc/run_get_diff_cat.txt"}
 
 Overall, the following ordering of \texttt{personal\_status\_sex} was returned by the method: 
-\lstinputlisting{"rsrc/run_order_levels.R"}
+% \lstinputlisting{"rsrc/run_order_levels.R"}
 \lstinputlisting{"rsrc/run_order_levels.txt"}
 
 
