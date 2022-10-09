@@ -1,0 +1,215 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\begin{document}
+
+\newcommand{\titlefigure}{figure/whitebox}
+\newcommand{\learninggoals}{
+\item Generalized additive model
+\item Decision trees
+\item Other interpretable models}
+
+\lecturechapter{Interpretable Nonlinear Models}
+\lecture{Interpretable Machine Learning}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{frame}{Generalized Additive Model (GAM) \citebutton{Hastie and Tibshirani (1986)}{https://www.jstor.org/stable/2245459}}
+
+\textbf{Problem}: Relationship between features and target variable not linear $\leadsto$ standard LM not suitable 
+
+\medskip
+\pause
+\textbf{Solution}: 
+ \begin{itemize}
+        \item Feature transformations (e.g., exp or log)
+        \item Categorization of features (i.e., intervals / buckets of feature values)
+        \item GAMs:
+        $$g(\E (y \mid \xv)) = \beta_0 + f_1(x_1) + f_2(x_2) + \ldots + f_p(x_p)$$
+    
+    \begin{itemize}
+        \item Instead of linear terms $\beta_j x_j$ use flexible functions $f_j(x_j)$ $\leadsto$ splines
+        \item Preserves additive structure and allows to model non-linear effects
+        \item Splines have a smoothness parameter to control flexibility (prevent overfitting)\\
+        $\leadsto$ Needs to be chosen, e.g., via cross-validation
+    \end{itemize}
+    \end{itemize}
+    
+    
+
+   
+
+\end{frame}
+
+
+\begin{frame}{Generalized Additive Model (GAM) - Example}
+    \begin{itemize}
+    \item Fit a GAM with smooth splines for four numeric features of bike rental data 
+\end{itemize}
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\begin{table}[ht]
+\centering
+\tiny
+\begin{tabular}{rrrrr}
+  \hline
+ & edf & Ref.df & F & p-value \\ 
+  \hline
+s(temp) & 5.8 & 7.0 & 57.2 & 0.00 \\ 
+  s(hum) & 4.0 & 5.1 & 68.0 & 0.00 \\ 
+  s(windspeed) & 1.7 & 2.1 & 50.1 & 0.00 \\ 
+  s(days\_since\_2011) & 8.3 & 8.8 & 154.4 & 0.00 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+\textbf{Interpretation}
+\begin{itemize}
+    %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
+    \item Edf (effective degrees of freedom) represents complexity of smoothness
+    \item Interpretation needs to be done visually and relative to average prediction\\
+    $\leadsto$ more flexible and better model fit but less interpretable than LM
+\end{itemize}
+\end{column}
+\hfill
+\begin{column}{0.5\textwidth}
+\includegraphics[width = \textwidth]{figure/gam_effects.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{frame}{Decision Trees \citebutton{Breiman et al. (1984)}{https://doi.org/10.1201/9781315139470}}
+
+\textbf{Problem}: Can we model non-linear effects and interactions automatically (without manual specification as in GLMs or GAMs)?\\
+%Relationship between features and target are non-linear or interactions are present\\
+\medskip
+%\pause
+\textbf{Idea}: Decision tree -- Split data in different subsets depending on cut-off values in features 
+$$
+\hat f(x) = \sum_{m=1}^M c_m \mathds{1}_{\{x \in \mathcal{R}_m\}}\text{,  where $c_m$ is a constant and $\mathcal{R}_m$ the $m$-th leaf node of the tree}
+$$
+
+\begin{itemize}
+    \item Finding best split point (CART): Greedy search for the point that minimizes the variance of $y$ (regression) or the Gini index (classification)
+    \item Able to handle mixed feature spaces and missing values
+\end{itemize}
+\medskip
+\pause
+\textbf{Interpretation}
+\begin{itemize}
+    \item Directly by following the tree structure (i.e., sequence of decision rules)
+    \item Feature importance by (scaled) score of how much splitting criterion (e.g. variance) is reduced compared to a parent node
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}{Decision Trees - Example}
+\begin{itemize}
+    \item Fit decision tree with tree depth of 3 on bike data
+    \item E.g., mean prediction for the first 105 days since 2011 is 1798
+    \item Feature \code{days\_since\_2011} shows highest feature importance (explains most of variance)
+\end{itemize}
+\begin{columns}[T]
+\begin{column}{0.4\textwidth}
+\begin{table}[ht]
+\centering
+\begin{tabular}{lr}
+  \hline
+Feature & Importance \\ 
+  \hline
+days\_since\_2011 & 68.03 \\ 
+  temp & 20.54 \\ 
+  season & 6.56 \\ 
+  hum & 3.58 \\ 
+  windspeed & 1.29 \\ 
+   \hline
+\end{tabular}
+\end{table}
+\end{column}
+\begin{column}{0.6\textwidth}
+  \includegraphics[width = \textwidth]{figure/tree.pdf} 
+\end{column}
+\end{columns}
+ 
+\end{frame}
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+%\begin{frame}[c]{Decision Rules}
+
+%\texttt{IF COND$_1$ AND COND$_2$ AND ... THEN value}
+
+%\begin{itemize}
+%    \item \texttt{COND$_i$} can be of the form \texttt{feature <op> value} where \texttt{<op>} can be for example $\{=, <, > \}$
+%\end{itemize}
+
+%\pause
+%\medskip
+
+%Properties:
+%\begin{description}
+%    \item{Support} Fraction of observations to support appliance of rule
+%    \item{Accuracy} for predicting the correct class under the condition(s)
+%\end{description}
+
+%$\leadsto$ often trade-off between these two
+
+%\pause
+%\medskip
+
+%$\leadsto$ many different ways to learn a set of rules (incl. a default rule if none of the rules are met)
+
+%\end{frame}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+
+\begin{frame}[c]{Other Interpretable Models}
+
+\textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
+\begin{itemize}
+    \item Combination of linear models and decision trees 
+    \item Allows for feature interactions and non-linearities
+\end{itemize}
+
+\textbf{Decision Rules} \citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
+\begin{itemize}
+    \item Simple ``if -- then'' statements - very intuitive and easy-to-interpret
+    \item Common assumption: only classification tasks and categorical features
+\end{itemize}
+
+\textbf{NaiveBayes}
+%$$P (C_k \mid x ) = \frac{1}{Z} P(C_k) \prod_{i=1}^{n} P(x_i \mid C_k) $$
+\begin{itemize}
+    \item Product of probabilities for a class on the value of each feature
+    \item Strong independence assumption
+\end{itemize}
+
+
+\textbf{k-Nearest Neighbor}
+\begin{itemize}
+    \item (Closely related to case-based reasoning)
+    \item Average of the outcome of neighbors -- local explanation
+\end{itemize}
+
+\end{frame}
+
+
+\endlecture
+\end{document}

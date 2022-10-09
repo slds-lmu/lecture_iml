@@ -1,0 +1,186 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\begin{document}
+
+\newcommand{\titlefigure}{figure/whitebox}
+\newcommand{\learninggoals}{
+\item Definition of GLMs
+\item Logistic regression as example
+\item Interpretation in logistic regression
+}
+
+\lecturechapter{Generalized Linear Models}
+\lecture{Interpretable Machine Learning}
+
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+\begin{frame}{Generalized Linear Model (GLM)}
+
+\textbf{Problem}: Target variable given the features not always normally distributed $\leadsto$ LM not suitable
+\begin{itemize}
+    \item Target is binary (e.g., disease classification)\\
+    $\leadsto$ Bernoulli / Binomial distribution
+    \item Target is count variable (e.g., number of sold products)\\
+    $\leadsto$ Poisson distribution
+    \item Time until an event occurs (e.g., time until death)\\
+    $\leadsto$ Gamma distribution
+\end{itemize}
+\medskip
+\pause
+\textbf{Solution}: GLMs - extend LMs by allowing other distributions from exponential family
+%$$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p$$
+% \begin{align*}
+% &g(\E (y \mid \xv)) = 
+% %\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p = 
+% \xv^\top \beta\\
+% \Leftrightarrow \; & \E (y \mid \xv) = g^{-1}(\xv^\top \beta)
+% \end{align*}
+$$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^{-1}(\xv^\top \beta)$$
+\vspace*{-0.5cm}
+    \begin{itemize}[<+->]
+        \item Link function $g$ links linear predictor $\xv^\top \beta$ to $\E$ of specified distribution of $y \mid \xv$\\
+        $\leadsto$ LM is special case: Gaussian distribution $y \mid \xv$ with $g$ as identity function 
+        \item Link function $g$ and distribution need to be specified by the user
+        \item Interaction and polynomial effects can be manually added in the same way as in LMs
+        \item Note: Interpretation of weights depend on specified link function and distribution
+    \end{itemize}
+ %   \medskip
+ %   Non-Gaussian outputs via Generalized Linear Models (GLMs):
+  %  \begin{itemize}
+   %     \item link function $g$ -- can be freely chosen
+    %    \item exponential family defining $\E_Y$ -- can be freely chosen
+     %   \item weighted sum $X^\top W$
+    %\end{itemize}
+    %\medskip 
+    %\pause
+    %Interaction effects via feature engineering:
+    %\begin{itemize}
+    %    \item E.g., feature expansion: $\beta_{x_i,x_j} x_i \cdot x_j$
+    %\end{itemize}
+\end{frame}
+ 	
+\begin{frame}{GLM - Logistic Regression}
+\begin{itemize}
+    \item Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function: 
+    $$g(x) = \log\left(\frac{x}{1 - x}\right) \; \Rightarrow \; g^{-1}(x) = \frac{1}{1+\exp(-x)} $$
+    \item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification by
+    $$P(y = 1) = g^{-1}(\xv^\top \beta) = \frac{1}{1 + \exp(-( \xv^\top \beta ))} $$
+    %\item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification 
+    %\item Logistic regression formula:
+    %$$P(y = 1) =\frac{1}{1 + \exp(-( \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p ))} $$
+    \item Typically, we set the threshold to $0.5$ to predict classes, e.g.,
+        \begin{itemize}
+            \item Class 1 if $P(y=1) > 0.5$
+            \item Class 0 if $P(y=1) \leq 0.5$
+        \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+% \begin{frame}{Generalized Linear Models (GLMs)}
+
+% \begin{align*}
+% g\left(\mathbb{E}_Y(Y \vert X)\right) &= X^T\beta \\
+% \mathbb{E}_Y \left(Y \vert X\right) &= g^{-1}(X^T\beta)
+% \end{align*}
+% \begin{itemize}[<+->]
+% %\setlength\itemsep{1em}
+% %\item GLMs are a framework for target distributions of  exponential families (e.g., Gaussian, Binomial, Poisson, Gamma). Gaussian target distribution $+$ identity link $\hat =$ linear / polynomial model.
+% \item GLM framework assumes distribution of $Y$ is a member of exponential families, e.g.: % (e.g., Gaussian, Binomial, Poisson)
+% \begin{itemize}[<.->]
+%     \item Gaussian target distribution $+$ identity link $\hat =$ linear / polynomial model.
+%     \item Binomial target distribution $+$ logit link $log\left(\frac{\mathbb{E}_Y(Y \vert X)}{1 - \mathbb{E}_Y(Y \vert X)}\right)$ $\hat =$ logistic regression.
+% \end{itemize}
+% %\item GLMs keeps linear predictor $X^T\beta$ (explains $\mathbb{E}_Y(Y \vert X)$ through a more flexible link function $g$).
+% \item Link function $g$ describes how $X^T\beta$ relates to the expected, conditional target $\mathbb{E}_Y(Y \vert X)$.
+% \begin{itemize}[<.->]
+%     \item Interpretations as for linear / polynomial models but w.r.t. transformed target via $g$.
+%     \item Linear terms become non-linear through the link function (except for identity link)!
+% \end{itemize}
+% %\item If the target is distributed binomially, a natural link function is the logit link $log\left(\frac{\mathbb{E}_Y(Y \vert X)}{1 - \mathbb{E}_Y(Y \vert X)}\right)$ (logistic regression).
+% \item We need to specify the correct model equation, target distribution, and link function to receive a good model fit.
+% %\item %As the model equation is still known, interpretations are possible the same way as for polynomial regression models.
+% %However, even linear terms become non-linear through the link function (if the identity link is not used)!
+% \end{itemize}
+% \end{frame}
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{frame}[c]{GLM - Logistic Regression - Interpretation}
+
+    \begin{itemize}
+        \item Weights $\beta_j$ relate to log odds $\leadsto$ Effects are again linear (but w.r.t. log odds)
+        $$log\text{ }odds = \log \left(\frac{P(y = 1)}{1 - P(y=1)}\right) = \log \left(\frac{P(y = 1)}{P(y=0)}\right) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p  $$
+        \pause
+        \item Odds can be caulculated by 
+        $$odds = \left(\frac{P(y = 1)}{P(y=0)}\right) = \exp(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p)  $$
+        \item \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} by a \textbf{factor} of $\exp(\beta_j)$
+        $$odds\text{ }ratio = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_j (x_j+1) + \ldots + \beta_p x_p)}{\exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_j x_j + \ldots + \beta_p x_p)} = \exp{(\beta_j)} $$
+        \pause
+        \item Interpretation for different feature types is the same as for linear regression (however, linear interpretation only possible w.r.t. log odds $\leadsto$ difficult to comprehend)
+    \end{itemize}	
+
+\end{frame}
+
+\begin{frame}{GLM - Logistic Regression - Example}
+
+\begin{itemize}
+    \item Create a binary target variable for bike rental data:
+    \begin{itemize}
+        \item Class 1: ``high number of bike rentals'' - more than the 70\% quantile (i.e., \code{cnt} > 5531)
+        \item Class 0: ``low to medium number of bike rentals'' (i.e., \code{cnt} $\leq$ 5531)
+    \end{itemize}
+    \item Fit a logistic regression model (GLM with Bernoulli distribution and logit link)
+\end{itemize}
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\begin{table}[ht]
+\centering
+\tiny
+\begin{tabular}{rrrrr}
+  \hline
+ & Weights & Std. Error & z value & Pr($>$$|$z$|$) \\ 
+  \hline
+(Intercept) & -8.5 & 1.2 & -7.1 & 0.00 \\ 
+  seasonSPRING & 1.7 & 0.6 & 2.9 & 0.00 \\ 
+  seasonSUMMER & -0.9 & 0.8 & -1.1 & 0.26 \\ 
+  seasonFALL & -0.6 & 0.6 & -1.2 & 0.25 \\ 
+  temp & 0.3 & 0.0 & 7.4 & 0.00 \\ 
+  hum & -0.1 & 0.0 & -5.0 & 0.00 \\ 
+  windspeed & -0.1 & 0.0 & -3.0 & 0.00 \\ 
+  days\_since\_2011 & 0.0 & 0.0 & 11.6 & 0.00 \\ 
+   \hline
+\end{tabular}
+\end{table}
+\pause
+\textbf{Interpretation}
+\begin{itemize}
+    %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
+    \item If \code{temp} increases by 1$^\circ C$, the odds for ``high number of bike rentals'' increase by the factor $\exp (0.3) = 1.3$, c.p.
+\end{itemize}
+\end{column}
+\hfill
+\pause
+\begin{column}{0.5\textwidth}
+\includegraphics[width = \textwidth]{figure/logistic_marginal_temp.pdf}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\endlecture
+\end{document}
