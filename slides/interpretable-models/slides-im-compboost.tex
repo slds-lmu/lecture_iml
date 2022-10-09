@@ -18,29 +18,32 @@
 
 \newcommand{\titlefigure}{figure/whitebox}
 \newcommand{\learninggoals}{
-\item Examples of popular interpretable models
-%\item Properties of some interpretable models
-\item Focus on how to interpret them, not on math details}
+\item Understand additive model structure
+\item Combining base learners}
 
-\lecturechapter{Overview of Interpretable Models}
+\lecturechapter{Model-based Boosting}
 \lecture{Interpretable Machine Learning}
 
 
-\begin{frame}{Componentwise Gradient Boosting}
+\begin{frame}{Model-based Boosting \citebutton{Bühlmann and Yu 2003}{https://doi.org/10.1198/016214503000125}}
 
 \begin{itemize}
 %\setlength\itemsep{2em}
-\item<1-> Recall: Boosting iteratively combines weak base learners to create a powerful ensemble model
+\item<1-> Recall: Boosting iteratively combines weak base learners (BL) %to create a powerful ensemble model
 \item<1->
-Idea: Boosting with gradient descent using interpretable base learners (e.g., use base learners with single features in each iteration $\leadsto$ coordinate gradient descent)
+Idea: Use simple linear BL to ensure interpretability \\
+%$\leadsto$ e.g., linear BL with single features in each iteration
+%Boosting with gradient descent using interpretable base learners (e.g., use base learners with single features in each iteration $\leadsto$ coordinate gradient descent)
 %The resulting ensemble is also interpretable.
 %\pause
 \item<2->
-Two linear base learners $b_j(x, \theta)$ and $b_j(x, \theta^{\star})$ of the same type, but distinct parameter vectors $\theta$ and $\theta^{\star}$ can be combined in a base learner of the same type:
+Possible to combine linear BL of same type (with distinct parameters $\theta$ and $\theta^{\star}$):
+%Two linear base learners $b_j(x, \theta)$ and $b_j(x, \theta^{\star})$ of the same type, but distinct parameter vectors $\theta$ and $\theta^{\star}$ can be combined in a base learner of the same type:
 $$b_j(x, \theta) + b_j(x, \theta^{\star}) = b_j(x, \theta + \theta^{\star})$$
 %\pause
-\item<3-> In each iteration, a set of base learners is fitted on pseudo residuals. The one with the best fit is added to the previously computed model (using step-size $\nu$):
-\medskip
+\item<3-> %In each iteration, a set of BLs is fitted on pseudo residuals. The one with the best fit is added to the previously computed model (using step-size $\nu$), e.g.,
+In each iteration, fit a set of BLs and add the best BL to previous model (using step-size $\nu$):
+%\medskip
 \begin{align*}
 \widehat{f}^{[1]}(x) &= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} \\
 \widehat{f}^{[2]}(x) &= \widehat{f}^{[1]}(x) + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} 
@@ -48,19 +51,20 @@ $$b_j(x, \theta) + b_j(x, \theta^{\star}) = b_j(x, \theta + \theta^{\star})$$
 \\
 \widehat{f}^{[3]}(x) &= \widehat{f}^{[2]}(x) + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
 %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
-= \hat{f}_0 + \nu \left(\textcolor{blue}{b_3(x_3, \theta^{[1]} + \theta^{[2]})} + \textcolor{orange}{b_1(x_1, \theta^{[3]})}\right) 
+\\
+&= \hat{f}_0 + \nu \left(\textcolor{blue}{b_3(x_3, \theta^{[1]} + \theta^{[2]})} + \textcolor{orange}{b_1(x_1, \theta^{[3]})}\right) 
 \\
 &= \hat{f}_0 + \textcolor{blue}{\hat{f}_3(x_3)} + \textcolor{orange}{\hat{f}_1(x_1)}
 \end{align*}
-\item<3-> Final model has additive structure (as GAMs), where each component function is interpretable
+\item<3-> Final model is additive (as GAMs), where each component function is interpretable
 
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Componentwise Gradient Boosting - Example}
+\begin{frame}{Model-based Boosting - Example}
 
-Simple case: Use linear model with single feature (including intercept) as base learner
+Simple case: Use linear model with single feature (including intercept) as BL
 $$
 b_j(x_j, \theta) = x_j\theta + \theta_0 \hspace*{0.2cm}\text{ for } j = 1,\ldots p \hspace*{0.3cm} \leadsto \text{ordinary linear regression}
 $$
@@ -85,7 +89,7 @@ days\_since\_2011 & -1791.06 & 4.9 \\
   \hline
   hum & 1953.05 & -31.1 \\ 
     \hline
-  season &  &  \begin{tabular}[c]{@{}l@{}}
+  season & 0 &  \begin{tabular}[c]{@{}l@{}}
   WINTER: -323.4\\
   SPRING: 539.5\\
   SUMMER: -280.2\\
@@ -115,7 +119,7 @@ $\Rightarrow$ Converges to solution of LM
   \hline  \hline
   days\_since\_2011 & -1210.27 & 3.3 \\ 
     \hline
-   season &  & 
+   season & 0 & 
    \begin{tabular}[c]{@{}l@{}}
   WINTER: -276.9\\
   SPRING: 137.6\\
@@ -130,10 +134,10 @@ $\Rightarrow$ Converges to solution of LM
 \end{tabular}
 \end{table}
 \centering
-$\Rightarrow$ 3 base learners selected after 20 iter. (feature selection)
+$\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 }
 \only<3>{
-Relative frequency of selected base learners across iterations
+Relative frequency of selected BLs across iterations
 \includegraphics[width = .95 \textwidth]{figure/compboost_base_linear.pdf}}
 \end{column}
 \end{columns}
@@ -143,11 +147,11 @@ Relative frequency of selected base learners across iterations
 % \end{itemize}
 \end{frame}
 
-\begin{frame}{Componentwise Gradient Boosting - Interpretation}
+\begin{frame}{Model-based Boosting - Interpretation}
 
 \begin{itemize}
-    \item Fit model on bike data with different base learner types \citebutton{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}
-    \item Base learners: linear and centered splines for numeric features, categorical for season
+    \item Fit model on bike data with different BL types \citebutton{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}
+    \item BLs: linear and centered splines for numeric features, categorical for season
     %and categorical base learner for season
 \end{itemize}
 \begin{columns}[T]
@@ -166,7 +170,7 @@ Relative frequency of selected base learners across iterations
   \includegraphics[width = 0.9 \textwidth]{figure/compboost_pfe.pdf}
   \begin{itemize}
       \item Partial feature effect for \code{days\_since\_2011}\\
-      $\leadsto$ Total effect: Combination of partial effects of linear and centered spline base learners 
+      $\leadsto$ Total effect: Combination of partial effects of linear BL and centered spline BL 
   \end{itemize}
 \end{column}
 \end{columns}

@@ -14,6 +14,10 @@
 \def\thirdrowcolor{}
 \def\fourthrowcolor{}
 
+\definecolor{winter}{RGB} {243,117,108}
+\definecolor{spring}{RGB} {121,174,65}
+\definecolor{summer}{RGB} {25,188,195}
+\definecolor{fall}{RGB} {166,128,185}
 \begin{document}
 
 \newcommand{\titlefigure}{figure/whitebox}
@@ -42,28 +46,30 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
 
     \begin{itemize}
         %\item $\mathbb{E}_Y(Y \vert X)$ expected value of target given features $X$
-        %\item $y$ target / output
+        \item $y$: target / output
+        \item $\epsilon$: remaining error / residual term (e.g., due to noise)
         \item $\beta_j$: weight of input feature $x_j$ (with intercept $\beta_0$)\\
         $\leadsto$ model consists of $p+1$ weights
-        %\item $\epsilon$ remaining error (e.g., because of noise)
         %\item Model equation is additive and identical across entire input space
         %\pause
-        \item Polynomial regression extends equation above by
-        \begin{itemize}
-        \item \textbf{higher order main effects} which have their own weights (e.g., quadratic: $\beta_{x_j^2} \cdot x_j^2$)
-        \item \textbf{interaction effects} (e.g., 2-way interaction: $\beta_{x_i, x_j} \cdot x_i \cdot x_j$)
-        \end{itemize}
+        % \item Polynomial regression extends equation above by
+        % \begin{itemize}
+        % \item \textbf{higher order main effects} which have their own weights (e.g., quadratic: $\beta_{x_j^2} \cdot x_j^2$)
+        % \item \textbf{interaction effects} (e.g., 2-way interaction: $\beta_{x_i, x_j} \cdot x_i \cdot x_j$)
+        % \end{itemize}
     \end{itemize}
    \vspace*{0.2cm} 
    \pause
-    \textbf{Model assumptions} \citebutton{Examples with R and Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b}
-    \begin{itemize}
+    \textbf{Properties and assumptions} \citebutton{Checking assumptions in R \& Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b}
+    \begin{itemize}[<+->]
     \item Predictions are a \textbf{linear} combination of features $\leadsto$ model equation is additive% and identical across entire input space
-    \item Error term $\epsilon$ and $y \vert \xv$ are \textbf{normally} distributed with \textbf{constant variance} (homoscedastic), i.e.,\\
-    \centerline{$\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \beta, \sigma^2)$}
+    \item $\epsilon$ and $y \vert \xv$ are \textbf{normally} distributed with \textbf{constant variance} (homoscedastic)\\
+    $\leadsto$ $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \beta, \sigma^2)$\\
     $\leadsto$ if violated, inference-based metrics (t-statistic, p-values, confidence intervals) are invalid
     %\item Error terms are assumed to have a \textbf{constant variance} over the entire feature space %(homoscedasticity)
-    \item Further assumptions: Independence of observations (e.g., no autocorrelation), independence of features $x_j$ with error term $\epsilon$, no multicollinearity 
+    \item Independence of observations (e.g., no autocorrelated error terms)
+    \item Independence of features $x_j$ with error term $\epsilon$
+    \item No or little multicollinearity (i.e., no strong feature correlations)
     % free of measurement error assumption: https://indigo.uic.edu/articles/thesis/Measurement_Error_in_Generalized_Linear_Models/17025971/1/files/31488719.pdf
     % \item Note: For inference-based metrics (t-statistic, p-values, confidence intervals) to be valid, the error term needs to be normally distributed, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$\\
 %$\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data
@@ -103,40 +109,17 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
         %Predicted outcome changes for $l$-th category compared to the reference category by its weight $\beta_{j,l}$ c.p.\pause
         %Predicted outcome changes for category $x_{j,l}$ compared to the reference category by $\beta_j$ c.p.\pause
         \item \textbf{Intercept $\beta_0$}: Expected outcome if all feature values are set to 0 %(baseline) %reflects expected features values if features were standardised (0-mean, 1-stdev)
-        \item Note: In case of higher order or interaction effects, weights cannot be interpreted in isolation
+        %\item Note: In case of higher order or interaction effects, weights cannot be interpreted in isolation
     \end{itemize}	
     \pause
     \textbf{Feature importance}:
     \begin{itemize}
-        \item Absolute t-statistic value: Estimated weight scaled with its standard error (reliability of the estimate) -- high absolute t-values indicate important (i.e. significant) features
-    \end{itemize}
+        \item Absolute t-statistic value: $\hat\beta_j$ scaled with its standard error ($\hat =$ reliability of the estimate) 
     $$t_{\hat\beta_j} = \left| \tfrac{\hat\beta_j}{SE(\hat\beta_j)} \right|$$
+        \item High values indicate important (i.e. significant) features
+    \end{itemize}
 \end{frame}
 
-%------------------------------------------------------------------
-%------------------------------------------------------------------
-
-% \begin{frame}{Linear and Polynomial Regression}
-
-% \begin{align*}
-% \mathbb{E}_Y(Y \vert X) &= \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \epsilon \\
-%  &= X^T\beta + \mathcal{E}
-% \end{align*}
-
-% \begin{itemize}
-% \itemsep1em
-% \item Model equation is identical across the entire feature space.
-% %\item The predictive power of LMs is determined by specifying the correct model structure.
-% \item Polynomial regression extends the LM by non-linear effects.
-% %A polynomial regression model is an extension of the LM that includes higher order terms or interactions.
-% %This enables us to model non-linear data while making use of the entire arsenal of LM functionality.
-% \item We can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
-% %By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
-% \item For higher order effects or interactions, beta coefficients cannot be interpreted in isolation.
-% \item Note: For inference-based metrics (p-values, confidence intervals) to be valid, error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$.\\
-% $\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data.
-% \end{itemize}
-% \end{frame}
 
 \begin{frame}{Example: Linear Regression - Main Effects}
 
@@ -216,7 +199,7 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
     If all feature values are 0 (and season is \code{WINTER} $\hat =$ reference cat.), the expected number of bike rentals is $\hat\beta_0 = 3229.3$
     \item \textbf{Interpretation categorical}: Rentals in \code{SPRING} are by $\hat\beta_1 = 862$ higher than in \code{WINTER}, c.p.
     \item \textbf{Interpretation numerical}: Rentals increase by $\hat\beta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
-    %If the temperature increases by 1 degree Celsius, the number of bike rentals increases by 120.5 c.p.
+    %If the temperature increases by 1 order Celsius, the number of bike rentals increases by 120.5 c.p.
 
 \end{itemize}
 \end{column}
@@ -224,7 +207,64 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 \end{frame}
 
 
-\begin{frame}{Example: Linear Regression - Including Interactions}
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{frame}{Linear Regression - Interaction and High-order Effects}
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
+
+Equation above can be extended (polynomial regression) by including
+
+\begin{itemize}
+\item \textbf{high-order effects} which have their own weights\\
+$\leadsto$ e.g., quadratic effect: $\beta_{x_j^2} \cdot x_j^2$
+\item \textbf{interaction effects} as the product of multiple features\\
+$\leadsto$ e.g., 2-way interaction: $\beta_{x_i, x_j} \cdot x_i \cdot x_j$
+\end{itemize}
+\pause
+Implications of including high-order and interaction effects: 
+\begin{itemize}
+    \item Both make the model more flexible but also less interpretable\\
+    $\leadsto$ More weights to interpret
+    \item Both need to be specified manually (inconvenient and sometimes infeasible)\\
+    $\leadsto$ ML models learn them often automatically
+    \item Marginal effect of a feature cannot be interpreted by single weights anymore\\
+$\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equation
+\end{itemize}
+
+%Weights cannot be interpreted in isolation as before
+% $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
+
+% \begin{itemize}
+% \item Results in polynomial regression 
+% \item Weights cannot be interpreted in isolation as before
+% \end{itemize}
+\end{frame}
+
+% \begin{frame}{Linear and Polynomial Regression}
+
+% \begin{align*}
+% \mathbb{E}_Y(Y \vert X) &= \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \epsilon \\
+%  &= X^T\beta + \mathcal{E}
+% \end{align*}
+
+% \begin{itemize}
+% \itemsep1em
+% \item Model equation is identical across the entire feature space.
+% %\item The predictive power of LMs is determined by specifying the correct model structure.
+% \item Polynomial regression extends the LM by non-linear effects.
+% %A polynomial regression model is an extension of the LM that includes higher order terms or interactions.
+% %This enables us to model non-linear data while making use of the entire arsenal of LM functionality.
+% \item We can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
+% %By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
+% \item For higher order effects or interactions, beta coefficients cannot be interpreted in isolation.
+% \item Note: For inference-based metrics (p-values, confidence intervals) to be valid, error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$.\\
+% $\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data.
+% \end{itemize}
+% \end{frame}
+
+\begin{frame}{Example: Linear Regression - Interaction Effect}
 \textbf{Example}: Interaction between \code{temp} and \code{season} will affect marginal effect of \code{temp}% with (right) and without (left) interaction.
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.65\linewidth}
@@ -274,8 +314,8 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 \end{frame}
 
 
-\begin{frame}{Example: Linear Regression - Including Polynomials}
-\textbf{Example}: Adding 2nd order polynomial for \code{temp} \only<2>{(left) and interaction with \code{season} (right)}
+\begin{frame}{Example: Linear Regression - Quadratic Effect}
+\textbf{Example}: Adding quadratic effect for \code{temp} \only<2>{(left) and an interaction with \code{season} (right)}
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.65\linewidth}
 \includegraphics[width=0.5\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}\invisible<1>{\includegraphics[width=0.5\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}}
@@ -286,9 +326,15 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 
 \textbf{Interpretation}: Not linear anymore!
 \begin{itemize}
-    \item[$\leadsto$] \code{temp} depends on two weights: $280.2 \cdot x_{temp} - 5.6 \cdot x_{temp}^2$
-    \item<2>[$\leadsto$] Non-linear and interaction effects make the model more flexible but also less interpretable (more weights)
-    \item<2>[$\leadsto$] Non-linear and interaction effects need to be specified manually (inconvenient) - ML models do this automatically
+    \only<1>{\item[$\leadsto$] \code{temp} depends on two weights: $ 280.2 \cdot x_{temp} -  5.6 \cdot x_{temp}^2$}
+    \item<2>[$\leadsto$] \code{temp} depends on multiple weights due to \code{season}:\\
+    $\leadsto$ \code{WINTER}: ${\color{winter}39.1} \cdot x_{temp} + {\color{winter}8.6} \cdot x_{temp}^2$ \\
+    $\leadsto$ \code{SPRING}: 
+    $({\color{winter}39.1} {\color{spring}+407.4}) \cdot x_{temp} + ({\color{winter}8.6} {\color{spring} - 18.7}) \cdot x_{temp}^2$ \\
+    $\leadsto$ \code{SUMMER}: $({\color{winter}39.1}  {\color{summer}+801.1}) \cdot x_{temp} + ({\color{winter}8.6} {\color{summer} - 27.2}) \cdot x_{temp}^2$  \\
+    $\leadsto$ \code{FALL}: $({\color{winter}39.1}  {\color{fall}+217.4}) \cdot x_{temp} + ({\color{winter}8.6} {\color{fall} - 11.3}) \cdot x_{temp}^2$ 
+    % \item<2>[$\leadsto$] High-order and interaction effects make the model more flexible but also less interpretable (more weights)
+    % \item<2>[$\leadsto$] High-order and interaction effects need to be specified manually (inconvenient) - ML models do this automatically
 \end{itemize}
 
 \end{column}
@@ -322,11 +368,6 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 }
 % \end{table}
 \only<2>{%
-\definecolor{winter}{RGB} {243,117,108}
-\definecolor{spring}{RGB} {121,174,65}
-\definecolor{summer}{RGB} {25,188,195}
-\definecolor{fall}{RGB} {166,128,185}
-
 \def\firstrowcolor{\rowcolor{winter}}%
 \begin{tabular}{rr}
   \hline
