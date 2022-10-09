@@ -270,7 +270,7 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 \end{frame}
 
 
-\begin{frame}{Linear Regression - Including Polynomials}
+\begin{frame}{Example: Linear Regression - Including Polynomials}
 \textbf{Example}: Adding 2nd order polynomial for \code{temp} \only<2>{(left) and interaction with \code{season} (right)}
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.65\linewidth}
@@ -434,9 +434,12 @@ $$
 
 \textbf{Problem}: Target variable given the features not always normally distributed $\leadsto$ LM not suitable
 \begin{itemize}
-    \item Target is binary (e.g., disease classification) $\leadsto$ Bernoulli / Binomial distribution
-    \item Target is count variable (e.g., number of sold products) $\leadsto$ Poisson distribution
-    \item Time until an event occurs (e.g., time until death) $\leadsto$ Gamma distribution
+    \item Target is binary (e.g., disease classification)\\
+    $\leadsto$ Bernoulli / Binomial distribution
+    \item Target is count variable (e.g., number of sold products)\\
+    $\leadsto$ Poisson distribution
+    \item Time until an event occurs (e.g., time until death)\\
+    $\leadsto$ Gamma distribution
 \end{itemize}
 \medskip
 \pause
@@ -451,8 +454,8 @@ $$
 $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^{-1}(\xv^\top \beta)$$
 \vspace*{-0.5cm}
     \begin{itemize}[<+->]
-        \item Link function $g$ links weighted sum of features (linear predictor) to $\E$ of specified distribution\\
-        $\leadsto$ LM is a special case: Gaussian distribution with $g$ as identity function 
+        \item Link function $g$ links linear predictor $\xv^\top \beta$ to $\E$ of specified distribution of $y \mid \xv$\\
+        $\leadsto$ LM is special case: Gaussian distribution $y \mid \xv$ with $g$ as identity function 
         \item Link function $g$ and distribution need to be specified by the user
         \item Interaction and polynomial effects can be manually added in the same way as in LMs
         \item Note: Interpretation of weights depend on specified link function and distribution
