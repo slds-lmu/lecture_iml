@@ -302,6 +302,8 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \end{columns}
 \vfill
 \pause
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.6\linewidth}
 \textbf{Interpretation}: If \code{temp} increases by 1 $^{\circ}$C, bike rentals
 \begin{itemize}[<+->]
     \item increase by 160.5 in \code{WINTER} (reference)
@@ -309,7 +311,16 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
     \item decrease by -61.5 (= 160.5 - 222) in \code{SUMMER}
     \item increase by 187.7 (= 160.5 + 27.2) in \code{FALL}
 \end{itemize} %\\\vspace*{0.2cm}
-%\textbf{Note:} Temperature ranges (on x-axis) depend on season $\leadsto$ not acknowledged by LM
+\end{column}
+\begin{column}{0.4\linewidth}
+\lz
+\only<6>{\textbf{Note:}
+Temperature values (on x-axis) depend on \code{season}\\
+$\leadsto$ not acknowledged by LM\\
+$\leadsto$ misleading interpretation due to extrapolation in regions with few points (e.g. low \code{temp} in \code{SUMMER})
+}
+\end{column}
+\end{columns}
 %Value ranges of temperature differ depending on the season $\leadsto$ not acknowledged by LM
 \end{frame}
 
@@ -409,15 +420,16 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
     %Aim: Feature selection (sparsity) and regularization of feature weights
     \item Penalization parameter $\lambda$ must be chosen (e.g., by CV) %or depending on the number of features to keep
 \end{itemize}
+
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.65\textwidth}
 $$
 min_{\beta} \bigg(\underbrace{\frac{1}{n} \sum_{i=1}^{n} (y^{(i)} - {\xi}^{\top} \beta)^2}_\text{Least square estimate for LM} + \lambda||\beta||_1\bigg)
 $$
 %\vspace*{0.2cm}\\
 %\vspace*{-0.4cm}
 \pause
-\begin{columns}[T, totalwidth=\linewidth]
-\begin{column}{0.65\textwidth}
-\textbf{Example}
+\textbf{Example} (interpretation of weights analogous to LM):
 \begin{itemize}
     \item LASSO with main effects and interaction \code{temp} with \code{season}
     \item $\lambda$ is chosen such that 6 features are selected (not zero)
@@ -429,8 +441,9 @@ $$
 \end{itemize}
 \end{column}
 \begin{column}{0.35\textwidth}
-\tiny
-\begin{table}[ht]
+\lz\lz
+\scriptsize
+%\begin{table}[b]
 \centering
 \begin{tabular}{rr}
   \hline
@@ -450,7 +463,7 @@ $$
   seasonFALL:temp & 30.2 \\ 
    \hline
 \end{tabular}
-\end{table}
+%\end{table}
 % \begin{table}[ht]
 % \centering
 % \begin{tabular}{rr}
