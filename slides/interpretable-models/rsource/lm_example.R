@@ -27,4 +27,4 @@ gg2 = ggplot(d, aes(x = x, y = y)) +
 res = grid.arrange(gg1, gg2, ncol = 2) 
 
 
-ggsave("slides/interpretable-models/figure/lm_example.pdf", gg1, width = 6, height = 4)
+ggsave("slides/interpretable-models/figure/lm_example.pdf", gg1, width = 5, height = 3)
