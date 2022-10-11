@@ -22,8 +22,8 @@
 
 \newcommand{\titlefigure}{figure/whitebox}
 \newcommand{\learninggoals}{
-\item Interpretation of main effects
-\item Inclusion of interactions and polynomials 
+\item Interpretation of main effects in LM
+\item Inclusion of high-order and interaction effects
 \item Regularization via LASSO
 %\item Examples of popular interpretable models
 %\item Properties of some interpretable models
@@ -62,10 +62,10 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
    \pause
     \textbf{Properties and assumptions} \citebutton{Checking assumptions in R \& Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b}
     \begin{itemize}[<+->]
-    \item Predictions are a \textbf{linear} combination of features $\leadsto$ model equation is additive% and identical across entire input space
+    \item Predictions are a \textbf{linear} combination of features $\leadsto$ model equation is additive and linear% and identical across entire input space
     \item $\epsilon$ and $y \vert \xv$ are \textbf{normally} distributed with \textbf{constant variance} (homoscedastic)\\
     $\leadsto$ $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \beta, \sigma^2)$\\
-    $\leadsto$ if violated, inference-based metrics (t-statistic, p-values, confidence intervals) are invalid
+    $\leadsto$ if violated, inference-based metrics (e.g., t-statistics, p-values) are invalid
     %\item Error terms are assumed to have a \textbf{constant variance} over the entire feature space %(homoscedasticity)
     \item Independence of observations (e.g., no autocorrelated error terms)
     \item Independence of features $x_j$ with error term $\epsilon$
@@ -313,12 +313,12 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \end{itemize} %\\\vspace*{0.2cm}
 \end{column}
 \begin{column}{0.4\linewidth}
-\lz
-\only<6>{\textbf{Note:}
-Temperature values (on x-axis) depend on \code{season}\\
-$\leadsto$ not acknowledged by LM\\
-$\leadsto$ misleading interpretation due to extrapolation in regions with few points (e.g. low \code{temp} in \code{SUMMER})
-}
+% \lz
+% \only<6>{\textbf{Note:}
+% Temperature values (on x-axis) depend on \code{season}\\
+% $\leadsto$ not acknowledged by LM\\
+% $\leadsto$ misleading interpretation due to extrapolation in regions with few points (e.g. low \code{temp} in \code{SUMMER})
+% }
 \end{column}
 \end{columns}
 %Value ranges of temperature differ depending on the season $\leadsto$ not acknowledged by LM

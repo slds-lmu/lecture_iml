@@ -28,11 +28,11 @@
 
 \textbf{Problem}: Target variable given the features not always normally distributed $\leadsto$ LM not suitable
 \begin{itemize}
-    \item Target is binary (e.g., disease classification)\\
+    \item Target is binary (e.g., disease classification)
     $\leadsto$ Bernoulli / Binomial distribution
-    \item Target is count variable (e.g., number of sold products)\\
+    \item Target is count variable (e.g., number of sold products)
     $\leadsto$ Poisson distribution
-    \item Time until an event occurs (e.g., time until death)\\
+    \item Time until an event occurs (e.g., time until death)
     $\leadsto$ Gamma distribution
 \end{itemize}
 \medskip
@@ -71,21 +71,31 @@ $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^
  	
 \begin{frame}{GLM - Logistic Regression}
 \begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.6\textwidth}
+\begin{column}{0.62\textwidth}
 
 \begin{itemize}
     \item<1-> Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function: 
-    $$g(x) = \log\left(\tfrac{x}{1 - x}\right) \; \Rightarrow \; g^{-1}(x) = \tfrac{1}{1+\exp(-x)} $$
+    $$g(x) = \log\left(\frac{x}{1 - x}\right) \; \Rightarrow \; g^{-1}(x) = \frac{1}{1+\exp(-x)} $$
     \item<1-> Models probabilities for binary classification by
-    $$\E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \beta) = \tfrac{1}{1 + \exp(-( \xv^\top \beta ))} $$
+    $$\E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \beta) = \frac{1}{1 + \exp(- \xv^\top \beta)} $$
     %\item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification 
     %\item Logistic regression formula:
     %$$P(y = 1) =\frac{1}{1 + \exp(-( \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p ))} $$
         \end{itemize}
 \end{column}
-\begin{column}{0.4\textwidth}
+\begin{column}{0.38\textwidth}
 
+\begin{columns}[c, totalwidth=\linewidth]
+\begin{column}{0.005\linewidth}
+\scriptsize
+\rotatebox[origin=c]{90}{\hspace{10pt}$P(y = 1)$}
+\end{column}
+\begin{column}{0.995\linewidth}
 \includegraphics[width = \textwidth]{figure/Logistic-curve.pdf}
+\scriptsize\centerline{$\xv^\top \beta$}
+\end{column}
+\end{columns}
+
 
 \end{column}
 \end{columns}
@@ -132,15 +142,20 @@ $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^
 \begin{frame}[c]{GLM - Logistic Regression - Interpretation}
 
     \begin{itemize}
-        \item Weights $\beta_j$ relate to log odds $\leadsto$ Effects are again linear (but w.r.t. log odds)
-        $$log\text{ }odds = \log \left(\frac{P(y = 1)}{1 - P(y=1)}\right) = \log \left(\frac{P(y = 1)}{P(y=0)}\right) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p  $$
+        \item \textbf{Recall:} Odds is the quotient of two probabilities, odds ratio compares the ratio of two odds 
+        \item Weights $\beta_j$ are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
+        %relate to log-odds %$\leadsto$ Effects are linear as in LM (but w.r.t. log-odds)
+        $$log\text{-}odds = \log \left(\frac{P(y = 1)}{1 - P(y=1)}\right) = \log \left(\frac{P(y = 1)}{P(y=0)}\right) = \beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p  $$
+        \textbf{Interpretation:} Changing $x_j$ by one unit, changes log-odds of class 1 compared to class 0 by $\beta_j$%\\
+        %$\leadsto$ Effects are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
         \pause
-        \item Odds can be caulculated by 
-        $$odds = \left(\frac{P(y = 1)}{P(y=0)}\right) = \exp(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p)  $$
-        \item \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} by a \textbf{factor} of $\exp(\beta_j)$
+        \item Odds for class 1 vs. class 0: %Odds can be caulculated by:
+        $odds = \displaystyle\frac{P(y = 1)}{P(y=0)}= \exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p)$
+        \item Instead of interpreting changes w.r.t. log-odds, it is more common to use odds ratios:
         $$odds\text{ }ratio = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_j (x_j+1) + \ldots + \beta_p x_p)}{\exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_j x_j + \ldots + \beta_p x_p)} = \exp{(\beta_j)} $$
-        \pause
-        \item Interpretation for different feature types is the same as for linear regression (however, linear interpretation only possible w.r.t. log odds $\leadsto$ difficult to comprehend)
+        \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\beta_j)$
+        %\pause
+        %\item Interpretation for different feature types is the same as for linear regression (however, linear interpretation only possible w.r.t. log odds $\leadsto$ difficult to comprehend)
     \end{itemize}	
 
 \end{frame}
@@ -156,11 +171,10 @@ $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^
     \item Fit a logistic regression model (GLM with Bernoulli distribution and logit link)
 \end{itemize}
 
-\begin{columns}[T]
-\begin{column}{0.45\textwidth}
-\begin{table}[ht]
+\begin{columns}[T, totalwidth = \textwidth]
+\begin{column}{0.55\textwidth}
+%\begin{table}[ht]
 \centering
-\scriptsize
 % \begin{tabular}{rrrrr}
 %   \hline
 %  & Weights & SE & z value & p-value \\ 
@@ -175,6 +189,7 @@ $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^
 %   days\_since\_2011 & 0.0 & 0.0 & 11.6 & 0.00 \\ 
 %   \hline
 % \end{tabular}
+\begin{scriptsize}
 \begin{tabular}{rrrr}
   \hline
  & Weights & SE & p-value \\ 
@@ -189,21 +204,23 @@ $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^
   days\_since\_2011 & 0.02 & 0.00 & 0.00 \\ 
    \hline
 \end{tabular}
-\end{table}
+\end{scriptsize}
+%\end{table}
 \pause
-\textbf{Interpretation}
-\begin{itemize}
-    %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
-    \item If \code{temp} increases by 1$^\circ C$, the odds for ``high number of bike rentals'' increase by the factor $\exp (0.29) = 1.34$, c.p.
-\end{itemize}
 \end{column}
 \hfill
 %\pause
-\begin{column}{0.5\textwidth}
-\includegraphics[width = \textwidth]{figure/logistic_marginal_temp.pdf}
+\begin{column}{0.45\textwidth}
+\includegraphics[width = 0.9\textwidth]{figure/logistic_marginal_temp.pdf}
 \end{column}
 \end{columns}
 
+\textbf{Interpretation}
+\begin{itemize}
+    %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
+    \item If \code{temp} increases by 1$^\circ C$, odds ratio for class 1 increases by factor $\exp (0.29) = 1.34$ compared to class 0, c.p. ($\hat =$ ``high number of bike rentals'' become 1.34 times more likely)
+    %\item If \code{season} is SPRING instead of WINTER (reference), odds ratio for class 1 increases by factor $\exp (1.74) = 1.34$ compared to class 0
+\end{itemize}
 \end{frame}
 
 %------------------------------------------------------------------
