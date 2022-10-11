@@ -44,13 +44,13 @@
     %$$\mathbb{E}_Y(Y \vert X) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p + \epsilon = X^T\mathbf{\beta} + \epsilon$$
 
 \begin{columns}[T, totalwidth = \linewidth]
-\begin{column}{0.6\linewidth}
+\begin{column}{0.58\linewidth}
 $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \beta + \epsilon$$
 
  \begin{itemize}
         %\item $\mathbb{E}_Y(Y \vert X)$ expected value of target given features $X$
         \item $y$: target / output
-        \item $\epsilon$: remaining error / residual term (e.g., due to noise)
+        \item $\epsilon$: remaining error / residual (e.g., due to noise)
         \item $\beta_j$: weight of input feature $x_j$ (with intercept $\beta_0$)\\
         $\leadsto$ model consists of $p+1$ weights
         %\item Model equation is additive and identical across entire input space
@@ -62,21 +62,23 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
         % \end{itemize}
     \end{itemize}
 \end{column}
-\begin{column}{0.4\linewidth}
+\begin{column}{0.42\linewidth}
 \includegraphics[width=\linewidth]{figure/lm_example.pdf}
 \end{column}
 \end{columns}
    
-   \vspace*{0.2cm} 
+   %\vspace*{0.2cm} 
    \pause
     \textbf{Properties and assumptions} \citebutton{Checking assumptions in R \& Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b}
     \begin{itemize}[<+->]
-    \item Predictions are a \textbf{linear} combination of features $\leadsto$ model equation is additive and linear% and identical across entire input space
+    \item \textbf{Linear} relationship between features and target
+    %Predictions are \textbf{linear} combination of features $\leadsto$ 
+    %Model equation is additive and linear w.r.t. features% and identical across entire input space
     \item $\epsilon$ and $y \vert \xv$ are \textbf{normally} distributed with \textbf{constant variance} (homoscedastic)\\
     $\leadsto$ $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \beta, \sigma^2)$\\
-    $\leadsto$ if violated, inference-based metrics (e.g., t-statistics, p-values) are invalid
+    $\leadsto$ if violated, inference-based metrics (e.g., p-values) are invalid
     %\item Error terms are assumed to have a \textbf{constant variance} over the entire feature space %(homoscedasticity)
-    \item Independence of observations (e.g., no autocorrelated error terms)
+    \item Independence of observations (e.g., no repeated measurements) %(e.g., no autocorrelated error terms)
     \item Independence of features $x_j$ with error term $\epsilon$
     \item No or little multicollinearity (i.e., no strong feature correlations)
     % free of measurement error assumption: https://indigo.uic.edu/articles/thesis/Measurement_Error_in_Generalized_Linear_Models/17025971/1/files/31488719.pdf
@@ -123,8 +125,8 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
     \pause
     \textbf{Feature importance}:
     \begin{itemize}
-        \item Absolute t-statistic value: $\hat\beta_j$ scaled with its standard error ($\hat =$ reliability of the estimate) 
-    $$t_{\hat\beta_j} = \left| \tfrac{\hat\beta_j}{SE(\hat\beta_j)} \right|$$
+        \item Absolute t-statistic value: $\hat\beta_j$ scaled with its standard error ($SE(\hat\beta_j)$ $\hat =$ reliability of the estimate) 
+    $$|t_{\hat\beta_j}| = \left| \tfrac{\hat\beta_j}{SE(\hat\beta_j)} \right|$$
         \item High values indicate important (i.e. significant) features
     \end{itemize}
 \end{frame}
