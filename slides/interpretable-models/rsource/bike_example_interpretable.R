@@ -140,11 +140,13 @@ dat = cbind(X, "y" = y_binary)
 
 # fit logistic regression
 mod_log = glm(y ~., family = binomial, data = dat)
-
+mod_log
+table(y_binary, predict(mod_log, type = "response") > 0.5)
+mean(y_binary != (predict(mod_log, type = "response") > 0.5))
 
 # Effect Table
 lm_summary = summary(mod_log)$coefficients
-xtable(lm_summary, digits = c(0,1,1,1,2))
+xtable(lm_summary[,-3], digits = c(0,2,2,2))
 
 # create effect plot
 pred = ggpredict(mod_log, terms = c("temp [-8:35 by = 1]"))
