@@ -277,7 +277,7 @@ $\Rightarrow$ Avoids OVB issue as other unwanted main effects were removed in \e
 $$
 \begin{aligned}
 \hspace*{-0.7cm} 
-\tilde{f}_{S, ALE}(x) &= \underbrace{\int_{z_{0}}^{x}}_{ \eqref{ref3}} \underbrace{\E_{\xv_{-S} \vert x_S}}_{\eqref{ref2}} \Bigg(  \underbrace{\frac{\partial \fh(x_S, \xv_{-S})}{\partial x_S}}_{\eqref{ref1}} \bigg \vert x_S = z_S \Bigg) dz_S = \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}  \frac{\partial \fh(z_S, \xv_{-S})}{\partial z_S} d\P(\xv_{-S} | z_S) \,   \right) dz_S
+\tilde{f}_{S, ALE}(x) &= \underbrace{\int_{z_{0}}^{x}}_{ \eqref{ref3}} \underbrace{\E_{\xv_{-S} \vert x_S}}_{\eqref{ref2}} \Bigg(  \underbrace{\frac{\partial \fh(x_S, \xv_{-S})}{\partial x_S}}_{\eqref{ref1}} \bigg \vert x_S = z_S \Bigg) dz_S % = \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}  \frac{\partial \fh(z_S, \xv_{-S})}{\partial z_S} d\P(\xv_{-S} | z_S) \,   \right) dz_S
 \end{aligned}
 $$
 \pause
@@ -528,10 +528,12 @@ Unlike bivariate PD plots, 2nd-order ALE plots only estimate pure interaction be
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{PD vs. ALE}
+%$$\int_{z_{0}}^{x} \E_{\xv_{-S} \vert x_S} \Bigg(  \frac{\partial \fh(x_S, \xv_{-S})}{\partial x_S} \bigg \vert x_S = z_S \Bigg) dz_S - const$$
+
     \textbf{PD:}
     \centerline{$
     \begin{aligned}
-      \hspace{2cm} f_{S, PD}(x_S) &= \E_{\xv_{-S}} \left( \fh(x_S, \xv_{-S}) \right) = \int_{-\infty}^{\infty} \fh(x_S, \xv_{-S}) \, d\P(\xv_{-S})
+      \hspace{2cm} f_{S, PD}(x_S) &= \E_{\xv_{-S}} \left( \fh(x_S, \xv_{-S}) \right) %= \int_{-\infty}^{\infty} \fh(x_S, \xv_{-S}) \, d\P(\xv_{-S})
     \end{aligned}
     $} \\
     \textbf{ALE:}
@@ -540,12 +542,16 @@ Unlike bivariate PD plots, 2nd-order ALE plots only estimate pure interaction be
       \only<1>{\hspace{1cm}
        f_{S, ALE}(x)
 %&= \int_{z_{0}}^{x} \E_{\xv_C \vert x_S} \left(\textcolor{purple}{\frac{\partial \fh(x_S, \xv_C)}{\partial x_S}} \textcolor{blue}{\bigg \vert x_S = z_S} \right) dz_S - const%\\
- &= \int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}  \textcolor{purple}{\frac{\partial \fh(z_S, \xv_{-S})}{\partial z_S}} d \textcolor{blue}{\P(\xv_{-S} | z_S) } \,   \right) dz_S - const
+ &= 
+ \int_{z_{0}}^{x} \E_{\textcolor{blue}{\xv_{-S} \vert x_S}} \Bigg(  \textcolor{purple}{\frac{\partial \fh(x_S, \xv_{-S})}{\partial x_S}} \bigg \vert x_S = z_S \Bigg) dz_S - const
+ %\int_{z_{0}}^{x} \left( \int_{-\infty}^{\infty}  \textcolor{purple}{\frac{\partial \fh(z_S, \xv_{-S})}{\partial z_S}} d \textcolor{blue}{\P(\xv_{-S} | z_S) } \,   \right) dz_S - const
 }
     \only<2>{\hspace{1cm}
      f_{S, ALE}(x)
 %&= \textcolor{blue}{\int_{z_{0}}^{x}} \E_{\xv_C \vert x_S} \left(\frac{\partial \fh(x_S, \xv_C)}{\partial x_S} \bigg \vert x_S = z_S \right) \textcolor{blue}{dz_S} - const%\\
-  &= \textcolor{blue}{\int_{z_{0}}^{x}} \left( \int_{-\infty}^{\infty}\frac{\partial \fh(z_S, \xv_{-S})}{\partial z_S} d \P(\xv_{-S} | z_S)  \,   \right) \textcolor{blue}{dz_S} - const
+  &= 
+   \textcolor{blue}{\int_{z_{0}}^{x}} \E_{\textcolor{blue}{\xv_{-S} \vert x_S}} \Bigg(  \textcolor{purple}{\frac{\partial \fh(x_S, \xv_{-S})}{\partial x_S}} \bigg \vert x_S = z_S \Bigg) \textcolor{blue}{dz_S - const
+  %\textcolor{blue}{\int_{z_{0}}^{x}} \left( \int_{-\infty}^{\infty}\frac{\partial \fh(z_S, \xv_{-S})}{\partial z_S} d \P(\xv_{-S} | z_S)  \,   \right) \textcolor{blue}{dz_S} - const
 }
 \only<3>{\hspace{1cm}
      f_{S, ALE}(x)
