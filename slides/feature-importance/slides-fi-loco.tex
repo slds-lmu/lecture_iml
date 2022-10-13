@@ -73,7 +73,7 @@ $$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
 \begin{figure}
   \centering
   \includegraphics[width=0.65\textwidth]{figure_man/bike_sharing_loco.pdf}
-\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing data (training set) to optimize MSE. Then LOCO was computed for all features on the test data. The year is the most important feature. Without access to year, the MSE increases by $10^6$.}
+\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing data (training set) to optimize MSE. Then LOCO was computed for all features on the test data. The temperature is the most important feature. Without access to \texttt{temp}, the MSE increases by approx. $140,000$.}
 \end{figure}
 %
  %\textbf{Interpretation:} $\text{LOCO}_j$ quantifies how important variable $x_j$ is to the generalization performance of the learner on $\Dtrain$.\\
@@ -158,8 +158,8 @@ Bottom: LOCO importance of LM fitted on 70\% of the data computed on 30\% remain
 
 \lz\pause
 
-$\Rightarrow$ We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient of $x_2$ is $1.86$)\\\pause
-$\Rightarrow$ We also can't infer (2), e.g., $Cor(x_2, y) = 0.69$ but $\text{LOCO}_2 \approx 0$\\\pause
+$\Rightarrow$ We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient of $x_2$ is $2.05$)\\\pause
+$\Rightarrow$ We also can't infer (2), e.g., $Cor(x_2, y) = 0.68$ but $\text{LOCO}_2 \approx 0$\\\pause
 $\Rightarrow$ We can get insight into (3): $x_2$ and $x_1$ highly correlated with $\text{LOCO}_1 = \text{LOCO}_2  \approx 0$ \\
 \phantom{$\Rightarrow$} $\leadsto$ $x_2$ and $x_1$ can take each others place if one of them is left out (not the case for $x_3$)
 %As $x_2$ and $x_1$ are highly correlated, they can take each others place, which is not the case for $x_3$.
@@ -169,7 +169,7 @@ $\Rightarrow$ We can get insight into (3): $x_2$ and $x_1$ highly correlated wit
 \begin{frame}{Pros and Cons}
   Pros:
   \begin{itemize}
-    \item Requires (only?) one resampling set per feature for evaluation
+    \item Requires (only?) one refitting step per feature for evaluation
     \item Easy to implement
     \item Testing framework available in \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173}
   \end{itemize}
