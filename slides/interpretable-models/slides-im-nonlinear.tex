@@ -175,7 +175,7 @@ s(temp) & 5.8 & 0.00 \\
 Partition data into subsets based on cut-off values in features (found by minimizing a split criterion via greedy search) and predict constant mean $c_m$ in leaf node $\mathcal{R}_m$:
 
 $$
-\hat f(x) = \sum_{m=1}^M c_m \mathds{1}_{\{x \in \mathcal{R}_m\}},
+\hat f(x) = \sum_{m=1}^M c_m \mathds{1}_{\{x \in \mathcal{R}_m\}}
 $$
 
 % \begin{itemize}
@@ -234,7 +234,7 @@ $$
 \textbf{Interpretation}
 \begin{itemize}
     \item Directly by following the tree structure (i.e., sequence of decision rules)
-    \item Importance of $x_j$ based on ``improvement in split criterion'' over all splits where $x_j$ was involved\\
+    \item Importance of $x_j$: Aggregate ``improvement in split criterion'' over all splits where $x_j$ was involved\\
     (e.g., variance for regression or Gini index for classification)
     %Feature importance: How much did split criterion improve compared to parent node% by (scaled) score of how much splitting criterion (e.g. variance) is reduced compared to a parent node
 \end{itemize}
@@ -316,15 +316,17 @@ days\_since\_2011 & 68.03 \\
 \textbf{Decision Rules} \citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
 \begin{itemize}
     \item Simple ``if -- then'' statements - very intuitive and easy-to-interpret
-    \item Common assumption: only classification tasks and categorical features
+    \item Most methods work only for classification tasks and categorical features
 \end{itemize}
 
 \textbf{Naive Bayes}
 \citebutton{Zhang 2004}{https://www.aaai.org/Papers/FLAIRS/2004/Flairs04-097.pdf}
 %$$P (C_k \mid x ) = \frac{1}{Z} P(C_k) \prod_{i=1}^{n} P(x_i \mid C_k) $$
 \begin{itemize}
-    \item Product of probabilities for a class on the value of each feature
-    \item Strong independence assumption
+    \item Uses Bayes' theorem to assign class probabilities to observations
+    %Product of (conditional) probabilities for a class on the value of each feature
+    %For each feature, it calculates the probability for a class depending on the value of the feature. 
+    \item Strong assumption: Independence of features
 \end{itemize}
 
 
@@ -334,6 +336,8 @@ days\_since\_2011 & 68.03 \\
     \item (Closely related to case-based reasoning)
     \item Average of the outcome of neighbors -- local explanation
 \end{itemize}
+
+...
 
 \end{frame}
 

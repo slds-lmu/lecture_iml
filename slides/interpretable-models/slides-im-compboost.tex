@@ -18,8 +18,8 @@
 
 \newcommand{\titlefigure}{figure/compboost_base_linear.pdf}
 \newcommand{\learninggoals}{
-\item Understand additive model structure
-\item Combining base learners}
+\item Model-based boosting with simple base learners
+\item Feature effect and importance in model-based boosting}
 
 \lecturechapter{Model-based Boosting}
 \lecture{Interpretable Machine Learning}
@@ -46,17 +46,20 @@ In each iteration, fit a set of BLs and add the best BL to previous model (using
 %\medskip
 \begin{align*}
 \widehat{f}^{[1]}(x) &= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} \\
-\widehat{f}^{[2]}(x) &= \widehat{f}^{[1]}(x) + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} 
+\visible<4->{\widehat{f}^{[2]}(x) &= \widehat{f}^{[1]}(x) + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} 
 %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})}
 \\
+\visible<5->{
 \widehat{f}^{[3]}(x) &= \widehat{f}^{[2]}(x) + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
 %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
 \\
 &= \hat{f}_0 + \nu \left(\textcolor{blue}{b_3(x_3, \theta^{[1]} + \theta^{[2]})} + \textcolor{orange}{b_1(x_1, \theta^{[3]})}\right) 
 \\
 &= \hat{f}_0 + \textcolor{blue}{\hat{f}_3(x_3)} + \textcolor{orange}{\hat{f}_1(x_1)}
+}
+}
 \end{align*}
-\item<3-> Final model is additive (as GAMs), where each component function is interpretable
+\item<6-> Final model is additive (as GAMs), where each component function is interpretable
 
 \end{itemize}
 \end{frame}
@@ -70,12 +73,11 @@ b_j(x_j, \theta) = x_j\theta + \theta_0 \hspace*{0.2cm}\text{ for } j = 1,\ldots
 $$
 
 \begin{itemize}
-\item After many iterations, it converges to same solution as least square estimate of LMs
-\item Early stopping allows feature selection and might prevent overfitting (regularization)
+\item<1-> Here: Interpretation of weights as in LM
+\item<1-> After many iterations, it converges to same solution as least square estimate of LMs
+\item<2-> Early stopping allows feature selection and might prevent overfitting (regularization)
 %\item Specifying loss and link function according to exponential family leads a (regularized) GLM
-\item Here: Interpretation of weights as in LM
 \end{itemize}
-\pause
 \begin{columns}[T]
 \begin{column}{0.49\textwidth}
 \scriptsize
@@ -109,6 +111,12 @@ days\_since\_2011 & -1791.06 & 4.9 \\
 $\Rightarrow$ Converges to solution of LM
 \end{column}
 \begin{column}{0.49\textwidth}
+
+\only<1>{\scriptsize
+Relative frequency of selected BLs across iterations
+\includegraphics[width = .95 \textwidth]{figure/compboost_base_linear.pdf}}
+
+\pause
 \scriptsize
 \only<2>{
 \begin{table}[ht]
@@ -136,9 +144,6 @@ $\Rightarrow$ Converges to solution of LM
 \centering
 $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 }
-\only<3>{
-Relative frequency of selected BLs across iterations
-\includegraphics[width = .95 \textwidth]{figure/compboost_base_linear.pdf}}
 \end{column}
 \end{columns}
 % \begin{itemize}
@@ -155,25 +160,30 @@ Relative frequency of selected BLs across iterations
     %and categorical base learner for season
 \end{itemize}
 \begin{columns}[T]
-\pause
+\visible<2->{
 \begin{column}{0.5\textwidth}
- \includegraphics[width = 0.9\textwidth]{figure/compboost_pfi.pdf}
- \begin{itemize}
-     \item Feature importance (risk reduction over iter.)\\
-     $\leadsto$ \code{days\_since\_2011} most important
- \end{itemize}
+\hspace{45pt}{\scriptsize{Feature importance}}
+ \includegraphics[width = \textwidth]{figure/compboost_pfi.pdf}
+%Feature importance (risk reduction over iter.)\\
+%$\leadsto$ \code{days\_since\_2011} most important
 %\scriptsize
 %\verbatiminput{figure/mboost_output.txt}
 \end{column}
-\pause
+}
+\visible<3->{
 \begin{column}{0.5\textwidth}  %%<--- here
-  \includegraphics[width = 0.9 \textwidth]{figure/compboost_pfe.pdf}
-  \begin{itemize}
-      \item Partial feature effect for \code{days\_since\_2011}\\
-      $\leadsto$ Total effect: Combination of partial effects of linear BL and centered spline BL 
-  \end{itemize}
+\hspace{20pt}{\scriptsize{Feature effect}}
+  \includegraphics[width = \textwidth]{figure/compboost_pfe.pdf}
+%Partial feature effect for \code{days\_since\_2011}\\
+%$\leadsto$ Total effect: Combination of partial effects of linear BL and centered spline BL
 \end{column}
+}
 \end{columns}
+\begin{itemize}
+    \item<2->  Feature importance (risk reduction over iter.) $\leadsto$ \code{days\_since\_2011} most important
+     \item<3-> Total effect for \code{days\_since\_2011}\\
+$\leadsto$ Combination of partial effects of linear BL and centered spline BL
+\end{itemize}
 \end{frame}
 
 
