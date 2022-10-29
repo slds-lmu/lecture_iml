@@ -275,22 +275,23 @@ cfi_fname = function(fname, model, X_train, X_test) {
   C = colnames(X_train)[colnames(X_train) != fname]
   
   sample = sample_cond(fname, C, X_train, X_test, 1)
-  
+  print(sample)
+
   X_test_perturbed = X_test
-  
+
   # Perturb the feature interested
   X_test_perturbed[fname] = sample
-  
+
   # Predict for the original test data and data after permutation
   predictionForOriginal = predict(model, X_test)
   predictAfterPermutation = predict(model, X_test_perturbed)
-  
+
   original_score = mse(predictionForOriginal, y_test)
   after_perturbed_score = mse(predictAfterPermutation, y_test)
-  
+
   #Calculate the performance
   performance = after_perturbed_score - original_score
-  
+
   return(performance)
 }
 ```
