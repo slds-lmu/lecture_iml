@@ -1,0 +1,146 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+% deactivate beamer navigation
+%\setbeamertemplate{navigation symbols}{}
+%\usepackage{geometry}
+%\geometry{papersize={180mm, 135mm}, top=-1.5mm} % 210mm, 297mm
+
+\usepackage{multicol}
+% set path of iml lecture here, e.g., relative to the current dir
+\newcommand{\pathiml}{../}
+\usepackage{\pathiml/style/lmu-lecture}
+\usepackage{pax}
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+%\useoutertheme{metropolis}
+% remove section slides
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Introduction to IML}
+    \begin{multicols}{2}
+    \tableofcontents[currentsection, subsectionstyle=hide]
+    \end{multicols}
+  \end{frame}
+}
+% includepdf slides, pagecommad will set counter for framenumber
+\usepackage{pdfpages}
+\includepdfset{trim=0mm 0mm 0mm 0mm, pagecommand={\global\setcounter{framenumber}{\value{page}}}}
+% trim=0mm 6mm 0mm 0mm, offset=0 15,
+% add footer:
+\usepackage{framed, color}
+\usepackage{xcolor}
+%\iffalse
+\setbeamertemplate{footline}[text line]{%
+    \noindent\hspace*{\dimexpr-\oddsidemargin-1in\relax}%
+     \colorbox{white}{
+     \makebox[\dimexpr\paperwidth-2\fboxsep\relax]{
+     \color{black}
+     \begin{minipage}[c][4.5ex][c]{0.5\linewidth}
+       \secname
+     \end{minipage}
+     \hfill\begin{minipage}[c][4.5ex][c]{0.5\linewidth}
+       \flushright
+       \insertframenumber{}~/~\inserttotalframenumber~~
+     \end{minipage}
+     }}%
+  \hspace*{-\paperwidth}
+}
+%\fi
+
+\begin{document}
+\setbeamercolor{background canvas}{bg=}
+
+% General remark: hyperlinks in included pdfs are not clickable anymore in the combined pdf unless you use pax to extract annotations from original files and complile this file locally (see https://tex.stackexchange.com/questions/497624/merging-multiple-pdf-files-without-breaking-hyperlinks)
+
+\section{Introduction, Motivation and History}
+\includepdf[pages={1,6-7,11,18-19}]{slides-intro-motivation.pdf}
+\includepdf[pages={11-15}]{slides-le-intro.pdf}
+\includepdf[pages={last}]{slides-intro-motivation.pdf}
+
+\section{Dimensions of Interpretability}
+\includepdf[pages={1-13}]{slides-intro-dimensions.pdf}
+\includepdf[pages={8,13}]{slides-le-counterfactuals.pdf}
+\includepdf[pages={14-last}]{slides-intro-dimensions.pdf}
+\includepdf[pages={28}]{slides-intro-correlation-interaction.pdf}
+%\section{Correlation, Interaction and Pitfalls}
+%\includepdf[pages={1,15,18,28}]{slides-intro-correlation-interaction.pdf}
+
+% \section{Interpretable Models - Examples}
+% \includepdf[pages={1-last}]{slides-im-models.pdf}
+
+\section{Bike Sharing Dataset}
+\includepdf[pages={1-last}]{slides-intro-bike-data.pdf}
+
+\section{Feature Effects - ICE and PDP}
+\includepdf[pages={1-last}]{slides-fe-intro.pdf}
+%\section{Feature Effects - ICE curves}
+\includepdf[pages={2}]{slides-fe-ice.pdf}
+
+%\section{Feature Effects - PD plots}
+\includepdf[pages={7-8}]{slides-fe-pdp.pdf}
+
+% %\section{Feature Effects - ICE curves}
+% \includepdf[pages={2-9}]{slides-fe-ice.pdf}
+% 
+% %\section{Feature Effects - PD plots}
+% \includepdf[pages={4-8}]{slides-fe-pdp.pdf}
+
+% \section{Feature Effects - ALE plots}
+% \includepdf[pages={1-last}]{slides-fe-ale.pdf}
+
+
+% \section{Feature Importance - Intro}
+% \includepdf[pages={1-last}]{slides-fi-intro.pdf}
+
+\section{Feature Importance - PFI}
+\includepdf[pages={2-3,10}]{slides-fi-pfi.pdf}
+
+
+% \section{Feature Importance - CFI}
+% \includepdf[pages={1-last}]{slides-fi-cfi.pdf}
+% 
+% \section{Feature Importance - LOCO}
+% \includepdf[pages={1-last}]{slides-fi-loco.pdf}
+% 
+% \section{Shapley Values - Game Theory}
+% \includepdf[pages={1-last}]{slides-shapley-game-theory.pdf}
+% 
+% 
+% \section{Shapley Values - Global Feature Importance with SAGE}
+% \includepdf[pages={1-18}]{slides-fi-sage.pdf}
+% 
+% \section{Shapley Values - Global Feature Importance with SAGE (Implications \& Axioms)}
+% \includepdf[pages={19-last}]{slides-fi-sage.pdf}
+% 
+% \section{Shapley Values - Local Feature Effects}
+% \includepdf[pages={1-last}]{slides-shapley-ml.pdf}
+% 
+% \section{Optional: Shapley Values - Local Feature Effects with SHAP}
+% \includepdf[pages={1-23}]{slides-shap.pdf}
+% 
+% \section{Optional: Shapley Values - Global Feature Effects with SHAP}
+% \includepdf[pages={28-last}]{slides-shap.pdf}
+% 
+
+% \section{Local Explanations - Intro}
+% \includepdf[pages={9-15}]{slides-le-intro.pdf}
+% 
+% \section{Local Explanations - LIME}
+% \includepdf[pages={1-last}]{slides-le-lime.pdf}
+% %\section{Local Explanations - Examples}
+% \includepdf[pages={2-4,7-last}]{slides-le-lime-examples.pdf}
+% 
+% \section{Local Explanations - LIME Pitfalls}
+% \includepdf[pages={1-last}]{slides-le-lime-pitfalls.pdf}
+
+
+% \section{Local Explanations - Counterfactuals}
+% \includepdf[pages={1-3,8,13}]{slides-le-counterfactuals.pdf}
+% 
+% \section{Local Explanations - Counterfactuals Methods}
+% \includepdf[pages={1-last}]{slides-le-counterfactuals-methods.pdf}
+
+
+% \section{Interpretable Models}
+% \includepdf[pages={1-2, 7, 14-last}]{slides-im-motivation.pdf}
+
+\end{document}

@@ -171,7 +171,7 @@ mod_gam = mgcv::gam(y~season + s(temp) + s(hum) + s(windspeed) + s(days_since_20
 
 # Effect Table
 gam_summary = summary(mod_gam)$s.table
-xtable(gam_summary, digits = c(0,1,1,1,2))
+xtable(gam_summary[,-c(2:3)], digits = c(0,1,2))
 
 # create effect plot
 pdf("slides/interpretable-models/figure/gam_effects.pdf", width = 6, height = 5)
