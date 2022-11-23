@@ -84,45 +84,68 @@
 % \end{frame}
 
 
+% \begin{frame}{Intrinsic vs. Model-Agnostic}
+% %	\begin{center}
+% %		\includegraphics[width=0.8\textwidth]{figure/overview}
+% %	\end{center}
+% 	\begin{center}
+	    
+% 		\begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
+%                         every label/.append style={align=left, font=\footnotesize, text width=4cm}]
+%         \node[main node] (1) { Model Interpretation };
+%         \node[main node,
+%             label={below: 
+%             \tab[0.25cm] - Decision trees \\ 
+%             \tab[0.25cm] - Decision rules \\ 
+%             \tab[0.25cm] - GLMs}
+%             ] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };
+%         \node[main node] (3) [below right = 1cm and -0cm of 1] { Black Box Models };
+%         \node[main node,
+%             label={below: 
+%              - \textbf{Advantage:} Can exploit model structure\\
+%             - Random forest explainer \\ - Visualize activations of NNs}
+%             ] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };
+%         \node[main node, fill=lightgray,
+%             label={below:
+%             - \textbf{Advantage:} Applicable to any model\\ 
+%             - Feature effect methods\\
+%             - Feature importance methods}
+%             ] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };
+%         \draw (1) -- (2);
+%         \draw (1) -- (3);
+%         \draw (3) -- (4);
+%         \draw (3) -- (5);
+
+%     \end{tikzpicture}
+% 	\end{center}
+% \end{frame}
+
 \begin{frame}{Intrinsic vs. Model-Agnostic}
 %	\begin{center}
 %		\includegraphics[width=0.8\textwidth]{figure/overview}
 %	\end{center}
 	\begin{center}
 	    
+	    \resizebox{9.5cm}{3.5cm}{%
 		\begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
                         every label/.append style={align=left, font=\footnotesize, text width=4cm}]
         \node[main node] (1) { Model Interpretation };
-        \node[main node,
-            label={below: 
-            \tab[0.25cm] - Decision trees \\ 
-            \tab[0.25cm] - Decision rules \\ 
-            \tab[0.25cm] - GLMs}
-            ] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };
+        \only<1>{\node[main node, fill=lightgray] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };}
+        \only<2->{\node[main node] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };}
         \node[main node] (3) [below right = 1cm and -0cm of 1] { Black Box Models };
-        \node[main node,
-            label={below: 
-             - \textbf{Advantage:} Can exploit model structure\\
-            - Random forest explainer \\ - Visualize activations of NNs}
-            ] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };
-        \node[main node, fill=lightgray,
-            label={below:
-            - \textbf{Advantage:} Applicable to any model\\ 
-            - Feature effect methods\\
-            - Feature importance methods}
-            ] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };
+        \only<1,3>{\node[main node] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };}
+        \only<2>{\node[main node, fill=lightgray] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };}
+        \only<-2>{\node[main node] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };}
+        \only<3>{\node[main node, fill=lightgray] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };}
         \draw (1) -- (2);
         \draw (1) -- (3);
         \draw (3) -- (4);
         \draw (3) -- (5);
 
-    \end{tikzpicture}
+    \end{tikzpicture}}
 	\end{center}
-\end{frame}
-
-
-\begin{frame}{Intrinsic vs. Model-Agnostic}
-		\begin{columns}
+	
+	\only<1>{\begin{columns}
 		\begin{column}{0.75\textwidth}
 	\begin{itemize}
 		\item<1-> Intrinsically interpretable models:
@@ -130,30 +153,17 @@
 		
 		\begin{itemize}
 		%\itemsep1em
-			\item Examples: linear model and decision tree
+			\item Examples: linear model, decision tree, decision rule, GLMs
 			\item Interpretable because of simple model structure, \\
 			e.g., weighted combination of feature values or tree structure
 			\item Difficult to interpret with many features / complex interactions
 		\end{itemize}
-		
-	\medskip
-	%\pause
-		\item<2-> Model-agnostic interpretation methods:
-		\medskip
-		\begin{itemize}
-		%\itemsep1em
-			\item Applied after training (post-hoc)
-			\item Work for any model $\leadsto$ only access to data and model required
-			%\item Also work for more complex black box models
-			\item Can also be applied to intrinsically interpretable models,\\ e.g., feature importance for linear model %decision trees
-			\item Different types of explanations:\\
-			feature or data attribution, counterfactual explanations
-		\end{itemize}
 	\end{itemize}
 	\end{column}
 	\begin{column}{0.25\textwidth}
-		
-   \only<1-2>{\begin{tikzpicture}[scale=0.75, transform shape]
+	
+	\resizebox{2.75cm}{3cm}{%	
+   \begin{tikzpicture}[scale=0.7, transform shape]
    \usetikzlibrary{arrows}
     \usetikzlibrary{shapes}
      \tikzset{treenode/.style={draw, circle, font=\small}}
@@ -180,8 +190,40 @@
      
    \end{tikzpicture}}
 	\end{column}
-	\end{columns}
+	\end{columns}}
+	
+	\only<2>{\begin{itemize}
+		\item Model-specific methods:
+		\medskip
+		
+		\begin{itemize}
+		%\itemsep1em
+		    \item Interpretation method being applicable to a particular ML model
+		    \item Example: implicitly integrated feature interpretation methods in tree based models, e.g., Gini Importance
+			\item Advantage: Can exploit model structure
+            \item Visualize activations of NNs
+		\end{itemize}
+	\end{itemize}}
+	
+	\only<3>{\begin{itemize}
+		\item Model-agnostic methods:
+		\medskip
+		
+		\begin{itemize}
+		%\itemsep1em
+		    \item Applied after training (post-hoc)
+			\item Work for any model $\leadsto$ only access to data and model required
+			%\item Feature effect methods \& feature importance methods
+			%\item Also work for more complex black box models
+			\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations
+			%, \\e.g., feature importance for linear model %decision trees
+			%\item Different types of explanations:
+			$\leadsto$ feature or data attribution, counterfactual explanations
+		\end{itemize}
+	\end{itemize}}
 \end{frame}
+
+
 
 % \begin{frame}{Model-Agnostic Interpretability}
 % 	\begin{itemize}
@@ -202,94 +244,146 @@
 %     \end{center}
     \begin{center}
         \begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
-                            every label/.append style={align=left, font=\footnotesize, text width=4cm}]
+                            every label/.append style={align=left, font=\footnotesize, text width=4cm},
+                            scale=0.7, transform shape]
             \node[main node] (1) { Model Interpretation };
-            \node[main node,
-                label={below:
-                \tab[0.5cm] - Saliency Maps\\ %\tab[0.5cm] - Hard Masking \\
-                \tab[0.5cm] - Model-agnostic methods \\ 
-                \tab - SHAP\\ 
-                \tab - LIME}
-                ] (2) [below left = 1.3cm and 1.5cm of 1]  { Feature Attribution };
-            \node[main node, text width=3cm, align=center,
-                label={below: \tab[0.5cm] - Influence Functions\\ \tab[0.5cm] - ... }
-                ] (3) [below = 1.3cm of 1] { Data Attribution };
-            \node[main node,
-                label={below:
-                - Contrastive explanations\\ 
-                - Diverse counterfactuals \\ 
-                - Feasible \& actionable explanations}
-                ] (4) [below right = 1.3cm and 1.5cm of 1] { Counterfactual Explanations };
+            \only<-3>{\node[main node, fill=lightgray] (2) [below left = 1.3cm and 1.5cm of 1]  { Feature Attribution };}
+            \only<4->{\node[main node] (2) [below left = 1.3cm and 1.5cm of 1]  { Feature Attribution };}
+            \only<1,2,3,7,8>{\node[main node, text width=3cm, align=center] (3) [below = 1.3cm of 1] { Data Attribution };}
+            \only<4,5,6>{\node[main node, fill=lightgray, text width=3cm, align=center] (3) [below = 1.3cm of 1] { Data Attribution };}
+            \only<-6>{\node[main node] (4) [below right = 1.3cm and 1.5cm of 1] { Counterfactual Explanations };}
+            \only<7->{\node[main node, fill=lightgray] (4) [below right = 1.3cm and 1.5cm of 1] { Counterfactual Explanations };}
             \draw (1) -- (2);
             \draw (1) -- (3);
             \draw (1) -- (4);
     
-        \end{tikzpicture}  
+        \end{tikzpicture} 
     \end{center}
-\end{frame}
-
-
-
-\begin{frame}{Types of Explanations}
-
-	The output of an interpretation technique is an \textbf{explanation}, which can be of different types:
-
-    \medskip
-
-	\begin{itemize}
-  \itemsep1em
-	\item
-		\textbf{Feature attribution:} Produce explanations on a per-feature level, \\
-		e.g., feature effects or feature importance
-		%Identifies (a subset of) features that are most responsible for a decision.
-		\\
-		%Input: feature $\rightarrow$ Output: target
-		$\leadsto$ Vary feature values, inspect how model prediction, model variance or model error changes
-\pause
-	\item
-		\textbf{Data attribution:}
-		Identify training instances that are most responsible for a decision
-\pause
-	\item
-	   \textbf{Counterfactual explanations:}
-	   Identify smallest necessary change in feature values so that a desired outcome is predicted
-	   \\
-		%\smallskip
-		%Input: target $\rightarrow$ Output: feature
-		%Vary target, identify how feature needs to be changed
-
-	\end{itemize}
-
-\end{frame}
-
-
-
-\begin{frame}{Feature Effects vs. Feature Importance}
-
+    
+    \only<1>{\begin{itemize}
+	\item Feature Attribution:
+	\medskip
+		\begin{itemize}
+		%\itemsep1em
+		    \item Produce explanations on a per-feature level, 
+		        e.g., feature effects or feature importance \\
+		    $\leadsto$ Vary feat. values, inspect change of model prediction, model variance or model error
+		\end{itemize}
+	\end{itemize}}
+	
+	\only<2>{%Feature Effects vs. Feature Importance
 	\textbf{Feature Effects} indicate the change in prediction due to changes in feature values.
 	\medskip
-	\begin{center}
-		\includegraphics[page=1, width=0.7\textwidth, trim=0 0 215 0, clip]{figure/feature-effect}
-	\end{center}
-	\begin{itemize}
-		\item Model-agnostic methods: ICE curves, PD plots $\hdots$
-		\item Pendant in linear models: Regression coefficient $\beta_j$
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Feature Effects vs. Feature Importance}
-
+	\begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.4\linewidth}
+	    \begin{itemize}
+	    	\item Model-agnostic methods: \\ ICE curves, PD plots $\hdots$
+	    	\item Pendant in linear models: \\Regression coefficient $\beta_j$
+	    	\item Further examples: Saliency Maps, model-agnostic methods such as SHAP and LIME
+	    \end{itemize}
+	\end{column}
+	\begin{column}{0.6\linewidth}
+    \includegraphics[page=1, width=\textwidth, trim=0 0 215 0, clip]{figure/feature-effect}
+    \end{column}
+	\end{columns}
+	}
+	
+	\only<3>{%Feature Effects vs. Feature Importance
 	\textbf{Feature importance} methods rank features by how much they contribute to the predictive performance or prediction variance of the model.
-	\begin{center}
-		\includegraphics[page=1, width=0.4\textwidth]{figure/feature-importance}
-	\end{center}
-	\begin{itemize}
-		%\itemsep1em
-		\item Model-agnostic methods: PFI, $\hdots$
+	\medskip
+	\begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.55\linewidth}
+	    \begin{itemize}
+	    	\item Model-agnostic methods: PFI, $\hdots$
 		\item Pendant in linear models: t-statistic, p-value (significant effect)
+	    \end{itemize}
+	\end{column}
+	\begin{column}{0.45\linewidth}
+    \includegraphics[width=0.7\textwidth]{figure/feature-importance}
+    \end{column}
+	\end{columns}
+	}
+	
+	\only<4>{\begin{itemize}
+	\item Data Attribution:
+	\medskip
+		\begin{itemize}
+		%\itemsep1em
+			\item Identify training instances that are most responsible for a decision
+		    \item Influence Functions
+		\end{itemize}
+	\end{itemize}}
+	
+	\only<5>{
+	\textbf{Example:} Consider the following prediction:
+	\begin{center}
+		\includegraphics[page=1, width=0.65\textwidth]{figure/Chihuahua_or_muffin_model.png}
+	\end{center}}
+	
+	\only<6>{
+	\textbf{Data attribution:} Which training instances results in the decision for the instance $x$ of the model?
+	\begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.5\linewidth}
+	\begin{center}
+		\includegraphics[page=1, width=0.5\textwidth]{figure/Chihuahua_or_muffin.png} 
+	\end{center}
+	\end{column}
+	\begin{column}{0.5\linewidth}
+	Left: Part of training data set
+	\begin{itemize}
+	    \item[$\leadsto$] Model chose the wrong output (muffin instead of chihuahua)
 	\end{itemize}
-
+	\end{column}
+	\end{columns}}
+	
+	\only<7>{\begin{itemize}
+	\item Counterfactual Explanations:
+	\medskip
+		\begin{itemize}
+		%\itemsep1em
+            \item Identify smallest necessary change in feature values so that a desired outcome is predicted
+		    \item Contrastive explanations 
+            \item Diverse counterfactuals 
+            \item Feasible \& actionable explanations
+		\end{itemize}
+	\end{itemize}}
+	
+	\only<8>{
+	\textbf{Example} (loan application):
+	\begin{center}
+	\includegraphics[page=1, width=0.5\textwidth]{figure/counterfactual.pdf}
+	\end{center}}
 \end{frame}
+
+
+
+
+% \begin{frame}{Feature Effects vs. Feature Importance}
+
+% 	\textbf{Feature Effects} indicate the change in prediction due to changes in feature values.
+% 	\medskip
+% 	\begin{center}
+% 		\includegraphics[page=1, width=0.7\textwidth, trim=0 0 215 0, clip]{figure/feature-effect}
+% 	\end{center}
+% 	\begin{itemize}
+% 		\item Model-agnostic methods: ICE curves, PD plots $\hdots$
+% 		\item Pendant in linear models: Regression coefficient $\beta_j$
+% 	\end{itemize}
+% \end{frame}
+
+% \begin{frame}{Feature Effects vs. Feature Importance}
+
+% 	\textbf{Feature importance} methods rank features by how much they contribute to the predictive performance or prediction variance of the model.
+% 	\begin{center}
+% 		\includegraphics[page=1, width=0.4\textwidth]{figure/feature-importance}
+% 	\end{center}
+% 	\begin{itemize}
+% 		%\itemsep1em
+% 		\item Model-agnostic methods: PFI, $\hdots$
+% 		\item Pendant in linear models: t-statistic, p-value (significant effect)
+% 	\end{itemize}
+
+% \end{frame}
 
 
 \begin{frame}{Explanation using training instances~\citebutton{Koh et al. 2017}{https://arxiv.org/pdf/1703.04730.pdf}}
@@ -311,16 +405,34 @@
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Explanation using Counterfactuals}
-    A counterfactual is small ``imperceptible'' change in $x$ causing a different prediction.\\
-    $\leadsto$ What if a small difference $ |x - x'| \leq \epsilon$ to $x$ causes a large change in the model output ?
-    
-    \textbf{Example} (loan application):
-	\begin{center}
-	\includegraphics[page=1, width=0.7\textwidth]{figure/counterfactual.pdf}
-	\end{center}
+% \begin{frame}{Explanation using training instances}
+%     \textbf{Data attribution:} Which training instances results in the decision for the instance $x$ of the model?
+% 	\vspace{0.4cm}
+% 	\begin{center}
+% 		\includegraphics[page=1, width=0.8\textwidth]{figure/Chihuahua_or_muffin_model.png}
+% 	\end{center}
+% \end{frame}
 
-\end{frame}
+% \begin{frame}{Explanation using training instances}
+% 	\textbf{Data attribution:} Which training instances results in the decision for the instance $x$ of the model?
+% 	\begin{center}
+% 		\includegraphics[page=1, width=0.3\textwidth]{figure/Chihuahua_or_muffin.png} 
+% 	\end{center}
+% 	\begin{itemize}
+% 		\item[$\leadsto$]  Model chose the wrong output
+% 	\end{itemize}
+% \end{frame}
+
+% \begin{frame}{Explanation using Counterfactuals}
+%     A counterfactual is small ``imperceptible'' change in $x$ causing a different prediction.\\
+%     $\leadsto$ What if a small difference $ |x - x'| \leq \epsilon$ to $x$ causes a large change in the model output ?
+    
+%     \textbf{Example} (loan application):
+% 	\begin{center}
+% 	\includegraphics[page=1, width=0.7\textwidth]{figure/counterfactual.pdf}
+% 	\end{center}
+
+% \end{frame}
 
 
 \begin{frame}{Global vs. Local}
@@ -373,16 +485,16 @@ Local interpretation methods explain the model behavior for single data instance
 % \end{frame}
 
 
-\begin{frame}{Fixed Model vs. Refits}
-	\begin{itemize}
-		\itemsep1em
-		\item Most methods we will discuss analyze a fixed, trained model (e.g., PD plots, PFI)
-		\item Some methods require refitting of the model (e.g., PIMP)
-		\item Trained model $\Rightarrow$ Model is the object of analysis
-		\item Refitting $\Rightarrow$ Learning process is the object of analysis
-		\item Advantage of refitting: It includes information about the variability in the learning process
-	\end{itemize}
-\end{frame}
+% \begin{frame}{Fixed Model vs. Refits}
+% 	\begin{itemize}
+% 		\itemsep1em
+% 		\item Most methods we will discuss analyze a fixed, trained model (e.g., PD plots, PFI)
+% 		\item Some methods require refitting of the model (e.g., PIMP)
+% 		\item Trained model $\Rightarrow$ Model is the object of analysis
+% 		\item Refitting $\Rightarrow$ Learning process is the object of analysis
+% 		\item Advantage of refitting: It includes information about the variability in the learning process
+% 	\end{itemize}
+% \end{frame}
 
 
 % \begin{frame}{Intrinsic and Model-Agnostic Interpretation}

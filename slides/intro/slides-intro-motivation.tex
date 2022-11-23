@@ -62,158 +62,9 @@
 			\item[$\leadsto$] Many disciplines with required trust rely on traditional models,\\ e.g., linear models, with less predictive performance
 		\end{itemize}
 	\end{frame}
-
-	%-----------------------------------------------------------------------------------------------------------------------------
-
-	\begin{frame}{Brief History of Interpretability}
-		\begin{itemize}
-			\item 18th and 19th century: linear regression models (Gauss, Legendre, Quetelet)
-			\medskip
-			\item 1940s: emergence of sensitivity analysis (SA)
-			\medskip
-			\item Middle of 20th century: Rule-based ML, incl. decision rules and decision trees
-			\medskip
-			\item 2001: built-in feature importance measure of random forests
-			\medskip
-			\item >2010: Explainable AI (XAI) for deep learning
-			\medskip
-			\item >2015: IML as an independent field of research
-		\end{itemize}
-	\end{frame}
-
-	%-----------------------------------------------------------------------------------------------------------------------------
-\begin{frame}{When do we need interpretability?}
-\begin{columns}[T]
-\begin{column}{0.55\textwidth}
-%  \begin{itemize}
-%   \item Debugging machine learning models
-%   \item Increasing trust in models
-%   \item Analyzing newly developed systems with unknown consequences
-%   \item Decisions about humans
-%   \item Models using proxies instead of causal inputs, e.g. predicting flu outbreaks from google searches.
-%   \item When loss function does not cover constraints like fairness (e.g. credit score) or need for insights (e.g. science).
-% \end{itemize}
-\begin{itemize}
-  \item To \textbf{Discover}: Gain insights about data, distribution and model
-  \pause 
-  \item To \textbf{Improve}: Insights help to identify flaws (in data or model), which can be corrected\\
-  $\leadsto$ Global perspective
-  \pause
-  \item To \textbf{Control}: Explaining individual decisions can prevent unwanted actions based on the model\\
-  $\leadsto$ Local perspective
-  \pause 
-  \item To \textbf{Justify}: Investigate if and why biased, unexpected or discriminatory predictions were made, or improve/reject the model\\
-  $\leadsto$ Fairness perspective
-
-\end{itemize}
-\end{column}
-\begin{column}{0.4\textwidth}  %%<--- here
- %\vspace{0.5cm}
-%  \begin{center}
-%  \begin{figure}
-  \includegraphics[width=0.9\textwidth]{figure/explain-to}
-   \centering \citebutton{Adadi and Berrada 2018}{https://doi.org/10.1109/ACCESS.2018.2870052}
-%  \end{figure}
-%  \end{center}
-\end{column}
-\end{columns}
-     %\lz
-    %\footnote[frame]{Doshi-Velez, F., \& Kim, B. (2017). Towards A Rigorous Science of Interpretable Machine Learning. arXiv: 1702.08608.}
-    %\footnote[frame]{A. Adadi and M. Berrada, "Peeking Inside the Black-Box: A Survey on Explainable Artificial Intelligence (XAI)," in IEEE Access, vol. 6, pp. 52138-52160, 2018.}
-\end{frame}
-
-
-
-% \begin{frame}{Why is Interpretability Important?}
-
-% 	\begin{itemize}
-% 	    \item Machine learning is (mostly) about discovering patterns in data.
-% 	    \medskip
-% 	    \item Unfortunately, it is not guaranteed that ML will identify the correct patterns.
-
-% 	    \medskip
-% 	    \item We humans might not be able to discover patterns ML models discovered.
-% 	    \begin{itemize}
-% 	        \item Good for science or to get new insights.
-% 	        \item Bad in applications where unexpected behavior is not desired.
-% 	    \end{itemize}
-% 	    \medskip
-
-% 	    \item \alert{How can you check whether the model is correct in its inference?}
-% 	\end{itemize}
-
-% \end{frame}
-
-\begin{frame}{Clever Hans \citebutton{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4} }
-
-	\centering
-	\begin{columns}[T]
-	\begin{column}{0.6\textwidth}
-	\includegraphics<1>[width=\textwidth]{figure/horse_without_label.PNG}
-	\includegraphics<2>[width=\textwidth]{figure/horse_with_label.PNG}
-	\includegraphics<3>[width=\textwidth]{figure/horse_map_with_label.PNG}
-	\includegraphics<4>[width=\textwidth]{figure/horse_map_without_label.PNG}
-	\end{column}
-	\begin{column}{0.4\textwidth}
-
-	\begin{itemize}
-	    \item Horse with claimed math skills
-	    \item Answered questions correctly by hoof tapping or head shaking
-	    \item Correct answers were traced to involuntary cues from human's body language $\Rightarrow$ no math skills %asking person
-	    %(e.g., tense attitude)
-	    \item<2-> Image classification: \\
-	    source tag present \\
-	    \onslide<3->{$\Rightarrow$ classified as horse}
-	    \item<4-> no source tag \\ $\Rightarrow$ not classified as horse
-	\end{itemize}
-
-	\end{column}
-	\end{columns}
-\end{frame}
-
-
-% \begin{frame}{Clever Hans \citebutton{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
-
-% 	\centering
-% 	\includegraphics[width=0.6\textwidth]{figure/boats_maps.PNG}
-
-% \end{frame}
-
-
-%%%
-
-\begin{frame}{COMPAS}
-
-    \begin{itemize}
-        \item Correctional Offender Management Profiling for Alternative Sanctions (COMPAS)
-        \item Commercial algorithm used by judges to assess defendant’s likelihood of re-offending
-        \pause
-        \item Predict recidivism risk
-        \begin{itemize}
-            \item i.e., criminal re-offense after previous crime, resulting in jail booking
-            \item different risk levels: high risk, medium risk or low risk
-        \end{itemize}
-        \pause
-        \item Evaluation of recidivism risk based on a questionnaire the defendant has to answer
-    \end{itemize}
-
-\end{frame}
-
-\begin{frame}{COMPAS Model Analysis~\citebutton{Larson et al. 2016}{https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm}}
-
-    \centering
-    \includegraphics[width=0.7\textwidth]{figure/compass_black_white.PNG}
-    % source https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm
-
-    Decile score: 1 (low risk) to 10 (high risk)
-
-	$\leadsto$ Model skewed towards low risk for white defendants
 	
-	$\leadsto$ Strong indication that the model is discriminating black defendants
-
-\end{frame}
-
-\begin{frame}{Need for Interpretability in High-stakes Decisions}
+	
+	\begin{frame}{Need for Interpretability in High-stakes Decisions}
 
 Examples of critical areas where decisions based on ML models can affect human life 
     \begin{itemize}
@@ -242,7 +93,7 @@ Examples of critical areas where decisions based on ML models can affect human l
     The need for interpretability is also becoming increasingly important from a legal perspective
     
     \begin{itemize}
-    \item GDPR requires for some applications that models have to be explainable \citebutton{Goodman \& Flaxman (2017)}{https://doi.org/10.1609/aimag.v38i3.2741}\\
+    \item General Data Protection Regulation (GDPR) requires for some applications that models have to be explainable \citebutton{Goodman \& Flaxman (2017)}{https://doi.org/10.1609/aimag.v38i3.2741}\\
     $\leadsto$ \textit{EU Regulations on Algorithmic Decision-Making and a ``Right to Explanation''} 
     
     \item \textit{Ethics guidelines for trustworthy AI}
@@ -250,6 +101,250 @@ Examples of critical areas where decisions based on ML models can affect human l
 
     \end{itemize}
 \end{frame}
+
+	%-----------------------------------------------------------------------------------------------------------------------------
+
+	\begin{frame}{Brief History of Interpretability}
+		\begin{itemize}
+			\item 18th and 19th century: linear regression models (Gauss, Legendre, Quetelet)
+			\medskip
+			\item 1940s: emergence of sensitivity analysis (SA)
+			\medskip
+			\item Middle of 20th century: Rule-based ML, incl. decision rules and decision trees
+			\medskip
+			\item 2001: built-in feature importance measure of random forests
+			\medskip
+			\item >2010: Explainable AI (XAI) for deep learning
+			\medskip
+			\item >2015: IML as an independent field of research
+		\end{itemize}
+	\end{frame}
+
+	%-----------------------------------------------------------------------------------------------------------------------------
+\begin{frame}{When do we need interpretability?}
+\begin{columns}[T]
+\begin{column}{0.6\textwidth}
+%  \begin{itemize}
+%   \item Debugging machine learning models
+%   \item Increasing trust in models
+%   \item Analyzing newly developed systems with unknown consequences
+%   \item Decisions about humans
+%   \item Models using proxies instead of causal inputs, e.g. predicting flu outbreaks from google searches.
+%   \item When loss function does not cover constraints like fairness (e.g. credit score) or need for insights (e.g. science).
+% \end{itemize}
+\begin{itemize}
+  \item To \textbf{Discover}: Gain insights about data, distribution and model
+  \pause 
+  \item To \textbf{Debug, audit and improve}: Insights help to identify flaws (in data or model), which can be corrected (debug and audit)\\
+  $\leadsto$ Global perspective
+  \pause
+  \item To \textbf{explain individual decisions}: Explaining individual decisions can prevent unwanted actions based on the model\\
+  $\leadsto$ Local perspective
+  \pause 
+  \item To \textbf{Justify}: Investigate if and why biased, unexpected or discriminatory predictions were made, or improve/reject the model\\
+  $\leadsto$ Fairness perspective
+
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}  %%<--- here
+ %\vspace{0.5cm}
+%  \begin{center}
+%  \begin{figure}
+  \includegraphics[width=0.9\textwidth]{figure/explain-to}
+   \centering \citebutton{Adadi and Berrada 2018}{https://doi.org/10.1109/ACCESS.2018.2870052}
+%  \end{figure}
+%  \end{center}
+\end{column}
+\end{columns}
+     %\lz
+    %\footnote[frame]{Doshi-Velez, F., \& Kim, B. (2017). Towards A Rigorous Science of Interpretable Machine Learning. arXiv: 1702.08608.}
+    %\footnote[frame]{A. Adadi and M. Berrada, "Peeking Inside the Black-Box: A Survey on Explainable Artificial Intelligence (XAI)," in IEEE Access, vol. 6, pp. 52138-52160, 2018.}
+\end{frame}
+
+\begin{frame}{Alternative: When do we need interpretability}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\begin{itemize}
+  \item To \textbf{Discover}: Gain insights about data, distribution and model
+  \pause 
+  \item To \textbf{Improve}: Insights help to identify flaws (in data or model), which can be corrected (debug and audit)\\
+  $\leadsto$ Global perspective
+  \pause
+  \item To \textbf{Control}: Explaining individual decisions can prevent unwanted actions based on the model\\
+  $\leadsto$ Local perspective
+  \pause 
+  \item To \textbf{Justify}: Investigate if and why biased, unexpected or discriminatory predictions were made, or improve/reject the model\\
+  $\leadsto$ Fairness perspective
+
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+    \vspace{0.5cm}
+    \def\firstcircle{(90:1cm) circle (2.5cm)}
+    \def\secondcircle{(210:2.5cm) circle (2.5cm)}
+    \def\thirdcircle{(330:2.5cm) circle (2.5cm)}
+    \def\fourthcircle{(90:-3.5cm) circle (2.5cm)}
+    \resizebox{6cm}{5.5cm}{
+    \begin{tikzpicture}
+        \begin{scope}[ fill opacity=0.5]
+            \fill[red] \firstcircle;
+            \fill[green] \secondcircle;
+            \fill[blue] \thirdcircle;
+            \fill[cyan] \fourthcircle;
+        \end{scope}
+        \draw \firstcircle node[text=black,above, text width=2cm, align=center] {Explain to discover};
+        \draw \secondcircle node [text=black, left, text width=2cm, align=center] {Explain to improve};
+        \draw \thirdcircle node [text=black,right, text width=2cm, align=center] {Explain to control};
+        \draw \fourthcircle node [text=black,below, text width=2cm, align=center]{Explain to justify};
+    \end{tikzpicture}}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+
+% \begin{frame}{Why is Interpretability Important?}
+
+% 	\begin{itemize}
+% 	    \item Machine learning is (mostly) about discovering patterns in data.
+% 	    \medskip
+% 	    \item Unfortunately, it is not guaranteed that ML will identify the correct patterns.
+
+% 	    \medskip
+% 	    \item We humans might not be able to discover patterns ML models discovered.
+% 	    \begin{itemize}
+% 	        \item Good for science or to get new insights.
+% 	        \item Bad in applications where unexpected behavior is not desired.
+% 	    \end{itemize}
+% 	    \medskip
+
+% 	    \item \alert{How can you check whether the model is correct in its inference?}
+% 	\end{itemize}
+
+% \end{frame}
+
+\begin{frame}{Example (Explain to discover): Bike Sharing Dataset }
+
+Bike Sharing Dataset: Prediction of the number of bike rentals per day
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figure/bike-sharing02.png}
+\end{center}
+
+\textbf{Interpretation:}
+
+\begin{itemize}
+ \item Year (\code{yr}) and Temperature (temp) are most important features
+ \item $5 \%$ and $95 \%$ quantile of repetitions due multiple permutations are shown as error bars
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Example (Explain to improve): Clever Hans \citebutton{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4} }
+
+	\centering
+	\begin{columns}[T]
+	\begin{column}{0.6\textwidth}
+	\includegraphics<1>[width=\textwidth]{figure/horse_without_label.PNG}
+	\includegraphics<2>[width=\textwidth]{figure/horse_with_label.PNG}
+	\includegraphics<3>[width=\textwidth]{figure/horse_map_with_label.PNG}
+	\includegraphics<4>[width=\textwidth]{figure/horse_map_without_label.PNG}
+	\end{column}
+	\begin{column}{0.4\textwidth}
+
+	\begin{itemize}
+	    \item Horse with claimed math skills
+	    \item Answered questions correctly by hoof tapping or head shaking
+	    \item Correct answers were traced to involuntary cues from human's body language $\Rightarrow$ no math skills %asking person
+	    %(e.g., tense attitude)
+	    \item<2-> Image classification: \\
+	    source tag present \\
+	    \onslide<3->{$\Rightarrow$ classified as horse}
+	    \item<4-> no source tag \\ $\Rightarrow$ not classified as horse
+	\end{itemize}
+
+	\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Example (Explain to improve): Neural Net Tank \citebutton{gwern.net}{https://www.gwern.net/Tanks} }
+
+	\centering
+	\begin{columns}[T]
+	\begin{column}{0.6\textwidth}
+	\includegraphics[width=\textwidth]{figure/tank.jpg}
+	\end{column}
+	\begin{column}{0.4\textwidth}
+
+	\begin{itemize}
+	    \item Researchers created a neural network to detect camouflaged tanks
+        \item Model showed good predictive performance in training data set
+        \item Application outside this data set proved to be a failure
+        \item Reasons vary depending on the source, in general the NN based its decision on irrelevant points in the image
+	\end{itemize}
+
+	\end{column}
+	\end{columns}
+\end{frame}
+
+
+% \begin{frame}{Clever Hans \citebutton{Lapuschkin et al. 2019}{https://www.nature.com/articles/s41467-019-08987-4}}
+
+% 	\centering
+% 	\includegraphics[width=0.6\textwidth]{figure/boats_maps.PNG}
+
+% \end{frame}
+
+\begin{frame}{Example (Explain to control): tbd }
+
+\end{frame}
+
+%%%
+
+\begin{frame}{Example (Explain to justify): COMPAS}
+
+    \begin{itemize}
+        \item Correctional Offender Management Profiling for Alternative Sanctions (COMPAS)
+        \item Commercial algorithm used by judges to assess defendant’s likelihood of re-offending
+        \pause
+        \item Predict recidivism risk
+        \begin{itemize}
+            \item i.e., criminal re-offense after previous crime, resulting in jail booking
+            \item different risk levels: high risk, medium risk or low risk
+        \end{itemize}
+        \pause
+        \item Evaluation of recidivism risk based on a questionnaire the defendant has to answer
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Example (Explain to justify): COMPAS~\citebutton{Larson et al. 2016}{https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm}}
+    Discrete Analysis: 
+    \vspace{0.5cm}
+    
+    \centering
+    \includegraphics[width=0.7\textwidth]{figure/compass_black_white.PNG}
+    % source https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm
+
+    Decile score: 1 (low risk) to 10 (high risk)
+
+	$\leadsto$ Model skewed towards low risk for white defendants
+	
+	$\leadsto$ Strong indication that the model is discriminating black defendants
+
+\end{frame}
+
+\begin{frame}{Example (Explain to justify): COMPAS~\citebutton{Alvarez-Melis and Jaakkola 2018}{https://arxiv.org/pdf/1806.08049.pdf}}
+    Feature effects analysis for two examples, using different methods (SHAP and LIME): 
+    \vspace{0.5cm}
+    
+    \centering
+    \includegraphics[width=0.95\textwidth]{figure/COMPAS_shap_lime_example.png}
+    
+    \vspace{0.5cm}
+    $\leadsto$ In both cases the race (african american) has a noticeable positive impact on violent score
+\end{frame}
+
+
 
 
 

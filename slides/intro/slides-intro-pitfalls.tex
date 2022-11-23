@@ -1,0 +1,64 @@
+%TODO: Chapter needs to be improved a lot
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\usepackage[export]{adjustbox}
+\usepackage[most]{tcolorbox}
+
+\newtcolorbox{BlueBox}[2][]{%
+   enhanced,
+   colback   = blue!5!white,
+   colframe  = blue!65!black,
+   arc       = 1mm,
+   outer arc = 1mm,
+   fonttitle = \Large\slshape\textbf,
+   center title,
+   title     = #2,
+   #1}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\begin{document}
+
+\newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\learninggoals}{
+\item General pitfalls of interpretation methods}
+
+\lecturechapter{Pitfalls}
+\lecture{Interpretable Machine Learning}
+%
+%
+
+\begin{frame}[t]{Pitfalls and Best Practices~\citebutton{Molnar et. al (2021)}{https://arxiv.org/abs/2007.04131v2}}
+
+\begin{itemize}[<+->]
+    \item \textbf{Proper training and evaluation}:
+    To gain insights into data generating process, deployed model should at least generalize well to unseen data (garbage in, garbage out)
+    %Model interpretation is only as good as the underlying model (garbage in, garbage out).
+    \item \textbf{Avoid unnecessary complexity}: Prefer simple interpretable models and use them as baseline
+    \item \textbf{Quantify uncertainty}: Interpretation methods are often (statistical) estimators \\
+    $\leadsto$ Beware of uncertainty, we may need confidence intervals
+    %To avoid interpretation of noise, include uncertainty estimates for the interpretations, e.g.,  confidence intervals for feature importance.
+    \item \textbf{Careful with causality}:
+     Do you want to understand the model or the nature of DGP?\\
+     $\leadsto$ Your goal should guide the choice of interpretation method
+     %Causal interpretation requires assumptions about relationships in the data and a corresponding model considerations (e.g., including confounders into the model).
+    \item \textbf{Consider dependencies}: Some interpretation methods suffer when features are dependent\\
+    $\leadsto$ Check presence of dependencies and use suitable methods
+    \item \textbf{Beware of simplifications}:
+    % Interpretation methods map complex models to low-dim. explanations
+    % Interpretation methods
+    Mapping of complex models to low-dim. explanations\\
+    $\leadsto$ Information loss, e.g., some interpretation methods hide interactions
+\end{itemize}
+
+\end{frame}
+
+\endlecture
+\end{document}
