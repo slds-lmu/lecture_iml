@@ -2,7 +2,7 @@
 
 This Project offers a free, open source introductory and an overview of interpretable machine learning methods. 
 
-Main course site: https://xxx.netlify.app/
+Main course site: TBA
 
 
 # Contents, License, Team and Further Info
@@ -16,15 +16,13 @@ We strongly believe in open source and collaborative work. Please contact us if
 you think likewise and would like to contribute. 
 See also our [contributing guidelines](CONTRIBUTING.md)
 
-- Are you an ML expert and like the course, but have some feedback or consider 
+- Are you a lecturer and like the course, but have some feedback or consider 
   extending it? 
-  Write an email to Bernd and Fabian (see [Team page](vignettes/team.Rmd)) or
-  Open an [issue](https://github.com/slds-lmu/lecture_iml/issues).
+  Open an [issue](https://github.com/slds-lmu/lecture_iml/issues) and we can discuss your proposal.
 - Are you a student taking the lecture and you spotted a typo, think we 
   should rephrase something be or even would like to 
   provide a new quiz question or coding example? Please consider providing a 
-  pull request. To do so, please check out the *devel* branch of the repo and 
-  add your fixes there. Writing an e-mail or opening an 
+  pull request. Opening an 
   [issue](https://github.com/slds-lmu/lecture_iml/issues) with suggested 
   improvements is obviously very welcome as well!
 - You are none of the above but would like to contribute, get in touch / open
