@@ -191,36 +191,53 @@
    \end{tikzpicture}}
 	\end{column}
 	\end{columns}}
+
 	
-	\only<2>{\begin{itemize}
-		\item Model-specific methods:
-		\medskip
-		
-		\begin{itemize}
-		%\itemsep1em
-		    \item Interpretation method being applicable to a particular ML model
-		    \item Example: implicitly integrated feature interpretation methods in tree based models, e.g., Gini Importance
-			\item Advantage: Can exploit model structure
-            \item Visualize activations of NNs
+	\only<2>{\begin{columns}
+	\begin{column}{0.8\linewidth}
+	    \begin{itemize}
+	        \item Model-specific methods:
+		    \medskip
+			\begin{itemize}
+		    %\itemsep1em
+		        \item Interpretation method being applicable to a particular ML model
+		        \item Example: implicitly integrated feature interpretation methods in tree based models, e.g., Gini Importance
+    			\item Advantage: Can exploit model structure
+                \item Visualize activations of NNs
+		    \end{itemize}
 		\end{itemize}
-	\end{itemize}}
+	\end{column}  
+	\begin{column}{0.2\linewidth}
 	
-	\only<3>{\begin{itemize}
+    \centering \includegraphics[page=1, width=\textwidth]{figure/nn_model}
+    \end{column}
+	\end{columns}}
+		
+	
+	
+	\only<3>{\begin{columns}
+	\begin{column}{0.8\linewidth}
+	    \begin{itemize}
 		\item Model-agnostic methods:
 		\medskip
-		
 		\begin{itemize}
 		%\itemsep1em
 		    \item Applied after training (post-hoc)
 			\item Work for any model $\leadsto$ only access to data and model required
 			%\item Feature effect methods \& feature importance methods
 			%\item Also work for more complex black box models
-			\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations
+			\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations \\
 			%, \\e.g., feature importance for linear model %decision trees
 			%\item Different types of explanations:
 			$\leadsto$ feature or data attribution, counterfactual explanations
 		\end{itemize}
-	\end{itemize}}
+	\end{itemize}
+	\end{column}
+	\begin{column}{0.2\linewidth}
+	\quad \vspace{0.65cm} \quad \\
+    \centering \includegraphics[page=1, width=\textwidth]{figure/counterfactuals_obj}
+    \end{column}
+	\end{columns}}
 \end{frame}
 
 
@@ -434,7 +451,7 @@
 \begin{frame}{Global vs. Local}
 Global interpretation methods explain the model behavior for the entire input space by considering all available observations:
 \begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.5\linewidth}
+    \begin{column}{0.65\linewidth}
 	\begin{itemize}
 		\item Permutation Feature Importance (PFI)
 		\item Partial Dependence (PD) plots
@@ -451,8 +468,12 @@ Local interpretation methods explain the model behavior for single data instance
 		\item ...
 	\end{itemize}
 	\end{column}
-	\begin{column}{0.5\linewidth}
-	\includegraphics[page=1, width=0.5\textwidth, trim=215 0 215 0, clip]{figure/feature-effect}
+	\begin{column}{0.35\linewidth}
+	\begin{center}
+	\includegraphics[page=1, width=0.7\textwidth, trim=215 0 215 43, clip]{figure/feature-effect}
+	\medskip
+	\includegraphics[width=0.7\textwidth]{figure/lime5}
+	\end{center}
 	\end{column}
 	\end{columns}
 \end{frame}
@@ -495,7 +516,7 @@ Local interpretation methods explain the model behavior for single data instance
 % 		\item Some methods require refitting of the model (e.g., PIMP)
 % 		\item Trained model $\Rightarrow$ Model is the object of analysis
 % 		\item Refitting $\Rightarrow$ Learning process is the object of analysis
-% 		\item Advantage of refitting: It includes information about the variability in the learning process
+% 		\item  Advantage of refitting: It includes information about the variability in the learning process
 % 	\end{itemize}
 % \end{frame}
 
