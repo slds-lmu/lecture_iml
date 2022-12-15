@@ -20,10 +20,17 @@ GaussianConditionalEstimator <-
         cov = cov(X_train)
         
         n_in = ncol(train_inputs)
-        n_co = ncol(train_context)
         
+        if(is.null(n_in)){
+          n_in = 1
+        }
+        n_co = ncol(train_context)
+        if(is.null(n_co)){
+          n_co = 1
+        }
         # In R, the index should start from 1.
         inp_ind_from_0 = seq(0, n_in, 1)
+        
         inp_ind <- tail(inp_ind_from_0, -1)
         
         cont_ind_from_0 = seq(n_in, n_in + n_co, 1)
