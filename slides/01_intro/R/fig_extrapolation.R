@@ -2,7 +2,7 @@
 
 library(ggplot2)
 library(patchwork)
-p = readRDS("slides/03_feature-effects/figure/ale_scatter.RDS")
+p = readRDS("../../03_feature-effects/figure/ale_scatter.RDS")
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 # DATA -------------------------------------------------------------------------
