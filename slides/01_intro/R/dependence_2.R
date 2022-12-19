@@ -65,7 +65,7 @@ Others <- function(n = 1000) {
   MyPlot(rbind(xy1, xy2, xy3, xy4), xlim = c(-3-4, 3+4), ylim = c(-3-4, 3+4))
 }
 
-pdf("slides/intro/figure/dependence_2.pdf", width = 7, height = 4)
+pdf("../figure/dependence_2.pdf", width = 7, height = 4)
 par(mfrow = c(3, 7), oma = c(0,0,0,0), mar=c(2,2,2,0))
 MvNormal(800, c(1.0, 0.8, 0.4, 0.0, -0.4, -0.8, -1.0));
 RotNormal(200, c(0, pi/12, pi/6, pi/4, pi/2-pi/6, pi/2-pi/12, pi/2));
