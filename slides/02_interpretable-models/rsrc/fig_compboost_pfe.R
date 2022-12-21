@@ -1,4 +1,6 @@
 source("bike_example_Data.R")
+#remotes::install_github("schalkdaniel/compboost", "dev")
+library(compboost)
 
 # fit compboost model with linear and centered splines for numeric features and categorical
 # base learner for season
