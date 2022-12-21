@@ -5,6 +5,12 @@
 \input{../../style/common.tex}
 \newcommand\tab[1][1cm]{\hspace*{#1}}
 
+\definecolor{imllightblue}{RGB}{184, 198, 210}
+\definecolor{imlmedblue}{RGB}{90, 122, 151}
+\definecolor{imldarkblue}{RGB}{7, 55, 99}
+\definecolor{imlhuegreen}{RGB}{0, 191, 196}
+\definecolor{imlhuered}{RGB}{248, 118, 109}
+
 \tikzset{main node/.style={rectangle,draw,minimum size=1cm,inner sep=4pt},}
 
 \title{Interpretable Machine Learning}
@@ -133,10 +139,10 @@
         \only<1>{\node[main node, fill=lightgray] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };}
         \only<2->{\node[main node] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };}
         \node[main node] (3) [below right = 1cm and -0cm of 1] { Black Box Models };
-        \only<1,3>{\node[main node] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };}
+        \only<1,3->{\node[main node] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };}
         \only<2>{\node[main node, fill=lightgray] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };}
         \only<-2>{\node[main node] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };}
-        \only<3>{\node[main node, fill=lightgray] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };}
+        \only<3->{\node[main node, fill=lightgray] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };}
         \draw (1) -- (2);
         \draw (1) -- (3);
         \draw (3) -- (4);
@@ -216,28 +222,48 @@
 	
 	
 	\only<3>{\begin{columns}
-	\begin{column}{0.8\linewidth}
+	\begin{column}{0.7\linewidth}
 	    \begin{itemize}
 		\item Model-agnostic methods:
 		\medskip
 		\begin{itemize}
 		%\itemsep1em
+			\item In ML: Tune over many model classes \\ 
+            $\leadsto$ Unknown which model is best / deployed \\
+            $\leadsto$  Need for interpretation methods applicable to any model
 		    \item Applied after training (post-hoc)
-			\item Work for any model $\leadsto$ only access to data and model required
-			%\item Feature effect methods \& feature importance methods
-			%\item Also work for more complex black box models
-			\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations \\
-			%, \\e.g., feature importance for linear model %decision trees
-			%\item Different types of explanations:
-			$\leadsto$ feature or data attribution, counterfactual explanations
-		\end{itemize}
+      \item Applicable to intrinsically interpretable models\\
+       $\leadsto$ provides insights into other types of explanations \\
+		      %\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations 
+		      %$\leadsto$ feature or data attribution, counterfactual explanations
+   \end{itemize}
 	\end{itemize}
 	\end{column}
-	\begin{column}{0.2\linewidth}
-	\quad \vspace{0.65cm} \quad \\
+	\begin{column}{0.3\linewidth}
+	\quad \vspace{0.15cm} \quad \\
     \centering \includegraphics[page=1, width=\textwidth]{figure/counterfactuals_obj}
     \end{column}
 	\end{columns}}
+
+
+ %    \only<4>{\begin{columns}
+	% \begin{column}{0.7\linewidth}
+ %        \begin{itemize}
+ %        \item Model-agnostic methods:
+ %        \medskip
+	%     \begin{itemize}
+	% 	      \item Model-agnostic methods work for any model \\ $\leadsto$ Only access to data and model required 
+ %             \item Also applicable to intrinsically interpretable models to additionally gain insights into other types of explanations \\
+	% 	      %\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations 
+	% 	      $\leadsto$ feature or data attribution, counterfactual explanations
+ %        \end{itemize}
+	% \end{itemize}
+	% \end{column}
+	% \begin{column}{0.3\linewidth}
+	% \quad \vspace{0.15cm} \quad \\
+ %    \centering \includegraphics[page=1, width=\textwidth]{figure/counterfactuals_obj}
+ %    \end{column}
+	% \end{columns}}
 \end{frame}
 
 
@@ -349,7 +375,10 @@
     \end{column}
 	\end{columns}}
 	
-	\only<7>{\begin{itemize}
+	\only<7>{\quad \vspace{0.15cm} \quad \\
+    \begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.65\linewidth}
+	\begin{itemize}
 	\item Counterfactual Explanations:
 	\medskip
 		\begin{itemize}
@@ -359,7 +388,13 @@
             \item Diverse counterfactuals 
             \item Feasible \& actionable explanations
 		\end{itemize}
-	\end{itemize}}
+    \end{itemize}
+    \end{column}
+	\begin{column}{0.3\linewidth}
+	
+        \centering \includegraphics[page=1, width=\textwidth]{figure/counterfactuals_obj}
+    \end{column}
+	\end{columns}}
 	
 	\only<8>{
 	\textbf{Example} (loan application):
@@ -509,16 +544,16 @@ Local interpretation methods explain the model behavior for single data instance
 % \end{frame}
 
 
-% \begin{frame}{Fixed Model vs. Refits}
-% 	\begin{itemize}
-% 		\itemsep1em
-% 		\item Most methods we will discuss analyze a fixed, trained model (e.g., PD plots, PFI)
-% 		\item Some methods require refitting of the model (e.g., PIMP)
-% 		\item Trained model $\Rightarrow$ Model is the object of analysis
-% 		\item Refitting $\Rightarrow$ Learning process is the object of analysis
-% 		\item  Advantage of refitting: It includes information about the variability in the learning process
-% 	\end{itemize}
-% \end{frame}
+\begin{frame}{Fixed Model vs. Refits}
+	\begin{itemize}
+		\itemsep1em
+		\item Most methods we will discuss analyze a fixed, trained model 
+		\item Some methods require refitting of the model 
+		\item Trained model $\Rightarrow$ Model is the object of analysis
+		\item Refitting $\Rightarrow$ Learning process is the object of analysis
+		\item  Advantage of refitting: It includes information about the variability in the learning process
+	\end{itemize}
+\end{frame}
 
 
 % \begin{frame}{Intrinsic and Model-Agnostic Interpretation}
@@ -612,6 +647,21 @@ Local interpretation methods explain the model behavior for single data instance
 %   \end{itemize}
 % \end{frame}
 
+\begin{frame}{Levels of interpretability}
+	\begin{center}
+        \begin{tabular}{ >{\centering\arraybackslash}m{0.1\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.36\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
+         && \textbf{Requirement} && \textbf{Approach} \\ &&&\\
+         
+         1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}\textit{understand} (deployed) models \centerline{$\theta \mapsto \hat{f}(\theta)$} && \cellcolor{imldarkblue}\color{white} 1. Develop/extend interpretation methods for improved insights  \newline 2. Design optimization algorithms that favor interpretable models  \\ &&&\\
+         
+         2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}\textit{understand} decisions made by AutoML systems for a given task 
+         \centerline{$\lambda\mapsto \hat{c}(\lambda)$} 
+         && \cellcolor{imlmedblue}\color{white}\centerline{Adapt IML methods}\leavevmode \centerline{to interpret AutoML systems} \leavevmode\\ &&&\\
+         
+        3\textsuperscript{rd} level view && \cellcolor{imllightblue}\textit{understand} properties of optimizers / ML algorithms in general && \cellcolor{imllightblue}Conduct large-scale benchmarks \centerline{and analyze the results} \leavevmode\\ &&&\\
+    \end{tabular}
+\end{center}
+\end{frame}
 
 \endlecture
 \end{document}
