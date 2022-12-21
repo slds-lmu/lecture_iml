@@ -5,7 +5,7 @@ y = runif(1000, min = -10, max = 10)
 z = x^3 * y
 df = data.frame(x, y, z)
 
-png("slides/intro/figure/interaction.png")
+png("../figure/interaction.png")
 # plot(y, z)
 library(mlr)
 library(plot3D)

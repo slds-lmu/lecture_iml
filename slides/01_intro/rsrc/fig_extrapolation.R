@@ -2,7 +2,7 @@
 
 library(ggplot2)
 library(patchwork)
-p = readRDS("slides/feature-effects/figure/ale_scatter.RDS")
+p = readRDS("../../03_feature-effects/figure/ale_scatter.RDS")
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 # DATA -------------------------------------------------------------------------
@@ -59,5 +59,5 @@ ppermute = p + ylim(-8, 6) +
   labs(colour = "Data Points") +
   theme(legend.position =  "bottom", legend.title = element_blank())
 
-ggsave("slides/intro/figure/extrapolation.pdf", pgrid + ppermute,
+ggsave("../figure/extrapolation.pdf", pgrid + ppermute,
   width = 10, height = 3)
