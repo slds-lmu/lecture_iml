@@ -1,7 +1,8 @@
 # correlation
 library(ggplot2)
 library(pbv)
-library(CopulaModel) # devtools::install_github("vincenzocoia/CopulaModel")
+#library(CopulaModel) # devtools::install_github("vincenzocoia/CopulaModel")
+devtools::source_url("https://github.com/giuseppec/CopulaModel/blob/master/R/copcdfpdf.R?raw=TRUE")
 devtools::source_url("https://github.com/UBC-MDS/DSCI_551_stat-prob-dsci/blob/master/supplementary/ggjointmarg.R?raw=TRUE")
 
 set.seed(1)
@@ -13,7 +14,7 @@ p21_layers = list(
 )
 
 xy_seq = seq(-3, 3, length.out = 100)
-grid = expand.grid(x = xy_seq, y= xy_seq)
+grid = expand.grid(x = xy_seq, y = xy_seq)
 
 cor = 0.8
 data_cor = cbind(grid, z = dbvn2(grid$x, grid$y, cor))
@@ -35,5 +36,5 @@ p3 = ggjointmarg(data_norm, dnorm, dnorm, .sample = sample_norm,
 #ggsave(filename = "slides/intro/figure/dependent.pdf", p1, width = 4, height = 3)
 #ggsave(filename = "slides/intro/figure/independent.pdf", p2, width = 4, height = 3)
 
-ggsave(filename = "slides/intro/figure/dnorm_correlation.pdf", p3+p1+p2,
+ggsave(filename = "../figure/dnorm_correlation.pdf", p3 + p1 + p2,
   width = 12, height = 3.8)

@@ -20,7 +20,7 @@ shadowtext = function(x, y = NULL, labels, col = 'black', bg = 'white',
 
 
 
-pdf("slides/intro/figure/interaction_separable.pdf", width = 8.25, height = 5.5)
+pdf("../figure/interaction_separable.pdf", width = 8.25, height = 5.5)
 pred = function(x, y) {
   #(x-10)^2 - (y-10)^2 + (x*y)
   x + y + x*y

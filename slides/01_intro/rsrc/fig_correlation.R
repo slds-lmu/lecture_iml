@@ -8,4 +8,4 @@ p = ggplot(df, aes(x1, x2)) +
   geom_point(pch = 21, color = "steelblue") +
   theme_bw()
 
-ggsave(filename = "slides/intro/figure/correlation.png", p)
+ggsave(filename = "../figure/correlation.png", p)

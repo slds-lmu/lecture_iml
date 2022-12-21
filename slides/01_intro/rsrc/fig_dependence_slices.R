@@ -1,9 +1,10 @@
 library(ggplot2)
 library(purrr)
 library(patchwork)
-library(CopulaModel)
+#library(CopulaModel) # devtools::install_github("vincenzocoia/CopulaModel")
+devtools::source_url("https://github.com/giuseppec/CopulaModel/blob/master/R/copcdfpdf.R?raw=TRUE")
 devtools::source_url("https://github.com/UBC-MDS/DSCI_551_stat-prob-dsci/blob/master/supplementary/ggjointmarg.R?raw=TRUE")
-theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
+theme_set(theme_bw() + theme(plot.margin = grid::unit(c(1,5.5,1,1), "pt")))
 
 
 layout <- "
@@ -128,5 +129,5 @@ plot2 = p + p1 + p2 + plot_layout(design = layout) +
   plot_annotation(title = expression('Dependent')) & # ~P(X[1]~"|"~X[2])!=P(X[1])
   theme(legend.position = 'right', plot.title = element_text(hjust = 0.5))
 
-ggsave(filename = "slides/intro/figure/independent_slice.pdf", plot1, width = 7, height = 3.5)
-ggsave(filename = "slides/intro/figure/dependent_slice.pdf", plot2, width = 7, height = 3.5)
+ggsave(filename = "../figure/independent_slice.pdf", plot1, width = 7, height = 3.5)
+ggsave(filename = "../figure/dependent_slice.pdf", plot2, width = 7, height = 3.5)

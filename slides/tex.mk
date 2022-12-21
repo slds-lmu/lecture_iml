@@ -1,4 +1,4 @@
-TSLIDES = $(shell find . -maxdepth 1 -iname "slides-*.tex")
+TSLIDES = $(shell find . -maxdepth 1 -iname "slides*.tex")
 TPDFS = $(TSLIDES:%.tex=%.pdf)
 
 all: delete $(TPDFS) pax texclean copy
@@ -14,8 +14,8 @@ pax:
 	pdfannotextractor *.pdf
 
 delete:
-	rm -rf slides-*.pdf
-	rm -rf slides-*.pax
+	rm -rf slides*.pdf
+	rm -rf slides*.pax
 
 texclean:
 	rm -rf *.out

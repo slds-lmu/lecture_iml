@@ -9,7 +9,7 @@ theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 negcol = "#F8766D"
 poscol = "#00BFC4"
 set.seed(123)
-load("data/bike.RData")
+load("../../../data/bike.RData")
 mean.temp = mean(bike$temp)
 mean.cnt = mean(bike$cnt)
 
@@ -131,5 +131,5 @@ plot = ggplot(bike, aes(x = temp, y = cnt)) +
   guides(fill = guide_legend(override.aes = list(alpha = 1))) +
   labs(x = expression(X[1]~": Temperature in °C"), y = expression(X[2]~": Number of bike rentals"))
 
-ggsave(filename = "slides/intro/figure/pearson_cor.pdf", plot,
+ggsave(filename = "../figure/pearson_cor.pdf", plot,
   width = 9, height = 5.5)

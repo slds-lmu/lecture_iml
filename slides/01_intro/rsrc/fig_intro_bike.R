@@ -1,6 +1,6 @@
 library(ggpubr)
 library(ggcorrplot)
-load("data/bike.RData")
+load("../../../data/bike.RData")
 
 p = ggplot(data = bike, aes(y = cnt)) #+ ylim(c(0, 10000))
 
@@ -37,4 +37,4 @@ plot = append(plot, list(dens), after = 0)
 
 res = ggarrange(plotlist = plot, common.legend = TRUE, legend = "right")
 
-ggsave("slides/intro/figure/intro_bike.pdf", res, width = 10, height = 5)
+ggsave("../figure/intro_bike.pdf", res, width = 10, height = 5)
