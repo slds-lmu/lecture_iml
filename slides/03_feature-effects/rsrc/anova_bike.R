@@ -8,7 +8,7 @@ library(iml)
 # DATA -------------------------------------------------------------------------
 
 set.seed(123)
-load("data/bike.RData")
+load("../../../data/bike.RData")
 tsk = TaskRegr$new(id = "bike", backend = bike, target = "cnt")
 mod = lrn("regr.ranger")$train(tsk)
 

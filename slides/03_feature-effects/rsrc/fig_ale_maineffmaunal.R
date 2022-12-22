@@ -1,12 +1,12 @@
 # PREREQ -----------------------------------------------------------------------
 
 source(textConnection(
-  readLines("slides/feature-effects/rsrc/ale_maineff.R")[c(1:32, 36:42)]
+  readLines("fig_ale_maineff.R")[c(1:32, 36:42)]
 ))
 
 # PLOT -------------------------------------------------------------------------
 
-pdf("slides/feature-effects/figure/ale_maineffmaunal.pdf")
+pdf("../figure/ale_maineffmaunal.pdf")
 
 par(mfrow = c(2, 2), mar = c(4,4,2,2) + 0.1)
 plot(ALE.1$x.values, ALE.1$f.values, type="l", xlab="x1",
