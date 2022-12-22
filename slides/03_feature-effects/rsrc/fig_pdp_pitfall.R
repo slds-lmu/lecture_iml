@@ -26,4 +26,4 @@ pdp = FeatureEffect$new(pred, "x2", "pdp+ice")
 
 p1 = pdp$plot()
 
-ggsave("slides/feature-effects/figure/pdp_pitfall.pdf", p1)
+ggsave("../figure/pdp_pitfall.pdf", p1)

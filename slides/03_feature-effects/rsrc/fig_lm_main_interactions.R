@@ -2,7 +2,7 @@
 
 library(ggplot2)
 library(patchwork)
-load("data/bike.RData")
+load("../../../data/bike.RData")
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 # PLOT -------------------------------------------------------------------------
@@ -25,4 +25,4 @@ p2 = ggplot(data = bike, aes(x = temp, y = cnt, col = season)) +
 
 p = p1 + p2 + plot_layout(guides = "collect") & theme(legend.position = "bottom")
 
-ggsave("slides/feature-effects/figure/lm_main_interactions.pdf", p, width = 8, height = 3.52)
+ggsave("../figure/lm_main_interactions.pdf", p, width = 8, height = 3.52)
