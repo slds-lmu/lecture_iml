@@ -17,6 +17,6 @@ ggplot(kernel10_df) +
   theme_minimal() +
   geom_label(aes(x = coalition_size, y = kernel_weight,label=z), fill = "black", colour = "white")
   
-ggsave(file = "kernel-weights.pdf", height = 3, width = 4)
+ggsave(file = "../figure_man/kernel-weights.pdf", height = 3, width = 4)
 
 
