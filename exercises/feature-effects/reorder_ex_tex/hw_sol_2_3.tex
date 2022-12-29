@@ -1,0 +1,60 @@
+\loesung{
+\begin{enumerate}[a)]
+\item 
+Overall, all customers, regardless of their personal status and gender, have on 
+average a high probability of being a low (good) risk for the bank. 
+The average marginal prediction for divorced or separated male customers
+reveals a slightly higher risk for this group. 
+\item 
+The ALE is faster to compute and unbiased. Unbiasedness means that it does 
+not suffer from the extrapolation problem which is especially aparent in PDPs 
+when features are correlated.
+% SAY in CLASS:
+% Since \texttt{personal\_status\_sex} is a categorical feature, we cannot 
+% use the Pearson correlation coefficients (even for 
+% numerical features it is not always a good idea (see in-class exercise)). 
+% For two categorical features we can use a $\Chi^2$-test 
+% and for categorical vs. a numerical features we could rely on a one-way ANOVA F-test. 
+\item 
+The following pseudocode computes the pairwise sum of the absolute differences of relative 
+frequencies in the categories of a categorical feature $x_j$ based on a 
+feature $x_k$
+
+%\lstinputlisting{"rsrc/get_diff_cat().R"}
+
+\begin{algorithm}[h]
+\caption{\texttt{get\_diff\_cat()}}
+\begin{algorithmic}[1]
+\Require \texttt{feature.k}: values of categorical feature for which relative frequencies per class are calculated
+\Require \texttt{feature.j}: values of categorical feature for which similarity based on \texttt{feature.k} should be assessed
+\State \texttt{dists} $\gets$ unique class combinations of \texttt{feature.j}
+\State \texttt{x.count} $\gets$ number of observations per class of \texttt{feature.j}
+\State \texttt{A} $\gets$ relative cross table of \texttt{feature.j} and \texttt{feature.k} weighted by \texttt{x.count} (per class of \texttt{feature.j} relative frequencies of classes of \texttt{feature.k} should sum up to 1)
+\State \texttt{dist} $\gets$ sum up distances of probability distributions per unique class combination specified in \texttt{dists}
+\State \textbf{return} \texttt{dist}, \texttt{dists}
+\end{algorithmic}
+\end{algorithm}
+
+For our task at hand, we obtain the following distances
+% \lstinputlisting{"rsrc/run_get_diff_cat.R"}
+\lstinputlisting{"rsrc/run_get_diff_cat.txt"}
+
+Overall, the following ordering of \texttt{personal\_status\_sex} was returned by the method: 
+% \lstinputlisting{"rsrc/run_order_levels.R"}
+\lstinputlisting{"rsrc/run_order_levels.txt"}
+
+
+The ordering seems to be feasible, since categories including females are close to each other 
+and also categories with males. 
+Also the ordering of males according to their relationship status seems to make sense, since typically 
+the process is: single, then married and then divorced :-).
+
+\item \textbf{Bonus:} ALE and PDP are global interpretation tools which base their insights on averages (of predictions or 
+prediction differences) over whole test sets.
+Indeed vulnerable groups are typically not the majority of a population but have a low proportion, 
+and biases might be overlooked.
+Therefore, local explanation tools should be consulted, in addition to these methods in order to 
+identify pointwise biases or discriminative behavior.
+
+\end{enumerate}
+}
