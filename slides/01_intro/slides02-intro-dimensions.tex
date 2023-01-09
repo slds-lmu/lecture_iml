@@ -1,6 +1,7 @@
 \documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
 
 \usepackage{../../style/lmu-lecture}
+\usepackage{makecell}
 % Defines macros and environments
 \input{../../style/common.tex}
 \newcommand\tab[1][1cm]{\hspace*{#1}}
@@ -241,7 +242,7 @@
 	\end{column}
 	\begin{column}{0.3\linewidth}
 	\quad \vspace{0.15cm} \quad \\
-    \centering \includegraphics[page=1, width=\textwidth]{figure/counterfactuals_obj}
+    \centering \includegraphics[page=1, width=0.85\textwidth]{figure/model_agnostic.jpg}
     \end{column}
 	\end{columns}}
 
@@ -545,14 +546,33 @@ Local interpretation methods explain the model behavior for single data instance
 
 
 \begin{frame}{Fixed Model vs. Refits}
+\begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.6\linewidth}
 	\begin{itemize}
-		\itemsep1em
-		\item Most methods we will discuss analyze a fixed, trained model 
-		\item Some methods require refitting of the model 
-		\item Trained model $\Rightarrow$ Model is the object of analysis
-		\item Refitting $\Rightarrow$ Learning process is the object of analysis
-		\item  Advantage of refitting: It includes information about the variability in the learning process
+		%\itemsep1em
+        \item Learner vs. model 
+		\item<2-> Fixed model \\$\Rightarrow$ Trained model is object of analysis
+		\item<3> Refitting \\$\Rightarrow$ Learning process is object of analysis
+		%\item Advantage of refitting: Includes information about variability in learning process
 	\end{itemize}
+    \end{column}
+	\begin{column}{0.4\linewidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{figure/learner_model.jpg}
+        \vspace{0.2cm}
+    \end{column}
+\end{columns}
+
+\begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.5\linewidth}
+	    \centering
+        \includegraphics<2->[width=0.8\textwidth]{figure/model_analysis.jpg}
+    \end{column}
+	\begin{column}{0.5\linewidth}
+        \centering
+        \includegraphics<3>[width=0.8\textwidth]{figure/learner_analysis.jpg}
+    \end{column}
+\end{columns}
 \end{frame}
 
 
@@ -647,18 +667,27 @@ Local interpretation methods explain the model behavior for single data instance
 %   \end{itemize}
 % \end{frame}
 
+
 \begin{frame}{Levels of interpretability}
 	\begin{center}
-        \begin{tabular}{ >{\centering\arraybackslash}m{0.1\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.36\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
-         && \textbf{Requirement} && \textbf{Approach} \\ &&&\\
+        \begin{tabular}{ 
+         >{\centering\arraybackslash}m{0.1\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.36\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
+         \only<1>{&& \textcolor{white}{Requirement} && \textcolor{white}{Approach} \\ &&&\\}
+         \only<2->{&& \textbf{Requirement} && \textbf{Approach} \\ &&&\\
          
-         1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}\textit{understand} (deployed) models \centerline{$\theta \mapsto \hat{f}(\theta)$} && \cellcolor{imldarkblue}\color{white} 1. Develop/extend interpretation methods for improved insights  \newline 2. Design optimization algorithms that favor interpretable models  \\ &&&\\
+         1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}\textit{understand} (deployed) models \centerline{$\theta \mapsto \hat{f}(\theta)$} && \cellcolor{imldarkblue}\color{white} 1. Develop/extend interpretation methods for improved insights  \newline 2. Design optimization algorithms that favor interpretable models  \\ &&&\\}
          
-         2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}\textit{understand} decisions made by AutoML systems for a given task 
+         \only<4->{2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}\textit{understand} decisions made by AutoML systems for a given task 
          \centerline{$\lambda\mapsto \hat{c}(\lambda)$} 
-         && \cellcolor{imlmedblue}\color{white}\centerline{Adapt IML methods}\leavevmode \centerline{to interpret AutoML systems} \leavevmode\\ &&&\\
+         && \cellcolor{imlmedblue}\color{white}\centerline{Adapt IML methods}\leavevmode \centerline{to interpret AutoML systems} \leavevmode\\ &&&\\}
          
-        3\textsuperscript{rd} level view && \cellcolor{imllightblue}\textit{understand} properties of optimizers / ML algorithms in general && \cellcolor{imllightblue}Conduct large-scale benchmarks \centerline{and analyze the results} \leavevmode\\ &&&\\
+        \only<6>{3\textsuperscript{rd} level view && \cellcolor{imllightblue}\textit{understand} properties of optimizers / ML algorithms in general && \cellcolor{imllightblue}Conduct large-scale benchmarks \centerline{and analyze the results} \leavevmode\\ &&&\\}
+
+        \only<1>{1\textsuperscript{st} level view && \multicolumn{3}{c}{How does one particular model given one data set operate?} \leavevmode\\ &&&\\}
+
+        \only<3>{2\textsuperscript{nd} level view && \multicolumn{3}{c}{\makecell{How was a model chosen based on a data set? \\ (E.g., hyperparameter tuning, model class selection)}} \leavevmode\\ &&&\\}
+
+        \only<5>{3\textsuperscript{rd} level view && \multicolumn{3}{c}{\makecell{How do the properties of data sets (e.g., number of observations/variables/ \\missing values) relate to the particular model selection?}} \leavevmode\\} &&&\\
     \end{tabular}
 \end{center}
 \end{frame}

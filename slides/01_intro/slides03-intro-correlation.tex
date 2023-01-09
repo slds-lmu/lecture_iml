@@ -106,18 +106,19 @@
 % \end{frame}
 
 \begin{frame}{Joint, Marginal and Conditional Distribution}
-    Let $X_1, X_2$ be two descrete random variables of two outcome spaces $\mathcal{X}_1, \mathcal{X}_2$, respectively, with joint probability mass function $p(x_1,x_2)$. Then the following definitions hold:\\
+    Let $X_1, X_2$ be two descrete random variables of two outcome spaces $\mathcal{X}_1, \mathcal{X}_2$, respectively. %with joint probability mass function $p(x_1,x_2)$. 
+    Then the following definitions hold:\\
     \begin{columns}[c, totalwidth=\textwidth]
     \begin{column}{0.5\linewidth}
     \begin{itemize}
         \setlength{\itemsep}{0pt}
         \item Joint distribution
         \begin{align*}
-            \mathbb{P}(X_1, X_2) = \sum_{(x_1,x_2)\in (X_1,X_2)} p(x_1,x_2)
+            \mathbb{P}(X_1, X_2) = p(x_1,x_2) %\sum_{(x_1,x_2)\in (X_1,X_2)} p(x_1,x_2)
         \end{align*}
         \item Marginal distribution
         \begin{align*}
-            \mathbb{P}(X_1) = \sum_{x_2\in X_2} p(x_1,x_2)
+            \mathbb{P}(X_1) = \sum_{x_2\in \mathcal{X}_2} p(x_1,x_2)
         \end{align*}
         \item Conditional distribution
         \begin{align*}
@@ -268,7 +269,17 @@ Idea for two-dimensional case:
 
 
 \begin{frame}{Mutual Information}
-    x
+    \begin{itemize}
+        \item MI describes the amount of information about one random variable obtained through the other one or how different the joint distribution is from pure independence
+        \item The MI $I(X_1 ; X_2 )$ is the Kullback-Leibler distance between the joint distribution and the product distribution $\mathbb{P}(X_1) \mathbb{P}(X_2)$:
+        \begin{align*}
+            I(X_1 ; X_2 ) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{x_2 \in \mathcal{X}_2} \mathbb{P}(x_1, x_2) log\left(\frac{\mathbb{P}(x_1, x_2)}{\mathbb{P}(X_1) \mathbb{P}(X_2)} \right) \\
+            &= D_{KL} \left( \mathbb{P}(x_1, x_2) \, || \, \mathbb{P}(X_1) \mathbb{P}(X_2) \right) \\
+            &= \mathbb{E}_{\mathbb{P}(x_1, x_2)} \left[ log\left(\frac{\mathbb{P}(x_1, x_2)}{\mathbb{P}(X_1) \mathbb{P}(X_2)} \right) \right]
+        \end{align*}
+        \item MI is a measure of the amount of "dependence" between variables. It is zero if and only if the variables are independent.
+        \item Unlike (Pearson) correlation, mutual information is not limited to real-valued random variables.
+    \end{itemize}
 \end{frame}
 
 

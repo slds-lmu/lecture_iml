@@ -71,7 +71,7 @@ distributed according to human interpretability
     \bigskip
    \begin{equation*}
              \centering
-    \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
+    \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
 \end{equation*}
     
     
@@ -106,15 +106,18 @@ distributed according to human interpretability
 \begin{frame}{Monte Carlo Sampling}
  
 $$
-\mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})] 
+\mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})] 
 $$
 
 
     \begin{itemize}
         \item \textbf{Trick:} $\nabla_{\boldsymbol{\theta}} \log p(\mathbf{x} ; \boldsymbol{\theta})=\frac{\nabla_{\boldsymbol{\theta}} p(\mathbf{x} ; \boldsymbol{\theta})}{p(\mathbf{x} ; \boldsymbol{\theta})}$
     \end{itemize}
+\medskip
+
+$\leadsto$ In a simplified notation (ignoring $\mathbf{m}$), we get the following:
 $$
-\bigskip
+\smallskip
     \begin{aligned}
         \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,
         \boldsymbol{\eta}:=\nabla_{\boldsymbol{\theta}} \mathcal{F}(\boldsymbol{\theta}) &=\nabla_{\boldsymbol{\theta}} \mathbb{E}_{p(\mathbf{x} ; \boldsymbol{\theta})}[f(\mathbf{x} ; \boldsymbol{\phi})] \\
@@ -128,7 +131,7 @@ $$
 \begin{frame}{Monte Carlo Estimator}
    
 \begin{equation*}
-     \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
+     \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
 \end{equation*}
 
 $$
@@ -156,7 +159,7 @@ $$
 \begin{frame}{Reducing variance}
   
   \begin{equation*}
-     \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
+     \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
 \end{equation*}
 
   \bigskip
