@@ -114,15 +114,15 @@
         \setlength{\itemsep}{0pt}
         \item Joint distribution
         \begin{align*}
-            \mathbb{P}(X_1, X_2) = p(x_1,x_2) %\sum_{(x_1,x_2)\in (X_1,X_2)} p(x_1,x_2)
+            p_{X_1, X_2}(x_1,x_2) = \mathbb{P}(X_1 = x_1, X_2 = x_2) %
         \end{align*}
         \item Marginal distribution
         \begin{align*}
-            \mathbb{P}(X_1) = \sum_{x_2\in \mathcal{X}_2} p(x_1,x_2)
+            p_{X_1}(x_1) = \sum_{x_2\in \mathcal{X}_2} p(x_1,x_2)
         \end{align*}
         \item Conditional distribution
         \begin{align*}
-            \mathbb{P}(X_1 | X_2) = \frac{\mathbb{P}(X_1, X_2)}{\mathbb{P}(X_2)}
+            p_{X_1|X_2}(x_1 | x_2) = \mathbb{P}(X_1=x_1| X_2 = x_2) = \frac{p_{X_1, X_2}(x_1,x_2)}{p_{X_2}(x_2)}
         \end{align*}
     \end{itemize}
     $\leadsto$ Analogue in the continuous case with integrals.
@@ -270,15 +270,15 @@ Idea for two-dimensional case:
 
 \begin{frame}{Mutual Information}
     \begin{itemize}
-        \item MI describes the amount of information about one random variable obtained through the other one or how different the joint distribution is from pure independence
-        \item The MI $I(X_1 ; X_2 )$ is the Kullback-Leibler distance between the joint distribution and the product distribution $\mathbb{P}(X_1) \mathbb{P}(X_2)$:
+        \item MI describes amount of information about one random variable obtained through another one or how different the joint distribution is from pure independence
+        \item $MI(X_1 ; X_2 )$ is the Kullback-Leibler distance between joint distribution and product distribution $p_{X_1} p_{X_2}$:
         \begin{align*}
-            I(X_1 ; X_2 ) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{x_2 \in \mathcal{X}_2} \mathbb{P}(x_1, x_2) log\left(\frac{\mathbb{P}(x_1, x_2)}{\mathbb{P}(X_1) \mathbb{P}(X_2)} \right) \\
-            &= D_{KL} \left( \mathbb{P}(x_1, x_2) \, || \, \mathbb{P}(X_1) \mathbb{P}(X_2) \right) \\
-            &= \mathbb{E}_{\mathbb{P}(x_1, x_2)} \left[ log\left(\frac{\mathbb{P}(x_1, x_2)}{\mathbb{P}(X_1) \mathbb{P}(X_2)} \right) \right]
+            MI(X_1 ; X_2 ) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{x_2 \in \mathcal{X}_2} p(x_1, x_2) log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \\
+            &= D_{KL} \left( p(x_1, x_2) \, || \, p(x_1) p(x_2) \right) \\
+            &= \mathbb{E}_{p(x_1, x_2)} \left[ log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \right]
         \end{align*}
-        \item MI is a measure of the amount of "dependence" between variables. It is zero if and only if the variables are independent.
-        \item Unlike (Pearson) correlation, mutual information is not limited to real-valued random variables.
+        \item MI measures amount of "dependence" between variables. It is zero if and only if the variables are independent.
+        \item Unlike (Pearson) correlation, MI is not limited to real-valued random variables.
     \end{itemize}
 \end{frame}
 
