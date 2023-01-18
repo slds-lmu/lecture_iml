@@ -12,12 +12,10 @@ The associated files are \textit{ale.R} or \textit{ale.py} depending on the prog
 \begin{itemize}
     \item Select the observations inside the interval (if zero observations are found then return 0 for this interval). In general $x_s$ can be counted as included if it is bigger than the lower bound and smaller equals the upper bound. However, make sure the elements in the first bound are included as well.
     \item Intervention: Use the relevant observations to create two new datasets:
-    
     \begin{itemize}
         \item \texttt{X\_min}: Values at $s$-th feature position are replaced by the lower interval value $z_{k-1}$.
         \item \texttt{X\_max}: Values at $s$-th feature position are replaced by the higher interval value $z_k$.
     \end{itemize}
-
     \item Prediction: Get the predictions for both \texttt{X\_min} and \texttt{X\_max}. Compute the
       differences in predictions of \texttt{X\_max} to \texttt{X\_min} and average them. 
     
@@ -25,7 +23,6 @@ The associated files are \textit{ale.R} or \textit{ale.py} depending on the prog
 
 \noindent Use \texttt{cumsum} in R or \texttt{np.cumsum} in Python to perform the aggregation step and therefore to get accumulated values for each interval value. 
 Finally, if the \texttt{center} parameter is set, center each interval by subtracting the average of all interval values\\
-
 \noindent \textit{Hint}: \texttt{mapply} in R or \texttt{zip(bounds, bounds[1:])} in Python are a nice trick to iterate over the lower and upper bounds at the same time.
 
 \item The function \texttt{calculate\_ale()} returns both the used bounds and the ALE data. To use those data with
