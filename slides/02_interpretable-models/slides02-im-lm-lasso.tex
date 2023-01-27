@@ -105,30 +105,39 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
 $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \beta + \epsilon$$
 
     Interpretation of weights (\textbf{feature effects}) depend on type of feature:
-    \begin{itemize}
+    \begin{itemize}[<+->]
         \item \textbf{Numerical $x_j$}: Increasing $x_j$ by one unit changes outcome by $\beta_j$, ceteris paribus (c.p.)
-        \pause
         \item \textbf{Binary $x_j$}: Weight $\beta_j$ is active or not (multiplication with 1 or 0) where 0 is reference category
-        \pause
         \item %Categorical: One-hot-encoding of $L-1$ new features for $L$ categories (dummy encoding) \\
         \textbf{Categorical $x_j$ with $L$ categories}: Create $L-1$ one-hot-encoded features $x_{j,1}, \hdots, x_{j,L-1}$ (each having its own weight), left out category is reference ($\hat =$ dummy encoding)
         %$x_{j,l}, \forall l \in \{1, \hdots, L-1\}$ (with weight $\beta_{j,l}$), left out category is reference ($\hat =$ dummy encoding)
         \\
         $\leadsto$ Interpretation:
-        Outcome changes by $\beta_{j,l}$ for category $l$ compared to reference cat.,  c.p.\pause
+        Outcome changes by $\beta_{j,l}$ for category $l$ compared to reference cat.,  c.p.
         % (for any of the $L-1$ categories):
-        %Predicted outcome changes for $l$-th category compared to the reference category by its weight $\beta_{j,l}$ c.p.\pause
-        %Predicted outcome changes for category $x_{j,l}$ compared to the reference category by $\beta_j$ c.p.\pause
+        %Predicted outcome changes for $l$-th category compared to the reference category by its weight $\beta_{j,l}$ c.p.
+        %Predicted outcome changes for category $x_{j,l}$ compared to the reference category by $\beta_j$ c.p.
         \item \textbf{Intercept $\beta_0$}: Expected outcome if all feature values are set to 0 %(baseline) %reflects expected features values if features were standardised (0-mean, 1-stdev)
         %\item Note: In case of higher order or interaction effects, weights cannot be interpreted in isolation
-    \end{itemize}	
-    \pause
+    \end{itemize}
+    \begin{center}
+        \includegraphics[width = 0.45\textwidth]{figure/plot_lin_effect.pdf}
+    \end{center}
+\end{frame}
+
+     
+\begin{frame}[c]{Linear Regression - Interpretation}
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \beta + \epsilon$$
     \textbf{Feature importance}:
     \begin{itemize}
         \item Absolute t-statistic value: $\hat\beta_j$ scaled with its standard error ($SE(\hat\beta_j)$ $\hat =$ reliability of the estimate) 
     $$|t_{\hat\beta_j}| = \left| \tfrac{\hat\beta_j}{SE(\hat\beta_j)} \right|$$
         \item High values indicate important (i.e. significant) features
     \end{itemize}
+    \begin{center}
+        \includegraphics[width=0.4\textwidth]{../01_intro/figure/bike-sharing02.png}
+    \end{center}
 \end{frame}
 
 
@@ -424,22 +433,30 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 
 
 \begin{frame}{Regularization via LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
-\begin{itemize}
-    \item LASSO adds an $L_1$-norm penalization term ($\lambda||\beta||_1$) to the least squares optimization problem\\
-    $\leadsto$ Shrinks some feature weights to zero (feature selection)\\
-    $\leadsto$ Sparser models (with fewer features) are more interpretable
-    %Aim: Feature selection (sparsity) and regularization of feature weights
-    \item Penalization parameter $\lambda$ must be chosen (e.g., by CV) %or depending on the number of features to keep
-\end{itemize}
+% \begin{itemize}
+%     \item LASSO adds an $L_1$-norm penalization term ($\lambda||\beta||_1$) to the least squares optimization problem%\\
+%     % $\leadsto$ Shrinks some feature weights to zero (feature selection)\\
+%     % $\leadsto$ Sparser models (with fewer features) are more interpretable
+%     % %Aim: Feature selection (sparsity) and regularization of feature weights
+%     % \item Penalization parameter $\lambda$ must be chosen (e.g., by CV) %or depending on the number of features to keep
+% \end{itemize}
 
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.65\textwidth}
+\begin{itemize}
+    \item LASSO adds an $L_1$-norm penalization term ($\lambda||\beta||_1$) \\%to the least squares optimization problem\\
+    $\leadsto$ Shrinks some feature weights to zero (feature selection)\\
+    $\leadsto$ Sparser models (fewer features): more interpretable
+    %Aim: Feature selection (sparsity) and regularization of feature weights
+    \item Penalization parameter $\lambda$ must be chosen (e.g., by CV) %or depending on the number of features to keep
+\end{itemize}
 $$
 min_{\beta} \bigg(\underbrace{\frac{1}{n} \sum_{i=1}^{n} (y^{(i)} - {\xi}^{\top} \beta)^2}_\text{Least square estimate for LM} + \lambda||\beta||_1\bigg)
 $$
 %\vspace*{0.2cm}\\
 %\vspace*{-0.4cm}
-\pause
+%\pause
+\only<2->{
 \textbf{Example} (interpretation of weights analogous to LM):
 \begin{itemize}
     \item LASSO with main effects and interaction \code{temp} with \code{season}
@@ -449,12 +466,15 @@ $$
     $\leadsto$ No feature selection of whole categorical features\\
     %May be problematic for categorical features as only weights of single categories are set to zero (due to dummy encoding) instead of the whole categorical feature\\ %, polynomials and interactions
     $\leadsto$ Solution: group LASSO \citebutton{Yuan and Lin (2006)}{https://doi.org/10.1111/j.1467-9868.2005.00532.x}
-\end{itemize}
+\end{itemize}}
 \end{column}
 \begin{column}{0.35\textwidth}
-\lz\lz
+\centerline{\includegraphics[width=0.5\textwidth]{figure/l1_hat.png}} 
+%\lz\lz
 \scriptsize
+\vspace{0.1cm}
 %\begin{table}[b]
+\only<2->{
 \centering
 \begin{tabular}{rr}
   \hline
@@ -493,6 +513,7 @@ $$
 %   \hline
 % \end{tabular}
 % \end{table}
+}
 \end{column}
 \end{columns}
 

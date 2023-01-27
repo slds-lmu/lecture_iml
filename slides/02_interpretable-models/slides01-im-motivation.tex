@@ -52,12 +52,13 @@ Achieving interpretability by using interpretable models is the most straightfor
 \end{frame}
 
 \begin{frame}{Advantages}
-
+\begin{columns}
+\begin{column}{0.72\textwidth}
     \begin{itemize}[<+->]
     \itemsep1em
         \item Inherently interpretable - some additional model-agnostic interpretation methods not required \\
         $\leadsto$ Eliminates a source of error
-        \item Since interpretable models are often simple, training time is fairly small
+        \item Interpretable models often simple $\leadsto$ training time is fairly small
         \item Some interpretable models fulfill the monotonicity constraint \\
         $\leadsto$ Larger feature values always lead to higher (or smaller) outcomes (e.g., GLMs)
         \item Many people are familiar with traditional interpretable models \\
@@ -65,11 +66,25 @@ Achieving interpretability by using interpretable models is the most straightfor
         \item Implementations are available in many programming languages \\
         $\leadsto$ Simple models are easier to deploy in practice or implement from scratch
     \end{itemize}
-
+\end{column}
+\begin{column}{0.28\textwidth}
+    \begin{center}
+        \includegraphics<3->[width = \textwidth]{figure/logistic_marginal_temp.pdf} 
+        \vspace{0.15cm} \quad \\
+        \includegraphics<5->[width = 0.2\textwidth]{figure/R_logo.svg.png}
+        \includegraphics<5->[width = 0.5\textwidth]{figure/python-logo-master-v3-TM.png} \quad \\
+        \vspace{0.25cm}
+        \only<5->{\includegraphics[width = 0.6\textwidth]{figure/kq_estimator.png} \, \\
+        % https://docs.google.com/presentation/d/1pejtyxCRGC7YCLWP6aM8DLDJr8zbAv9IgoJuBiqgWp4/edit?usp=sharing
+        min $\lVert \hat{y}-y\rVert^2_2$}
+    \end{center}
+\end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}{Disadvantages}
-
+\begin{columns}
+\begin{column}{0.72\textwidth}
     \begin{itemize}%[<+->]
     \itemsep1em
         \item<1-> Certain assumptions about data and / or model structure are often reqiured\\
@@ -79,18 +94,28 @@ Achieving interpretability by using interpretable models is the most straightfor
         %\pause
         \item<2-> Often not able to automatically model complex relationships due to limited model flexibility, \\
         e.g., high-order main or interaction effects need to be specified manually in a LM
-        %\pause
-        \item<3-> A complex structure of an interpretable model may also be difficult to interpret, e.g.:
-        \begin{itemize}
-            \item Linear model with hundreds of features and interactions 
-            \item Decision trees with huge tree depth
-        \end{itemize}
-        %\pause
-        \item<4-> Inherently interpretable models do not provide all types of explanations one might be interested\\
-        $\leadsto$ Methods providing other types of explanations still useful (e.g., counterfactual explanations)
-        %Still requires application of model-agnostic interpretation techniques if certain types of explanations are of interest (e.g., counterfactual explanations)
     \end{itemize}
+\end{column}
+\begin{column}{0.28\textwidth}
+    \begin{center}
+        \includegraphics[width = \textwidth]{figure/lm_bad_fit.pdf} 
+    \end{center}
+\end{column}
+\end{columns}
+\quad \\
 
+\begin{itemize}
+\itemsep1em
+    \item<3-> A complex structure of an interpretable model may also be difficult to interpret, e.g.:
+    \begin{itemize}
+        \item Linear model with hundreds of features and interactions 
+        \item Decision trees with huge tree depth
+    \end{itemize}
+        %\pause
+     \item<4-> Inherently interpretable models do not provide all types of explanations one might be interested\\
+     $\leadsto$ Methods providing other types of explanations still useful (e.g., counterfactual explanations)
+     %Still requires application of model-agnostic interpretation techniques if certain types of explanations are of interest (e.g., counterfactual explanations)
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Further Comments}
