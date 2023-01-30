@@ -7,7 +7,7 @@ library(rpart)
 library(rpart.plot)
 
 # fit decision tree
-tree = rpart(y~., data = dat, control = rpart.control(maxdepth = 3))
+tree = rpart(y~., data = dat, control = rpart.control(maxdepth = 3, maxsurrogate = 0))
 
 # create tree plot
 pdf("../figure/tree.pdf", width = 6, height = 4)
