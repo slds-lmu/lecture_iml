@@ -1,0 +1,61 @@
+\aufgabe{}{
+
+An insurance company wants to calculate monthly premiums for a disability 
+insurance ("Berufs\-unfähigkeitsversicherung") with an ML model based on the 
+pension, age, job type and marital status.
+An appropriate model $\fh$ was already fitted using a large customer dataset but in order 
+to be launched it needs approval by regulators. 
+The regulators put the model to test by using LIME (with exponential kernel) to provide an explanation
+for typical and critical customers. 
+One of these test instances $\xv$ is a 21 year old woman displayed in the first row of the following table.
+
+\begin{enumerate}[a)]
+  \item The regulators already generated new instances to fit the 
+  surrogate model. For simplicity, 
+  we assume that three instances are enough to fit the model.
+  Fill out the missing fields in the following table, where $\phi_{\sigma}(\zv) = \exp(-d(\xv, \zv)^2/ \sigma^2)$ is the exponential kernel similarity measure for a specific $\sigma$ and $d(\cdot)$ as the Gower's distance.
+
+  \begin{table}[ht]
+  \centering
+    \begin{tabular}{l|llll|l|l|l|l}
+            & pension & age & job type       & marital status  & $\fh$ & $d(\xv, \zv_{\cdot})$ & $\phi_{\sigma = 0.15}(\zv_{\cdot})$ & $\phi_{\sigma = 0.5}(\zv_{\cdot})$ \\
+            \hline
+    $\xv$   & 1800    &  21 & sedentary      & single          & 30.6    & -    &  - & - \\
+    $\zv_1$ & 1600    &  21 & sedentary      & married         & 25.8    & 0.25 &  0.06 &  \\
+    $\zv_3$ & 2200    &  32 & sedentary      & married         & 85.2    & 0.32 &  0.01 &  \\
+    $\zv_2$ & 1200    &  23 & physically     & single          & 74.9    & 0.49 &  0.00  & 0.38 \\
+    \end{tabular}
+  \end{table}
+  
+  How does the kernel width $\sigma$ influence the proximity measure? 
+  What would happen if the kernel width is set too small?
+  \newpage
+  \item The regulatories fit two different local surrogate models ($g_1$ and $g_2$) on the re-weighted 
+  data (here, three observations).
+  The following table compares the prediction of $\fh$ to the ones of the two surrogate models for the three instances.
+  
+   \begin{table}[ht]
+  \centering
+    \begin{tabular}{l|l|l|l}
+           & $\fh$ & $g_1$ & $g_2$    \\
+           \hline
+    $\xv$   & 30.6    & 34.8 &  31.1  \\
+    $\zv_1$ & 25.8    & 28   &  26.1  \\
+    $\zv_3$ & 85.2    & 105  &  92.7  \\
+    $\zv_2$ & 74.9    & 90   &  68.9  \\
+    \end{tabular}
+  \end{table}
+  
+  Which of the two surrogate models do you prefer? 
+  Compute the local faithfulness for both surrogate models using the weights from a) with $\sigma = 0.15$. \\
+  \textit{Hint}: consider $L(\fh, g, \phi_{\xv})$ from the lecture.
+  
+  \item The surrogate model $g_1$ corresponds to a linear model using all three features, while 
+  $g_2$ corresponds to a random forest with 500 trees.
+  Would you still prefer the model you chose in b)? 
+  
+  \item Discuss whether for the faithfulness assessment in b) it makes sense to use a new sampled dataset 
+  instead of the one the local surrogate model was fitted on.
+  
+\end{enumerate}
+}

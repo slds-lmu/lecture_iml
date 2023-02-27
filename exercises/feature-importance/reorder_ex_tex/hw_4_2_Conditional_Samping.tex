@@ -1,0 +1,36 @@
+\aufgabe{Conditional sampling based feature importance techniques}{
+
+	Conditional Feature Importance and conditional SAGE value functions have been suggested as an alternative to Permutation Feature Importance. %In contrast to PFI, the conditional sampling based techniques preserve the covariate joint distribution.
+\begin{enumerate}
+    \item Implement a linear Gaussian conditional sampler. For conditional sage values the sampler must be able to learn Gaussian conditionals with multivariate conditioning set and multivariate target, whereas for conditional feature importance the target can be assume to be univariate. \textit{Advice:} For multivariate Gaussian data, the conditional distributions can be derived analytically from mean vector and covariance matrix, see \href{https://en.wikipedia.org/wiki/Multivariate_normal_distribution\#Conditional_distributions}{here}.
+    \begin{enumerate}
+        \item First, learn a function that returns the conditional mean and covariance structure given specific values for the conditioning set. Given the decomposition of the covariance matrix as 
+        \begin{equation}
+            \boldsymbol\Sigma
+                =
+            \begin{bmatrix}
+                \boldsymbol\Sigma_{11} & \boldsymbol\Sigma_{12} \\
+                \boldsymbol\Sigma_{21} & \boldsymbol\Sigma_{22}
+            \end{bmatrix}
+            \text{ with sizes }\begin{bmatrix} q \times q & q \times (N-q) \\ (N-q) \times q & (N-q) \times (N-q) \end{bmatrix},
+        \end{equation}
+        the distribution of $X_1$ conditional on $X_2=a$ is the multivariate normal $N(\bar{\boldsymbol{\mu}}, \overline{\boldsymbol{\Sigma}})$
+        \begin{equation}
+            \bar{\boldsymbol\mu}
+            =
+            \boldsymbol\mu_1 + \boldsymbol\Sigma_{12} \boldsymbol\Sigma_{22}^{-1}
+            \left(
+                \mathbf{a} - \boldsymbol\mu_2
+            \right)
+        \end{equation}
+        \begin{equation}
+            \overline{\boldsymbol\Sigma} = \boldsymbol\Sigma_{11} - \boldsymbol\Sigma_{12} \boldsymbol\Sigma_{22}^{-1} \boldsymbol\Sigma_{21}.
+        \end{equation}
+        \item Then write a function, that takes the conditional mean and covariate structure and allows to sample from the respective (multivariate) Gaussian.
+    \end{enumerate}
+    \item Using your sampler or the sampler implemented in \texttt{utils.py} and \texttt{utils.R}, write a function that computes CFI. You may assume that the data is multivariate Gaussian.
+    \item Apply CFI to the dataset and model from Exercise \ref{ex:pfi}. Interpret the result: which insights into model and data are possible? Compare the result with PFI.
+    \item Write a function that computes conditional SAGE value functions $v_{\fh}(S)$.
+    \item Apply the conditional SAGE value function with respect to an empty coalition and with respect to all remaining variables to the dataset and model from Exercise \ref{ex:pfi}. Interpret the result (insights into model and data) and compare it to CFI and PFI.
+\end{enumerate}
+}
