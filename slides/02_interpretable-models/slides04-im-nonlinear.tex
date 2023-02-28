@@ -27,7 +27,7 @@
 
 \textbf{Problem}: LM not suitable if relationship between features and target variable is not linear % $\leadsto$ standard 
 
-\begin{columns}
+\begin{columns}[totalwidth=\textwidth]
     \begin{column}{0.7\textwidth}
     
         \only<2->{
@@ -173,7 +173,7 @@ s(temp) & 5.8 & 0.00 \\
 %\medskip
 %\pause
 
-\begin{columns}[T]
+\begin{columns}[T, totalwidth=\textwidth]
 
 \begin{column}{0.7\textwidth}
 \textbf{Idea of decision trees}: 
@@ -310,9 +310,9 @@ days\_since\_2011 & 79.53 \\
 %------------------------------------------------------------------
 
 
-\begin{frame}[c]{Other Interpretable Models}
+\begin{frame}{Other Interpretable Models}
 
-\begin{columns}
+\begin{columns}[totalwidth=\textwidth]
     \begin{column}{0.7\textwidth}
         \textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
         \begin{itemize}
@@ -320,40 +320,41 @@ days\_since\_2011 & 79.53 \\
             \item Allows for feature interactions and non-linearities
         \end{itemize}
 
-        \textbf{Decision Rules} \citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
+        \only<2->{\textbf{Decision Rules} \citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
         \begin{itemize}
             \item Simple ``if -- then'' statements - very intuitive and easy-to-interpret
-            \item Most methods work only for classification tasks and categorical features
-        \end{itemize}
+            \item Most methods work only for classification and categorical feat.
+        \end{itemize}}
 
-        \textbf{Naive Bayes}
+        \only<3->{\textbf{Naive Bayes}
         \citebutton{Zhang 2004}{https://www.aaai.org/Papers/FLAIRS/2004/Flairs04-097.pdf}
         %$$P (C_k \mid x ) = \frac{1}{Z} P(C_k) \prod_{i=1}^{n} P(x_i \mid C_k) $$
         \begin{itemize}
-            \item Uses Bayes' theorem to assign class probabilities to observations
+            \item Uses Bayes' theorem to assign class prob. to observations
             %Product of (conditional) probabilities for a class on the value of each feature
             %For each feature, it calculates the probability for a class depending on the value of the feature. 
             \item Strong assumption: Independence of features
-        \end{itemize}
+        \end{itemize}}
 
-        \textbf{k-Nearest Neighbor}
+        \only<4->{\textbf{k-Nearest Neighbor}
         \citebutton{Cover 1967}{https://doi.org/10.1109/TIT.1967.1053964}
         \begin{itemize}
             \item (Closely related to case-based reasoning)
             \item Average of the outcome of neighbors -- local explanation
         \end{itemize}
 
-        ...
+        ...}
     \end{column}
     \begin{column}{0.3\textwidth}
+    \vspace{\dimexpr-2\parsep-2\parskip\relax}
         \begin{center}
             \includegraphics[width = 0.6\textwidth]{figure/RuleFit.png} \\
             \smallskip
-            \includegraphics[width = 0.8\textwidth]{figure/decision_rules.png} \\
+            \only<2->{\includegraphics[width = 0.8\textwidth]{figure/decision_rules.png} \\
             \citebutton{Molnar 2022}{https://christophm.github.io/interpretable-ml-book/}\\
-            \smallskip
-            \includegraphics[width = 0.7\textwidth]{figure/knn.png} 
-            \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}
+            \smallskip}
+            \only<4->{\includegraphics[width = 0.7\textwidth]{figure/knn.png} 
+            \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}}
         \end{center}
     \end{column}
 \end{columns}

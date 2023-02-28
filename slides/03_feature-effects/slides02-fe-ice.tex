@@ -43,7 +43,10 @@
 %$\Rightarrow$ Repeat for all observations and average the curves for global feature effect ($\leadsto$ PD plots)
 \end{frame}
 
-\begin{frame}{Individual Conditional Expectation (ICE) \citebutton{Goldstein et. al (2013)}{https://doi.org/10.1080/10618600.2014.907095}}
+
+
+
+\begin{frame}[c]{Individual Conditional Expectation (ICE) \citebutton{Goldstein et. al (2013)}{https://doi.org/10.1080/10618600.2014.907095}}
 
 %Consider an index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
 %\lz
@@ -58,18 +61,34 @@
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values from the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing values from features addressed by the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
-Partition each observation $\xv$ into $\xv_S$ (features of interest) and remaining features $\xv_{-S}$.\\
-$\leadsto$ In practice, $\xv_S$ consists of one or two features (i.e., $|S| \leq 2$ and ${-S} = S^\complement$).
-%, containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
+Partition each observation $\xv$ into $\xv_S$ (features of interest) and $\xv_{-S}$ (remaining feat.)
+\begin{itemize}
+    \item[$\leadsto$] In practice, $\xv_S$ consists of one or two features (i.e., $|S| \leq 2$ and ${-S} = S^\complement$).
+    %, containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
+\end{itemize}
 
-\medskip
+\bigskip
 
-ICE curves visualize how prediction of $i$-th observation changes after varying its feature values indexed by $S$ using grid points $\xv_S^*$ while keeping all values in $-S$ fixed:
+Formal definition of ICE curves: 
+\begin{itemize}
+    \item Choose grid points $\xv_S^* = \xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$ to vary $\xv_S$
+    \item Plot point pairs $ \Bigl\{\left(\xv_S^{*^{(k)}}, \fh_S^{(i)}(\xv_S^{*^{(k)}}) \right) \Bigr\}_{k=1}^g $ where $\fh_{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$
+    \item For each $k$ connect point pairs to obtain \textbf{ICE curve}
+\end{itemize}
+
+\bigskip
+
+\begin{itemize}
+    \item[$\leadsto$] ICE curves visualize how prediction of $i$-th observation changes after varying its feature values indexed by $S$ using grid points $\xv_S^*$ while keeping all values in $-S$ fixed:
 %by replacing the feature values $\xv_S^{(i)}$ with other values $\xv_S$ while keeping all other features in $\xi_C$ fixed:
-%by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed:
-$$\fh_{S}^{(i)}(\xv_S^*) \; \text{ vs. } \; \xv_S^*$$
+%by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed.
 
-where $\fh_{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$ is prediction of $i$-th observation in which original feature value $\xi_S$ was replaced by $\xv_S^*$.
+% \begin{itemize}
+%     \item[$\leadsto$] Plot \quad $\fh_{S}^{(i)}(\xv_S^*) \; \text{ vs. } \; \xv_S^*$ \\
+%     where $\fh_{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$ is prediction of $i$-th observation in which original feature value $\xi_S$ was replaced by $\xv_S^*$.
+% \end{itemize}
+\end{itemize}
+
 
 %Visualize for \textbf{I}ndividual observations and \textbf{C}onditional on all other features how \textbf{E}xpected prediction changes
 
@@ -277,6 +296,32 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
 
 % % ICE curves involve plotting the pairs $ \{(\xv_S^{*^{(k)}}, \fh_{S}^{(i)}(\xv_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$.
 % \end{frame}
+
+
+\begin{frame}{Comments on Grid values}
+\begin{itemize}
+%\item ICE curves show how different feature values of an observation affect its prediction \newline $\Rightarrow$ \textbf{local interpretation method}
+\item Plotting ICE curves involves generating grid values $\xv_S^*$ that are visualized on the x-axis
+\item Common choices for grid values are
+\begin{itemize}
+\item equidistant grid values within feature range
+\item randomly sampled values or quantile values of observed feature values
+\end{itemize}
+\item Except equidistant grid, the other two options preserve (approximately) the marginal distribution of feature of interest
+$\Rightarrow$ Avoids unrealistic feature values for distributions with outliers %or dependencies
+
+\vspace{3pt}
+\centering
+\includegraphics[width=0.75\textwidth, trim=0cm 0cm 0cm 0cm, clip]{figure/sampling2}
+
+%Preferable for skewed distributions (with outliers) to avoid using unrealistic feature values.
+% \begin{itemize}
+% \item equidistant grid values:
+% \item sub-sampled grid values:
+% \item quantile grid values:
+% \end{itemize}
+\end{itemize}
+\end{frame}
 
 
 \begin{frame}{Comments on Grid values}

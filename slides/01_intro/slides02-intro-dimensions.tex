@@ -546,33 +546,53 @@ Local interpretation methods explain the model behavior for single data instance
 
 
 \begin{frame}{Fixed Model vs. Refits}
+\begin{itemize}
+    \item Global interpretation methods use a model and data as input and produce explanations\\
+    $\rightarrow$ Explanations can be viewed as statistical estimators\\
+    TODO: picture showing Model + Data -> "IML Method" -> Explanation
+    \item Situation in ML: Deployed model is trained on all available data\\
+    $\rightarrow$ No unseen test data left to, e.g., reliably estimate performance\\
+    $\rightarrow$ IML method could use the same data the model was trained on to produce explanations\\ 
+    $\rightarrow$ But: Some IML methods rely on measuring loss which requires unseen test data
+    % (or some artificially created data?)
+    \item Alternative: Explain the inducer that created the model (instead of a fixed model)\\
+    $\rightarrow$ Idea: Use resampling strategies (e.g., 4-fold CV) as in performance estimation\\
+    $\rightarrow$ Requires refitting
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Fixed Model vs. Refits}
 \begin{columns}[c, totalwidth=\textwidth]
     \begin{column}{0.6\linewidth}
 	\begin{itemize}
 		%\itemsep1em
-        \item Learner vs. model 
-		\item<2-> Fixed model \\$\Rightarrow$ Trained model is object of analysis
-		\item<3> Refitting \\$\Rightarrow$ Learning process is object of analysis
+        %\item Learner vs. model 
+		\item Fixed model \\$\Rightarrow$ Trained model is object of analysis
+		\item<2-> Refitting \\$\Rightarrow$ Learning process is object of analysis
 		%\item Advantage of refitting: Includes information about variability in learning process
 	\end{itemize}
     \end{column}
 	\begin{column}{0.4\linewidth}
         \centering
-        \includegraphics[width=0.9\textwidth]{figure/learner_model.jpg}
+        %\includegraphics[width=0.9\textwidth]{figure/learner_model.jpg}
+        \includegraphics[width=0.8\textwidth]{figure/fixed_model.png}
         \vspace{0.2cm}
     \end{column}
 \end{columns}
 
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.5\linewidth}
-	    \centering
-        \includegraphics<2->[width=0.8\textwidth]{figure/model_analysis.jpg}
-    \end{column}
-	\begin{column}{0.5\linewidth}
-        \centering
-        \includegraphics<3>[width=0.8\textwidth]{figure/learner_analysis.jpg}
-    \end{column}
-\end{columns}
+\centering
+\includegraphics<2->[width=0.8\textwidth]{figure/model_refits.png}
+
+% \begin{columns}[c, totalwidth=\textwidth]
+%     \begin{column}{0.5\linewidth}
+% 	    \centering
+%         \includegraphics<2->[width=0.8\textwidth]{figure/model_analysis.jpg}
+%     \end{column}
+% 	\begin{column}{0.5\linewidth}
+%         \centering
+%         \includegraphics<3>[width=0.8\textwidth]{figure/learner_analysis.jpg}
+%     \end{column}
+% \end{columns}
 \end{frame}
 
 
@@ -668,47 +688,67 @@ Local interpretation methods explain the model behavior for single data instance
 % \end{frame}
 
 
-\begin{frame}{Levels of interpretability (Variant 1)}
+\begin{frame}{Levels of interpretability}
 	\begin{center}
         \begin{tabular}{ 
          >{\centering\arraybackslash}m{0.083\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.377\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
-         && \textbf{Research Question} && \textbf{Aim} \\ &&&\\
+         && \textbf{Research Question} && \textbf{Objects of analysis} \\ &&&\\[-2ex]
          
-         1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}How to explain a given model fitted on a data set? && \cellcolor{imldarkblue}\color{white}\textit{understand} (deployed) models \centerline{$\theta \mapsto \hat{f}(\theta)$} \leavevmode\\ 
-
-        \only<2->{&&&\\2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}How does an optimizer choose a model based on a data set? && \cellcolor{imlmedblue}\color{white} \textit{understand} decisions made by AutoML systems for a given task \leavevmode\\ }
-
-        \only<3>{&&&\\ 3\textsuperscript{rd} level view && \cellcolor{imllightblue}\color{white}How do properties of data sets (e.g., number of observations/variables/ missing values) relate to performance of a learner and its hyperparameters? && \cellcolor{imllightblue}\color{white} \textit{understand} properties of optimizers/ ML algorithms in general \leavevmode\\}
+         1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}How to explain a given model fitted on a data set? && \cellcolor{imldarkblue}\color{white} (deployed) model \centerline{$\theta \mapsto \hat{f}(\theta)$} \leavevmode\\ 
+        \only<2->{&&&\\[-1.5ex] 2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}How does an optimizer choose a model based on a data set? && \cellcolor{imlmedblue}\color{white} Model selection (decisions made by AutoML systems, hyperparameter optimization process, ...) \leavevmode\\ }
+        \only<3>{&&&\\[-1.5ex] 3\textsuperscript{rd} level view && \cellcolor{imllightblue}\color{white}How do properties of data sets relate to performance of a learner and its hyperparameters? && \cellcolor{imllightblue}\color{white} properties of ML algorithms in general (benchmark) \leavevmode\\}
     \end{tabular}
-\includegraphics<1>[page=1, width=0.5\textwidth]{figure/iml_level_1.jpg}
-\includegraphics<2>[page=1, width=0.3\textwidth]{figure/model_agnostic.jpg}
+    
+\only<1>{\vspace{0.3cm}}
+\includegraphics<1>[page=1, width=0.6\textwidth]{figure/model_agnostic3.jpg}
+\only<2>{\vspace{-0.3cm}}
+\includegraphics<2>[page=1, width=0.6\textwidth]{figure/model_agnostic2.jpg}
+\only<3>{\vspace{0.05cm}}
+\includegraphics<3>[page=1, width=0.6\textwidth]{figure/model_agnostic4.jpg}
 \end{center}
 \end{frame}
 
 
-\begin{frame}{Levels of interpretability (Variant 2)}
-	\begin{center}
-        \begin{tabular}{ 
-         >{\centering\arraybackslash}m{0.1\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.36\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
-         \only<1>{&& \textcolor{white}{Requirement} && \textcolor{white}{Approach} \\ &&&\\}
-         \only<2->{&& \textbf{Requirement} && \textbf{Approach} \\ &&&\\
+% \begin{frame}{Levels of interpretability (Variant 1)}
+% 	\begin{center}
+%         \begin{tabular}{ 
+%          >{\centering\arraybackslash}m{0.083\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.377\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
+%          && \textbf{Research Question} && \textbf{Aim} \\ &&&\\[-2ex]
          
-         1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}\textit{understand} (deployed) models \centerline{$\theta \mapsto \hat{f}(\theta)$} && \cellcolor{imldarkblue}\color{white} 1. Develop/extend interpretation methods for improved insights  \newline 2. Design optimization algorithms that favor interpretable models \\ &&&\\}
+%          1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}How to explain a given model fitted on a data set? && \cellcolor{imldarkblue}\color{white}\textit{understand} (deployed) models \centerline{$\theta \mapsto \hat{f}(\theta)$} \leavevmode\\ 
+%         \only<2->{&&&\\[-1.5ex] 2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}How does an optimizer choose a model based on a data set? && \cellcolor{imlmedblue}\color{white} \textit{understand} decisions made by AutoML systems or a hyperparameter optimization process for a given task \leavevmode\\ }
+
+%         \only<3>{&&&\\[-1.5ex] 3\textsuperscript{rd} level view && \cellcolor{imllightblue}\color{white}How do properties of data sets (e.g., number of observations / features) relate to performance of a learner and its hyperparameters? && \cellcolor{imllightblue}\color{white} \textit{understand} properties of ML algorithms in general \leavevmode\\}
+%     \end{tabular}
+% \includegraphics<1>[page=1, width=0.5\textwidth]{figure/iml_level_1.jpg}
+% \includegraphics<2>[page=1, width=0.32\textwidth]{figure/model_agnostic.jpg}
+% \end{center}
+% \end{frame}
+
+
+% \begin{frame}{Levels of interpretability (Variant 2)}
+% 	\begin{center}
+%         \begin{tabular}{ 
+%          >{\centering\arraybackslash}m{0.1\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.36\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
+%          \only<1>{&& \textcolor{white}{Requirement} && \textcolor{white}{Approach} \\ &&&\\}
+%          \only<2->{&& \textbf{Requirement} && \textbf{Approach} \\ &&&\\
          
-         \only<4->{2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}\textit{understand} decisions made by AutoML systems for a given task 
-         %\centerline{$\lambda\mapsto \hat{c}(\lambda)$} 
-         && \cellcolor{imlmedblue}\color{white}\centerline{Adapt IML methods}\leavevmode \centerline{to interpret AutoML systems} \leavevmode\\ &&&\\}
+%          1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}\textit{understand} (deployed) models \centerline{$\theta \mapsto \hat{f}(\theta)$} && \cellcolor{imldarkblue}\color{white} 1. Develop/extend interpretation methods for improved insights  \newline 2. Design optimization algorithms that favor interpretable models \\ &&&\\}
          
-        \only<6>{3\textsuperscript{rd} level view && \cellcolor{imllightblue}\textit{understand} properties of optimizers / ML algorithms in general && \cellcolor{imllightblue}Conduct large-scale benchmarks \centerline{and analyze the results} \leavevmode\\ &&&\\}
+%          \only<4->{2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}\textit{understand} decisions made by AutoML systems for a given task 
+%          %\centerline{$\lambda\mapsto \hat{c}(\lambda)$} 
+%          && \cellcolor{imlmedblue}\color{white}\centerline{Adapt IML methods}\leavevmode \centerline{to interpret AutoML systems} \leavevmode\\ &&&\\}
+         
+%         \only<6>{3\textsuperscript{rd} level view && \cellcolor{imllightblue}\textit{understand} properties of optimizers / ML algorithms in general && \cellcolor{imllightblue}Conduct large-scale benchmarks \centerline{and analyze the results} \leavevmode\\ &&&\\}
 
-        \only<1>{1\textsuperscript{st} level view && \multicolumn{3}{c}{How to explain a given model fitted on a data set?} \leavevmode\\ &&&\\}
+%         \only<1>{1\textsuperscript{st} level view && \multicolumn{3}{c}{How to explain a given model fitted on a data set?} \leavevmode\\ &&&\\}
 
-        \only<3>{2\textsuperscript{nd} level view && \multicolumn{3}{c}{\makecell{How does an optimizer choose a model based on a data set? / \\How was a model chosen based on a data set? }} \leavevmode\\ &&&\\}
+%         \only<3>{2\textsuperscript{nd} level view && \multicolumn{3}{c}{\makecell{How does an optimizer choose a model based on a data set? / \\How was a model chosen based on a data set? }} \leavevmode\\ &&&\\}
 
-        \only<5>{3\textsuperscript{rd} level view && \multicolumn{3}{c}{\makecell{How do properties of data sets (e.g., number of observations/variables/ \\missing values) relate to performance of a learner and its hyperparameters?}} \leavevmode\\} &&&\\
-    \end{tabular}
-\end{center}
-\end{frame}
+%         \only<5>{3\textsuperscript{rd} level view && \multicolumn{3}{c}{\makecell{How do properties of data sets (e.g., number of observations/variables/ \\missing values) relate to performance of a learner and its hyperparameters?}} \leavevmode\\} &&&\\
+%     \end{tabular}
+% \end{center}
+% \end{frame}
 
 \endlecture
 \end{document}
