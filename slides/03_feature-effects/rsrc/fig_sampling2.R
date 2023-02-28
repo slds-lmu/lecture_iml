@@ -4,11 +4,11 @@ library(ggplot2)
 
 # DATA -------------------------------------------------------------------------
 
-set.seed(12345678)
+set.seed(1234)
 n = 100
 ngrid = 11
-x1 = rexp(n, rate = 1)
-x2 = x1 + rnorm(n, mean(x1), sd = 0.5*sd(x1)) #rexp(1000, rate = 100)
+x1 = c(runif(n-2, 0, 400)/100, 3.86, 6.78)
+x2 = c(runif(n-2, 0, 460)/100, 4.61, 8.31)
 
 # grid
 grid.x1 = seq(min(x1), max(x1), length = ngrid+1)
@@ -69,25 +69,6 @@ p = p +
   geom_rect(data = ann_text, mapping = aes(ymax = x2 + 0.5, ymin = x2 - 0.5,
                                            xmax = x1 - 0.3, xmin = (x1-diff) + 0.3), alpha = 0, size = 0.5,
             colour = "red", fill = "red") +
-  geom_rect(data = ann_text, mapping = aes(ymax = x2 + 0.5, ymin = x2 - 0.5,
-                                           xmax = (x1-diff) - 0.45, xmin = -0.1), alpha = 0, size = 0.5,
-            colour = "red", fill = "red") +
   theme(plot.title = element_text(hjust = 0.5))
 
-ann_text = data.frame(x1 = max(x1), x2 = x2[ind], diff = max(diff(sort(x1))), #lab = "Text",
-                      method = factor("randomly sampled grid", levels = levels(data$method)))
-p = p + 
-  geom_rect(data = ann_text, mapping = aes(ymax = x2 + 0.5, ymin = x2 - 0.5,
-                                           xmax = (x1-diff) - 0.45, xmin = -0.1), alpha = 0, size = 0.5,
-            colour = "red", fill = "red") +
-  theme(plot.title = element_text(hjust = 0.5))
-
-ann_text = data.frame(x1 = max(x1), x2 = x2[ind], diff = max(diff(sort(x1))), #lab = "Text",
-                      method = factor("quantile grid", levels = levels(data$method)))
-p = p + 
-  geom_rect(data = ann_text, mapping = aes(ymax = x2 + 0.5, ymin = x2 - 0.5,
-                                           xmax = (x1-diff) - 0.45, xmin = -0.1), alpha = 0, size = 0.5,
-            colour = "red", fill = "red") +
-  theme(plot.title = element_text(hjust = 0.5))
-
-ggsave("slides/03_feature-effects/figure/sampling.pdf", p, height = 2.5, width = 7.5)
+ggsave("slides/03_feature-effects/figure/sampling2.pdf", p, height = 2.5, width = 7.5)
