@@ -238,15 +238,15 @@ Idea for two-dimensional case:
 \begin{itemize}
     \setlength\itemsep{0.7mm}
     \item Fit a linear model:
-    $\hat{x}_2 = \hat{f}_{LM}(x_1) = \beta_0 + \beta_1 x_1$
+    $\hat{x}_2 = \hat{f}_{LM}(x_1) = \theta_0 + \theta_1 x_1$
     %($x_2 \sim x_1$) 
     % $\hat{f}_{LM}(x_1) = 2345 + 141.3 x_1$
     \item[] $\leadsto$ Slope = $0$ $\Rightarrow$ no dependence
     \item[] $\leadsto$ Very large slope $\Rightarrow$ strong dependence
-    \item Exact $\beta_1$ score problematic 
+    \item Exact $\theta_1$ score problematic 
     \pause
-    \item[] $\leadsto$ Rescaling of $x_1$ or $x_2$ changes $\beta_1$ 
-    \only<2>{\item e.g. °F $\rightarrow$ °C $\Rightarrow$ ${\color{blue}\beta_1=78.5}\rightarrow{\color{ggblue}\beta_1^*=141.3}$}
+    \item[] $\leadsto$ Rescaling of $x_1$ or $x_2$ changes $\theta_1$ 
+    \only<2>{\item e.g. °F $\rightarrow$ °C $\Rightarrow$ ${\color{blue}\theta_1=78.5}\rightarrow{\color{ggblue}\theta_1^*=141.3}$}
     \pause
     \item Set $SSE_{LM}$ in relation to $SSE$ of a constant model $\hat{f}_c = \bar{x}_2$
     \item[] $SSE_{LM} = \sum_{i=1}^n ({\color{ggblue}x_2^{(i)} - \hat{f}_{LM}(x_1^{(i)})})^2$
@@ -284,7 +284,7 @@ Idea for two-dimensional case:
 
 Scatterplot with multivariate distribution (contour lines) and marginal density $X_1$, $X_2 \sim N(0,1)$ 
 
-\begin{center}
+\only<1>{\begin{center}
 \begin{minipage}[t]{0.3\textwidth}
 \centering
  $\rho(X_1, X_2) = 0$
@@ -298,14 +298,29 @@ Scatterplot with multivariate distribution (contour lines) and marginal density 
  $\rho(X_1, X_2) = -0.8$
 \end{minipage}
 \includegraphics[width = 0.9\textwidth]{figure/dnorm_correlation.pdf}
+\end{center}}
+
+\only<2>{\begin{center}
+\begin{minipage}[t]{0.15\textwidth}
+\centering{\scriptsize
+ $\rho(X_1, X_2) = 0$}
+\end{minipage}
+\begin{minipage}[t]{0.15\textwidth}
+\centering{\scriptsize
+ $\rho(X_1, X_2) = 0.8$}
+\end{minipage}
+\begin{minipage}[t]{0.15\textwidth}
+\centering{\scriptsize
+ $\rho(X_1, X_2) = -0.8$}
+\end{minipage}\\
+\includegraphics[width = 0.45\textwidth]{figure/dnorm_correlation.pdf}
 \end{center}
 
-\pause
 
-Examples with Pearson's correlation $\rho = 0$ but non-linear dependencies:
-
+Examples with Pearson's correlation $\rho = 0$ but non-linear dependencies (MI $\neq 0$):\\
+\medskip
 \centering
-\includegraphics[width = 0.65\textwidth, trim=0 0 0 190px, clip]{figure/dependence_2}
+\includegraphics[width = 0.8\textwidth]{figure/dependence_3}}
 \end{frame}
 
 
@@ -329,7 +344,7 @@ $\leadsto$ Information-theoretical measures like mutual information \\
 $\leadsto$ Kernel-based measures like Hilbert-Schmidt Independence Criterion (HSIC)
 % nice further reading https://jejjohnson.github.io/research_journal/appendix/similarity/hsic/
 \item \textbf{N.B.:} $X_j$, $X_k$ independent $\Rightarrow$ $\rho(X_j, X_k) = 0$ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  independent \\
-But equivalency holds if distrib is jointly normal
+But equivalency holds if distribution is jointly normal
 \item  $MI(X_j, X_k) = 0$ if and only if $X_j$, $X_k$ independent
 \end{itemize}
 \end{frame}

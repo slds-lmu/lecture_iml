@@ -9,7 +9,7 @@
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
 \date{}
 
-\begin{document}
+\begin{document} 
 
 \newcommand{\titlefigure}{figure/whitebox}
 \newcommand{\learninggoals}{
@@ -52,7 +52,7 @@ Achieving interpretability by using interpretable models is the most straightfor
 \end{frame}
 
 \begin{frame}{Advantages}
-\begin{columns}
+\begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.72\textwidth}
     \begin{itemize}[<+->]
     \itemsep1em
@@ -63,20 +63,42 @@ Achieving interpretability by using interpretable models is the most straightfor
         $\leadsto$ Larger feature values always lead to higher (or smaller) outcomes (e.g., GLMs)
         \item Many people are familiar with traditional interpretable models \\
         $\leadsto$ Increases trust in the model and facilitates communication about its results
-        \item Implementations are available in many programming languages \\
-        $\leadsto$ Simple models are easier to deploy in practice or implement from scratch
+        %\item Implementations are available in many programming languages \\
+        %$\leadsto$ Simple models are easier to deploy in practice or implement from scratch
     \end{itemize}
 \end{column}
 \begin{column}{0.28\textwidth}
     \begin{center}
-        \includegraphics<3->[width = \textwidth]{figure/logistic_marginal_temp.pdf} 
-        \vspace{0.15cm} \quad \\
-        \includegraphics<5->[width = 0.2\textwidth]{figure/R_logo.svg.png}
-        \includegraphics<5->[width = 0.5\textwidth]{figure/python-logo-master-v3-TM.png} \quad \\
-        \vspace{0.25cm}
-        \only<5->{\includegraphics[width = 0.6\textwidth]{figure/kq_estimator.png} \, \\
-        % https://docs.google.com/presentation/d/1pejtyxCRGC7YCLWP6aM8DLDJr8zbAv9IgoJuBiqgWp4/edit?usp=sharing
-        min $\lVert \hat{y}-y\rVert^2_2$}
+        \begin{tikzpicture}[scale=0.55, transform shape]
+        \usetikzlibrary{arrows}
+            \usetikzlibrary{shapes}
+            \tikzset{treenode/.style={draw, circle, font=\small}}
+            \tikzset{line/.style={draw, thick}}
+            \node [treenode, draw=red] (a0) {$a_0$};
+            \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
+            \node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
+     
+            \node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
+            \node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
+     
+            \node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
+            \node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
+     
+            \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
+            \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
+     
+            \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};;
+            \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
+     
+          
+            \path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};;
+            \path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
+     
+        \end{tikzpicture}
+        
+        \vspace{0.5cm}
+        
+        \includegraphics[height = 2.5cm, width = \textwidth]{figure/intro_lm_bike.pdf}
     \end{center}
 \end{column}
 \end{columns}
@@ -138,16 +160,60 @@ Achieving interpretability by using interpretable models is the most straightfor
         %\pause
         %\item One can assume a trade-off between interpretability and model performance which generally (but not always) holds
         \item<3-> Often there is a trade-off between interpretability and model performance (but not always)
-        %\pause
-        \item<4-> \textbf{Recommendation:}
-        \begin{itemize}
-            \item Start with most simple model that makes sense for application at hand
-            \item Gradually increase complexity if performance is insufficient\\
-            $\leadsto$ will usually lower interpretability and require additional interpretation methods
-            \item Choose the most simple, sufficient model (Occam's razor)
-        \end{itemize} 
     \end{itemize}
+    \only<3>{\centering\includegraphics[width=0.4\textwidth]{figure/performance_vs_interpretability.png}}
+    % Quelle: https://docs.google.com/presentation/d/12ZPrTjBKEUT-7drdyUJCQGK0oHVDtYIVd2_6byE62f0/edit?usp=sharing
 
+\end{frame}
+
+
+\begin{frame}{Recommendation}
+    \begin{itemize}
+        \item Start with most simple model that makes sense for application at hand
+        \item Gradually increase complexity if performance is insufficient\\
+        $\leadsto$ will usually lower interpretability and require additional interpretation methods
+        \item Choose the most simple, sufficient model (Occam's razor)
+    \end{itemize} 
+
+    \bigskip
+
+\begin{columns}[T, totalwidth=\textwidth]
+\begin{column}{0.5\textwidth}
+\centering \textbf{Bike Data}
+    \begin{table}[ht]
+        \centering
+        \begin{tabular}{llrr}
+            \hline
+            Model & RMSE & $R^2$ \\ 
+            \hline
+            LM & 858.89 & 0.84 \\ 
+            Tree & 995.34 & 0.85 \\ 
+            GAM & 858.89 & 0.84 \\ 
+            Random Forest & 728.21 & 0.75 \\ 
+            Boosting & 805.21 & 0.75 \\ 
+            \hline
+        \end{tabular}
+    \end{table}
+\end{column}
+\begin{column}{0.5\textwidth}
+\centering \textbf{Boston Housing Data}
+    \begin{table}[ht]
+        \centering
+        \begin{tabular}{llrr}
+            \hline
+            Model & RMSE & $R^2$ \\ 
+            \hline
+            LM & 5.01 & 0.67 \\ 
+            Tree & 5.29 & 0.74 \\ 
+            GAM & 5.01 & 0.67 \\ 
+            Random Forest & 3.91 & 0.61 \\ 
+            Boosting & 4.00 & 0.68 \\ 
+            \hline
+        \end{tabular}
+    \end{table}
+\end{column}
+\end{columns}
+% code for tables in rsrc/tab_ml_comparison.R
 \end{frame}
 
 

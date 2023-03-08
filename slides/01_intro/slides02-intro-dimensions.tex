@@ -29,6 +29,7 @@
 \item Different types of explanations
 \item Local vs. global methods
 \item Model or learner explanations -- with or without refits
+\item Levels of interpretability 
 }
 
 \lecturechapter{Dimensions of Interpretability}
@@ -322,7 +323,7 @@
     \begin{column}{0.4\linewidth}
 	    \begin{itemize}
 	    	\item Model-agnostic methods: \\ ICE curves, PD plots $\hdots$
-	    	\item Pendant in linear models: \\Regression coefficient $\beta_j$
+	    	\item Pendant in linear models: \\Regression coefficient $\theta_j$
 	    	\item Further examples: Saliency Maps, model-agnostic methods such as SHAP and LIME
 	    \end{itemize}
 	\end{column}
@@ -416,7 +417,7 @@
 % 	\end{center}
 % 	\begin{itemize}
 % 		\item Model-agnostic methods: ICE curves, PD plots $\hdots$
-% 		\item Pendant in linear models: Regression coefficient $\beta_j$
+% 		\item Pendant in linear models: Regression coefficient $\theta_j$
 % 	\end{itemize}
 % \end{frame}
 
@@ -548,8 +549,8 @@ Local interpretation methods explain the model behavior for single data instance
 \begin{frame}{Fixed Model vs. Refits}
 \begin{itemize}
     \item Global interpretation methods use a model and data as input and produce explanations\\
-    $\rightarrow$ Explanations can be viewed as statistical estimators\\
-    TODO: picture showing Model + Data -> "IML Method" -> Explanation
+    $\rightarrow$ Explanations can be viewed as statistical estimators
+    \item[] \centerline{\includegraphics[width=0.7\textwidth]{figure/fixed_model_vs_refits.jpg}}
     \item Situation in ML: Deployed model is trained on all available data\\
     $\rightarrow$ No unseen test data left to, e.g., reliably estimate performance\\
     $\rightarrow$ IML method could use the same data the model was trained on to produce explanations\\ 
@@ -561,39 +562,39 @@ Local interpretation methods explain the model behavior for single data instance
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Fixed Model vs. Refits}
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.6\linewidth}
-	\begin{itemize}
-		%\itemsep1em
-        %\item Learner vs. model 
-		\item Fixed model \\$\Rightarrow$ Trained model is object of analysis
-		\item<2-> Refitting \\$\Rightarrow$ Learning process is object of analysis
-		%\item Advantage of refitting: Includes information about variability in learning process
-	\end{itemize}
-    \end{column}
-	\begin{column}{0.4\linewidth}
-        \centering
-        %\includegraphics[width=0.9\textwidth]{figure/learner_model.jpg}
-        \includegraphics[width=0.8\textwidth]{figure/fixed_model.png}
-        \vspace{0.2cm}
-    \end{column}
-\end{columns}
-
-\centering
-\includegraphics<2->[width=0.8\textwidth]{figure/model_refits.png}
-
+% \begin{frame}{Fixed Model vs. Refits}
 % \begin{columns}[c, totalwidth=\textwidth]
-%     \begin{column}{0.5\linewidth}
-% 	    \centering
-%         \includegraphics<2->[width=0.8\textwidth]{figure/model_analysis.jpg}
+%     \begin{column}{0.6\linewidth}
+% 	\begin{itemize}
+% 		%\itemsep1em
+%         %\item Learner vs. model 
+% 		\item Fixed model \\$\Rightarrow$ Trained model is object of analysis
+% 		\item<2-> Refitting \\$\Rightarrow$ Learning process is object of analysis
+% 		%\item Advantage of refitting: Includes information about variability in learning process
+% 	\end{itemize}
 %     \end{column}
-% 	\begin{column}{0.5\linewidth}
+% 	\begin{column}{0.4\linewidth}
 %         \centering
-%         \includegraphics<3>[width=0.8\textwidth]{figure/learner_analysis.jpg}
+%         %\includegraphics[width=0.9\textwidth]{figure/learner_model.jpg}
+%         \includegraphics[width=0.8\textwidth]{figure/fixed_model.png}
+%         \vspace{0.2cm}
 %     \end{column}
 % \end{columns}
-\end{frame}
+%
+% \centering
+% \includegraphics<2->[width=0.8\textwidth]{figure/model_refits.png}
+
+% % \begin{columns}[c, totalwidth=\textwidth]
+% %     \begin{column}{0.5\linewidth}
+% % 	    \centering
+% %         \includegraphics<2->[width=0.8\textwidth]{figure/model_analysis.jpg}
+% %     \end{column}
+% % 	\begin{column}{0.5\linewidth}
+% %         \centering
+% %         \includegraphics<3>[width=0.8\textwidth]{figure/learner_analysis.jpg}
+% %     \end{column}
+% % \end{columns}
+% \end{frame}
 
 
 % \begin{frame}{Intrinsic and Model-Agnostic Interpretation}
