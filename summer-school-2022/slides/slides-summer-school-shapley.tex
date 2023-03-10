@@ -92,6 +92,46 @@
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
 \date{}
 
+\newcommand{\mysectionslide}{
+\begin{frame}[plain]
+    %\global\advance\c@lecture by -1
+    \vspace*{0.5 cm}
+    \LARGE\bfseries\inserttitle
+    \vspace*{0.5 cm}
+
+    \ifx\lecturesection\@empty\relax\else%
+    {\lecturesection}%
+    \fi%
+
+\ifcsname learninggoals\endcsname
+  {\vspace*{0.5 cm}
+  \begin{minipage}{0.4\textwidth}
+  \ifcsname titlefigure\endcsname
+    {\begin{center}
+    \begin{figure}[!b]
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{\titlefigure}
+     \ifcsname titlecaption\endcsname
+     \caption*{\titlecaption}
+     \fi
+    \end{figure}
+    \end{center}}
+  \else
+    $\;$
+  \fi
+  \end{minipage}
+  \begin{minipage}{0.55\textwidth}
+  \normalsize
+  Learning goals
+   \normalfont
+   \footnotesize
+  \begin{itemize}
+  \learninggoals
+  \end{itemize}
+  \end{minipage}}
+\fi
+
+  \end{frame}
+}
 
 
 \begin{document}
@@ -452,26 +492,27 @@ $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stau \cup \{j\}) - v(\Stau))$$
 
 \lecturechapter{Shapley Values for Local Explanations}
 %\lecture{Interpretable Machine Learning}
+\mysectionslide
 
-\begin{frame}{Shapley Values for Local Explanations}
-    \begin{columns}
-    \begin{column}{0.5\textwidth}
-    \vspace{1.5cm}
-    \begin{center}
-        \includegraphics[]{../../slides/04_shapley/figure_man/bike-sharing03.png}
-    \end{center}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-     \vspace*{2cm}
+% \begin{frame}{Shapley Values for Local Explanations}
+%     \begin{columns}
+%     \begin{column}{0.5\textwidth}
+%     \vspace{1.5cm}
+%     \begin{center}
+%         \includegraphics[]{../../slides/04_shapley/figure_man/bike-sharing03.png}
+%     \end{center}
+%     \end{column}
+%     \begin{column}{0.5\textwidth}
+%      \vspace*{2cm}
      
-    \textbf{Learning goals}
-    \begin{itemize}
-        \item See model predictions as a cooperative game
-        \item Transfer the Shapley value concept from game theory to machine learning
-    \end{itemize}
-    \end{column}
-    \end{columns}
-\end{frame}
+%     \textbf{Learning goals}
+%     \begin{itemize}
+%         \item See model predictions as a cooperative game
+%         \item Transfer the Shapley value concept from game theory to machine learning
+%     \end{itemize}
+%     \end{column}
+%     \end{columns}
+% \end{frame}
 
 \begin{frame}{From Game Theory To Machine Learning}
 
@@ -878,22 +919,23 @@ $$
 
 \lecturechapter{SHAP (SHapley Additive exPlanation) Values}
 
-\begin{frame}{SHAP (SHapley Additive exPlanation) Values}
+\mysectionslide
+% \begin{frame}{SHAP (SHapley Additive exPlanation) Values}
     
-    \vspace{1.5cm}
-    \begin{center}
-        \includegraphics[]{../../slides/04_shapley/figure_man/exSHAP.png}
-    \end{center}
+%     \vspace{1.5cm}
+%     \begin{center}
+%         \includegraphics[]{../../slides/04_shapley/figure_man/exSHAP.png}
+%     \end{center}
 
-    \textbf{Learning goals}
-    \begin{itemize}
-        \item Get an intuition of additive feature attributions
-        \item Understand the concept of Kernel SHAP
-        \item Ability to interpret SHAP plots
-        \item Global SHAP methods
-    \end{itemize}
+%     \textbf{Learning goals}
+%     \begin{itemize}
+%         \item Get an intuition of additive feature attributions
+%         \item Understand the concept of Kernel SHAP
+%         \item Ability to interpret SHAP plots
+%         \item Global SHAP methods
+%     \end{itemize}
   
-\end{frame}
+% \end{frame}
 % \begin{frame}{Shapley Values in ML - A short Recap}
   
 %   \textbf{Question:} How much does a feature $j$ contribute to the prediction of a single observation. \\
@@ -1671,28 +1713,28 @@ From \textbf{consistency} the Shapley \textbf{axioms of additivity, dummy and sy
 }
 
 \lecturechapter{Global SHAP}
-
-\begin{frame}{Global SHAP}
-    \begin{columns}
-    \begin{column}{0.6\textwidth}
-    \vspace{1cm}
-    \begin{center}
-        \includegraphics[]{../../slides/04_shapley/figure_man/global_shap_depend_season.pdf}
-    \end{center}
-    \end{column}
-    \begin{column}{0.4\textwidth}
-     \vspace*{1.5cm}
+\mysectionslide
+% \begin{frame}{Global SHAP}
+%     \begin{columns}
+%     \begin{column}{0.6\textwidth}
+%     \vspace{1cm}
+%     \begin{center}
+%         \includegraphics[]{../../slides/04_shapley/figure_man/global_shap_depend_season.pdf}
+%     \end{center}
+%     \end{column}
+%     \begin{column}{0.4\textwidth}
+%      \vspace*{1.5cm}
      
-    \textbf{Learning goals}
-    \begin{itemize}
-        \item Get an intuition of additive feature attributions
-\item Understand the concept of Kernel SHAP
-\item Ability to interpret SHAP plots
-\item Global SHAP methods
-    \end{itemize}
-    \end{column}
-    \end{columns}
-\end{frame}
+%     \textbf{Learning goals}
+%     \begin{itemize}
+%         \item Get an intuition of additive feature attributions
+% \item Understand the concept of Kernel SHAP
+% \item Ability to interpret SHAP plots
+% \item Global SHAP methods
+%     \end{itemize}
+%     \end{column}
+%     \end{columns}
+% \end{frame}
 
 \begin{frame}{Global SHAP \citebutton{Lundberg et al. 2018}{https://doi.org/10.48550/arXiv.1802.03888}}
 \textbf{Idea: }

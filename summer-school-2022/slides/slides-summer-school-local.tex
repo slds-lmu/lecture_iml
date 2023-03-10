@@ -54,6 +54,8 @@
   \end{frame}
 }
 
+\usepackage{colortbl}
+
 \begin{document}
 
 % Set style/preamble.Rnw as parent.
@@ -76,10 +78,7 @@
 
 % ------------------------------------------------------------------------------
 
-\begin{frame}[c]{Methodological Motivation}
-
-% Marius: We cannot write such stuff if we want to stay flexible how to combine chunks
-%Except for Shapley values and ICE curves, we focused so far mostly on global explanation methods that explain global model behavior (e.g. PDP, PFI, etc.). However, there are also many methods that explain the \textbf{local} behavior of a model.
+\begin{frame}[c]{Motivation}
 
 	\begin{itemize}
 	    \item Purpose of local explanations:
@@ -89,49 +88,24 @@
 	    \end{itemize}
 	    \medskip
 	    \pause
-		\item Local Methods can address questions such as: 
+		\item Local methods can address questions such as: 
 		\begin{itemize}
 		    \item \textbf{Why} did the model decide to predict $\yh$ for input $\xv$?
 		    \item \textbf{How} does the model decide for observations that are similar to $\xv$?
 		    \item \textbf{What} would the ML model have decided if $\xv$ its values in $\Xspace$ were different?
 		    \item  \textbf{Where} (in which regions in $\Xspace$) does the model fail?
 		\end{itemize}  
+		\medskip
+	    \pause
+		\item Local methods can be particularly useful for laypersons, e.g.:
+		    \begin{itemize}
+		        \item Why was my loan application rejected?
+		        \item Why do I have a high predicted disease risk?
+		    \end{itemize}
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[c]{Social Motivation}
-
-%All these questions can indeed be relevant for the ML modeler. However, unlike in global methods that require expert ML understanding or even domain knowledge, many local methods aim to provide explanations also for laypersons. 
-	\begin{itemize}
-		\item Explanations for laypersons must be tailored to the \textbf{explainee} (who receives the explanation)\\ %(i.e., the person receiving the explanation)
-		%\pause
-		$\leadsto$ \textbf{case specific}, \textbf{easy} for humans to understand, and \textbf{faithful} to the explained mechanism
-		\pause
-		\item If algorithms make decisions in \textbf{socially/safety critical domains}, end users have a justified interest in receiving explanations
-		\pause
-		\item Local explanations cannot only increase \textbf{user trust}, but also help to detect \textbf{critical local biases} in algorithmic decision making
-		\pause
-		\item European citizens have the legally binding \textbf{right to explanation} as given in the General Data Protection Regulation (GDPR)
-		\begin{itemize}
-		    \item[$\leadsto$] Instead of explaining the entire (complex) model (with potential market secrets), explanations in a case-by-case usage is more reasonable
-		\end{itemize}
-
-	\end{itemize}
-\end{frame}
-
-
-\begin{frame}[c]{GDPR: The Right to Explanation}
-
-    ``The data subject should have the right not to be subject to a decision, which may include a measure, evaluating personal aspects relating to him or her which is based solely on automated processing and which produces legal effects concerning him or her or similarly significantly affects him or her, such as automatic refusal of an online credit application or e-recruiting practices without any human intervention.
-
-$[\ldots]$
-
-In any case, such processing should be subject to suitable safeguards, which should include specific information to the data subject and the \textbf{right} to obtain human intervention, to express his or her point of view, \textbf{to obtain an explanation of the decision reached after such assessment and to challenge the decision}.
-'' \\[0.2cm] (\href{https://gdpr-text.com/read/recital-71/}{Recital 71, GDPR})
-\end{frame}
-
-
-\begin{frame}[c]{Example: Husky or Wolf?}
+\begin{frame}[c]{Example: Husky or Wolf? \citebutton{Sameer Singh 2018}{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}}
 	\begin{itemize}
 		\item We trained a model to predict if an image shows a wolf or a husky 
 		\item Below the predictions on six test images are given 
@@ -144,8 +118,7 @@ In any case, such processing should be subject to suitable safeguards, which sho
 	    
     	\begin{center}
     		\includegraphics[width=0.58\textwidth]{\pathiml/figure/lime-wolfhusky.png}\\
-    		\includegraphics[width=0.58\textwidth]{\pathiml/figure/lime-wolfhusky2.png}\\
-    		{\textbf{Source:} [\href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{Sameer Singh 2018}]}
+    		\includegraphics[width=0.58\textwidth]{\pathiml/figure/lime-wolfhusky2.png}
     	\end{center}
 	    
 	\end{column}
@@ -171,8 +144,7 @@ In any case, such processing should be subject to suitable safeguards, which sho
 	\begin{column}{0.7\textwidth}
 	    
 	\begin{center}
-		\includegraphics[width=0.9\textwidth]{\pathiml/figure/lime-wolfhusky3.png}\\
-		{\textbf{Source:} [\href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{Sameer Singh 2018}]}
+		\includegraphics[width=0.9\textwidth]{\pathiml/figure/lime-wolfhusky3.png}
 	\end{center}
 	    
 	\end{column}
@@ -197,14 +169,13 @@ In any case, such processing should be subject to suitable safeguards, which sho
 \end{frame}
 
 
-\begin{frame}{Example: Loan Application}
+\begin{frame}{Example: Loan Application \citebutton{https://www.elte.hu}{https://www.elte.hu/content/trendfordulo-az-mi-fejlesztesekben.t.19025}}
 
 \begin{columns}[c]
     
     \begin{column}{0.45\textwidth}
         	\begin{center}
-		\includegraphics[width=1\textwidth]{\pathiml/figure/IntroJudge.png}\\
-		{\textbf{Source:} [\href{https://www.elte.hu/content/trendfordulo-az-mi-fejlesztesekben.t.19025}{https://www.elte.hu}]}
+		\includegraphics[width=1\textwidth]{\pathiml/figure/IntroJudge.png}
 	\end{center}
 	
 	\end{column}
@@ -226,37 +197,6 @@ In any case, such processing should be subject to suitable safeguards, which sho
 
 \end{frame}
 
-\begin{frame}[c]{Example: Stop or Right-of-Way?}
-
-\begin{columns}[c]
-
-	\begin{column}{0.55\textwidth}
-	\begin{itemize}
-	    \item Imagine: 
-	        \begin{itemize}
-	            \item You work at a car company that develops image classifiers for autonomous driving
-	            \item You show your model the following image (an adversarial example)
-	            \pause
-	            \item Classifier is $99\%$ sure it describes a right-of-way sign
-	        \end{itemize}  
-	    \item Would you entrust other peoples lives into the hands of this software?
-	\end{itemize}
-	
-	 \end{column}
-	
-	\begin{column}{0.45\textwidth}
-
-	\begin{center}
-		\includegraphics[width=0.7\textwidth]{\pathiml/figure/IntroStop.jpg}\\
-		{\textbf{Source:} [\href{https://arxiv.org/abs/1707.08945}{Eykholt et. al 2018}]}
-	\end{center}
-
-     \end{column}
-
-\end{columns}
-
-\end{frame}
-
 \begin{frame}[c]{Characteristics of Local Explanations}
 	\begin{itemize}[<+->]
 		\item \textbf{Explanation scope:} Specific prediction, local environment
@@ -269,415 +209,6 @@ In any case, such processing should be subject to suitable safeguards, which sho
 		\item \textbf{Special:} Due to audience, strong interactions with social sciences and strong connections to cognitive science and neurosciences due to data types
 	\end{itemize}
 \end{frame}
-
-% \begin{frame}{Recap: ICE Curve}
-% 		\begin{itemize}
-% 		\item Visualize how the model prediction $\fh(\xv)$ of a individual observation $\xv$ change by varying the feature values of one or two features while keeping all other features fixed. 
-% 		\item Warning: Careful interpretation for highly correlated features or feature regions with a few observations. 
-% 	\end{itemize}
-% \vspace{0.5cm}
-% \begin{columns}
-% 	\begin{column}{0.47\textwidth}
-% 		\includegraphics[width=1\textwidth]{\pathiml/figure/bike-sharing-dataset01.png}
-% 	\end{column}
-% 	\begin{column}{0.47\textwidth}
-% 		\includegraphics[width=1\textwidth]{\pathiml/figure/bike-sharing-dataset02.png}
-% 	\end{column}
-% \end{columns}
-% \end{frame}
-
-% \begin{frame}{Recap: Shapley Values}
-% 	\begin{itemize}
-% 		\item Shapley values were original proposed in game theory.
-% 		\item They are a local explanation method because they tell us how each feature $x_j$ contributes to the overall prediction $\fh(\xv)$ of a specific observation $\xv$. 
-% 	\end{itemize}
-% \vspace{0.5cm}
-% \begin{center}
-% 	\includegraphics[width=0.8\textwidth]{\pathiml/figure/shapley_valuefct}
-% \end{center}
-% \end{frame}
-
-\begin{frame}{Credit Dataset}
-
-	\begin{itemize}
-		\item We illustrate local explanation methods on the German credit data 
-		\citebutton{see Kaggle}{https://www.kaggle.com/uciml/german-credit}
-		\item 522 complete observations, 9 features containing credit and customer information
-		\item Binary target ``risk'' indicates if a customer has a `good' or `bad' credit risk
-		\item We merged categories with few observations 
-	\end{itemize}
-		\begin{center}
-			\footnotesize
-			\begin{tabular}{ccc}
-				\toprule
-				name & type & range\\
-				\midrule
-				age & numeric & [19, 75]\\
-				sex & factor & \{male, female\}\\
-				job & factor & \{0, 1, 2, 3\}\\
-				housing & factor & \{free, own, rent\}\\
-				saving.accounts & factor & \{little, moderate, rich\}\\
-				checking.accounts & factor & \{little, moderate, rich\}\\
-				credit.amount & numeric & [276, 18424]\\
-				duration & numeric &  [6, 72]\\
-				purpose & numeric &  \{others, car, furniture, radio/TV\}\\
-				risk & factor & \{good, bad\}\\
-				\bottomrule
-			\end{tabular}
-		\end{center}
-\end{frame}
-
-\endlecture
-
- \renewcommand{\titlefigure}{\pathiml/figure/AEturtle.jpg} 
-\renewcommand{\learninggoals}{
-\item Understand the definition of ADEs 
-\item Understand first methods that generate ADEs
-\item Discuss potential causes of ADEs and standard defenses against them}
-
-\lecturechapter{\Large{Local Explanations: Adversarial Examples}}
-%\lecture{Interpretable Machine Learning}
-\mysectionslide
-
-% ------------------------------------------------------------------------------
-
-\begin{frame}[c]{Adversarial Machine Learning}
-\begin{itemize}
-    \item What happens if a computer system gets an erroneous input?
-    \item Even worse:\\ What happens if someone feeds in a malicious input on purpose to attack a system?
-    \item[$\leadsto$] \textbf{Robustness} is important to ensure a safe service!
-    \medskip
-    \item \textbf{Adversarial ML} studies the robustness of machine learning (ML) algorithms to malicious input
-    \item Two different kinds of attacks:
-    \begin{itemize}
-        \item \textbf{Evasion attacks} mislead an employed ML model with manipulated inputs (our focus)
-        \item \textbf{Data Poisoning}: Malicious inputs to the training dataset
-    \end{itemize}
-    \end{itemize}
-\end{frame}
-
-\begin{vbframe}[c]{Adversarial Examples}
-%The inputs by which evasion attacks can be conducted are called \textbf{Adversarial Examples (ADEs)}
-\begin{itemize}
-    \item \textbf{Informal Definition}: An ADE is an input to a model that is deliberately designed to "fool" the model into misclassifying it
-    \item Even possible with low generalization error
-    \item Both deep learning models (e.g., CNNs) and classical ML can be vulnerable to such attacks
-    \item ADEs created from a real data observation $\xv$ can be indistinguishable from $\xv$ by a human observer 
-    \item Since the model misclassifies this input, it does not seem to have a real understanding of the underlying concepts of the provided inputs
-\end{itemize}
-\end{vbframe}
-
-\begin{vbframe}{Examples: Model-Attacks \citebutton{Gong \& Poellabauer 2018}{https://arxiv.org/pdf/1803.09156.pdf}}
-
-\begin{columns}
-
-\begin{column}{0.6\textwidth}
-
-\begin{figure}[h]
-\centering
-  \includegraphics[width=1\linewidth]{\pathiml/figure/AEduckSound.png}
-  \label{fig:mnist}
-\end{figure} 
-
-\end{column}
-
-\begin{column}{0.4\textwidth}
-
-    \vspace{3em}
-    \begin{itemize}
-        \item Is this a duck or a horse?
-        \item Small (hard-to-see) noise can change the prediction
-    \end{itemize}
-
-\end{column}
-
-\end{columns}
-
-\end{vbframe}
-
-\begin{vbframe}[c]{Examples: Image Data \citebutton{Eykholt et al. (2018)}{https://arxiv.org/pdf/1807.07769.pdf}  \citebutton{Athalye et al. (2018)}{https://arxiv.org/pdf/1707.07397.pdf}}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.46\linewidth]{\pathiml/figure/AEstop.png}\quad \includegraphics[width=0.45\linewidth]{\pathiml/figure/AEturtle.jpg}
-  \label{fig:mnist}
-\end{figure} 
-
-\begin{columns}
-
-\begin{column}{0.5\textwidth}
-
-\begin{itemize}
-    \item Stop signs can be missclassified\\ e.g., because of graffiti
-    \item With some well-placed patches, the model identifies it as a ``right of way'' sign
-\end{itemize}
-
-\end{column}
-
-\begin{column}{0.5\textwidth}
-
-\begin{itemize}
-    \item 3D-print of a turtle
-    \item Misclassified as a rifle (from every angle)
-    \item Video: 
-    \citebutton{MITCSAIL
-    (2017)}{https://www.youtube.com/watch?v=piYnd_wYlT8}
-\end{itemize}
-
-\end{column}
-
-\end{columns}
-
-
-\end{vbframe}
-
-\begin{vbframe}{Example: Tabular Data \citebutton{Ballet (2019)}{https://arxiv.org/pdf/1911.03274.pdf}}
-What is imperceptibility on tabular data?
-\begin{itemize}
-    \item Idea: experts focus on the most important features in their judgment
-    \item An ADE arises from manipulating features the model deems important but experts do not
-\end{itemize}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.6\linewidth]{\pathiml/figure/AEloanApplication.png}\\
-   \centering
-  {Decision boundary of a classifier deciding loan applications. ADE via ``number of pets''}
-  \label{fig:mnist}
-\end{figure} 
-
-\end{vbframe}
-
-\begin{vbframe}[c]{ADE and Interpretability}
-
-\begin{enumerate}
-    \item ADEs show where models fail $\leadsto$ improved model understanding
-    \item Because of ADEs, we need more interpretability
-    \item Interpretation can lead to robustness against ADEs
-    \medskip
-    \item Explanations can be used to construct ADEs (e.g., see numer of pets on previous slide)
-\end{enumerate}
-
-\end{vbframe}
-
-\begin{vbframe}[c]{Formal Definition}
-\begin{block}{Adversarial Input}
-Let $\epsilon>0$, $f:\Xspace \rightarrow \Yspace$ be an ML model and $\xv \in \Xspace$ be a real data point that is correctly classified: $f(\xv)=y_{\xv,true}$. \\\medskip
- We call $\mathbf{a}_{\xv}$ an \textbf{adversarial input} to $\xv$ if:
-\begin{equation*}
-    \| \mathbf{a}_{\xv}- \xv\|<\epsilon\text{ and } f(\mathbf{a}_{\xv})\neq y_{\mathbf{a}_{\xv},true}=f(\xv)
-\end{equation*}
-\end{block}
-\begin{itemize}
-    \item $\mathbf{a}_{\xv}$ an is a data point close to a real, correctly classified input that is misclassified
-    \item $\mathbf{a}_{\xv}$ is called \textbf{targeted} if the class it is assigned to is determined\\
-    $f(\mathbf{a}_{\xv})=y'$ with $y'$ being a desired prediction
-    \item Can be generalized to regression problems
-\end{itemize}
-\end{vbframe}
-
-
-% \begin{vbframe}{ADE and Counterfactual Explanations}
-% It seems as if ADEs and counterfactual explanations (CEs) are defined similarly. Both ADEs and CEs describe inputs close to a given input $\xv$ that gets a different assignment. What are their differences?
-% \begin{itemize}
-%     \item Counterfactuals do not have to be misclassified.
-% %    \item Counterfactuals should be maximally close to $\xv$.
-%     \item Different notions of distance $\|\cdot\|$ are applied, e.g., $p_{2,\infty}$-norm for ADEs or $p_{0,1}$-norm for CEs.
-%     \item Informal difference I: ADEs are mostly considered for high-dimensional data, while CEs are mostly considered in the context of low-dimensional data.
-%     \item Informal difference II: ADEs hide changes while CEs highlight them.
-%     \item \textbf{Shared example:} ``If you had two more pets, your loan application would have been granted" is an example of both ADEs and CEs.
-% \end{itemize}
-% \end{vbframe}
-
-
-\begin{frame}{Why Do ADE Exist?}
-Non-exhaustive list of hypotheses: \\[0.5cm]
-    
-\only<1>{
-    \textbf{1. Low-probability spaces hypotheses:} ADEs live in low-probability yet dense spaces in the data manifold that are not well represented in the training samples \citebutton{Szegedy et al. (2013)}{https://arxiv.org/abs/1312.6199}
-        
-    \begin{figure}
-        \centering
-        \includegraphics[width = .5\textwidth]{\pathiml/figure/adversarial examples.png}
-        \caption{Binary classification example (dark blue vs. green dots). Dotted line represents the true decision boundary, bold line the trained one. Low probability space close to decision boundary allow for adversarial examples (turquoise dot).}
-    \end{figure}
-}
-    
-\only<2>{
-    \textbf{2. Linearity hypotheses (most popular):}\\ Adversarial examples are omnipresent in the data manifold\\
-    $\leadsto$ occur, because commonly used models often show linear behavior\\
-    $\leadsto$ small changes of $\epsilon$ in every feature cause a change of $\epsilon\|\thetab\|_1$ in prediction \citebutton{Goodfellow et al. (2014)}{https://arxiv.org/abs/1412.6572}
-
-    \vspace{.5cm}
-    
-    \textbf{Example:} linear model
-    
-    Original: $f(\xv) = \xv^T \thetab$ 
-    
-    Small changes: $f(\xv + \epsilon) = (\xv + \epsilon)^T \thetab$
-    
-    Difference: $f(\xv + \epsilon) - f(\xv) = \epsilon \cdot \thetab$
-}
-    
-\only<3>{
-    \textbf{3. The boundary tilting hypothesis:} Linearity is neither necessary nor sufficient to explain ADEs\\
-    $\leadsto$ ADEs mostly result from overfitting the sampled manifold \citebutton{Tanay and Griffin (2016)}{https://arxiv.org/abs/1608.07690}
-    
-    \begin{figure}
-        \centering
-        \includegraphics[width = .35\textwidth]{\pathiml/figure/tilting_ae.png}
-        \caption{Linear binary classification example. Due to overfitting the decision boundary (red) is close to the manifold of the training data. Techniques like regularization could help to make the decision boundary more robust (green). \citebutton{Kim et al. (2019)}{https://arxiv.org/abs/1903.11626}
-}
-    \end{figure}
-}
-    
-\only<4>{
-    \textbf{4. Human-centric hypotheses:} ML models make use of predictive but non-robust features -- meaning they are highly correlated with the prediction target, but not used by humans \citebutton{Ilyas et al. (2019)}{https://papers.nips.cc/paper/2019/hash/e2c420d928d4bf8ce0ff2ec19b371514-Abstract.html}
-}
-    
-\end{frame}
-
-
-\begin{vbframe}[c]{Ways to Generate ADE}
-Different ways for constructing ADEs:
-There exist various ways in the literature to generate ADEs for a given model in feasible time
-\begin{itemize}
-    \item Formulate the search for ADEs as an \textbf{optimization problem}, e.g. 
-    \begin{equation*}
-        \label{eq:optimization}
-        \underset{\xv'\in \Xspace}{\text{argmin}}\; \underbrace{\| \xv-\xv' \|_{\Xspace}}_{\text{minmize}} - \lambda\;   \underbrace{ \|f(\xv')-y'\|_{\Yspace}}_{\text{maximize}}
-    \end{equation*}
-    \item Use \textbf{sensitivity analysis} to identify features that influence the target class
-    \item Train a generative adversarial network (GAN) \citebutton{Goodfellow et al. (2014)}{https://papers.nips.cc/paper/2014/file/5ca3e9b122f61f8f06494c97b1afccf3-Paper.pdf}
-\end{itemize}
-Moreover, depending on the attacker's model access, we can distinguish between
-\begin{itemize}
-    \item \textbf{Full-access attacks}: the attacker has full access to the internals of the model
-    \item \textbf{Black-box attacks}: the attacker can only query the model on some inputs and receives the model's outputs
-\end{itemize}
-\end{vbframe}
-
-\begin{vbframe}{Fast-Gradient-Sign-Method (FGSM)
-\citebutton{Goodfellow et al. (2015)}{https://arxiv.org/pdf/1412.6572.pdf}}
-% Since we have seen optimization methods for CEs, we focus on a method using sensitivity analysis, namely FGSM.
-% Source of (modified) figure: https://docs.google.com/presentation/d/1l-ng618qrisSorutii9I30qL8VhZGYD9aRBuwvvBbSY/edit?usp=sharing
-\begin{itemize}
-    \item FGSM is based on the linearity hypothesis
-    \item FGSM finds ADEs from:
-    \begin{equation*}
-        a_{\xv}=\xv+\epsilon\cdot\text{sign}(\nabla_{\xv} J(\theta,\xv,y_{\xv,true}))
-    \end{equation*}
-    where $\text{sign}(\nabla_{\xv} J(\theta,x,y_{\xv,true}))$ describes the component-wise signum of the gradient of cost function $J$ in $\xv$ with true label $y_{\xv,true}$
-\end{itemize}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.7\linewidth]{\pathiml/figure/AEpanda.png}
-  \label{fig:mnist}
-\end{figure} 
-
-\end{vbframe}
-
-\begin{vbframe}[c]{Notes on FGSM \citebutton{Goodfellow et al. (2015)}{https://arxiv.org/pdf/1412.6572.pdf} \citebutton{Lyu et al. 2015}{https://arxiv.org/abs/1511.06385}}
-\begin{itemize}
-    \item FGSM works particularly well for linear(-like) models in high-dimensional spaces,\\ e.g., LSTMs, logistic regressions or CNNs with ReLU activations
-    \item Not every $\mathbf{a}_{\xv}$ generated by FGSM is an ADE, especially if $\epsilon$ is too small
-    \item FGSM attacks can be also generated without model access by approximating the gradient,\\ e.g. with finite difference methods
-    \item The notion of similarity in FGSM is based on $\|\cdot\|_{\infty}$ $\leadsto$ there are generalizations of FGSM to other norms
-\end{itemize}
-\end{vbframe}
-
-
-\begin{vbframe}[c]{Black-Box Attacks with Surrogates \citebutton{Papernot et al. (2016)}{https://arxiv.org/abs/1605.07277}}
-
-\begin{itemize}
-    \item So far, we assumed full access to the predictive model
-    \item Black-box attacks only assume query-access
-    \item Large risk of attacks since often one can query predictive models many times
-\end{itemize}
-
-\medskip
-\begin{enumerate}
-    \item Query the model you aim to attack as often as allowed on data similar to the training data
-    \item Use the labeled data you received to train a surrogate model
-    \item Generate ADEs for the surrogate model
-    \item Use these ADEs to attack the original model
-\end{enumerate}
-
-\medskip
-\begin{itemize}
-    \item[$\leadsto$] Known as the \textbf{transferability} of ADEs.
-\end{itemize}
-
-
-
-\end{vbframe}
-
-\begin{vbframe}[c]{Defenses Against ADE}
-There are several ways to protect your network against such attacks -- we distinguish between two broad types of defenses, differing in the position in which they act
-\begin{itemize}
-    \item \textbf{Guards} act on the inputs a model receives
-    \begin{itemize}
-        \item \textbf{Detect anomalies:} e.g., statistical testing, or discriminator networks from GANs
-        \item \textbf{Conduct transformations} on inputs (e.g. PCA)
-    \end{itemize}
-    \item \textbf{Defense by design} act on the model itself
-    \begin{itemize}
-        \item \textbf{Adversarial training}: train model on adversarials
-        \item \textbf{Architectural defenses}: e.g., removing low predictive features from the model
-    \end{itemize}
-\end{itemize}
-\end{vbframe}
-
-%\begin{vbframe}{Regularization Against ADEs}
-%The use of regularization techniques against ADEs is motivated by most hypotheses that explain ADEs. As an example we look at a technique based on the FGSM and the linearity hypotheses.
-%\begin{itemize}
-%    \item Goodfellow et al. suggest to specfiy the cost function s.t.
-%    \begin{equation*}
-%        \tilde{J}(\theta,\xv,y):=\alpha J(\theta,\xv,y)+(1-\alpha) J(\theta,\xv+\epsilon\cdot\text{sign}(\nabla_{\xv} J(\theta,\xv,y)),y)
-%    \end{equation*}
-%    with $\alpha=0.5$.
-%    \item This increased the model robustness against FGSM generated ADEs.
-%    \item However, model are not only still prone to other ADEs but also to many FGSM-ADEs.
-%    \item Applying such regularization terms can increase test error.
-%\end{itemize}
-%\end{vbframe}
-
-\begin{vbframe}[c]{Summary}
-\begin{itemize}
-    \item ADEs are not explanations themselves but are conceptually connected to them
-    \item ADEs can be generated in diverse settings $\leadsto$ crucial modeling decisions are the distance measure, the local environment, and the target level (model or process)
-    \item There are various hypotheses on the existence of ADEs which also motivate different defense strategies
-\end{itemize}
-\begin{center}
-    \includegraphics[width = .6\textwidth]{\pathiml/figure/AEpanda_simple.png}
-    
-    {\citebutton{Goodfellow et al. (2017)}{https://openai.com/blog/adversarial-example-research/}}
-\end{center}
-\end{vbframe}
-
-%\begin{vbframe}{Outlook}
-%\begin{itemize}
-%    \item Even in highly non-linear models ADEs occur. As long as their existence is not well-understood, defenses against them will have limited power.
-%    \item More and more different distance measures are considered, e.g. $p_0$ for one-pixel attacks, the Wasserstein-metric or psychologically motivated measures like the Perceptual Adversarial Similarity Score (PASS).
-%    \item Recent work considered ADEs that fool both, humans and ML models. ADEs may be a case where research on human and machine perception can profit from each other.
-%\end{itemize}
-%@misc{rozsa2016adversarial,
-%      title={Adversarial Diversity and Hard Positive Generation}, 
-%      author={Andras Rozsa and Ethan M. Rudd and Terrance E. Boult},
-%      year={2016},
-%      eprint={1605.01775},
-%      archivePrefix={arXiv},
-%      primaryClass={cs.CV}
-%}
-%\end{vbframe}
-
-% \begin{vbframe}{Central References}
-% \begin{itemize}
-%     \item Serban, A., Poll, E., \& Visser, J. (2020). Adversarial examples on object recognition: A comprehensive survey. ACM Computing Surveys (CSUR), 53(3), 1-38.
-%     \item Goodfellow, I. J., Shlens, J., \& Szegedy, C. (2014). Explaining and harnessing adversarial examples. arXiv preprint arXiv:1412.6572.
-%     \item Yuan, X., He, P., Zhu, Q., \& Li, X. (2019). Adversarial examples: Attacks and defenses for deep learning. IEEE transactions on neural networks and learning systems, 30(9), 2805-2824.
-% \end{itemize}
-% \end{vbframe}
-
-\endlecture
 
 \renewcommand{\titlefigure}{\pathiml/figure/lime5}
 \renewcommand{\learninggoals}{
@@ -729,7 +260,7 @@ There are several ways to protect your network against such attacks -- we distin
 
  	\textbf{Example: Linear model}\\
  	\begin{itemize}
- 	    \item Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = s(\thetab^\top \xv)\right\}$ be the class of linear models
+ 	    \item Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = s(\thetab^\top \xv)\right\}$ be the class of generalized linear models
  	    \item $s(\cdot)$: identity function for linear regression or logistic sigmoid function for logistic regression
  	    \item[$\leadsto$] $J(g) = \sum_{j = 1}^p \Ind_{\{ \theta_j \neq 0 \}}$ could be the L$_0$ loss, i.e., the number of non-zero coefficients 
  	\end{itemize}
@@ -877,7 +408,7 @@ There are several ways to protect your network against such attacks -- we distin
 		\end{center}
 \end{frame}
 
-\endlecture
+%\endlecture
 
 \renewcommand{\titlefigure}{\pathiml/figure/lime_credit_ice2.pdf}
 \renewcommand{\learninggoals}{
@@ -1056,7 +587,7 @@ There are several ways to protect your network against such attacks -- we distin
 	\end{center}
 	
 \end{frame}
-\endlecture
+%\endlecture
 
 	\renewcommand{\titlefigure}{\pathiml/figure/lime5}
     \renewcommand{\learninggoals}{
@@ -1097,8 +628,8 @@ There are several ways to protect your network against such attacks -- we distin
 	  \item \textbf{Pitfall}: Common sampling strategies for $\zv \in Z$ do not account for correlation between features 
       \item \textbf{Implication}:  Unlikely data points might be used to learn local explanation models
       \pause
-      \item \textbf{Solution I}: Use a local sampler directly on $\Xspace$\\
-      $\leadsto$ derivation is particularly difficult for high dimensional or mixed feature spaces 
+      \item \textbf{Solution I}: Conditional sampling\\ %Use a local sampler directly on $\Xspace$\\
+      $\leadsto$ particularly difficult for high dimensional or mixed feature spaces 
       \item \textbf{Solution II}: Use training data to fit surrogate model\\
       $\leadsto$ only works well with enough data near $\xv$
     \end{itemize}
@@ -1376,7 +907,7 @@ There are several ways to protect your network against such attacks -- we distin
 \end{frame}
 
 
-\endlecture
+%\endlecture
 
 \renewcommand{\titlefigure}{\pathiml/figure/counterfactuals_obj}
 \renewcommand{\learninggoals}{
@@ -1661,14 +1192,14 @@ $\leadsto$ Transfer of model explanations to explain real-world is generally not
 \end{frame}
 
 
-\endlecture
+%\endlecture
 
 \renewcommand{\titlefigure}{\pathiml/figure/counterfactuals_heat.png}
     \renewcommand{\learninggoals}{
     	\item See two strategies to generate CEs
     	\item Know problems and limitations of CEs}
 	
-	\lecturechapter{Methods \& Discussion of CEs}
+	\lecturechapter{Methods \& Discussion of Counterfactual Explanations}
 	%\lecture{Interpretable Machine Learning}
 	\mysectionslide
 	
@@ -1735,6 +1266,40 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 		\item MOC (with default parameters) found 69 CEs after 200 iterations that met the target
 		\item All counterfactuals proposed changes to credit duration and many of them to credit amount
 	\end{itemize}
+	
+	\pause
+	\bigskip
+
+    \textbf{Original observation:}\\
+	\begin{table}[ht]
+		\centering
+		\scriptsize
+		\begin{tabular}{rlrlllrrlr}
+			\hline
+			age & sex & job & housing & saving & checking & credit.amount & duration & purpose & $\hat{y}$ \\ 
+			\hline
+			 22 & female &   2 & own & little & moderate & 5951 &  48 & radio/TV & 0.34 \\ 
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	\pause
+	\bigskip
+
+    \textbf{Selected counterfactuals:}\\
+	\begin{table}[ht]
+		\centering
+		\scriptsize
+		\begin{tabular}{rlrlllrrlr}
+			\hline
+			age & sex & job & housing & saving & checking & credit.amount & duration & purpose & $\hat{y}$ \\ 
+			 \hline
+			 22 & female &   2 & own & little & moderate & 5951 & \cellcolor{yellow} 30 & radio/TV & 0.54 \\ 
+			 22 & female &   2 & own & little & moderate & \cellcolor{yellow} 2656 & \cellcolor{yellow} 24 & radio/TV & 0.63 \\ 
+			 22 & female &   2 & own & little & moderate & \cellcolor{yellow} 1454 &  \cellcolor{yellow} 12 & radio/TV & 0.72 \\ 
+			\hline
+		\end{tabular}
+	\end{table}
 \end{frame}
 
 \begin{frame}{Example: Credit Data \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
@@ -1857,228 +1422,7 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 %	\end{itemize}
 \end{frame}
 
-\endlecture
-
-\renewcommand{\titlefigure}{\pathiml/figure/dbscan.jpg}
-\renewcommand{\learninggoals}{
-\item Understand the aspects that undermine users' trust in an explanation
-\item Learn diagnostic tools that could increase trust }
-
-\lecturechapter{Increasing Trust in Explanations}
-%\lecture{Interpretable Machine Learning}
-\mysectionslide
-
-% Prerequisites: LIME and SHAP
-
-% ------------------------------------------------------------------------------
-
-
-% ------------------------------------------------------------------------------
-
-\begin{frame}{Motivation \& Important Properties}
-	\begin{itemize}
-		\item Local explanations should not only make a model interpretable but also reveal if the model is trustworthy
-	    \pause
-	    \item \textbf{Interpretable}: ``Why did the model come up with this decision?''
-	    \pause
-	    \item \textbf{Trustworthy}: ``How certain is this explanation?''
-	    \begin{enumerate}
-	        \item accurate insights into the inner workings of our model
-	        \begin{itemize}
-	            \item Failure case: generation is based on inputs in areas where the model was trained with little or no training data (extrapolation)
-	        \end{itemize}
-	        \pause
-	        \item robust (i.e. low variance)
-	        \begin{itemize}
-	            \item Expectation: similar explanations for similar data points with similar predictions
-	            \item However, multiple sources of uncertainty exist
-	            \item[$\leadsto$] measure how robust an IML method is to small changes in the input data or parameters
-	            \item[$\leadsto$] Is an observation out-of-distribution?
-	        \end{itemize}
-	    \end{enumerate}
-	    \pause
-		\item Failing in one of these $\leadsto$ undermining users' trust in the explanations\\ $\leadsto$ undermining trust in the model 
-		%\item In the upcoming section, we will, therefore, discuss methods to detect if a point is out-of-distribution and to measure how robust IML methods are.
-	\end{itemize}
-\end{frame}
-
-\begin{frame}[c]{Out-of-distribution Detection}
-	\begin{itemize}
-		\item Models are unreliable in areas with little data support\\ $\leadsto$ explanations from local explanation methods are unreliable
-		\pause
-		\item For local explanation methods, the following components could be out-of-distribution (OOD): 
-		\begin{itemize}
-			\item The data for LIME's surrogate model
-			\item Counterfactuals themselves
-			\item Shapley value's permuted observations to calculate the marginal contributions 
-			\item ICE curves grid data points 
-		\end{itemize}
-		\pause
-		\item Two very simple and intuitive approaches
-		\begin{itemize}
-		    \item Classifier for out-of-distribution
-		    \item Clustering
-		\end{itemize}
-		\item More complicated also possible, e.g., variational autoencoders [\href{https://arxiv.org/abs/1912.05651}{Daxberger et al. 2020}]
-	\end{itemize}
-\end{frame}
-
-
-\begin{frame}[c]{Out-of-distribution Detection: OOD-Classifier}
-	\begin{itemize}
-	    \item Problem: we have only in-distribution data
-	    \item Idea: Hallucinate new (out-of-distribution) data by randomly sample data points
-	    \item[$\leadsto$] Learn a binary classifier to distinguish between the origins of the data
-	    \medskip
-	    \pause
-	    \item Study whether an explanation approach can be fooled \citebutton{Dylan Slack et al. 2020}{https://arxiv.org/abs/1911.02508}
-	    \begin{itemize}
-	        \item Hide bias in the true (deployed) model, but use an unbiased model for all out-of-distribution samples
-	    \end{itemize}
-	    \item[$\leadsto$] Important way to diagnose an explanation approach
-	\end{itemize}
-\end{frame}
-
-\begin{frame}[c]{Out-of-distribution Detection: Clustering via DBSCAN}
-\begin{itemize}
-	\item DBSCAN is a data clustering algorithm \citebutton{Martin Ester et al. 1996}{https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf}\\ (Density-Based Spatial Clustering of Applications with Noise) 
-	\pause
-	\item For this method, we define an $\epsilon$-neighborhood: \\
-	Given a dataset $X = \{\xi\}_{i = 1}^n$, an $\epsilon$-neighborhood for $\xv \in \Xspace$ is defined as 
-	$$ \mathcal{N}_{\epsilon}(\xv) = \{\xi \in \Xspace | d(\xv, \xi) \le \epsilon\}.$$
-	 $d(\cdot)$ is a distance measure (e.g., Euclidean or Gower distance) 
-	 \pause
-	\item Core observations $\xv$
-	\begin{itemize}
-	    \item Have at least $m$ data points within $\mathcal{N}_{\epsilon}(\xv)$
-	    \item Forms an own cluster with all its neighborhood points
-	\end{itemize}
-	\pause
-    \item Border points
-    \begin{itemize}
-        \item Within $\mathcal{N}_{\epsilon}(\xv)$
-        \item Part of a cluster defined by a core point
-    \end{itemize}
-    \pause
-    \item Noise points
-    \begin{itemize}
-        \item Are not within $\mathcal{N}_{\epsilon}(\xv)$
-        \item Not part of any cluster
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[c]{Out-of-distribution Detection}
-\vspace{-0.6cm}
-\begin{columns}
-
-	\begin{column}{0.5\textwidth}
-	    \vspace{-2em}
-		\begin{center}
-			\includegraphics[width=0.6\textwidth]{\pathiml/figure/dbscan.jpg}\\
-			\tiny{Example for DBSCAN, circles display $\epsilon$-neighborhoods, $m = 4$}
-		\end{center}
-	\end{column}
-
-	\begin{column}{0.5\textwidth}
-	
-		\begin{itemize}
-			\item Green points A and B are core points and form one cluster since they lie in each others neighborhood, all yellow points are border points of this cluster 
-			\pause
-			\item Since D is not part of the neighborhood of core points, it is a noise point 
-			\pause
-			\item In-distribution: new point lies within a cluster
-			\pause
-		    \item Out-of-distribution: new point lies outside the clusters 
-		\end{itemize}
-	\end{column}
-
-\end{columns}
-
-\pause
-
-\hspace{1em}
-\begin{itemize}
-		\item Disadvantages:
-		\begin{itemize}
-		    \item Depending on the distance metric $d(\cdot)$, DBSCAN could suffer from the ``curse of dimensionality'' 
-		    \item The choice of $\epsilon$ and $m$ is not clear a-priori 
-		\end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[c]{Robustness}
-		\begin{itemize}
-		\item Differentiate between different kinds of uncertainty: 
-		\begin{enumerate}
-			\item \textbf{Explanation uncertainty}: Change of explanation if we repeat the process, e.g., the explanation could differ depending on which subset of data we use for the explanation method and which hyperparameters 
-			\pause
-			\item \textbf{Process uncertainty}: Change of explanation if the underlying model is changed\\ $\leadsto$ are ML models non-robust, e.g., because they are trained on noisy data?
-		\end{enumerate}
-		\pause
-		\item We focus on explanation uncertainty 
-		\begin{itemize}
-		    \item Even with the same model and same (or similar) data points, we can receive different explanations
-		\end{itemize}
-	\end{itemize}
-\end{frame}
-
-\begin{frame}[c]{Robustness Measure for LIME and SHAP}  
-	\begin{itemize}
-		\item Objective: Similar explanations for similar inputs (in a neighborhood) 
-		\pause
-		%\item In the previous chapter on the limitations of LIME, we already saw an example where LIME produced different explanations for very similar data points (with similar predictions).
-		\item For LIME and SHAP, notion of stability based on \textbf{locally Lipschitz continuity} \citebutton{Alvarez-Melis and Jaakkola 2018}{https://arxiv.org/abs/1806.08049}:\\
-		An explanation method $g:\Xspace \rightarrow \R^m$ is locally Lipschitz if 
-		\begin{itemize}
-		    \item for every $\xv_0 \in \Xspace$ there exist $\delta > 0$ and  $\omega \in \R$
-		    \item such that $||\xv - \xv_0|| < \delta$ implies $||g(\xv) - g(\xv_0)|| < \omega ||\xv - \xv_0||$
-		\end{itemize}
-		\footnotesize Note that, for LIME, $g$ returns the $m$ coefficients of the surrogate model \normalsize
-		\pause
-		\item According to this, we can quantify the robustness of explanation models in terms of $\omega$:
-		\begin{itemize}
-		    \item[$\leadsto$] The closer $\omega$ is to 0, the more robust our explanation method is 
-		\end{itemize}
-		\pause
-		\item $\omega$ is rarely known a-priori but it could be estimated as follows: 
-		$$\hat{\omega}_{X}(\xv) \in \underset{\xi \in \mathcal{N}_{\epsilon}(\xv)}{\arg \max} \frac{||g(\xv) - g(\xi)||_2}{d(\xv, \xi)},$$
-		where $\mathcal{N}_{\epsilon}(\xv)$ is the $\epsilon$-neighborhood of $\xv$
-	\end{itemize}
-\end{frame}
-
-
-\begin{comment}
-\begin{frame}{Sources of Uncertainty}
-Two sources of uncertainty could be identified for local explanation methods: 
-\begin{itemize}
-\item Sampling variance in explaining a single data point. 
-E.g., to train a surrogate model for LIME we sample a new data set.   
-\item Sensitivity to choice of parameters. E.g., the user needs to determine the sample size and the kernel width to explain a model with LIME. 
-\end{itemize}
-These sources could lead to different explanations although we analyse the same model and the same (or a very similar) data point. 
-\footnote[frame]{Zhang et al. (2019). ``Why Should You Trust My Explanation?'' Understanding Uncertainty in LIME Explanations. arXiv preprint arXiv:1904.12991.} 
-\end{frame}
-\end{comment}
-
-
-\begin{comment}
-\begin{frame}{Noisy data}
-	\begin{itemize}
-		\item What if the ML model was trained on noisy data? Should the explanation model also take up these noisy patterns? 
-		\item If we use an explanation model to debug the ML model, it is okay, if our explanation model also takes up the noisy patterns learned in the ML model. 
-		\item If we use an explanation model to understand both the predictor but also the underlying true data generating process, we want to focus on the stable patterns learned by the ML model and receive robust explanations. 
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Addtional notes}
-	\begin{itemize}
-		\item We cannot only impose that the explanation of one particular method is similar for similar data points, but also across multiple IML methods. 
-	\end{itemize}
-\end{frame}
-
-content...
-\end{comment}
+%\endlecture
 
 \endlecture
 

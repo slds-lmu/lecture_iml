@@ -22,13 +22,13 @@
 \lecture{Interpretable Machine Learning}
 
 \begin{frame}{Motivation}
-Achieving interpretability by using interpretable models is the most straightforward approach
-\bigskip
+%Achieving interpretability by using interpretable models is the most straightforward approach
+%\bigskip
 \begin{columns}[T, totalwidth = \linewidth]
     \begin{column}{0.5\textwidth}
     \begin{itemize}
         %\item Obtaining interpretations by using interpretable models is the easiest and least error-prone approach
-       % \item Achieving interpretability by using interpretable models is the most straightforward approach
+       \item Achieving interpretability by using interpretable models is the most straightforward approach
         \bigskip
         \item Classes of models deemed interpretable:
         \begin{itemize}
@@ -58,11 +58,12 @@ Achieving interpretability by using interpretable models is the most straightfor
     \itemsep1em
         \item Inherently interpretable - some additional model-agnostic interpretation methods not required \\
         $\leadsto$ Eliminates a source of error
-        \item Interpretable models often simple $\leadsto$ training time is fairly small
+        \item Interpretable models often simple \\
+        $\leadsto$ training time is fairly small
         \item Some interpretable models fulfill the monotonicity constraint \\
         $\leadsto$ Larger feature values always lead to higher (or smaller) outcomes (e.g., GLMs)
         \item Many people are familiar with traditional interpretable models \\
-        $\leadsto$ Increases trust in the model and facilitates communication about its results
+        $\leadsto$ Increases trust, facilitates communication of results
         %\item Implementations are available in many programming languages \\
         %$\leadsto$ Simple models are easier to deploy in practice or implement from scratch
     \end{itemize}
@@ -98,7 +99,7 @@ Achieving interpretability by using interpretable models is the most straightfor
         
         \vspace{0.5cm}
         
-        \includegraphics[height = 2.5cm, width = \textwidth]{figure/intro_lm_bike.pdf}
+        \includegraphics<3->[height = 2.5cm, width = \textwidth]{figure/intro_lm_bike.pdf}
     \end{center}
 \end{column}
 \end{columns}
@@ -114,8 +115,11 @@ Achieving interpretability by using interpretable models is the most straightfor
         %\item In high-dimensional settings, it may not be feasible to find and define all feature relationships
         %\item If the wrong assumptions are made, interpretable models may have a bad predictive performance
         %\pause
-        \item<2-> Often not able to automatically model complex relationships due to limited model flexibility, \\
-        e.g., high-order main or interaction effects need to be specified manually in a LM
+        \item<2-> Interpretable models may also be difficult to interpret, e.g.:
+    \begin{itemize}
+        \item Linear model with hundreds of features and interactions 
+        \item Decision trees with huge tree depth
+    \end{itemize}
     \end{itemize}
 \end{column}
 \begin{column}{0.28\textwidth}
@@ -128,11 +132,10 @@ Achieving interpretability by using interpretable models is the most straightfor
 
 \begin{itemize}
 \itemsep1em
-    \item<3-> A complex structure of an interpretable model may also be difficult to interpret, e.g.:
-    \begin{itemize}
-        \item Linear model with hundreds of features and interactions 
-        \item Decision trees with huge tree depth
-    \end{itemize}
+        \item<3-> Often not able to automatically model complex relationships due to limited model flexibility
+        \\
+        e.g., high-order main or interaction effects need to be specified manually in a LM
+
         %\pause
      \item<4-> Inherently interpretable models do not provide all types of explanations one might be interested\\
      $\leadsto$ Methods providing other types of explanations still useful (e.g., counterfactual explanations)
@@ -159,7 +162,8 @@ Achieving interpretability by using interpretable models is the most straightfor
        %(e.g., image and text data would require good feature extraction steps $\leadsto$ information loss)
         %\pause
         %\item One can assume a trade-off between interpretability and model performance which generally (but not always) holds
-        \item<3-> Often there is a trade-off between interpretability and model performance (but not always)
+        \item<3-> Often there is a trade-off between interpretability and model performance 
+        %(but not always)
     \end{itemize}
     \only<3>{\centering\includegraphics[width=0.4\textwidth]{figure/performance_vs_interpretability.png}}
     % Quelle: https://docs.google.com/presentation/d/12ZPrTjBKEUT-7drdyUJCQGK0oHVDtYIVd2_6byE62f0/edit?usp=sharing
