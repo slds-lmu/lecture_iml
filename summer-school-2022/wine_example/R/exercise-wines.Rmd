@@ -1,0 +1,503 @@
+---
+name: "Wine"
+title: "Wine quality"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, echo=FALSE}
+set.seed(123)
+longrun = FALSE
+knitr::opts_chunk$set(cache = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  R.options = list(width = 120))
+
+colorize <- function(x, color) {
+  # see https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+      x)
+  } else x
+}
+
+show.solution = F
+```
+
+# Introduction
+
+### Load the iml package
+
+Before we start, we need to load some libraries:
+
+* `ranger` is a package that supplies the random forest algorithm for classification and regression. We use it to train a model for our data. 
+* `iml` is a package that implements several model-agnostic interpretation methods that explain the the model behavior and its predictions.
+* `ggplot`, `grid.Extra`, and `DataExplorer` will be used for plotting and a quick exploratory data analysis.
+
+```{r library}
+library('ranger')
+library('iml')
+library('ggplot2')
+library('gridExtra')
+library('DataExplorer')
+```
+
+### Wine Data
+
+```{r, out.width = "50%", echo=FALSE}
+knitr::include_graphics("../images/wine-features.jpg")
+```
+
+We can import the wine data set from the 'data' folder and apply some pre-processing steps.
+
+```{r data}
+wine_complete = read.csv(file.path("../data", "wine.csv"))
+# Removing 36 wines with missing values
+wine_complete = na.omit(wine_complete)
+# convert wine type from data type character to type factor (create levels/categories for modelling purposes)
+wine_complete$type = as.factor(wine_complete$type)
+```
+
+The data set:
+
+* 6500 red and white Portuguese "Vinho Verde" wines (the ratio between white and red is approximately 3:1)
+* Features: Physicochemical properties
+* Quality assessed by blind tasting, from 0 (very bad) to 10 (excellent)
+
+```{r exploredta}
+plot_bar(wine_complete)
+plot_histogram(wine_complete)
+```
+
+### Model
+
+Finally, we apply machine learning to predict the quality of wine using the random forest algorithm.
+
+```{r, echo= FALSE}
+knitr::include_graphics("../images/random-forest.jpg")
+```
+
+Some interpretation methods make more sense if they are applied on test data (i.e., data that was not used to fit a model). 
+Hence, we split up the data into a training set on which the random forest is trained and a test set which we will use to analyze our model using several interpretation methods.
+
+We store the trained model in an object `rfmod` and use 1000 observations for the test set and IML analysis.
+
+```{r model}
+# sample 1000 observations randomly as test set and use all other observations for training the model
+set.seed(1)
+test_ind = sample(1:nrow(wine_complete), size = 1000, replace = FALSE)
+train_ind = setdiff(1:nrow(wine_complete), test_ind)
+wine_train = wine_complete[train_ind,]
+wine = wine_complete[test_ind,]
+
+# fit the random forest to be analyzed 
+rfmod = ranger(quality ~ ., data = wine_train)
+```
+
+# Exercises
+
+You can copy and paste the previously shown code to import the data and model.
+Note that for all following exercises, you are asked to use the test data `wine` that contains 1000 observations.
+
+
+### Exercise 0: The Predictor 
+
+Create a `Predictor` object using the `iml` package.
+
+`r colorize("hint", "blue")`: Checkout the help page `?Predictor` to understand how to create a Predictor object.
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+<details>
+  <summary>**Solution**</summary>
+A Predictor object holds a machine learning model (mlr3, caret, randomForest, ...) and the data to be used for analyzing the model.
+The interpretation methods in the `iml` package require that the machine learning model and the data are wrapped in a Predictor object.
+
+```{r predictor}
+rfpred = Predictor$new(rfmod, data = wine, y = "quality")
+rfpred
+```
+
+</details>
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+### Exercise 1.1: PD and ALE plots
+
+
+We are interested in how the features influence the predicted wine quality. 
+To address this aspect, you are asked to plot the PDPs and ALE plots for all features and interpret the result.
+
+`r colorize("hint", "blue")`: Use `FeatureEffect$new` and specify `method="pdp"` for the partial dependence method.
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+
+<details>
+  <summary>**Solution**</summary>
+  
+The `FeatureEffects` class implements accumulated local effect (ALE) plots (which is the default `method`), partial dependence plots (which needs to be specified via `method="pdp"`) and individual conditional expectation curves (which need to be specified via `method="pdp+ice"`).
+
+The marks (rug plot) on the x-axis indicate the distribution of the feature values, showing how relevant a region is for interpretation (little or no points mean that predictions might be uncertain in this area and hence we cannot reliably interpret these regions).
+
+```{r pd_effects}
+pd_effects = FeatureEffects$new(rfpred, method = "pdp", grid.size = 10)
+pd_effects$plot()
+```
+
+We compare it to the ALE plots of all features:
+```{r ale_effects}
+ale_effects = FeatureEffects$new(rfpred, method = "ale", grid.size = 10)
+ale_effects$plot()
+```
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+
+### Exercise 1.2: PDP and ICE
+
+Plot the PDP and ICE curves of the feature alcohol. What do you observe?
+
+`r colorize("hint", "blue")`: `FeatureEffect$new` with `method="pdp+ice"`
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+<details>
+  <summary>**Solution**</summary>
+Individual conditional expectation (ICE) plots visualize how the model prediction of individual observations for one feature changes by varying its feature values while keeping all other features' values fixed.
+
+```{r pdpice}
+alc_pdp_ice = FeatureEffects$new(rfpred, method = "pdp+ice")
+alc_plot_ice = alc_pdp_ice$plot()
+alc_plot_ice
+```
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+### Exercise 1.3: Interactions
+
+Compute the interaction strength of all features using the H-statistic to identify the feature that contains the strongest interactions with other features.
+
+`r colorize("hint", "blue")`: Use `Interaction$new`.
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+
+<details>
+  <summary>**Solution**</summary>
+We can also measure if interactions between features are present and rank them according to their interaction strength. An interaction between two features is present if the individual average marginal effects of the two features do not add up to their joint effect. Therefore, the interaction measure H-Statistics calculates how much of the variance of the joint distribution is explained by the interaction term. The measure is between 0 (no interaction) and 1 (= the variance of the joint distribution is completely defined by interactions). For each feature, we measure how much they interact with any other feature:
+
+```{r ia, eval=longrun}
+intera = Interaction$new(rfpred)
+intera$plot()
+```
+```{r saveia, echo=FALSE, eval=longrun}
+ggsave("../images/intera.png", plot = intera$plot(), width = 7, height = 4)
+```
+```{r loadia, echo=FALSE, eval=!longrun, out.height="80%"}
+knitr::include_graphics("../images/intera.png")
+```
+
+Since alcohol seems to interact most with other features, we dig deeper to understand which features have the highest interaction with alcohol.
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+
+### Exercise 1.4: 2-way Interactions with Feature 'alcohol'
+
+In the previous exercise, we only identified the feature with strongest interactions.
+But it does not tell us with which other features the strongest interacting feature interacts.
+Now, you are asked to compute the interaction statistic between alcohol (the feature of interest) and all other features.
+
+`r colorize("hint", "blue")`: Use again `Interaction$new` but now you need to additionally specify the feature of interest (here alcohol). Checkout the help page via `?Interaction` to find out how to do this.
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+
+<details>
+  <summary>**Solution**</summary>
+Besides general interactions, we can also specify a feature and measure all its 2-way interactions with all other features:
+
+
+```{r ice, echo = FALSE, eval = FALSE}
+alc_ice = FeatureEffect$new(rfpred, feature = "alcohol", method = "ice")
+ice_dta = alc_ice$plot()
+wine20 = as.data.frame(sapply(colnames(wine)[-12], function(x) rep(wine[,x], each = 20)))
+colnames(wine20) = colnames(wine)[-12] 
+```
+
+```{r ia_alc, eval=longrun}
+intera_alc = Interaction$new(rfpred, feature = "alcohol")
+intera_alc$plot()
+```
+```{r saveia_alc, echo=FALSE, eval=longrun}
+ggsave("../images/intera_alc.png", plot = intera_alc$plot(), width = 7, height = 4)
+```
+```{r loadia_alc, echo=FALSE, eval=!longrun}
+knitr::include_graphics("../images/intera_alc.png")
+```
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+
+### Exercise 1.5: 2D-PDP
+
+Compute a 2D-PDP between alcohol and one of the most important features that interacts with alcohol (from the previous exercise).
+
+`r colorize("hint", "blue")`: In previous exercises, we used `FeatureEffect$new` to create 1-dimensional PDPs. But now you are asked to create a 2-dimensional PDP for alcohol and  one of the most important features that interacts with alcohol from the previous exercise. Look up the help page `?FeatureEffect` to find out how to do this.
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+
+<details>
+  <summary>**Solution**</summary>
+
+Here we choose `volatile.acidity` but `free.sulfur.dioxide` would also be an option according to the H-statistic.
+
+```{r, alc_acidity_pdp, eval=longrun}
+alc_pdp = FeatureEffect$new(rfpred, feature = c("alcohol", "volatile.acidity"), method = "pdp", grid.size = 10)
+alc_pdp$plot()
+```
+```{r save2D, echo=FALSE, eval=longrun}
+ggsave("../images/2D.png", plot = alc_pdp$plot(), width = 6, height = 4)
+```
+```{r load2D, echo=FALSE, eval=!longrun}
+knitr::include_graphics("../images/2D.png")
+```
+
+The 2D-PDP visualizes the interaction between alcohol and acidity. The higher the alcohol volume and the less acid a wine is the higher is its quality. However, it needs to be noted that there are just a few observations for very high values of acidity and hence predictions in this region need to be regarded with caution.
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+
+### Exercise 2: Feature Importance
+
+Find out which features are important using the mean absolute error (mae):
+
+* Create a plot that shows the feature importance of all features and interpret the result. \
+`r colorize("hint", "blue")`: Use `FeatureImp` and the mean absolute error ('mae') as loss function. If needed, checkout the help page via `?FeatureImp`.
+
+* Find a way to access the raw values of the feature importance results table. \
+`r colorize("hint", "blue")`: You need to inspect the R-object that is created with `FeatureImp`. It contains the importance scores in a data.frame (see `?FeatureImp`)
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+
+<details>
+  <summary>**Solution**</summary>
+We can measure the loss-based importance for each feature with `FeatureImp`. The resulting importance scores are calculated by shuffling each feature individually and measuring how much the performance drops (or in this case how much the 'mae' (loss) increases) compared to the original model's performance. For this regression task, we choose to measure the loss with the mean absolute error ('mae'), another choice would be the mean squared error ('mse').
+
+Once we create a new object of `FeatureImp`, the importance is automatically computed.
+We can call the `plot()` function of the object ...
+
+```{r fimportance}
+f_imp = FeatureImp$new(rfpred, loss = "mae")
+plot(f_imp)
+```
+
+... or look at the results in a data.frame.
+
+```{r fimportance_result}
+results = f_imp$results
+rmarkdown::paged_table(results) # this line produces a nice table output in the html
+```
+
+In this example, `r results[1,"feature"]` and `r results[2,"feature"]` seem to have the highest contribution to the prediction of wine quality among all features. 
+
+The scores refer to the ratio between the mae values after permuting the considered feature vs. without permuting the considered feature (see the description of the `compare` argument in `?FeatureImp`). The higher these values, the more important a feature.
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+
+### Exercise 3: Counterfactuals
+
+This exercise provides the fundamental ideas of another local IML approach which is called *Counterfactual Explanations*. 
+A counterfactual explanation of a prediction describes the smallest change to the feature values that changes the prediction to a predefined output.
+We can manually change some feature values and inspect how the prediction changes.
+
+Your task is to choose a wine with a rating of 5 and to change some of its feature values so that the predicted wine rating changes to 6. 
+Try to change as few features as possible (e.g., 1-2 features) and with rather small changes.
+
+`r colorize("hint", "blue")`: After having chosen a wine with quality 5, you need to manually change feature values of 1-2 features of this wine until its predicted wine quality is higher than 6 (while holding all other features unchanged). To do so, you may create a sequence of feature values using the `seq` function and may use the `expand.grid` function to obtain a grid containing all possible combinations of multiple sequences, e.g.,
+```{r}
+# create sequences of feature 1 and feature 2
+feat1 = seq(1, 2, length.out = 3)
+feat2 = seq(10, 12, length.out = 3)
+# use expand.grid to have all possible combinations of the sequences
+expand.grid(feat1, feat2)
+```
+
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+<details>
+  <summary>**Solution**</summary>
+We know that, generally speaking, volatile acidity has a rather negative effect on the predicted quality while alcohol has a rather positive effect.
+Therefore, we'll search for a wine with low alcohol (<9.5) but high volatile acidity (>0.5) and then, artificially, turn those values up, respectively down, until the rating for the regarded observation reaches a value of 6.
+
+```{r incr_wineq}
+# Search for a suitable wine
+idx = which(wine$quality == 5 & wine$alcohol < 9.5 & wine$volatile.acidity > 0.5)
+wine1 = wine[idx[1], ]
+wine1
+
+# create a grid with a sequence and turn up alcohol volume slowly to 12 and volatile acidity down to 0.2
+alc_steps = seq(wine1$alcohol, 13, length.out = 30)
+va_steps = seq(wine1$volatile.acidity, 0.2, length.out = 30)
+grid_wine = expand.grid(alcohol = alc_steps, volatile.acidity = va_steps)
+head(grid_wine)
+
+# create a new dataframe - keep all features constant (values of the regarded wine) and only vary alcohol and acidity (by using the created grid)
+cols = setdiff(colnames(wine1), colnames(grid_wine))
+cols # these are the columns of features that are kept oonstant
+wine_experiment = cbind(wine1[, cols], grid_wine)
+head(wine_experiment)
+
+# predict with the rfmod model to see how the predictions for the regarded wine changes when we only vary the alcohol and acidity features while keeping all other features constant.
+rfmod_pred = predict(rfmod, wine_experiment)
+wine_experiment$rfmod_prediction = rfmod_pred$predictions
+rmarkdown::paged_table(wine_experiment[wine_experiment$rfmod_prediction > 6, ])
+```
+
+For the considered wine, we reach the prediction of wine quality > 6 at around 12%-13% alcohol and volatile acidity of around 0.3. 
+
+```{r last_plot}
+p1 = ggplot(wine_experiment, aes(alcohol, volatile.acidity)) +
+  geom_raster(aes(fill = rfmod_prediction)) +
+  scale_fill_viridis_c()
+
+p2 = ggplot(wine_experiment, aes(alcohol, volatile.acidity)) +
+  geom_point(aes(col = factor(rfmod_prediction > 6)))
+
+library(patchwork)
+p1 / p2
+```
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+
+
+
+
+
+### Exercise 4.1: Shapely Values - local analysis
+
+Shapley values are a local IML method, meaning that they provide explanations for one specific observation. 
+They explain how much each feature attributed to the prediction of the regarded observation.
+Choose an interesting wine and explain its quality prediction by using Shapley values (e.g., a high quality wine with rather low alcohol volume).
+
+`r colorize("hint", "blue")`: Use `Shapley$new`
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+
+<details>
+  <summary>**Solution**</summary>
+We choose a high quality wine (8) with rather low alcohol volume (<10).
+
+```{r shapley}
+idx = which(wine$quality >= 8 & wine$alcohol < 10)[1]
+shapley_values = Shapley$new(rfpred, x.interest = wine[idx,])
+plot(shapley_values)
+```
+
+The plot shows how much the actual prediction of the wine deviates from the average wine quality and how this deviation is attributed to the different features. In this specific example, we can see that the low acidity and pH value contribute most to the good rating of the wine. 
+
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+
+
+### Exercise 4.2: Shapely Values - global analysis
+
+Calculate Shapley values for a random sample of size = 100 for global analysis:
+
+`r colorize("hint", "blue")`: Use `Shapley$new`
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+
+<details>
+  <summary>**Solution**</summary>
+```{r shapley_global, eval=FALSE}
+set.seed(1)
+idx = sample(1:nrow(wine), size = 100, replace = FALSE)
+shapley_values_all = lapply(idx, function(i){
+  shapley_values = Shapley$new(rfpred, x.interest = wine[i,])
+  cbind(shapley_values$results[,1:3], "feature.value" = as.numeric(shapley_values$x.interest))
+})
+shapley_values_all = do.call("rbind", shapley_values_all)
+save(shapley_values_all, file = "wine_example/data/shapley.RData")
+
+```
+Based on this sample we can approximate the global behavior of features, e.g., by plotting the Shapley dependency for individual features
+
+
+```{r shapley_shap_dep}
+load("../data/shapley.RData")
+ggplot(data = shapley_values_all[which(shapley_values_all$feature == "alcohol"),]) + geom_point(aes(x=feature.value, y = phi)) + theme_bw()
+
+
+```
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+### Exercise 5: Further hypotheses
+
+Think about further interesting hypotheses that you can answer by applying the introduced IML methods.
+
+
