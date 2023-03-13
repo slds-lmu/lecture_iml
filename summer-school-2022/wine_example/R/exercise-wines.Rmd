@@ -160,14 +160,11 @@ ale_effects$plot()
 cat("-->")
 ```
 
+TODO: Explanation + Most important
 
-### Exercise 1.2: PDP and ICE
+### Exercise 1 (b): ICE plots
 
-TODO
-
-Plot the PDP and ICE curves of the feature alcohol. What do you observe?
-
-`r colorize("hint", "blue")`: `FeatureEffect$new` with `method="pdp+ice"`
+Create ICE plots for the same features as above and interpret the difference to the PDPs. Are your chosen features interacting with any other features? 
 
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
 cat("<!--")
@@ -541,26 +538,8 @@ cat("-->")
 ```
 
 ### Exercise 4 (a): Shapely Values - local analysis
-Choose 3-4 observations of your dataset which might be worth to explain via Shapley values. Explain how you chose these observations.
 
-```{r, eval = !show.solution, echo = FALSE, results='asis'}
-cat("<!--")
-```
-
-
-<details>
-  <summary>**Solution**</summary>
-
-TODO
-
-</details>
-```{r, eval = !show.solution, echo = FALSE, results='asis'}
-cat("-->")
-```
-
-### Exercise 4 (b): Shapely Values - local analysis
-
-Calculate and visualize the Shapley values for these observations and interpret your results.
+Choose one or two observations of your dataset which might be worth to explain via Shapley values. Calculate and visualize the Shapley values for these observations and interpret your results.
 
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
 cat("<!--")
@@ -571,13 +550,17 @@ cat("<!--")
   <summary>**Solution**</summary>
 We choose a high quality wine (8) with rather low alcohol volume (<10).
 
-```{r shapley}
-idx = which(wine$quality >= 8 & wine$alcohol < 10)[1]
-shapley_values = Shapley$new(rfpred, x.interest = wine[idx,])
-plot(shapley_values)
+```{r shapley, fig.width=10, fig.height=5}
+idx1 = which(wine$quality == 8 & wine$type == "white")[11]
+idx2 = which(wine$quality == 5 & wine$type == "red")[1]
+shapley1 = Shapley$new(rfpred, x.interest = wine[idx1,])
+shapley2 = Shapley$new(rfpred, x.interest = wine[idx2,])
+
+library(patchwork)
+plot(shapley1) + plot(shapley2)
 ```
 
-The plot shows how much the actual prediction of the wine deviates from the average wine quality and how this deviation is attributed to the different features. In this specific example, we can see that the low acidity and pH value contribute most to the good rating of the wine. 
+The plot shows how much the actual prediction of the wine deviates from the average wine quality and how this deviation is attributed to the different features. In this specific example, we can see that the low acidity and pH value contribute most to the good rating of the wine. TODO
 
 
 </details>
@@ -585,7 +568,7 @@ The plot shows how much the actual prediction of the wine deviates from the aver
 cat("-->")
 ```
 
-### Exercise 4 (c): Shapely Values - global analysis
+### Exercise 4 (b): Shapely Values - global analysis
 
 Sample 100 observations from your dataset at hand and calculate the Shapley values for these observations
 
