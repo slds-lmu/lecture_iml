@@ -26,7 +26,7 @@ colorize <- function(x, color) {
   } else x
 }
 
-show.solution = F
+show.solution = T
 ```
 
 # Introduction
@@ -102,16 +102,14 @@ rfmod = ranger(quality ~ ., data = wine_train)
 # Exercises
 
 You can copy and paste the previously shown code to import the data and model.
-Note that for all following exercises, you are asked to use the test data `wine` that contains 1000 observations.
+Note that for all following exercises, we will use the test data `wine` that contains 1000 observations.
 
 
 ### Exercise 0: The Predictor 
 
 Create a `Predictor` object using the `iml` package.
 
-`r colorize("hint", "blue")`: Checkout the help page `?Predictor` to understand how to create a Predictor object.
-
-```{r, eval = !show.solution, echo = FALSE, results='asis'}
+```{r, eval = FALSE, echo = FALSE, results='asis'}
 cat("<!--")
 ```
 
@@ -122,22 +120,17 @@ The interpretation methods in the `iml` package require that the machine learnin
 
 ```{r predictor}
 rfpred = Predictor$new(rfmod, data = wine, y = "quality")
-rfpred
 ```
 
 </details>
 
-```{r, eval = !show.solution, echo = FALSE, results='asis'}
+```{r, eval = FALSE, echo = FALSE, results='asis'}
 cat("-->")
 ```
 
-### Exercise 1.1: PD and ALE plots
+### Exercise 1 (a): PD and ALE plots
+Create PDP and ALE plots for at least 6 features of your dataset you are most interested in how they affect your target variable. Can you see any differences between PDP and ALE plots? Can you explain those differences?
 
-
-We are interested in how the features influence the predicted wine quality. 
-To address this aspect, you are asked to plot the PDPs and ALE plots for all features and interpret the result.
-
-`r colorize("hint", "blue")`: Use `FeatureEffect$new` and specify `method="pdp"` for the partial dependence method.
 
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
 cat("<!--")
@@ -169,6 +162,8 @@ cat("-->")
 
 
 ### Exercise 1.2: PDP and ICE
+
+TODO
 
 Plot the PDP and ICE curves of the feature alcohol. What do you observe?
 
@@ -304,15 +299,10 @@ cat("-->")
 ```
 
 
-### Exercise 2: Feature Importance
+### Exercise 2 (a): Permutation Feature Importance
 
-Find out which features are important using the mean absolute error (mae):
-
-* Create a plot that shows the feature importance of all features and interpret the result. \
-`r colorize("hint", "blue")`: Use `FeatureImp` and the mean absolute error ('mae') as loss function. If needed, checkout the help page via `?FeatureImp`.
-
-* Find a way to access the raw values of the feature importance results table. \
-`r colorize("hint", "blue")`: You need to inspect the R-object that is created with `FeatureImp`. It contains the importance scores in a data.frame (see `?FeatureImp`)
+Make yourself familiar with the `FeatureImp` method in the **iml** package and calculate the permutation feature importance (PFI) for all features in your dataset. Calculate the PFI on your training and on your test dataset.
+Do you observe any differences? Interpret your results.
 
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
 cat("<!--")
@@ -347,24 +337,135 @@ The scores refer to the ratio between the mae values after permuting the conside
 cat("-->")
 ```
 
+### Exercise 2 (b): LOCO
 
-### Exercise 3: Counterfactuals
+Write a function which calculates the LOCO feauture importance on the test dataset. How does it differ to the PFI results? Explain your observation.
+Hint: Refit your model on the training data without the feature of interest. Predict with the refitted model on the test dataset and calculate the loss difference between your original model and your refitted model.
+Repeat for all features.
 
-This exercise provides the fundamental ideas of another local IML approach which is called *Counterfactual Explanations*. 
-A counterfactual explanation of a prediction describes the smallest change to the feature values that changes the prediction to a predefined output.
-We can manually change some feature values and inspect how the prediction changes.
-
-Your task is to choose a wine with a rating of 5 and to change some of its feature values so that the predicted wine rating changes to 6. 
-Try to change as few features as possible (e.g., 1-2 features) and with rather small changes.
-
-`r colorize("hint", "blue")`: After having chosen a wine with quality 5, you need to manually change feature values of 1-2 features of this wine until its predicted wine quality is higher than 6 (while holding all other features unchanged). To do so, you may create a sequence of feature values using the `seq` function and may use the `expand.grid` function to obtain a grid containing all possible combinations of multiple sequences, e.g.,
-```{r}
-# create sequences of feature 1 and feature 2
-feat1 = seq(1, 2, length.out = 3)
-feat2 = seq(10, 12, length.out = 3)
-# use expand.grid to have all possible combinations of the sequences
-expand.grid(feat1, feat2)
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
 ```
+
+
+<details>
+  <summary>**Solution**</summary>
+
+We first predict on the full model and calculate the loss:
+
+```{r loco1}
+rf_full = ranger(quality ~ ., data = wine_train)
+pred_full = predict(rf_full, wine)$predictions
+loss_full = mean(abs(wine$quality - pred_full))
+```
+
+Now, we create a function that takes the feature number, refits the learner without the selected feature, calculates the loss and returns the loss difference. We apply the function to all features and save the results in a data.frame:
+```{r loco2}
+loco = function(feature) {
+  rf_reduced = ranger(quality ~ ., data = wine_train[, -feature])
+  pred_reduced = predict(rf_reduced, wine[, -feature])$predictions
+  loss_reduced = mean(abs(wine$quality - pred_reduced))
+  loss_reduced - loss_full
+}
+feats = 1:(ncol(wine)-1)
+loco_res = data.frame(Feature = colnames(wine)[feats], 
+                         LOCO = sapply(feats, loco))
+```
+
+We can look at the results ...
+
+```{r loco3}
+loco_res
+```
+
+... or plot them, e.g. in a bar plot:
+
+```{r loco4}
+# To sort
+loco_res$Feature = factor(loco_res$Feature, 
+                          levels = loco_res$Feature[order(loco_res$LOCO)])
+
+# Plot
+ggplot(loco_res, aes(x = Feature, y = LOCO)) + 
+  geom_bar(stat = "identity") + 
+  coord_flip()
+
+```
+
+We see a similar picture as with PFI, i.e. high importance of alcohol and volatile acidity, but very different values. There are two reasons for the different values: 
+
+* The `FeatureImp` function by default calculates a ratio of the losses, we just calculated a difference. 
+* Results of conditional feature importance (here: LOCO) are generally smaller than those of marginal measures (here: PFI). 
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+### Exercise 2 (c): Comparison with feature effects
+
+Compare your feature importance values to your feature effect results of the first exercise sheet. Are they conclusive?
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+
+<details>
+  <summary>**Solution**</summary>
+
+Yes, they are generally conclusive in this example. In feature effects, we see more details such as effect directions. On the other hand, feature importance clearly shows the most important features. 
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+### Exercise 3 (a): LIME
+
+Choose 2-3 observations from your dataset which you would like to explain. How do the different features influence the predictions of the regarded observations? Use LIME for your analysis and interpret your results.
+Hint: Use `LocalModel` from the **iml** package.
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
+
+
+<details>
+  <summary>**Solution**</summary>
+
+We choose a white wine of very good quality (8) and a red wine of mediocre quality (5): 
+
+```{r lime1}
+idx1 = which(wine$quality == 8 & wine$type == "white")[11]
+idx2 = which(wine$quality == 5 & wine$type == "red")[1]
+```
+
+We now use `LocalModel` to compute LIME for both wines (with all features):
+
+```{r lime2}
+lime1 = LocalModel$new(rfpred, x.interest = wine[idx1,], k = 10)
+lime2 = LocalModel$new(rfpred, x.interest = wine[idx2,], k = 10)
+```
+
+And plot both results side by side:
+
+```{r lime3, fig.width=10, fig.height=5}
+grid.arrange(plot(lime1), plot(lime2), nrow = 1)
+```
+
+We see that the results look quite similar between the good and the mediocre wine. We also see a problem of LIME: While the actual prediction of the random forest is quite accurate, the local model fit is very bad for the good wine. With that, we should interpret the results with care.
+
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
+
+### Exercise 3 (b): Counterfactual Explanations
+
+Your task is to choose an observation in your dataset of which you want to change the label (e.g. credit accepted vs. credit declined in a classification task or change a wine with a rating of 5 to a predicted wine rating of 6 in a regression task). Try to find such a counterfactual by changing as few features as possible (e.g., 1-2 features) and with rather small changes.
+
+Bonus: Try the **counterfactuals** package (https://github.com/dandls/counterfactuals), e.g. with the method `MOCRegr` or `MOCClassif`, and compare your results.
 
 
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
@@ -376,25 +477,35 @@ cat("<!--")
 We know that, generally speaking, volatile acidity has a rather negative effect on the predicted quality while alcohol has a rather positive effect.
 Therefore, we'll search for a wine with low alcohol (<9.5) but high volatile acidity (>0.5) and then, artificially, turn those values up, respectively down, until the rating for the regarded observation reaches a value of 6.
 
-```{r incr_wineq}
-# Search for a suitable wine
+First, find such a wine and look at it: 
+
+```{r incr_wineq1}
 idx = which(wine$quality == 5 & wine$alcohol < 9.5 & wine$volatile.acidity > 0.5)
 wine1 = wine[idx[1], ]
 wine1
+```
 
-# create a grid with a sequence and turn up alcohol volume slowly to 12 and volatile acidity down to 0.2
+Now, we create a grid with a sequence and turn up alcohol volume slowly to 12 and volatile acidity down to 0.2:
+
+```{r incr_wineq2}
 alc_steps = seq(wine1$alcohol, 13, length.out = 30)
 va_steps = seq(wine1$volatile.acidity, 0.2, length.out = 30)
 grid_wine = expand.grid(alcohol = alc_steps, volatile.acidity = va_steps)
 head(grid_wine)
+```
 
-# create a new dataframe - keep all features constant (values of the regarded wine) and only vary alcohol and acidity (by using the created grid)
+With this, we create a new dataframe - keep all features constant (values of the regarded wine) and only vary alcohol and acidity (by using the created grid):
+
+```{r incr_wineq3}
 cols = setdiff(colnames(wine1), colnames(grid_wine))
 cols # these are the columns of features that are kept oonstant
 wine_experiment = cbind(wine1[, cols], grid_wine)
 head(wine_experiment)
+```
 
-# predict with the rfmod model to see how the predictions for the regarded wine changes when we only vary the alcohol and acidity features while keeping all other features constant.
+Finally, we predict with the random forest model to see how the predictions for the regarded wine changes when we only vary the alcohol and acidity features while keeping all other features constant.
+
+```{r incr_wineq4}
 rfmod_pred = predict(rfmod, wine_experiment)
 wine_experiment$rfmod_prediction = rfmod_pred$predictions
 rmarkdown::paged_table(wine_experiment[wine_experiment$rfmod_prediction > 6, ])
@@ -414,23 +525,42 @@ library(patchwork)
 p1 / p2
 ```
 
+For the bonus solution, we take the same wine as above but use multi-objective counterfactual explanations from the **counterfactuals** package:
+
+```{r cebonus}
+library(counterfactuals)
+moc = MOCRegr$new(rfpred, n_generations = 15L, quiet = TRUE)
+ces = moc$find_counterfactuals(x_interest = wine1, desired_outcome = 7)
+head(ces$data)
+```
+First, the algorithm suggests to have a white wine instead of the red one. The other solutions tend to mostly increase alcohol, as we manually did above. 
+
 </details>
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
 cat("-->")
 ```
 
+### Exercise 4 (a): Shapely Values - local analysis
+Choose 3-4 observations of your dataset which might be worth to explain via Shapley values. Explain how you chose these observations.
+
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("<!--")
+```
 
 
+<details>
+  <summary>**Solution**</summary>
 
+TODO
 
+</details>
+```{r, eval = !show.solution, echo = FALSE, results='asis'}
+cat("-->")
+```
 
-### Exercise 4.1: Shapely Values - local analysis
+### Exercise 4 (b): Shapely Values - local analysis
 
-Shapley values are a local IML method, meaning that they provide explanations for one specific observation. 
-They explain how much each feature attributed to the prediction of the regarded observation.
-Choose an interesting wine and explain its quality prediction by using Shapley values (e.g., a high quality wine with rather low alcohol volume).
-
-`r colorize("hint", "blue")`: Use `Shapley$new`
+Calculate and visualize the Shapley values for these observations and interpret your results.
 
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
 cat("<!--")
@@ -455,13 +585,12 @@ The plot shows how much the actual prediction of the wine deviates from the aver
 cat("-->")
 ```
 
+### Exercise 4 (c): Shapely Values - global analysis
 
+Sample 100 observations from your dataset at hand and calculate the Shapley values for these observations
 
-### Exercise 4.2: Shapely Values - global analysis
-
-Calculate Shapley values for a random sample of size = 100 for global analysis:
-
-`r colorize("hint", "blue")`: Use `Shapley$new`
+* Calculate the Shapley feature importance for your sample. How does it differ from the PFI?
+* Create a Shapley dependency plot for the 6 features you have chosen in the feature effects exercise and compare your plots with the PDPs.
 
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
 cat("<!--")
@@ -496,8 +625,7 @@ ggplot(data = shapley_values_all[which(shapley_values_all$feature == "alcohol"),
 cat("-->")
 ```
 
-### Exercise 5: Further hypotheses
 
-Think about further interesting hypotheses that you can answer by applying the introduced IML methods.
+
 
 
