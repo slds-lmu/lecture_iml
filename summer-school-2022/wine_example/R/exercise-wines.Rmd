@@ -452,6 +452,7 @@ grid.arrange(plot(lime1), plot(lime2), nrow = 1)
 ```
 
 We see that the results look quite similar between the good and the mediocre wine. We also see a problem of LIME: While the actual prediction of the random forest is quite accurate, the local model fit is very bad for the good wine. With that, we should interpret the results with care.
+Note that the **iml** package plots the effects instead of the coefficients of the local model, i.e. $x_{ij} \beta_j$ instead of $\beta_j$.
 
 </details>
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
@@ -560,7 +561,7 @@ library(patchwork)
 plot(shapley1) + plot(shapley2)
 ```
 
-The plot shows how much the actual prediction of the wine deviates from the average wine quality and how this deviation is attributed to the different features. In this specific example, we can see that the low acidity and pH value contribute most to the good rating of the wine. TODO
+The plot shows how much the actual prediction of the wine deviates from the average wine quality and how this deviation is attributed to the different features. In this specific example, we can see that the low acidity contributes most to the good rating of the white wine (left), while the low alcohol does not have a negative effect. This wine is one of the few great wines with low alcohol (see ICE plots). In contrast, for the not-so-good wine (right), the low alcohol does have a strong negative effect. 
 
 
 </details>
