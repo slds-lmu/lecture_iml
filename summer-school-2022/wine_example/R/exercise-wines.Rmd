@@ -155,12 +155,12 @@ ale_effects = FeatureEffects$new(rfpred, method = "ale", grid.size = 10)
 ale_effects$plot()
 ```
 
+ALE and PD plots are very similar. Increasing level of alcohol has a positive influence on the wine rating, while increasing level of acid.volatility has a negative effect on the predicted outcome. These two features show the highest volatility of global feature effects and thus can be considered most important for the model's prediction.
+
 </details>
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
 cat("-->")
 ```
-
-ALE and PD plots are very similar. Increasing level of alcohol has a positive influence on the wine rating, while increasing level of acid.volatility has a negative effect on the predicted outcome. These two features show the highest volatility of global feature effects and thus can be considered most important for the model's prediction.
 
 ### Exercise 1 (b): ICE plots
 
@@ -476,7 +476,7 @@ cat("<!--")
 
 <details>
   <summary>**Solution**</summary>
-```{r shapley_global, eval=FALSE}
+```{r shapley_global}
 set.seed(1)
 idx = sample(1:nrow(wine), size = 100, replace = FALSE)
 shapley_values_all = lapply(idx, function(i){
@@ -484,15 +484,12 @@ shapley_values_all = lapply(idx, function(i){
   cbind(shapley_values$results[,1:3], "feature.value" = as.numeric(shapley_values$x.interest))
 })
 shapley_values_all = do.call("rbind", shapley_values_all)
-#save(shapley_values_all, file = "wine_example/data/shapley.RData")
-
 ```
 
 Calculate global Shapley importance by the mean of absolute Shapley values over all sampled observations.
 ```{r shapley_shap_imp}
 imp = shapley_values_all %>% dplyr::group_by(feature) %>% dplyr::summarise(imp = mean(abs(phi)))
 imp[order(imp$imp, decreasing = TRUE),]
-
 ```
 The ranking looks similar to PFI.
 
@@ -501,8 +498,6 @@ Based on the sample we can approximate the global behavior of features, e.g., by
 
 ```{r shapley_shap_dep}
 ggplot(data = shapley_values_all[which(shapley_values_all$feature == "alcohol"),]) + geom_point(aes(x=feature.value, y = phi)) + theme_bw()
-
-
 ```
 
 </details>
