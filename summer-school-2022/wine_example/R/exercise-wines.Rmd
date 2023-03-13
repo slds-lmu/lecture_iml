@@ -160,7 +160,7 @@ ale_effects$plot()
 cat("-->")
 ```
 
-TODO: Explanation + Most important
+ALE and PD plots are very similar. Increasing level of alcohol has a positive influence on the wine rating, while increasing level of acid.volatility has a negative effect on the predicted outcome. These two features show the highest volatility of global feature effects and thus can be considered most important for the model's prediction.
 
 ### Exercise 1 (b): ICE plots
 
@@ -180,38 +180,6 @@ alc_plot_ice = alc_pdp_ice$plot()
 alc_plot_ice
 ```
 
-</details>
-```{r, eval = !show.solution, echo = FALSE, results='asis'}
-cat("-->")
-```
-
-### Exercise 1.3: Interactions
-
-Compute the interaction strength of all features using the H-statistic to identify the feature that contains the strongest interactions with other features.
-
-`r colorize("hint", "blue")`: Use `Interaction$new`.
-
-```{r, eval = !show.solution, echo = FALSE, results='asis'}
-cat("<!--")
-```
-
-
-<details>
-  <summary>**Solution**</summary>
-We can also measure if interactions between features are present and rank them according to their interaction strength. An interaction between two features is present if the individual average marginal effects of the two features do not add up to their joint effect. Therefore, the interaction measure H-Statistics calculates how much of the variance of the joint distribution is explained by the interaction term. The measure is between 0 (no interaction) and 1 (= the variance of the joint distribution is completely defined by interactions). For each feature, we measure how much they interact with any other feature:
-
-```{r ia, eval=longrun}
-intera = Interaction$new(rfpred)
-intera$plot()
-```
-```{r saveia, echo=FALSE, eval=longrun}
-ggsave("../images/intera.png", plot = intera$plot(), width = 7, height = 4)
-```
-```{r loadia, echo=FALSE, eval=!longrun, out.height="80%"}
-knitr::include_graphics("../images/intera.png")
-```
-
-Since alcohol seems to interact most with other features, we dig deeper to understand which features have the highest interaction with alcohol.
 
 </details>
 ```{r, eval = !show.solution, echo = FALSE, results='asis'}
@@ -219,81 +187,6 @@ cat("-->")
 ```
 
 
-### Exercise 1.4: 2-way Interactions with Feature 'alcohol'
-
-In the previous exercise, we only identified the feature with strongest interactions.
-But it does not tell us with which other features the strongest interacting feature interacts.
-Now, you are asked to compute the interaction statistic between alcohol (the feature of interest) and all other features.
-
-`r colorize("hint", "blue")`: Use again `Interaction$new` but now you need to additionally specify the feature of interest (here alcohol). Checkout the help page via `?Interaction` to find out how to do this.
-
-```{r, eval = !show.solution, echo = FALSE, results='asis'}
-cat("<!--")
-```
-
-
-<details>
-  <summary>**Solution**</summary>
-Besides general interactions, we can also specify a feature and measure all its 2-way interactions with all other features:
-
-
-```{r ice, echo = FALSE, eval = FALSE}
-alc_ice = FeatureEffect$new(rfpred, feature = "alcohol", method = "ice")
-ice_dta = alc_ice$plot()
-wine20 = as.data.frame(sapply(colnames(wine)[-12], function(x) rep(wine[,x], each = 20)))
-colnames(wine20) = colnames(wine)[-12] 
-```
-
-```{r ia_alc, eval=longrun}
-intera_alc = Interaction$new(rfpred, feature = "alcohol")
-intera_alc$plot()
-```
-```{r saveia_alc, echo=FALSE, eval=longrun}
-ggsave("../images/intera_alc.png", plot = intera_alc$plot(), width = 7, height = 4)
-```
-```{r loadia_alc, echo=FALSE, eval=!longrun}
-knitr::include_graphics("../images/intera_alc.png")
-```
-
-</details>
-```{r, eval = !show.solution, echo = FALSE, results='asis'}
-cat("-->")
-```
-
-
-### Exercise 1.5: 2D-PDP
-
-Compute a 2D-PDP between alcohol and one of the most important features that interacts with alcohol (from the previous exercise).
-
-`r colorize("hint", "blue")`: In previous exercises, we used `FeatureEffect$new` to create 1-dimensional PDPs. But now you are asked to create a 2-dimensional PDP for alcohol and  one of the most important features that interacts with alcohol from the previous exercise. Look up the help page `?FeatureEffect` to find out how to do this.
-
-```{r, eval = !show.solution, echo = FALSE, results='asis'}
-cat("<!--")
-```
-
-
-<details>
-  <summary>**Solution**</summary>
-
-Here we choose `volatile.acidity` but `free.sulfur.dioxide` would also be an option according to the H-statistic.
-
-```{r, alc_acidity_pdp, eval=longrun}
-alc_pdp = FeatureEffect$new(rfpred, feature = c("alcohol", "volatile.acidity"), method = "pdp", grid.size = 10)
-alc_pdp$plot()
-```
-```{r save2D, echo=FALSE, eval=longrun}
-ggsave("../images/2D.png", plot = alc_pdp$plot(), width = 6, height = 4)
-```
-```{r load2D, echo=FALSE, eval=!longrun}
-knitr::include_graphics("../images/2D.png")
-```
-
-The 2D-PDP visualizes the interaction between alcohol and acidity. The higher the alcohol volume and the less acid a wine is the higher is its quality. However, it needs to be noted that there are just a few observations for very high values of acidity and hence predictions in this region need to be regarded with caution.
-
-</details>
-```{r, eval = !show.solution, echo = FALSE, results='asis'}
-cat("-->")
-```
 
 
 ### Exercise 2 (a): Permutation Feature Importance
@@ -590,14 +483,22 @@ shapley_values_all = lapply(idx, function(i){
   cbind(shapley_values$results[,1:3], "feature.value" = as.numeric(shapley_values$x.interest))
 })
 shapley_values_all = do.call("rbind", shapley_values_all)
-save(shapley_values_all, file = "wine_example/data/shapley.RData")
+#save(shapley_values_all, file = "wine_example/data/shapley.RData")
 
 ```
-Based on this sample we can approximate the global behavior of features, e.g., by plotting the Shapley dependency for individual features
+
+Calculate global Shapley importance by the mean of absolute Shapley values over all sampled observations.
+```{r shapley_shap_imp}
+imp = shapley_values_all %>% dplyr::group_by(feature) %>% dplyr::summarise(imp = mean(abs(phi)))
+imp[order(imp$imp, decreasing = TRUE),]
+
+```
+The ranking looks similar to PFI.
+
+Based on the sample we can approximate the global behavior of features, e.g., by plotting the Shapley dependency for individual features
 
 
 ```{r shapley_shap_dep}
-load("../data/shapley.RData")
 ggplot(data = shapley_values_all[which(shapley_values_all$feature == "alcohol"),]) + geom_point(aes(x=feature.value, y = phi)) + theme_bw()
 
 
