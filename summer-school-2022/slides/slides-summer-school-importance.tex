@@ -1,0 +1,1230 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\newcommand{\pathiml}{../../slides/05_feature-importance}
+\usepackage{../../style/lmu-lecture}
+
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\newcommand{\mysectionslide}{
+\begin{frame}[plain]
+    %\global\advance\c@lecture by -1
+    \vspace*{0.5 cm}
+    \LARGE\bfseries\inserttitle
+    \vspace*{0.5 cm}
+
+    \ifx\lecturesection\@empty\relax\else%
+    {\lecturesection}%
+    \fi%
+
+\ifcsname learninggoals\endcsname
+  {\vspace*{0.5 cm}
+  \begin{minipage}{0.4\textwidth}
+  \ifcsname titlefigure\endcsname
+    {\begin{center}
+    \begin{figure}[!b]
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{\titlefigure}
+     \ifcsname titlecaption\endcsname
+     \caption*{\titlecaption}
+     \fi
+    \end{figure}
+    \end{center}}
+  \else
+    $\;$
+  \fi
+  \end{minipage}
+  \begin{minipage}{0.55\textwidth}
+  \normalsize
+  Learning goals
+   \normalfont
+   \footnotesize
+  \begin{itemize}
+  \learninggoals
+  \end{itemize}
+  \end{minipage}}
+\fi
+
+  \end{frame}
+}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+%\bibliography{feature-importance}
+
+\begin{document}
+    
+    \newcommand{\titlefigure}{\pathiml/figure_man/feature-importance.png}
+    \newcommand{\learninggoals}{
+    	\item Understand motivation for feature importance
+    	\item Develop an intuition for possible use-cases
+    	\item Know characteristics of feature importance methods}
+	
+	% Set style/preamble.Rnw as parent.
+	
+	% Load all R packages and set up knitr
+	
+	% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+	% parent file
+	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+	
+	% Defines macros and environments
+
+	\lecturechapter{Feature Importance}
+	\lecture{Interpretable Machine Learning}
+	
+	% ------------------------------------------------------------------------------
+
+\begin{frame}{Motivation}
+\begin{itemize}
+  \item<1-3> \textbf{Feature effects} describe the relationship of features $x$ with the prediction $\yh$
+  \begin{itemize}
+    \item requires one plot per feature
+    \item does not take the true target $y$ into account
+  \end{itemize}
+  \item<2-3> \textbf{Feature importance} methods quantify the relevance of features w.r.t. prediction performance
+  \begin{itemize}
+    \item condensed to one number per feature
+    \item provides insight into the relationship with $y$
+  \end{itemize}
+  \item<3> \textbf{N.B.}: 
+  Here, we use the term feature importance to describe loss-based feature importance methods. In the literature, you may find other notions of ``feature importance'' (e.g., variance-based methods derived from feature effect methods, see also \citebutton{Greenwell et al. (2020)}{https://doi.org/10.32614/RJ-2020-013})
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example}
+
+Feature importance offers a condensed summary of the relevance of features w.r.t. performance
+
+\medskip
+
+\begin{minipage}{0.44\textwidth}
+\begin{itemize}
+    \item Fit random forest on bike sharing data
+    \item Left: Feature importance ranking by permutation feature importance (PFI)
+    \item Right: Feature effects for all features
+\end{itemize}
+\centering
+\includegraphics[width=0.7\linewidth]{\pathiml/figure_man/bike_pfi}
+\end{minipage}
+\begin{minipage}{0.54\textwidth}
+  \includegraphics[width=\linewidth]{\pathiml/figure_man/bike_pdp+ice}
+\end{minipage}
+% \begin{center}
+%   \begin{figure}
+%   \includegraphics[width=0.55\linewidth]{\pathiml/figure_man/bike_pdp+ice} \hfill \includegraphics[width=0.35\linewidth]{\pathiml/figure_man/bike_pfi}
+% \end{figure}
+% \end{center}
+
+\end{frame}
+
+\begin{frame}{Feature Importance Scheme}
+Loss-based feature importance methods are often based on two concepts
+\lz
+\begin{enumerate}
+  \item \textbf{Perturbation/Removal:}\\
+  Generate predictions for which the feature of interest has been perturbed or removed
+  \item \textbf{Performance Comparison:} \\
+  Compare performance under perturbation/removal with the original model performance
+\end{enumerate}
+\lz
+Depending on the type of perturbation/removal, feature importance methods provide insight into different aspects of model and data.
+\end{frame}
+
+
+\begin{frame}{Potential Interpretation Goals}
+
+Feature importance methods provide condensed insights, but can only highlight certain aspects of model and data. There are different interpretation goals one might be interested in whose question of interest do not necessarily coincide (except for special cases).
+%Except for special cases, several questions of interest do not coincide.
+
+\lz
+
+For example, one may be interested in getting insight into whether the ...
+
+\begin{enumerate}
+    \item[(1)] feature $x_j$ is causal for the prediction?
+    \only<2>{\begin{itemize}
+      \item Changing feature value $x_j$ has an effect on prediction $\yh = \fh(x)$
+      \item In LM: non-zero coefficient, in ML: present feature effect
+      \item \textbf{Note:} If $x_j$ is causal for prediction $\yh$ $\nRightarrow$ causal for the ground truth $y$, e.g.:
+      %A feature being causal for prediction $\yh$ does not imply that the underlying variable is causal for the ground truth $y$, e.g.:
+      \begin{itemize}
+          \item A disease symptom may be used in a model to predict disease status \\
+          $\leadsto$ causal for prediction $\yh$
+          \item But intervening on disease symptom does not have an effect on the disease \\
+          $\leadsto$ not causal for the ground truth $y$
+      \end{itemize}
+    \end{itemize}}
+    \item[(2)] feature $x_j$ contains prediction-relevant information about $y$?
+    \item[(3)] model requires access to $x_j$ to achieve it's prediction performance?
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}[c]{Example: Causal for the prediction (1)}
+
+\begin{columns}[c]
+  \begin{column}{0.5\textwidth}
+    \begin{figure}
+  \begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=1, line width=0.25mm, black, fill=white}]
+		%
+		\node[draw, ellipse, scale=0.7] (x7) at (0, 2) {contacts};
+		\node[draw, ellipse, scale=0.7] (x0) at (0, 1) {trust};
+		\node[draw, ellipse, scale=0.7] (x1) at (0, 0) {vaccinated};
+		\node[draw, ellipse, scale=0.7] (x4) at (0, -1) {test};
+		%\node[draw, ellipse, scale=0.7] (x5) at (0, -2) {compliance};
+		\node[draw, ellipse, scale=0.7] (y) at (-2,-.5) {$Y$: COVID risk};
+		\node[draw, ellipse, scale=0.7] (x6) at (0, -2) {noise};
+		\draw[dashed,gray] (-3.25,-2.5) -- (1,-2.5) -- (1,2.5) -- (-3.25,2.5) -- cycle;
+		\node[scale=0.7] (dots) at (-1,-2.75) {data level};
+		\draw[->] (x0) -- (x1);
+		\draw[->] (x1) -- (y);
+		\draw[->] (y) -- (x4);
+		%\draw[->] (x5) -- (x4);
+		\draw[->] (x7) -- (y);
+		%\draw[-] (xd) -- (y);
+		
+		\node[draw, ellipse, scale=0.7] (ux7) at (2, 2) {\texttt{cnt}};
+		\node[draw, ellipse, scale=0.7] (ux0) at (2, 1) {\texttt{trust}};
+		\node[draw, ellipse, scale=0.7, fill=orange] (ux1) at (2, 0) {\texttt{vac}};
+		\node[draw, ellipse, scale=0.7, fill=orange] (ux4) at (2, -1) {\texttt{test}};
+		%\node[draw, ellipse, scale=0.7, fill=orange] (ux5) at (2,-2) {\texttt{cmpl}};
+        \node[draw, ellipse, scale=0.7, fill=orange] (ux6) at (2,-2) {\texttt{noise}};
+		\draw[dashed,gray] (1.25,-2.5) -- (3.5,-2.5) -- (3.5,2.5) -- (1.25,2.5) -- cycle;
+		\node[scale=0.7] (dots) at (2.5,-2.75) {model level};
+		\draw[->, dotted] (x1) -- (ux1);
+		\draw[->, dotted] (x4) -- (ux4);
+		\draw[->, dotted] (x0) -- (ux0);
+		%\draw[->, dotted] (x5) -- (ux5);
+		\draw[->, dotted] (x6) -- (ux6);
+		\draw[->, dotted] (x7) -- (ux7);
+		
+		\node[draw, circle, scale=0.7] (yhat) at (3.2, -.5) {$\hat{Y}$};
+		\draw[->] (ux1) -- (yhat);
+		\draw[->] (ux4) -- (yhat);
+		%\draw[->] (ux5) -- (yhat);
+		\draw[->] (ux6) -- (yhat);
+\end{tikzpicture}
+\end{figure} 
+  \end{column}
+  \begin{column}{0.5\textwidth}
+  A feature may be causal for the prediction $\yh$ (1) without containing prediction-relevant information about $y$ (2)\\ 
+  \textit{Examples:} overfitting due noisy features
+  \lz\pause
+    \begin{itemize}
+      \item All features used by the model are of interest
+      \item Here: Model uses feature \code{noise}, although it does not contain prediction-relevant information about $y$ (data level)
+      \item[$\Rightarrow$] Overfitted models may use many noise features which are deemed relevant on model level (but not on data level)
+  \end{itemize}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Potential Interpretation Goals}
+
+Feature importance methods provide condensed insights, but can only highlight certain aspects of model and data. There are different interpretation goals one might be interested in whose question of interest do not necessarily coincide (except for special cases).
+%Except for special cases, several questions of interest do not coincide.
+
+\lz
+
+For example, one may be interested in getting insight into whether the ...
+
+\begin{enumerate}
+    \item[(1)] feature $x_j$ is causal for the prediction?
+    \item[(2)] feature $x_j$ contains prediction-relevant information about $y$?
+    \begin{itemize}
+      \item Feature $x_j$ helps to predict the target $y$ (e.g., conditional expectation) w.r.t. performance 
+      %, as measured by the difference in expected loss
+      %%\item e.g. when $\E[y|x_j] \neq \E[y]$ for models that minimize MSE
+      %\item feature selection terminology: \textit{weak relevance} \citebutton{Pellet (2008)}{https://www.jmlr.org/papers/volume9/pellet08a/pellet08a.pdf}
+      \item If $x_j \indep y$ (independent) then $x_j$ and $y$ have zero mutual information (since $\E[y|x_j] = \E[y]$)\\ %and therefore cannot contain 
+      $\leadsto$ $x_j$ has no prediction-relevant information
+    \end{itemize}
+    \item[(3)] model requires access to $x_j$ to achieve it's prediction performance?
+\end{enumerate}
+\end{frame}
+
+
+
+
+\begin{frame}[c]{Example: Contains prediction-relevant information (2)}
+
+\begin{columns}[c]
+  \begin{column}{0.5\textwidth}
+  \begin{figure}
+  \begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=1, line width=0.25mm, black, fill=white}]
+		%
+		\node[draw, ellipse, scale=0.7, fill=orange] (x7) at (0, 2) {contacts};
+		\node[draw, ellipse, scale=0.7, fill=orange] (x0) at (0, 1) {trust};
+		\node[draw, ellipse, scale=0.7, fill=orange] (x1) at (0, 0) {vaccinated};
+		\node[draw, ellipse, scale=0.7, fill=orange] (x4) at (0, -1) {test};
+		%\node[draw, ellipse, scale=0.7] (x5) at (0, -2) {compliance};
+		\node[draw, ellipse, scale=0.7] (y) at (-2,-.5) {$Y$: COVID risk};
+		\node[draw, ellipse, scale=0.7] (x6) at (0, -2) {noise};
+		\draw[dashed,gray] (-3.25,-2.5) -- (1,-2.5) -- (1,2.5) -- (-3.25,2.5) -- cycle;
+		\node[scale=0.7] (dots) at (-1,-2.75) {data level};
+		\draw[->] (x0) -- (x1);
+		\draw[->] (x1) -- (y);
+		\draw[->] (y) -- (x4);
+		%\draw[->] (x5) -- (x4);
+		\draw[->] (x7) -- (y);
+		%\draw[-] (xd) -- (y);
+		
+		\node[draw, ellipse, scale=0.7] (ux7) at (2, 2) {\texttt{cnt}};
+		\node[draw, ellipse, scale=0.7] (ux0) at (2, 1) {\texttt{trust}};
+		\node[draw, ellipse, scale=0.7] (ux1) at (2, 0) {\texttt{vac}};
+		\node[draw, ellipse, scale=0.7] (ux4) at (2, -1) {\texttt{test}};
+		%\node[draw, ellipse, scale=0.7] (ux5) at (2,-2) {\texttt{cmpl}};
+        \node[draw, ellipse, scale=0.7] (ux6) at (2,-2) {\texttt{noise}};
+		\draw[dashed,gray] (1.25,-2.5) -- (3.5,-2.5) -- (3.5,2.5) -- (1.25,2.5) -- cycle;
+		\node[scale=0.7] (dots) at (2.5,-2.75) {model level};
+		\draw[->, dotted] (x1) -- (ux1);
+		\draw[->, dotted] (x4) -- (ux4);
+		\draw[->, dotted] (x0) -- (ux0);
+		%\draw[->, dotted] (x5) -- (ux5);
+		\draw[->, dotted] (x6) -- (ux6);
+		\draw[->, dotted] (x7) -- (ux7);
+		
+		\node[draw, circle, scale=0.7] (yhat) at (3.2, -.5) {$\hat{Y}$};
+		\draw[->] (ux1) -- (yhat);
+		\draw[->] (ux4) -- (yhat);
+		%\draw[->] (ux5) -- (yhat);
+		\draw[->] (ux6) -- (yhat);
+\end{tikzpicture}
+\end{figure} 
+  \end{column}
+  \begin{column}{0.5\textwidth}
+  A feature may contain prediction-relevant information (2) without causing the prediction (1)\\ 
+  \textit{Examples:} underfitting, model multiplicity
+  \lz
+  \pause
+      \begin{itemize}
+      \item All prediction-relevant features for $y$ are of interest
+      \item Example: All features that are directly or indirectly (i.e., via another feature) connected to $y$ 
+      \item[$\Rightarrow$] Underfitted models may ignore prediction-relevant features such as \code{contacts} here
+  \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Potential Interpretation Goals}
+
+Feature importance methods provide condensed insights, but can only highlight certain aspects of model and data. There are different interpretation goals one might be interested in whose question of interest do not necessarily coincide (except for special cases).
+%Except for special cases, several questions of interest do not coincide.
+
+\lz
+
+For example, one may be interested in getting insight into whether the ...
+
+\begin{enumerate}
+    \item[(1)] feature $x_j$ is causal for the prediction?
+    \item[(2)] feature $x_j$ contains prediction-relevant information about $y$?
+    \item[(3)] model requires access to $x_j$ to achieve it's prediction performance?
+    \begin{itemize}
+      \item Feature $x_{j}$ helps to predict the target $y$ w.r.t. performance, compared to using only $x_{-j}$  %, as measured by the difference in expected loss
+      %%\item e.g. when $\E[y|x_{-j}] \neq \E[y|x_j, x_{-j}]$ for models that minimize MSE
+      %\item feature selection terminology: \textit{strong relevance} \citebutton{Pellet (2008)}{https://www.jmlr.org/papers/volume9/pellet08a/pellet08a.pdf}
+      \item If $x_j \indep y | x_{-j}$ (independent) then $\E[y|x_{-j}] = \E[y|x_j, x_{-j}]$ \\
+      $\leadsto$ $x_j$ does not contribute unique prediction-relevant information about $y$
+      \item \textbf{Note:} A model may rely on features that can be replaced with others, e.g., a random forest fitted on data with $\E[y|x_1] \neq \E[y]$ and $\E[y|x_1] = \E[y|x_1, x_2]$ where $x_1$ was not used as split variable may rely on $x_2$ %was not sampled as potential split variable may rely on $x_2$.
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}[c]{Example: Unique prediction relevant information (3)}
+
+
+\begin{columns}[c]
+  \begin{column}{0.5\textwidth}
+  \begin{figure}
+  \begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=1, line width=0.25mm, black, fill=white}]
+		%
+		\node[draw, ellipse, scale=0.7, fill=orange] (x7) at (0, 2) {contacts};
+		\node[draw, ellipse, scale=0.7] (x0) at (0, 1) {trust};
+		\node[draw, ellipse, scale=0.7, fill=orange] (x1) at (0, 0) {vaccinated};
+		\node[draw, ellipse, scale=0.7, fill=orange] (x4) at (0, -1) {test};
+		%\node[draw, ellipse, scale=0.7, fill=orange] (x5) at (0, -2) {compliance};
+		\node[draw, ellipse, scale=0.7] (y) at (-2,-.5) {$Y$: COVID risk};
+		\node[draw, ellipse, scale=0.7] (x6) at (0, -2) {noise};
+		\draw[dashed,gray] (-3.25,-2.5) -- (1,-2.5) -- (1,2.5) -- (-3.25,2.5) -- cycle;
+		\node[scale=0.7] (dots) at (-1,-2.75) {data level};
+		\draw[->] (x0) -- (x1);
+		\draw[->] (x1) -- (y);
+		\draw[->] (y) -- (x4);
+		%\draw[->] (x5) -- (x4);
+		\draw[->] (x7) -- (y);
+		%\draw[-] (xd) -- (y);
+		
+		\node[draw, ellipse, scale=0.7] (ux7) at (2, 2) {\texttt{cnt}};
+		\node[draw, ellipse, scale=0.7] (ux0) at (2, 1) {\texttt{trust}};
+		\node[draw, ellipse, scale=0.7] (ux1) at (2, 0) {\texttt{vac}};
+		\node[draw, ellipse, scale=0.7] (ux4) at (2, -1) {\texttt{test}};
+		%\node[draw, ellipse, scale=0.7] (ux5) at (2,-2) {\texttt{cmpl}};
+        \node[draw, ellipse, scale=0.7] (ux6) at (2,-2) {\texttt{noise}};
+		\draw[dashed,gray] (1.25,-2.5) -- (3.5,-2.5) -- (3.5,2.5) -- (1.25,2.5) -- cycle;
+		\node[scale=0.7] (dots) at (2.5,-2.75) {model level};
+		\draw[->, dotted] (x1) -- (ux1);
+		\draw[->, dotted] (x4) -- (ux4);
+		\draw[->, dotted] (x0) -- (ux0);
+		%\draw[->, dotted] (x5) -- (ux5);
+		\draw[->, dotted] (x6) -- (ux6);
+		\draw[->, dotted] (x7) -- (ux7);
+		
+		\node[draw, circle, scale=0.7] (yhat) at (3.2, -.5) {$\hat{Y}$};
+		\draw[->] (ux1) -- (yhat);
+		\draw[->] (ux4) -- (yhat);
+		%\draw[->] (ux5) -- (yhat);
+		\draw[->] (ux6) -- (yhat);
+\end{tikzpicture}
+\end{figure} 
+  \end{column}
+  \begin{column}{0.5\textwidth}
+  A feature may contain prediction-relevant information (2), without the model requiring access to the feature for (optimal) prediction performance (3)
+   \\
+   \textit{Examples:} correlated features, confounding
+  
+  \lz\pause
+      \begin{itemize}
+      \item All unique prediction-relevant features for $y$ are of interest
+      \item Example: All features that are directly connected to $y$
+      \item[$\Rightarrow$] \code{trust} and \code{vaccinated} may be correlated but only \code{vaccinated} is directly connected to $y$
+  \end{itemize}
+  \end{column}
+\end{columns}  
+\end{frame}
+
+% \begin{frame}{Potential Interpretation Goals}
+
+% Feature importance methods provide condensed insights, but can only highlight certain aspects of model and data. There are different interpretation goals one might be interested in whose question of interest do not necessarily coincide (except for special cases).
+% %Except for special cases, several questions of interest do not coincide.
+
+% \lz
+
+% For example, one may be interested in getting insight into whether the ...
+
+% \begin{enumerate}
+% %<1|only@1>
+%     \item[(1)]<1|only@1> feature $x_j$ is causal for the prediction?
+%     \begin{itemize}
+%       \item Changing feature value $x_j$ has an effect on prediction $\yh = \fh(x)$
+%       \item In LM: non-zero coefficient, in ML: present feature effect
+%       \item \textbf{Note:} 
+%       A feature being causal for prediction $\yh$ does not imply that the underlying variable is causal for the ground truth $y$, e.g.:
+%       \begin{itemize}
+%           \item A disease symptom may be used in a model to predict disease status \\
+%           $\leadsto$ causal for prediction $\yh$
+%           \item But intervening on disease symptom does not have an effect on the disease \\
+%           $\leadsto$ not causal for the ground truth $y$
+%       \end{itemize}
+%     \end{itemize}
+%     \item[(2)]<2|only@2> feature $x_j$ contains prediction-relevant information about $y$?
+%     \begin{itemize}
+%       \item Feature $x_j$ helps to predict the target $y$ (e.g., conditional expectation) w.r.t. performance 
+%       %, as measured by the difference in expected loss
+%       \item e.g. when $\E[y|x_j] \neq \E[y]$ for models that minimize MSE
+%       %\item feature selection terminology: \textit{weak relevance} \citebutton{Pellet (2008)}{https://www.jmlr.org/papers/volume9/pellet08a/pellet08a.pdf}
+%       \item If $x_j \indep y$ (independent) then $x_j$ and $y$ have zero mutual information (since $\E[y|x_j] = \E[y]$)\\ %and therefore cannot contain 
+%       $\leadsto$ $x_j$ has no prediction-relevant information
+%     \end{itemize}
+%     \item[(3)]<3-4|only@3-4> model requires access to $x_j$ to achieve it's prediction performance?
+%     \begin{itemize}
+%       \item Feature $x_{j}$ helps to predict the target $y$, compared to using only $x_{-j}$ w.r.t. performance %, as measured by the difference in expected loss
+%       \item e.g. when $\E[y|x_{-j}] \neq \E[y|x_j, x_{-j}]$ for models that minimize MSE
+%       %\item feature selection terminology: \textit{strong relevance} \citebutton{Pellet (2008)}{https://www.jmlr.org/papers/volume9/pellet08a/pellet08a.pdf}
+%       \item If $x_j \indep y | x_{-j}$ (independent) then $\E[y|x_{-j}] = \E[y|x_j, x_{-j}]$ \\
+%       $\leadsto$ $x_j$ does not contribute unique prediction-relevant information about $y$
+%       \item \textbf{Note:} A model may rely on features that can be replaced with others, e.g., a random forest fitted on data with $\E[y|x_1] \neq \E[y]$ and $\E[y|x_1] = \E[y|x_1, x_2]$ where $x_1$ was not used as split variable may rely on $x_2$ %was not sampled as potential split variable may rely on $x_2$.
+%     \end{itemize}
+% \end{enumerate}
+% \lz
+% \only<4>{The distinctness of the aforementioned aspects can be proven by example (sketch).}
+% \end{frame}
+
+% \begin{frame}{Potential Interpretation Goals}
+
+% The distinctness of the aforementioned aspects can be proven by example (sketch):
+
+% \begin{itemize}
+%   \item A feature may be causal for the prediction $\yh$ (1) without containing prediction-relevant information about $y$ (2)\\
+%   \textit{Example:} overfitting
+%   \item A feature may contain prediction-relevant information (2) without causing the prediction (1)\\ \textit{Examples:} underfitting, model multiplicity
+%   \item A feature may contain prediction-relevant information (2), without the model requiring access to the feature for (optimal) prediction performance (3)\\
+%   \textit{Note:} A model may rely on features that can be replaced with others, e.g., a random forest fitted on data with $\E[y|x_1] \neq \E[y]$ and $\E[y|x_1] = \E[y|x_1, x_2]$ where $x_1$ was not used as split variable may rely on $x_2$ %was not sampled as potential split variable may rely on $x_2$.
+%   \\
+%   \textit{Examples:} correlated features, confounding
+%   \end{itemize}
+% $\Rightarrow$ In general, an importance score cannot provide insight into all aspects at once.
+% \end{frame}
+
+
+
+% \begin{frame} {Causal for the prediction (1)}
+%   \begin{figure}
+%   \begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=1, line width=0.25mm, black, fill=white}]
+% 		%
+% 		\node[draw, ellipse, scale=0.7] (x7) at (0, 2) {contacts};
+% 		\node[draw, ellipse, scale=0.7] (x0) at (0, 1) {trust};
+% 		\node[draw, ellipse, scale=0.7] (x1) at (0, 0) {vaccinated};
+% 		%\node[draw, ellipse, scale=0.7] (x4) at (0, -1) {test};
+% 		%\node[draw, ellipse, scale=0.7] (x5) at (0, -2) {compliance};
+% 		\node[draw, ellipse, scale=0.7] (y) at (-2,-.5) {$Y$: COVID risk};
+% 		\node[draw, ellipse, scale=0.7] (x6) at (0, -3) {noise};
+% 		\draw[dashed,gray] (-3.25,-3.5) -- (1,-3.5) -- (1,2.5) -- (-3.25,2.5) -- cycle;
+% 		\node[scale=0.7] (dots) at (-1,-3.75) {data level};
+% 		\draw[->] (x0) -- (x1);
+% 		\draw[->] (x1) -- (y);
+% 		%\draw[->] (y) -- (x4);
+% 		%\draw[->] (x5) -- (x4);
+% 		\draw[->] (x7) -- (y);
+% 		%\draw[-] (xd) -- (y);
+		
+% 		\node[draw, ellipse, scale=0.7] (ux7) at (2, 2) {\texttt{cnt}};
+% 		\node[draw, ellipse, scale=0.7] (ux0) at (2, 1) {\texttt{trust}};
+% 		\node[draw, ellipse, scale=0.7, fill=orange] (ux1) at (2, 0) {\texttt{vac}};
+% 		%\node[draw, ellipse, scale=0.7, fill=orange] (ux4) at (2, -1) {\texttt{test}};
+% 		%\node[draw, ellipse, scale=0.7, fill=orange] (ux5) at (2,-2) {\texttt{cmpl}};
+%         \node[draw, ellipse, scale=0.7, fill=orange] (ux6) at (2,-3) {\texttt{noise}};
+% 		\draw[dashed,gray] (1.25,-3.5) -- (3.5,-3.5) -- (3.5,2.5) -- (1.25,2.5) -- cycle;
+% 		\node[scale=0.7] (dots) at (2.5,-3.75) {model level};
+% 		\draw[->, dotted] (x1) -- (ux1);
+% 		%\draw[->, dotted] (x4) -- (ux4);
+% 		\draw[->, dotted] (x0) -- (ux0);
+% 		%\draw[->, dotted] (x5) -- (ux5);
+% 		\draw[->, dotted] (x6) -- (ux6);
+% 		\draw[->, dotted] (x7) -- (ux7);
+		
+% 		\node[draw, circle, scale=0.7] (yhat) at (3.2, -.5) {$\hat{Y}$};
+% 		\draw[->] (ux1) -- (yhat);
+% 		%\draw[->] (ux4) -- (yhat);
+% 		%\draw[->] (ux5) -- (yhat);
+% 		\draw[->] (ux6) -- (yhat);
+% \end{tikzpicture}
+% \end{figure} 
+% \end{frame}
+
+%---------------------------------------------------%
+% PFI
+%---------------------------------------------------%
+
+\renewcommand{\titlefigure}{\pathiml/figure_man/feature-importance.png}
+    \renewcommand{\learninggoals}{
+    	\item Understand how PFI is computed
+    	\item Understanding strengths and weaknesses
+    	\item Testing importance}
+	% Set style/preamble.Rnw as parent.
+	
+	% Load all R packages and set up knitr
+	
+	% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+	% parent file
+	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+	
+	% Defines macros and environments
+
+	\lecturechapter{Permutation Feature Importance (PFI)}
+	%\lecture{Interpretable Machine Learning}
+	\mysectionslide
+
+\begin{frame}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+
+
+% TODO: explain this idea better in one separate slide, e.g. we have a fixed model we want to analyze and a data set. Our aim is to understand the importance of features. We would like to remove a feature and measure its "added value" w.r.t. performance compared to not removing it. But we cannot remove it as the model is fixed and was already trained with that feature -> permuting is the next best thing we can do to "destroy" the information of the feature -> another possibility could be to add some noise to the feature to perturb it but this would change the marginal distribution
+
+\textbf{Idea:} "Destroy" feature of interest $x_j$ by perturbing it such that it becomes uninformative, e.g., randomly permute observations in $x_j$ (marginal distribution $\P(x_j)$ stays the same).  %Therefore, resample the variable from its marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.
+
+PFI for features $x_S$ using test data $\D$:
+\begin{itemize}
+  \item Measure the error {\color{blue}\textbf{without permuting features}} and {\color{red}\textbf{with permuted feature values}} $\pert{x}{}{}_S$
+  \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
+$$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske (\fh, {\color{blue}\D}), \text{ where }
+\riske(\fh, \D) = \frac{1}{n} \sum\nolimits_{(x, y) \in \D}  L(\fh(x), y)$$
+\end{itemize}
+\pause
+The data $\D$ where $x_S$ is replaced with $\pert{x}{S}{}$ is denoted as $\pert{\D}{S}{}$.\\
+Example of permuting feature $x_S$ with $S = \{1\}$ and $m=6$:
+
+% TODO: update to new notation
+\begin{center}
+\includegraphics[width=0.75\textwidth]{\pathiml/figure_man/permuted-fv.pdf}
+\end{center}
+
+\vspace*{0.2cm}
+{\scriptsize{Note: 
+The $S$ in $x_S$ refers to a \textbf{S}ubset of features for which we are interested in their effect on the prediction.\\
+Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\par}
+
+\end{frame}
+
+
+
+% \begin{columns}
+%   \begin{column}{0.5\textwidth}
+%     \only<1-3,5-7>{$\hspace{36pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}
+%   \only<4>{$\hspace{36pt}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D}),$ where 
+% $\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
+% % $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
+% %   \only<5-6>{$\hspace{36pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}
+  
+%   \begin{center}
+%   \only<1>{\includegraphics[page=2, trim=0pt 5pt 0 66pt, clip, width=\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+%   \only<2>{\includegraphics[page=3, trim=0pt 5pt 0 66pt, clip, width=\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+%   \only<3-4>{\includegraphics[page=4, trim=0pt 5pt 0 66pt, clip, width=\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+%   \only<5>{\includegraphics[page=5, trim=0pt 5pt 0 66pt, clip, width=\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+%   \only<6>{\includegraphics[page=6, trim=0pt 5pt 0 66pt, clip, width=\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+%   \only<7>{\includegraphics[page=7, trim=0pt 5pt 0 66pt, clip, width=\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+%   \end{center}
+%   \end{column}
+%   \begin{column}{0.5\textwidth}
+  
+%   \begin{itemize}
+%     \only<1-2>{\item[1.]\textbf{Perturbation:} Sample feature values from the distribution of $x_S$ ($P(X_S)$). \newline $\Rightarrow$ Randomly permute feature $x_S$. Replace the original feature with the permuted feature $\pert{x}{}{}_S$ and create data with permuted feature   $\pert{\D}{S}{}$.}
+%     \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\pert{\D}{S}{}$.}
+%     \only<3-4>{\item[3.] \textbf{Aggregation:}
+%       \begin{itemize}
+%         \item Compute the loss for each observation in both data sets.
+%       \end{itemize}}
+%     \only<5>{\item[3.] \textbf{Aggregation:}
+%       \begin{itemize}
+%         \item Compute the loss for each observation in both data sets.
+%       \item Take the difference of both losses $\Delta L$ for each observation.
+%       \end{itemize}}
+%      \only<6>{\item[3.] \textbf{Aggregation:}
+%       \begin{itemize}
+%         \item Compute the loss for each observation in both data sets.
+%         \item Take the difference of both losses $\Delta L$ for each observation.
+%         \item Average this change in loss across all observations.
+%       \end{itemize}}
+%     \only<7>{\item[3.] \textbf{Aggregation:}
+%       \begin{itemize}
+%         \item Compute the loss for each observation in both data sets.
+%         \item Take the difference of both losses $\Delta L$ for each observation.
+%         \item Average this change in loss across all observations.
+%         \item Also, average over multiple repetitions, if available.
+%       \end{itemize}}
+%   \end{itemize}
+%   \end{column}
+% \end{columns}
+
+
+
+\begin{frame}{Permutation Feature Importance}
+
+  \only<1-4>{$\hspace{80pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}%
+  \only<5-6>{$\hspace{80pt}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})$}%
+% $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
+%   \only<5-6>{$\hspace{36pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}
+  
+  \begin{center}
+  \only<1>{\includegraphics[page=2, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+  \only<2>{\includegraphics[page=3, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+  \only<3>{\includegraphics[page=4, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+  \only<4>{\includegraphics[page=5, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+  \only<5>{\includegraphics[page=6, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+  \only<6>{\includegraphics[page=7, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{\pathiml/figure_man/pfi_demo2}}%
+  \end{center}
+  
+  \begin{itemize}
+    \only<1-2>{\item[1.]\textbf{Perturbation:} Sample feature values from the distribution of $x_S$ ($P(X_S)$). \newline 
+    $\Rightarrow$ Randomly permute feature $x_S$ \\
+    $\Rightarrow$ Replace original feature with permuted feature $\pert{x}{}{}_S$ and create data $\pert{\D}{S}{}$ containing $\pert{x}{}{}_S$}%
+    \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\pert{\D}{S}{}$}%
+    \only<3->{\item[3.] \textbf{Aggregation:}}%
+      \begin{itemize}
+        \item<3-> Compute the loss for each observation in both data sets%
+        \item<4-> Take the difference of both losses $\Delta L$ for each observation%
+        \item<5-> Average this change in loss across all observations%
+        \only<5>{\\ Note: This is equivalent to computing $\riske$ on both data sets and taking the difference}%
+        \item<6-> Repeat pertubation and average over multiple repetitions%
+      \end{itemize}
+    % \only<3-4>{\item[3.] \textbf{Aggregation:}
+    %   \begin{itemize}
+    %     \item Compute the loss for each observation in both data sets.
+    %   \end{itemize}}
+    % \only<5>{\item[3.] \textbf{Aggregation:}
+    %   \begin{itemize}
+    %     \item Compute the loss for each observation in both data sets.
+    %   \item Take the difference of both losses $\Delta L$ for each observation.
+    %   \end{itemize}}
+    %  \only<6>{\item[3.] \textbf{Aggregation:}
+    %   \begin{itemize}
+    %     \item Compute the loss for each observation in both data sets.
+    %     \item Take the difference of both losses $\Delta L$ for each observation.
+    %     \item Average this change in loss across all observations.
+    %   \end{itemize}}
+    % \only<7>{\item[3.] \textbf{Aggregation:}
+    %   \begin{itemize}
+    %     \item Compute the loss for each observation in both data sets.
+    %     \item Take the difference of both losses $\Delta L$ for each observation.
+    %     \item Average this change in loss across all observations.
+    %     \item Also, average over multiple repetitions, if available.
+    %   \end{itemize}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Bike Sharing Dataset}
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{\pathiml/figure_man/bike-sharing02.png}
+\end{center}
+
+\textbf{Interpretation:}
+
+\begin{itemize}
+ \item Year (\code{yr}) and Temperature (temp) are most important features
+ %Features such as weekday also contribute to the performance.
+ \item Destroying information about \code{yr} by permuting it increases mean absolute error of model by 816
+ \item $5 \%$ and $95 \%$ quantile of repetitions due multiple permutations are shown as error bars
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Comments on PFI}
+ \begin{itemize}[<+->]
+ \itemsep1em
+  \item Interpretation: PFI is the increase of model error when feature's information is destroyed
+  \item Results can be unreliable due to random permutations \\
+  $\Rightarrow$ Solution: Average results over multiple repetitions
+  \item Permuting features despite correlation with other features can lead to unrealistic combinations of feature values (since under dependence $\P(x_j,x_{-j}) \neq \P(x_j) \P(x_{-j})$) $\leadsto$ Extrapolation issue
+  \item PFI automatically includes importance of interaction effects with other features \\
+  $\Rightarrow$ Permutation also destroys information of interactions where permuted feature is involved\\
+  $\Rightarrow$ Importance of all interactions with the permuted feature are contained in PFI score %Not only importance of permuted feature is contained but also importance of all interactions with that feature
+  \item Interpretation of PFI depends on whether training or test data is used
+ \end{itemize}
+\end{frame}
+
+%TODO: Simplify example
+\begin{frame}{Comments on PFI - Extrapolation}
+ 
+%\textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1$, $x_2 := x_1 + \epsilon_1$ are highly correlated ($x_1 \sim N(0,1), \epsilon_1 \sim N(0, 0.01)$). Let $x_3, x_4 \sim N(0,1)$ be noisy features are independent.
+ 
+ \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+ Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+\pause
+
+%\begin{figure}
+% \hfill
+%   \includegraphics[width=0.3\linewidth]{\pathiml/figure_man/pfi_hexbin_pre.pdf}\hfill
+%   \includegraphics[width=0.3\linewidth]{\pathiml/figure_man/pfi_hexbin_post.pdf} \hfill
+%   \includegraphics[width=0.39\linewidth]{\pathiml/figure_man/pfi_extrapolation.pdf} \hfill
+\centerline{\includegraphics[width=0.9\linewidth]{\pathiml/figure_man/pfi_hexbin_extrapolation.pdf}}
+\centerline{Hexbin plot of $x_1, x_2$ before permuting $x_1$ (left), after permuting $x_1$ (center), and PFI scores (right)}
+\lz\pause
+% \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
+%\end{figure}
+% 
+$\Rightarrow$ $x_1$ and $x_2$ should be irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
+$\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$, $x_2$ are considered relevant (PFI $> 0$)
+%$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+
+ \end{frame}
+
+\begin{frame}{Comments on PFI - Interactions}
+
+\textbf{Example:} Let $x_1, \dots, x_4$ be independently and uniformly sampled from $\{-1, 1\}$ and 
+$$y:= x_1 x_2 + x_3 + \epsilon_Y \text{ with } \epsilon_Y \sim N(0, 1)$$
+
+\begin{columns}[T, totalwidth = \textwidth]
+\begin{column}{0.5\textwidth}
+
+Fitting a LM yields $\fh(x) \approx x_1 x_2 + x_3$.\\
+\lz\pause
+Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jointly, all three are considered equally relevant.\\
+\lz
+$\Rightarrow$ PFI does not fairly attribute the performance to the individual features.
+
+\end{column}
+\begin{column}{0.5\textwidth}
+\centering
+  \includegraphics[width=\linewidth]{\pathiml/figure_man/pfi_interactions.pdf}
+\end{column}
+\end{columns}
+
+
+\end{frame}
+
+\begin{frame}{Comments on PFI - Test vs. Training data}
+
+\textbf{Example:} $x_1, \dots, x_{20}, y$ are independently sampled from $\mathcal{U} (-10, 10)$. An \texttt{xgboost} model with default hyperparameters is fit on a small training set of $50$ observations. The model overfits heavily.\\
+
+\begin{figure}
+  \includegraphics[width=0.9\linewidth]{\pathiml/figure_man/pfi_test_vs_train.pdf}
+  \caption{While PFI on test data considers all features to be irrelevant, PFI on train data exposes the features on which the model overfitted.}
+\end{figure}
+
+\pause
+
+Why? PFI can only be nonzero if the permutation breaks a dependence in the data. Spurious correlations help the model perform well on train data, but are not present in the test data.\\
+$\Rightarrow$ If you are interested in which features help the model to generalize, apply PFI on test data.
+  
+\end{frame}
+
+\begin{frame}{Implications of PFI}
+
+Can we get insight into whether the ...
+
+\begin{enumerate}
+    \item<1-> feature $x_j$ is causal for the prediction?
+    \begin{itemize}
+      \item $PFI_j \neq 0$ $\Rightarrow$ model relies on $x_j$
+      %(contraposition does not hold, see training vs. test data example)
+      \item As the training vs. test data example demonstrates, the converse does not hold
+    \end{itemize}
+    \item<2-> feature $x_j$ contains prediction-relevant information?
+    \begin{itemize}
+      \item $PFI_j \neq 0$  $\Rightarrow$ $x_{j}$ is dependent of $y$ or it's covariates $x_{-j}$ or both (due to extrapolation) 
+      \item $x_{j}$ is not exploited by model (regardless of whether it is useful for $y$ or not) $\Rightarrow$ $PFI_j = 0$  %irrespective of whether the feature is useful or not
+    \end{itemize}
+    \item<3-> model requires access to $x_j$ to achieve it's prediction performance?    
+    \begin{itemize}
+      \item As the extrapolation example demonstrates, such insight is not possible
+\end{itemize}
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Testing Importance (PIMP) \citebutton{Altmann et al. (2010)}{https://doi.org/10.1093/bioinformatics/btq134}}
+
+\begin{itemize}[<+->]
+  \item PIMP was originally introduced for random forest's built-in permutation feature importance
+  %\item It fixes the problem that the importance measure prefers features with many categories.
+  \item PIMP investigates whether the PFI score \textbf{significantly} differs from 0\\
+  $\Rightarrow$ Useful because PFI can be non-zero due to stochasticity
+  \item PIMP tests the $H_0$-hypothesis: Feature is independent of the target $y$ (unimportant)
+  %It computes the distribution of importances under the $H_0$-hypothesis that the feature is independent of the target $y$
+  \item Sampling under $H_0$: Permute target $y$, retrain model, compute PFI scores (repeat)\\
+  $\Rightarrow$ Permuting $y$ breaks relationship to all features\\
+  $\Rightarrow$ By computing PFI scores again, we obtain distribution of PFI scores under $H_0$
+  \item %We now rescale the importance to a 
+  Compute p-value - the tail probability under $H_0$ - and use it as a new importance measure
+\end{itemize}
+
+%\footnote[frame]{\fullcite{altmann2010permutation}}
+%{\tiny{Altmann, André, et al. "Permutation importance: a corrected feature importance measure." 
+%Bioinformatics 26.10 (2010): 1340-134.}}
+
+\end{frame}
+
+\begin{frame}{Testing Importance (PIMP)}
+
+PIMP algorithm:
+\begin{enumerate}
+	\item<1-3> For $m \in \{1, \ldots, n_{repetitions}\}$:
+		\begin{itemize}
+			\item Permute response vector $y$
+			\item Retrain model with data $\Xmat$ and permuted $y$
+			\item Compute feature importance $PFI_j^m$ for each feature $j$ (under $H_0$)
+		\end{itemize}
+	\item<2-3> Train model with $\Xmat$ and unpermuted $y$
+	\item<3> For each feature $j \in \{1,\ldots,p\}$:
+		\begin{itemize}
+			\item Fit probability distribution of the feature importance values $PFI_j^m$, $m \in \{1, \ldots, n_{repetitions}\}$ (choice between Gaussian, lognormal, gamma or non-parametric)
+			\item Compute feature importance $PFI_j$ for the model without permutation of $y$ (under $H_1$)
+			\item Retrieve the p-value of $PFI_j$ based on the fitted distribution
+		\end{itemize}
+\end{enumerate}
+\end{frame}
+
+
+%TODO: Simplify or better explain example
+\begin{frame}{PIMP for extrapolation example}
+\textbf{Recall:} 
+$y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$, 
+$x_1$, $x_2$ highly correlated but independent of $y$, 
+$x_4$ is independent of $y$ and all other variables.
+Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+%Fitting a \texttt{lm} yields $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+%
+%\begin{figure}
+  \includegraphics[width=\linewidth]{\pathiml/figure_man/pimp.pdf}
+  %\caption{$H_0$ distribution (1000 samples) for each feature as histograms, the true PFI indicated in red. PIMP only considers $x_3$ relevant. Although PFI for $x_1$ and $x_2$ is nonzero, PIMP considers them irrelevant since they are not predictive of $y$. Even after permuting $y$, the model relies on them.}
+%\end{figure}
+
+\begin{itemize}
+    \item Histograms: $H_0$ distribution of PFI scores after permuting $y$ (1000 repetitions)
+    \item Red: PFI score estimated on unpermuted $y$ (under $H_1$) $\leadsto$ compare against $H_0$ distribution
+    \item Results: Although PFI for $x_1$ and $x_2$ is nonzero (red), PIMP considers them not significantly relevant (p-value > 0.05) 
+    %since they are not predictive of $y$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Digression: Multiple testing problem \citebutton{Romano et al. (2010)}{https://doi.org/10.1057/978-1-349-95121-5_2914-1}}
+\begin{itemize}[<+->]
+  \item When should we reject the $H_0$-hypothesis for a feature? 
+  \item The larger the number of features, the more tests need to be performed by PIMP\\
+  $\leadsto$ \textbf{Multiple testing problem}: If multiplicity of tests is not taken into account, the probability that some of the true $H_0$-hypothesis is rejected (type-I error) by chance may be large
+  \item Accounting for multiplicity of individual tests can be achieved by controlling an appropriate error rate, e.g., the \textbf{family-wise error rate} (FWE: probability of at least one type-I error)
+  \item One classical method to control the FWE is the \textbf{Bonferroni correction} which rejects a null hypothesis if its p-value is smaller than $\alpha/m$ with $m$ as the number of performed parallel tests
+  %\item We refer to other lectures or the statistics literature for more details
+  \end{itemize} 
+
+  %\footnote[frame]{\fullcite{romano2010multiple}}
+  %{\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
+\end{frame}
+
+%---------------------------------------------------%
+% CFI
+%---------------------------------------------------%
+\renewcommand{\titlefigure}{\pathiml/figure_man/feature-importance.png}
+    \renewcommand{\learninggoals}{
+    	\item Extrapolation and Conditional Sampling
+    	\item Conditional Feature Importance (CFI)
+    	\item Interpretation of CFI and difference to PFI}
+	% Set style/preamble.Rnw as parent.
+	
+	% Load all R packages and set up knitr
+	
+	% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+	% parent file
+	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+	
+	% Defines macros and environments
+	
+% 	\input{../../latex-math/basic-math.tex}
+% 	\input{../../latex-math/basic-ml.tex}
+% 	\input{../../latex-math/ml-interpretable.tex}
+	
+	\lecturechapter{Conditional Feature Importance (CFI)}
+	%\lecture{Interpretable Machine Learning}
+	\mysectionslide
+
+\begin{frame}{Conditional Feature Importance Idea}
+
+\begin{itemize}[<+->]
+    \item \textbf{Permutation Feature Importance Idea:} Replace the feature of interest $x_j$ with an independent sample from the marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$
+    \item \textbf{Problem:} Under dependent features, permutation leads to extrapolation
+    \item \textbf{Conditional Feature Importance Idea:} Resample $x_j$ from the conditional distribution $\P(x_j|x_{-j})$, such that the joint distribution is preserved, i.e., $\P(x_j|x_{-j}) \P(x_{-j}) = \P(x_j, x_{-j})$
+\end{itemize}
+%\\
+%\lz
+%\\
+%\lz
+\visible<4>{
+\textbf{Example:} Conditional permutation scheme \citebutton{Molnar et. al (2020)}{https://arxiv.org/abs/2006.04628}
+\begin{columns}[T, totalwidth = \linewidth]
+\begin{column}{0.47\textwidth}
+\includegraphics[width=\linewidth]{\pathiml/figure_man/conditional_sampling.pdf}
+\end{column}
+\begin{column}{0.52\textwidth}
+\begin{itemize}
+    \item $X_2 \sim U(0,1)$ and $X_1 \sim N(0, 1)$ if $X_2<0.5$, else $X_1 \sim N(4,4)$ (black dots)
+% $X_2 \sim U(0,1)$ and 
+% \begin{align*}
+% X_1 \sim \begin{cases}
+% N(0, 1) \text{, if } X_2<0.5\\
+% N(4, 4), \text{else}
+% \end{cases}
+%\end{align*}
+    \item \textbf{Left:} For $X_2<0.5$, permuting $X_1$ (crosses) preserves marginal (but not joint) distribution \\
+    $\leadsto$ Bottom: Marginal density of $X_1$
+    \item \textbf{Right:} Permuting $X_1$ within subgroups $X_2<0.5$ \& $X_2\geq 0.5$ reduces extrapolation\\
+    $\leadsto$ Bottom: Density of $X_1$ conditional on groups
+    %\item \textbf{Bottom left:} Marginal density of $X_1$
+    %\item \textbf{Bottom right:} Densities of $X_1$ conditional on the groups
+\end{itemize}
+\end{column}
+\end{columns}
+}
+\end{frame}
+
+
+%TODO: Changed in PFI slides? Also change here!
+% RECAP EXTRAPOLATION
+\begin{frame}{Recall: Extrapolation in PFI}
+ 
+ \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+ Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+
+%\begin{figure}
+% \hfill
+%   \includegraphics[width=0.3\linewidth]{\pathiml/figure_man/pfi_hexbin_pre.pdf}\hfill
+%   \includegraphics[width=0.3\linewidth]{\pathiml/figure_man/pfi_hexbin_post.pdf} \hfill
+%   \includegraphics[width=0.39\linewidth]{\pathiml/figure_man/pfi_extrapolation.pdf} \hfill
+\centerline{\includegraphics[width=0.9\linewidth]{\pathiml/figure_man/pfi_hexbin_extrapolation.pdf}}
+\centerline{Hexbin plot of $x_1, x_2$ before permuting $x_1$ (left), after permuting $x_1$ (center), and PFI scores (right)}
+\lz
+% \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
+%\end{figure}
+% 
+$\Rightarrow$ $x_1$ and $x_2$ should be irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
+$\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$ and $x_2$ are considered relevant
+%$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+
+ \end{frame}
+
+
+ 
+%  % CONDITIONAL SAMPLING PRESERVES THE JOINT
+%  \begin{frame}{Conditional Sampling preserves the Joint}
+ 
+%  Let $\pert{x}{S}{-S} = (\pert{x}{S}{-S}_S, x_{-S})$ be the feature vector where feature values $x_S$ were replaced with an independent sample from $\P(x_S|x_{-S})$ while all other remaining feature values $x_{-S}$ stay the same. %We partition $\pert{x}{S}{-S}$ into $(\pert{x}{S}{-S}_S, x_{-S})$ containing features indexed by $S$ and the remaining features by $-S$). 
+%  Using the definition of conditional probability:
+% %
+% \begin{align*}
+%   \P(\pert{x}{S}{-S}) = \P(\pert{x}{S}{-S}_S, x_{-S}) &= \P(\pert{x}{S}{-S}_S|x_{-S}) \P(x_{-S})\\
+%   &= \P(x_S|x_{-S}) \P(x_{-S}) =  \P(x_S, x_{-S})= \P(x)
+% \end{align*}
+% \pause
+
+% Consequence: The joint distribution is preserved in the perturbed dataset.\\
+% $\Rightarrow$ CFI only evaluates the model within the observational covariate distribution\\
+%  \lz
+%  \textbf{Note:} That does not imply $\P(x,y) = \P(\pert{x}{S}{-S}, y)$! In the perturbed data, the relationship between $x_S$ and $y$ may still be destroyed (if $x_S$ is not independent from $y | x_{-S}$).\\
+%  \end{frame}
+
+
+
+% CFI DEFINITION
+\begin{frame}{Conditional Feature Importance \citebutton{Strobl et al. (2008)}{https://doi.org/10.1186/1471-2105-9-307} \citebutton{Hooker et al. (2021)}{https://arxiv.org/abs/1905.03151}}
+\normalsize
+
+Conditional feature importance (CFI) for features $x_S$ using test data $\D$:
+\begin{itemize}
+  \item Measure the error \color{blue}\textbf{with unperturbed features}\color{black}.
+  \item Measure the error \color{red}\textbf{with perturbed feature values} \color{black} $\pert{x}{S}{-S}$, where $\pert{x}{S}{-S}_S \sim \P(x_S|x_{-S})$
+  \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
+$$\widehat{CFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{-S}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
+\end{itemize}
+
+Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled conditional on the remaining features $x_{-S}$.
+
+%\footnote[frame]{\fullcite{Strobl2008}}
+
+\end{frame}
+
+
+%TODO: What is meant by "mechanistically"?
+% INTERPRETATION OF CFI
+\begin{frame}{Implications of CFI \citebutton{König et al. (2020)}{https://arxiv.org/abs/2007.08283}}
+
+\textbf{Interpretation:} Due to the conditional sampling w.r.t. all other features, CFI quantifies a feature's unique contribution to the model performance.\\
+\lz\pause
+\textbf{Entanglement with data:}
+\begin{itemize}
+  \item If feature $x_S$ does not contribute unique information about $y$, i.e., $x_S \indep y | x_{-S}$ $\Rightarrow$ CFI $= 0$
+  \item Why? Under the conditional independence $\P(\pert{x}{S}{-S}, y) = \P(x,y)$\\
+  $\leadsto$ no prediction-relevant information is destroyed by permutation of $x_S$ conditional on $x_{-S}$
+\end{itemize}
+\lz\pause
+\textbf{Entanglement with model:}
+\begin{itemize}
+  \item If the model does not use a feature $\Rightarrow$ CFI $= 0$
+  \item Why? Then the prediction is not affected by any perturbation of the feature\\
+  $\leadsto$ model performance does not change after conditional permutation
+  %(and consequently the performance is invariant).
+\end{itemize}
+
+%\footnote[frame]{\fullcite{konig_relative_2021}}
+\end{frame}
+
+
+% IMPLICATIONS OF CFI
+\begin{frame}{Implications of CFI}
+
+Can we gain insight into whether ...
+
+\begin{enumerate}
+    \item<1-3> the feature $x_j$ is causal for the prediction?
+    \begin{itemize}
+      \item $CFI_j \neq 0$ $\Rightarrow$ model relies on $x_j$ (converse does not hold, see next slide)
+    \end{itemize}
+    \item<2-3> the variable $x_j$ contains prediction-relevant information?
+    \begin{itemize}
+      \item If $x_j \not \indep y$ but $x_j \indep y | x_{-j}$ (e.g., $x_j$ and $x_{-j}$ share information) $\Rightarrow$ $CFI_j = 0$
+      \item  $x_{j}$ is not exploited by model (regardless of whether it is useful for $y$ or not) $\Rightarrow$ $CFI_j = 0$
+      %\item If a feature is not exploited by the model, CFI is zero, irrespective of whether the feature is useful or not.
+    \end{itemize}
+    \item<3> Does the model require access to $x_j$ to achieve its prediction performance?
+\begin{itemize}
+      \item $CFI_j \neq 0 \Rightarrow$ $x_j$ contributes unique information (meaning $x_j \not \indep y | x_{-j}$)
+      %Nonzero CFI implies that the feature contributes unique information (meaning $x_S \not \indep y | x_{-S}$).
+      \item Only uncovers the relationships that were exploited by the model
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+%TODO: Better example? 
+% RECAP EXTRAPOLATION
+\begin{frame}{Comparison: PFI and CFI}
+ 
+ \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+ Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.%\\
+ %
+\begin{figure}
+\hfill
+  \includegraphics[width=0.25\linewidth]{\pathiml/figure_man/pfi_hexbin_pre.pdf}\hfill
+  \includegraphics[width=0.6\linewidth]{\pathiml/figure_man/cfi_pfi.pdf} \hfill
+  \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left). PFI and CFI (right).}
+\end{figure}
+% 
+%$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
+%$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant \\
+$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
+$\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$, $x_2$ are considered relevant (PFI $> 0$) \\
+$\Rightarrow$ Since $x_1$ can be reconstructed from $x_2$ and vice versa, CFI considers $x_1$ and $x_2$ to be irrelevant
+
+ \end{frame}
+ 
+%---------------------------------------------------%
+% LOCO
+%---------------------------------------------------%
+ \renewcommand{\titlefigure}{\pathiml/figure_man/feature-importance.png}
+    \renewcommand{\learninggoals}{
+    	\item Definition of LOCO
+    	\item Interpretation of LOCO}
+	% Set style/preamble. Rnw as parent.
+	
+	% Load all R packages and set up knitr
+	
+	% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+	% parent file
+	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+	
+	% Defines macros and environments
+
+	\lecturechapter{Leave One Covariate Out (LOCO)}
+	%\lecture{Interpretable Machine Learning}
+	\mysectionslide
+ 
+ \begin{frame}{Leave One Covariate Out (LOCO) \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173} \citebutton{Tibshirani (2018)}{http://www.stat.cmu.edu/~ryantibs/talks/loco-2018.pdf}}
+% citation of the original LOCO paper
+%
+\textbf{LOCO idea:} Remove the feature from the dataset, refit the model on the reduced dataset, and measure the loss in performance compared to the model fitted on the complete dataset. %Remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.
+
+\pause\lz
+
+\textbf{Definition:} Given training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\inducer$ and a model $\fh = \inducer(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
+  \begin{enumerate}
+    \item learn model on dataset ${\Dtrain}_{,-j}$ where feature $x_j$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$\pause
+    \item compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |y^{(i)} - \fh_{-j}(x_{-j}^{(i)}) \right | - \left |y^{(i)} - \fh(x^{(i)}) \right | $ with $i \in \Dtest$\pause
+    \item yield the importance score $\text{LOCO}_j = \text{med} \left ( \Delta_j  \right )$
+  \end{enumerate}
+\lz\pause
+The method can be generalized to other loss functions and aggregations. If we use mean instead of median we can rewrite LOCO as
+%
+$$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
+%\footnote[frame]{\fullcite{lei_distribution-free_2018}\\ \fullcite{tibshirani_loco_2018}}
+\end{frame}
+
+\begin{frame}{Bike Sharing Example}
+%
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{\pathiml/figure_man/bike_sharing_loco.pdf}
+\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing data (training set) to optimize MSE. Then LOCO was computed for all features on the test data. The temperature is the most important feature. Without access to \texttt{temp}, the MSE increases by approx. $140,000$.}
+\end{figure}
+%
+ %\textbf{Interpretation:} $\text{LOCO}_j$ quantifies how important variable $x_j$ is to the generalization performance of the learner on $\Dtrain$.\\
+%
+\end{frame}
+
+\begin{frame}{Interpretation of LOCO}
+
+\textbf{Interpretation:} LOCO estimates the generalization error of the learner on a reduced dataset $\D_{-j}$.\\
+\lz
+Can we get insight into whether the ...
+\begin{enumerate}
+    \item feature $x_j$ is causal for the prediction $\yh$?
+    \begin{itemize}
+      \item In general, no also because we refit the model (counterexample on the next slide)
+    \end{itemize}
+    \item feature $x_j$ contains prediction-relevant information?
+    \begin{itemize}
+      \item In general, no (counterexample on the next slide)
+    \end{itemize}
+    \item model requires access to $x_j$ to achieve its prediction performance?
+    \begin{itemize}
+      \item Approximately, it provides insight into whether the \textit{learner} requires access to $x_j$
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Interpretation of LOCO}
+
+\begin{columns}[c]
+\begin{column}{0.7\textwidth}
+
+% x1 = rnorm(n, mean=0, sd = 5)
+% x2 = rnorm(n, mean=0, sd = 0.1) + x1
+% x3 = rnorm(n, mean=0, sd = 5)
+% y = rnorm(n, mean = 0, sd = 2) + x3 + x2
+
+\textbf{Example:} Sample $1000$ observations with
+\begin{itemize}
+    \item $x_1, x_3 \sim N(0, 5)$
+    \item $x_2 = x_1 + \epsilon_2$ with $\epsilon_2 \sim N(0, 0.1)$
+    \item $y = x_2 + x_3 + \epsilon$ with $\epsilon \sim N(0, 2)$
+\end{itemize}
+
+$\Rightarrow$ Fitting a LM yields
+$\fh(x) = -0.02 - 1.02 x_1 + 2.05 x_2 + 0.98 x_3$
+
+%Sample $1000$ observations with $x_1, x_3 \sim N(0, 5), x_2 = x_1 + \epsilon_2$ with $\epsilon_2 \sim N(0, 0.1)$ and $y = x_2 + x_3 + \epsilon$ with $\epsilon \sim N(0, 2)$.
+
+\lz\pause
+Top: Correlation matrix
+
+Bottom: LOCO importance of LM fitted on 70\% of the data computed on 30\% remaining observations
+
+\end{column}
+\begin{column}{0.3\textwidth}
+
+%\begin{figure}
+%\centering
+%\hfill
+ % \begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=0.6, line width=0.3mm, black, fill=white}]
+%		\node[draw, circle, font=\large] (x1) at  (-.5, 2) {$X_1$};
+%		\node[draw, circle, font=\large] (x2) at  (-.5,1) {$X_2$};
+%		\node[draw, circle, font=\large] (x3) at  (.5,1) {$X_3$};
+%		\node[draw, circle, font=\large] (y) at  (0,0) {$Y$};
+%		\draw[->, black] (x1) -- (x2);
+%		\draw[->, black] (x3) -- (y);
+%		\draw[->, black] (x2) -- (y);
+%	\end{tikzpicture} 
+%\hfill
+\includegraphics[width=\linewidth]{\pathiml/figure_man/simulation_loco_corr.pdf} 
+\hfill
+\includegraphics[width=\linewidth]{\pathiml/figure_man/simulation_loco}
+%\hfill
+%\end{figure}
+
+%Linear Gaussian data generating process with correlation matrix as depicted left.
+%A linear model was fit with $\fh(x) = -0.09 - 0.86 x_1 + 1.86 x_2 + 0.96 x_3$.\\
+
+\end{column}
+\end{columns}
+
+\lz\pause
+
+$\Rightarrow$ We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient of $x_2$ is $2.05$)\\\pause
+$\Rightarrow$ We also can't infer (2), e.g., $Cor(x_2, y) = 0.68$ but $\text{LOCO}_2 \approx 0$\\\pause
+$\Rightarrow$ We can get insight into (3): $x_2$ and $x_1$ highly correlated with $\text{LOCO}_1 = \text{LOCO}_2  \approx 0$ \\
+\phantom{$\Rightarrow$} $\leadsto$ $x_2$ and $x_1$ can take each others place if one of them is left out (not the case for $x_3$)
+%As $x_2$ and $x_1$ are highly correlated, they can take each others place, which is not the case for $x_3$.
+\end{frame}
+
+%TODO: Why only?
+\begin{frame}{Pros and Cons}
+  Pros:
+  \begin{itemize}
+    \item Requires (only?) one refitting step per feature for evaluation
+    \item Easy to implement
+    \item Testing framework available in \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173}
+  \end{itemize}
+%
+  Cons:
+  \begin{itemize}
+    \item Does not provide insight into a specific model, but rather a learner on a specific dataset
+    \item Model training is a random process, so estimates can be noisy (which is problematic for inference about model and data)
+    \item Requires re-fitting the learner for each feature $\rightarrow$ computationally intensive compared to PFI
+  \end{itemize}
+\end{frame}
+
+%\begin{frame}{Bibliography}
+%  \printbibliography
+%\end{frame}
+
+\endlecture
+\end{document}

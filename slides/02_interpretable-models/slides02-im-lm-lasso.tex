@@ -41,24 +41,24 @@
 % https://www.statology.org/linear-regression-assumptions/
 % https://link.springer.com/book/10.1007/978-3-642-34333-9
 %\textbf{Model formula}
-    %$$\mathbb{E}_Y(Y \vert X) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p + \epsilon = X^T\mathbf{\beta} + \epsilon$$
+    %$$\mathbb{E}_Y(Y \vert X) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p + \epsilon = X^T\mathbf{\theta} + \epsilon$$
 
 \begin{columns}[T, totalwidth = \linewidth]
 \begin{column}{0.58\linewidth}
-$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \beta + \epsilon$$
+$$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon = \xv^\top \boldsymbol{\theta} + \epsilon$$
 
  \begin{itemize}
         %\item $\mathbb{E}_Y(Y \vert X)$ expected value of target given features $X$
         \item $y$: target / output
         \item $\epsilon$: remaining error / residual (e.g., due to noise)
-        \item $\beta_j$: weight of input feature $x_j$ (with intercept $\beta_0$)\\
+        \item $\theta_j$: weight of input feature $x_j$ (with intercept $\theta_0$)\\
         $\leadsto$ model consists of $p+1$ weights
         %\item Model equation is additive and identical across entire input space
         %\pause
         % \item Polynomial regression extends equation above by
         % \begin{itemize}
-        % \item \textbf{higher order main effects} which have their own weights (e.g., quadratic: $\beta_{x_j^2} \cdot x_j^2$)
-        % \item \textbf{interaction effects} (e.g., 2-way interaction: $\beta_{x_i, x_j} \cdot x_i \cdot x_j$)
+        % \item \textbf{higher order main effects} which have their own weights (e.g., quadratic: $\theta_{x_j^2} \cdot x_j^2$)
+        % \item \textbf{interaction effects} (e.g., 2-way interaction: $\theta_{x_i, x_j} \cdot x_i \cdot x_j$)
         % \end{itemize}
     \end{itemize}
 \end{column}
@@ -69,20 +69,20 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
    
    %\vspace*{0.2cm} 
    \pause
-    \textbf{Properties and assumptions} \citebutton{Checking assumptions in R \& Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b}
+    \textbf{Properties and assumptions} \citebutton{Faraway (2002), Ch. 7}{https://cran.r-project.org/doc/contrib/Faraway-PRA.pdf} \citebutton{Checking assumptions in R \& Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b}
     \begin{itemize}[<+->]
     \item \textbf{Linear} relationship between features and target
     %Predictions are \textbf{linear} combination of features $\leadsto$ 
     %Model equation is additive and linear w.r.t. features% and identical across entire input space
     \item $\epsilon$ and $y \vert \xv$ are \textbf{normally} distributed with \textbf{constant variance} (homoscedastic)\\
-    $\leadsto$ $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \beta, \sigma^2)$\\
+    $\leadsto$ $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \theta, \sigma^2)$\\
     $\leadsto$ if violated, inference-based metrics (e.g., p-values) are invalid
     %\item Error terms are assumed to have a \textbf{constant variance} over the entire feature space %(homoscedasticity)
     \item Independence of observations (e.g., no repeated measurements) %(e.g., no autocorrelated error terms)
     \item Independence of features $x_j$ with error term $\epsilon$
     \item No or little multicollinearity (i.e., no strong feature correlations)
     % free of measurement error assumption: https://indigo.uic.edu/articles/thesis/Measurement_Error_in_Generalized_Linear_Models/17025971/1/files/31488719.pdf
-    % \item Note: For inference-based metrics (t-statistic, p-values, confidence intervals) to be valid, the error term needs to be normally distributed, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$\\
+    % \item Note: For inference-based metrics (t-statistic, p-values, confidence intervals) to be valid, the error term needs to be normally distributed, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \theta, \sigma^2)$\\
 %$\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data
         % \item Properties and assumptions:
         % \begin{itemize}
@@ -102,39 +102,51 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
 
 \begin{frame}[c]{Linear Regression - Interpretation}
 
-$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \beta + \epsilon$$
+$$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon = \xv^\top \theta + \epsilon$$
 
     Interpretation of weights (\textbf{feature effects}) depend on type of feature:
     \begin{itemize}[<+->]
-        \item \textbf{Numerical $x_j$}: Increasing $x_j$ by one unit changes outcome by $\beta_j$, ceteris paribus (c.p.)
-        \item \textbf{Binary $x_j$}: Weight $\beta_j$ is active or not (multiplication with 1 or 0) where 0 is reference category
-        \item %Categorical: One-hot-encoding of $L-1$ new features for $L$ categories (dummy encoding) \\
+        \item \textbf{Numerical $x_j$}: Increasing $x_j$ by one unit changes outcome by $\theta_j$, ceteris paribus (c.p.) \\ (\textit{ceteris paribus} means "everything else held constant".)
+        \item \textbf{Binary $x_j$}: Weight $\theta_j$ is active or not (multiplication with 1 or 0) where 0 is reference category
+    \end{itemize}
+
+\begin{columns}[T, totalwidth = \linewidth]
+\begin{column}{0.58\linewidth}
+    \begin{itemize}
+        \item<3-> %Categorical: One-hot-encoding of $L-1$ new features for $L$ categories (dummy encoding) \\
         \textbf{Categorical $x_j$ with $L$ categories}: Create $L-1$ one-hot-encoded features $x_{j,1}, \hdots, x_{j,L-1}$ (each having its own weight), left out category is reference ($\hat =$ dummy encoding)
-        %$x_{j,l}, \forall l \in \{1, \hdots, L-1\}$ (with weight $\beta_{j,l}$), left out category is reference ($\hat =$ dummy encoding)
+        %$x_{j,l}, \forall l \in \{1, \hdots, L-1\}$ (with weight $\theta_{j,l}$), left out category is reference ($\hat =$ dummy encoding)
         \\
         $\leadsto$ Interpretation:
-        Outcome changes by $\beta_{j,l}$ for category $l$ compared to reference cat.,  c.p.
+        Outcome changes by $\theta_{j,l}$ for category $l$ compared to reference cat.,  c.p.
         % (for any of the $L-1$ categories):
-        %Predicted outcome changes for $l$-th category compared to the reference category by its weight $\beta_{j,l}$ c.p.
-        %Predicted outcome changes for category $x_{j,l}$ compared to the reference category by $\beta_j$ c.p.
-        \item \textbf{Intercept $\beta_0$}: Expected outcome if all feature values are set to 0 %(baseline) %reflects expected features values if features were standardised (0-mean, 1-stdev)
+        %Predicted outcome changes for $l$-th category compared to the reference category by its weight $\theta_{j,l}$ c.p.
+        %Predicted outcome changes for category $x_{j,l}$ compared to the reference category by $\theta_j$ c.p.
+        \item<4> \textbf{Intercept $\theta_0$}: Expected outcome if all feature values are set to 0 %(baseline) %reflects expected features values if features were standardised (0-mean, 1-stdev)
         %\item Note: In case of higher order or interaction effects, weights cannot be interpreted in isolation
     \end{itemize}
-    \begin{center}
-        \includegraphics[width = 0.45\textwidth]{figure/plot_lin_effect.pdf} \\
-        Boxplot of $\hat\beta_j x_j$-values (scale invariant)
-        $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
+\end{column}
+\begin{column}{0.42\linewidth}
+\begin{center}
+        \includegraphics[width = 0.8\textwidth]{figure/reg_lm_plot_interpreted.pdf}\\
+        % Bild aus I2ML: supervised-regression
+        %figure/plot_lin_effect.pdf} \\
+        %Boxplot of $\hat\theta_j x_j$-values (scale invariant)
+        %$\leadsto$ Comparable feature contributions w.r.t. $\hat y$
     \end{center}
+\end{column}
+\end{columns}
+    
 \end{frame}
 
      
 \begin{frame}[c]{Linear Regression - Interpretation}
 
-$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv^\top \beta + \epsilon$$
+$$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon = \xv^\top \theta + \epsilon$$
     \textbf{Feature importance}:
     \begin{itemize}
-        \item Absolute t-statistic value: $\hat\beta_j$ scaled with its standard error ($SE(\hat\beta_j)$ $\hat =$ reliability of the estimate) 
-    $$|t_{\hat\beta_j}| = \left| \tfrac{\hat\beta_j}{SE(\hat\beta_j)} \right|$$
+        \item Absolute t-statistic value: $\hat\theta_j$ scaled with its standard error ($SE(\hat\theta_j)$ $\hat =$ reliability of the estimate) 
+    $$|t_{\hat\theta_j}| = \left| \tfrac{\hat\theta_j}{SE(\hat\theta_j)} \right|$$
         \item High values indicate important (i.e. significant) features
     \end{itemize}
     \begin{center}
@@ -146,9 +158,12 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
 \begin{frame}{Example: Linear Regression - Main Effects}
 
 \textbf{Bike data}: predict number of rented bikes using 4 numeric and 1 categorical feature (season)
+
+\medskip 
+
 % \begin{footnotesize}
 % $$
-% \hat y = \hat \beta_0 + \hat \beta_1 \mathds{1}_{(seas = SPRING)} + \hat \beta_2 \mathds{1}_{(seas = SUMMER)} + \hat \beta_3 \mathds{1}_{(seas = FALL)} + \hat \beta_4 temp + \hat \beta_5 hum + \hat \beta_6 windspeed + \hat \beta_7 days\_since\_2011
+% \hat y = \hat \theta_0 + \hat \theta_1 \mathds{1}_{(seas = SPRING)} + \hat \theta_2 \mathds{1}_{(seas = SUMMER)} + \hat \theta_3 \mathds{1}_{(seas = FALL)} + \hat \theta_4 temp + \hat \theta_5 hum + \hat \theta_6 windspeed + \hat \theta_7 days\_since\_2011
 % $$
 % \end{footnotesize}
 \begin{columns}[T, totalwidth=\linewidth]
@@ -156,16 +171,16 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
 %\vspace*{-0.3cm}
 \begin{align*}
 \hat y = 
-& \hat \beta_0 + 
-\hat \beta_1 \mathds{1}_{x_{season} = SPRING} +
-\hat \beta_2 \mathds{1}_{x_{season} = SUMMER} +\\
+& \hat \theta_0 + 
+\hat \theta_1 \mathds{1}_{x_{season} = SPRING} +
+\hat \theta_2 \mathds{1}_{x_{season} = SUMMER} +\\
 & 
-\hat \beta_3 \mathds{1}_{x_{season} = FALL} + 
-\hat \beta_4 x_{temp} + 
-\hat \beta_5 x_{hum} + \\
+\hat \theta_3 \mathds{1}_{x_{season} = FALL} + 
+\hat \theta_4 x_{temp} + 
+\hat \theta_5 x_{hum} + \\
 & 
-\hat \beta_6 x_{windspeed} + 
-\hat \beta_7 x_{days\_since\_2011}
+\hat \theta_6 x_{windspeed} + 
+\hat \theta_7 x_{days\_since\_2011}
 \end{align*}
 \end{column}
 \begin{column}{0.47\textwidth}
@@ -199,33 +214,33 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon = \xv
 \pause
 
 \lz
-\begin{columns}[T, totalwidth=\linewidth]
-\begin{column}<5>{0.46\textwidth}
-\textbf{Vis.}: Boxplot of $\hat\beta_j x_j$-values (scale invariant)\\
+%\begin{columns}[T, totalwidth=\linewidth]
+%\begin{column}<5>{0.46\textwidth}
+%\textbf{Vis.}: Boxplot of $\hat\theta_j x_j$-values (scale invariant)\\
 %weights multiplied by actual feature value (better comparable due to different scales)
-$\leadsto$ Comparable feature contributions w.r.t. $\hat y$
+%$\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 
-\includegraphics[width = \textwidth]{figure/plot_lin_effect.pdf}
+%\includegraphics[width = \textwidth]{figure/plot_lin_effect.pdf}
 %   \begin{center}
-%   % Effect of $i$-th observation $= \beta_j x_j^{(i)}$\\
+%   % Effect of $i$-th observation $= \theta_j x_j^{(i)}$\\
 
 %     %$\leadsto$ Better comparability due to different scales
 %   \end{center}
 %\pause
 %\verbatiminput{figure/lm_output.txt}
-\end{column}\hfill
-\begin{column}{0.54\textwidth}  %%<--- here
+%\end{column}\hfill
+%\begin{column}{0.54\textwidth}  %%<--- here
 
 \begin{itemize}[<+->]
     \item \textbf{Interpretation intercept}:
-    If all feature values are 0 (and season is \code{WINTER} $\hat =$ reference cat.), the expected number of bike rentals is $\hat\beta_0 = 3229.3$
-    \item \textbf{Interpretation categorical}: Rentals in \code{SPRING} are by $\hat\beta_1 = 862$ higher than in \code{WINTER}, c.p.
-    \item \textbf{Interpretation numerical}: Rentals increase by $\hat\beta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
+    If all feature values are 0 (and season is \code{WINTER} $\hat =$ reference cat.), the expected number of bike rentals is $\hat\theta_0 = 3229.3$
+    \item \textbf{Interpretation categorical}: Rentals in \code{SPRING} are by $\hat\theta_1 = 862$ higher than in \code{WINTER}, c.p.
+    \item \textbf{Interpretation numerical}: Rentals increase by $\hat\theta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
     %If the temperature increases by 1 order Celsius, the number of bike rentals increases by 120.5 c.p.
 
 \end{itemize}
-\end{column}
-\end{columns}
+%\end{column}
+%\end{columns}
 \end{frame}
 
 
@@ -234,15 +249,15 @@ $\leadsto$ Comparable feature contributions w.r.t. $\hat y$
 
 \begin{frame}{Linear Regression - Interaction and High-order Effects}
 
-$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
+$$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon$$
 
 Equation above can be extended (polynomial regression) by including
 
 \begin{itemize}
 \item \textbf{high-order effects} which have their own weights\\
-$\leadsto$ e.g., quadratic effect: $\beta_{x_j^2} \cdot x_j^2$
+$\leadsto$ e.g., quadratic effect: $\theta_{x_j^2} \cdot x_j^2$
 \item \textbf{interaction effects} as the product of multiple features\\
-$\leadsto$ e.g., 2-way interaction: $\beta_{x_i, x_j} \cdot x_i \cdot x_j$
+$\leadsto$ e.g., 2-way interaction: $\theta_{x_i, x_j} \cdot x_i \cdot x_j$
 \end{itemize}
 \pause
 Implications of including high-order and interaction effects: 
@@ -256,7 +271,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \end{itemize}
 
 %Weights cannot be interpreted in isolation as before
-% $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p + \epsilon$$
+% $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon$$
 
 % \begin{itemize}
 % \item Results in polynomial regression 
@@ -267,8 +282,8 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 % \begin{frame}{Linear and Polynomial Regression}
 
 % \begin{align*}
-% \mathbb{E}_Y(Y \vert X) &= \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \epsilon \\
-%  &= X^T\beta + \mathcal{E}
+% \mathbb{E}_Y(Y \vert X) &= \theta_0 + \theta_1 x_1 + \dots + \theta_p x_p + \epsilon \\
+%  &= X^T\theta + \mathcal{E}
 % \end{align*}
 
 % \begin{itemize}
@@ -281,7 +296,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 % \item We can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
 % %By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
 % \item For higher order effects or interactions, beta coefficients cannot be interpreted in isolation.
-% \item Note: For inference-based metrics (p-values, confidence intervals) to be valid, error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \beta, \sigma^2)$.\\
+% \item Note: For inference-based metrics (p-values, confidence intervals) to be valid, error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \theta, \sigma^2)$.\\
 % $\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data.
 % \end{itemize}
 % \end{frame}
@@ -436,7 +451,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 
 \begin{frame}{Regularization via LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
 % \begin{itemize}
-%     \item LASSO adds an $L_1$-norm penalization term ($\lambda||\beta||_1$) to the least squares optimization problem%\\
+%     \item LASSO adds an $L_1$-norm penalization term ($\lambda||\theta||_1$) to the least squares optimization problem%\\
 %     % $\leadsto$ Shrinks some feature weights to zero (feature selection)\\
 %     % $\leadsto$ Sparser models (with fewer features) are more interpretable
 %     % %Aim: Feature selection (sparsity) and regularization of feature weights
@@ -446,14 +461,14 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.65\textwidth}
 \begin{itemize}
-    \item LASSO adds an $L_1$-norm penalization term ($\lambda||\beta||_1$) \\%to the least squares optimization problem\\
+    \item LASSO adds an $L_1$-norm penalization term ($\lambda||\theta||_1$) \\%to the least squares optimization problem\\
     $\leadsto$ Shrinks some feature weights to zero (feature selection)\\
     $\leadsto$ Sparser models (fewer features): more interpretable
     %Aim: Feature selection (sparsity) and regularization of feature weights
     \item Penalization parameter $\lambda$ must be chosen (e.g., by CV) %or depending on the number of features to keep
 \end{itemize}
 $$
-min_{\beta} \bigg(\underbrace{\frac{1}{n} \sum_{i=1}^{n} (y^{(i)} - {\xi}^{\top} \beta)^2}_\text{Least square estimate for LM} + \lambda||\beta||_1\bigg) 
+min_{\theta} \bigg(\underbrace{\frac{1}{n} \sum_{i=1}^{n} (y^{(i)} - {\xi}^{\top} \theta)^2}_\text{Least square estimate for LM} + \lambda||\theta||_1\bigg) 
 $$
 %\vspace*{0.2cm}\\
 %\vspace*{-0.4cm}

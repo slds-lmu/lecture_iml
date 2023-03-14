@@ -47,17 +47,17 @@
 \medskip
 \pause
 \textbf{Solution}: GLMs - extend LMs by allowing other distributions from exponential family
-%$$g(\E (y \mid \xv)) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p$$
+%$$g(\E (y \mid \xv)) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p$$
 % \begin{align*}
 % &g(\E (y \mid \xv)) = 
-% %\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p = 
-% \xv^\top \beta\\
-% \Leftrightarrow \; & \E (y \mid \xv) = g^{-1}(\xv^\top \beta)
+% %\theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p = 
+% \xv^\top \theta\\
+% \Leftrightarrow \; & \E (y \mid \xv) = g^{-1}(\xv^\top \theta)
 % \end{align*}
-$$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^{-1}(\xv^\top \beta)$$
+$$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g^{-1}(\xv^\top \theta)$$
 \vspace*{-0.5cm}
     \begin{itemize}[<+->]
-        \item Link function $g$ links linear predictor $\xv^\top \beta$ to expectation $\E$ of specified distribution of $y \mid \xv$\\
+        \item Link function $g$ links linear predictor $\xv^\top \theta$ to expectation $\E$ of specified distribution of $y \mid \xv$\\
         $\leadsto$ LM is special case: Gaussian distribution for $y \mid \xv$ with $g$ as identity function 
         \item Link function $g$ and distribution need to be specified 
         \item High-order and interaction effects can be manually added as in LMs
@@ -74,7 +74,7 @@ $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^
     %\pause
     %Interaction effects via feature engineering:
     %\begin{itemize}
-    %    \item E.g., feature expansion: $\beta_{x_i,x_j} x_i \cdot x_j$
+    %    \item E.g., feature expansion: $\theta_{x_i,x_j} x_i \cdot x_j$
     %\end{itemize}
 \end{frame}
  	
@@ -86,10 +86,10 @@ $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^
     \item<1-> Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function: 
     $$g(x) = \log\left(\frac{x}{1 - x}\right) \; \Rightarrow \; g^{-1}(x) = \frac{1}{1+\exp(-x)} $$
     \item<1-> Models probabilities for binary classification by
-    $$\E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \beta) = \frac{1}{1 + \exp(- \xv^\top \beta)} $$
+    $$\E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \theta) = \frac{1}{1 + \exp(- \xv^\top \theta)} $$
     %\item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification 
     %\item Logistic regression formula:
-    %$$P(y = 1) =\frac{1}{1 + \exp(-( \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p ))} $$
+    %$$P(y = 1) =\frac{1}{1 + \exp(-( \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p ))} $$
         \end{itemize}
 \end{column}
 \begin{column}{0.38\textwidth}
@@ -101,29 +101,40 @@ $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^
 \end{column}
 \begin{column}{0.995\linewidth}
 \includegraphics[width = \textwidth]{figure/Logistic-curve.pdf}
-\scriptsize\centerline{$\xv^\top \beta$}
+\scriptsize\centerline{$\xv^\top \theta$}
 \end{column}
 \end{columns}
 
-
 \end{column}
 \end{columns}
 
-\begin{itemize}
-    \item<2-> Typically, we set the threshold to $0.5$ to predict classes, e.g.,
+\vspace{-0.5cm}
+
+\begin{columns}[c, totalwidth=\linewidth]
+    \begin{column}{0.53\linewidth}
+    \begin{itemize}
+        \item Typically, we set the threshold to $0.5$ to predict classes, e.g.,
         \begin{itemize}
             \item Class 1 if $P(y=1) > 0.5$
             \item Class 0 if $P(y=1) \leq 0.5$
         \end{itemize}
-\end{itemize}
+    \end{itemize}
+    \end{column}
+    \begin{column}{0.47\linewidth}
+        \centering
+        \includegraphics[width=0.4\textwidth]{figure/logreg-2vars-surface.png} \,
+        \includegraphics[width=0.45\textwidth]{figure/reg_class_log_7} 
+    \end{column}
+\end{columns}
+% figs from i2ml course, Chapter 03.04: Logistic Regression, slide 7 
 \end{frame}
 
 
 % \begin{frame}{Generalized Linear Models (GLMs)}
 
 % \begin{align*}
-% g\left(\mathbb{E}_Y(Y \vert X)\right) &= X^T\beta \\
-% \mathbb{E}_Y \left(Y \vert X\right) &= g^{-1}(X^T\beta)
+% g\left(\mathbb{E}_Y(Y \vert X)\right) &= X^T\theta \\
+% \mathbb{E}_Y \left(Y \vert X\right) &= g^{-1}(X^T\theta)
 % \end{align*}
 % \begin{itemize}[<+->]
 % %\setlength\itemsep{1em}
@@ -133,8 +144,8 @@ $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^
 %     \item Gaussian target distribution $+$ identity link $\hat =$ linear / polynomial model.
 %     \item Binomial target distribution $+$ logit link $log\left(\frac{\mathbb{E}_Y(Y \vert X)}{1 - \mathbb{E}_Y(Y \vert X)}\right)$ $\hat =$ logistic regression.
 % \end{itemize}
-% %\item GLMs keeps linear predictor $X^T\beta$ (explains $\mathbb{E}_Y(Y \vert X)$ through a more flexible link function $g$).
-% \item Link function $g$ describes how $X^T\beta$ relates to the expected, conditional target $\mathbb{E}_Y(Y \vert X)$.
+% %\item GLMs keeps linear predictor $X^T\theta$ (explains $\mathbb{E}_Y(Y \vert X)$ through a more flexible link function $g$).
+% \item Link function $g$ describes how $X^T\theta$ relates to the expected, conditional target $\mathbb{E}_Y(Y \vert X)$.
 % \begin{itemize}[<.->]
 %     \item Interpretations as for linear / polynomial models but w.r.t. transformed target via $g$.
 %     \item Linear terms become non-linear through the link function (except for identity link)!
@@ -152,17 +163,17 @@ $$g(\E (y \mid \xv)) = \xv^\top \beta \; \Leftrightarrow \; \E (y \mid \xv) = g^
 
     \begin{itemize}
         \item \textbf{Recall:} Odds is the quotient of two probabilities, odds ratio compares the ratio of two odds 
-        \item Weights $\beta_j$ are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
+        \item Weights $\theta_j$ are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
         %relate to log-odds %$\leadsto$ Effects are linear as in LM (but w.r.t. log-odds)
-        $$log\text{-}odds = \log \left(\frac{P(y = 1)}{1 - P(y=1)}\right) = \log \left(\frac{P(y = 1)}{P(y=0)}\right) = \beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p  $$
-        \textbf{Interpretation:} Changing $x_j$ by one unit, changes log-odds of class 1 compared to class 0 by $\beta_j$%\\
+        $$log\text{-}odds = \log \left(\frac{P(y = 1)}{1 - P(y=1)}\right) = \log \left(\frac{P(y = 1)}{P(y=0)}\right) = \theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p  $$
+        \textbf{Interpretation:} Changing $x_j$ by one unit, changes log-odds of class 1 compared to class 0 by $\theta_j$%\\
         %$\leadsto$ Effects are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
         \pause
         \item Odds for class 1 vs. class 0: %Odds can be caulculated by:
-        $odds = \displaystyle\frac{P(y = 1)}{P(y=0)}= \exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p)$
+        $odds = \displaystyle\frac{P(y = 1)}{P(y=0)}= \exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p)$
         \item Instead of interpreting changes w.r.t. log-odds, it is more common to use odds ratios:
-        $$odds\text{ }ratio = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_j (x_j+1) + \ldots + \beta_p x_p)}{\exp(\beta_0 + \beta_1 x_1 + \ldots + \beta_j x_j + \ldots + \beta_p x_p)} = \exp{(\beta_j)} $$
-        \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\beta_j)$
+        $$odds\text{ }ratio = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j (x_j+1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp{(\theta_j)} $$
+        \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\theta_j)$
         %\pause
         %\item Interpretation for different feature types is the same as for linear regression (however, linear interpretation only possible w.r.t. log odds $\leadsto$ difficult to comprehend)
     \end{itemize}	

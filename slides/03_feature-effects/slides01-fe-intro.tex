@@ -25,15 +25,15 @@
 
 % %Here,
 
-% %Here, the marginal effect of a feature $x_j$ does not vary across observations and is quantified by its associated coefficient $\hat\beta_j$. %, which explains how a feature affects the model prediction.
+% %Here, the marginal effect of a feature $x_j$ does not vary across observations and is quantified by its associated coefficient $\hat\theta_j$. %, which explains how a feature affects the model prediction.
 
-% %The $\hat\beta$-coefficients are constant across different observations.
-% %It is sufficient to consider a feature's $\hat\beta$ coefficient as marginal effect as it provides an understanding how a feature affects the model prediction. % on average.
+% %The $\hat\theta$-coefficients are constant across different observations.
+% %It is sufficient to consider a feature's $\hat\theta$ coefficient as marginal effect as it provides an understanding how a feature affects the model prediction. % on average.
 
 % %\lz
 % % \textbf{Example}: %Visualizing the marginal effect of a LM (left) and a GAM (right) with a single feature (temperature) to predict the number of bike rentals.
 % % Feature effect of LM (left) visualizes relationship of a single feature (here: temperature) on prediction (here: number of bike rentals) while ignoring all other features.
-% % GAM (right) replaces linear terms $x_j\hat\beta_j$ of LM by non-linear functions $f_j(x_j)$ estimated via splines.
+% % GAM (right) replaces linear terms $x_j\hat\theta_j$ of LM by non-linear functions $f_j(x_j)$ estimated via splines.
 % %Marginal effects of a LM with features temperature (\texttt{temp}) and \texttt{season} to predict the number of bike rentals (\texttt{cnt}).
 
 % \centering
@@ -41,10 +41,10 @@
 
 % \includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}\phantom{\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}}
 
-% LM without interaction: $\hat\beta_j$ is linear effect of feature $x_j$ (applies globally to all observations):
+% LM without interaction: $\hat\theta_j$ is linear effect of feature $x_j$ (applies globally to all observations):
 % %the prediction of any observation $\xi$ is %can be expressed by %explained by its marginal feature effects
 % %prediction of an observation $\xi$ can be explained by the individual main effects, e.g.:
-% $$\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$$ % + \dots + x_p\hat\beta_p.$$
+% $$\fh(\xv) = \hat\theta_0 + x_1\hat\theta_1$$ % + \dots + x_p\hat\theta_p.$$
 
 % %\phantom{\includegraphics[width=0.375\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/lm_main_effects}}\includegraphics[width=0.375\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/lm_main_effects}
 
@@ -64,17 +64,17 @@
 
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.49\linewidth}
-LM without interaction: $\hat\beta_j$ is linear effect of feature $x_j$ (applies globally to all observations):
+LM without interaction: $\hat\theta_j$ is linear effect of feature $x_j$ (applies globally to all observations):
 \begin{itemize}
-    \item Model equation: $\fh(\xv) = \hat\beta_0 + x_1\hat\beta_1$
-    \item Single value $\hat\beta_1$ describes global effect
+    \item Model equation: $\fh(\xv) = \hat\theta_0 + x_1\hat\theta_1$
+    \item Single value $\hat\theta_1$ describes global effect
 \end{itemize}
-%$$% + \dots + x_p\hat\beta_p.$$
+%$$% + \dots + x_p\hat\theta_p.$$
 \end{column}\pause
 \begin{column}{0.49\linewidth}
 GAM without interaction: $\fh_j(x_j)$ is non-linear effect of feature $x_j$  (applies globally):
 \begin{itemize}
-    \item Model equation: $\fh(\xv) = \hat\beta_0 + \fh_j(x_1)$
+    \item Model equation: $\fh(\xv) = \hat\theta_0 + \fh_j(x_1)$
     \item Curve $\fh_1$ describes global effect
 \end{itemize}
 %$$% + \dots + \hat{h}_p(x_p).$$
