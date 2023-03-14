@@ -1,0 +1,52 @@
+\documentclass[a4paper]{article}
+
+\input{../../style/preamble_ex_summer_school.tex}
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/ml-trees.tex}
+\input{../../latex-math/ml-interpretable.tex}
+
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\begin{document}
+
+\kopf{3}
+
+%\input{ex_tex/ex_inclass.tex}
+
+\aufgabe{Quiz}{
+
+\begin{enumerate}
+  \item Which of the following statement(s) about local surrogate models is/are correct?  
+            \begin{enumerate}
+                \item Surrogate models produced by LIME should have the same prediction as the model to be explained for the whole training dataset.
+                \item The choice of the sampling process and the definition of locality are important hyperparameters of LIME that have a large impact on the behavior of the method.
+                \item LIME does not require any adaptions to be applicable to deep learning models for image data.
+                \item LIME requires the surrogate model to use all available features - a selection of features is not allowed. 
+                \item If the kernel width for the exponential kernel is set to infinity, all observations receive a proximity measure/weight of $1$ independent of their distance to $\xv$. 
+          \end{enumerate}
+  \item Which of the following statement(s) about counterfactual explanations is/are correct? 
+        \begin{enumerate}
+        \item In case of only two continuous features, we could directly read of counterfactuals from a prediction surface plot.
+        \item Counterfactual explanations are not suitable for people without machine learning knowledge, because reasoning by "What if..." questions are not natural for human beings.
+         \item Making use of domain-knowledge encoded in causal graphs, could help to receive more realistic counterfactuals.
+        \end{enumerate}
+\end{enumerate}
+}
+
+\dlz
+
+\aufgabe{Application}{
+%Make yourself familiar with the iml package in R and the method FeatureEffects.
+Answer the following questions for your chosen dataset
+\begin{enumerate}
+\item Choose 2-3 observations from your dataset which you would like to explain. How do the different features influence the predictions of the regarded observations? Use LIME for your analysis and interpret your results.\\
+Hint: Use LocalModel from the iml package.
+\item Your task is to choose an observation in your dataset of which you want to change the label (e.g. credit accepted vs. credit declined in a classification task or change a wine with a rating of 5 to a predicted wine rating of 6 in a regression task). 
+Try to find such a counterfactual by changing as few features as possible (e.g., 1-2 features) and with rather small changes.\\
+Bonus: Try the counterfactuals package (\url{https://github.com/dandls/counterfactuals}), e.g. with the method MOCRegr/MOCClassif, and compare your results.
+\end{enumerate}
+}
+
+\end{document}
