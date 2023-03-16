@@ -80,52 +80,64 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
  	
 \begin{frame}{GLM - Logistic Regression}
 \begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.62\textwidth}
+\begin{column}{0.5\textwidth}
 
 \begin{itemize}
-    \item<1-> Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function: 
-    $$g(x) = \log\left(\frac{x}{1 - x}\right) \; \Rightarrow \; g^{-1}(x) = \frac{1}{1+\exp(-x)} $$
-    \item<1-> Models probabilities for binary classification by
+    \item Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function: 
+\end{itemize}
+\begin{align*}
+    g(x) &= \log\left(\frac{x}{1 - x}\right) \\ 
+    \Rightarrow \; g^{-1}(x) &= \frac{1}{1+\exp(-x)}
+\end{align*}
+\end{column}
+\begin{column}{0.5\textwidth}
+
+% \begin{columns}[c, totalwidth=\linewidth]
+% \begin{column}{0.005\linewidth}
+% \scriptsize
+% \rotatebox[origin=c]{90}{\hspace{10pt}$P(y = 1)$}
+% \end{column}
+% \begin{column}{0.995\linewidth}
+\includegraphics[width = \textwidth]{figure/reg_class_log_6.pdf}
+% \scriptsize\centerline{$\xv^\top \theta$}
+% \end{column}
+% \end{columns}
+\end{column}
+\end{columns}
+
+\smallskip
+
+\begin{columns}[T, totalwidth=\textwidth]
+\begin{column}{0.6\textwidth}
+\begin{itemize}
+    \item Models probabilities for binary classification by
     $$\E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \theta) = \frac{1}{1 + \exp(- \xv^\top \theta)} $$
     %\item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification 
     %\item Logistic regression formula:
     %$$P(y = 1) =\frac{1}{1 + \exp(-( \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p ))} $$
-        \end{itemize}
+\end{itemize}
 \end{column}
-\begin{column}{0.38\textwidth}
-
-\begin{columns}[c, totalwidth=\linewidth]
-\begin{column}{0.005\linewidth}
-\scriptsize
-\rotatebox[origin=c]{90}{\hspace{10pt}$P(y = 1)$}
-\end{column}
-\begin{column}{0.995\linewidth}
-\includegraphics[width = \textwidth]{figure/Logistic-curve.pdf}
-\scriptsize\centerline{$\xv^\top \theta$}
+\begin{column}{0.4\textwidth}
 \end{column}
 \end{columns}
 
-\end{column}
-\end{columns}
+\end{frame}
 
-\vspace{-0.5cm}
 
-\begin{columns}[c, totalwidth=\linewidth]
-    \begin{column}{0.53\linewidth}
+
+\begin{frame}{GLM - Logistic Regression}
+
+\begin{itemize}
+    \item Typically, we set the threshold to $0.5$ to predict classes, e.g.,
     \begin{itemize}
-        \item Typically, we set the threshold to $0.5$ to predict classes, e.g.,
-        \begin{itemize}
-            \item Class 1 if $P(y=1) > 0.5$
-            \item Class 0 if $P(y=1) \leq 0.5$
-        \end{itemize}
+        \item Class 1 if $P(y=1) > 0.5$
+        \item Class 0 if $P(y=1) \leq 0.5$
     \end{itemize}
-    \end{column}
-    \begin{column}{0.47\linewidth}
-        \centering
-        \includegraphics[width=0.4\textwidth]{figure/logreg-2vars-surface.png} \,
-        \includegraphics[width=0.45\textwidth]{figure/reg_class_log_7} 
-    \end{column}
-\end{columns}
+\end{itemize}
+
+\centering
+\includegraphics[width=0.3\textwidth]{figure/logreg-2vars-surface.png} \qquad
+\includegraphics[width=0.4\textwidth]{figure/reg_class_log_7} 
 % figs from i2ml course, Chapter 03.04: Logistic Regression, slide 7 
 \end{frame}
 

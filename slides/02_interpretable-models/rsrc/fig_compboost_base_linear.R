@@ -47,6 +47,8 @@ row.names(df) = df$Feature
 df$Feature = NULL
 xtable(df)
 
+fi = plotFeatureImportance(cboost) + theme_bw()
+ggsave("../figure/compboost_pfi_base1.pdf", fi, width = 6, height = 3.5)
 
 
 cboost$train(1000L, trace = 1000L)
@@ -76,3 +78,6 @@ xtable(df)
 
 plot_base = plotBaselearnerTraces(cboost) + theme_bw()
 ggsave("../figure/compboost_base_linear.pdf", plot_base, width = 7, height = 3)
+
+fi = plotFeatureImportance(cboost) + theme_bw()
+ggsave("../figure/compboost_pfi_base2.pdf", fi, width = 6, height = 3.5)
