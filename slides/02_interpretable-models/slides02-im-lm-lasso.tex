@@ -141,7 +141,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 
      
 \begin{frame}[c]{Linear Regression - Interpretation}
-
+\vspace{-0.2cm}
 $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon = \xv^\top \theta + \epsilon$$
     \textbf{Feature importance}:
     \begin{itemize}
@@ -150,7 +150,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
         \item High values indicate important (i.e. significant) features
     \end{itemize}
     \begin{center}
-        \includegraphics[width=0.4\textwidth]{../01_intro/figure/bike-sharing02.png}
+        \includegraphics[width=0.6\textwidth]{figure/t_stat.pdf}
     \end{center}
 \end{frame}
 
@@ -253,12 +253,36 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon$$
 
 Equation above can be extended (polynomial regression) by including
 
-\begin{itemize}
-\item \textbf{high-order effects} which have their own weights\\
-$\leadsto$ e.g., quadratic effect: $\theta_{x_j^2} \cdot x_j^2$
-\item \textbf{interaction effects} as the product of multiple features\\
-$\leadsto$ e.g., 2-way interaction: $\theta_{x_i, x_j} \cdot x_i \cdot x_j$
-\end{itemize}
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.65\linewidth}
+    \begin{itemize}
+        \item \textbf{high-order effects} which have their own weights\\
+        $\leadsto$ e.g., quadratic effect: $\theta_{x_j^2} \cdot x_j^2$
+        \item \textbf{interaction effects} as the product of multiple feat.\\
+        $\leadsto$ e.g., 2-way interaction: $\theta_{x_i, x_j} \cdot x_i \cdot x_j$
+    \end{itemize}
+\end{column}
+\begin{column}{0.35\linewidth}
+    \vspace{-0.2cm}
+    \begin{scriptsize}
+    \begin{table}[ht]
+    \centering
+        \begin{tabular}{lrr}
+        \hline
+        Method & $R^2$ & adj. $R^2$ \\ 
+        \hline
+        Simple LM & 0.85 & 0.84 \\ 
+        Higher-order & 0.87 & 0.87 \\ 
+        Interaction  & 0.96 & 0.93 \\ 
+    %    Both Types & 0.96 & 0.93 \\ 
+        \hline
+        \end{tabular}
+    \end{table}
+    \end{scriptsize}
+    % code for tables in rsrc/tab_lm_comparison.R
+\end{column}
+\end{columns}
+
 \pause
 Implications of including high-order and interaction effects: 
 \begin{itemize}
