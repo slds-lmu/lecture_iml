@@ -266,7 +266,7 @@ Equation above can be extended (polynomial regression) by including
     \vspace{-0.2cm}
     \begin{scriptsize}
     \begin{table}[ht]
-    \centering
+    \centering \textbf{Bike Data}
         \begin{tabular}{lrr}
         \hline
         Method & $R^2$ & adj. $R^2$ \\ 
@@ -483,21 +483,33 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 % \end{itemize}
 
 \begin{columns}[T, totalwidth=\linewidth]
-\begin{column}{0.65\textwidth}
+\begin{column}{0.6\textwidth}
 \begin{itemize}
-    \item LASSO adds an $L_1$-norm penalization term ($\lambda||\theta||_1$) \\%to the least squares optimization problem\\
-    $\leadsto$ Shrinks some feature weights to zero (feature selection)\\
-    $\leadsto$ Sparser models (fewer features): more interpretable
+    \item LASSO adds an $L_1$-norm penalization term ($\lambda||\theta||_1$) %to the least squares optimization problem
+    \begin{itemize}
+        \item[$\leadsto$] Shrinks some feature weights to zero\\ (feature selection)
+        \item[$\leadsto$] Sparser models (fewer features): \\ more interpretable
+    \end{itemize}
     %Aim: Feature selection (sparsity) and regularization of feature weights
     \item Penalization parameter $\lambda$ must be chosen (e.g., by CV) %or depending on the number of features to keep
 \end{itemize}
+\vspace{0.2cm}
 $$
 min_{\theta} \bigg(\underbrace{\frac{1}{n} \sum_{i=1}^{n} (y^{(i)} - {\xi}^{\top} \theta)^2}_\text{Least square estimate for LM} + \lambda||\theta||_1\bigg) 
 $$
-%\vspace*{0.2cm}\\
-%\vspace*{-0.4cm}
-%\pause
-\only<2->{
+\end{column}
+\begin{column}{0.4\textwidth}
+\centerline{\includegraphics[width=.8\textwidth]{figure/l1_hat.png}} 
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Regularization via LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
+
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.65\textwidth}
 \textbf{Example} (interpretation of weights analogous to LM):
 \begin{itemize}
     \item LASSO with main effects and interaction \code{temp} with \code{season}
@@ -507,15 +519,15 @@ $$
     $\leadsto$ No feature selection of whole categorical features\\
     %May be problematic for categorical features as only weights of single categories are set to zero (due to dummy encoding) instead of the whole categorical feature\\ %, polynomials and interactions
     $\leadsto$ Solution: group LASSO \citebutton{Yuan and Lin (2006)}{https://doi.org/10.1111/j.1467-9868.2005.00532.x}
-\end{itemize}}
+\end{itemize}
+\medskip
+\centering
+\includegraphics[width = 0.5\textwidth]{figure/reg_lm_plot_interpreted.pdf}
+
 \end{column}
 \begin{column}{0.35\textwidth}
-\centerline{\includegraphics[width=0.5\textwidth]{figure/l1_hat.png}} 
-%\lz\lz
-\scriptsize
-\vspace{0.1cm}
-%\begin{table}[b]
-\only<2->{
+
+\footnotesize
 \centering
 \begin{tabular}{rr}
   \hline
@@ -554,9 +566,12 @@ $$
 %   \hline
 % \end{tabular}
 % \end{table}
-}
 \end{column}
 \end{columns}
+
+
+%\includegraphics[width = 0.8\textwidth]{figure/reg_lm_plot_interpreted.pdf}
+
 
 \end{frame}
 \endlecture
