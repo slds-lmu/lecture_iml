@@ -1,0 +1,11 @@
+\aufgabe{SHAP}{
+\label{ex:shap}
+	Now we apply Shapley as a local feature relevance quantification tool. Therefore we implement the marginal SHAP payoff function.
+
+\begin{enumerate}
+    \item Load the \href{https://www.kaggle.com/code/sndychvn18/fifa-world-cup-2018/notebook}{FIFA dataset} into a data table (e.g. using the pandas library in python) and predict the Man of the Match probability through a random forest. \\ \textit{Hint:} Note that many of the float variables in the data set contain missing values and hence, consider integer variables only. Transform the target variable 'Man of the Match' into a binary format suitable for a prediction task and select only explanatory variables of type integer (e.g. dtype int64). Don't forget to split the data into a training and test set before fitting the random forest! Use an instance from your test set to generate an exemplary prediction for the probability of a team having the 'Man of the Match' amongst them. 
+    \item Implement the marginal sampling based SHAP value function. Compute the marginal sampling based value functions $v(j)$ for the instance.
+    \item We could use the value function implemented above in combination with our Shapley implementations from Exercise \ref{ex:shapley} to compute SHAP. A more efficient equivalent definition has been proposed, which is based on locally fitting a weighted linear model: kernel SHAP. Implement kernel SHAP and calculate the SHAP values for the instance.
+    \item Why might using TreeSHAP be a better idea for our setting than using KernelSHAP? Calculate SHAP values using Tree SHAP (as found in the \texttt{shap} package, \href{https://modeloriented.github.io/shapper/}{R} \href{https://github.com/slundberg/shap}{python}). Visualize the TreeSHAP values using a force plot and interpret your results.
+\end{enumerate}
+}
