@@ -1,0 +1,602 @@
+---
+title: "Exercise Feature Importance"
+output: html_document
+---
+# Libraries
+```{r}
+library(docstring)
+library(dplyr)
+library(data.table)
+library(matrixStats)
+library(ggplot2)
+library(tibble)
+library(cowplot)
+library(keras)
+library(patchwork)
+library(MASS)
+library(Thermimage)
+library(GMCM)
+source("utils.R")
+```
+
+
+# Exercise 1: Permutation feature importance
+## 1c)
+```{r}
+# Read the dataset and remove the index column.
+df = read.csv(file = "extrapolation.csv")
+df = df[,-which(names(df) == "X")]
+
+# Split the dataset to 70% train data and 30% test data.
+set.seed(100)
+train = sample(nrow(df), 0.7 * nrow(df), replace = FALSE)
+trainData = df[train,]
+testData = df[-train,]
+
+# Build a linear regression model.
+model = lm(y ~ ., data = trainData)
+summary(model)
+
+# Calculate mean_squared_error
+MSE = mean(model$residuals ^ 2)
+print(paste("MSE:", MSE))
+
+# Get X_train, X_test, y_train, y_test for later use.
+X_train = trainData[,-which(names(trainData) == "y")]
+X_test = testData[,-which(names(testData) == "y")]
+y_train = trainData[, which(names(trainData) == "y")]
+y_test = testData[, which(names(testData) == "y")]
+
+# Function to calculate mse for later use.
+mse = function(fitted, true) {
+  #'Function to calculate mse.
+  #'
+  #' @param fitted: Predicted values
+  #' @param true: True values
+  
+  mean((fitted - true) ^ 2)
+}
+  
+```
+
+
+## 1d)
+First, we implement PFI (with mean squared error as performance metric). 
+```{r}
+
+pfi_fname = function(fname, model, X_test, y_test) {
+  #' Function that returns the pfi for a single feature.
+  #'
+  #' @param fname: Name of the selected feature.
+  #' @param model: Classifier which has a predict method.
+  #' @param X_test (data.frame): Input X_test data.
+  #' @param y_test (vector): y_test values
+  #'
+  #' @return performance (integer(1)): performance metric
+  
+  X_test_perturbed = X_test
+  
+  # Perturb the feature interested
+  X_test_perturbed[[fname]] = sample(X_test_perturbed[[fname]])
+  
+  # Predict for the original X_test and data after permutation
+  predictionForOriginal = predict(model, X_test)
+  predictAfterPermutation = predict(model, X_test_perturbed)
+  
+  # Calculate the mse score.
+  original_score = mse(predictionForOriginal, y_test)
+  after_perturbed_score = mse(predictAfterPermutation, y_test)
+  
+  #Calculate the performance
+  performance = after_perturbed_score - original_score
+  
+  return(performance)
+  
+}
+
+fi = function(fi_fname_func, ...) {
+  #' Feature importance for all features given a feature importance method for a single column
+  #' model, X_test, y_test,
+  #' @param model: Classifier which has a predict method.
+  #' @param X_test (data.frame): Input X_test data.
+  #' @param y_test (vector): y_test values
+  #'
+  #' @return results (vector): relevance for each feature (in the order of X_test.columns)
+  
+  #results = c()
+  #for (fi_fname in colnames(X_test)) {
+  #  imp = fi_fname_func(fi_fname, model, X_test, y_test, ...)
+  #  results = append(results, imp)
+  #}
+  
+  results = unlist(lapply(colnames(X_test), fi_fname_func, ...))
+  return(results)
+}
+```
+
+This is the function to run n times for all navie functions. 
+Different arguments will be passed here according to the order of the parameters in each naive function.
+In total, there are 7 arguments: model,X_test,y_test,X_train,n_marginalize,df,'y'(y_name).
+```{r}
+
+n_times = function(func, n, return_raw, ...) {
+  #' Run for n times but pass different navie function.
+  #'
+  #' @param func: a feature importance method
+  #' @param n (integer(1)): How many times to run.
+  #' @param return_raw (bool): whether to have row results or not.
+  #'
+  #' @return final_Result (list): A list containing mean_fi, std_fi (row results).
+  
+  results = c()
+  for (i in 1:n) {
+    imp = func(...)
+    results = rbind(results, imp)
+  }
+  
+  rownames(results) = 1:nrow(results)
+  col_Means = colMeans(results)
+  col_Sds = colSds(results)
+  
+  # Create a list to store the final results.
+  final_Result = list()
+  
+  # Whether only the aggregation (mean, stdd) or also the raw results are returned.
+  if (return_raw) {
+    final_Result = append(final_Result, list(col_Means))
+    final_Result = append(final_Result, list(col_Sds))
+    final_Result = append(final_Result, list(results))
+  }
+  else{
+    final_Result = append(final_Result, list(col_Means))
+    final_Result = append(final_Result, list(col_Sds))
+  }
+  return(final_Result)
+}
+
+```
+
+
+Now we apply the method to our model and dataset. 
+```{r}
+pfi_results =
+  n_times(fi, 10, TRUE, pfi_fname, model, X_test, y_test)
+
+#Store mean and sd as a data frame.
+pfi_mean_sds = data.frame(pfi_results[1], pfi_results[2])
+rownames(pfi_mean_sds) = c('x1', 'x2', 'x3', 'x4')
+colnames(pfi_mean_sds) = c('col_Means', 'col_Sds')
+
+#Create the plot to visualize
+ggplot(
+  rownames_to_column(pfi_mean_sds[1:4, ], var = "Features"),
+  aes(
+    x = reorder(Features, pfi_mean_sds$col_Means),
+    y = pfi_mean_sds$col_Means
+  )
+) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "pfi", y = "Mean Value", x = "Features") +
+  geom_errorbar(
+    aes(
+      ymin = pfi_mean_sds$col_Means - pfi_mean_sds$col_Sds,
+      ymax = pfi_mean_sds$col_Means + pfi_mean_sds$col_Sds
+    ),
+    width = .1
+  )
+
+```
+
+
+## 1f)
+```{r}
+# Get to know linear regression model's coefficients and intercept.
+model$coefficients
+
+corrplot::corrplot(cor(testData))
+```
+
+## 1h)
+We use the extrapolation.csv dataset. We create a pairplot showing the pairwise scatterplot of the original feature as well as the corresponding perturbed variable with all remaining feature variables (and potentially y).
+```{r}
+# The plot before the permutation. 
+reshaped_test_data =
+  reshape2::melt(testData ,  id.vars = 'x2', variable.name = 'series')
+
+# Create line plot for each column in data frame
+plot1 = ggplot(reshaped_test_data, aes(x2, value)) +
+  geom_point() +
+  labs(title = "Before Permutation") +
+  facet_grid(series ~ .)
+
+# The plot after the permutation. 
+X_test_perturbed = testData
+# Perturb the feature interested
+X_test_perturbed$x2 = sample(X_test_perturbed$x2)
+
+reshaped_X_test_perturbed =
+  reshape2::melt(X_test_perturbed ,
+                 id.vars = 'x2',
+                 variable.name = 'series')
+
+# Create line plot for each column in data frame
+plot2 = ggplot(reshaped_X_test_perturbed, aes(x2, value)) +
+  geom_point() +
+  labs(title = "After Permutation") +
+  facet_grid(series ~ .)
+
+plot1 + plot2
+```
+
+
+
+# Exercise 2: Conditional sampling based feature importance techniques
+## 2a)
+```{r}
+sample_cond = function(J, C, X_train, X_test, num_samples) {
+  #' Conditional sampler
+  #'
+  #' @param J: Names of interested features.
+  #' @param C: Names of features conditioned on.
+  #' @param X_train (data.frame): Input X_train data.
+  #' @param X_test (data.frame): Input X_test data.
+  #' @param num_samples (integer(1)): Times to sample.
+  #'
+  #' @return sample(data.frame): Sample results.
+  #'
+  dist = GaussianConditionalEstimator$new()
+  dist$fit(X_train[, J], X_train[, C])
+  sample = dist$sample(X_test[,C], num_samples, J)
+  return(sample)
+  
+}
+```
+Show the sample results.
+```{r}
+J = c('x1', 'x3')
+C = c('x2', 'x4')
+sample = sample_cond(J, C, X_train, X_test, 10)
+head(sample)
+```
+
+## 2b) 
+We implement conditional feature importance (CFI)
+```{r}
+cfi_fname = function(fname, model, X_train, X_test) {
+  #' Conditional feature importance for a feature.
+  #'
+  #' @param fname: Name of the selected feature.
+  #' @param model: Classifier which has a predict method.
+  #' @param X_train (data.frame): Input X_train data.
+  #' @param X_test (data.frame): Input X_test data.
+  #'
+  #' @return performance: performance metric
+  
+  C = colnames(X_train)[colnames(X_train) != fname]
+  
+  sample = sample_cond(fname, C, X_train, X_test, 1)
+  #print(sample)
+
+  X_test_perturbed = X_test
+
+  # Perturb the feature interested
+  X_test_perturbed[fname] = sample
+
+  # Predict for the original test data and data after permutation
+  predictionForOriginal = predict(model, X_test)
+  predictAfterPermutation = predict(model, X_test_perturbed)
+
+  original_score = mse(predictionForOriginal, y_test)
+  after_perturbed_score = mse(predictAfterPermutation, y_test)
+
+  #Calculate the performance
+  performance = after_perturbed_score - original_score
+
+  return(performance)
+}
+```
+
+
+## 2c)
+```{r}
+cfi_results =
+  n_times(fi, 10, TRUE, cfi_fname, model, X_train, X_test)
+
+#Store mean and sd as a data frame.
+cfi_mean_sds = data.frame(cfi_results[1], cfi_results[2])
+rownames(cfi_mean_sds) = c('x1', 'x2', 'x3', 'x4')
+colnames(cfi_mean_sds) = c('col_Means', 'col_Sds')
+
+#Create the plot to visualize
+ggplot(
+  rownames_to_column(cfi_mean_sds[1:4, ], var = "Features"),
+  aes(
+    x = reorder(Features, cfi_mean_sds$col_Means),
+    y = cfi_mean_sds$col_Means
+  )
+) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "cfi", y = "Mean Value", x = "Features") +
+  geom_errorbar(
+    aes(
+      ymin = cfi_mean_sds$col_Means - cfi_mean_sds$col_Sds,
+      ymax = cfi_mean_sds$col_Means + cfi_mean_sds$col_Sds
+    ),
+    width = .1
+  )
+```
+
+## 2d)
+```{r}
+c_value_func_partial =
+  function(J, X_train, X_test, y_test, n_marginalize, model) {
+    #' Partial value function, i.e. performance given all features are
+    #' reconstructed conditional on the set J, marginalization of the prediction
+    #' over the remaining features
+    #'
+    #' @param J (vector): Name of the selected feature.
+    #' @param X_train (data.frame): Input X_train data.
+    #' @param X_test (data.frame): Input X_test data.
+    #' @param y_test (vector): y_test values
+    #' @param n_marginalize (integer(1)): Number to marginalize.
+    #' @param model: Classifier which has a predict method.
+    #'
+    #' @return performance: performance metric
+    
+    #Get the feature names other than fname
+    c_columns = dplyr::select(X_train, -all_of(J))
+    C = colnames(c_columns)
+    
+    if (length(C) == 0) {
+      X_test_prediction = predict(model, X_test)
+      return(mse(X_test_prediction, y_test))
+    }
+    
+    #Sample using features from C
+    sample = sample_cond(C, J, X_train, X_test, n_marginalize)
+    
+    #Duplicate each row n_marginalize times to create a new dataset.
+    replication_x_test =
+      X_test[rep(seq_len(nrow(X_test)), each = n_marginalize),]
+    
+    #Replace the corresponding columns using sample obtained.
+    replication_x_test[C] = sample
+    
+    #Get the new y_test prediction value.
+    new_y_test = predict(model, replication_x_test)
+    
+    # Calculate the mean value for each data.
+    y_hat_agg = colMeans(matrix(new_y_test, n_marginalize))
+    
+    performance = mse(y_hat_agg, y_test)
+    return(performance)
+  }
+
+c_value_func =
+  function(J, S, X_train, X_test, y_test, n_marginalize, model) {
+    #' Conditional sage value function of variables j given coalition S.
+    #'
+    #' @param J (vector): Name of the selected feature.
+    #' @param S (vector): name of the Coalition features.
+    #' @param X_train (data.frame): Input X_train data.
+    #' @param X_test (data.frame): Input X_test data.
+    #' @param y_test (vector): y_test values
+    #' @param n_marginalize (integer(1)): Number to marginalize.
+    #' @param model: Classifier which has a predict method.
+    #'
+    #' @return: Performance difference between S and J+S.
+    
+    partialforS =
+      c_value_func_partial(S, X_train, X_test, y_test, n_marginalize, model)
+    partialforJandS =
+      c_value_func_partial(c(J, S), X_train, X_test, y_test, n_marginalize, model)
+    return(partialforS - partialforJandS)
+  }
+
+sage_val_empty =
+  function(J, X_train, X_test, y_test, n_marginalize, model) {
+    #' Sage value given empty coalition.
+    #'
+    #' @param J (vector): Name of the selected feature.
+    #' @param X_train (data.frame): Input X_train data.
+    #' @param X_test (data.frame): Input X_test data.
+    #' @param y_test (vector): y_test values
+    #' @param n_marginalize (integer(1)): Number to marginalize.
+    #' @param model: Classifier which has a predict method.
+    #'
+    #' @return: Score difference given empty coalition.
+    
+    S = c()
+    return(c_value_func(J, S, X_train, X_test, y_test, n_marginalize, model))
+  }
+
+sage_val_remainder =
+  function(J, X_train, X_test, y_test, n_marginalize, model) {
+    #' Sage value given full remainder as coaliation.
+    #'
+    #' @param J (vector): Name of the selected feature.
+    #' @param X_train (data.frame): Input X_train data.
+    #' @param X_test (data.frame): Input X_test data.
+    #' @param y_test (vector): y_test values
+    #' @param n_marginalize (integer(1)): Number to marginalize.
+    #' @param model: Classifier which has a predict method.
+    #'
+    #' @return: Score difference given full remainder as coalition.
+    
+    remainder_columns = dplyr::select(X_train, -all_of(J))
+    remainder = colnames(remainder_columns)
+    return(c_value_func(J, remainder, X_train, X_test, y_test, n_marginalize, model))
+  }
+```
+
+
+## 2e)
+```{r}
+
+#Sage empty final result and visulization.
+sage_empty_results = 
+  n_times(fi, 10, FALSE, sage_val_empty, X_train, X_test, y_test, 50, model)
+
+# Store mean and sd as a data frame.
+sage_empty_mean_sds =
+  data.frame(sage_empty_results[1], sage_empty_results[2])
+rownames(sage_empty_mean_sds) = c('x1', 'x2', 'x3', 'x4')
+colnames(sage_empty_mean_sds) = c('col_Means', 'col_Sds')
+
+# Create the plot to visualize
+ggplot(
+  rownames_to_column(sage_empty_mean_sds[1:4, ], var = "Features"),
+  aes(
+    x = reorder(Features, sage_empty_mean_sds$col_Means),
+    y = sage_empty_mean_sds$col_Means
+  )
+) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "sage val(j)", y = "Mean Value", x = "Features") +
+  geom_errorbar(
+    aes(
+      ymin = sage_empty_mean_sds$col_Means - sage_empty_mean_sds$col_Sds,
+      ymax = sage_empty_mean_sds$col_Means + sage_empty_mean_sds$col_Sds
+    ),
+    width = .1
+  )
+
+```
+
+```{r}
+# Sage remainder final result and visulization.
+sage_remainder_results = 
+  n_times(fi, 10, FALSE, sage_val_remainder, X_train, X_test, y_test, 50, model)
+
+# Store mean and sd as a data frame.
+sage_remainder_mean_sds =
+  data.frame(sage_remainder_results[1], sage_remainder_results[2])
+rownames(sage_remainder_mean_sds) = c('x1', 'x2', 'x3', 'x4')
+colnames(sage_remainder_mean_sds) = c('col_Means', 'col_Sds')
+
+# Create the plot to visualize
+ggplot(
+  rownames_to_column(sage_remainder_mean_sds[1:4, ], var = "Features"),
+  aes(
+    x = reorder(Features, sage_remainder_mean_sds$col_Means),
+    y = sage_remainder_mean_sds$col_Means
+  )
+) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "sage val(j cup S) - val(S)", y = "Mean Value", x = "Features") +
+  geom_errorbar(
+    aes(
+      ymin = sage_remainder_mean_sds$col_Means - sage_remainder_mean_sds$col_Sds,
+      ymax = sage_remainder_mean_sds$col_Means + sage_remainder_mean_sds$col_Sds
+    ),
+    width = .1
+  )
+
+```
+
+
+
+# Exercise 3: Refitting based importance
+## 3a)
+```{r}
+loco = function(fname, originalModel, X_test, y_test, original_df, y_name) {
+  #' loco importance for feature fname
+  #'
+  #' @param fname: Name of the selected feature.
+  #' @param original_df (data.frame): Original dataset.
+  #' @param originalModel: Original classifier which has a predict method.
+  #' @param X_test (data.frame): Input X_test data.
+  #' @param y_test (vector): y_test values.
+  #' @param y_name: Name of the y_test column.
+  #'
+  #' @return performance: performance metric
+  
+  remainder  = dplyr::select(original_df, -all_of(fname))
+  
+  # Split the dataset to 70% train data and 30% test data.
+  set.seed(100)
+  train = sample(nrow(remainder), 0.7 * nrow(remainder), replace = FALSE)
+  newTrainData = remainder[train,]
+  newTestData = remainder[-train,]
+  
+  loco_X_Test = dplyr::select(newTestData, -all_of(y_name))
+  loco_Y_Test = newTestData[, y_name]
+  
+  outcome = names(newTrainData[y_name])
+  variables = names(loco_X_Test)
+  
+  f =
+    as.formula(paste(outcome, paste(variables, collapse = " + "),
+                     sep = " ~ "))
+  # Build a linear regression model.
+  newModel = lm(f, data = newTrainData)
+  
+  #Calculate the score for the orginal dataset
+  original_X_Test = X_test
+  original_Y_Test = y_test
+  
+  predictionForOriginal = predict(originalModel, original_X_Test)
+  original_score = mse(predictionForOriginal, original_Y_Test)
+  
+  # Calculate the score for loco
+  predictForLoco = predict(newModel, loco_X_Test)
+  loco_Score = mse(predictForLoco, loco_Y_Test)
+  
+  # #Calculate the performance
+  performance = loco_Score - original_score
+  
+  return(performance)
+  
+}
+
+loco_naive = function(original_df, originalModel, X_test, y_test, y_name, ...) {
+  #' Naive loco feature importance implementation.
+  #'
+  #' @param original_df (data.frame): Original dataset.
+  #' @param originalModel: Original classifier which has a predict method.
+  #' @param X_test (data.frame): Input X_test data.
+  #' @param y_test (vector): y_test values.
+  #' @param y_name: Name of the y_test column.
+  #'
+  #' @return results: relevance for each feature (in the order of X_test.columns)
+  #'
+  
+  results = c()
+  for (fi_fname in colnames(X_test)) {
+    imp = loco(fi_fname, original_df, originalModel, X_test, y_test, y_name)
+    results = append(results, imp)
+  }
+  return(results)
+}
+
+```
+## 3b)
+```{r}
+locoResults = 
+  n_times(fi, 10, FALSE, loco, model, X_test, y_test, df, 'y')
+
+#Store mean and sd as a data frame.
+loco_mean_sds = data.frame(locoResults[1], locoResults[2])
+rownames(loco_mean_sds) = c('x1', 'x2', 'x3', 'x4')
+colnames(loco_mean_sds) = c('col_Means', 'col_Sds')
+
+
+#Create the plot to visualize
+ggplot(
+  rownames_to_column(loco_mean_sds[1:4, ], var = "Features"),
+  aes(
+    x = reorder(Features, loco_mean_sds$col_Means),
+    y = loco_mean_sds$col_Means
+  )
+) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "loco importance", y = "Mean Value", x = "Features") +
+  geom_errorbar(
+    aes(
+      ymin = loco_mean_sds$col_Means - loco_mean_sds$col_Sds,
+      ymax = loco_mean_sds$col_Means + loco_mean_sds$col_Sds
+    ),
+    width = .1
+  )
+```
+
