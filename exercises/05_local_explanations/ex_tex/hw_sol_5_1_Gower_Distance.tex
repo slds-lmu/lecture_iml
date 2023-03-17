@@ -1,0 +1,43 @@
+\loesung{}{
+\begin{enumerate} [a)]
+  \item Derivation of Gower and feature-wise distances: 
+  
+  \begin{table}[ht]
+\centering
+\begin{tabular}{ccc|ccc|c}
+  \hline
+  Sex$^{(1)}$ & Sex$^{(2)}$ & $\delta_G(\textnormal{Sex}^{(1)}, \textnormal{Sex}^{(2)})$ & Age$^{(1)}$ & Age$^{(2)}$ & $\delta_G(\textnormal{Age}^{(1)}, \textnormal{Age}^{(2)})$ & $d_G(\xv^{(1)}, \xv^{(2)})$ \\
+  \hline
+ F & F & 0 & 15 & 15 & 0 & 0\\
+ F & F & 0 & 15 & 58 & $ = \frac{1}{90-15}|15-58|= 0.573$ & 0.287\\
+ F & F & 0 & 15 & 90 & 1& 0.5\\
+ F & M & 1 & 15 & 15 & 0 & 0.5\\
+ F & M & 1 & 15 & 58 & 0.573 & 0.787\\
+ F & M & 1 & 15 & 90 & 1& 1\\
+   \hline
+\end{tabular}
+\label{tab:probgow}
+\end{table}
+
+\item 
+The table shows that the Gower distance tends to favor the observations sharing the same sex.
+Two units having the same sex but largely differ in their age are considered closer than two units having the same age but a different gender. A feature-wise distance of 1 is only achieved for age if it has extreme values (90), which is rarely the case, since 
+many other values could be achieved in between. While the only possible flip in sex from 
+female to male, always leads to the maximum feature-wise distance of 1 - independent of 
+the number of classes of the categorical features.
+Outliers in age, could further aggravate this issue.
+
+\item 
+Possible weighting schemes: 
+\begin{itemize}
+  \item User-defined weighting schemes depending on the use case: features 
+  that should not change receive high weights.
+  \item Weight categorical features by their number of categories, such that
+  changes in categorical features with many classes lead to lower distances. 
+  \item Use the weighting scheme of exercise sheet 1/exercise 3 to find a ranking of the nominal scaled features.
+  Rank them and treat them as numerical features, where $R_j$ is equal to the maximum rank.
+  \item ...
+\end{itemize}
+
+\end{enumerate}
+}

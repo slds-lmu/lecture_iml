@@ -1,0 +1,51 @@
+\aufgabe{}{
+
+\begin{enumerate}[a)]
+  \item  Fill out table:
+  
+  
+  \begin{table}[ht]
+  \centering
+    \begin{tabular}{l|llll|l|l|l|l}
+           & pension & age & job type       & marital status  & $\fh$ & $d(\xv, \zv_{\cdot})$ & $\phi_{\sigma = 0.15}(\zv_{\cdot})$ & $\phi_{\sigma = 0.5}(\zv_{\cdot})$ \\
+            \hline
+    $\xv$   & 1800    &  21 & sedentary      & single          & 30.6    & -    &  - & - \\
+    $\zv_1$ & 1600    &  21 & sedentary      & married         & 25.8    & 0.25 &  0.06 &  0.78\\
+    $\zv_3$ & 2200    &  32 & sedentary      & married         & 85.2    & 0.32 &  0.01 & 0.66 \\
+    $\zv_2$ & 1200    &  23 & physically     & single          & 74.9    & 0.49 &  0.00  & 0.38 \\
+    \end{tabular}
+  \end{table}
+  
+  \begin{itemize}
+    \item The smaller the kernel width $\sigma$ the smaller the proximity measure, the smaller the weight for the sampled data points
+    \item If the kernel is set too small, many or all sampled observations receive a weight close to 0.
+    \item Since there are not many datapoints used to fit the surrogate model, the model might be unstable
+    and not faithful to the original model.
+  \end{itemize}
+
+  \item
+   $$
+  \begin{aligned}
+  L(\fh, g_1, \phi_{\xv}) &= \sum_{\zv \in Z} \phi_{\xv}(\zv) L(\fh(\zv), g(\zv))  \\
+  &= 0.06 \cdot (28 - 25.8)^2 + 0.01 \cdot(105 - 85.2)^2 + 0 \\
+  &= 4.21
+  \end{aligned}
+  $$
+
+  $$
+  \begin{aligned}
+  L(\fh, g_2, \phi_{\xv}) & = \sum_{\zv \in Z} \phi_{\xv}(\zv) L(\fh(\zv), g(\zv))  \\
+  &= 0.06 \cdot (26.1 - 25.8)^2 + 0.01 \cdot(92.7 - 85.2)^2 + 0 \\
+  &= 0.57
+  \end{aligned}
+  $$
+  According to the faithfulness, $g_2$ should be preferred because it has a lower
+  weighted loss.
+
+  \item No, because a random forest is by far less interpretable than a linear model
+  with three features.
+
+  \item Yes, because there is a high probability that the random forest overfitted on the sampled data.
+    With a new sampled dataset the faithfulness might be lower for the random forest.
+\end{enumerate}
+}
