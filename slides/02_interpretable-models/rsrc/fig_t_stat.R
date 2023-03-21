@@ -5,7 +5,8 @@ set.seed(123)
 load("data/bike.RData")
 # bike = na.omit(bike)
 
-mod = lm(cnt~., data = bike)
+mod = lm(cnt ~ season+temp+hum+windspeed+days_since_2011, 
+         data = bike)
 sum_mod = as.data.frame(summary(mod)$coefficients)
 sum_mod$`t value` = abs(sum_mod$`t value`)
 sum_mod = sum_mod[order(sum_mod$`t value`),]

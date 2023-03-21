@@ -125,23 +125,23 @@ Idea: Use simple linear BL to ensure interpretability (in general also spline BL
 %The resulting ensemble is also interpretable.
 %\pause
 \item<2->
-Possible to combine linear BL of same type (with distinct parameters $\theta$ and $\theta^{\star}$):
+Possible to combine linear BL of same type (with distinct parameters $\thetab$ and $\ts$):
 %Two linear base learners $b_j(x, \theta)$ and $b_j(x, \theta^{\star})$ of the same type, but distinct parameter vectors $\theta$ and $\theta^{\star}$ can be combined in a base learner of the same type:
-$$b_j(x, \theta) + b_j(x, \theta^{\star}) = b_j(x, \theta + \theta^{\star})$$
+$$\bljt + \bljts = \bl[j](\xv, \thetab + \ts) $$
 %\pause
 \item<3-> %In each iteration, a set of BLs is fitted on pseudo residuals. The one with the best fit is added to the previously computed model (using step-size $\nu$), e.g.,
 In each iteration, fit a set of BLs and add the best BL to previous model (using step-size $\nu$):
 %\medskip
 \begin{align*}
-\widehat{f}^{[1]}(x) &= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} \\
-\visible<4->{\widehat{f}^{[2]}(x) &= \widehat{f}^{[1]}(x) + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} 
+\fmh[1] &= \hat{f}_0 + \nu \textcolor{blue}{\bl[3](\xv_3, \thetam[1])} \\
+\visible<4->{\fmh[2] &= \fmh[1] + \nu \textcolor{blue}{\bl[3](x_3, \thetam[2])} 
 %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})}
 \\
 \visible<5->{
-\widehat{f}^{[3]}(x) &= \widehat{f}^{[2]}(x) + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
+\fmh[3] &= \fmh[2] + \nu \textcolor{orange}{\bl[1](x_1, \thetam[3])} 
 %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
 \\
-&= \hat{f}_0 + \nu \left(\textcolor{blue}{b_3(x_3, \theta^{[1]} + \theta^{[2]})} + \textcolor{orange}{b_1(x_1, \theta^{[3]})}\right) 
+&= \hat{f}_0 + \nu \left(\textcolor{blue}{\bl[3](x_3, \thetam[1] + \thetam[2])} + \textcolor{orange}{\bl[1](x_1, \thetam[3])}\right) 
 \\
 &= \hat{f}_0 + \textcolor{blue}{\hat{f}_3(x_3)} + \textcolor{orange}{\hat{f}_1(x_1)}
 }
@@ -157,7 +157,7 @@ In each iteration, fit a set of BLs and add the best BL to previous model (using
 
 Simple case: Use linear model with single feature (including intercept) as BL
 $$
-b_j(x_j, \theta) = x_j\theta + \theta_0 \hspace*{0.2cm}\text{ for } j = 1,\ldots p \hspace*{0.3cm} \leadsto \text{ordinary linear regression}
+\bl[j](x_j, \thetab) = x_j\thetab + \thetab_0 \hspace*{0.2cm}\text{ for } j = 1,\ldots p \hspace*{0.3cm} \leadsto \text{ordinary linear regression}
 $$
 
 \begin{itemize}

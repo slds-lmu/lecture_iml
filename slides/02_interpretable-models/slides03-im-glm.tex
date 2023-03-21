@@ -108,16 +108,16 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 \smallskip
 
 \begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.6\textwidth}
+\begin{column}{0.65\textwidth}
 \begin{itemize}
     \item Models probabilities for binary classification by
-    $$\E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \theta) = \frac{1}{1 + \exp(- \xv^\top \theta)} $$
+    $$\pi(\xv) = \E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \theta) = \frac{1}{1 + \exp(- \xv^\top \theta)} $$
     %\item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification 
     %\item Logistic regression formula:
     %$$P(y = 1) =\frac{1}{1 + \exp(-( \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p ))} $$
 \end{itemize}
 \end{column}
-\begin{column}{0.4\textwidth}
+\begin{column}{0.35\textwidth}
 \end{column}
 \end{columns}
 
@@ -130,8 +130,8 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 \begin{itemize}
     \item Typically, we set the threshold to $0.5$ to predict classes, e.g.,
     \begin{itemize}
-        \item Class 1 if $P(y=1) > 0.5$
-        \item Class 0 if $P(y=1) \leq 0.5$
+        \item Class 1 if $\pi(\xv) > 0.5$
+        \item Class 0 if $\pi(\xv) \leq 0.5$
     \end{itemize}
 \end{itemize}
 
@@ -177,12 +177,12 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
         \item \textbf{Recall:} Odds is the quotient of two probabilities, odds ratio compares the ratio of two odds 
         \item Weights $\theta_j$ are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
         %relate to log-odds %$\leadsto$ Effects are linear as in LM (but w.r.t. log-odds)
-        $$log\text{-}odds = \log \left(\frac{P(y = 1)}{1 - P(y=1)}\right) = \log \left(\frac{P(y = 1)}{P(y=0)}\right) = \theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p  $$
+        $$log\text{-}odds = \log \left(\frac{\pi(\xv)}{1 - \pi(\xv)}\right) = \log \left(\frac{P(y=1)}{P(y=0)}\right) = \theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p  $$
         \textbf{Interpretation:} Changing $x_j$ by one unit, changes log-odds of class 1 compared to class 0 by $\theta_j$%\\
         %$\leadsto$ Effects are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
         \pause
         \item Odds for class 1 vs. class 0: %Odds can be caulculated by:
-        $odds = \displaystyle\frac{P(y = 1)}{P(y=0)}= \exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p)$
+        $odds = \displaystyle\frac{\pi(\xv)}{1 - \pi(\xv)}= \exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p)$
         \item Instead of interpreting changes w.r.t. log-odds, it is more common to use odds ratios:
         $$odds\text{ }ratio = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j (x_j+1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp{(\theta_j)} $$
         \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\theta_j)$
