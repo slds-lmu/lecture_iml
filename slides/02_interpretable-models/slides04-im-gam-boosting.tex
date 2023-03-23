@@ -196,8 +196,8 @@ days\_since\_2011 & -1791.06 & 4.9 \\
    %\hline
 \end{tabular}
 \end{table}
-\centering
-$\Rightarrow$ Converges to solution of LM
+% \centering
+% $\Rightarrow$ Converges to solution of LM 
 \end{column}
 \begin{column}{0.49\linewidth}
 
@@ -206,7 +206,6 @@ $\Rightarrow$ Converges to solution of LM
 Relative frequency of selected BLs across iterations
 \includegraphics[width = .95 \linewidth]{figure/compboost_base_linear.pdf}}
 
-\pause
 
 \only<2>{
 \begin{table}[ht]
@@ -232,6 +231,22 @@ Relative frequency of selected BLs across iterations
    %\hline
 \end{tabular}
 \end{table}
+% \centering
+% \scriptsize
+% $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
+}
+\end{column}
+\end{columns}
+
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.49\linewidth}
+\scriptsize
+\centering
+$\Rightarrow$ Converges to solution of LM 
+\end{column}
+\begin{column}{0.49\linewidth}
+
+\only<2>{
 \centering
 \scriptsize
 $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
@@ -242,34 +257,41 @@ $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 %     \item Linear base learners for numeric features and categorical base learner for season
 %     \item 3 base learners selected after 100 iterations
 % \end{itemize}
+
 \end{frame}
 
 
 \begin{frame}{Model-based Boosting - Linear Example: Interpretation}
 
 \medskip
-\textbf{Feature importance (risk reduction over iterations)}
-
+\textbf{Feature importance:} aggregated change in risk in each iteration.
 \medskip
 
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.47\linewidth}
 \hspace{46pt}{\scriptsize{1000 iterations}}
-\includegraphics[width = \linewidth]{figure/compboost_pfi_base2.pdf}
+\includegraphics[width = \linewidth]{figure/compboost_pfi_base2.pdf}\\
+\centering \scriptsize
+Overall risk: 434686
 \end{column}
 
 
 \begin{column}{0.47\linewidth}
 \hspace{46pt}{\scriptsize{20 iterations}}
-\includegraphics[width = \linewidth]{figure/compboost_pfi_base1.pdf}
+\includegraphics[width = \linewidth]{figure/compboost_pfi_base1.pdf}\\
+\centering \scriptsize
+Overall risk: 693505
 \end{column}
 \end{columns}
 
+\begin{center}
+\scriptsize
+$\Rightarrow$ Difference in risk: 258819\\
+\normalsize
 \bigskip
+$\leadsto$ Ranking of features stays the same
 
-\begin{itemize}
-    \item[$\leadsto$] \code{days\_since\_2011} most important, followed by \code{temp}
-\end{itemize}
+\end{center}
 
 \end{frame}
 
@@ -281,11 +303,11 @@ $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
     \item BLs: linear and centered splines for numeric features, categorical for season
     %and categorical base learner for season
 \end{itemize}
-\begin{columns}[T]
+\begin{columns}[T, totalwidth = \linewidth]
 \visible<2->{
-\begin{column}{0.5\textwidth}
+\begin{column}{0.5\linewidth}
 \hspace{45pt}{\scriptsize{Feature importance}}
- \includegraphics[width = \textwidth]{figure/compboost_pfi.pdf}
+ \includegraphics[width = \linewidth]{figure/compboost_pfi.pdf}
 %Feature importance (risk reduction over iter.)\\
 %$\leadsto$ \code{days\_since\_2011} most important
 %\scriptsize
@@ -293,17 +315,20 @@ $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 \end{column}
 }
 \visible<2->{
-\begin{column}{0.5\textwidth}  %%<--- here
+\begin{column}{0.5\linewidth}  %%<--- here
 \hspace{23pt}{\scriptsize{Feature effect}}
-  \includegraphics[width = \textwidth]{figure/compboost_pfe.pdf}
+  \includegraphics[width = \linewidth]{figure/compboost_pfe.pdf}
 %Partial feature effect for \code{days\_since\_2011}\\
 %$\leadsto$ Total effect: Combination of partial effects of linear BL and centered spline BL
 \end{column}
 }
 \end{columns}
+\smallskip
 \begin{itemize}
-    %\item<2->  Feature importance (risk reduction over iter.) $\leadsto$ \code{days\_since\_2011} most important
-     \item<2-> Total effect for \code{days\_since\_2011}\\
+    \scriptsize
+    \item<2->[$\Rightarrow$] Risk: 250202
+    \item<2->  Feature importance (risk reduction over iter.) $\leadsto$ \code{days\_since\_2011} most important
+    \item<2-> Total effect for \code{days\_since\_2011}\\
 $\leadsto$ Combination of partial effects of linear BL and centered spline BL
 \end{itemize}
 \end{frame}

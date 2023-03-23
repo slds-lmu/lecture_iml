@@ -51,6 +51,7 @@ xtable(df)
 fi = plotFeatureImportance(cboost) + theme_bw()
 ggsave("../figure/compboost_pfi_base1.pdf", fi, width = 6, height = 3.5)
 
+r20=plotRisk(cboost)$data$risk[21]
 
 cboost$train(1000L, trace = 1000L)
 coefs = cboost$getCoef()
@@ -82,3 +83,8 @@ ggsave("../figure/compboost_base_linear.pdf", plot_base, width = 7, height = 3)
 
 fi = plotFeatureImportance(cboost) + theme_bw()
 ggsave("../figure/compboost_pfi_base2.pdf", fi, width = 6, height = 3.5)
+
+r1000=plotRisk(cboost)$data$risk[1001]
+
+# difference in risk
+r20-r1000
