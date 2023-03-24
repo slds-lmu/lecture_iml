@@ -69,7 +69,7 @@
 Fit a GAM with smooth splines for four numeric features of bike rental data \\
 $\leadsto$ more flexible and better model fit but less interpretable than LM
 
-\begin{columns}[T]
+\begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.5\textwidth}
 \begin{table}[ht]
 \centering
@@ -134,16 +134,16 @@ In each iteration, fit a set of BLs and add the best BL to previous model (using
 %\medskip
 \begin{align*}
 \fmh[1] &= \hat{f}_0 + \nu \textcolor{blue}{\bl[3](\xv_3, \thetam[1])} \\
-\visible<4->{\fmh[2] &= \fmh[1] + \nu \textcolor{blue}{\bl[3](x_3, \thetam[2])} 
+\visible<4->{\fmh[2] &= \fmh[1] + \nu \textcolor{blue}{\bl[3](\xv_3, \thetam[2])} 
 %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})}
 \\
 \visible<5->{
-\fmh[3] &= \fmh[2] + \nu \textcolor{orange}{\bl[1](x_1, \thetam[3])} 
+\fmh[3] &= \fmh[2] + \nu \textcolor{orange}{\bl[1](\xv_1, \thetam[3])} 
 %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
 \\
-&= \hat{f}_0 + \nu \left(\textcolor{blue}{\bl[3](x_3, \thetam[1] + \thetam[2])} + \textcolor{orange}{\bl[1](x_1, \thetam[3])}\right) 
+&= \hat{f}_0 + \nu \left(\textcolor{blue}{\bl[3](\xv_3, \thetam[1] + \thetam[2])} + \textcolor{orange}{\bl[1](\xv_1, \thetam[3])}\right) 
 \\
-&= \hat{f}_0 + \textcolor{blue}{\hat{f}_3(x_3)} + \textcolor{orange}{\hat{f}_1(x_1)}
+&= \hat{f}_0 + \textcolor{blue}{\hat{f}_3(\xv_3)} + \textcolor{orange}{\hat{f}_1(\xv_1)}
 }
 }
 \end{align*}
@@ -261,10 +261,14 @@ $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 \end{frame}
 
 
-\begin{frame}{Model-based Boosting - Linear Example: Interpretation}
+\begin{frame}{Boosting - Linear Example: Interpretation}
 
 \medskip
-\textbf{Feature importance:} aggregated change in risk in each iteration.
+\textbf{Feature importance:} aggregated change in risk in each iteration per feature. 
+\begin{itemize}
+    \item E.g. iteration 1: \code{days\_since\_2011} causes a risk reduction of 140,782.94
+    \item For every iteration the change in risk can be attributed to a feature
+\end{itemize}
 \medskip
 
 \begin{columns}[T, totalwidth=\linewidth]
@@ -272,7 +276,8 @@ $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 \hspace{46pt}{\scriptsize{1000 iterations}}
 \includegraphics[width = \linewidth]{figure/compboost_pfi_base2.pdf}\\
 \centering \scriptsize
-Overall risk: 434686
+Overall risk: 434,686.0 \\
+OOB risk (10-fold CV): 446,450.0
 \end{column}
 
 
@@ -280,15 +285,17 @@ Overall risk: 434686
 \hspace{46pt}{\scriptsize{20 iterations}}
 \includegraphics[width = \linewidth]{figure/compboost_pfi_base1.pdf}\\
 \centering \scriptsize
-Overall risk: 693505
+Overall risk: 693,505.0\\
+OOB risk (10-fold CV): 705,776.0
 \end{column}
 \end{columns}
 
 \begin{center}
 \scriptsize
-$\Rightarrow$ Difference in risk: 258819\\
+$\Rightarrow$ Difference in risk: 258,819.0\\
+Difference in OOB risk: 259,326.0\\
 \normalsize
-\bigskip
+\medskip
 $\leadsto$ Ranking of features stays the same
 
 \end{center}
@@ -296,7 +303,7 @@ $\leadsto$ Ranking of features stays the same
 \end{frame}
 
 
-\begin{frame}{Model-based Boosting - Interpretation}
+\begin{frame}{Boosting - Non-linear Example: Interpretation}
 
 \begin{itemize}
     \item Fit model on bike data with different BL types \citebutton{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}
@@ -326,7 +333,7 @@ $\leadsto$ Ranking of features stays the same
 \smallskip
 \begin{itemize}
     \scriptsize
-    \item<2->[$\Rightarrow$] Risk: 250202
+    \item<2->[$\Rightarrow$] In-bag-Risk: 250,202.0 \, ; \, OOB risk (10-fold CV): 267,497.0
     \item<2->  Feature importance (risk reduction over iter.) $\leadsto$ \code{days\_since\_2011} most important
     \item<2-> Total effect for \code{days\_since\_2011}\\
 $\leadsto$ Combination of partial effects of linear BL and centered spline BL

@@ -1,3 +1,6 @@
+library("mlr3verse")
+library("mlr3learners")
+
 source("bike_example_Data.R")
 options("scipen"=100, "digits"=4)
 
@@ -51,7 +54,13 @@ xtable(df)
 fi = plotFeatureImportance(cboost) + theme_bw()
 ggsave("../figure/compboost_pfi_base1.pdf", fi, width = 6, height = 3.5)
 
+pred20 = cboost$predict()
+mean((pred20-dat$y)^2)
+# Absturz wenn man in predict() einen unpassenden datensatz übergibt
 r20=plotRisk(cboost)$data$risk[21]
+
+
+#### 1000 times
 
 cboost$train(1000L, trace = 1000L)
 coefs = cboost$getCoef()
@@ -88,3 +97,35 @@ r1000=plotRisk(cboost)$data$risk[1001]
 
 # difference in risk
 r20-r1000
+
+
+
+## OOB
+
+task = as_task_regr(dat, target = "y")
+cv10 = rsmp("cv", folds = 10)
+cv10$instantiate(task)
+r20 = numeric()
+r1000 = numeric()
+for(i in 1:10){
+  train_set = cv10$train_set(i)
+  
+  cboost = Compboost$new(data = dat[train_set,], target = "y", learning_rate = 0.1, loss = LossQuadratic$new())
+  
+  cboost$addBaselearner("temp", "linear", BaselearnerPolynomial, intercept = T)
+  cboost$addBaselearner("hum", "linear", BaselearnerPolynomial, intercept = T)
+  cboost$addBaselearner("windspeed", "linear", BaselearnerPolynomial, intercept = T)
+  cboost$addBaselearner("days_since_2011", "linear", BaselearnerPolynomial, intercept = T)
+  cboost$addBaselearner("season", "ridge", BaselearnerCategoricalRidge, df = 4)
+  
+  cboost$train(20L, trace = 20L)
+  pred20 = cboost$predict(newdata = dat[cv10$test_set(i),])
+  r20[i] = mean((pred20-dat[cv10$test_set(i),]$y)^2)/2
+  
+  cboost$train(1000L, trace = 1000L)
+  pred1000 = cboost$predict(newdata = dat[cv10$test_set(i),])
+  r1000[i] = mean((pred1000-dat[cv10$test_set(i),]$y)^2)/2
+}
+mean(r20)
+mean(r1000)
+mean(r20)-mean(r1000)
