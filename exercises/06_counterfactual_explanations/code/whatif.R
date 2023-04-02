@@ -1,11 +1,11 @@
 library("docstring")
-library(StatMatch)
+library("StatMatch")
 
 generate_whatif = function(x_interest, model, dataset) {
   #' Computes whatif counterfactuals for binary classification models, 
   #' i.e., the closest data point with a different prediction.
   #
-  #' @param x_interest (data.frame): Datapoint of interest, a single row data set. 
+  #' @param x_interest (data.frame): Data point of interest, a single row data set. 
   #' @param model: Binary classifier which can call a predict method.
   #' @param dataset (data.frame): Input data
   #'
@@ -20,7 +20,7 @@ evaluate_counterfactual = function(counterfactual, x_interest, model) {
   #' the value of x_interest still results in a different prediction than for x_interest.
   #' 
   #' @param counterfactual (data.frame): Counterfactual of `x_interest`, a single row data set. 
-  #' @param x_interest (data.frame): Datapoint of interest, a single row data set. 
+  #' @param x_interest (data.frame): Data point of interest, a single row data set. 
   #' @param model: Binary classifier which can call a predict method.
   #'
   #' @return (list): List with names of features that if set for the counterfactual to the value of 
@@ -31,19 +31,19 @@ evaluate_counterfactual = function(counterfactual, x_interest, model) {
 
 
 if (FALSE) {
-  df = read.csv(file = "datasets/wheat_seeds.csv")
+  df <- read.csv(file = "datasets/wheat_seeds.csv")
   table(df$Type)
   
   # Create a binary classification task
-  df$Type = as.factor(ifelse(df$Type == "0", 1, df$Type))
+  df$Type <- as.factor(ifelse(df$Type == "0", 1, df$Type))
   table(df$Type)
   
   # Fit a random forest to the data
-  mod = randomForest::randomForest(Type ~ ., data = df)
-  df$Type = NULL
+  mod <- randomForest::randomForest(Type ~ ., data = df)
+  df$Type <- NULL
   
   # Compute counterfactual for first observation
-  x_interest = df[1,]
-  cf = generate_whatif(x_interest = x_interest, model = mod, dataset = df)
+  x_interest <- df[1, ]
+  cf <- generate_whatif(x_interest = x_interest, model = mod, dataset = df)
   evaluate_counterfactual(counterfactual = cf, x_interest = x_interest, model = mod)
 }
