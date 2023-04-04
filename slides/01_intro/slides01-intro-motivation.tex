@@ -36,32 +36,36 @@
 % 			\smallskip
 % 			\item Interpretable machine learning (IML) aims to bridge the gap between interpretability and predictive performance.
 % 		\end{itemize}
-\bigskip
+%\bigskip
     \begin{columns}[T, totalwidth=\textwidth]
     \begin{column}{0.8\textwidth}
 		\begin{itemize}
 			\item ML: huge potential to aid decision-making process due to its predictive performance
 			%\pause
 			%\smallskip
-			\only<2->{\item ML models are often black boxes, e.g., XGBoost, RBF SVM or DNNs
-			\begin{itemize}
-				\item[$\leadsto$] too complex to be understood by humans
-			\end{itemize}}
+			\only<2->{\item ML models are black boxes, e.g., XGBoost, RBF SVM or DNNs \\ 
+            $\leadsto$ too complex to be understood by humans
+			}
 			%\pause
 			%\smallskip
-			\only<3->{\item Lack of explanation
+			\only<3->{\item When deploying ML models, lack of explanations 
 			\begin{enumerate}
 				\item hurts trust
 				\item creates barriers
 			\end{enumerate}}
-			\only<4->{\item[$\leadsto$] Harder to adapt for critical areas with decisions affecting human life}
-			\item<5>[\,$\leadsto$] Many disciplines with required trust rely on traditional models,\\ e.g., linear models, with less predictive performance
+			%\only<4->{\item[$\leadsto$] Hard to adapt in critical areas when decisions affect human life}
+			\item<4->[\,$\leadsto$] Many disciplines with required trust rely on traditional models,\\ e.g., linear models, with less predictive performance   
 		\end{itemize}
+    \centering\includegraphics[width=0.8\textwidth]{figure/performance_vs_interpretability.pdf}
+    % Quelle: https://docs.google.com/presentation/d/1Ah4fTi11bJITOIomtm71NPp0Wko5D5wzZYcL-Htm7qk/edit?usp=sharing
+    %\centering \citebutton{Scott Fortmann-Roe (2012)}{http://scott.fortmann-roe.com/docs/BiasVariance.html}
 	\end{column}
 	\begin{column}{0.2\textwidth}  %%<--- here
+        \centering
         \only<2->{\includegraphics[width=0.9\textwidth]{figure/nn_model.png}}
         \only<2->{\includegraphics[width=0.9\textwidth]{figure/nn_landscape.png}
-        \centering \citebutton{Liu 2021}{https://davideliu.com/2021/12/12/visualizing-loss-landscape-of-gail/}}
+        %\centering \citebutton{Liu 2021}{https://davideliu.com/2021/12/12/visualizing-loss-landscape-of-gail/}
+        }
     \end{column}
     \end{columns}
     % \bigskip
@@ -92,31 +96,41 @@ Examples of critical areas where decisions based on ML models can affect human l
 		\item Credit scoring and insurance applications
         \citebutton{Society of Actuaries}{https://www.soa.org/resources/research-reports/2021/interpretable-machine-learning}
         \begin{itemize}
-            \item Providing reasons for not granting a loan
+            \item Reasons for not granting a loan
             \item Fraud detection in insurance claims
         \end{itemize}
-        \item<2-> Medical applications
+    \end{itemize}
+    \end{column}
+	\begin{column}{0.45\textwidth}
+        \centering
+        \includegraphics<1->[page=1, width=.95\textwidth, trim = 0 250 0 0, clip]{figure/counterfactual.pdf}
+	\end{column}
+    \end{columns}
+    \bigskip
+    \begin{columns}[T, totalwidth=\textwidth]
+    \begin{column}{0.55\textwidth}
+		\begin{itemize}
+		\item<2-> Medical applications
         \begin{itemize}
             \item Identification of diseases
-            \item Chance of recovering
+            %\item Chance of recovering
             \item Recommendations of treatments
         \end{itemize}
         \item<2-> \ldots
     \end{itemize}
     \end{column}
 	\begin{column}{0.45\textwidth}
-        \includegraphics<1->[page=1, width=\textwidth, trim = 0 250 0 0, clip]{figure/counterfactual.pdf}
-        \medskip
-	    \only<2->{\includegraphics[width=\textwidth]{figure/medicine.png}
-	    \centering \citebutton{Miliard (2020)}{https://www.healthcareitnews.com/news/new-ai-diagnostic-tool-knows-when-defer-human-mit-researchers-say}}
+        \centering
+        \only<2->{\includegraphics[width=\textwidth]{figure/medicine.png}
+	    \citebutton{Miliard (2020)}{https://www.healthcareitnews.com/news/new-ai-diagnostic-tool-knows-when-defer-human-mit-researchers-say}}
 	\end{column}
     \end{columns}
 \end{frame}
 
 
-\begin{frame}{Need for interpretability in High-stakes Decisions}
+\begin{frame}{Need for interpretability}
 
-    Need for interpretability also becoming increasingly important from a legal perspective
+    Need for interpretability becoming increasingly important from a legal perspective
     
     \begin{itemize}
     \item General Data Protection Regulation (GDPR) requires for some applications that models have to be explainable \citebutton{Goodman \& Flaxman (2017)}{https://doi.org/10.1609/aimag.v38i3.2741}\\
@@ -128,17 +142,17 @@ Examples of critical areas where decisions based on ML models can affect human l
     \end{itemize}
     \medskip
     
-    \centering\includegraphics[width=0.7\textwidth]{figure/compass_black_white.PNG}
+    \centering\includegraphics[width=0.95\textwidth]{figure/compass_black_white.PNG}
     % source https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm
 \end{frame}
 
 
 
-\begin{frame}{Performance vs. Interpretability}
-    \centering\includegraphics[width=0.7\textwidth]{figure/performance_vs_interpretability.png}
-    % Quelle: https://docs.google.com/presentation/d/12ZPrTjBKEUT-7drdyUJCQGK0oHVDtYIVd2_6byE62f0/edit?usp=sharing
-    %\centering \citebutton{Scott Fortmann-Roe (2012)}{http://scott.fortmann-roe.com/docs/BiasVariance.html}
-\end{frame}
+% \begin{frame}{Performance vs. Interpretability}
+%     \centering\includegraphics[width=0.7\textwidth]{figure/performance_vs_interpretability.png}
+%     % Quelle: https://docs.google.com/presentation/d/12ZPrTjBKEUT-7drdyUJCQGK0oHVDtYIVd2_6byE62f0/edit?usp=sharing
+%     %\centering \citebutton{Scott Fortmann-Roe (2012)}{http://scott.fortmann-roe.com/docs/BiasVariance.html}
+% \end{frame}
 
 
 	%-----------------------------------------------------------------------------------------------------------------------------

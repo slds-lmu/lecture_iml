@@ -154,9 +154,8 @@
 	\end{center}
 	
 	\only<1>{\begin{columns}
-		\begin{column}{0.75\textwidth}
-	\begin{itemize}
-		\item<1-> Intrinsically interpretable models:
+		\begin{column}{0.77\textwidth}
+	   Intrinsically interpretable models:
 		\medskip
 		
 		\begin{itemize}
@@ -166,9 +165,9 @@
 			e.g., weighted combination of feature values or tree structure
 			\item Difficult to interpret with many features / complex interactions
 		\end{itemize}
-	\end{itemize}
+
 	\end{column}
-	\begin{column}{0.25\textwidth}
+	\begin{column}{0.23\textwidth}
 	
 	\resizebox{2.75cm}{3cm}{%	
    \begin{tikzpicture}[scale=0.7, transform shape]
@@ -202,20 +201,18 @@
 
 	
 	\only<2>{\begin{columns}
-	\begin{column}{0.8\linewidth}
-	    \begin{itemize}
-	        \item Model-specific methods:
+	\begin{column}{0.77\linewidth}
+	    Model-specific methods:
 		    \medskip
 			\begin{itemize}
 		    %\itemsep1em
-		        \item Interpretation method being applicable to a particular ML model
+		        \item Interpretation method applicable to a specific ML model
 		        \item Example: implicitly integrated feature interpretation methods in tree based models, e.g., Gini Importance
     			\item Advantage: Can exploit model structure
                 \item Visualize activations of NNs
 		    \end{itemize}
-		\end{itemize}
 	\end{column}  
-	\begin{column}{0.2\linewidth}
+	\begin{column}{0.23\linewidth}
 	
     \centering \includegraphics[page=1, width=\textwidth]{figure/nn_model}
     \end{column}
@@ -224,26 +221,24 @@
 	
 	
 	\only<3>{\begin{columns}
-	\begin{column}{0.7\linewidth}
-	    \begin{itemize}
-		\item Model-agnostic methods:
+	\begin{column}{0.77\linewidth}
+	    Model-agnostic methods:
 		\medskip
 		\begin{itemize}
 		%\itemsep1em
 			\item In ML: Tune over many model classes \\ 
             $\leadsto$ Unknown which model is best / deployed \\
-            $\leadsto$  Need for interpretation methods applicable to any model
+            $\leadsto$ Need for interpretation methods applicable to any model
 		    \item Applied after training (post-hoc)
       \item Applicable to intrinsically interpretable models\\
        $\leadsto$ provides insights into other types of explanations \\
 		      %\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations 
 		      %$\leadsto$ feature or data attribution, counterfactual explanations
    \end{itemize}
-	\end{itemize}
 	\end{column}
-	\begin{column}{0.3\linewidth}
+	\begin{column}{0.23\linewidth}
 	\quad \vspace{0.15cm} \quad \\
-    \centering \includegraphics[page=1, width=0.85\textwidth]{figure/model_agnostic.jpg}
+    \centering \includegraphics[page=1, width=\textwidth]{figure/model_agnostic.jpg}
     \end{column}
 	\end{columns}}
 
@@ -305,21 +300,20 @@
         \end{tikzpicture} 
     \end{center}
     
-    \only<1>{\begin{itemize}
-	\item Feature Attribution:
+    \only<1>{
+    Feature Attribution:
 	\medskip
 		\begin{itemize}
 		%\itemsep1em
 		    \item Produce explanations on a per-feature level, 
 		        e.g., feature effects or feature importance \\
-		    $\leadsto$ Vary feat. values, inspect change of model prediction, model variance or model error
-		\end{itemize}
-	\end{itemize}}
+		    \item Vary feature values, inspect change of model prediction, model variance or model error
+		\end{itemize}}
 	
 	\only<2>{%Feature Effects vs. Feature Importance
 	\textbf{Feature Effects} indicate the change in prediction due to changes in feature values.
 	\medskip
-	\begin{columns}[c, totalwidth=\textwidth]
+	\begin{columns}[T, totalwidth=\textwidth]
     \begin{column}{0.4\linewidth}
 	    \begin{itemize}
 	    	\item Model-agnostic methods: \\ ICE curves, PD plots $\hdots$
@@ -336,7 +330,7 @@
 	\only<3>{%Feature Effects vs. Feature Importance
 	\textbf{Feature importance} methods rank features by how much they contribute to the predictive performance or prediction variance of the model.
 	\medskip
-	\begin{columns}[c, totalwidth=\textwidth]
+	\begin{columns}[T, totalwidth=\textwidth]
     \begin{column}{0.55\linewidth}
 	    \begin{itemize}
 	    	\item Model-agnostic methods: PFI, $\hdots$
@@ -344,7 +338,7 @@
 	    \end{itemize}
 	\end{column}
 	\begin{column}{0.45\linewidth}
-    \includegraphics[width=0.7\textwidth]{figure/feature-importance}
+    \includegraphics[width=0.9\textwidth]{figure/feature-importance}
     \end{column}
 	\end{columns}
 	}
@@ -359,7 +353,7 @@
 	How does this incorrect prediction come about? }
 	
 	\only<6>{
-	Look at the training data set: Which of the training data points caused the model prediction?
+	Look at training data: Which data points caused the model prediction?
 	\begin{columns}[c, totalwidth=\textwidth]
     \begin{column}{0.5\linewidth}
 	\begin{center}
@@ -371,7 +365,7 @@
 	
     Method searches for the most similar images and bases the decision on them
     \begin{itemize}
-        \item[$\leadsto$] The training images that look most like the new input represent a muffin 
+        \item[$\leadsto$] Training images looking most like new input show a muffin 
         \item[$\leadsto$] Wrong output (muffin instead of dog)
     \end{itemize}
     \end{column}
@@ -379,9 +373,8 @@
 	
 	\only<7>{\quad \vspace{0.15cm} \quad \\
     \begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.65\linewidth}
-	\begin{itemize}
-	\item Counterfactual Explanations:
+    \begin{column}{0.6\linewidth}
+	Counterfactual Explanations:
 	\medskip
 		\begin{itemize}
 		%\itemsep1em
@@ -390,9 +383,8 @@
             \item Diverse counterfactuals 
             \item Feasible \& actionable explanations
 		\end{itemize}
-    \end{itemize}
     \end{column}
-	\begin{column}{0.3\linewidth}
+	\begin{column}{0.38\linewidth}
 	
         \centering \includegraphics[page=1, width=\textwidth]{figure/counterfactuals_obj}
     \end{column}
@@ -401,7 +393,7 @@
 	\only<8>{
 	\textbf{Example} (loan application):
 	\begin{center}
-	\includegraphics[page=1, width=0.5\textwidth]{figure/counterfactual.pdf}
+	\includegraphics[page=1, width=0.7\textwidth]{figure/counterfactual.pdf}
 	\end{center}}
 \end{frame}
 
@@ -507,9 +499,9 @@ Local interpretation methods explain the model behavior for single data instance
 	\end{column}
 	\begin{column}{0.35\linewidth}
 	\begin{center}
-	\includegraphics[page=1, width=0.7\textwidth, trim=215 0 215 43, clip]{figure/feature-effect}
+	\includegraphics[page=1, width=0.9\textwidth, trim=215 0 215 43, clip]{figure/feature-effect}
 	\medskip
-	\includegraphics[width=0.7\textwidth]{figure/lime5}
+	\includegraphics[width=0.9\textwidth]{figure/lime5}
 	\end{center}
 	\end{column}
 	\end{columns}
@@ -549,16 +541,16 @@ Local interpretation methods explain the model behavior for single data instance
 \begin{frame}{Fixed Model vs. Refits}
 \begin{itemize}
     \item Global interpretation methods use a model and data as input and produce explanations\\
-    $\rightarrow$ Explanations can be viewed as statistical estimators
-    \item[] \centerline{\includegraphics[width=0.7\textwidth]{figure/fixed_model_vs_refits.jpg}}
+    $\leadsto$ Explanations can be viewed as statistical estimators
+    \item[] \centerline{\includegraphics[width=0.9\textwidth]{figure/fixed_model_vs_refits.jpg}}
     \item Situation in ML: Deployed model is trained on all available data\\
-    $\rightarrow$ No unseen test data left to, e.g., reliably estimate performance\\
-    $\rightarrow$ IML method could use the same data the model was trained on to produce explanations\\ 
-    $\rightarrow$ But: Some IML methods rely on measuring loss which requires unseen test data
+    $\leadsto$ No unseen test data left to, e.g., reliably estimate performance\\
+    $\leadsto$ IML method could use same data model was trained on \\
+    $\leadsto$ But: Some IML methods rely on measuring loss requiring unseen test data
     % (or some artificially created data?)
     \item Alternative: Explain the inducer that created the model (instead of a fixed model)\\
-    $\rightarrow$ Idea: Use resampling strategies (e.g., 4-fold CV) as in performance estimation\\
-    $\rightarrow$ Requires refitting
+    $\leadsto$ Idea: Use resample strategies (e.g., 4-fold CV) as in performance estimation\\
+    $\leadsto$ Requires refitting
 \end{itemize}
 \end{frame}
 
@@ -691,6 +683,7 @@ Local interpretation methods explain the model behavior for single data instance
 
 \begin{frame}{Levels of interpretability}
 	\begin{center}
+    \vspace{-0.5cm}
         \begin{tabular}{ 
          >{\centering\arraybackslash}m{0.083\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.377\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
          && \textbf{Research Question} && \textbf{Objects of analysis} \\ &&&\\[-2ex]

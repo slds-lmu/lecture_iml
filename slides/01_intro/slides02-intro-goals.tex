@@ -13,11 +13,11 @@
 
 \newcommand{\titlefigure}{figure/open_blackbox}
 \newcommand{\learninggoals}{
-\item[] Role of interpretation for... 
-\item ... gaining insides about data
-\item ... improving model (debug and audit)
-\item ... understanding and controlling individual predictions
-\item ... justification and fairness}
+\item[] Role of interpretation: 
+\item gain insides about data
+\item improve model (debug and audit)
+\item understand and control individual predictions
+\item justification and fairness}
 
 \lecturechapter{Interpretation Goals}
 \lecture{Interpretable Machine Learning}
@@ -267,7 +267,7 @@ $\leadsto$ Gain insights about data, distribution and model \\
 \textbf{Example:} Bike Sharing Dataset (predict number of bike rentals per day) \\
 \textit{Exemplary question:} Which feature influences the model performance and to what extent?
 \begin{center}
-\includegraphics[width=0.6\textwidth]{figure/bike-sharing02.png}
+\includegraphics[width=0.8\textwidth]{figure/bike-sharing02.png}
 \end{center}
 
 %\textbf{Interpretation:}
@@ -328,20 +328,23 @@ $\leadsto$ Insights help to identify flaws (in data or model), which can be corr
             \end{tabular}
         \end{figure}
     }
-    \only<3>{\vspace{0.7cm}
-            \includegraphics[width=0.45\textwidth]{figure/tank.jpg}
-            \includegraphics[width=0.45\textwidth]{figure/tank_green.jpg}
-	        \includegraphics[width=0.45\textwidth]{figure/landscape.jpg}
-	        \includegraphics[width=0.45\textwidth]{figure/landscape_green.jpg}}
+    \only<3>{
+            \includegraphics[width=0.48\textwidth]{figure/tank.jpg}
+            \includegraphics[width=0.48\textwidth]{figure/tank_green.jpg}
+	        \includegraphics[width=0.48\textwidth]{figure/landscape.jpg}
+	        \includegraphics[width=0.48\textwidth]{figure/landscape_green.jpg}}
 	\end{column}
-	\begin{column}{0.54\textwidth}
-    A cautionary tale (which never actually happened):
+	\begin{column}{0.56\textwidth}
+    A cautionary tale (never actually happened):
 	\begin{itemize}
-	    \item Creation of neural network to detect tanks
-        \item Model shows good predictive performance in training data set
-        \item Application outside training data set: failure
-        \item<2-> Reasons vary depending on the source, in general: NN based its decision on irrelevant points. 
-        \item<3-> E.g. model detecting weather situations: Tanks always photographed under cloudy skies; photos without tanks always taken in sunny weather.
+	    \item Train a neural network to detect tanks
+        \item Good fit on training data
+        \item Application outside training data: failure
+        \item<2-> Reasons vary depending on input\\
+        $\leadsto$ NN based decision on irrelevant points
+        \item<3-> E.g. model detects weather based on sky:\\
+        $\leadsto$ All photos with tanks show cloudy sky\\
+        $\leadsto$ Photos without tanks show sunny sky
 	\end{itemize}
 
 	\end{column}
@@ -361,7 +364,7 @@ $\leadsto$ Insights help to identify flaws (in data or model), which can be corr
     \citebutton{Thomas G. Dietterich}{https://nitter.moomoo.me/tdietterich/status/1154839042623594496}
  \end{frame}
 
-\begin{frame}[c]{Debug and Audit}
+\begin{frame}{Debug and Audit}
     \begin{itemize}
         %\item etwas mehr die "technische" perspektive bringen und ein paar zeilen hintergrund was debuggiung ist, warum es schon immer schwierrig war und mit ML die hölle wird. ein porgramm schreibt ein program
         \item At first instance nearly all computer programs (CPs) have bugs
@@ -442,11 +445,13 @@ $\leadsto$ Insights help to identify flaws (in data or model), which can be corr
     Descriptive data analysis: 
     
     \centering
-    \includegraphics[width=0.7\textwidth]{figure/compass_black_white.PNG}
+    \includegraphics[width=0.95\textwidth]{figure/compass_black_white.PNG}
     % source https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm
 
     Decile score: 1 (low risk) to 10 (high risk)
 
+    \medskip
+    \raggedright
 	$\leadsto$ Model skewed towards low risk for white defendants
 	
 	$\leadsto$ Strong indication that the model is discriminating black defendants
@@ -454,18 +459,22 @@ $\leadsto$ Insights help to identify flaws (in data or model), which can be corr
 	$\leadsto$ Use IML to investigate if and how much the model uses the defendants' origin.
 \end{frame}
 
-\begin{frame}{Justification and fairness: COMPAS~\citebutton{Alvarez-Melis and Jaakkola 2018}{https://arxiv.org/pdf/1806.08049.pdf}}
-    $\leadsto$ Investigate if and why biased, unexpected or discriminatory predictions were made \\
+\begin{frame}{Justification and fairness: COMPAS \citebutton{Alvarez-Melis and Jaakkola 2018}{https://arxiv.org/pdf/1806.08049.pdf}}
+
+    $\leadsto$ Investigate if and why biased, unexpected or discriminatory predictions were made 
+    \begin{itemize}
+        \item Underlying classifier is a logistic regression.
+        \item Feature effects analysis for two exemplary defendants, using different interpretation methods (SHAP and LIME):
+    \end{itemize}
+
     \medskip
-    The underlying classifier is a logistic regression. Feature effects analysis for two exemplary defendants, using different interpretation methods (SHAP and LIME): \\
-    $\leadsto$ The methods give for every feature a number mirroring the impact on violence score. 
-    \vspace{0.5cm}
-    
     \centering
     \includegraphics[width=0.95\textwidth]{figure/COMPAS_shap_lime_example.png}
-    
-    \vspace{0.2cm}
-    $\leadsto$ In both cases the race (african american) has a noticeable positive impact on violent score
+
+    \medskip
+    \raggedright
+    $\leadsto$ Methods give for every feature a number mirroring the impact on violence score. \\
+    $\leadsto$ Race (african american) has a noticeable positive impact on violent score
 \end{frame}
 
 

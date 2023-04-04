@@ -415,13 +415,69 @@ days\_since\_2011 & 79.53 \\
 % \end{frame}
 
 
-\begin{frame}{Conditional Inference Trees \\ \citebutton{Hothorn et al. (2006)}{https://doi.org/10.1198/106186006X133933}
+\begin{frame}{Conditional Inference Trees}  
+\vspace{-0.2cm}
+\citebutton{Hothorn et al. (2006)}{https://doi.org/10.1198/106186006X133933}
 \citebutton{Zeileis et al. (2008)}{https://doi.org/10.1198/106186008X319331}
-\citebutton{Strobl et al. (2007)}{https://doi.org/10.1186/1471-2105-8-25}}
+\citebutton{Strobl et al. (2007)}{https://doi.org/10.1186/1471-2105-8-25}
 
-\textbf{Idea of conditional inference trees}: 
+\vspace{0.3cm}
+\textbf{Problems} with CART (Classification and Regression Trees): 
+
+\begin{enumerate}
+    \item Variable selection bias towards high-cardinal/continuous features 
+    \item Overfitting as the algorithm does not know which improvement (split) is significant 
+\end{enumerate}
+\medskip
+\scriptsize
+\pause
+\begin{columns}[T, totalwidth = \linewidth]
+    \begin{column}{0.6\textwidth}
+        \textbf{Example}: $n = 200,\, Y \sim N(0,1),\, X_1 \sim (1:n)\cdot$ $ (1+N(0, 0.001),\, X_2 \sim B(n, \frac{1}{2},\frac{1}{2}),\, X_3 \sim M(n, rep(\frac{1}{8},8)$
+    
+    \medskip
+    \scriptsize{Regular tree (\texttt{rpart})}\begin{center}
+    \vspace{-0.7cm}
+    \includegraphics[width = 0.9\textwidth]{figure/selection_bias_simulation_tree.pdf}
+    \end{center}
+    \end{column}
+    \pause
+    \begin{column}{0.4\textwidth}
+    
+        \textbf{Conditional inference trees}: 
+        \begin{enumerate}  
+        \item Separate variable selection and split point selection  
+        \item Hypothesis tests as stopping criteria 
+        \end{enumerate}
+    
+        \begin{center}
+        \scriptsize{ctree (\texttt{partykit}): 1 node}
+        \vspace{-0.2cm}
+        \includegraphics[width = 0.9\textwidth]{figure/selection_bias_simulation_ctree.pdf}
+        \end{center}
+        %\normalsize
+    \end{column}
+\end{columns}
+
+\end{frame}
 
 
+\begin{frame}{Bike-Example: ctree}
+\centering
+\includegraphics[width = .9\textwidth]{figure/bike_ctree.pdf}
+\end{frame}
+
+
+\begin{frame}{Model-based (MOB) Recursive Partitioning \citebutton{Zeileis et al. (2008)}{https://doi.org/10.1198/106186008X319331}}
+
+\textbf{Idea of MOB}: 
+
+\begin{itemize}
+    \item If more features are available, the model can be further optimized by considering these new features when partitioning the covariates 
+    \item Instead of a constant model (CART), a parametric model is fitted in each node % OLS regression, GLMs, and survival regression
+\end{itemize}
+\vspace{-0.2cm}
+\includegraphics[width = \textwidth]{figure/bike_mob.pdf}
 \end{frame}
 
 \endlecture
