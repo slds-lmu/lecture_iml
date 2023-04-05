@@ -14,7 +14,7 @@ source("bike_example_Data.R")
 ## ctree
 c_tree = ctree(y~., data = dat, 
                control = ctree_control(maxdepth = 3, maxsurrogate = 0))
-pdf("../figure/bike_ctree.pdf", width = 9, height = 5.5)
+pdf("../figure/bike_ctree.pdf", width = 9, height = 4.5)
 #plot(c_tree)
 ggparty(c_tree,
   terminal_space = 0.3,
@@ -43,7 +43,7 @@ ggparty(c_tree,
   geom_node_label(aes(label = paste0("Node ", id, ", N = ", nodesize)),
     fontface = "bold",
     ids = "terminal",
-    size = 2.5, 
+    size = 2, 
     nudge_y = 0.01) +
   theme(legend.position = "none")
 
@@ -56,7 +56,7 @@ rmse = mean((pred - dat$y)^2)/2
 ## mob
 mob_tree = lmtree(y ~ temp | ., data = dat, maxdepth = 4)
 
-pdf("../figure/bike_mob.pdf", width = 9, height = 5.5)
+pdf("../figure/bike_mob.pdf", width = 9, height = 4.5)
 ggparty(mob_tree,
   terminal_space = 0.3,
   add_vars = list(p.value = "$node$info$p.value")) +
@@ -84,7 +84,7 @@ ggparty(mob_tree,
   geom_node_label(aes(label = paste0("Node ", id, ", N = ", nodesize)),
     fontface = "bold",
     ids = "terminal",
-    size = 2.5, 
+    size = 2, 
     nudge_y = 0.01) +
   theme(legend.position = "none")
 dev.off()
