@@ -425,35 +425,39 @@ days\_since\_2011 & 79.53 \\
 \textbf{Problems} with CART (Classification and Regression Trees): 
 
 \begin{enumerate}
-    \item Variable selection bias towards high-cardinal/continuous features 
-    \item Overfitting as the algorithm does not know which improvement (split) is significant 
+    \item Selection bias towards high-cardinal/continuous features 
+    \item Does not consider significant improvements when splitting ($\leadsto$ overfitting)
+    %Overfitting as the algorithm does not know which improvement (split) is significant 
 \end{enumerate}
 \medskip
 \scriptsize
 \pause
 \begin{columns}[T, totalwidth = \linewidth]
-    \begin{column}{0.6\textwidth}
-        \textbf{Example}: $n = 200,\, Y \sim N(0,1),\, X_1 \sim (1:n)\cdot$ $ (1+N(0, 0.001),\, X_2 \sim B(n, \frac{1}{2},\frac{1}{2}),\, X_3 \sim M(n, rep(\frac{1}{8},8)$
+    \begin{column}{0.7\textwidth}
+        \textbf{Example (selection bias)}: 
+        $n = 200,\, Y \sim N(0,1)$ \\
+        Simulate features with different cardinality (independent from $Y$):
+        $X_1 \sim N(0,1),\, X_2 \sim B(n, \frac{1}{2},\frac{1}{2}),\, X_3 \sim M(n, rep(\frac{1}{8},8))$
     
     \medskip
-    \scriptsize{Regular tree (\texttt{rpart})}\begin{center}
+    \scriptsize{Regular tree \texttt{rpart})}\begin{center}
     \vspace{-0.7cm}
-    \includegraphics[width = 0.9\textwidth]{figure/selection_bias_simulation_tree.pdf}
+    \includegraphics[width = \textwidth]{figure/selection_bias_simulation_tree.pdf}
     \end{center}
     \end{column}
     \pause
-    \begin{column}{0.4\textwidth}
+    \begin{column}{0.3\textwidth}
     
         \textbf{Conditional inference trees}: 
         \begin{enumerate}  
-        \item Separate variable selection and split point selection  
+        \item Separate selection of feature and split point
         \item Hypothesis tests as stopping criteria 
         \end{enumerate}
     
         \begin{center}
         \scriptsize{ctree (\texttt{partykit}): 1 node}
         \vspace{-0.2cm}
-        \includegraphics[width = 0.9\textwidth]{figure/selection_bias_simulation_ctree.pdf}
+        \includegraphics[width = \textwidth]{figure/selection_bias_simulation_ctree.pdf}
         \end{center}
         %\normalsize
     \end{column}
