@@ -13,12 +13,13 @@ x = data.frame(x1 = round(rnorm(n, 0, 1), 4),
 
 ## normal tree
 tree = rpart(y~x1+x2+x3, data = x)
-pdf("../figure/selection_bias_simulation_tree.pdf", width = 6, height = 4)
-rpart.plot(tree)
+pdf("../figure/selection_bias_simulation_tree.pdf", width = 13, height = 7)
+plot(as.party(tree))
 dev.off()
 
 ## ctree
 c_tree = ctree(y~x1+x2+x3, data = x)
 pdf("../figure/selection_bias_simulation_ctree.pdf", width = 3, height = 2)
+par(mar = c(0,0,0,0))
 plot(c_tree)
 dev.off()
