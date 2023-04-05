@@ -1,15 +1,23 @@
 library(rpart)
 library(rpart.plot)
 library(partykit)
+library(ggparty)
 
 set.seed(1234)
 
 n = 200
 y = rnorm(n, 0, 1)
-x3 = apply(rmultinom(n, 1,  rep(0.125, 8)), 2, which.max)
-x = data.frame(x1 = round(rnorm(n, 0, 1), 3),
-  x2 = as.factor(rbinom(n, 1, prob = c(0.5,0.5))),
+x2 = apply(rmultinom(n, 1,  rep(1/4, 4)), 2, which.max)
+x3 = apply(rmultinom(n, 1,  rep(1/8, 8)), 2, which.max)
+x = data.frame(
+  x1 = as.factor(rbinom(n, 1, prob = c(0.5,0.5))),
+  x2 = as.factor(x2),
   x3 = as.factor(x3))
+
+#x3 = apply(rmultinom(n, 1,  rep(0.125, 8)), 2, which.max)
+# x = data.frame(x1 = round(rnorm(n, 0, 1), 3),
+#   x2 = as.factor(rbinom(n, 1, prob = c(0.5,0.5))),
+#   x3 = as.factor(x3))
 
 ## normal tree
 tree = rpart(y~x1+x2+x3, data = x)
@@ -48,4 +56,42 @@ c_tree = ctree(y~x1+x2+x3, data = x)
 pdf("../figure/selection_bias_simulation_ctree.pdf", width = 3, height = 2)
 par(mar = c(0,0,0,0))
 plot(c_tree)
+dev.off()
+
+
+# Simulate selection frequency of first split variable
+
+set.seed(1234)
+sim = lapply(1:500, function(i) {
+  n = 200
+  y = rnorm(n, 0, 1)
+  x2 = apply(rmultinom(n, 1,  rep(1/4, 4)), 2, which.max)
+  x3 = apply(rmultinom(n, 1,  rep(1/8, 8)), 2, which.max)
+  x = data.frame(
+    x1 = as.factor(rbinom(n, 1, prob = c(0.5,0.5))),
+    x2 = as.factor(x2),
+    x3 = as.factor(x3))
+  
+  rp = rpart(y~., data = x, cp = 0)
+  ct = ctree(y~., data = x, control = ctree_control(alpha = 1))
+  
+  data.frame(iter = i, rp = row.names(rp$splits)[1], ct = names(ct$node$info$p.value))
+})
+
+library(data.table)
+res = rbindlist(sim)
+
+table(res$rp)
+table(res$ct)
+
+library(scales)
+res = melt(res, id.vars = c("iter"), variable.name = "algorithm")
+
+pdf("../figure/selection_bias_simulation_1000.pdf", width = 6, height = 4)
+ggplot(data = res) + 
+  geom_bar(aes(x = as.factor(value), y = (..count..)/sum(..count..), fill = algorithm), position = "dodge") + 
+  scale_y_continuous(labels = percent) +
+  labs(x = "feature", y = "Selection Frequency of 1st Split-Feature") +
+  scale_fill_discrete(name = "Algorithm", breaks = c("rp", "ct"), labels = c("CART (rpart)", "Conditional Inference Trees (ctree)")) + 
+  theme_bw() + theme(legend.position = "top")
 dev.off()
