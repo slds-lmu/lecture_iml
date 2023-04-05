@@ -25,22 +25,26 @@
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 \begin{frame}{Generalized Linear Model (GLM) \citebutton{Nelder and Wedderburn 1972}{https://doi.org/10.2307/2344614}}
-
-\textbf{Problem}: Target variable given the features not always normally distributed $\leadsto$ LM not suitable
+\vspace{-0.2cm}
+\textbf{Problem}: Target variable given feat. not always normally dist. $\leadsto$ LM not suitable
+\begin{itemize}
+    \item Target is binary (e.g., disease classification)\\
+    $\leadsto$ Bernoulli / Binomial distribution
+\end{itemize}
+\vspace{-0.5cm}
 \begin{columns}
-    \begin{column}{0.6\textwidth}
+    \begin{column}{0.45\textwidth}
         \begin{itemize}
-            \item Target is binary (e.g., disease classification)\\
-            $\leadsto$ Bernoulli / Binomial distribution
-            \item Target is count variable (e.g., number of sold products)\\
+            \item Target is count variable \\(e.g., number of sold products)\\
             $\leadsto$ Poisson distribution
-            \item Time until an event occurs (e.g., time until death)\\
+            \item Time until an event occurs\\ (e.g., time until death)\\
             $\leadsto$ Gamma distribution
         \end{itemize}
     \end{column}
-    \begin{column}{0.4\textwidth}
+    \begin{column}{0.55\textwidth}
+    \vspace{-0.4cm}
         \begin{center}
-            \includegraphics[width = 0.98\textwidth]{figure/density_intervals.pdf}
+            \includegraphics[width = 0.9\textwidth]{figure/density_intervals.pdf}
         \end{center}
     \end{column}
 \end{columns}
@@ -80,7 +84,7 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
  	
 \begin{frame}{GLM - Logistic Regression}
 \begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.5\textwidth}
+\begin{column}{0.45\textwidth}
 
 \begin{itemize}
     \item Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function: 
@@ -90,7 +94,7 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
     \Rightarrow \; g^{-1}(x) &= \frac{1}{1+\exp(-x)}
 \end{align*}
 \end{column}
-\begin{column}{0.5\textwidth}
+\begin{column}{0.55\textwidth}
 
 % \begin{columns}[c, totalwidth=\linewidth]
 % \begin{column}{0.005\linewidth}
@@ -105,7 +109,7 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 \end{column}
 \end{columns}
 
-\smallskip
+\bigskip
 
 \begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.65\textwidth}
@@ -135,9 +139,10 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
     \end{itemize}
 \end{itemize}
 
+\medskip
 \centering
-\includegraphics[width=0.3\textwidth]{figure/logreg-2vars-surface.png} \qquad
-\includegraphics[width=0.4\textwidth]{figure/reg_class_log_7} 
+\includegraphics[width=0.4\textwidth]{figure/logreg-2vars-surface.png} \qquad
+\includegraphics[width=0.5\textwidth]{figure/reg_class_log_7} 
 % figs from i2ml course, Chapter 03.04: Logistic Regression, slide 7 
 \end{frame}
 
@@ -183,8 +188,8 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
         \pause
         \item Odds for class 1 vs. class 0: %Odds can be caulculated by:
         $odds = \displaystyle\frac{\pi(\xv)}{1 - \pi(\xv)}= \exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p)$
-        \item Instead of interpreting changes w.r.t. log-odds, it is more common to use odds ratios:
-        $$odds\text{ }ratio = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j (x_j+1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp{(\theta_j)} $$
+        \item Instead of interpreting changes w.r.t. log-odds, it is more common to use $odds\text{ }ratio$
+        $$ = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j (x_j+1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp{(\theta_j)} $$
         \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\theta_j)$
         %\pause
         %\item Interpretation for different feature types is the same as for linear regression (however, linear interpretation only possible w.r.t. log odds $\leadsto$ difficult to comprehend)
@@ -246,6 +251,8 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 \includegraphics[width = 0.9\textwidth]{figure/logistic_marginal_temp.pdf}
 \end{column}
 \end{columns}
+
+\bigskip
 
 \textbf{Interpretation}
 \begin{itemize}

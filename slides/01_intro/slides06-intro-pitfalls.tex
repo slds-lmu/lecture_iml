@@ -72,9 +72,9 @@
                             every label/.append style={align=left, font=\footnotesize, text width=4cm},
                             scale=0.7, transform shape]
             \node[main node] (1) { Data };
-            \node[main node] (2) [right of=1, node distance=5cm] { ML Model };
-            \node[main node, right of=2, node distance=5cm] (3) { IML Method };
-            \node[main node, right of=3, node distance=5cm] (4) { Interpretation };
+            \node[main node] (2) [right of=1, node distance=4.5cm] { ML Model };
+            \node[main node, right of=2, node distance=4.5cm] (3) { IML Method };
+            \node[main node, right of=3, node distance=4.5cm] (4) { Interpretation };
             \node[main node, below of=3, node distance=3cm, fill = lightgray] (5) { Sources of Pitfalls };
             \node[main node, below of=2, node distance=6cm] (6) { Issues of ML model };
             \node[main node, below of=3, node distance=6cm] (7) { Issues of IML method };
@@ -99,7 +99,7 @@
         \item \textbf{Proper training and evaluation}: To gain insights into data generating process, deployed model should at least generalize well to unseen data (garbage in, garbage out)\\
         \only<2->{\textit{Example}: Three features are drawn from a uniform distribution, and the target is generated as $Y = X_1^2 +X_2 - 5X_1X_2 + \epsilon$, with $\epsilon \sim \mathcal{N}(0, 5)$. Figure: PDPs for the DGP and for a linear regression model (underfitted), a random forest (overfitted) and a support vector machine with radial basis kernel (good fit).
         \begin{center}
-            \includegraphics[width=0.6\textwidth]{figure/pitfall1.png}
+            \includegraphics[width=0.8\textwidth]{figure/pitfall1.png}
         \end{center}}
         \item<3> \textbf{Avoid unnecessary complexity}: Prefer simple interpretable models and use them as baseline
     \end{itemize}
@@ -112,8 +112,8 @@
         $\leadsto$ Check presence of dependencies and use suitable methods\\
         \only<2->{\textit{Example:} Extrapolation}
     \end{itemize}
-    \only<2->{\centerline{\includegraphics[width=0.8\textwidth]{figure/extrapolation}}}
-    \only<3->{\begin{columns}[c, totalwidth=\textwidth]
+    \only<2->{\centerline{\includegraphics[width=0.9\textwidth]{figure/extrapolation}}}
+    \only<3->{\begin{columns}[T, totalwidth=\textwidth]
     \begin{column}{0.6\linewidth}
 	    \begin{itemize}
         \item \textbf{Beware of simplifications}:
@@ -122,7 +122,7 @@
     \end{itemize}
 	\end{column}
 	\begin{column}{0.4\linewidth}
-    \centerline{\includegraphics[width=0.6\textwidth]{../03_feature-effects/figure/pdp_xor.pdf}}
+    \centerline{\includegraphics[width=0.8\textwidth]{../03_feature-effects/figure/pdp_xor.pdf}}
     \end{column}
 	\end{columns}}
     
@@ -134,9 +134,9 @@
         \item \textbf{Quantify uncertainty}: Interpretation methods are often (statistical) estimators \\
         $\leadsto$ Beware of uncertainty, we may need confidence intervals\\
         \only<2->{\textit{Example:} Left plot (IML method output) misleading compared to fitted models in right plot \\
-        \centerline{\includegraphics[width=0.6\textwidth]{figure/pitfall5}}}
+        \centerline{\includegraphics[width=0.9\textwidth]{figure/pitfall5}}}
         \item<3> \textbf{Careful with causality}:
-        Do you want to understand the model or the nature of DGP?\\
+        Want to understand the model or the nature of DGP?\\
         $\leadsto$ Your goal should guide the choice of interpretation method
     \end{itemize}
 \end{frame}

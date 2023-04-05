@@ -30,19 +30,19 @@
 \textbf{Problem}: LM not suitable if relationship between features and target variable is not linear % $\leadsto$ standard 
 
 \begin{columns}[totalwidth=\textwidth]
-    \begin{column}{0.6\textwidth}
+    \begin{column}{0.55\textwidth}
     
         \only<2->{
         \textbf{Workaround in LMs / GLMs}: 
         \begin{itemize}
             \item Feature transformations (e.g., exp or log)
             \item Including high-order effects
-            \item Categorization of features (i.e., intervals / buckets of feature values)
+            \item Categorization of features (i.e., intervals/ buckets of feature values)
         \end{itemize}}
     \end{column}
-    \begin{column}{0.4\textwidth}
+    \begin{column}{0.45\textwidth}
         \begin{center}
-            \includegraphics[width = \textwidth]{figure/intro_lm_bike.pdf}
+            \includegraphics[width = .95\textwidth]{figure/intro_lm_bike.pdf}
             %\includegraphics[width = \textwidth]{figure/lm_bad_fit2.pdf}
         \end{center}
     \end{column}
@@ -70,7 +70,7 @@ Fit a GAM with smooth splines for four numeric features of bike rental data \\
 $\leadsto$ more flexible and better model fit but less interpretable than LM
 
 \begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.5\textwidth}
+\begin{column}{0.45\textwidth}
 \begin{table}[ht]
 \centering
 \scriptsize
@@ -104,7 +104,8 @@ s(temp) & 5.8 & 0.00 \\
 \end{itemize}
 \end{column}
 \hfill
-\begin{column}{0.45\textwidth}
+\centering
+\begin{column}{0.5\textwidth}
 \includegraphics[width = \textwidth]{figure/gam_effects.pdf}
 \end{column}
 \end{columns}
@@ -331,9 +332,10 @@ $\leadsto$ Ranking of features stays the same
 }
 \end{columns}
 \smallskip
+\scriptsize
+\only<2->{\qquad $\Rightarrow$ In-bag-Risk: 250,202.0 \, ; \, OOB risk (10-fold CV): 267,497.0}
 \begin{itemize}
-    \scriptsize
-    \item<2->[$\Rightarrow$] In-bag-Risk: 250,202.0 \, ; \, OOB risk (10-fold CV): 267,497.0
+    \normalsize
     \item<2->  Feature importance (risk reduction over iter.) $\leadsto$ \code{days\_since\_2011} most important
     \item<2-> Total effect for \code{days\_since\_2011}\\
 $\leadsto$ Combination of partial effects of linear BL and centered spline BL

@@ -51,7 +51,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
         %\item $\mathbb{E}_Y(Y \vert X)$ expected value of target given features $X$
         \item $y$: target / output
         \item $\epsilon$: remaining error / residual (e.g., due to noise)
-        \item $\theta_j$: weight of input feature $x_j$ (with intercept $\theta_0$)\\
+        \item $\theta_j$: weight of input feature $x_j$ (intercept $\theta_0$)\\
         $\leadsto$ model consists of $p+1$ weights
         %\item Model equation is additive and identical across entire input space
         %\pause
@@ -67,7 +67,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 \end{column}
 \end{columns}
    
-   %\vspace*{0.2cm} 
+   \vspace*{0.2cm} 
    \pause
     \textbf{Properties and assumptions} \citebutton{Faraway (2002), Ch. 7}{https://cran.r-project.org/doc/contrib/Faraway-PRA.pdf} \citebutton{Checking assumptions in R \& Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b}
     \begin{itemize}[<+->]
@@ -102,11 +102,11 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 
 \begin{frame}[c]{Linear Regression - Interpretation}
 
-$$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon = \xv^\top \theta + \epsilon$$
+$$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon = \xv^\top \thetab + \epsilon$$
 
     Interpretation of weights (\textbf{feature effects}) depend on type of feature:
     \begin{itemize}[<+->]
-        \item \textbf{Numerical $x_j$}: Increasing $x_j$ by one unit changes outcome by $\theta_j$, ceteris paribus (c.p.) \\ (\textit{ceteris paribus} means "everything else held constant".)
+        \item \textbf{Numerical $x_j$}: Increasing $x_j$ by one unit changes outcome by $\theta_j$, ceteris paribus \\ (\textit{ceteris paribus} (c.p.) means "everything else held constant".)
         \item \textbf{Binary $x_j$}: Weight $\theta_j$ is active or not (multiplication with 1 or 0) where 0 is reference category
     \end{itemize}
 
@@ -140,7 +140,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 \end{frame}
 
      
-\begin{frame}[c]{Linear Regression - Interpretation}
+\begin{frame}{Linear Regression - Interpretation}
 \vspace{-0.2cm}
 $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon = \xv^\top \thetab + \epsilon$$
     \textbf{Feature importance}:
@@ -160,6 +160,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
     \end{column}
     \end{columns}
     \vspace{0.3cm}
+    \only<2->{
     \begin{columns}[T, totalwidth=\linewidth]
     \begin{column}{0.6\textwidth}
     \begin{itemize}
@@ -173,13 +174,13 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
         \includegraphics[width=.9\textwidth]{figure/p-value.pdf}
     \end{center}
     \end{column}
-    \end{columns}
+    \end{columns}}
 \end{frame}
 
 
 \begin{frame}{Example: Linear Regression - Main Effects}
 
-\textbf{Bike data}: predict number of rented bikes using 4 numeric and 1 categorical feature (season)
+\textbf{Bike data}: predict no. of rented bikes using 4 numeric, 1 categorical feat. (season)
 
 \medskip 
 
@@ -189,23 +190,25 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 % $$
 % \end{footnotesize}
 \begin{columns}[T, totalwidth=\linewidth]
-\begin{column}{0.52\linewidth}
-%\vspace*{-0.3cm}
+\begin{column}{0.43\linewidth}
+\vspace*{-0.3cm}
 \begin{align*}
 \hat y = 
 & \hat \theta_0 + 
-\hat \theta_1 \mathds{1}_{x_{season} = SPRING} +
+\hat \theta_1 \mathds{1}_{x_{season} = SPRING} +\\
+& 
 \hat \theta_2 \mathds{1}_{x_{season} = SUMMER} +\\
 & 
 \hat \theta_3 \mathds{1}_{x_{season} = FALL} + 
-\hat \theta_4 x_{temp} + 
-\hat \theta_5 x_{hum} + \\
+\hat \theta_4 x_{temp} + \\
 & 
-\hat \theta_6 x_{windspeed} + 
+\hat \theta_5 x_{hum} + 
+\hat \theta_6 x_{windspeed} + \\
+& 
 \hat \theta_7 x_{days\_since\_2011}
 \end{align*}
 \end{column}
-\begin{column}{0.47\linewidth}
+\begin{column}{0.57\linewidth}
   \centering
 \begin{scriptsize}
 %\begin{overlayarea}{\textwidth}{\textheight}
@@ -269,7 +272,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}{Linear Regression - Interaction and High-order Effects}
+\begin{frame}{Interaction and High-order Effects}
 
 $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon$$
 
@@ -284,17 +287,18 @@ Equation above can be extended (polynomial regression) by including
         $\leadsto$ e.g., 2-way interaction: $\theta_{x_i, x_j} \cdot x_i \cdot x_j$
     \end{itemize}
 \end{column}
-\begin{column}{0.35\linewidth}
+\begin{column}{0.34\linewidth}
     \vspace{-0.2cm}
+    \centering
     \begin{scriptsize}
     \begin{table}[ht]
-    \centering \textbf{Bike Data}
+    \textbf{Bike Data}
         \begin{tabular}{lrr}
         \hline
         Method & $R^2$ & adj. $R^2$ \\ 
         \hline
         Simple LM & 0.85 & 0.84 \\ 
-        Higher-order & 0.87 & 0.87 \\ 
+        High-order & 0.87 & 0.87 \\ 
         Interaction  & 0.96 & 0.93 \\ 
     %    Both Types & 0.96 & 0.93 \\ 
         \hline
@@ -347,7 +351,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{Example: Linear Regression - Interaction Effect}
+\begin{frame}{Example: Interaction Effect}
 \textbf{Example}: Interaction between \code{temp} and \code{season} will affect marginal effect of \code{temp}% with (right) and without (left) interaction.
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.65\linewidth}
@@ -386,7 +390,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \vfill
 \pause
 \begin{columns}[T, totalwidth=\linewidth]
-\begin{column}{0.6\linewidth}
+\begin{column}{0.65\linewidth}
 \textbf{Interpretation}: If \code{temp} increases by 1 $^{\circ}$C, bike rentals
 \begin{itemize}[<+->]
     \item increase by 160.5 in \code{WINTER} (reference)
@@ -395,7 +399,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
     \item increase by 187.7 (= 160.5 + 27.2) in \code{FALL}
 \end{itemize} %\\\vspace*{0.2cm}
 \end{column}
-\begin{column}{0.4\linewidth}
+\begin{column}{0.35\linewidth}
 % \lz
 % \only<6>{\textbf{Note:}
 % Temperature values (on x-axis) depend on \code{season}\\
@@ -432,7 +436,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \end{itemize}
 
 \end{column}
-\begin{column}{0.35\linewidth}
+\begin{column}{0.34\linewidth}
 %\hfill
 \begin{scriptsize}
 % \begin{table}[ht]
@@ -535,21 +539,21 @@ $$
 \textbf{Example} (interpretation of weights analogous to LM):
 \begin{itemize}
     \item LASSO with main effects and interaction \code{temp} with \code{season}
-    \item $\lambda$ is chosen such that 6 features are selected (not zero)
-    \item For categorical features, LASSO shrinks weights of single categories separately (due to dummy encoding)\\
+    \item $\lambda$ is chosen $\leadsto$ 6 selected features ($\neq 0$)
+    \item LASSO shrinks weights of single categories separately (due to dummy encoding)\\
     %only weights of single categories are set to zero (due to dummy encoding) not the whole feature\\
     $\leadsto$ No feature selection of whole categorical features\\
     %May be problematic for categorical features as only weights of single categories are set to zero (due to dummy encoding) instead of the whole categorical feature\\ %, polynomials and interactions
     $\leadsto$ Solution: group LASSO \citebutton{Yuan and Lin (2006)}{https://doi.org/10.1111/j.1467-9868.2005.00532.x}
 \end{itemize}
-\medskip
+\smallskip
 \centering
-\includegraphics[width = 0.5\textwidth]{figure/reg_lm_plot_interpreted.pdf}
+\includegraphics[width = 0.6\textwidth]{figure/reg_lm_plot_interpreted.pdf}
 
 \end{column}
 \begin{column}{0.35\textwidth}
 
-\footnotesize
+\scriptsize
 \centering
 \begin{tabular}{rr}
   \hline
