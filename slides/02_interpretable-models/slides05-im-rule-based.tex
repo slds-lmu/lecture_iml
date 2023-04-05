@@ -462,25 +462,45 @@ days\_since\_2011 & 79.53 \\
 \end{frame}
 
 
-\begin{frame}{Bike-Example: ctree}
+\begin{frame}{ctree}
+
+\vspace{-0.1cm}
+Differences to CART:
+\begin{itemize}
+    \item Two-step implementation 
+    \item p-values given in each node
+    \item Parametric model is fitted in leave nodes % OLS regression, GLMs, and survival regression
+\end{itemize}
+
+\medskip
+
+\textbf{Example}: Bike data (here: constant model in final nodes)
+
 \centering
-\includegraphics[width = .9\textwidth]{figure/bike_ctree.pdf}
+\vspace{-0.2cm}
+\includegraphics[width = .8\textwidth]{figure/bike_ctree.pdf}
 \end{frame}
 
 
 \begin{frame}{Model-based (MOB) Recursive Partitioning \citebutton{Zeileis et al. (2008)}{https://doi.org/10.1198/106186008X319331}}
 
+\vspace{-0.1cm}
 \textbf{Idea of MOB}: 
 
 \begin{itemize}
     \item If more features are available, the model can be further optimized by considering these new features when partitioning the covariates 
-    \item Instead of a constant model (CART), a parametric model is fitted in each node % OLS regression, GLMs, and survival regression
+    \item Advantage: Separation possible, which features to use for splits and which for modelling in leaf nodes
+    \item \texttt{ctree} and \texttt{mob} differ in the variable and split point selection (test statistics)
 \end{itemize}
 
-\includegraphics[width = \textwidth]{figure/bike_mob.pdf}
+\textbf{Example:} Bike data (here: linear model in final nodes)
 
-\raggedright
-Comparison RMSE \texttt{ctree}: 696,180.7 \, ; \texttt{mob}: 11,994,124.1
+\vspace{-0.2cm}
+\includegraphics[width = 1.05\textwidth]{figure/bike_mob.pdf}
+
+\vspace{-0.1cm}
+\centering
+Comparison RMSE: \quad \texttt{ctree}: 696,180.7 \, ; \, \texttt{mob}: 11,994,124.1
 
 \end{frame}
 
