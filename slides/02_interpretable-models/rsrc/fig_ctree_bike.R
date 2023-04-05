@@ -51,7 +51,7 @@ dev.off()
 
 # rmse
 pred = predict(c_tree, newdata = dat)
-rmse = mean((pred - dat$y)^2)/2
+rmse = mean((pred - dat$y)^2)
 
 ## mob
 mob_tree = lmtree(y ~ temp | ., data = dat, maxdepth = 4)
@@ -91,4 +91,4 @@ dev.off()
 
 # rmse
 pred2 = predict(mob_tree, newdata = dat)
-rmse2 = mean((pred2 - dat$y)^2)/2
+rmse2 = mean((pred2 - dat$y)^2)
