@@ -6,11 +6,10 @@ set.seed(1234)
 
 n = 200
 y = rnorm(n, 0, 1)
-x3 = numeric()
-for(i in 1:n) x3[i] = match(1, rmultinom(1, 1, rep(0.125, 8)))
-x = data.frame(x1 = (1:n)*(1+rnorm(n, 0, 0.001)),
-               x2 = as.factor(rbinom(n, 1, prob = c(0.5,0.5))),
-               x3 = as.factor(x3))
+x3 = apply(rmultinom(n, 1,  rep(0.125, 8)), 2, which.max)
+x = data.frame(x1 = round(rnorm(n, 0, 1), 4),
+  x2 = as.factor(rbinom(n, 1, prob = c(0.5,0.5))),
+  x3 = as.factor(x3))
 
 ## normal tree
 tree = rpart(y~x1+x2+x3, data = x)
