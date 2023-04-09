@@ -37,22 +37,20 @@
 \begin{frame}{Feature Interactions}
 \begin{itemize}
 %\itemsep2em
-\item While feature dependencies concern data distribution, feature interactions occur in structure of model or DGP (e.g., functional relationship between $X$ and $\fh(X)$ or $X$ and $Y = f(X)$)\\
+\item While feature dependencies concern data distribution, feature interactions may occur in structure of both model or DGP (e.g., functional relationship between $X$ and $\fh(X)$ or $X$ and $Y = f(X)$)\\
 $\leadsto$ Feature dependencies may lead to feature interactions in a model
 \pause
 %\item Although correlation concerns the data and interactions the model, they are often connected as correlations in the training data are identified by the learning algorithm.
-\item Number of potential interactions in a model increases exponentially with number of features \\
-$\leadsto$ Interactions are difficult to identify, especially if feature dependencies are also present
+\item No. of potential interactions increases exponentially with no. of features \\
+$\leadsto$ Difficult to identify interactions, especially when features are dependent
 \pause
-\item With interactions present, a feature's effect on the prediction depends on other features
+\item Interactions: A feature's effect on the prediction depends on other features\\
+$\leadsto$ Example:
+$\fh(\xv) = x_1 x_2$ $\Rightarrow$ Effect of $x_1$ on $\fh$ depends on $x_2$ and vice versa 
 
 \begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.5\textwidth}
-\vspace{-0.2cm}
-\begin{itemize}
-    \item[] $\leadsto$
-$\fh(\xv) = x_1 x_2$ $\Rightarrow$ Effect of $x_1$ on $\fh$ depends on $x_2$ and vice versa 
-\end{itemize}
+%\vspace{-0.2cm}
 \vspace{0.5cm}
 \centering
 \begin{tikzpicture}[scale=0.75, transform shape]
@@ -79,7 +77,7 @@ $\fh(\xv) = x_1 x_2$ $\Rightarrow$ Effect of $x_1$ on $\fh$ depends on $x_2$ and
    No interaction
 \end{column}
 \begin{column}{0.5\textwidth}
-\vspace{-0.2cm}
+%\vspace{-0.2cm}
 
 \centering
 \begin{tikzpicture}[scale=0.75, transform shape]
@@ -130,7 +128,7 @@ No interactions: $x_2$ and $x_3$\phantom{,}
 \medskip
 \centerline{$\mathbb{E} \left[ \frac{\partial^2 f(\xv)}{\partial x_j \partial x_k} \right]^2 > 0$}
 \medskip
-$\Rightarrow$ If $x_j$ and $x_k$ do not interact, $f(\xv)$ is a sum of two functions, each independent from $x_j$ and $x_k$:
+$\Rightarrow$ If $x_j$ and $x_k$ do not interact, $f(\xv)$ is sum of 2 functions, each independent of $x_j$, $x_k$:
 % $f_{-j}$ and $f_{-k}$ that do not depend on $x_j$ and $x_k$, respectively:
 
 \medskip

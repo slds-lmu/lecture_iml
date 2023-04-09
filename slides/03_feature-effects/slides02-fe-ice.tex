@@ -62,25 +62,26 @@
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values from the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing values from features addressed by the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
-Partition each observation $\xv$ into $\xv_S$ (features of interest) and $\xv_{-S}$ (remaining feat.)
+Partition each observation $\xv$ into $\xv_S$ (features of interest) and $\xv_{-S}$ (remaining features)
 \begin{itemize}
-    \item[$\leadsto$] In practice, $\xv_S$ consists of one or two features (i.e., $|S| \leq 2$ and ${-S} = S^\complement$).
+    \item[$\leadsto$] In practice, $\xv_S$ consists of one or two features \\ (i.e., $|S| \leq 2$ and ${-S} = S^\complement$).
     %, containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
 \end{itemize}
 
-\bigskip
+\medskip
 
 Formal definition of ICE curves: 
 \begin{itemize}
     \item Choose grid points $\xv_S^* = \xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$ to vary $\xv_S$
-    \item Plot point pairs $ \Bigl\{\left(\xv_S^{*^{(k)}}, \fh_S^{(i)}(\xv_S^{*^{(k)}}) \right) \Bigr\}_{k=1}^g $ where $\fh_{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$
+    \item Plot point pairs $ \Bigl\{\left(\xv_S^{*^{(k)}}, \fhice{S}^{(i)}(\xv_S^{*^{(k)}}) \right) \Bigr\}_{k=1}^g$
+    \\where $\fhice{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$
     \item For each $k$ connect point pairs to obtain \textbf{ICE curve}
 \end{itemize}
 
-\bigskip
+\medskip
 
 \begin{itemize}
-    \item[$\leadsto$] ICE curves visualize how prediction of $i$-th observation changes after varying its feature values indexed by $S$ using grid points $\xv_S^*$ while keeping all values in $-S$ fixed:
+    \item[$\leadsto$] ICE curves visualize how prediction of $i$-th observation changes after varying its feature values indexed by $S$ using grid points $\xv_S^*$ while keeping all values in $-S$ fixed
 %by replacing the feature values $\xv_S^{(i)}$ with other values $\xv_S$ while keeping all other features in $\xi_C$ fixed:
 %by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed.
 
@@ -166,7 +167,7 @@ Sample grid values $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$ along feature of in
 and replace vector $\xv^{(i)}$ in data with grid
 %h observation with these sampled grid values.
 %$\Rightarrow$ New artificial data points for $i$-th observation.
-\newline $\Rightarrow$ Creates new artificial points for the $i$-th observation (here: $\xv_S^* = x_1^* \in \{1, 2, 3\}$ is a scalar)
+\newline $\Rightarrow$ Creates new artificial points for $i$-th observation (here: $\xv_S^* = x_1^* \in \{1, 2, 3\}$ scalar)
 
 \end{frame}
 
@@ -188,9 +189,9 @@ and replace vector $\xv^{(i)}$ in data with grid
 
 \textbf{2. Step - Predict and visualize:}
 
-For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(\xv_S^*)$ vs. grid values $\xv_S^*$:
+For each artificially created data point of $i$-th observation, plot prediction $\fhice{S}^{(i)}(\xv_S^*)$ vs. grid values $\xv_S^*$:
 
-$$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
+$$\fhice{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
 
 \end{frame}
 
@@ -310,7 +311,7 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
 \end{itemize}
 \item Except equidistant grid, the other two options preserve (approximately) the marginal distribution of feature of interest
 %$\Rightarrow$ Avoids unrealistic feature values for distributions with outliers %or dependencies
-\item<2> In case of correlations/interactions, unrealistic values are present for all three methods
+\item<2> Correlations/interactions $\leadsto$ unrealistic values in all three methods
 %Preferable for skewed distributions (with outliers) to avoid using unrealistic feature values.
 % \begin{itemize}
 % \item equidistant grid values:
