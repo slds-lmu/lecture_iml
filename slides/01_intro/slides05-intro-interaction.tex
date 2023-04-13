@@ -126,9 +126,7 @@ No interactions: $x_2$ and $x_3$\phantom{,}
 
 %A function $f(\xv)$ is said to exhibit an interaction between two of its variables $x_j$ and $x_k$ if the difference in the value of $f(\xv)$ as a result of changing the value of $x_j$ depends on the value of $x_k$. For numeric variables, this can be expressed as
 \textbf{Definition:} A function $f(\xv)$ contains an interaction between $x_j$ and $x_k$ if a difference in $f(\xv)$-values due to changes in $x_j$ will also depend on $x_k$, i.e.: %, for numeric features:
-\medskip
-\centerline{$\mathbb{E} \left[ \frac{\partial^2 f(\xv)}{\partial x_j \partial x_k} \right]^2 > 0$}
-\medskip
+$$\mathbb{E} \left[ \frac{\partial^2 f(\xv)}{\partial x_j \partial x_k} \right]^2 > 0$$
 $\Rightarrow$ If $x_j$ and $x_k$ do not interact, $f(\xv)$ is sum of 2 functions, each independent of $x_j$, $x_k$:
 % $f_{-j}$ and $f_{-k}$ that do not depend on $x_j$ and $x_k$, respectively:
 
@@ -136,51 +134,21 @@ $\Rightarrow$ If $x_j$ and $x_k$ do not interact, $f(\xv)$ is sum of 2 functions
 
 \centerline{$f(\xv) = f_{-j}(x_1, \ldots, x_{j-1}, x_{j+1}, \ldots, x_p) + f_{-k}(x_1, \ldots, x_{k-1}, x_{k+1}, \ldots, x_p)$}
 
-\medskip\pause
-
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.52\textwidth}
-Example ($f(\xv)$ not separable):
-\medskip
-
-\centerline{$f(\xv) = x_1 + x_2 + x_1 \cdot x_2$}
-\medskip
-$\mathbb{E} \left[ \tfrac{\partial^2 (x_1 + x_2 + x_1 \cdot x_2)}{\partial x_1 \partial x_2} \right]^2 = \mathbb{E} \left[ \tfrac{\partial (1 + x_2)}{\partial x_2} \right]^2 = 1 > 0$\\
-\medskip
-$\Rightarrow$ interaction between $x_1$ and $x_2$ 
-\end{column}
-\pause
-\begin{column}{0.48\textwidth}
-Example ($f(\xv)$ separable):
-\setlength{\abovedisplayskip}{0pt}
-\setlength{\belowdisplayskip}{0pt}
-\setlength{\abovedisplayshortskip}{0pt}
-\setlength{\belowdisplayshortskip}{0pt}
-\medskip
-\begin{align*}
-	f(\xv) &= x_1 + x_2 + \log(x_1 \cdot x_2)\\
-	       &= x_1 + x_2 + \log(x_1) + \log(x_2)\\
-	       &= f_1(x_1) + f_2(x_2), \text{ with }
-\end{align*}
-
-\medskip
-
-$f_1(x_1) = x_1 + \log(x_1)$ and $f_2(x_2) = x_2 + \log(x_2)$
-
-\medskip
-
-$\Rightarrow$ no interactions, also $\mathbb{E} \left[ \tfrac{\partial^2 f(\xv)}{\partial x_1 \partial x_2} \right]^2 = 0$
-\end{column} 
-\end{columns}
 
 \end{frame}
 
 
+
 \begin{frame}{Feature Interactions}
 
-\begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.3\textwidth}
-Interaction:
+Example: $f(\xv) = x_1 + x_2 + x_1 \cdot x_2$ (not separable)
+$$\mathbb{E} \left[ \tfrac{\partial^2 (x_1 + x_2 + x_1 \cdot x_2)}{\partial x_1 \partial x_2} \right]^2 = \mathbb{E} \left[ \tfrac{\partial (1 + x_2)}{\partial x_2} \right]^2 = 1 > 0$$
+$\Rightarrow$ interaction between $x_1$ and $x_2$ 
+
+\medskip\pause
+
+\includegraphics[width = \textwidth, trim = 0 200 0 0, clip]{figure/interaction_separable}
+
 \begin{itemize}
 	\item Effect of $x_1$ on $f(\xv)$ varies with $x_2$ (and vice versa)
 	\item[$\Rightarrow$] Different slopes
@@ -188,19 +156,27 @@ Interaction:
 	%Changing $x_1$-values by holding $x_2$-values fixed
 \end{itemize}
 
-\vspace{20pt}
+\end{frame}
 
-No interaction:
+\begin{frame}{Feature Interactions}
+
+Example of separable function: 
+$$f(\xv) = x_1 + x_2 + \log(x_1 \cdot x_2)
+	       = x_1 + x_2 + \log(x_1) + \log(x_2)$$
+$\Rightarrow$ $f(\xv) = f_1(x_1) + f_2(x_2)$ with $f_1(x_1) = x_1 + \log(x_1)$ and $f_2(x_2) = x_2 + \log(x_2)$
+
+\medskip
+
+$\Rightarrow$ no interactions due to separability, also $\mathbb{E} \left[ \tfrac{\partial^2 f(\xv)}{\partial x_1 \partial x_2} \right]^2 = 0$
+
+\medskip\pause
+
+	\includegraphics[width = \textwidth, trim = 0 0 0 190, clip]{figure/interaction_separable}
+
 \begin{itemize}
 	\item Effect of $x_1$ on $f(\xv)$ stays the same for different $x_2$ values (and vice versa)
 	\item[$\Rightarrow$] Parallel lines at different horizontal (blue) or vertical (black) slices
 \end{itemize}
-
-\end{column}
-\begin{column}{0.7\textwidth}
-	\includegraphics[width = \textwidth]{figure/interaction_separable}
-\end{column}
-\end{columns}
 
 \end{frame}
 
