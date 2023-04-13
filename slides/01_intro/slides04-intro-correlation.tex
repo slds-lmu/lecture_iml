@@ -19,6 +19,11 @@
    title     = #2,
    #1}
 
+\definecolor{winter}{RGB} {243,117,108}
+\definecolor{spring}{RGB} {121,174,65}
+\definecolor{summer}{RGB} {25,188,195}
+\definecolor{fall}{RGB} {166,128,185}
+
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
@@ -26,13 +31,13 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\titlefigure}{figure/dependence_2}
 \newcommand{\learninggoals}{
 \item Difference of dependence vs. correlation
 \item Role of feature dependence in IML
 }
 
-\lecturechapter{Correlation and dependencies}
+\lecturechapter{Correlation and Dependencies}
 \lecture{Interpretable Machine Learning}
 %
 % \begin{frame}{Interpretable ML}
@@ -246,13 +251,13 @@ Geometric interpretation of $\rho$:
 
 \begin{frame}{Coefficient of determination $R^2$}
 
-Another method to evaluate \textbf{linear dependency} between variables is by calculating the $R^2$
+Another method to evaluate \textbf{linear dependency} between features is $R^2$
 
 \begin{columns}[c, totalwidth=\textwidth]
 \begin{column}{0.5\linewidth}
-\only<1>{\includegraphics[width = 0.95\textwidth]{figure/r_squared_Fahrenheit}}
-\only<2>{\includegraphics[width = 0.95\textwidth]{figure/r_squared_compare}}
-\only<3>{\includegraphics[width = 0.95\textwidth]{figure/r_squared}}
+\only<1>{\includegraphics[width = \textwidth]{figure/r_squared_Fahrenheit}}
+\only<2>{\includegraphics[width = \textwidth]{figure/r_squared_compare}}
+\only<3>{\includegraphics[width = \textwidth]{figure/r_squared}}
 \end{column}
 \begin{column}{0.5\linewidth}
 
@@ -265,12 +270,12 @@ Idea for two-dimensional case:
     $\hat{x}_2 = \hat{f}_{LM}(x_1) = \theta_0 + \theta_1 x_1$
     %($x_2 \sim x_1$) 
     % $\hat{f}_{LM}(x_1) = 2345 + 141.3 x_1$
-    \item[$\leadsto$] Slope = $0$ $\Rightarrow$ no dependence
+    \item[$\leadsto$] Slope $\theta_1$ = $0$ $\Rightarrow$ no dependence
     \item[$\leadsto$] Large slope $\Rightarrow$ strong dependence
+        \pause
     \item Exact $\theta_1$ score problematic 
-    \pause
     \item[$\leadsto$] Re-scaling of $x_1$ or $x_2$ changes $\theta_1$ 
-    \only<2>{\item e.g. °F $\rightarrow$ °C $\Rightarrow$ ${\color{blue}\theta_1=78.5}\rightarrow{\color{ggblue}\theta_1^*=141.3}$}
+    \only<2>{\item[$\leadsto$] °F $\rightarrow$ °C $\Rightarrow$ ${\color{blue}\theta_1=78.5}\rightarrow{\color{ggblue}\theta_1^*=141.3}$}
     \pause
     \item Set $SSE_{LM}$ in relation to $SSE$ of a constant model $\hat{f}_c = \bar{x}_2$
     \item[] $SSE_{LM} = \sum_{i=1}^n ({\color{ggblue}x_2^{(i)} - \hat{f}_{LM}(x_1^{(i)})})^2$
@@ -291,22 +296,261 @@ $\Rightarrow \rho(X_1, X_2) = R$
 \begin{frame}{Mutual Information}
     \begin{itemize}
         \item MI describes amount of information about one random variable obtained through another one or how different the joint distribution is from pure independence
-        \item $MI(X_1 ; X_2 )$ is the Kullback-Leibler distance between joint distribution and product distribution $p_{X_1} p_{X_2}$:
+        \item $MI(X_1 ; X_2 )$ is the Kullback-Leibler distance between joint distribution $p(x_1, x_2)$ and the product of their marginal distribution $p(x_1) p(x_2)$:
         \begin{align*}
             MI(X_1 ; X_2 ) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{x_2 \in \mathcal{X}_2} p(x_1, x_2) log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \\
             &= D_{KL} \left( p(x_1, x_2) \, || \, p(x_1) p(x_2) \right) \\
             &= \mathbb{E}_{p(x_1, x_2)} \left[ log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \right]
         \end{align*}
-        \item MI measures amount of "dependence" between variables. It is zero if and only if the variables are independent.
-        \item Unlike (Pearson) correlation, MI is not limited to real-valued random variables.
+        \item MI measures amount of "dependence" between features\\
+        $\leadsto$ It is zero if and only if the features are independent
+        \item Unlike (Pearson) correlation, MI is not limited to continuous random variables\\
+        $\leadsto$ Discrete RV: joint and marginal distribution obtained from confusion matrix\\
+        $\leadsto$ Continuous RV: Density estimation required, e.g., create bins via histogram
     \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Mutual information: example 1}
+\begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.26\linewidth}
+        \begin{table}
+        \scriptsize
+        %\vspace{-0.3cm}
+        \begin{tabular}{|c|c|c|}
+            \hline 
+            $\bold{X}_1$ & ... & $\bold{Y}$ \\
+            \hline
+            yes & ... & yes  \\
+            yes & ... & yes  \\
+            yes & ... & yes  \\
+            yes & ... & no  \\
+            yes & ... & no  \\
+            no & ... & no  \\
+            \hline
+        \end{tabular} 
+        \end{table}
+
+    \end{column}
+    \begin{column}{0.74\linewidth}
+    \only<2>{
+    \scriptsize
+    \begin{table}
+    \begin{tabular}{|c|c|c|c|}
+        \hline 
+        & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
+        \hline
+        $\P(Y = \text{ yes})$ & 0.5 & 0 & 0.5  \\
+        $\P(Y = \text{ no}) $& 0.333 & 0.167 & 0.5  \\
+        \hline
+        $p_{X_1}$ & 0.833 & 0.167 & 1 \\
+        \hline
+    \end{tabular} 
+    \end{table}}
+
+    \only<3-4>{
+    \scriptsize
+    \begin{table}
+    \begin{tabular}{|c|c|c|c|}
+        \hline 
+        & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
+        \hline
+        $\P(Y = \text{ yes})$ & \cellcolor{summer}0.5 & \cellcolor{summer}0 & \cellcolor{spring}0.5  \\
+        $\P(Y = \text{ no}) $& \cellcolor{summer}0.333 & \cellcolor{summer}0.167 & \cellcolor{spring}0.5  \\
+        \hline
+        $p_{X_1}$ & \cellcolor{fall}0.833 & \cellcolor{fall}0.167 & 1 \\
+        \hline
+    \end{tabular} 
+    \end{table}}
+
+    \only<5->{
+    \vspace{-0.75cm}
+    \begin{align*}
+    MI(X_1 ; Y) = & \,0.5\, log\left(\frac{0.5}{0.833 \cdot 0.5} \right) 
+    + 0.333\, log\left(\frac{0.333}{0.833 \cdot 0.5} \right) \\
+    &+ 0\, log\left(\frac{0}{0.167 \cdot 0.5} \right) 
+    + 0.167\, log\left(\frac{0.167}{0.167 \cdot 0.5} \right) \\
+    = & \,0.133
+    \end{align*}}
+        
+    \end{column}
+\end{columns}
+
+\only<3>{
+\vspace{-0.2cm}
+\begin{align*}
+            MI(X_1 ; Y) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{y \in \mathcal{Y}} \textcolor{summer}{p(x_1, y)} log\left(\frac{\textcolor{summer}{p(x_1, y)}}{\textcolor{fall}{p(x_1)} \textcolor{spring}{p(y)}} \right) \\
+            &= \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
+            &\, + \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ no})}} \right) \\
+            &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
+            &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ no})}} \right) 
+        \end{align*}}
+\only<4>{
+\begin{align*}
+    MI(X_1 ; Y) = & \,\textcolor{summer}{0.5}\, log\left(\frac{\textcolor{summer}{0.5}}{\textcolor{fall}{0.833} \cdot \textcolor{spring}{0.5}} \right) 
+    + \textcolor{summer}{0.333}\, log\left(\frac{\textcolor{fall}{0.833}}{ \cdot \textcolor{spring}{0.5}} \right) \\
+    &+ \textcolor{summer}{0}\, log\left(\frac{\textcolor{summer}{0}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) 
+    + \textcolor{summer}{0.167}\, log\left(\frac{\textcolor{summer}{0.167}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) \\
+    = & \,0.133 \\
+    &\quad \\
+    \text{Note: } &lim_{x\rightarrow 0} \, x \, log\left(\frac{x}{c}\right) = 0, \, c \in \mathbb{R}
+\end{align*}
+
+}
+
+\vspace{0.5cm}
+
+\only<5->{
+\begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.26\linewidth}
+        \begin{table}
+        \scriptsize
+        %\vspace{-0.3cm}
+        \begin{tabular}{|c|c|c|}
+            \hline 
+            $\bold{X}_1$ & ... & $\bold{Y}$ \\
+            \hline
+            yes & ... & yes  \\
+            yes & ... & no  \\
+            no & ... & yes  \\
+            no & ... & no  \\
+            \hline
+        \end{tabular} 
+        \end{table}
+
+    \end{column}
+    \begin{column}{0.74\linewidth}
+    $ MI(X_1 ; Y) = 0$
+        
+    \end{column}
+\end{columns}
+}
+
+\end{frame}
+
+
+\begin{frame}{Mutual information: example 1}
+\begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.26\linewidth}
+        \begin{table}
+        \scriptsize
+        %\vspace{-0.3cm}
+        \begin{tabular}{|c|c|c|}
+            \hline 
+            $\bold{X}_1$ & ... & $\bold{Y}$ \\
+            \hline
+            yes & ... & yes  \\
+            yes & ... & yes  \\
+            yes & ... & yes  \\
+            yes & ... & no  \\
+            yes & ... & no  \\
+            no & ... & no  \\
+            \hline
+        \end{tabular} 
+        \end{table}
+
+    \end{column}
+    \begin{column}{0.74\linewidth}
+    \only<2>{
+    \scriptsize
+    \begin{table}
+    \begin{tabular}{|c|c|c|c|}
+        \hline 
+        & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
+        \hline
+        $\P(Y = \text{ yes})$ & 0.5 & 0 & 0.5  \\
+        $\P(Y = \text{ no}) $& 0.333 & 0.167 & 0.5  \\
+        \hline
+        $p_{X_1}$ & 0.833 & 0.167 & 1 \\
+        \hline
+    \end{tabular} 
+    \end{table}}
+
+    \only<3-4>{
+    \scriptsize
+    \begin{table}
+    \begin{tabular}{|c|c|c|c|}
+        \hline 
+        & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
+        \hline
+        $\P(Y = \text{ yes})$ & \cellcolor{summer}0.5 & \cellcolor{summer}0 & \cellcolor{spring}0.5  \\
+        $\P(Y = \text{ no}) $& \cellcolor{summer}0.333 & \cellcolor{summer}0.167 & \cellcolor{spring}0.5  \\
+        \hline
+        $p_{X_1}$ & \cellcolor{fall}0.833 & \cellcolor{fall}0.167 & 1 \\
+        \hline
+    \end{tabular} 
+    \end{table}}
+
+    \only<5->{
+    \vspace{-0.75cm}
+    \begin{align*}
+    MI(X_1 ; Y) = & \,0.5\, log\left(\frac{0.5}{0.833 \cdot 0.5} \right) 
+    + 0.333\, log\left(\frac{0.333}{0.833 \cdot 0.5} \right) \\
+    &+ 0\, log\left(\frac{0}{0.167 \cdot 0.5} \right) 
+    + 0.167\, log\left(\frac{0.167}{0.167 \cdot 0.5} \right) \\
+    = & \,0.133
+    \end{align*}}
+        
+    \end{column}
+\end{columns}
+
+\only<3>{
+\vspace{-0.2cm}
+\begin{align*}
+            MI(X_1 ; Y) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{y \in \mathcal{Y}} \textcolor{summer}{p(x_1, y)} log\left(\frac{\textcolor{summer}{p(x_1, y)}}{\textcolor{fall}{p(x_1)} \textcolor{spring}{p(y)}} \right) \\
+            &= \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
+            &\, + \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ no})}} \right) \\
+            &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
+            &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ no})}} \right) 
+        \end{align*}}
+\only<4>{
+\begin{align*}
+    MI(X_1 ; Y) = & \,\textcolor{summer}{0.5}\, log\left(\frac{\textcolor{summer}{0.5}}{\textcolor{fall}{0.833} \cdot \textcolor{spring}{0.5}} \right) 
+    + \textcolor{summer}{0.333}\, log\left(\frac{\textcolor{fall}{0.833}}{ \cdot \textcolor{spring}{0.5}} \right) \\
+    &+ \textcolor{summer}{0}\, log\left(\frac{\textcolor{summer}{0}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) 
+    + \textcolor{summer}{0.167}\, log\left(\frac{\textcolor{summer}{0.167}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) \\
+    = & \,0.133 \\
+    &\quad \\
+    \text{Note: } &lim_{x\rightarrow 0} \, x \, log\left(\frac{x}{c}\right) = 0, \, c \in \mathbb{R}
+\end{align*}
+
+}
+
+\vspace{0.5cm}
+
+\only<5->{
+\begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.26\linewidth}
+        \begin{table}
+        \scriptsize
+        %\vspace{-0.3cm}
+        \begin{tabular}{|c|c|c|}
+            \hline 
+            $\bold{X}_1$ & ... & $\bold{Y}$ \\
+            \hline
+            yes & ... & yes  \\
+            yes & ... & no  \\
+            no & ... & yes  \\
+            no & ... & no  \\
+            \hline
+        \end{tabular} 
+        \end{table}
+
+    \end{column}
+    \begin{column}{0.74\linewidth}
+    $ MI(X_1 ; Y) = 0$
+        
+    \end{column}
+\end{columns}
+}
+
 \end{frame}
 
 
 
 \begin{frame}{Correlation and Dependence}
 
-Scatterplot with multivariate distribution (contour lines) and marginal density $X_1$, $X_2 \sim N(0,1)$ 
+Scatterplot with multivariate distribution (contour lines) and marginal density\\ $X_1$, $X_2 \sim N(0,1)$ 
 
 \only<1>{\begin{center}
 \begin{minipage}[t]{0.3\textwidth}
@@ -344,19 +588,19 @@ Scatterplot with multivariate distribution (contour lines) and marginal density 
 Examples with Pearson's correlation $\rho = 0$ but non-linear dependencies (MI $\neq 0$):\\
 \medskip
 \centering
-\includegraphics[width = \textwidth]{figure/dependence_3}}
+\includegraphics[width = 0.95\textwidth]{figure/dependence_3}}
 \end{frame}
 
 
 \begin{frame}{Correlation and Dependence}
-\textbf{Dependence:} Describes general dependence structure of features (e.g., non-linear relationships)
+\textbf{Dependence:} Describes general dependence structure  (e.g., non-lin. relationships)
 
 %\textbf{Definition:}
 \begin{itemize}[<+->]
 \item Definition: $X_j$, $X_k$ independent $\Leftrightarrow$ joint distribution is product of marginals:\\ \vspace{5pt}
 \centerline{$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$}
 \vspace{5pt}
-\item Equivalent definition (knowing $X_k$ does not tell us anything about $X_j$ and vice versa): \\
+\item Equivalent definition (knowing $X_k$ does not say anything about $X_j$ and vice versa): \\
 \vspace{5pt}
 \phantom{AAA} $\P(X_j|X_k) = \P(X_j) \text{ and } \P(X_k|X_j) = \P(X_k)$ \hfill (follows from cond. probability) \phantom{AAA}
 \vspace{5pt}
@@ -508,16 +752,6 @@ $\leadsto$ Density of train data may helps identify regions where extrapolation 
 \end{itemize}
 
 \end{frame}
-% \begin{frame}{Extrapolation}
-% \begin{itemize}
-% %\itemsep1em
-% \item Predictions of an ML model in regions with a low density of training points are subject to a high variance.
-% \item Essentially we are interested in the prediction uncertainty, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty. Unfortunately, virtually no ML models are capable of quantifying prediction uncertainty.
-% \item There is no consensus definition of when a model extrapolates and to what degree. Furthermore, the severity of the problem depends on the model itself. Some models might extrapolate more reliably than others.
-% \item Theoretically, we could use the training density as a proxy. However, density estimation in many dimensions is often infeasible.
-% \end{itemize}
-
-% \end{frame}
 
 %%% dann das gleiche für interactions
 
@@ -538,30 +772,6 @@ $\leadsto$ Density of train data may helps identify regions where extrapolation 
 % allgemeine definition von fanoava
 % sagen dass eine funktin keine IA hat, wenn sie separierbar. verbindung zur optimierung bringen
 % sagen dass man aus der fanbova die interactioons ablesen kann und auf die H-statistic für weiteres vereweisen
-
-
-
-% \begin{frame}{Correlation vs. Interaction}
-% \begin{itemize}
-% %\itemsep2em
-% \item Correlated (or dependent) features and feature interactions can cause misleading explanations. %One needs to be careful not to confuse them.
-% \item Correlated features implies joint is not product of marginals: $\text{PDF}(x_1, \dots, x_p) \neq \text{PDF}(x_1) \cdot \ldots \cdot \text{PDF}(x_p)$.
-% \item
-% Many interpretation methods rely on varying feature values and may create data points that are out-of-distribution or located in low-density regions if features are correlated.\\
-% $\leadsto$ May produce biased explanations that rely on predictions where the model extrapolated.
-% % \item An interaction is a product term between features inside the prediction function. As such, interactions are detached from the constitution of the data, i.e., regardloss of the degree of correlation, the effect of a feature on the target will depend on the values of one or multiple other features.
-% \end{itemize}
-% \end{frame}
-
-% \begin{frame}{Correlation vs. Interaction}
-
-% 1000 randomly sampled observations with positive correlation between $x_1$ and $x_2$:
-% \medskip
-% \begin{figure}
-% \includegraphics[width = 0.7\textwidth]{figure/correlation}
-% \end{figure}
-% \end{frame}
-
 
 \endlecture
 \end{document}
