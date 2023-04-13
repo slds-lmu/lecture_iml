@@ -304,9 +304,9 @@ $\Rightarrow \rho(X_1, X_2) = R$
         \end{align*}
         \item MI measures amount of "dependence" between features\\
         $\leadsto$ It is zero if and only if the features are independent
-        \item Unlike (Pearson) correlation, MI is not limited to continuous random variables\\
-        $\leadsto$ Discrete RV: joint and marginal distribution obtained from confusion matrix\\
-        $\leadsto$ Continuous RV: Density estimation required, e.g., create bins via histogram
+        \item Unlike (Pearson) correlation, MI is not limited to continuous random variables%\\
+        %$\leadsto$ Discrete RV: joint and marginal distribution obtained from confusion matrix\\
+        %$\leadsto$ Continuous RV: Density estimation required, e.g., create bins via histogram
     \end{itemize}
 \end{frame}
 
@@ -333,7 +333,7 @@ $\Rightarrow \rho(X_1, X_2) = R$
 
     \end{column}
     \begin{column}{0.74\linewidth}
-    \only<2>{
+    \only<1>{
     \scriptsize
     \begin{table}
     \begin{tabular}{|c|c|c|c|}
@@ -348,7 +348,7 @@ $\Rightarrow \rho(X_1, X_2) = R$
     \end{tabular} 
     \end{table}}
 
-    \only<3-4>{
+    \only<2-3>{
     \scriptsize
     \begin{table}
     \begin{tabular}{|c|c|c|c|}
@@ -362,21 +362,11 @@ $\Rightarrow \rho(X_1, X_2) = R$
         \hline
     \end{tabular} 
     \end{table}}
-
-    \only<5->{
-    \vspace{-0.75cm}
-    \begin{align*}
-    MI(X_1 ; Y) = & \,0.5\, log\left(\frac{0.5}{0.833 \cdot 0.5} \right) 
-    + 0.333\, log\left(\frac{0.333}{0.833 \cdot 0.5} \right) \\
-    &+ 0\, log\left(\frac{0}{0.167 \cdot 0.5} \right) 
-    + 0.167\, log\left(\frac{0.167}{0.167 \cdot 0.5} \right) \\
-    = & \,0.133
-    \end{align*}}
         
     \end{column}
 \end{columns}
 
-\only<3>{
+\only<2>{
 \vspace{-0.2cm}
 \begin{align*}
             MI(X_1 ; Y) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{y \in \mathcal{Y}} \textcolor{summer}{p(x_1, y)} log\left(\frac{\textcolor{summer}{p(x_1, y)}}{\textcolor{fall}{p(x_1)} \textcolor{spring}{p(y)}} \right) \\
@@ -385,7 +375,7 @@ $\Rightarrow \rho(X_1, X_2) = R$
             &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
             &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ no})}} \right) 
         \end{align*}}
-\only<4>{
+\only<3>{
 \begin{align*}
     MI(X_1 ; Y) = & \,\textcolor{summer}{0.5}\, log\left(\frac{\textcolor{summer}{0.5}}{\textcolor{fall}{0.833} \cdot \textcolor{spring}{0.5}} \right) 
     + \textcolor{summer}{0.333}\, log\left(\frac{\textcolor{fall}{0.833}}{ \cdot \textcolor{spring}{0.5}} \right) \\
@@ -396,129 +386,12 @@ $\Rightarrow \rho(X_1, X_2) = R$
     \text{Note: } &lim_{x\rightarrow 0} \, x \, log\left(\frac{x}{c}\right) = 0, \, c \in \mathbb{R}
 \end{align*}
 
-}
-
-\vspace{0.5cm}
-
-\only<5->{
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.26\linewidth}
-        \begin{table}
-        \scriptsize
-        %\vspace{-0.3cm}
-        \begin{tabular}{|c|c|c|}
-            \hline 
-            $\bold{X}_1$ & ... & $\bold{Y}$ \\
-            \hline
-            yes & ... & yes  \\
-            yes & ... & no  \\
-            no & ... & yes  \\
-            no & ... & no  \\
-            \hline
-        \end{tabular} 
-        \end{table}
-
-    \end{column}
-    \begin{column}{0.74\linewidth}
-    $ MI(X_1 ; Y) = 0$
-        
-    \end{column}
-\end{columns}
 }
 
 \end{frame}
 
 
-\begin{frame}{Mutual information: example 1}
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.26\linewidth}
-        \begin{table}
-        \scriptsize
-        %\vspace{-0.3cm}
-        \begin{tabular}{|c|c|c|}
-            \hline 
-            $\bold{X}_1$ & ... & $\bold{Y}$ \\
-            \hline
-            yes & ... & yes  \\
-            yes & ... & yes  \\
-            yes & ... & yes  \\
-            yes & ... & no  \\
-            yes & ... & no  \\
-            no & ... & no  \\
-            \hline
-        \end{tabular} 
-        \end{table}
-
-    \end{column}
-    \begin{column}{0.74\linewidth}
-    \only<2>{
-    \scriptsize
-    \begin{table}
-    \begin{tabular}{|c|c|c|c|}
-        \hline 
-        & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
-        \hline
-        $\P(Y = \text{ yes})$ & 0.5 & 0 & 0.5  \\
-        $\P(Y = \text{ no}) $& 0.333 & 0.167 & 0.5  \\
-        \hline
-        $p_{X_1}$ & 0.833 & 0.167 & 1 \\
-        \hline
-    \end{tabular} 
-    \end{table}}
-
-    \only<3-4>{
-    \scriptsize
-    \begin{table}
-    \begin{tabular}{|c|c|c|c|}
-        \hline 
-        & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
-        \hline
-        $\P(Y = \text{ yes})$ & \cellcolor{summer}0.5 & \cellcolor{summer}0 & \cellcolor{spring}0.5  \\
-        $\P(Y = \text{ no}) $& \cellcolor{summer}0.333 & \cellcolor{summer}0.167 & \cellcolor{spring}0.5  \\
-        \hline
-        $p_{X_1}$ & \cellcolor{fall}0.833 & \cellcolor{fall}0.167 & 1 \\
-        \hline
-    \end{tabular} 
-    \end{table}}
-
-    \only<5->{
-    \vspace{-0.75cm}
-    \begin{align*}
-    MI(X_1 ; Y) = & \,0.5\, log\left(\frac{0.5}{0.833 \cdot 0.5} \right) 
-    + 0.333\, log\left(\frac{0.333}{0.833 \cdot 0.5} \right) \\
-    &+ 0\, log\left(\frac{0}{0.167 \cdot 0.5} \right) 
-    + 0.167\, log\left(\frac{0.167}{0.167 \cdot 0.5} \right) \\
-    = & \,0.133
-    \end{align*}}
-        
-    \end{column}
-\end{columns}
-
-\only<3>{
-\vspace{-0.2cm}
-\begin{align*}
-            MI(X_1 ; Y) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{y \in \mathcal{Y}} \textcolor{summer}{p(x_1, y)} log\left(\frac{\textcolor{summer}{p(x_1, y)}}{\textcolor{fall}{p(x_1)} \textcolor{spring}{p(y)}} \right) \\
-            &= \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
-            &\, + \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ no})}} \right) \\
-            &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
-            &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ no})}} \right) 
-        \end{align*}}
-\only<4>{
-\begin{align*}
-    MI(X_1 ; Y) = & \,\textcolor{summer}{0.5}\, log\left(\frac{\textcolor{summer}{0.5}}{\textcolor{fall}{0.833} \cdot \textcolor{spring}{0.5}} \right) 
-    + \textcolor{summer}{0.333}\, log\left(\frac{\textcolor{fall}{0.833}}{ \cdot \textcolor{spring}{0.5}} \right) \\
-    &+ \textcolor{summer}{0}\, log\left(\frac{\textcolor{summer}{0}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) 
-    + \textcolor{summer}{0.167}\, log\left(\frac{\textcolor{summer}{0.167}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) \\
-    = & \,0.133 \\
-    &\quad \\
-    \text{Note: } &lim_{x\rightarrow 0} \, x \, log\left(\frac{x}{c}\right) = 0, \, c \in \mathbb{R}
-\end{align*}
-
-}
-
-\vspace{0.5cm}
-
-\only<5->{
+\begin{frame}{Mutual information: example 2}
 \begin{columns}[c, totalwidth=\textwidth]
     \begin{column}{0.26\linewidth}
         \begin{table}
@@ -538,11 +411,50 @@ $\Rightarrow \rho(X_1, X_2) = R$
 
     \end{column}
     \begin{column}{0.74\linewidth}
-    $ MI(X_1 ; Y) = 0$
+    \only<1>{
+    \scriptsize
+    \begin{table}
+    \begin{tabular}{|c|c|c|c|}
+        \hline 
+        & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
+        \hline
+        $\P(Y = \text{ yes})$ & 0.25 & 0.25 & 0.5  \\
+        $\P(Y = \text{ no}) $& 0.25 & 0.25 & 0.5  \\
+        \hline
+        $p_{X_1}$ & 0.5 & 0.5 & 1 \\
+        \hline
+    \end{tabular} 
+    \end{table}}
+
+    \only<2>{
+    \scriptsize
+    \begin{table}
+    \begin{tabular}{|c|c|c|c|}
+        \hline 
+        & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
+        \hline
+        $\P(Y = \text{ yes})$ & \cellcolor{summer}0.25 & \cellcolor{summer}0.25 & \cellcolor{spring}0.5  \\
+        $\P(Y = \text{ no}) $& \cellcolor{summer}0.25 & \cellcolor{summer}0.25 & \cellcolor{spring}0.5  \\
+        \hline
+        $p_{X_1}$ & \cellcolor{fall}0.5 & \cellcolor{fall}0.5 & 1 \\
+        \hline
+    \end{tabular} 
+    \end{table}}
         
     \end{column}
 \end{columns}
-}
+
+\only<2>{
+\begin{align*}
+    MI(X_1 ; Y) = & \,\textcolor{summer}{0.25}\, log\left(\frac{\textcolor{summer}{0.25}}{\textcolor{fall}{0.5} \cdot \textcolor{spring}{0.5}} \right) 
+    + \textcolor{summer}{0.25}\, log\left(\frac{\textcolor{summer}{0.25}}{\textcolor{fall}{0.5} \cdot \textcolor{spring}{0.5}} \right) \\
+    &+ \textcolor{summer}{0.25}\, log\left(\frac{\textcolor{summer}{0.25}}{\textcolor{fall}{0.5} \cdot \textcolor{spring}{0.5}} \right)
+    +\textcolor{summer}{0.25}\, log\left(\frac{\textcolor{summer}{0.25}}{\textcolor{fall}{0.5} \cdot \textcolor{spring}{0.5}} \right)\\
+    = & \,0.25\, log\left(\frac{0.25}{0.25} \right) \cdot 4 \\
+    = & \,0.25\, log\left(1 \right) \cdot 4 \\
+    = & \,0
+\end{align*}}
+
 
 \end{frame}
 
