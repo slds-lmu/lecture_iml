@@ -33,8 +33,10 @@
 
 \newcommand{\titlefigure}{figure/dependence_2}
 \newcommand{\learninggoals}{
-\item Difference of dependence vs. correlation
-\item Role of feature dependence in IML
+\item Pearson correlation
+\item Coefficient of determination $R^2$
+\item Mutual Information
+\item Correlation vs. dependence
 }
 
 \lecturechapter{Correlation and Dependencies}
@@ -227,7 +229,7 @@ Geometric interpretation of $\rho$:
 \begin{itemize}
     \item Numerator is sum of rectangle's area with width $x_1^{(i)}-\bar{x}_1$ and height $x_2^{(i)}-\bar{x}_2$
     \item Areas enter numerator with positive (\textbf{+}) or negative (\textbf{-}) sign, depending on position
-    \item Denominator scales the sum
+    \item Denominator scales the sum into the range $[-1, 1]$
     %\item $\rho = 0$ if area of all rectangles cancels out\\
     %$\leadsto$ $X_1, X_2$ uncorrelated
 \end{itemize}
@@ -460,62 +462,18 @@ $\Rightarrow \rho(X_1, X_2) = R$
 
 
 
-\begin{frame}{Correlation and Dependence}
-
-Scatterplot with multivariate distribution (contour lines) and marginal density\\ $X_1$, $X_2 \sim N(0,1)$ 
-
-\only<1>{\begin{center}
-\begin{minipage}[t]{0.3\textwidth}
-\centering
- $\rho(X_1, X_2) = 0$
-\end{minipage}
-\begin{minipage}[t]{0.3\textwidth}
-\centering
- $\rho(X_1, X_2) = 0.8$
-\end{minipage}
-\begin{minipage}[t]{0.3\textwidth}
-\centering
- $\rho(X_1, X_2) = -0.8$
-\end{minipage}
-\includegraphics[width = 0.9\textwidth]{figure/dnorm_correlation.pdf}
-\end{center}}
-
-\only<2>{\begin{center}
-\begin{minipage}[t]{0.2\textwidth}
-\centering{\scriptsize
- $\rho(X_1, X_2) = 0$}
-\end{minipage}
-\begin{minipage}[t]{0.2\textwidth}
-\centering{\scriptsize
- $\rho(X_1, X_2) = 0.8$}
-\end{minipage}
-\begin{minipage}[t]{0.2\textwidth}
-\centering{\scriptsize
- $\rho(X_1, X_2) = -0.8$}
-\end{minipage}\\
-\includegraphics[width = 0.6\textwidth]{figure/dnorm_correlation.pdf}
-\end{center}
-
-
-Examples with Pearson's correlation $\rho = 0$ but non-linear dependencies (MI $\neq 0$):\\
-\medskip
-\centering
-\includegraphics[width = 0.95\textwidth]{figure/dependence_3}}
-\end{frame}
-
-
-\begin{frame}{Correlation and Dependence}
+\begin{frame}{Dependence}
 \textbf{Dependence:} Describes general dependence structure  (e.g., non-lin. relationships)
 
 %\textbf{Definition:}
 \begin{itemize}[<+->]
-\item Definition: $X_j$, $X_k$ independent $\Leftrightarrow$ joint distribution is product of marginals:\\ \vspace{5pt}
-\centerline{$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$}
-\vspace{5pt}
-\item Equivalent definition (knowing $X_k$ does not say anything about $X_j$ and vice versa): \\
-\vspace{5pt}
-\phantom{AAA} $\P(X_j|X_k) = \P(X_j) \text{ and } \P(X_k|X_j) = \P(X_k)$ \hfill (follows from cond. probability) \phantom{AAA}
-\vspace{5pt}
+\item Definition: $X_j$, $X_k$ independent $\Leftrightarrow$ joint distribution is product of marginals:%\\ \vspace{5pt}
+$$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$$
+%\vspace{5pt}
+\item Equivalent definition (knowledge of $X_k$ says nothing about $X_j$ and vice versa): 
+%\vspace{5pt}
+$$\P(X_j|X_k) = \P(X_j) \text{ and } \P(X_k|X_j) = \P(X_k) \text{ (follows from cond. probability)}$$ 
+%\vspace{5pt}
 %$$\P(X_j|X_k) = \P(X_j) \hfill \text{(knowing $X_k$ does not tell us anything about $X_j$ and vice versa)}$$
 %\medskip
 \item Measuring complex dependencies is difficult but different measures exist, e.g., \\
@@ -523,14 +481,14 @@ $\leadsto$ Spearman correlation (measures monotonic dependencies via ranks) \\
 $\leadsto$ Information-theoretical measures like mutual information \\
 $\leadsto$ Kernel-based measures like Hilbert-Schmidt Independence Criterion (HSIC)
 % nice further reading https://jejjohnson.github.io/research_journal/appendix/similarity/hsic/
-\item \textbf{N.B.:} $X_j$, $X_k$ independent $\Rightarrow$ $\rho(X_j, X_k) = 0$ \\ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  independent \\
+\item \textbf{N.B.:} $X_j$, $X_k$ independent $\Rightarrow$ $\rho(X_j, X_k) = 0$ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  indep. \\
 Equivalency holds if distribution is jointly normal
 \item  $MI(X_j, X_k) = 0$ if and only if $X_j$, $X_k$ independent
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Correlation and Dependence}
+\begin{frame}{Dependence and Independence}
 	
 \textbf{Example:}
 \begin{columns}[T, totalwidth=\linewidth]
@@ -561,109 +519,155 @@ Conditional distributions do not match their marginal distributions
 
 
 
-\begin{frame}{Interpretations with Dependent Features}
-\begin{itemize}
+\begin{frame}{Correlation vs. Dependence}
 
-% \item Be clear about interpretation goal: Explain model or underlying relationship in data?
-% %We need to differentiate between interpretations of a model or reality
+%Scatterplot with multivariate distribution (contour lines) and marginal density\\ 
+Illustration of bivariate normal distribution with different correlations
+$X_1$, $X_2 \sim N(0,1)$ 
+
+\only<1>{\begin{center}
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+ $\rho(X_1, X_2) = 0$ \\(independent)
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+ $\rho(X_1, X_2) = 0.8$
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+ $\rho(X_1, X_2) = -0.8$
+\end{minipage}
+\includegraphics[width = 0.9\textwidth]{figure/dnorm_correlation.pdf}
+\end{center}}
+
+\only<2>{\begin{center}
+\begin{minipage}[t]{0.2\textwidth}
+\centering{\scriptsize
+ $\rho(X_1, X_2) = 0$ \\(independent)}
+\end{minipage}
+\begin{minipage}[t]{0.2\textwidth}
+\centering{\scriptsize
+ $\rho(X_1, X_2) = 0.8$}
+\end{minipage}
+\begin{minipage}[t]{0.2\textwidth}
+\centering{\scriptsize
+ $\rho(X_1, X_2) = -0.8$}
+\end{minipage}\\
+\includegraphics[width = 0.6\textwidth]{figure/dnorm_correlation.pdf}
+\end{center}
+
+
+Examples with Pearson's correlation $\rho \approx 0$ but non-linear dependencies (MI $\neq 0$):\\
+\medskip
+\centering
+\includegraphics[width = 0.95\textwidth]{figure/dependence_3}}
+\end{frame}
+
+
+% \begin{frame}{Interpretations with Dependent Features}
+% \begin{itemize}
+
+% % \item Be clear about interpretation goal: Explain model or underlying relationship in data?
+% % %We need to differentiate between interpretations of a model or reality
+% % \\
+% % $\leadsto$ Latter might be distorted by modeling fallacies, 
+% % e.g., 
+% % %due to bad data quality, 
+% % under- and overfitting or extrapolation
+
+% %\pause
+% \item Highly correlated features contain similar information \\
+% $\leadsto$ Model might pick only 1 feat. (regularization), even if it is causally irrelevant \\
+% %Some models might use only one correlated feature (even if it is causally not relevant)
+% %Can confuse a model so that only one correlated feature is used (even if it is not relevant) \\
+% $\leadsto$ Produced explanations can be misleading (true to model, but not to data) % generating process
 % \\
-% $\leadsto$ Latter might be distorted by modeling fallacies, 
-% e.g., 
-% %due to bad data quality, 
-% under- and overfitting or extrapolation
+% $\leadsto$ E.g., different interpretable models produce different results
+% %$\leadsto$ Different IML models often produce different results in these situation, and not always trivial to understand which / why 
+% %Even for two causally and equally relevant correlated features it is not guaranteed that their explanations will be similar
+% % \pause
+% % \item Assume two causally and equally relevant but highly correlated features \\
+% % $\leadsto$ One might expect that their explanations (e.g., feature importance) will be similar \\
+% % %One might expect that explanations of two correlated features (e.g., feature importance) are similar as they share similar information \\
+% % $\leadsto$ Generally not true as the model can learn different relationships
 
-%\pause
-\item Highly correlated features contain similar information \\
-$\leadsto$ Model might pick only 1 feat. (regularization), even if it is causally irrelevant \\
-%Some models might use only one correlated feature (even if it is causally not relevant)
-%Can confuse a model so that only one correlated feature is used (even if it is not relevant) \\
-$\leadsto$ Produced explanations can be misleading (true to model, but not to data) % generating process
-\\
-$\leadsto$ E.g., different interpretable models produce different results
-%$\leadsto$ Different IML models often produce different results in these situation, and not always trivial to understand which / why 
-%Even for two causally and equally relevant correlated features it is not guaranteed that their explanations will be similar
+
+% % \begin{tikzpicture}[remember picture,overlay,shift=(current page.center)] %opacity=.2,text opacity=1
+% % \node[fill=white, opacity=1,text opacity=1] at (current page.center) {\includegraphics[width=0.6\textwidth]{figure/ridge_lasso}};
+% % \end{tikzpicture}
 % \pause
-% \item Assume two causally and equally relevant but highly correlated features \\
-% $\leadsto$ One might expect that their explanations (e.g., feature importance) will be similar \\
-% %One might expect that explanations of two correlated features (e.g., feature importance) are similar as they share similar information \\
-% $\leadsto$ Generally not true as the model can learn different relationships
 
+% % \only<3>{
+% %  \begin{BlueBox}{Example}
+% %   \begin{columns}[c, totalwidth=\textwidth]
+% % \begin{column}{0.5\textwidth}
+% % \includegraphics[trim=0px 110px 30px 0px, clip, width=\textwidth]{figure/ridge_lasso}
+% % \end{column}
+% % \begin{column}{0.5\textwidth}
+% % \includegraphics[trim=0px 0px 0px 115px, clip, width=\textwidth]{figure/ridge_lasso}
+% % \end{column}
+% % \end{columns}}
+% % \end{BlueBox}
+% % }
 
-% \begin{tikzpicture}[remember picture,overlay,shift=(current page.center)] %opacity=.2,text opacity=1
-% \node[fill=white, opacity=1,text opacity=1] at (current page.center) {\includegraphics[width=0.6\textwidth]{figure/ridge_lasso}};
-% \end{tikzpicture}
-\pause
+% %\only<3>{
+% %\colorbox{blue!20}{
+% %\includegraphics[trim=0px 0px 0px 115px, clip, width=.55\linewidth]{figure/ridge_lasso}}
+% %\begin{columns}[T, totalwidth = \textwidth]
+% %    \begin{column}{0.5\textwidth}
+% %\scriptsize
+% \item \textbf{Example:} Simulate 100 obs. from DGP $Y = 0.2 (X_1 + \dots + X_5) + \epsilon, \epsilon \sim N(0,1)$
 
-% \only<3>{
-%  \begin{BlueBox}{Example}
-%   \begin{columns}[c, totalwidth=\textwidth]
-% \begin{column}{0.5\textwidth}
-% \includegraphics[trim=0px 110px 30px 0px, clip, width=\textwidth]{figure/ridge_lasso}
-% \end{column}
-% \begin{column}{0.5\textwidth}
-% \includegraphics[trim=0px 0px 0px 115px, clip, width=\textwidth]{figure/ridge_lasso}
-% \end{column}
-% \end{columns}}
-% \end{BlueBox}
-% }
-
-%\only<3>{
-%\colorbox{blue!20}{
-%\includegraphics[trim=0px 0px 0px 115px, clip, width=.55\linewidth]{figure/ridge_lasso}}
-%\begin{columns}[T, totalwidth = \textwidth]
-%    \begin{column}{0.5\textwidth}
-%\scriptsize
-\item \textbf{Example:} Simulate 100 obs. from DGP $Y = 0.2 (X_1 + \dots + X_5) + \epsilon, \epsilon \sim N(0,1)$
-
-\centerline{%\colorbox{blue!20}{
-\includegraphics[trim=0px 110px 30px 0px, clip, width=0.8\textwidth]{figure/ridge_lasso} }%}
-%    \end{column}
-%    \begin{column}{0.5\textwidth}
+% \centerline{%\colorbox{blue!20}{
+% \includegraphics[trim=0px 110px 30px 0px, clip, width=0.8\textwidth]{figure/ridge_lasso} }%}
+% %    \end{column}
+% %    \begin{column}{0.5\textwidth}
         
-\begin{itemize}
-    \item $X_1, \dots, X_4 \sim N(0, 2)$ (uncorrelated)
-    \item $X_5 = X_4 + \delta, \delta \sim N(0, 0.3)$ $\Rightarrow \rho(X_4, X_5) = 0.98$ (highly correlated)
-    \item LASSO: Shrinks coef. of $X_5$ to zero, coef. of $X_4$ about $1.5 \times$ higher
-    \item Ridge: Similar coef. for $X_4$ and $X_5$ for higher lambda
-\end{itemize}
-%    \end{column}
-%\end{columns}
+% \begin{itemize}
+%     \item $X_1, \dots, X_4 \sim N(0, 2)$ (uncorrelated)
+%     \item $X_5 = X_4 + \delta, \delta \sim N(0, 0.3)$ $\Rightarrow \rho(X_4, X_5) = 0.98$ (highly correlated)
+%     \item LASSO: Shrinks coef. of $X_5$ to zero, coef. of $X_4$ about $1.5 \times$ higher
+%     \item Ridge: Similar coef. for $X_4$ and $X_5$ for higher lambda
+% \end{itemize}
+% %    \end{column}
+% %\end{columns}
 
-\end{itemize}
+% \end{itemize}
 
-\end{frame}
+% \end{frame}
 
 
 
-\begin{frame}{Extrapolation due to Dependencies}
-%\begin{center}
-\centerline{\includegraphics[width=\textwidth]{figure/extrapolation}}
-%\end{center}
+% \begin{frame}{Extrapolation due to Dependencies}
+% %\begin{center}
+% \centerline{\includegraphics[width=\textwidth]{figure/extrapolation}}
+% %\end{center}
 
-\begin{itemize}
-%\itemsep1em
-\item Many interpretation methods are based on
-%rely on varying feature values and create
-artificially created data points \\
-$\leadsto$ Many points lie in low-density regions if features are dependent\\
-$\leadsto$ Predictions in such regions have high uncertainty\\ % in regions with no or few training data
-$\leadsto$ Explanations can be biased if they rely on pred. where model extrapolated\\
-\pause
-%\item 
-%\item Essentially, we are interested in the prediction uncertainty\\
-%, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty.
-%$\leadsto$ Models are rarely able to quantify uncertainty of predictions %Models are rarely capable of quantifying prediction uncertainty
-\item There is no definition of when a model extrapolates and to what degree \\
-$\leadsto$ Severity of extrapolation depends on model %, some extrapolate more than others 
-\\
-$\leadsto$ Density of train data may helps identify regions where extrapolation is likely \\
-\phantom{$\leadsto$} But: Density estimation in many dimensions is often infeasible
-%$\leadsto$ Some models might extrapolate more than others
-%\item Density of training data might serve as proxy to identify regions where extrapolation is likely\\
-%$\leadsto$ Density estimation in many dimensions is often infeasible
-\end{itemize}
+% \begin{itemize}
+% %\itemsep1em
+% \item Many interpretation methods are based on
+% %rely on varying feature values and create
+% artificially created data points \\
+% $\leadsto$ Many points lie in low-density regions if features are dependent\\
+% $\leadsto$ Predictions in such regions have high uncertainty\\ % in regions with no or few training data
+% $\leadsto$ Explanations can be biased if they rely on pred. where model extrapolated\\
+% \pause
+% %\item 
+% %\item Essentially, we are interested in the prediction uncertainty\\
+% %, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty.
+% %$\leadsto$ Models are rarely able to quantify uncertainty of predictions %Models are rarely capable of quantifying prediction uncertainty
+% \item There is no definition of when a model extrapolates and to what degree \\
+% $\leadsto$ Severity of extrapolation depends on model %, some extrapolate more than others 
+% \\
+% $\leadsto$ Density of train data may helps identify regions where extrapolation is likely \\
+% \phantom{$\leadsto$} But: Density estimation in many dimensions is often infeasible
+% %$\leadsto$ Some models might extrapolate more than others
+% %\item Density of training data might serve as proxy to identify regions where extrapolation is likely\\
+% %$\leadsto$ Density estimation in many dimensions is often infeasible
+% \end{itemize}
 
-\end{frame}
+% \end{frame}
 
 %%% dann das gleiche für interactions
 
