@@ -114,6 +114,100 @@
 % % correlation reflects the noisiness and direction of a linear relationship (top row), but not the slope of that relationship (middle), nor many aspects of nonlinear relationships (bottom). N.B.: the figure in the center has a slope of 0 but in that case the correlation coefficient is undefined because the variance of Y is zero.
 % \end{frame}
 
+
+\begin{frame}{Pearson's correlation coefficient $\rho$}
+
+\textbf{Correlation} often refers to Pearson's correlation (measures only \textbf{linear relationship}) %between pairs of features
+\smallskip
+
+%\dfrac{s_{X_1 X_2}}{s_{X_1} \cdot s_{X_2}} \text{ with }
+
+% \begin{itemize}
+%     \item Sample covariance of $X_1$ and $X_2$:
+%     $s_{X_1 X_2} = \frac{1}{n-1}\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-\bar{x}_2)}$
+%     \item Sample standard deviation $s_{X_1}$ and $s_{X_2}$ of $X_1$ and $X_2$
+% \end{itemize}
+
+\centerline{$\rho(X_1, X_2) = \tfrac{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-\bar{x}_2)}}{\sqrt{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1)^2 \sum_{i=1}^{n}{(x_2^{(i)}-\bar{x}_2)^2 }}}} \in [-1, 1]$}
+
+\bigskip
+
+\begin{columns}[T, totalwidth=\textwidth]
+\begin{column}{0.6\linewidth}
+\includegraphics[width = \textwidth]{figure/pearson_cor}
+\end{column}
+\begin{column}{0.4\linewidth}
+
+Geometric interpretation of $\rho$:
+\begin{itemize}
+    \item Numerator is sum of rectangle's area with width $x_1^{(i)}-\bar{x}_1$ and height $x_2^{(i)}-\bar{x}_2$
+    \item Areas enter numerator with positive (\textbf{+}) or negative (\textbf{-}) sign, depending on position
+    \item Denominator scales the sum into the range $[-1, 1]$
+    %\item $\rho = 0$ if area of all rectangles cancels out\\
+    %$\leadsto$ $X_1, X_2$ uncorrelated
+\end{itemize}
+\end{column}
+\end{columns}
+
+\medskip
+\pause
+\begin{itemize}
+    \item $\rho > 0$ if {\color{ggblue}positive areas} dominate {\color{ggred}negative areas} 
+    $\leadsto$ $X_1, X_2$ positive correlated
+    \item $\rho < 0$ if {\color{ggred}negative areas} dominate {\color{ggblue}positive areas} 
+    $\leadsto$ $X_1, X_2$ negative correlated
+    \item $\rho = 0$ if area of rectangles cancels out
+    $\leadsto$ $X_1, X_2$ linearly uncorrelated
+\end{itemize}
+%\textbf{But:} Pearson's $\rho$ does not measure non-linear dependencies, e.g., $\rho = 0$ but dependent:
+
+\end{frame}
+
+
+\begin{frame}{Coefficient of determination $R^2$}
+
+Another method to evaluate \textbf{linear dependency} between features is $R^2$
+
+\begin{columns}[c, totalwidth=\textwidth]
+\begin{column}{0.52\linewidth}
+\only<1>{\includegraphics[width = \textwidth]{figure/r_squared_Fahrenheit}}
+\only<2>{\includegraphics[width = \textwidth]{figure/r_squared_compare}}
+\only<3>{\includegraphics[width = \textwidth]{figure/r_squared}}
+\end{column}
+\begin{column}{0.48\linewidth}
+
+\medskip
+
+%Idea for two-dimensional case:
+\begin{itemize}
+    \setlength\itemsep{0.7mm}
+    \item Fit a linear model:
+    $\hat{x}_2 = \hat{f}_{LM}(x_1) = \theta_0 + \theta_1 x_1$
+    %($x_2 \sim x_1$) 
+    % $\hat{f}_{LM}(x_1) = 2345 + 141.3 x_1$
+    \item[$\leadsto$] Slope $\theta_1$ = $0$ $\Rightarrow$ no dependence
+    \item[$\leadsto$] Large slope $\Rightarrow$ strong dependence
+        \pause
+    \item Exact $\theta_1$ score problematic 
+    \item[$\leadsto$] Re-scaling of $x_1$ or $x_2$ changes $\theta_1$ 
+    \only<2>{\item[$\leadsto$] °F $\rightarrow$ °C $\Rightarrow$ ${\color{blue}\theta_1=78}\rightarrow{\color{ggblue}\theta_1^*=141}$}
+    \pause
+    \item Set $SSE_{LM}$ in relation to $SSE$ of a constant model $\hat{f}_c = \bar{x}_2$
+    \item[] $SSE_{LM} = \sum_{i=1}^n ({\color{ggblue}x_2^{(i)} - \hat{f}_{LM}(x_1^{(i)})})^2$
+    \item[] $SSE_{c} = \sum_{i=1}^n ({\color{ggred}x_2^{(i)} - \bar{x}_2})^2$
+\end{itemize}
+
+\end{column}
+\end{columns}
+
+\medskip
+
+$\Rightarrow$ Measure of fitting quality of LM: $R^2 = 1-\frac{SSE_{LM}}{SSE_{c}} \in [0, 1]$ \\
+$\Rightarrow \rho(X_1, X_2) = R$
+
+\end{frame}
+
+
 \begin{frame}{Joint, Marginal and Conditional Distribution}
     For two discrete random variables $X_1, X_2$:
     
@@ -202,198 +296,135 @@
 
 
 
-\begin{frame}{Pearson's correlation coefficient $\rho$}
+\begin{frame}{Dependence}
+\textbf{Dependence:} Describes general dependence structure  (e.g., non-lin. relationships)
 
-\textbf{Correlation} often refers to Pearson's correlation (measures only \textbf{linear relationship}) %between pairs of features
-\smallskip
-
-%\dfrac{s_{X_1 X_2}}{s_{X_1} \cdot s_{X_2}} \text{ with }
-
-% \begin{itemize}
-%     \item Sample covariance of $X_1$ and $X_2$:
-%     $s_{X_1 X_2} = \frac{1}{n-1}\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-\bar{x}_2)}$
-%     \item Sample standard deviation $s_{X_1}$ and $s_{X_2}$ of $X_1$ and $X_2$
-% \end{itemize}
-
-\centerline{$\rho(X_1, X_2) = \tfrac{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1) \cdot (x_2^{(i)}-\bar{x}_2)}}{\sqrt{\sum_{i=1}^{n}{(x_1^{(i)}-\bar{x}_1)^2 \sum_{i=1}^{n}{(x_2^{(i)}-\bar{x}_2)^2 }}}} \in [-1, 1]$}
-
-\bigskip
-
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.6\linewidth}
-\includegraphics[width = \textwidth]{figure/pearson_cor}
-\end{column}
-\begin{column}{0.4\linewidth}
-
-Geometric interpretation of $\rho$:
-\begin{itemize}
-    \item Numerator is sum of rectangle's area with width $x_1^{(i)}-\bar{x}_1$ and height $x_2^{(i)}-\bar{x}_2$
-    \item Areas enter numerator with positive (\textbf{+}) or negative (\textbf{-}) sign, depending on position
-    \item Denominator scales the sum into the range $[-1, 1]$
-    %\item $\rho = 0$ if area of all rectangles cancels out\\
-    %$\leadsto$ $X_1, X_2$ uncorrelated
+%\textbf{Definition:}
+\begin{itemize}[<+->]
+\item Definition: $X_j$, $X_k$ independent $\Leftrightarrow$ joint distribution is product of marginals:%\\ \vspace{5pt}
+$$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$$
+%\vspace{5pt}
+\item Equivalent definition (knowledge of $X_k$ says nothing about $X_j$ and vice versa): 
+%\vspace{5pt}
+$$\P(X_j|X_k) = \P(X_j) \text{ and } \P(X_k|X_j) = \P(X_k) \text{ (follows from cond. probability)}$$ 
+%\vspace{5pt}
+%$$\P(X_j|X_k) = \P(X_j) \hfill \text{(knowing $X_k$ does not tell us anything about $X_j$ and vice versa)}$$
+%\medskip
+\item Measuring complex dependencies is difficult but different measures exist, e.g., \\
+$\leadsto$ Spearman correlation (measures monotonic dependencies via ranks) \\
+$\leadsto$ Information-theoretical measures like mutual information \\
+$\leadsto$ Kernel-based measures like Hilbert-Schmidt Independence Criterion (HSIC)
+% nice further reading https://jejjohnson.github.io/research_journal/appendix/similarity/hsic/
+\item \textbf{N.B.:} $X_j$, $X_k$ independent $\Rightarrow$ $\rho(X_j, X_k) = 0$ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  indep. \\
+Equivalency holds if distribution is jointly normal
 \end{itemize}
-\end{column}
-\end{columns}
-
-\medskip
-\pause
-\begin{itemize}
-    \item $\rho > 0$ if {\color{ggblue}positive areas} dominate {\color{ggred}negative areas} 
-    $\leadsto$ $X_1, X_2$ positive correlated
-    \item $\rho < 0$ if {\color{ggred}negative areas} dominate {\color{ggblue}positive areas} 
-    $\leadsto$ $X_1, X_2$ negative correlated
-    \item $\rho = 0$ if area of rectangles cancels out
-    $\leadsto$ $X_1, X_2$ linearly uncorrelated
-\end{itemize}
-%\textbf{But:} Pearson's $\rho$ does not measure non-linear dependencies, e.g., $\rho = 0$ but dependent:
-
-\end{frame}
-
-
-\begin{frame}{Coefficient of determination $R^2$}
-
-Another method to evaluate \textbf{linear dependency} between features is $R^2$
-
-\begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.5\linewidth}
-\only<1>{\includegraphics[width = \textwidth]{figure/r_squared_Fahrenheit}}
-\only<2>{\includegraphics[width = \textwidth]{figure/r_squared_compare}}
-\only<3>{\includegraphics[width = \textwidth]{figure/r_squared}}
-\end{column}
-\begin{column}{0.5\linewidth}
-
-\medskip
-
-Idea for two-dimensional case:
-\begin{itemize}
-    \setlength\itemsep{0.7mm}
-    \item Fit a linear model:
-    $\hat{x}_2 = \hat{f}_{LM}(x_1) = \theta_0 + \theta_1 x_1$
-    %($x_2 \sim x_1$) 
-    % $\hat{f}_{LM}(x_1) = 2345 + 141.3 x_1$
-    \item[$\leadsto$] Slope $\theta_1$ = $0$ $\Rightarrow$ no dependence
-    \item[$\leadsto$] Large slope $\Rightarrow$ strong dependence
-        \pause
-    \item Exact $\theta_1$ score problematic 
-    \item[$\leadsto$] Re-scaling of $x_1$ or $x_2$ changes $\theta_1$ 
-    \only<2>{\item[$\leadsto$] °F $\rightarrow$ °C $\Rightarrow$ ${\color{blue}\theta_1=78.5}\rightarrow{\color{ggblue}\theta_1^*=141.3}$}
-    \pause
-    \item Set $SSE_{LM}$ in relation to $SSE$ of a constant model $\hat{f}_c = \bar{x}_2$
-    \item[] $SSE_{LM} = \sum_{i=1}^n ({\color{ggblue}x_2^{(i)} - \hat{f}_{LM}(x_1^{(i)})})^2$
-    \item[] $SSE_{c} = \sum_{i=1}^n ({\color{ggred}x_2^{(i)} - \bar{x}_2})^2$
-\end{itemize}
-
-\end{column}
-\end{columns}
-
-\medskip
-
-$\Rightarrow$ Measure of fitting quality of LM: $R^2 = 1-\frac{SSE_{LM}}{SSE_{c}} \in [-1, 1]$ \\
-$\Rightarrow \rho(X_1, X_2) = R$
-
 \end{frame}
 
 
 \begin{frame}{Mutual Information}
     \begin{itemize}
-        \item MI describes amount of information about one random variable obtained through another one or how different the joint distribution is from pure independence
-        \item $MI(X_1 ; X_2 )$ is the Kullback-Leibler distance between joint distribution $p(x_1, x_2)$ and the product of their marginal distribution $p(x_1) p(x_2)$:
-        \begin{align*}
-            MI(X_1 ; X_2 ) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{x_2 \in \mathcal{X}_2} p(x_1, x_2) log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \\
-            &= D_{KL} \left( p(x_1, x_2) \, || \, p(x_1) p(x_2) \right) \\
-            &= \mathbb{E}_{p(x_1, x_2)} \left[ log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \right]
-        \end{align*}
-        \item MI measures amount of "dependence" between features\\
-        $\leadsto$ It is zero if and only if the features are independent
+        \item MI describes expected amount of information shared by two random variables:% or how different the joint distribution is from pure independence
+        $$MI(X_1 ; X_2 ) =  \mathbb{E}_{p(x_1, x_2)} \left[ log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \right] $$
+        % \item $MI(X_1 ; X_2 )$ is the Kullback-Leibler distance between joint distribution $p(x_1, x_2)$ and the product of their marginal distribution $p(x_1) p(x_2)$:
+        % \begin{align*}
+        %     MI(X_1 ; X_2 ) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{x_2 \in \mathcal{X}_2} p(x_1, x_2) log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \\
+        %     &= D_{KL} \left( p(x_1, x_2) \, || \, p(x_1) p(x_2) \right) \\
+        %     &= \mathbb{E}_{p(x_1, x_2)} \left[ log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \right]
+        % \end{align*}
+        \item MI measures amount of "dependence" between features by looking how different the joint distribution is from pure independence $p(x_1, x_2) = p(x_1) p(x_2)$\\
+        $\leadsto$ $MI(X_1, X_2) = \mathbb{E}_{p(x_1, x_2)} \left[ log\left(\frac{p(x_1, x_2)}{p(x_1, x_2)} \right) \right] = \mathbb{E}_{p(x_1, x_2)} \left[ log(1) \right] = 0$\\
+        $\leadsto$  $MI(X_j, X_k) = 0$ if and only if the features are independent
         \item Unlike (Pearson) correlation, MI is not limited to continuous random variables%\\
         %$\leadsto$ Discrete RV: joint and marginal distribution obtained from confusion matrix\\
         %$\leadsto$ Continuous RV: Density estimation required, e.g., create bins via histogram
+        %\item  $MI(X_j, X_k) = 0$ if and only if $X_j$, $X_k$ independent
     \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Mutual information: example 1}
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.26\linewidth}
-        \begin{table}
-        \scriptsize
-        %\vspace{-0.3cm}
-        \begin{tabular}{|c|c|c|}
-            \hline 
-            $\bold{X}_1$ & ... & $\bold{Y}$ \\
-            \hline
-            yes & ... & yes  \\
-            yes & ... & yes  \\
-            yes & ... & yes  \\
-            yes & ... & no  \\
-            yes & ... & no  \\
-            no & ... & no  \\
-            \hline
-        \end{tabular} 
-        \end{table}
+% \begin{frame}{Mutual information: example 1}
+% \begin{columns}[c, totalwidth=\textwidth]
+%     \begin{column}{0.26\linewidth}
+%         \begin{table}
+%         \scriptsize
+%         %\vspace{-0.3cm}
+%         \begin{tabular}{|c|c|c|}
+%             \hline 
+%             $\bold{X}_1$ & ... & $\bold{Y}$ \\
+%             \hline
+%             yes & ... & yes  \\
+%             yes & ... & yes  \\
+%             yes & ... & yes  \\
+%             yes & ... & no  \\
+%             yes & ... & no  \\
+%             no & ... & no  \\
+%             \hline
+%         \end{tabular} 
+%         \end{table}
 
-    \end{column}
-    \begin{column}{0.74\linewidth}
-    \only<1>{
-    \scriptsize
-    \begin{table}
-    \begin{tabular}{|c|c|c|c|}
-        \hline 
-        & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
-        \hline
-        $\P(Y = \text{ yes})$ & 0.5 & 0 & 0.5  \\
-        $\P(Y = \text{ no}) $& 0.333 & 0.167 & 0.5  \\
-        \hline
-        $p_{X_1}$ & 0.833 & 0.167 & 1 \\
-        \hline
-    \end{tabular} 
-    \end{table}}
+%     \end{column}
+%     \begin{column}{0.74\linewidth}
+%     \only<1>{
+%     \scriptsize
+%     \begin{table}
+%     \begin{tabular}{|c|c|c|c|}
+%         \hline 
+%         & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
+%         \hline
+%         $\P(Y = \text{ yes})$ & 0.5 & 0 & 0.5  \\
+%         $\P(Y = \text{ no}) $& 0.333 & 0.167 & 0.5  \\
+%         \hline
+%         $p_{X_1}$ & 0.833 & 0.167 & 1 \\
+%         \hline
+%     \end{tabular} 
+%     \end{table}}
 
-    \only<2-3>{
-    \scriptsize
-    \begin{table}
-    \begin{tabular}{|c|c|c|c|}
-        \hline 
-        & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
-        \hline
-        $\P(Y = \text{ yes})$ & \cellcolor{summer}0.5 & \cellcolor{summer}0 & \cellcolor{spring}0.5  \\
-        $\P(Y = \text{ no}) $& \cellcolor{summer}0.333 & \cellcolor{summer}0.167 & \cellcolor{spring}0.5  \\
-        \hline
-        $p_{X_1}$ & \cellcolor{fall}0.833 & \cellcolor{fall}0.167 & 1 \\
-        \hline
-    \end{tabular} 
-    \end{table}}
+%     \only<2-3>{
+%     \scriptsize
+%     \begin{table}
+%     \begin{tabular}{|c|c|c|c|}
+%         \hline 
+%         & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
+%         \hline
+%         $\P(Y = \text{ yes})$ & \cellcolor{summer}0.5 & \cellcolor{summer}0 & \cellcolor{spring}0.5  \\
+%         $\P(Y = \text{ no}) $& \cellcolor{summer}0.333 & \cellcolor{summer}0.167 & \cellcolor{spring}0.5  \\
+%         \hline
+%         $p_{X_1}$ & \cellcolor{fall}0.833 & \cellcolor{fall}0.167 & 1 \\
+%         \hline
+%     \end{tabular} 
+%     \end{table}}
         
-    \end{column}
-\end{columns}
+%     \end{column}
+% \end{columns}
 
-\only<2>{
-\vspace{-0.2cm}
-\begin{align*}
-            MI(X_1 ; Y) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{y \in \mathcal{Y}} \textcolor{summer}{p(x_1, y)} log\left(\frac{\textcolor{summer}{p(x_1, y)}}{\textcolor{fall}{p(x_1)} \textcolor{spring}{p(y)}} \right) \\
-            &= \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
-            &\, + \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ no})}} \right) \\
-            &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
-            &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ no})}} \right) 
-        \end{align*}}
-\only<3>{
-\begin{align*}
-    MI(X_1 ; Y) = & \,\textcolor{summer}{0.5}\, log\left(\frac{\textcolor{summer}{0.5}}{\textcolor{fall}{0.833} \cdot \textcolor{spring}{0.5}} \right) 
-    + \textcolor{summer}{0.333}\, log\left(\frac{\textcolor{fall}{0.833}}{ \cdot \textcolor{spring}{0.5}} \right) \\
-    &+ \textcolor{summer}{0}\, log\left(\frac{\textcolor{summer}{0}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) 
-    + \textcolor{summer}{0.167}\, log\left(\frac{\textcolor{summer}{0.167}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) \\
-    = & \,0.133 \\
-    &\quad \\
-    \text{Note: } &lim_{x\rightarrow 0} \, x \, log\left(\frac{x}{c}\right) = 0, \, c \in \mathbb{R}
-\end{align*}
+% \only<2>{
+% \vspace{-0.2cm}
+% \begin{align*}
+%             MI(X_1 ; Y) &= \sum_{x_1 \in \mathcal{X}_1} \sum_{y \in \mathcal{Y}} \textcolor{summer}{p(x_1, y)} log\left(\frac{\textcolor{summer}{p(x_1, y)}}{\textcolor{fall}{p(x_1)} \textcolor{spring}{p(y)}} \right) \\
+%             &= \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
+%             &\, + \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ no})}} \right) \\
+%             &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
+%             &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ no})}} \right) 
+%         \end{align*}}
+% \only<3>{
+% \begin{align*}
+%     MI(X_1 ; Y) = & \,\textcolor{summer}{0.5}\, log\left(\frac{\textcolor{summer}{0.5}}{\textcolor{fall}{0.833} \cdot \textcolor{spring}{0.5}} \right) 
+%     + \textcolor{summer}{0.333}\, log\left(\frac{\textcolor{fall}{0.833}}{ \cdot \textcolor{spring}{0.5}} \right) \\
+%     &+ \textcolor{summer}{0}\, log\left(\frac{\textcolor{summer}{0}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) 
+%     + \textcolor{summer}{0.167}\, log\left(\frac{\textcolor{summer}{0.167}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) \\
+%     = & \,0.133 \\
+%     &\quad \\
+%     \text{Note: } &lim_{x\rightarrow 0} \, x \, log\left(\frac{x}{c}\right) = 0, \, c \in \mathbb{R}
+% \end{align*}
 
-}
+% }
 
-\end{frame}
+% \end{frame}
 
 
-\begin{frame}{Mutual information: example 2}
+\begin{frame}{Mutual information: example}
+For two discrete RV $X_1$ and $Y$:
+$$MI(X_1 ; Y ) =  \mathbb{E}_{p(x_1, y)} \left[ log\left(\frac{p(x_1, y)}{p(x_1) p(y)} \right) \right] = \sum_{x_1 \in \mathcal{X}_1} \sum_{y \in \mathcal{Y}} p(x_1, y) log\left(\frac{p(x_1, y)}{p(x_1) p(y)} \right) $$
 \begin{columns}[c, totalwidth=\textwidth]
     \begin{column}{0.26\linewidth}
         \begin{table}
@@ -453,39 +484,12 @@ $\Rightarrow \rho(X_1, X_2) = R$
     &+ \textcolor{summer}{0.25}\, log\left(\frac{\textcolor{summer}{0.25}}{\textcolor{fall}{0.5} \cdot \textcolor{spring}{0.5}} \right)
     +\textcolor{summer}{0.25}\, log\left(\frac{\textcolor{summer}{0.25}}{\textcolor{fall}{0.5} \cdot \textcolor{spring}{0.5}} \right)\\
     = & \,0.25\, log\left(\frac{0.25}{0.25} \right) \cdot 4 \\
-    = & \,0.25\, log\left(1 \right) \cdot 4 \\
-    = & \,0
+    = & \,0.25\, log\left(1 \right) \cdot 4 = \,0
 \end{align*}}
 
 
 \end{frame}
 
-
-
-\begin{frame}{Dependence}
-\textbf{Dependence:} Describes general dependence structure  (e.g., non-lin. relationships)
-
-%\textbf{Definition:}
-\begin{itemize}[<+->]
-\item Definition: $X_j$, $X_k$ independent $\Leftrightarrow$ joint distribution is product of marginals:%\\ \vspace{5pt}
-$$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$$
-%\vspace{5pt}
-\item Equivalent definition (knowledge of $X_k$ says nothing about $X_j$ and vice versa): 
-%\vspace{5pt}
-$$\P(X_j|X_k) = \P(X_j) \text{ and } \P(X_k|X_j) = \P(X_k) \text{ (follows from cond. probability)}$$ 
-%\vspace{5pt}
-%$$\P(X_j|X_k) = \P(X_j) \hfill \text{(knowing $X_k$ does not tell us anything about $X_j$ and vice versa)}$$
-%\medskip
-\item Measuring complex dependencies is difficult but different measures exist, e.g., \\
-$\leadsto$ Spearman correlation (measures monotonic dependencies via ranks) \\
-$\leadsto$ Information-theoretical measures like mutual information \\
-$\leadsto$ Kernel-based measures like Hilbert-Schmidt Independence Criterion (HSIC)
-% nice further reading https://jejjohnson.github.io/research_journal/appendix/similarity/hsic/
-\item \textbf{N.B.:} $X_j$, $X_k$ independent $\Rightarrow$ $\rho(X_j, X_k) = 0$ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  indep. \\
-Equivalency holds if distribution is jointly normal
-\item  $MI(X_j, X_k) = 0$ if and only if $X_j$, $X_k$ independent
-\end{itemize}
-\end{frame}
 
 
 \begin{frame}{Dependence and Independence}
