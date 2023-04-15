@@ -22,7 +22,7 @@
 \setlength{\leftmarginii}{1em}
 \begin{document}
 
-\newcommand{\titlefigure}{figure/whitebox}
+\newcommand{\titlefigure}{figure/lm_example}
 \newcommand{\learninggoals}{
 \item Interpretation of main effects in LM
 \item Inclusion of high-order and interaction effects
@@ -153,16 +153,16 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
     \begin{columns}[T, totalwidth=\linewidth]
     \begin{column}{0.6\textwidth}
     \begin{itemize}
-        \item Absolute \textbf{t-statistic} value: $\hat\theta_j$ scaled with its standard error ($SE(\hat\theta_j)$ $\hat =$ reliability of the estimate) 
-    $$|t_{\hat\theta_j}| = \left| \tfrac{\hat\theta_j}{SE(\hat\theta_j)} \right|$$
-        \item High values indicate important (i.e. significant) features
+        \item Absolute \textbf{t-statistic} value: $\hat\theta_j$ scaled with standard error ($SE(\hat\theta_j)$ $\hat =$ reliability of estimate) 
+    $$|t_{\hat\theta_j}| = \left| \frac{\hat\theta_j}{SE(\hat\theta_j)} \right|$$
+        \item High $t$-values $\Rightarrow$ important (significant) feat.
     \end{itemize}
     \end{column}
     \begin{column}{0.4\textwidth}
-    \vspace{-0.2cm}
-    \begin{center}
-        \includegraphics[width=.9\textwidth]{figure/t_stat.pdf} 
-    \end{center}
+    %\vspace{-0.2cm}
+    %\begin{center}
+        \includegraphics[width=\textwidth]{figure/t_stat.pdf} 
+    %\end{center}
     \end{column}
     \end{columns}
     \vspace{0.3cm}
@@ -170,15 +170,19 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
     \begin{columns}[T, totalwidth=\linewidth]
     \begin{column}{0.6\textwidth}
     \begin{itemize}
-        \item \textbf{p-value}: probability of obtaining a test statistic that is more extreme (values that speak against $H_0$) as the test statistic computed from the sample, assuming $H_0$ (here: $\theta_j =0)$ is correct.
-        \item The smaller the p-value, the less likely it is to obtain a more extreme test statistic.
+        \item \textbf{p-value}: 
+        probability of obtaining a more extreme test statistic assuming $H_0$ is correct (here: $\theta_j =0)$
+        %probability of obtaining a test statistic that is more extreme (values that speak against $H_0$) as the test statistic computed from the sample, assuming $H_0$ (here: $\theta_j =0)$ is correct.
+        \\
+        $\leadsto$ High $|t|$ $\Rightarrow$ small p-val. (speak against $H_0$)
+        %\item The smaller the p-value, the less likely it is to obtain a more extreme test statistic
     \end{itemize}
     \end{column}
     \begin{column}{0.4\textwidth}
-    \vspace{-0.3cm}
-    \begin{center}
-        \includegraphics[width=.9\textwidth]{figure/p-value.pdf}
-    \end{center}
+    %\vspace{-0.3cm}
+    %\begin{center}
+        \includegraphics[width=\textwidth]{figure/p-value.pdf}
+    %\end{center}
     \end{column}
     \end{columns}}
 \end{frame}
@@ -261,12 +265,13 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 %\verbatiminput{figure/lm_output.txt}
 %\end{column}\hfill
 %\begin{column}{0.54\textwidth}  %%<--- here
+\textbf{Interpretation:}
 
 \begin{itemize}[<+->]
-    \item \textbf{Interpretation intercept}:
+    \item \textbf{Intercept}:
     If all feature values are 0 (and season is \code{WINTER} $\hat =$ reference cat.), the expected number of bike rentals is $\hat\theta_0 = 3229.3$
-    \item \textbf{Interpretation categorical}: Rentals in \code{SPRING} are by $\hat\theta_1 = 862$ higher than in \code{WINTER}, c.p.
-    \item \textbf{Interpretation numerical}: Rentals increase by $\hat\theta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
+    \item \textbf{Categorical}: Rentals in \code{SPRING} are by $\hat\theta_1 = 862$ higher than in \code{WINTER}, c.p.
+    \item \textbf{Numerical}: Rentals increase by $\hat\theta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
     %If the temperature increases by 1 order Celsius, the number of bike rentals increases by 120.5 c.p.
 
 \end{itemize}
@@ -418,10 +423,10 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \end{frame}
 
 
-\begin{frame}{Example: Linear Regression - Quadratic Effect}
-\textbf{Example}: Adding quadratic effect for \code{temp} \only<2>{(left) and an interaction with \code{season} (right)}
-\begin{columns}[T, totalwidth=\linewidth]
-\begin{column}{0.65\linewidth}
+\begin{frame}{Example: Quadratic Effect}
+\textbf{Example}: Adding quadratic effect for \code{temp} \only<2>{(left) and interaction with \code{season} (right)}
+\begin{columns}[T, totalwidth=\textwidth]
+\begin{column}{0.685\textwidth}
 \includegraphics[width=0.5\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}\invisible<1>{\includegraphics[width=0.5\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}}
 %\includegraphics[width = \textwidth]{figure/poly_main_vs_interaction_effects.pdf}
 %\begin{columns}
@@ -430,8 +435,8 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 
 \textbf{Interpretation}: Not linear anymore!
 \begin{itemize}
-    \only<1>{\item[$\leadsto$] \code{temp} depends on two weights: $ 280.2 \cdot x_{temp} -  5.6 \cdot x_{temp}^2$}
-    \item<2>[$\leadsto$] \code{temp} depends on multiple weights due to \code{season}:\\
+    \only<1>{\item \code{temp} depends on two weights: $ 280.2 \cdot x_{temp} -  5.6 \cdot x_{temp}^2$}
+    \item<2> \code{temp} depends on multiple weights due to \code{season}:\\
     $\leadsto$ \code{WINTER}: ${\color{winter}39.1} \cdot x_{temp} + {\color{winter}8.6} \cdot x_{temp}^2$ \\
     $\leadsto$ \code{SPRING}: 
     $({\color{winter}39.1} {\color{spring}+407.4}) \cdot x_{temp} + ({\color{winter}8.6} {\color{spring} - 18.7}) \cdot x_{temp}^2$ \\
@@ -442,7 +447,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \end{itemize}
 
 \end{column}
-\begin{column}{0.34\linewidth}
+\begin{column}{0.32\linewidth}
 %\hfill
 \begin{scriptsize}
 % \begin{table}[ht]
@@ -454,6 +459,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \def\fourthrowcolor{\rowcolor{fall}}%
 
 \only<1>{%
+%\addtolength{\tabcolsep}{-1pt}
 \begin{tabular}{rr}
   \hline
  & Weights \\ 
@@ -469,10 +475,12 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
   \firstrowcolor temp$^2$ & -5.6 \\ 
   \hline
 \end{tabular}%
+%\addtolength{\tabcolsep}{1pt}
 }
 % \end{table}
 \only<2>{%
 \def\firstrowcolor{\rowcolor{winter}}%
+\addtolength{\tabcolsep}{-3pt}%
 \begin{tabular}{rr}
   \hline
  & Weights \\ 
@@ -496,6 +504,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
  \fourthrowcolor seasonFALL:temp$^2$ & -11.3 \\ 
    \hline
 \end{tabular}%
+\addtolength{\tabcolsep}{3pt}
 }%
 %Table: Weights for main effect model
 \end{scriptsize}
@@ -517,7 +526,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.6\textwidth}
 \begin{itemize}
-    \item LASSO adds an $L_1$-norm penalization term ($\lambda||\theta||_1$) %to the least squares optimization problem
+    \item LASSO adds an $L_1$-norm penalization term ($\lambda||\theta||_1$) to least squares optimization problem
     \begin{itemize}
         \item[$\leadsto$] Shrinks some feature weights to zero\\ (feature selection)
         \item[$\leadsto$] Sparser models (fewer features): \\ more interpretable
@@ -539,16 +548,20 @@ $$
 
 
 \begin{frame}{Regularization via LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
-
-\begin{columns}[T, totalwidth=\linewidth]
-\begin{column}{0.65\textwidth}
 \textbf{Example} (interpretation of weights analogous to LM):
+
 \begin{itemize}
     \item LASSO with main effects and interaction \code{temp} with \code{season}
+\end{itemize}
+\vspace{-0.5\topsep}
+\begin{columns}[c, totalwidth=\linewidth]
+\begin{column}{0.65\textwidth}
+\begin{itemize}
+    %\item LASSO with main effects and interaction \code{temp} with \code{season}
     \item $\lambda$ is chosen $\leadsto$ 6 selected features ($\neq 0$)
     \item LASSO shrinks weights of single categories separately (due to dummy encoding)\\
     %only weights of single categories are set to zero (due to dummy encoding) not the whole feature\\
-    $\leadsto$ No feature selection of whole categorical features\\
+    $\leadsto$ No feature selection of whole categorical features (only w.r.t. category levels)\\
     %May be problematic for categorical features as only weights of single categories are set to zero (due to dummy encoding) instead of the whole categorical feature\\ %, polynomials and interactions
     $\leadsto$ Solution: group LASSO \citebutton{Yuan and Lin (2006)}{https://doi.org/10.1111/j.1467-9868.2005.00532.x}
 \end{itemize}
