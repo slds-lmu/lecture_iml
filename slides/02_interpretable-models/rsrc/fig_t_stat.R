@@ -2,7 +2,7 @@ library("ggplot2")
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 set.seed(123)
-load("data/bike.RData")
+load("../../../data/bike.RData")
 # bike = na.omit(bike)
 
 mod = lm(cnt ~ season+temp+hum+windspeed+days_since_2011, 
@@ -17,4 +17,4 @@ t_statistics = sum_mod$`t value`
 ggplot(sum_mod, aes(y = features, x = t_statistics)) +
   geom_point(size = 3)
 
-ggsave('slides/02_interpretable-models/figure/t_stat.pdf', width=8, height=4)
+ggsave('../figure/t_stat.pdf', width=3, height=1.5)
