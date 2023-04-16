@@ -1,13 +1,23 @@
+---
+title: "Exercise Feature Importance"
+output: html_document
+---
+# Exercise 2: ALE
+## 2a)
+```{r}
 get_bounds <- function(X, s, n_intervals = 100) {
   ### Luckily for us the seq()-function already implements exactly what we want if we take two neighboring 
   ### equidistant points as the boundaries of one interval. Now we need n_intervals + 1 points since we always
   ### need two points for one interval resulting in one point more than the number of intervals we want.
   seq(min(X[ , s]), max(X[ , s]), length.out = n_intervals + 1)
 }
+```
 
-calculate_ale = function(model, X, s, n_intervals = 100, centered = FALSE) {
+## 2b)
+```{r}
+calculate_ale <- function(model, X, s, n_intervals = 100, centered = FALSE) {
   ### Get the feature column specified by s from the input data.
-  x_s <- X[, s]
+  x_s <- X[ , s]
   
   ### Save all possible lower and upper bounds in lowerbounds and upperbounds, respectively. 
   boundary_points <- get_bounds(X, s, n_intervals)
@@ -57,8 +67,11 @@ calculate_ale = function(model, X, s, n_intervals = 100, centered = FALSE) {
   ### Return the boundary points as well as the centered or uncentered ALE values.
   list(bounds = boundary_points, ale = ale_values)
 }
+```
 
-prepare_ale = function(model, X, s, n_intervals = 100, centered = TRUE) {
+## 2c)
+```{r}
+prepare_ale <- function(model, X, s, n_intervals = 100, centered = TRUE) {
   ### Get the ALE values via our function from task b).
   ale <- calculate_ale(model, X, s, n_intervals, centered)
   
@@ -118,16 +131,11 @@ ale_plot <- function() {
 
 ### The warning message can be ignored here.
 ale_plot()
+```
 
-
-
-
-
-
-
-
-
-
+# Exercise 3: Categorical ALE
+## 3c)
+```{r}
 order_levels <- function(data, feature.name) {
   feature <- data[ , feature.name]
   others <- setdiff(colnames(data), feature.name)
@@ -210,3 +218,4 @@ if (FALSE) {
   order_levels(credit, "personal_status_sex")
   get_diff_cat(feature.k = credit[ ,"employment_duration"], feature.j = credit[ ,"personal_status_sex"])
 }
+```
