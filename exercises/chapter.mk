@@ -7,7 +7,7 @@ $(EXS): %.pdf: %.tex
 	latexmk -pdf $<
 	
 copy: 
-	find . -maxdepth 1 -type f \( -iname "ex_*.pdf" -o -iname "sol_*.pdf" -o -iname "collection_*.pdf" -o -iname "ic_*.pdf" \) -exec cp {}  ../../exercises-pdf \;
+	find . -maxdepth 1 -type f \( -iname "ex_*.pdf" -o -iname "sol_*.pdf" -o -iname "collection_*.pdf" -o -iname "ic_*.pdf" -o -iname "hw_*.pdf" \) -exec cp {}  ../../exercises-pdf \;
 	
 texclean: 
 	rm -rf *.out
