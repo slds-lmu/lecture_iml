@@ -1,82 +1,52 @@
-library(dplyr)
-library(knitr)
-library(ggpubr)
-library(xtable)
-library(ggeffects)
-library(rpart)
-library(mgcv)
-library(randomForest)
-library(gbm)
-library(mlbench)
-source("slides/02_interpretable-models/rsrc/helper.R")
-theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
+library("mlr3verse")
+library("mlr3learners")
+library("xtable")
+set.seed(1)
 
-# Bike data
 load("data/bike.RData")
+bike_task = as_task_regr(bike, target = "cnt")
+# bh_task = tsk("boston_housing")
+# bh_task$select(setdiff(bh_task$feature_names, c("town")))
+# tsks = c(bike_task, bh_task)
+#tsks$bike_sharing$select(setdiff(tsks$bike_sharing$feature_names, c("date", "season", "weather")))
+tsks = list(bike_task)
 
-# Boston Housing Data
-data(BostonHousing)
+lrn = lrn("regr.xgboost")
+lrn$param_set$values$nrounds = 100 # fix nrounds for speed
+# tune the following hyperpars
+lrn$param_set$values$eta = to_tune(0.01, 0.4, logscale = TRUE)
+lrn$param_set$values$subsample = to_tune(0.5, 1)
+lrn$param_set$values$colsample_bytree = to_tune(0.5, 1)
 
+# combine xgb with one-hot encoding to support factor features
+xgb = as_learner(po("encode") %>>% lrn)
 
-create_tab = function(x, y){
-  dat = data.frame(y,x)
-  n_dat = length(dat$y)
-  test_id = sample(1:n_dat, n_dat*0.33)
-  test = dat[test_id,]
-  dat = dat[-test_id,]
-  
-  rmse = numeric()
-  r_sqrt = numeric()
-  var = sum((test$y-mean(test$y))^2)
-  
-  ### Linear Model
-  lm = lm(y ~ ., data = dat)
-  y_lm = predict(lm, newdata = test)
-  rmse[1] = sqrt(mean((test$y - y_lm)^2))
-  r_sqrt[1] = sum((y_lm-mean(test$y))^2)/var
-  
-  
-  ### Tree
-  tree = rpart(y ~., data = dat)
-  y_tree = predict(tree, newdata = test)
-  rmse[2] = sqrt(mean((test$y - y_tree)^2))
-  r_sqrt[2] = sum((y_tree-mean(test$y))^2)/var
-  
-  
-  ### GAM
-  gam = gam(formula = y ~ ., data = dat)
-  y_gam = predict(gam, newdata = test)
-  rmse[3] = sqrt(mean((test$y - y_gam)^2))
-  r_sqrt[3] = sum((y_gam-mean(test$y))^2)/var
-  
-  
-  ### Random Forest
-  rf = randomForest(y ~., data = dat)
-  y_rf = predict(rf, newdata = test)
-  rmse[4] = sqrt(mean((test$y - y_rf)^2))
-  r_sqrt[4] = sum((y_rf-mean(test$y))^2)/var
-  
-  
-  ### Boosting
-  boost = gbm(y ~., data = dat)
-  y_boost = predict(boost, newdata = test)
-  rmse[5] = sqrt(mean((test$y - y_boost)^2))
-  r_sqrt[5] = sum((y_boost-mean(test$y))^2)/var
-  
-  
-  #### table
-  tab = data.frame(Model = c("LM", "Tree", "GAM", "Random Forest", "Boosting"),
-                   RMSE = rmse,
-                   R2 = round(r_sqrt,3))
-  
-  return(tab)
-}
+# create auto-tuned xgboost
+xgb_auto = auto_tuner(
+  method = tnr("random_search", batch_size = 4L),
+  learner = xgb,
+  resampling = rsmp("holdout"),
+  measure = msr("regr.mse"),
+  term_evals = 30)
 
-### create tabs
-# bike data
-tab = create_tab(y = bike$cnt, x = subset(bike, select = -c(cnt)))
-xtable(tab, type = "latex", tabular.environment="longtable")
+lrns = c(lrns(c("regr.lm", "regr.rpart", "regr.ranger")), xgb_auto)
+rsmp = rsmps("cv", folds = 4)
 
-# Boston Housing data
-tab = create_tab(y = BostonHousing$medv, x = subset(BostonHousing, select = -c(medv)))
-xtable(tab, type = "latex", tabular.environment="longtable")
+design = benchmark_grid(tsks, lrns, rsmp)
+
+future::plan("multicore", workers = 4L)
+bmr = benchmark(design)
+print(bmr)
+
+# performance
+acc = bmr$aggregate(msrs(c("regr.rmse", "regr.rsq")))
+result = acc[, .(task_id, learner_id, regr.rmse, regr.rsq)]
+
+# rename
+names(result) = c("task", "Model", "RMSE", "R2")
+result$Model = c("LM", "Tree", "Random Forest", "Boosting")
+#result[, 3:4] = round(result[, 3:4], 2)
+
+# create tables
+print(xtable(result[1:4, -1], type = "latex", tabular.environment = "longtable"),  include.rownames = FALSE)
+#xtable(result[5:8, -1], type = "latex", tabular.environment = "longtable")

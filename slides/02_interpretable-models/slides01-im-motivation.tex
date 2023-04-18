@@ -25,24 +25,22 @@
 %Achieving interpretability by using interpretable models is the most straightforward approach
 %\bigskip
 \begin{columns}[T, totalwidth = \linewidth]
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.55\textwidth}
     \begin{itemize}
         %\item Obtaining interpretations by using interpretable models is the easiest and least error-prone approach
        \item Achieving interpretability by using interpretable models is the most straightforward approach
         \bigskip
         \item Classes of models deemed interpretable:
-        \begin{itemize}
             %\item Linear regression models
-            \item (Generalized) linear models (LM, GLM)
-            \item Generalized additive models (GAM)
-            \item Decision trees
-            \item Rule-based learning
-            \item Model-based boosting / component-wise boosting
-            \item ...
-        \end{itemize}
+            \item[] $\bullet$ (Generalized) linear models (LM, GLM)
+            \item[] $\bullet$ Generalized additive models (GAM)
+            \item[] $\bullet$ Decision trees
+            \item[] $\bullet$ Rule-based learning
+            \item[] $\bullet$ Model-based boosting / component-wise boosting
+            \item[] $\bullet$ ...
     \end{itemize}
     \end{column}
-    \begin{column}{0.45\textwidth}  %%<--- here
+    \begin{column}{0.44\textwidth}  %%<--- here
   \includegraphics[width = \textwidth]{figure/main_effect_lm_temp.pdf}
   \begin{center}
     $\leadsto$ LM provides straightforward interpretation
@@ -70,7 +68,7 @@
 \end{column}
 \begin{column}{0.28\textwidth}
     \begin{center}
-        \begin{tikzpicture}[scale=0.55, transform shape]
+        \begin{tikzpicture}[scale=0.6, transform shape]
         \usetikzlibrary{arrows}
             \usetikzlibrary{shapes}
             \tikzset{treenode/.style={draw, circle, font=\small}}
@@ -107,7 +105,7 @@
 
 \begin{frame}{Disadvantages}
 \begin{columns}
-\begin{column}{0.72\textwidth}
+\begin{column}{0.7\textwidth}
     \begin{itemize}%[<+->]
     \itemsep1em
         \item<1-> Often certain assumptions about data / model structure required\\
@@ -122,7 +120,7 @@
     \end{itemize}
     \end{itemize}
 \end{column}
-\begin{column}{0.28\textwidth}
+\begin{column}{0.3\textwidth}
     \begin{center}
         \includegraphics[width = \textwidth]{figure/lm_bad_fit.pdf} 
     \end{center}
@@ -132,12 +130,16 @@
 
 \begin{itemize}
 \itemsep1em
-        \item<3-> Often not able to automatically model complex relationships due to limited model flexibility
+        \item<3-> 
+        %No automatic modeling of complex relationships due to limited model flexibility
+        Often not able to automatically model complex relationships due to limited model flexibility
         \\
         e.g., high-order main or interaction effects need to be specified manually in a LM
 
         %\pause
-     \item<4-> Inherently interpretable models do not provide all types of explanations one might be interested\\
+     \item<4-> Inherently interpretable models do not provide all types of explanations
+     %% one might be interested
+     \\
      $\leadsto$ Methods providing other types of explanations still useful (e.g., counterfactual explanations)
      %Still requires application of model-agnostic interpretation techniques if certain types of explanations are of interest (e.g., counterfactual explanations)
 \end{itemize}
@@ -146,7 +148,7 @@
 \begin{frame}{Further Comments}
 
     \begin{itemize}
-    \itemsep1em
+    %\itemsep1em
         \item<1-> Some argue that one should always use interpretable models in the first place \citebutton{Rudin 2019}{https://www.nature.com/articles/s42256-019-0048-x}
         \begin{itemize}
             \item \ldots and not try to explain uninterpretable models post-hoc
@@ -157,7 +159,7 @@
         % {https://www.nature.com/articles/s42256-019-0048-x}
        %\item Interpretable models also have the potential for a high predictive performance, but require more knowledge and time spent on data preprocessing
        \item<2->[$\leadsto$] Drawback: Hard to achieve for data for which end-to-end learning is crucial\\ 
-        (e.g., hard to extract good features for image / text data $\leadsto$ information loss = bad performance)
+        (e.g., hard to extract good features for image / text data\\ $\leadsto$ information loss = bad performance)
        %(e.g., for image / text data extraction of good features is hard $\leadsto$ information loss = bad performance)
        %(e.g., image and text data would require good feature extraction steps $\leadsto$ information loss)
         %\pause
@@ -165,7 +167,10 @@
         \item<3-> Often there is a trade-off between interpretability and model performance 
         %(but not always)
     \end{itemize}
-    \only<3>{\centering\includegraphics[width=0.4\textwidth]{figure/performance_vs_interpretability.png}}
+    
+    \smallskip
+    
+    \only<3>{\centering\includegraphics[width=0.65\textwidth]{figure/performance_vs_interpretability.pdf}}
     % Quelle: https://docs.google.com/presentation/d/12ZPrTjBKEUT-7drdyUJCQGK0oHVDtYIVd2_6byE62f0/edit?usp=sharing
 
 \end{frame}
@@ -181,44 +186,58 @@
 
     \bigskip
 
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.5\textwidth}
-\centering \textbf{Bike Data}
-    \begin{table}[ht]
-        \centering
-        \begin{tabular}{llrr}
-            \hline
-            Model & RMSE & $R^2$ \\ 
-            \hline
-            LM & 858.89 & 0.84 \\ 
-            Tree & 995.34 & 0.85 \\ 
-            GAM & 858.89 & 0.84 \\ 
-            Random Forest & 728.21 & 0.75 \\ 
-            Boosting & 805.21 & 0.75 \\ 
-            \hline
-        \end{tabular}
-    \end{table}
-\end{column}
-\begin{column}{0.5\textwidth}
-\centering \textbf{Boston Housing Data}
-    \begin{table}[ht]
-        \centering
-        \begin{tabular}{llrr}
-            \hline
-            Model & RMSE & $R^2$ \\ 
-            \hline
-            LM & 5.01 & 0.67 \\ 
-            Tree & 5.29 & 0.74 \\ 
-            GAM & 5.01 & 0.67 \\ 
-            Random Forest & 3.91 & 0.61 \\ 
-            Boosting & 4.00 & 0.68 \\ 
-            \hline
-        \end{tabular}
-    \end{table}
-\end{column}
-\end{columns}
+% \begin{columns}[T, totalwidth=\textwidth]
+% \begin{column}{0.5\textwidth}
+% \centering \textbf{Bike Data}
+%     \begin{table}[ht]
+%         \centering
+%         \begin{tabular}{lrr}
+%             \hline
+%             Model & RMSE & $R^2$ \\ 
+%             \hline
+%             LM & 142.39 & 0.38 \\ 
+%             Tree & 98.71 & 0.70 \\ 
+%             Random Forest & 57.07 & 0.90 \\ 
+%             Boosting & 197.42 & -0.18 \\  
+%             \hline
+%         \end{tabular}
+%     \end{table}
+% \end{column}
+% \begin{column}{0.5\textwidth}
+% \centering \textbf{Boston Housing Data}
+%     \begin{table}[ht]
+%         \centering
+%         \begin{tabular}{lrr}
+%             \hline
+%             Model & RMSE & $R^2$ \\ 
+%             \hline
+%             LM & 0.43 & 1.00 \\ 
+%             Tree & 1.81 & 0.96 \\ 
+%             Random Forest & 1.77 & 0.96 \\ 
+%             Boosting & 16.89 & -2.43 \\
+%             \hline
+%         \end{tabular}
+%     \end{table}
+% \end{column}
+% \end{columns}
 % code for tables in rsrc/tab_ml_comparison.R
+
+\centering \textbf{Bike Data, 4-fold CV}
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrr}
+  \hline
+Model & RMSE & $R^2$ \\ 
+  \hline
+  LM & 800.15 & 0.83 \\ 
+  Tree & 981.83 & 0.74 \\ 
+  Random Forest & 653.25 & 0.88 \\ 
+  Boosting (tuned) & 638.42 & 0.89 \\ 
+   \hline
+\end{tabular}
+\end{table}
 \end{frame}
+
 
 
 \endlecture
