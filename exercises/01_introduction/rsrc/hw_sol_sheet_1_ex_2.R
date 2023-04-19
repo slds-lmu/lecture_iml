@@ -1,6 +1,4 @@
 # PREREQ -----------------------------------------------------------------------
-library(ggplot2)
-library(xtable)
 library(entropy)
 
 # DATA -------------------------------------------------------------------------
@@ -10,6 +8,7 @@ x2 = round(x1^2+rnorm(length(x1), sd = 0.04), 2)
 y = round(5*x1 + -2*x2 + rnorm(length(x1)), 2)
 d = data.frame(y, x1, x2)
 
+# MI ---------------------------------------------------------------------------
 # calculate histogram and take mean for each interval
 par(mfrow = c(1,2))
 h1 = hist(x1, freq = FALSE, include.lowest = TRUE, breaks = 3)
@@ -37,7 +36,7 @@ tabx = cbind(tab, rowSums(tab))
 tabx = rbind(tabx, colSums(tabx))
 tabx
 
-# calclate MI
+# calculate MI
 0.11 * log(0.11 / (0.33 * 0.44)) + 0.22 * log(0.22 / (0.33 * 0.44)) + 
   0.11 * log(0.11 / (0.22 * 0.11)) + 0.11 * log(0.11 / (0.22 * 0.44)) + 
   0.22 * log(0.22 / (0.22 * 0.44)) + 0.22 * log(0.22 / (0.22 * 0.44)) 

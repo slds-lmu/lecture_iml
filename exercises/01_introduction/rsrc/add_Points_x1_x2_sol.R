@@ -40,7 +40,7 @@ tabx = cbind(tab, rowSums(tab))
 tabx = rbind(tabx, colSums(tabx))
 xtable(tabx)
 
-# calclate MI
+# calculate MI
 0.11 * log(0.11 / (0.33 * 0.44)) + 0.22 * log(0.22 / (0.33 * 0.44)) + 
   0.11 * log(0.11 / (0.22 * 0.11)) + 0.11 * log(0.11 / (0.22 * 0.44)) + 
   0.22 * log(0.22 / (0.22 * 0.44)) + 0.22 * log(0.22 / (0.22 * 0.44)) 
