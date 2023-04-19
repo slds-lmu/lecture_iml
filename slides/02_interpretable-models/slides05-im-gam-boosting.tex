@@ -163,8 +163,8 @@ $$
 
 \begin{itemize}
 \item<1-> Here: Interpretation of weights as in LM
-\item<1-> After many iterations, it converges to same solution as least square estimate of LMs
-\item<2-> Early stopping allows feature selection and might prevent overfitting (regularization)
+\item<1-> After many iterations, it converges to same solution as LM %least square estimate of
+\item<2-> Early stopping allows feature selection \& may prevent overfitting (regularization)
 %\item Specifying loss and link function according to exponential family leads a (regularized) GLM
 \end{itemize}
 \begin{columns}[T, totalwidth=\linewidth]
@@ -265,9 +265,9 @@ $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 \begin{frame}{Linear Example: Interpretation}
 
 \medskip
-\textbf{Feature importance:} aggregated change in risk in each iteration per feature. 
+\textbf{Feature importance:} aggregated change in risk in each iteration per feature
 \begin{itemize}
-    \item E.g. iteration 1: \code{days\_since\_2011} causes a risk reduction (MSE) of 140,782.94
+    \item E.g. iteration 1: \code{days\_since\_2011} with risk reduction (MSE) of 140,782.94
     \item For every iteration the change in risk can be attributed to a feature
 \end{itemize}
 \medskip
@@ -277,7 +277,7 @@ $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 \hspace{46pt}{\scriptsize{1000 iterations}}
 \includegraphics[width = \linewidth]{figure/compboost_pfi_base2.pdf}\\
 \centering \scriptsize
-Overall risk: 434,686.0 \\
+In-bag-risk: 434,686.0 \\
 OOB risk (10-fold CV): 446,450.0
 \end{column}
 
@@ -286,7 +286,7 @@ OOB risk (10-fold CV): 446,450.0
 \hspace{46pt}{\scriptsize{20 iterations}}
 \includegraphics[width = \linewidth]{figure/compboost_pfi_base1.pdf}\\
 \centering \scriptsize
-Overall risk: 693,505.0\\
+In-bag-risk: 693,505.0\\
 OOB risk (10-fold CV): 705,776.0
 \end{column}
 \end{columns}
@@ -333,10 +333,11 @@ Difference in OOB risk: 259,326.0\\
 \end{columns}
 \smallskip
 \scriptsize
-\only<2->{\qquad $\Rightarrow$ In-bag-Risk: 250,202.0 \, ; \, OOB risk (10-fold CV): 267,497.0 (Difference: 178,953.0)}
+\only<2->{\qquad $\Rightarrow$ In-bag-risk: 250,202.0 \, ; \, OOB risk (10-fold CV): 267,497.0 (difference to lin. example: 178,953.0)\\
+\qquad $\Rightarrow$ In-bag-risk: 434,686.0 \, ; \, OOB risk (10-fold CV): 446,450.0 (previous lin. example with 1000 iter.)}
 \begin{itemize}
     \normalsize
-    \item<2->  Feature importance (risk reduction over iter.) $\leadsto$ \code{days\_since\_2011} most important
+    \item<2->  Feature importance (risk reduction over iter.) \\ $\leadsto$ \code{days\_since\_2011} most important
     \item<2-> Total effect for \code{days\_since\_2011}\\
 $\leadsto$ Combination of partial effects of linear BL and centered spline BL
 \end{itemize}

@@ -61,7 +61,7 @@
 $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g^{-1}(\xv^\top \theta)$$
 \vspace*{-0.5cm}
     \begin{itemize}[<+->]
-        \item Link function $g$ links linear predictor $\xv^\top \theta$ to expectation $\E$ of specified distribution of $y \mid \xv$\\
+        \item Link function $g$ links linear predictor $\xv^\top \theta$ to expectation of distribution of $y \mid \xv$\\ %$\E$ of specified distribution of
         $\leadsto$ LM is special case: Gaussian distribution for $y \mid \xv$ with $g$ as identity function 
         \item Link function $g$ and distribution need to be specified 
         \item High-order and interaction effects can be manually added as in LMs
@@ -179,8 +179,9 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 \begin{frame}[c]{GLM - Logistic Regression - Interpretation}
 
     \begin{itemize}
-        \item \textbf{Recall:} Odds is quotient of two probabilities, odds ratio compares ratio of two odds 
-        \item Weights $\theta_j$ interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
+        \item \textbf{Recall:} Odds is ratio of two probabilities, odds ratio compares ratio of two odds 
+        \item Weights $\theta_j$ are interpreted linear as in LM (but w.r.t. log-odds) \\
+        $\leadsto$ difficult to comprehend
         %relate to log-odds %$\leadsto$ Effects are linear as in LM (but w.r.t. log-odds)
         $$log\text{-}odds = \log \left(\frac{\pi(\xv)}{1 - \pi(\xv)}\right) = \log \left(\frac{P(y=1)}{P(y=0)}\right) = \theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p  $$
         \textbf{Interpretation:} \\ Changing $x_j$ by one unit, changes log-odds of class 1 compared to class 0 by $\theta_j$%\\
@@ -188,7 +189,7 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
         \pause
         \item Odds for class 1 vs. class 0: %Odds can be caulculated by:
         $odds = \displaystyle\frac{\pi(\xv)}{1 - \pi(\xv)}= \exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p)$
-        \item Instead of interpreting changes w.r.t. log-odds, it is more common to use $odds\text{ }ratio$
+        \item Instead of interpreting changes w.r.t. log-odds,  $odds\text{ }ratio$ is more common
         $$ = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j (x_j+1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp{(\theta_j)} $$
         \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\theta_j)$
         %\pause
