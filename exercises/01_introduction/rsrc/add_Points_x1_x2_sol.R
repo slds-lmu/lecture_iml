@@ -36,10 +36,13 @@ xtable(t(data.frame(x1_d, x2_d)))
 
 # joint frequency matrix
 tab = prop.table(table(data.frame(x1_d, x2_d)))
-tab = cbind(tab, rowSums(tab))
-tab = rbind(tab, colSums(tab))
-xtable(tab)
-# calclate MI 
+tabx = cbind(tab, rowSums(tab))
+tabx = rbind(tab, colSums(tab))
+xtable(tabx)
+# calclate MI
+0.11 * log2(0.11 / (0.33 * 0.44)) + 0.22 * log2(0.22 / (0.33 * 0.44)) + 
+  0.11 * log2(0.11 / (0.22 * 0.11)) + 0.11 * log2(0.11 / (0.22 * 0.44)) + 
+  0.22 * log2(0.22 / (0.22 * 0.44)) + 0.22 * log2(0.22 / (0.22 * 0.44)) 
 mi.plugin(tab)
 
 # PLOT -------------------------------------------------------------------------
