@@ -37,12 +37,14 @@ xtable(t(data.frame(x1_d, x2_d)))
 # joint frequency matrix
 tab = prop.table(table(data.frame(x1_d, x2_d)))
 tabx = cbind(tab, rowSums(tab))
-tabx = rbind(tab, colSums(tab))
+tabx = rbind(tabx, colSums(tabx))
 xtable(tabx)
+
 # calclate MI
-0.11 * log2(0.11 / (0.33 * 0.44)) + 0.22 * log2(0.22 / (0.33 * 0.44)) + 
-  0.11 * log2(0.11 / (0.22 * 0.11)) + 0.11 * log2(0.11 / (0.22 * 0.44)) + 
-  0.22 * log2(0.22 / (0.22 * 0.44)) + 0.22 * log2(0.22 / (0.22 * 0.44)) 
+0.11 * log(0.11 / (0.33 * 0.44)) + 0.22 * log(0.22 / (0.33 * 0.44)) + 
+  0.11 * log(0.11 / (0.22 * 0.11)) + 0.11 * log(0.11 / (0.22 * 0.44)) + 
+  0.22 * log(0.22 / (0.22 * 0.44)) + 0.22 * log(0.22 / (0.22 * 0.44)) 
+# without rounded values
 mi.plugin(tab)
 
 # PLOT -------------------------------------------------------------------------
