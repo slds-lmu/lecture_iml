@@ -433,35 +433,40 @@ days\_since\_2011 & 79.53 \\
 Differences to CART:
 \begin{itemize}
     \item Two-step approach (1. find most significant split feature, 2. find best split point)
+    \item Parametric model (e.g. LM instead of constant) can be fitted in leave nodes % OLS regression, GLMs, and survival regression    
     \item Significance of split (p-value) given in each node
-    \item Parametric model can be fitted in leave nodes % OLS regression, GLMs, and survival regression
-    \item \texttt{ctree} and \texttt{mob} differ in hypothesis test used for selecting the split feature% and split point
+    \item \texttt{ctree} and \texttt{mob} differ in hypothesis test used for selecting the split feature (independence test vs. fluctuation test) and how to find the best split point
 \end{itemize}
 
 \medskip
 
-% \begin{columns}[T, totalwidth = \textwidth]
-%     \begin{column}{0.775\textwidth}
+\begin{columns}[c, totalwidth = \textwidth]
+     \begin{column}{0.83\textwidth}
 \only<2>{
 \textbf{Example} (\texttt{ctree}): Bike data (constant model in final nodes)
-\centerline{\includegraphics[width =0.8\textwidth]{figure/bike_ctree.pdf}}
+\centerline{\includegraphics[width =\textwidth]{figure/bike_ctree.pdf}}
 }
 \only<3>{
 \textbf{Example}  (\texttt{mob}): Bike data (linear model with \texttt{temp} in final nodes)
-\centerline{\includegraphics[width = 0.8\textwidth]{figure/bike_mob.pdf}}
+\centerline{\includegraphics[width = \textwidth]{figure/bike_mob.pdf}}
 }
-\only<3>{
-\centerline{Train error (MSE): 758,844.0 (\texttt{ctree}), 742,244.4 (\texttt{mob})}
-}
-%     \end{column}
-%     \begin{column}{0.225\textwidth}
+% \only<3>{
+% \centerline{Train error (MSE): 758,844.0 (\texttt{ctree}), 742,244.4 (\texttt{mob})}
+% }
+     \end{column}
+     \begin{column}{0.18\textwidth}
+     \only<2-3>{\scriptsize
+     Train error (MSE): \\
+     758,844.0 (\texttt{ctree})\\
+     742,244.4 (\texttt{mob})
+     }
 % \only<3>{
 % Comparison MSE: \\
 % \texttt{ctree}: 758,844.0 \\
 % \texttt{mob}: 742,244.4
 % }
-%     \end{column}
-% \end{columns}
+     \end{column}
+ \end{columns}
 \end{frame}
 
 
@@ -507,7 +512,7 @@ Differences to CART:
         \begin{itemize}
             \item (Chaining of) simple ``if -- then'' statements\\
             $\leadsto$ very intuitive and easy-to-interpret
-            \item Most methods work only for classification and categorical feat.
+            \item Most methods work only for classification and categorical features
         \end{itemize}
     \end{column}
     \begin{column}{0.4\textwidth}
