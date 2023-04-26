@@ -1,0 +1,774 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-04-26"
+---
+
+
+# Model Interpretation {#sec-interpretation}
+
+```{r, include = FALSE, cache = FALSE}
+library("data.table")
+library("mlr3")
+library("mlr3book") # remotes::install_github("https://github.com/mlr-org/mlr3book")
+requireNamespace("bbotk")
+library("mlr3verse")
+
+lgr::get_logger("mlr3")$set_threshold("warn")
+lgr::get_logger("bbotk")$set_threshold("warn")
+
+knitr::opts_chunk$set(error=TRUE)
+set.seed(123)
+```
+
+
+<!-- Predictive models have numerous applications in virtually every area of life.  -->
+The increasing availability of data and software frameworks to create predictive models has allowed the widespread adoption of machine learning in many applications. 
+However, high predictive performance of such models often comes at the cost of `r index("interpretability")`: 
+Many trained models by default do not provide further insights into the model and are often too complex to be understood by humans such that questions like ''What are the most important features and how do they influence a prediction?'' cannot be directly answered. 
+This lack of explanations hurts trust and creates barriers to adapt predictive models especially in critical areas with decision affecting human life, such as credit scoring or medical applications.
+
+<!-- TODO: Not sure if the interpretation goals below are too broad as we do not mention HOW and with which IML methods they can be addressed? -->
+Interpretation methods are valuable from multiple perspectives:
+
+1. To gain global insights into a model, e.g., to identify which features were overall most important. 
+2. To improve the model after flaws were identified (in the data or model), e.g., whether the model unexpectedly relies on a certain feature.
+3. To understand and control individual predictions, e.g., to identify how a given prediction
+changes when changing the input.
+4. For justification purposes or to assess fairness (see @sec-fairness), e.g., to inspect whether the model adversely affects certain subpopulations or individuals. 
+<!--TODO: reference to fairness chapter if there is one in the future --> 
+
+In this chapter, we focus on some important methods from the field of interpretable machine learning that can be applied `r index("post-hoc")`, i.e. after the model has been trained, and are `r index("model-agnostic")`, i.e. applicable to any model without any restriction to a specific model class.
+<!-- TODO: Interactions fehlen... -->
+Specifically, we introduce methods implemented in the `r ref_pkg("iml")`, `r ref_pkg("DALEX")`, and `r ref_pkg("counterfactuals")` packages and most of them are also described in more detail in the introductory book about interpretable machine learning by @Molnar2022.
+<!-- Model-agnostic means that the methods can be applied to any machine learning model without any restriction to a specific model class. -->
+<!-- We distinguish between local and global methods:  -->
+<!-- If we want to explain the model behavior over the entire population by taking all observations into account, we should use `r index("global interpretation methods")`. -->
+<!-- If we want to understand how the model behaves for single data instances (and the close neighborhood around them), we should use `r index("local interpretation methods")`.  -->
+
+## Estimating Interpretation Methods on Train or Test Data {#sec-dataset}
+
+According to @sec-performance, performance evaluation should not be conducted on the training data but on unseen data to receive unbiased estimates for the performance. 
+Similar considerations play a role in the choice of the underlying data set used for post-hoc interpretations of a model: 
+Should model interpretation be based on training data or test data? 
+
+This question is especially relevant when we use a performance-based interpretation method such as the permutation feature importance (PFI, see also @sec-feat-importance). 
+For example, if a the PFI is computed based on the training data, the reported feature importance values may be overly optimistic and overestimate the actual importance: the model may have learned to rely on specific features during training that may not be as important for generalization to new data.
+This comes from the fact that the performance measured on the training data is overly optimistic and permuting a feature would lead to a huge drop in the performance.
+In contrast, computing the PFI on the test data provides a more accurate estimate of the feature importance as the performance measured on test data is a more reliable estimate.
+For the same reasons why evaluating the performance of a model should be performed on an independent test set (see @sec-performance), it is also recommended to apply a performance-based interpretation method such as the PFI on an independent test set.
+
+::: {.callout-note}
+For performance evaluation, it is generally recommended to use resampling with more than one iteration, e.g., k-fold cross validation or (repeated) subsampling, instead of a single train-test split as performed by the hold-out method (see @sec-performance). 
+<!-- However, not all resampling strategies can be combined with all interpretation methods.  -->
+However, for the sake of simplicity, we will use a single test data set when applying the interpretation methods to produce explanations throughout this chapter.
+Since produced explanations can be considered as statistical estimates, a higher number of resampling iterations can reduce the variance and result in a more reliable explanation [@molnar2021relating].
+
+<!-- However, if the test data is used, the prediction performance is an estimate of the generalization performance and consequently the calculated feature importance reflect a feature's importance for good predictions on unseen data.  -->
+For prediction-based methods that do not require performance estimation such as ICE/PD (@sec-feature-effects) or Shapley values (@sec-shapley), the differences in interpretation between training and test data are less pronounced [@Molnar2022pitfalls]. 
+<!-- Generally, we recommend to use test data to. -->
+<!-- TODO: reference missing!--> 
+:::
+
+
+## Penguin Task {#sec-penguin-task}
+
+Throughout this chapter, we use the `r ref("palmerpenguins::penguins")` [@palmerpenguins2020] data  which contains information on 344 penguins including the species -- our target variable.
+We want to fit a random forest model using `r ref_pkg("mlr3")` and for the sake of simplicity remove the 11 observations that have missing values:
+
+```{r interpretation-003, message=FALSE, warning=FALSE}
+library("mlr3")
+task = tsk("penguins")
+no_missing_ids = which(complete.cases(task$data()))
+task$filter(rows = no_missing_ids)
+task
+```
+
+For the reasons outlined in @sec-dataset, we use 2/3 of the data to train the model and the remaining 1/3 to analyze the trained model using different interpretation methods. 
+We fit a `"classif.ranger"` learner, i.e. a classification random forest, to predict the probabilities for the penguin species (by setting `predict_type = "prob"`): 
+
+```{r, interpretation--005-model, message=FALSE,warning=FALSE}
+library("mlr3learners")
+set.seed(1L)
+split = partition(task)
+learner = lrn("classif.ranger", predict_type = "prob")
+learner$train(task, row_ids = split$train)
+```
+
+In the next sections, we will illustrate how the described interpretation methods can be applied to our trained random forest.
+To do so, we introduce the following three packages:
+
+-   `r ref_pkg("iml")` presented in @sec-iml, 
+-   `r ref_pkg("counterfactuals")`presented in @sec-counterfactuals that implements counterfactual explanation methods, and
+-   `r ref_pkg("DALEX")` presented in @sec-dalex.
+
+The `r ref_pkg("iml")` and `r ref_pkg("DALEX")` packages offer similar functionality, but they differ in design choices. 
+Both `r ref_pkg("iml")` and `r ref_pkg("counterfactuals")` are based on the R6 class system, thus working with them is more similar in style to the `r ref_pkg("mlr3")` package.
+In contrast, `r ref_pkg("DALEX")` is based on the S3 class system and focuses on comparing multiple diverse models on the same plot.
+
+## The `iml` Package {#sec-iml}
+
+The `r ref_pkg("iml")` package [@Molnar2018] implements a variety of model-agnostic interpretation methods and is based on the R6 class system just like the `r ref_pkg("mlr3")` package.
+It provides a unified interface to the implemented methods and facilitates the analysis and interpretation of machine learning models.
+<!-- Each interpretation method has its own R6 class and inherits from the same parent class -->
+<!-- The implemented methods internally originate from the same parent class and use the same processing framework. -->
+<!-- Thus, calls to each interpretation method follow the same syntax and also the output and functionalities are consistent (for example, all methods have a `$plot()` method).  -->
+<!-- This makes it easy to analyse machine learning models using multiple interpretation tools. -->
+
+Below, we provide examples on how to use the `r ref_pkg("iml")` package using the random forest model fitted above with the `r ref_pkg("mlr3")` package.
+
+### The Predictor Object
+
+The `r ref_pkg("iml")` package supports machine learning models (for classification or regression) fitted by *any* R package.
+To ensure that this works seamlessly, fitted models need to be wrapped in a `r ref("iml::Predictor")` object to unify the input-output behavior of the trained models.
+A `r ref("iml::Predictor")` object contains the prediction model and the data used for analyzing the model and producing the desired explanation.
+We construct the `r ref("iml::Predictor")` object using the test data which will be used as the basis for the presented model interpretation methods:
+
+```{r iml-Predictor, message=FALSE, warning=FALSE,  fig.align='center'}
+library("iml")
+penguins_x = task$data(rows = split$test, cols = task$feature_names)
+penguins_y = task$data(rows = split$test, cols = task$target_names)
+predictor = Predictor$new(learner, data = penguins_x, y = penguins_y)
+```
+
+::: {.callout-tip}
+The constructor `r ref("iml::Predictor", text = "iml::Predictor$new()")` has an (optional) input argument `predict.function` which requires a function that predicts on new data. 
+For models fitted with the packages `r ref_pkg("mlr3")`, `r ref_pkg("mlr")` or `r ref_pkg("caret")`, a default `predict.function` is already implemented in the `r ref_pkg("iml")` package and the `predict.function` argument is not required to be specified.
+For models fitted with any other package, the model-specific `predict` function of that package is used by default. 
+Passing a custom `predict.function` to unify the output of the model-specific `predict` function might be necessary for some packages.
+This is especially needed if the model-specific `predict` function does not produce a vector of predictions (in case of regression tasks or classification tasks that predict discrete classes instead of probabilities) or a `data.frame` with as many columns as class labels (in case of classification tasks that predict a probability for each class label).
+<!-- This argument only needs to be specified if the model was not built with the `r ref_pkg("mlr3")`, `r ref_pkg("mlr")` or `r ref_pkg("caret")` packages.  -->
+<!-- Since the random forest (`learner`) was fitted with `r ref_pkg("mlr3")`, `predict.function` is already implemented in the `r ref_pkg("iml")` package and does not need to be specified by us. -->
+:::
+
+
+
+
+
+### Feature Importance {#sec-feat-importance}
+
+
+When deploying a model in practice, it is often of interest which features are contributing the most towards the *predictive performance* of the model.
+On the one hand, this is useful to better understand the problem at hand and the relationship between the features and the target outcome to be predicted.
+On the other hand, this can also be useful to identify irrelevant features and potentially remove those using feature importance methods as the basis for feature filtering (see @sec-fs-filter).
+In context of this book, we use the term `r index("feature importance")` to describe global methods that calculate a single score per feature reflecting the importance regarding a certain quantity of interest such as the model performance. 
+<!-- As we focus on performance-based feature importance methods here, the *quantity of interest* usually refers to the improvement regarding a performance measure such as the classification error. -->
+The calculated feature importance is reported by a single numeric score per feature and allows to rank the features according to their importance.
+
+::: {.callout-tip}
+It should be noted that there are also other notions of feature importance not based on a performance measure such as the SHAP feature importance, which is based on Shapley values (see @sec-shapley and @lundberg2019consistent) or the partial dependence-based feature importance introduced in @greenwell2018simple, which is based on the variance of a PD plot (see @sec-feature-effects).
+:::
+<!-- based on computing Shapley values for each observation and averaging their absolute values (SHAP feature importance) -->
+<!-- quantify the importance of features regarding a certain quantity of interest. -->
+<!-- and help us to identify the features that are most important for a prediction. -->
+
+One of the most popular methods is the permutation feature importance (PFI), originally introduced by @breiman2001random for random forests and adapted by @Fisher2019pfi as a model-agnostic feature importance measure, which they called *model reliance*.
+The PFI quantifies the importance of a feature regarding the model performance (measured by a performance measure of interest). 
+It calculates the decrease in model performance (or, equivalently the increase in the model's prediction error) after destroying the information in the feature by permutation.
+Permutation means that the observed feature values in a dataset are randomly shuffled. This destroys the dependency structure of the feature with the outcome variable and all other features while maintaining the marginal distribution of the feature. 
+
+The intuition of PFI is simple: if a feature is not important, permuting that feature should not affect the model performance.
+<!-- TODO: mention here (or at least later in the implementation) that we can compute the difference or the quotient? -->
+However, the worse the performance under permutation is in relation to the original model performance, the more important this feature is w.r.t. the prediction performance.
+The method requires a labeled dataset (for which both the feature and true outcome are given), a trained model, and a performance measure to quantify the decrease in model performance after permutation. 
+<!-- Then, the following steps need to be conducted for each feature: -->
+<!-- 1. Generate a new dataset by permuting the column of the feature of interest.  -->
+<!-- 2. Estimate the performance of the model on the permuted data.  -->
+<!-- 3. Compare the performance under permutation with the original model performance.  -->
+
+
+
+First, we analyze which features are the most important features to classify penguins with the random forest model according to the permutation feature importance method described in @sec-feat-importance. 
+The importance of a feature is measured as the factor by which the model's prediction error increases when the feature values are shuffled. 
+We initialize a `r ref("iml::FeatureImp")` object with the model and the classification error (`"ce"`) as a loss function and visualize the results with the `$plot()` method.
+
+```{r iml-007, message=FALSE, warning=FALSE, fig.height=3, fig.align='center'}
+effect = FeatureImp$new(predictor, loss = "ce")
+effect$plot()
+```
+
+We see that `r effect$results$feature[1]` is the most important feature. 
+That is, if we permute the `r effect$results$feature[1]` column in the data, the classification error of our model increases on average by a factor of around `r effect$results$importance[1]`. 
+We say on average because the `r ref("iml::FeatureImp")` method repeats by default the shuffling process 5 times.
+In each repetition, the classification error is computed and the results are then averaged.
+In general, repeating the shuffling process and averaging the results is recommended because the results can be unreliable due to the randomness of the permutation process. 
+The number of repetitions can be set with the input argument `n.repetitions` of `r ref("iml::FeatureImp", text = "iml::FeatureImp$new()")`.
+The `$plot()` method of the `r ref("iml::FeatureImp")` object shows the median of the 5 resulting importance values (as a point) and the boundaries of the error bar in the plot refers to the 5 % and 95 % quantiles of the importance values.
+
+::: {.callout-tip}
+By default, `r ref("iml::FeatureImp")` uses the ratio of the prediction performance before and after permutation as importance value. 
+Alternatively, the difference of the two performance measures can be used by setting `compare = "difference"` in `r ref("iml::FeatureImp", text = "iml::FeatureImp$new()")`.
+:::
+
+
+
+### Feature Effects {#sec-feature-effects}
+`r index("Feature effect")` methods describe how or to what extend a feature contributes towards the *model predictions* by analyzing how the predictions change when changing a feature.
+For example, these methods are useful to identify whether the model estimated a non-linear relationship between a feature of interest and the target outcome.
+<!-- or to identify whether the model contains interactions. -->
+In general, we distinguish between local and global feature effect methods.
+Global feature effect methods refer to how a prediction changes *on average* when a feature is changed. 
+In contrast, local feature effect methods address the question how a *single* prediction of a considered observation changes when a feature value is changed.
+To a certain extent, local feature effect methods can also reveal interactions in the model that become visible when the local effects are heterogeneous, i.e., if changes of the local effect is different across the observations.
+
+A popular global method to visualize feature effects is the partial dependence (PD) plot [@Friedman2001pdp]. 
+It visualizes how the model predictions change on average if we vary the feature values of a certain feature of interest.
+Later, @Goldstein2015ice discovered that the global feature effect as visualized by a PD plot can be disaggregated into local feature effects associated to a single observation. 
+Specifically, they introduced individual conditional expectation (ICE) curves a visual tool for local feature effects and showed that the PD plot is just the average of ICE curves. 
+ICE curves display how the prediction of a *single* observation changes when varying a feature of interest while all other features stay constant (ceteris paribus). 
+<!-- TODO: Add a figure for illustration from iml lecture? -->
+<!-- To visualize the ICE values of a single feature -- the ICE curve -- the prediction changes are inspected for multiple points (e.g., on an equidistant grid of the feature's value range). -->
+Hence, for each observation, the values of the feature of interest are replaced by multiple other values (e.g., on an equidistant grid of the feature's value range) to inspect the changes in the model prediction.
+Specifically, an ICE curve visualizes on the x-axis the set of feature values used to replace the feature of interest and on the y-axis the prediction of the model after the original feature value of the considered observation has been replaced.
+Hence, each ICE curve is a local explanation that assesses the feature effect of a *single* observation on the model prediction. 
+If the shape of the ICE curves is heterogenous and there are lots of crossing ICE curves, this would indicate that the model may have estimated an interaction involving the considered feature.
+<!-- To receive an estimate of the global effect, the ICE curves of all observations in a given data set can be averaged. -->
+
+::: {.callout-note}
+Feature effects are very similar to regression coefficients $\beta$ in linear models which offer interpretations such as 
+''if you increase this feature by one unit, your prediction increases on average by $\beta$ if all other features stay constant''. 
+However, they cannot only convey linear effects but also more complex ones (similar to splines in generalized additive models) and can be applied to any type of predictive model.
+:::
+
+Next, we inspect *how* the feature `bill_length` influences the predictions of the penguin classification. 
+For this purpose, we compute feature effects using the partial dependence plot (PDP) and ICE curves that were described in @sec-feature-effects.
+We generally recommend to accompany PD plots by ICE curves because showing the PD plot alone might obfuscate heterogeneous effects and interactions. 
+ICE curves that do not have a similar shape, i.e., are not parallel for a feature, suggest that the feature interacts with other features. 
+To plot PDP and ICE, we initialize a `r ref("iml::FeatureEffect")` object with the feature name and select `method = "pdp+ice"`. 
+Again, we used the `$plot()` method to visualize the results:
+
+```{r iml-pdp, message=FALSE, warning=FALSE, fig.height=3, fig.align='center'}
+effect = FeatureEffect$new(predictor, 
+  feature = "bill_length", method = "pdp+ice")
+effect$plot()
+```
+
+As we have multiclass-classification task at hand, we see PD and ICE plots for the predicted probabilities of each predicted class separately.
+The plot shows that if `bill_length` is smaller than roughly 45 mm, there is on average a high chance that the penguin belongs to the species `Adelie`.
+<!-- We also see that the effect of the bill length on the probability of being Adelie or Gentoo is homogeneous because most of the ICE curves are parallel. -->
+<!-- For Chinstrap, the bill length has a very small effect on the prediction for some penguins and a very large effect for other penguins. This indicates that bill length interacts with other features.  -->
+<!-- Unfortunately, the plot does not tell us with which features exactly it interacts.  -->
+
+<!-- We can also compute and visualize the feature effects of all numeric features at once with `r ref("iml::FeatureEffects")`.  -->
+
+<!-- ```{r iml-pdp2, message=FALSE, warning=FALSE, fig.cap='Feature effects of all numeric features computed with the PDP method implemented in `iml::FeatureEffect` for the penguin classification task and random forest model.',  fig.align='center'} -->
+
+<!-- num_features = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g", "year") -->
+
+<!-- effect = FeatureEffects$new(predictor, features = num_features, method = "pdp") -->
+
+<!-- effect$plot() -->
+
+<!-- ``` -->
+
+<!-- All numeric features except for study `year` (either 2007, 2008 or 2009) provide meaningful interpretable information. -->
+
+### Surrogate Models
+
+<!-- Interpretable models such as decision trees or linear models can be used as `r index("surrogate models")` to approximate the behavior of a (often very complex) black-box model.  -->
+<!-- Surrogate models are simpler models such as a decision trees or linear models that can be trained to mimic the behavior of the black-box model, allowing for greater interpretability and explainability. -->
+<!-- `r index("Surrogate models")` aim at approximating the (often) very complex machine learning model using an inherently interpretable model such as a decision tree or linear model as a surrogate. -->
+Interpretable models such as decision trees or linear models can be used as `r index("surrogate models")` to approximate or mimic a (often very complex) black-box model.
+Inspecting the surrogate model provides insights into the behavior of a black-box model, as the (learned) model structure or (learned) parameters of the surrogate model allows for a certain interpretation. 
+For example, the learned model structure of a decision tree or the coefficients of a linear model can be easily interpreted and provide information on how the features formed the prediction.
+<!-- Suitable surrogate models are, e.g., decision trees or linear models whose tree structure or coefficients can be easily interpreted.  -->
+
+We differentiate between local surrogate models, which approximate a model locally around a specific data point of interest, and global surrogate models that approximate the model across the entire input space [@Ribeiro2016lime;@Molnar2022].
+<!-- While it is very difficult to approximate the whole model, it is much simpler if we only do so for a small area in the feature space surrounding a specific point -- the point of interest.  -->
+The surrogate model is usually trained on the same data used to train the black-box model or on data having the same distribution to ensure a representative input space.
+For local surrogate models, the data used to train the surrogate model is usually weighted according to the closeness to the data point of interest.
+In either case, the predictions obtained from the black-box model are used as the target feature to train a surrogate model that approximates the black-box model.
+<!-- Since surrogate models approximate the black-box model of interest, the target to train the surrogate model are the predictions obtained from the black-box model. -->
+
+
+#### Global Surrogate Model
+
+With `r ref("iml::TreeSurrogate")`, we can fit a tree-based surrogate model which trains a `r ref("partykit::ctree()")` model from the `r ref_pkg("partykit")` package to the predictions of our random forest model we want to analyze:
+
+```{r iml-globalsurrogate, message=FALSE, warning=FALSE,  fig.align='center'}
+treesurrogate = TreeSurrogate$new(predictor, maxdepth = 2L)
+treesurrogate$plot()
+```
+
+As we have used `maxdepth = 2`, the surrogate tree performs two binary splits yielding 4 leaf nodes.
+<!-- By default, the plot method of `r ref("iml::TreeSurrogate")` extracts the decision rules found by the tree surrogate (that lead to the leaf nodes) and visualizes the distribution of the predicted outcomes for each leaf node. -->
+`r ref("iml::TreeSurrogate")` extracts the decision rules found by the tree surrogate (that lead to the leaf nodes), and the `$plot()` method visualizes the distribution of the predicted outcomes for each leaf node.
+For example, we can see that the first leaf node that results from the split `flipper_length <= 203 & bill_length <= 43.1` and mainly consists of penguins of the species Adelie.
+
+We can access the trained tree surrogate via the `$tree` field of the fitted `r ref("iml::TreeSurrogate")` object and can apply the `plot()` function to visualize the underlying structure of the tree surrogate:
+
+```{r iml-globalsurrogate-tree, message=FALSE, warning=FALSE, fig.height=8,  fig.align='center'}
+treesurrogate$tree
+plot(treesurrogate$tree)
+```
+
+<!-- If a penguin comes from the Biscoe island, the model derives the species based on the flipper length. If a penguin comes from the other islands, the model determines the species from the bill length. -->
+<!-- It is important to note that statements such as "the bill length and the island determine the species" are in general not valid, since the surrogate model never sees the real outcomes of the underlying data. -->
+Since the surrogate model does not see the real outcomes of the underlying data used to train the black-box model (here, the random forest), general conclusions can not be drawn.
+Consequently, the conclusions drawn from the surrogate model only hold for the prediction model (if the approximation of the surrogate model is accurate). 
+<!-- We can only draw conclusions on the data if the surrogate model approximates the prediction model accurately and the prediction model accurately predicts the species. -->
+
+To evaluate whether the surrogate model approximates the prediction model accurately, we can compare the predictions of the tree surrogate and the predictions of the black-box model.
+For example, we can produce a cross table comparing the predicted classes of the random forest and predicted classes of the surrogate tree:
+
+```{r iml-crosstable, message=FALSE, warning=FALSE}
+pred_surrogate = treesurrogate$predict(penguins_x, type = "class")[,1]
+pred_rf = learner$predict_newdata(penguins_x)$response
+table(pred_rf, pred_surrogate)
+```
+
+Mostly, the black-box predicted class and the surrogate predicted classes overlap.
+<!-- Furthermore, the `r ref("iml::TreeSurrogate")` object has a field `$r.squared` -->
+
+<!-- R squared measures how well the surrogate tree approximates the underlying black-box model.  -->
+<!-- It is calculated as 1 - (variance of prediction differences / variance of black-box model predictions). For the multi-class case, r.squared contains one measure per class. -->
+
+<!-- ```{r} -->
+<!-- treesurrogate$r.squared -->
+<!-- ``` -->
+
+#### Local Surrogate Model
+
+In general, it can be very difficult to accurately approximate the black-box model with an interpretable one in the entire feature space.
+However, it is much simpler if we only focus on a small area in the feature space surrounding a specific point -- the point of interest. 
+For a local surrogate model, we conduct the following steps: 
+
+1.  We obtain predictions from the black-box model for a given data set.
+2.  We weight the observations in this data set by their proximity to our point of interest.
+3.  We fit an interpretable model on the weighted data set using the predictions of the black-box model as the target.
+4.  We exploit the interpretable nature of the surrogate model to explain the prediction of our point of interest.
+
+<!-- How can we approach this with the `r ref_pkg("iml")` package?  -->
+To illustrate this using the `r ref_pkg("iml")` package, we first select a data point we want to explain. 
+Here, we use the first penguin in the data set, let us call him Steve.
+For Steve, the model predicts the following class probabilities:
+
+```{r steve,  message=FALSE, warning=FALSE,  asis='results'}
+steve = penguins_x[1, ]
+steve
+predictor$predict(steve)
+```
+
+The model predicts the class `r names(which.max(predictor$predict(steve)))` with `r round(max(predictor$predict(steve))*100, 1)`%  probability.
+As a next step, we use `r ref("iml::LocalModel")`, which fits a locally weighted linear regression model that provides an explanation why Steve was classified as Adelie by inspecting the estimated coefficients.
+The underlying surrogate model is L1-penalized such that only a pre-defined number of features per class, say `k` will have a non-zero coefficient.
+The default is `k = 3L`.
+
+```{r iml-localsurrogate,  fig.height=3, message=FALSE, warning=FALSE, fig.align = 'center'}
+localsurrogate = LocalModel$new(predictor, steve)
+localsurrogate$results[c(".class", "feature", "beta")]
+```
+
+From the table we see that the three *locally* most influential features are the flipper length, bill length, and the bill depth.
+A closer look at the coefficients of the Adelie class reveals that bill length and flipper length have a negative effect, while the effect of bill depth is positive.
+
+<!-- Compared to the global surrogate model, the local surrogate does not have to be accurate w.r.t. the prediction of the black-box model on the whole data set but only w.r.t. to the prediction of the black-box model on the local neighborhood of the point of interest. -->
+
+
+### Shapley Values {#sec-shapley}
+`r index("Shapley values")` were originally developed in the context of cooperative game theory to study how the payout of a game can be fairly distributed among the players that form a team.
+This concept has been adapted for use in machine learning as a local interpretation method to explain the contributions of each input feature to the final model prediction of a single observation [@Trumbelj2013Shapley].
+The analogy is as follows: 
+In the context of machine learning, the cooperative game played by a set of players refers to the process of making a prediction by a set of features for a single observation whose prediction we want to explain.
+Hence, the features are considered to be the players.
+The total payout, which should be farily distributed among the players, refers to the difference of the individual observation's prediction with the mean prediction.
+
+In essence, Shapley values aim to answer the question of how much each input feature contributed to the final prediction for a single observation (after subtracting the mean prediction).
+By assigning a value to each feature, we can gain insights into which features were the most important ones for the considered observation.
+<!-- Shapley values are calculated by considering all possible combinations of features and computing the difference in the model prediction with and without each feature included. -->
+<!-- The Shapley value of a feature is then defined as the average contribution of the feature across all possible combinations. -->
+<!-- To compute Shapley values, we need to inspect how the prediction changes if a feature value is present vs. when a feature value  -->
+<!-- is not present. Not being present means that the feature is set to a different value than the one of the single observation.  -->
+<!-- For inspecting the prediction changes, the feature values of the other features do not necessarily have to stay constant (as it is demanded for ICE curves or PD plots) but they can also differ. This is necessary such that the interaction effects are also taken into account.  -->
+
+::: {.callout-note}
+Shapley values are sometimes misinterpreted: The Shapley value of a feature does *not* display the difference of the predicted value after removing the feature from the model training.
+The exact Shapley value of a feature is calculated by considering all possible subsets of features and computing the difference in the model prediction with and without the feature of interest included. 
+<!-- The contribution of a feature is then defined as the difference in the expected prediction with and without the considered feature, averaged over all possible subsets that include the feature. -->
+Hence, it refers to the marginal contribution of a feature to the difference between the actual prediction and the mean prediction, given the current set of features.
+:::
+
+
+In the introduction, we introduced another local explanation method: Shapley values (@sec-shapley). Shapley values reveal how much each feature contributed to the prediction compared to the average prediction obtained for a given data set. Compared to the penalized, linear model as a local surrogate model, Shapley values guarantee that the prediction is fairly distributed among the features.
+
+With the help of `r ref("iml::Shapley")`, we now generate Shapley values for Steve's prediction. Again, the results can be visualized with the `$plot()` method.
+
+```{r iml-006, message=FALSE, warning=FALSE,  fig.height=3, fig.align='center'}
+shapley = Shapley$new(predictor, x.interest = steve)
+plot(shapley)
+```
+
+If we focus on the plot for Adelie, the Shapley values ($\phi$) of the features show us how to fairly distribute the difference of Steve's probability to be Adelie to the data set average probability to be Adelie among the given features. Steve's bill length of 39.1 mm has the most positive effect on the probability of being an Adelie, with an increase in the predicted probability of more than 20 %.
+
+<!-- ### Independent Test Data {#subsec-iml-testdata} -->
+
+<!-- It is also interesting to see how well the model performs on a test data set. For this section, 2/3 of the penguin data set will be used for the training set and 1/3 for the test set (default of the holdout method in `r ref("mlr3::resample")`): -->
+
+<!-- ```{r iml-008, message=FALSE, warning=FALSE} -->
+<!-- train_set = sample(task_peng$nrow, 2/3 * task_peng$nrow) -->
+<!-- test_set = setdiff(seq_len(task_peng$nrow), train_set) -->
+<!-- learner$train(task_peng, row_ids = train_set) -->
+<!-- prediction = learner$predict(task_peng, row_ids = test_set) -->
+<!-- ``` -->
+
+<!-- First, we compare the feature importance on training and test set -->
+
+<!-- ```{r iml-009, message=FALSE, warning=FALSE,  fig.height=3, fig.cap='FeatImp on train (left) and test (right)',  fig.align='center'} -->
+<!-- # plot on training -->
+<!-- model = Predictor$new(learner, data = penguins[train_set, ], y = "species") -->
+<!-- effect = FeatureImp$new(predictor, loss = "ce") -->
+<!-- plot_train = effect$plot() -->
+
+<!-- # plot on test data -->
+<!-- model = Predictor$new(learner, data = penguins[test_set, ], y = "species") -->
+<!-- effect = FeatureImp$new(predictor, loss = "ce") -->
+<!-- plot_test = effect$plot() -->
+
+<!-- # combine into single plot -->
+<!-- library("patchwork") -->
+<!-- plot_train + plot_test -->
+<!-- ``` -->
+
+<!-- In both cases, the bill lengths is the most important feature. Since all other features have similar, much lower importance values, the ranking between training and test data slightly changes. The magnitude of values differs between training and test data. For test data FI values of $>$ 15 are measured while for train data the values are $\le$ 0.3. This is because fitting a model means that the model parameters are adapted to have low prediction error on the training data. -->
+
+<!-- We follow a similar approach to compare the feature effects: -->
+
+<!-- ```{r iml-010, message=FALSE, warning=FALSE, fig.cap='FeatEffect train data set', fig.align='center'} -->
+<!-- num_features = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g", "year") -->
+<!-- model = Predictor$new(learner, data = penguins[train_set, ], y = "species") -->
+<!-- effect = FeatureEffects$new(predictor, method = "pdp") -->
+<!-- plot(effect, features = num_features) -->
+<!-- ``` -->
+
+<!-- ```{r iml-011, message=FALSE, warning=FALSE, fig.cap='FeatEffect test data set',  fig.align='center'} -->
+<!-- model = Predictor$new(learner, data = penguins[test_set, ], y = "species") -->
+<!-- effect = FeatureEffects$new(predictor, method = "pdp") -->
+<!-- plot(effect, features = num_features) -->
+<!-- ``` -->
+
+<!-- As is the case with `FeatureImp`, the test data results are similar to the training results but the magnitude of effects differs slightly. This would be a good opportunity for the reader to inspect the effect of varying amounts of features and the amount of data used for both the test and train data sets on `FeatureImp` and `FeatureEffects`. -->
+
+## The `counterfactuals` Package {#sec-counterfactuals}
+
+Counterfactual explanations try to identify the smallest possible changes to the input features of a given observation that would lead to a different prediction [@Wachter2017].
+<!-- answer the question of how we can minimally change the feature values of a given observation such that we obtain a different prediction [@Wachter2017].  -->
+<!-- This allows for statements such as: ''If you had the following feature values instead of the present ones, you would have received the desired outcome.'' -->
+In other words, a counterfactual explanation provides an answer to the question: "What changes in current feature values do I need to make to achieve a different prediction?"
+Such statements are valuable explanations because we can understand which features affect a prediction and what actions can be taken to obtain a different, more desirable prediction.
+The goal is to identify the smallest possible set of changes needed to achieve a desired prediction, while still keeping the changes as realistic and interpretable as possible.
+Counterfactual explanations can have many applications in different areas such as healthcare, finance, and criminal justice, where it may be important to understand how small changes in input features could affect the model's prediction.
+For example, a counterfactual explanation could be used to suggest lifestyle changes to a patient to reduce their risk of developing a particular disease, or to suggest actions that would increase the chance of a credit application being approved.
+
+The simplest method to generate counterfactuals is the What-If approach [@Wexler2019].
+For a data point, whose prediction should be explained, the it usually returns a single counterfactual which is equal to the closest data point of a given data set with the desired prediction. 
+Instead of a single counterfactual, we might be interested in multiple counterfactuals.
+@Dandl2020 introduced the multi-objective counterfactuals method (MOC) that can also generate multiple counterfactuals. 
+Compared to the What-If method, the counterfactuals generated by MOC are not equal to observations in a given dataset but are artificially generated data points. 
+The generation of counterfactuals is based on an optimization problem that aims for counterfactuals that 
+
+1) have the desired prediction,
+2) are close to the observation of interest (here, our penguin Steve),
+3) only require changes in a few features, and
+4) originate from the same distribution as the observations in the given dataset.
+
+All these four objectives are optimized simultaneously via a multi-objective optimization method.
+
+In previous years, multiple methods to generate counterfactuals have been proposed.
+They mainly differ in how the counterfactual explanations are generated, the number of counterfactuals they return, and the properties of counterfactuals targeted by a method (e.g., sparsity or actionability of the proposed minimal changes to the input space). 
+<!-- that differ in the counterfactual properties they target, the generation approach, or the number of returned counterfactuals.  -->
+
+
+The `r ref_pkg("counterfactuals")` package depends on the `r ref_pkg("iml")` package and can be used for methods that generate counterfactual explanations, or short counterfactuals. Counterfactual explanations explain the prediction of a data point by presenting which minimal changes in the point are sufficient to receive a different, desired outcome.
+
+An example for a counterfactual for the `r ref("palmerpenguins::penguins")` data would be: "If the penguin has a bill length of 45 mm instead of 35 mm and a flipper length of 210 mm instead of 180 mm, the penguin would have been classified as Gentoo with a probability of \> 50 %" (@fig-counterfactuals-penguins). By revealing the feature changes that alter a decision, the counterfactuals reveal which features are the key drivers for a decision.
+
+```{r interpretation-counterfactuals-fig, echo=FALSE, out.width = '50%', fig.align='center'}
+#| label: fig-counterfactuals-penguins
+#| fig-cap: Illustration of a counterfactual explanation. The blue dot displays a counterfactual for a given point (brown dot) which proposed changes in bill and flipper length such that the prediction changes from Adelie to Gentoo with > 50 \% probability.
+#| fig-alt: Illustration of counterfactual explanations. Two dots are shown one that is the point whose prediction we want to explain and the other is it's counterfactual. The counterfactual proposes to increase the bill and flip length such that the point is classified as a Gentoo instead of Adelie with a probability of more than 50 \%.
+knitr::include_graphics("Figures/counterfactuals_penguins.png")
+```
+
+Many methods were proposed in previous years to generate counterfactual explanations. These methods differ in what targeted properties their generated counterfactuals have (for example, are the feature changes actionable?) and with which method (for example, should a set of counterfactuals be returned in a single run?). Due to the variety of methods, counterfactual explanations were outsourced into a separate package instead of integrating these methods into the `r ref_pkg("iml")` package. Currently, three methods are implemented in the R package but the R6-based interface makes it easy to add other counterfactual explanation methods in the future.
+
+### What-If Method
+
+<!-- In the following, we focus on the simplest method among the three implemented ones: the What-If approach [@Wexler2019]. For a data point, whose prediction should be explained, the returned counterfactual is equal to the closest data point of a given data set (here, the test data) with the desired prediction. To illustrate the overall workflow of the package, we generate counterfactuals for Steve, the first penguin in the data set. -->
+
+To illustrate the overall workflow of the package, we generate counterfactuals for Steve (the first penguin in the data set) using the What-If approach [@Wexler2019].
+The `r ref_pkg("counterfactuals")` package relies on `r ref("iml::Predictor()")` as a model wrapper and can, therefore, explain any prediction model fitted with the `r ref_pkg("mlr3")` package, including the random forest model we trained above.
+
+```{r interpretation-predictsteve, message=FALSE, warning=FALSE}
+predictor$predict(steve)
+```
+
+We saw above that the random forest classifies Steve with `r round(max(predictor$predict(steve))*100, 1)`% as an Adelie. The What-If method can be used to answer, e.g., how the features need to be changed such that Steve is classified as Gentoo with a probability of more or equal to 50%. Since we have a classification model we initialize a `r ref("counterfactuals::WhatIfClassif()")` object. By calling `$find_counterfactuals()`, we generate a counterfactual for Steve.
+
+```{r interpretation-whatif, message=FALSE, warning=FALSE}
+library("counterfactuals")
+whatif = WhatIfClassif$new(predictor, n_counterfactuals = 1L)
+cfe = whatif$find_counterfactuals(steve, 
+  desired_class = "Gentoo", desired_prob = c(0.5, 1))
+```
+
+`cfe`is a `r ref("counterfactuals::Counterfactuals")` object which offers many visualization and evaluation methods. For example, `$evaluate(show_diff = TRUE)` shows how the features need to be changed.
+
+```{r interpretation-whatifevaluation, message=FALSE, warning=FALSE}
+cfe$evaluate(show_diff = TRUE)
+```
+
+To receive a probability of more than 50 % for Gentoo, the bill length, flipper length, and body mass are enlarged while the bill depth is shortened. Furthermore, Steve must come from Biscoe island instead of Torgersen. For year born and sex no changes are required. Additional columns reveal the quality of the counterfactuals, for example, the number of required features changes (`no_changed`) or the distance to the closest training data point (`dist_train`) which is 0 because the counterfactual *is* a training point.
+
+### MOC method 
+
+<!-- Instead of a single counterfactual, we can also generate multiple counterfactuals with the multi-objective counterfactuals method of @Dandl2020.  -->
+<!-- Compared to the What-If method, the counterfactuals generated by MOC are not equal to observations in a given dataset but are artificially generated.  -->
+<!-- The generation of counterfactuals is based on an optimization problem that aims for counterfactuals that  -->
+
+<!-- 1) have the desired prediction, -->
+<!-- 2) are close to the observation of interest (here, our penguin Steve), -->
+<!-- 3) only require changes in a few features, and -->
+<!-- 4) originate from the same distribution as the observations in the given dataset. -->
+
+<!-- All these four objectives are optimized simultaneously via a multi-objective optimization method. -->
+
+Calling the MOC method is very similar to calling the What-If method. Instead of a `r ref("counterfactuals::WhatIfClassif()")` object, we initialize a `r ref("counterfactuals::MOCClassif()")` object. 
+We set the `epsilon` parameter to 0 to penalize counterfactuals in the optimization process with predictions outside the desired range. 
+With MOC, we can also prohibit changes in specific features, here year and sex, via the `fixed_features` argument.
+For illustrative purposes, we let the multi-objective optimizer only run for 30 generations. 
+
+```{r interpretation-mocmulti,echo=TRUE, message=FALSE, warning=FALSE}
+library("counterfactuals")
+set.seed(123L)
+moc = MOCClassif$new(predictor, epsilon = 0, n_generations = 30L, 
+  fixed_features = c("year", "sex"))
+cfe_multi = moc$find_counterfactuals(steve,
+  desired_class = "Gentoo", desired_prob = c(0.5, 1))
+```
+
+Since the multi-objective approach does not guarantee that all counterfactuals have the desired prediction, we remove all counterfactuals with predictions not equal to the desired prediction via the `$subset_to_valid()` method.
+```{r interpretation-mocmulti-subset, message=FALSE, warning=FALSE}
+cfe_multi$subset_to_valid()
+cfe_multi
+```
+Overall we generated `r nrow(cfe_multi$data)` counterfactuals.
+For a concise overview of the required feature changes, we can use the `plot_freq_of_feature_changes()` method.
+It visualizes the frequency of feature changes across all returned counterfactuals.
+
+```{r interpretation-mocfreq, message=FALSE, warning=FALSE, fig.height=3.5, out.width = '80%', fig.align='center'}
+cfe_multi$plot_freq_of_feature_changes()
+```
+
+We see that bill and flipper length are most often changed followed by the island.
+The`$parallel_plot()` method shows *how* the features have been changed:
+The blue line corresponds to the original feature values of Steve, while the gray line displays the counterfactuals.
+
+```{r interpretation-mocparallel, message=FALSE, warning=FALSE, fig.height=3.5, out.width = '80%', fig.align='center'}
+cfe_multi$plot_parallel()
+```
+We see that bill length, flipper length and body mass are equal or larger compared to Steve's values and bill depth is equal or smaller than Steve's values. 
+To assess whether the proposed features changes are minimal, we can visualize counterfactuals with only two changed features on a 2-dim ICE plot, also called surface plot.
+
+```{r interpretation-moc2features,message=FALSE, warning=FALSE, fig.height=3.5, out.width = '80%', fig.align='center'}
+two_features = cfe_multi$evaluate("no_changed", show_diff = TRUE)[no_changed == 2,]
+```
+
+Our generated set of counterfactuals contains only one observation with two feature changes. 
+For this counterfactual, bill depth and flipper length differ from the values of Steve. 
+The feature names of these two features serve as an input to the `$plot_surface()` method to generate the 2-dim ICE plot.
+
+```{r interpretation-mocsurface,message=FALSE, warning=FALSE, fig.height=3.5, out.width = '80%', fig.align='center'}
+cfe_multi$plot_surface(feature_names = c("bill_depth", "flipper_length"))
+```
+The colors and contour lines indicate the predicted value of the model when bill depth and flipper length differ while all other features are set to the values of Steve. 
+The white point displays Steve, the black point is the counterfactual that only proposed changes in the two features. The rugs show the marginal distributions of the features in the observed dataset.
+We can see that the counterfactual is in a cluster surrounded by other points with predictions larger or equal to 0.5. There is potential to slightly decrease flipper length the and increase the bill depth  without losing the desired prediction, such that the counterfactual values are sightly closer to the values of Steve. 
+
+## The `DALEX` Package {#sec-dalex}
+
+The `r ref_pkg("DALEX")` [@Biecek2018] package belongs to [DrWhy](https://www.drwhy.ai/) family of solutions created to support the responsible development of machine learning models. It implements the most common methods for explaining predictive models using post-hoc model agnostic techniques. You can use it for any model built with the `r ref_pkg("mlr3")` package as well as with other frameworks in `R`. The counterpart in `Python` is the library `dalex` [@Baniecki2021].
+
+The philosophy of working with the `r ref_pkg("DALEX")` package is based on the process of explanatory model analysis described in the [EMA book](https://ema.drwhy.ai/) [@biecek_burzykowski_2021]. In this chapter, we present code snippets and a general overview of this package. For illustrative purposes, we reuse the `learner` model built in the @sec-penguin-task on `r ref("palmerpenguins::penguins")` data.
+
+Once you become familiar with the philosophy of working with the `r ref_pkg("DALEX")` package, you can also use other packages from this family such as `r ref_pkg("fairmodels")` [@Wisniewski2022] for detection and mitigation of biases, `r ref_pkg("modelStudio")` [@Baniecki2019] for interactive model exploration, `r ref_pkg("modelDown")` [@Romaszko2019] for the automatic generation of IML model documentation in the form of a report, `r ref_pkg("survex")` [@Krzyzinski2023] for the explanation of survival models, or `r ref_pkg("treeshap")` for the analysis of tree-based models.
+
+### Explanatory model analysis {#sec-interpretability-architecture}
+
+The analysis of a model is usually an interactive process starting with a shallow analysis -- usually a single-number summary. Then in a series of subsequent steps, one can systematically deepen understanding of the model by exploring the importance of single variables or pairs of variables to an in-depth analysis of the relationship between selected variables to the model outcome. See @Bucker2022 for a broader discussion of what the model exploration process looks like.
+
+This explanatory model analysis (EMA) process can focus on a single observation, in which case we speak of local model analysis, or for a set of observations, in which case we speak of global data analysis. Below, we will present these two scenarios in separate subsections. See @fig-dalex-fig-plot-01 for an overview of key functions that will be discussed.
+
+```{r interpretation-012, echo=FALSE, fig.cap='Taxonomy of methods for model exploration presented in this chapter. Left part overview methods for global level exploration while the right part is related to local level model exploration.', out.width = '92%', fig.align='center'}
+#| label: fig-dalex-fig-plot-01
+knitr::include_graphics("Figures/DALEX_ema_process.png")
+```
+
+Predictive models in R have different internal structures. To be able to analyse them systematically, an intermediate object -- a wrapper -- is needed to provide a consistent interface for accessing the model. Working with explanations in the `r ref_pkg("DALEX")` package always starts with the creation of such a wrapper with the use of the `r ref("DALEX::explain()")` function. This function has several arguments that allow the model created by the various frameworks to be parameterised accordingly. For models created in the `r mlr3` package, it is more convenient to use the `r ref("DALEXtra::explain_mlr3()")`.
+
+```{r interpretation-019, message=FALSE, warning=FALSE}
+library("DALEX")
+library("DALEXtra")
+
+ranger_exp = DALEX::explain(learner,
+  data = penguins_x,
+  y = penguins_y,
+  label = "Ranger Penguins",
+  colorize = FALSE)
+```
+
+The `r ref("DALEX::explain()")` function performs a series of internal checks so the output is a bit verbose. Turn the `verbose = FALSE` argument to make it less wordy.
+
+### Global level exploration {#sec-interpretability-dataset-level}
+
+The global model analysis aims to understand how a model behaves on average on a set of observations, most commonly a test set. In the `r ref_pkg("DALEX")` package, functions for global analysis have names starting with the prefix `model_`.
+
+#### Model Performance
+
+As shown in @fig-dalex-fig-plot-01, it starts by evaluating the performance of a model. This can be done with a variety of tools, in the `r ref_pkg("DALEX")` package the default is to use the `r ref("DALEX::model_performance")` function. Since the `explain` function checks what type of task is being analysed, it can select the appropriate performance measures for it. In our illustration, we have a multi-label classification, so measures such as micro-aggregated F1, macro-aggregated F1 etc. are calculated in the following snippet. One of the calculated measures is cross entropy and it will be used later in the following sections.
+
+Each explanation can be drawn with the generic `plot()` function, for multi-label classification the distribution of residuals is drawn by default.
+
+```{r interpretation-020a, message=FALSE, warning=FALSE, fig.width=6, fig.height=5, out.width = '60%', fig.align='center'}
+perf_penguin = model_performance(ranger_exp)
+perf_penguin
+
+library("ggplot2")
+old_theme = set_theme_dalex("ema") 
+plot(perf_penguin)
+```
+
+The task of classifying the penguin species is rather easy, which is why there are so many values of 1 in the performance assessment of this model.
+
+#### Permutational Variable Importance
+
+A popular technique for assessing variable importance in a model-agnostic manner is the permutation variable importance. It is based on the difference (or ratio) in the selected loss function after the selected variable or set of variables has been permuted. Read more about this technique in [Variable-importance Measures](https://ema.drwhy.ai/featureImportance.html) chapter.
+
+The `r ref("DALEX::model_parts()")` function calculates the importance of variables and its results can be visualized with the generic `plot()` function.
+
+```{r interpretation-021, message=FALSE, warning=FALSE, fig.width=8, fig.height=4, out.width = '90%', fig.align='center'}
+ranger_effect = model_parts(ranger_exp)
+head(ranger_effect)
+
+plot(ranger_effect, show_boxplots = FALSE) 
+```
+
+The bars start in loss (here cross-entropy loss) for the selected data and end in a loss for the data after the permutation of the selected variable. The more important the variable, the more the model will lose after its permutation.
+
+#### Partial Dependence
+
+Once we know which variables are most important, we can use [Partial Dependence Plots](https://ema.drwhy.ai/partialDependenceProfiles.html) to show how the model, on average, changes with changes in selected variables.
+
+The `r ref("DALEX::model_profile()")` function calculates the partial dependence profiles. The `type` argument of this function also allows *Marginal profiles* and *Accumulated Local profiles* to be calculated. Again, the result of the explanation can be model_profile with the generic function `plot()`.
+
+```{r interpretation-024, message=FALSE, warning=FALSE, fig.width=8, fig.height=7, out.width = '90%', fig.align='center'}
+ranger_profiles = model_profile(ranger_exp)
+ranger_profiles
+
+plot(ranger_profiles) + 
+  theme(legend.position = "top") + 
+  ggtitle("Partial Dependence for Penguins","")
+```
+
+For the multi-label classification model, profiles are drawn for each class separately by indicating them with different colours. We already know which variable is the most important, so now we can read how the model result changes with the change of this variable. In our example, based on `bill_length` we can separate *Adelie* from *Chinstrap* and based on `flipper_length` we can separate *Adelie* from *Gentoo*.
+
+### Local level explanation {#sec-interpretability-instance-level}
+
+The local model analysis aims to understand how a model behaves for a single observation. In the `r ref_pkg("DALEX")` package, functions for local analysis have names starting with the prefix `predict_`.
+
+We will carry out the following examples using Steve the penguin of the Adelie species as an example.
+
+```{r interpretation-025a, message=FALSE, warning=FALSE}
+steve = penguins_x[1,]
+steve
+```
+
+#### Model Prediction
+
+As shown in Figure @fig-dalex-fig-plot-01, the local analysis starts with the calculation of a model prediction.
+
+For Steve, the species was correctly predicted as Adelie with high probability.
+
+```{r interpretation-025, message=FALSE, warning=FALSE}
+predict(ranger_exp, steve)
+```
+
+#### Break Down
+
+A popular technique for assessing the contributions of variables to model prediction is Break Down (see [Introduction to Break Down](https://ema.drwhy.ai/breakDown.html) chapter for more information about this method).
+
+The function `r ref("DALEX::predict_parts()")` function calculates the attributions of variables and its results can be visualized with the generic `plot()` function.
+
+```{r interpretation-027, message=FALSE, warning=FALSE, fig.width=8, fig.height=5.5, out.width = '90%', fig.align='center'}
+ranger_attributions = predict_parts(ranger_exp, new_observation = steve)
+plot(ranger_attributions) + ggtitle("Break Down for Steve") 
+```
+
+Looking at the plots above, we can read that the biggest contributors to the final prediction were for Steve the variables bill length and flipper.
+
+#### Shapley Values
+
+By far the most popular technique for local model exploration [@Holzinger2022] is Shapley values and the most popular algorithm for estimating these values is the SHAP algorithm. Find a detailed description of the method and algorithm in the chapter [SHapley Additive exPlanations (SHAP)](https://ema.drwhy.ai/shapley.html).
+
+The function `r ref("DALEX::predict_parts()")` calculates SHAP attributions, you just need to set `type = "shap"`. Its results can be visualized with a generic `plot()` function.
+
+```{r interpretation-028, message=FALSE, warning=FALSE, fig.width=8, fig.height=5.5, out.width = '90%', fig.align='center'}
+ranger_shap = predict_parts(ranger_exp, new_observation = steve, 
+  type = "shap")
+plot(ranger_shap, show_boxplots = FALSE) + 
+  ggtitle("Shapley values for Steve", "") 
+```
+
+The results for Break Down and SHAP methods are generally similar. Differences will emerge if there are many complex interactions in the model.
+
+#### Ceteris Paribus
+
+In the previous section, we have introduced a global explanation -- Partial Dependence plots. Ceteris Paribus plots are the local level version of that plot. Read more about this technique in the chapter [Ceteris Paribus](https://ema.drwhy.ai/ceterisParibus.html) and note that these profiles are also called Individual Conditional Expectations (ICE). They show the response of a model when only one variable is changed while others stay unchanged.
+
+The function `r ref("DALEX::predict_profile()")` calculates Ceteris paribus profiles which can be visualized with the generic `plot()` function.
+
+```{r interpretation-029, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, out.width = '90%', fig.align='center'}
+ranger_ceteris = predict_profile(ranger_exp, steve)
+#plot(ranger_ceteris) + ggtitle("Ceteris paribus for Steve", " ") 
+```
+
+Blue dot stands for the prediction for Steve. Only a big change in bill length could convince the model of Steve's different species.
+
+## Conclusion
+
+In this chapter, we learned how to gain post-hoc insights into a model trained with `r ref_pkg("mlr3")` by using the most popular approaches from the field of interpretable machine learning.
+The methods are all model-agnostic such that they do not depend on specific model classes.
+We utilized three different packages: `r ref_pkg("iml")`, `r ref_pkg("counterfactuals")` and `r ref_pkg("DALEX")`. `iml`and `DALEX` offer a wide range of (partly) overlapping methods, while the `counterfactuals` package focuses solely on counterfactual methods.
+We demonstrated on the `r ref("palmerpenguins::penguins")` data set how these packages offer an indepth analysis of a random forest model fitted with `r ref_pkg("mlr3")`. In the following, we show some limitations of the presented methods.
+
+If features are correlated, the insights from the interpretation methods should be treated with caution. Changing the feature values of an observation without taking the correlation with other features into account leads to unrealistic combinations of the feature values. 
+Since such feature combinations are also very unlikely part of the training data, the model will likely extrapolate in these areas [@Molnar2022pitfalls;@Hooker2019PleaseSP].
+This distorts the interpretation of methods that are based on changing single feature values such as PFI, PD plots and Shapley values.
+Alternative methods can help in these cases: conditional feature importance instead of PFI [@Strobl2008;@Watson2021], accumulated local effect plots instead of PD plots [@Apley2020], and the KernelSHAP method instead of Shapley values [@Lundberg2019].
+
+The explanations derived from an interpretation method can also be ambiguous. 
+A method can deliver multiple equally plausible but potentially contradicting explanations. 
+This phenomenon is also called the Rashomon effect [@Breiman2001].
+Differing hyperparameters can be one reason, for example, local surrogate models react very sensitively to changes in the underlying weighting scheme of observations. 
+Even with fixed hyperparameters, the underlying data set or the initial seed can lead to disparate explanations [@Molnar2022pitfalls].
+
+The `r ref("palmerpenguins::penguins")` is only a low-dimensional dataset with a limited number of observations. 
+Applying interpretation methods off-the-shelf to higher dimensional datasets is often not feasible due to the enormous computational costs.
+That is why in previous years more efficient methods were proposed, e.g., Shapley value computations based on kernel-based estimators (SHAP). 
+Another challenge is that the high-dimensional IML output generated for high-dimensional datasets can overwhelm users. If the features can be meaningfully grouped, grouped versions of the methods, e.g. the grouped feature importance proposed by @Au2022, can be applied.
+
+
+## Exercises
+
+Model explanation allows us to confront our expert knowledge related to the problem with relations learned by the model. Following tasks are based on predictions of the value of football players based on data from the FIFA game. It is a graceful example, as most people have some intuition about how a footballer's age or skill can affect their value. The latest FIFA statistics can be downloaded from [kaggle.com](https://www.kaggle.com/), but also one can use the 2020 data avaliable in the `DALEX` packages(see `DALEX::fifa` data set). The following exercises can be performed in both the `iml` and `DALEX` packages and we have provided solutions for both.
+
+1.  Prepare a `mlr3` regression task for `fifa` data. Select only variables describing the age and skills of footballers. Train any predictive model for this task, e.g. `regr.ranger`.
+
+2.  Use the permutation importance method to calculate variable importance ranking. Which variable is the most important? Is it surprising?
+
+3.  Use the Partial Dependence profile to draw the global behavior of the model for this variable. Is it aligned with your expectations?
+
+4 Choose one of the football players. You can choose some well-known striker (e.g. Robert Lewandowski) or a well-known goalkeeper (e.g. Manuel Neuer). The following tasks are worth repeating for several different choices.
+
+5.  For the selected footballer, calculate and plot the Shapley values. Which variable is locally the most important and has the strongest influence on the valuation of the footballer?
+
+6.  For the selected footballer, calculate the Ceteris Paribus / Individual Conditional Expectatons profiles to draw the local behaviour of the model for this variable. Is it different from the global behaviour?
