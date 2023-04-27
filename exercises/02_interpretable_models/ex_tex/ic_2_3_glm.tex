@@ -1,0 +1,78 @@
+\aufgabe{}{
+%You are given data about a Hepatitis A infection ($y=1$: infection, $y=0$: no infection) after eating salsa in a restaurant ($x=1$: salsa eaten, $x=0$: salsa not eaten).
+%
+%\begin{table}[ht]
+%	\centering
+%	\begin{tabular}{lcc|c}
+%	\hline
+%	& Hepatitis A & no Hepatitis A & $\Sigma$\\
+%	\hline
+%	Salsa eaten & $218$ & $45 $ & $263$ \\
+%	Salsa not eaten & $21 $ & $85 $ & $106$\\
+%	\hline
+%	$\Sigma$ & $239$ & $130$ & $369$\\
+%	\hline
+%	\end{tabular}
+%\end{table}
+%
+You are given the bike rental data with the features \texttt{season}, \texttt{temp}, \texttt{hum}, \texttt{windspeed}, and \texttt{days\_since\_2011}. A binary target variable $y$ is created: 
+\begin{itemize}
+	\item Class $y$=1: ``high number of bike rentals'' $>70\%$ quantile (i.e., \texttt{cnt} $> 5531$)
+	\item Class $y$=0: ``low to medium number of bike rentals'' (i.e., \texttt{cnt} $\leq$ 5531)
+\end{itemize}
+The following table shows the absolute joint and marginal probabilities of $y$ and \texttt{season}.
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{rrrrrr}
+		\hline
+		& WINTER & SPRING & SUMMER & FALL & $\Sigma$ \\ 
+		\hline
+		$y$=0 & 174.00 & 111.00 & 98.00 & 128.00 & 511.00 \\ 
+		$y$=1 & 7.00 & 73.00 & 90.00 & 50.00 & 220.00 \\ 
+		$\Sigma$ & 181.00 & 184.00 & 188.00 & 178.00 & 731.00 \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{enumerate}[a)]
+	\item Calculate and interpret the odds of ``high number of bike rentals'' vs. ``low to medium number of bike rentals'' in winter ($\text{odds}_{\text{winter}}$).
+	\item Calculate and interpret the odds ratio of high vs. low number of bike rentals when \texttt{season} changes from winter to spring.
+	\item Consider the output of a GLM on $y \sim \texttt{season}$:
+	
+	\begin{table}[ht]
+		\centering
+		\begin{tabular}{rrrr}
+			\hline
+			& Estimate & Std. Error & Pr($>$$|$z$|$) \\ 
+			\hline
+			(Intercept) & -3.2131 & 0.3854 & 0.0000 \\ 
+			seasonSPRING & 2.7941 & 0.4138 & 0.0000 \\ 
+			seasonSUMMER & 3.1280 & 0.4121 & 0.0000 \\ 
+			seasonFALL & 2.2731 & 0.4199 & 0.0000 \\ 
+			\hline
+		\end{tabular}
+	\end{table}
+
+	Interpret the $\beta$-estimate for the intercept and seasonSPRING. 
+	
+	\item Now compare the two coefficients with the ones in the full model: 
+		\begin{table}[ht]
+			\centering
+			\begin{tabular}{rrrr}
+				\hline
+				& Estimate & Std. Error & Pr($>$$|$z$|$) \\ 
+				\hline
+				(Intercept) & -8.5176 & 1.2066 & 0.0000 \\ 
+				seasonSPRING & 1.7427 & 0.5977 & 0.0035 \\ 
+				seasonSUMMER & -0.8566 & 0.7660 & 0.2635 \\ 
+				seasonFALL & -0.6417 & 0.5543 & 0.2470 \\ 
+				temp & 0.2902 & 0.0391 & 0.0000 \\ 
+				hum & -0.0627 & 0.0124 & 0.0000 \\ 
+				windspeed & -0.0925 & 0.0305 & 0.0024 \\ 
+				days\_since\_2011 & 0.0166 & 0.0014 & 0.0000 \\ 
+				\hline
+			\end{tabular}
+		\end{table}
+\end{enumerate}
+
+}
