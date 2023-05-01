@@ -85,7 +85,7 @@ task
 
 We want to fit a random forest model using `r ref_pkg("mlr3")`.
 For the reasons outlined in @sec-dataset, we use 2/3 of the data to train the model and the remaining 1/3 to analyze the trained model using different interpretation methods. 
-We fit a `"classif.ranger"` learner, i.e. a classification random forest, to predict the probabilities for the penguin species (by setting `predict_type = "prob"`): 
+We fit a `"classif.ranger"` learner, i.e. a classification random forest, to predict the probability of being creditworthy (by setting `predict_type = "prob"`): 
 
 ```{r, interpretation--005-model, message=FALSE,warning=FALSE}
 library("mlr3learners")
@@ -177,7 +177,7 @@ The method requires a labeled dataset (for which both the feature and true targe
 
 
 
-First, we analyze which features are the most important features to classify penguins with the random forest model according to the permutation feature importance method described in @sec-feat-importance. 
+First, we analyze which features are the most important features to classify creditworthiness with the random forest model according to the permutation feature importance method described in @sec-feat-importance. 
 The importance of a feature is measured as the factor by which the model's prediction error increases when the feature values are shuffled. 
 We initialize a `r ref("iml::FeatureImp")` object with the model and the classification error (`"ce"`) as a loss function and visualize the results with the `$plot()` method.
 
@@ -229,7 +229,7 @@ Feature effects are very similar to regression coefficients $\beta$ in linear mo
 However, they cannot only convey linear effects but also more complex ones (similar to splines in generalized additive models) and can be applied to any type of predictive model.
 :::
 
-Now, we inspect how the feature `bill_length` influences the predictions of the penguin classification. 
+Now, we inspect how the feature `amount` influences the predictions of the creditworthiness classification. 
 For this purpose, we compute feature effects using PD plots and ICE curves.
 We generally recommend to accompany PD plots by ICE curves because showing the PD plot alone might obfuscate heterogeneous effects and interactions. 
 ICE curves that do not have a similar shape, i.e., are not parallel for a feature, suggest that the feature interacts with other features. 
@@ -242,11 +242,9 @@ effect = FeatureEffect$new(predictor,
 effect$plot()
 ```
 
-As we have multiclass-classification task at hand, we see PD and ICE plots for the predicted probabilities of each predicted class separately.
-The plot shows that if `bill_length` is smaller than roughly 45 mm, there is on average a high chance that the penguin belongs to the species `Adelie`.
-<!-- We also see that the effect of the bill length on the probability of being Adelie or Gentoo is homogeneous because most of the ICE curves are parallel. -->
-<!-- For Chinstrap, the bill length has a very small effect on the prediction for some penguins and a very large effect for other penguins. This indicates that bill length interacts with other features.  -->
-<!-- Unfortunately, the plot does not tell us with which features exactly it interacts.  -->
+As we have binary classification task at hand, we see PD and ICE plots for the predicted probabilities of both predicted classes separately.
+The plot shows that if `amount` is smaller than roughly 10,000 DM (standing for Deutsche Mark the currency in Germany before the Euro was introduced as cash in 2002), there is on average a high chance that the creditworthiness is `good`.
+<!-- We also see that the effect of the amount on the probability of being creditworthy is homogeneous because most of the ICE curves are parallel. -->
 
 <!-- We can also compute and visualize the feature effects of all numeric features at once with `r ref("iml::FeatureEffects")`.  -->
 
@@ -292,7 +290,7 @@ treesurrogate$plot()
 As we have used `maxdepth = 2`, the surrogate tree performs two binary splits yielding 4 leaf nodes.
 <!-- By default, the plot method of `r ref("iml::TreeSurrogate")` extracts the decision rules found by the tree surrogate (that lead to the leaf nodes) and visualizes the distribution of the predicted outcomes for each leaf node. -->
 `r ref("iml::TreeSurrogate")` extracts the decision rules found by the tree surrogate (that lead to the leaf nodes), and the `$plot()` method visualizes the distribution of the predicted outcomes for each leaf node.
-For example, we can see that the first leaf node that results from the split `flipper_length <= 203 & bill_length <= 43.1` and mainly consists of penguins of the species Adelie.
+For example, we can see that the first leaf node that results from the split `(status = 0 <= ... < 200 DM | status = ... >= 200 DM / salary for at least 1 year) & duration <= 36` and only consists of persons with good creditworthiness.
 
 We can access the trained tree surrogate via the `$tree` field of the fitted `r ref("iml::TreeSurrogate")` object and can apply the `plot()` function to visualize the underlying structure of the tree surrogate:
 
@@ -349,7 +347,7 @@ predictor$predict(steve)
 ```
 
 The model predicts the class `r names(which.max(predictor$predict(steve)))` with `r round(max(predictor$predict(steve))*100, 1)`%  probability.
-As a next step, we use `r ref("iml::LocalModel")`, which fits a locally weighted linear regression model that provides an explanation why Steve was classified as Adelie by inspecting the estimated coefficients.
+As a next step, we use `r ref("iml::LocalModel")`, which fits a locally weighted linear regression model that provides an explanation why Steve was classified as having bad creditworthiness by inspecting the estimated coefficients.
 The underlying surrogate model is L1-penalized such that only a pre-defined number of features per class, say `k` will have a non-zero coefficient.
 The default is `k = 3L`.
 
@@ -360,8 +358,8 @@ plot(localsurrogate)
 localsurrogate$results
 ```
 
-From the table we see that the three *locally* most influential features are the flipper length, bill length, and the bill depth.
-A closer look at the coefficients of the Adelie class reveals that bill length and flipper length have a negative effect, while the effect of bill depth is positive.
+From the table we see that the three *locally* most influential features are the status, duration, and the credit history.
+A closer look at the coefficients reveals that all three features have a negative effect.
 
 <!-- Compared to the global surrogate model, the local surrogate does not have to be accurate w.r.t. the prediction of the black-box model on the whole data set but only w.r.t. to the prediction of the black-box model on the local neighborhood of the point of interest. -->
 
@@ -397,7 +395,7 @@ shapley = Shapley$new(predictor, x.interest = steve)
 plot(shapley)
 ```
 
-If we focus on the plot for Adelie, the Shapley values ($\phi$) of the features show us how to fairly distribute the difference of Steve's probability to be Adelie to the data set average probability to be Adelie among the given features. Steve's bill length of 39.1 mm has the most positive effect on the probability of being an Adelie, with an increase in the predicted probability of more than 20 %.
+If we focus on the plot, the Shapley values ($\phi$) of the features show us how to fairly distribute the difference of Steve's probability to be creditworthy to the data set average probability to be creditworthy among the given features. Steve's duration of 9 month has the most positive effect on the probability of being creditworthy, with an increase in the predicted probability of about 5 %. The most negative effect on the probability of being creditworthy has the credit history, with a decrease in the predicted probability of more than 15 %.
 
 <!-- ### Independent Test Data {#subsec-iml-testdata} -->
 
@@ -494,14 +492,14 @@ Many methods were proposed in previous years to generate counterfactual explanat
 
 <!-- In the following, we focus on the simplest method among the three implemented ones: the What-If approach [@Wexler2019]. For a data point, whose prediction should be explained, the returned counterfactual is equal to the closest data point of a given data set (here, the test data) with the desired prediction. To illustrate the overall workflow of the package, we generate counterfactuals for Steve, the first penguin in the data set. -->
 
-To illustrate the overall workflow of the package, we generate counterfactuals for Steve (the first penguin in the data set) using the What-If approach [@Wexler2019].
+To illustrate the overall workflow of the package, we generate counterfactuals for Steve (the first person in the data set) using the What-If approach [@Wexler2019].
 The `r ref_pkg("counterfactuals")` package relies on `r ref("iml::Predictor()")` as a model wrapper and can, therefore, explain any prediction model fitted with the `r ref_pkg("mlr3")` package, including the random forest model we trained above.
 
 ```{r interpretation-predictsteve, message=FALSE, warning=FALSE}
 predictor$predict(steve)
 ```
 
-We saw above that the random forest classifies Steve with `r round(max(predictor$predict(steve))*100, 1)`% as an `r predictor$class`. The What-If method can be used to answer, e.g., how the features need to be changed such that Steve is classified as `r predictor$class` with a probability of more or equal to 60%. Since we have a classification model we initialize a `r ref("counterfactuals::WhatIfClassif()")` object. By calling `$find_counterfactuals()`, we generate a counterfactual for Steve.
+We saw above that the random forest classifies Steve with `r round(max(predictor$predict(steve))*100, 1)`% as being `r predictor$class` creditworthy. The What-If method can be used to answer, e.g., how the features need to be changed such that Steve is classified as `r predictor$class` with a probability of more or equal to 60%. Since we have a classification model we initialize a `r ref("counterfactuals::WhatIfClassif()")` object. By calling `$find_counterfactuals()`, we generate a counterfactual for Steve.
 
 ```{r interpretation-whatif, message=FALSE, warning=FALSE}
 library("counterfactuals")
@@ -516,7 +514,7 @@ cfe = whatif$find_counterfactuals(steve,
 cfe$evaluate(show_diff = TRUE)
 ```
 
-To receive a probability of more than 60 % for Gentoo, the bill length, flipper length, and body mass are enlarged while the bill depth is shortened. Furthermore, Steve must come from Biscoe island instead of Torgersen. For year born and sex no changes are required. Additional columns reveal the quality of the counterfactuals, for example, the number of required features changes (`no_changed`) or the distance to the closest training data point (`dist_train`) which is 0 because the counterfactual *is* a training point.
+To receive a probability of more than 60 % for being creditworthy, the age is reduced by 8 years and the amount is reduced by 3603 DM while the duration is enlarged by 3 months. Furthermore, Steve's credit history must become such that he paid all his credits at this bank back duly instead of having a critical account/other credits elsewhere and his status must be no checking account. For the employment duration, other debtors, property, purpose and the savings no changes are required. Additional columns reveal the quality of the counterfactuals, for example, the number of required features changes (`no_changed`) or the distance to the closest training data point (`dist_train`) which is 0 because the counterfactual *is* a training point.
 
 ### MOC method 
 
@@ -558,7 +556,7 @@ It visualizes the frequency of feature changes across all returned counterfactua
 cfe_multi$plot_freq_of_feature_changes()
 ```
 
-We see that bill and flipper length are most often changed followed by the island.
+We see that the credit history and status are the only changed features.
 The`$parallel_plot()` method shows *how* the features have been changed:
 The blue line corresponds to the original feature values of Steve, while the gray line displays the counterfactuals.
 
@@ -566,7 +564,7 @@ The blue line corresponds to the original feature values of Steve, while the gra
 feat_freq = cfe_multi$get_freq_of_feature_changes(subset_zero = TRUE)
 cfe_multi$plot_parallel(feature_names = names(feat_freq))
 ```
-We see that bill length, flipper length and body mass are equal or larger compared to Steve's values and bill depth is equal or smaller than Steve's values. 
+We see that the credit histories are better or equal to Steve's value of having a critical account/other credits elsewhere (changes to all credits at this bank paid back duly, existing credits paid back duly till now, no credits taken/all credits paid back duly) and that the status is one time lowered to no checking account, three times stayed on ... < 0 DM and one time increased to ... >= 200 DM / salary for at least 1 year. 
 To assess whether the proposed features changes are minimal, we can visualize counterfactuals with only two changed features (see column `no_changed` for the number of changed features) on a 2-dim ICE plot, also called surface plot.
 
 ```{r interpretation-moc2features,message=FALSE, warning=FALSE, fig.height=3.5, out.width = '80%', fig.align='center'}
@@ -574,13 +572,12 @@ cfe_multi$evaluate("no_changed", show_diff = TRUE)
 ```
 
 Our generated set of counterfactuals contains only one observation with two feature changes. 
-For this counterfactual, bill depth and flipper length differ from the values of Steve. 
+For this counterfactual, credit history and status differ from the values of Steve. 
 The feature names of these two features serve as an input to the `$plot_surface()` method to generate the 2-dim ICE plot.
 
 ```{r interpretation-mocsurface,message=FALSE, warning=FALSE, fig.height=3.5, out.width = '80%', fig.align='center'}
 cfe_multi$plot_surface(feature_names = names(feat_freq[1:2]))
 ```
-The colors and contour lines indicate the predicted value of the model when bill depth and flipper length differ while all other features are set to the values of Steve. 
+The colors and contour lines indicate the predicted value of the model when credit history and status differ while all other features are set to the values of Steve. 
 The white point displays Steve, the black point is the counterfactual that only proposed changes in the two features. The rugs show the marginal distributions of the features in the observed dataset.
-We can see that the counterfactual is in a cluster surrounded by other points with predictions larger or equal to 0.6. There is potential to slightly decrease flipper length the and increase the bill depth  without losing the desired prediction, such that the counterfactual values are sightly closer to the values of Steve. 
-
+We can see that the counterfactual is in a cluster surrounded by other points with predictions larger or equal to 0.6.
