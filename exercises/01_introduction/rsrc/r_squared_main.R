@@ -18,9 +18,9 @@ negcol = "#F8766D"
     mean.temp_F = mean(bike$temp_F)
     
     ind = c(601,169)
-    SSE <- c("SSE[LM]", "SSE[c]", "SSE[LM-c]")
+    SSE <- c("SSE[LM]", "SSE[LM-c]", "SSE[c]")
     
-    xlab = ylab = c("x[2]^{(i)} - hat(f)[LM]", "x[2]^{(j)} - bar(x)[2]")
+    xlab = ylab = c("c == bar(y)", "hat(f)[LM] == hat(y)")
     
     l = lm(cnt~temp, data = bike)
     ym = l$fitted.values[ind]
@@ -28,3 +28,4 @@ negcol = "#F8766D"
     ym = c(ym, ym[2])
     
     l1 = lm(cnt~temp_F, data = bike)
+    
