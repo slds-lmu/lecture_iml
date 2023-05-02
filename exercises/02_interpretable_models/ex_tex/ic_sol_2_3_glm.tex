@@ -1,0 +1,81 @@
+\loesung{
+%
+%\begin{table}[ht]
+%	\centering
+%	\begin{tabular}{lcc|c}
+%		\hline
+%		 & Hepatitis A & no Hepatitis A & $\Sigma$\\
+%		\hline
+%		Salsa eaten & $218 (a)$ & $45 (b)$ & $263$ \\
+%		Salsa not eaten & $21 (c)$ & $85 (d)$ & $106$\\
+%		\hline
+%		$\Sigma$ & $239$ & $130$ & $369$\\
+%		\hline
+%	\end{tabular}
+%\end{table}
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{rrrrrr}
+		\hline
+		& WINTER & SPRING & SUMMER & FALL & $\Sigma$ \\ 
+		\hline
+		$y$=0 & 174.00 & 111.00 & 98.00 & 128.00 & 511.00 \\ 
+		$y$=1 & 7.00 & 73.00 & 90.00 & 50.00 & 220.00 \\ 
+		$\Sigma$ & 181.00 & 184.00 & 188.00 & 178.00 & 731.00 \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{enumerate}[a)]
+	\item Odds for ``high number of bike rentals'' vs. ``low to medium number of bike rentals'' in winter: $$\text{odds} = \frac{P(y=1\, | \,\texttt{season}=\text{WINTER})}{P(y=0\, | \,\texttt{season}=\text{WINTER})} = \frac{7}{174} = 0.04 $$
+	\textbf{Interpretation:} In winter the occurrence of \texttt{cnt} $> 5531$ ($y$=1) is $0.04$ times as likely as \texttt{cnt} $\leq 5531$ ($y$=0).
+	\item Odds Ratio: 
+	\begin{align*}
+		\text{odds ratio} 
+		&= \frac{P(y=1\, | \,\texttt{season}=\text{SPRING})\,/\,P(y=0\, | \,\texttt{season}=\text{SPRING})}{P(y=1\, | \,\texttt{season}=\text{WINTER})\,/\,P(y=0\, | \,\texttt{season}=\text{WINTER})} \\
+		&= \frac{73/111}{7/174} = 16.35
+	\end{align*}
+	\textbf{Interpretation:} there is a $16.35$ times higher chance of having "high bike rentals" in season SPRING compared to the reference category (WINTER).
+	\item Table:
+	
+	\begin{table}[ht]
+		\centering
+		\begin{tabular}{rrrr}
+			\hline
+			& Estimate & Std. Error & Pr($>$$|$z$|$) \\ 
+			\hline
+			(Intercept) & -3.2131 & 0.3854 & 0.0000 \\ 
+			seasonSPRING & 2.7941 & 0.4138 & 0.0000 \\ 
+			seasonSUMMER & 3.1280 & 0.4121 & 0.0000 \\ 
+			seasonFALL & 2.2731 & 0.4199 & 0.0000 \\ 
+			\hline
+		\end{tabular}
+	\end{table}
+
+	The intercept gives the odds for ``high number of bike rentals'' vs. ``low to medium number of bike rentals'' in winter: exp$(-3.2131) = 0.04$. Interpretation as in a).
+	
+	Regarding the estimate of seasonSPRING: $\text{odds ratio (when season changes from winter to spring)} = \text{exp}(2.7941) =  16.35$. Interpretation as in b).
+	\item Table:
+	
+	\begin{table}[ht]
+		\centering
+		\begin{tabular}{rrrr}
+			\hline
+			& Estimate & Std. Error & Pr($>$$|$z$|$) \\ 
+			\hline
+			(Intercept) & -8.5176 & 1.2066 & 0.0000 \\ 
+			seasonSPRING & 1.7427 & 0.5977 & 0.0035 \\ 
+			seasonSUMMER & -0.8566 & 0.7660 & 0.2635 \\ 
+			seasonFALL & -0.6417 & 0.5543 & 0.2470 \\ 
+			temp & 0.2902 & 0.0391 & 0.0000 \\ 
+			hum & -0.0627 & 0.0124 & 0.0000 \\ 
+			windspeed & -0.0925 & 0.0305 & 0.0024 \\ 
+			days\_since\_2011 & 0.0166 & 0.0014 & 0.0000 \\ 
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	If all features are considered in the model, the $\beta$-value for the intercept is higher in absolute terms, but the odds changes to exp($-8.5176) = 0.0002$, i.e. the probability of ``high number of bike rentals'' is even less in winter when considering the full model compared to the one only containing feature \texttt{season}. Also the higher chance of having "high bike rentals" in season SPRING compared to WINTER declined to exp($1.7427)=5.71$ (vs. $16.35$ in the smaller model).
+\end{enumerate}
+}
