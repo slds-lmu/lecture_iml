@@ -3,32 +3,42 @@
 
 Which of the following statement(s) is/are correct?  
 	\begin{enumerate}
-        \item Interpretable models are always easy to interpret.
-        \begin{itemize}
-        	\item[$\Rightarrow$] \textbf{Wrong}, e.g. linear models with many features and interactions or decision trees with deep trees are not easy to interpret.
-        \end{itemize}
-    	\item Mostly the interpretability of a function decreases with the rise of performance.
+        \item In which scenarios are inherently interpretable models usually much harder to interpret?
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Correct.}
+    		\item[$\Rightarrow$] E.g. linear models with many features and interactions or decision trees with deep trees are not easy to interpret.
     	\end{itemize}
-    	\item Most important is to always choose the model with the best performance.
+    	\item Why does usually interpretability become worse or more difficult if the generalization performance of the model improves?
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Wrong}, as one should always keep the interpretability of a model in mind.
+    		\item[$\Rightarrow$] Methods become more complex.
     	\end{itemize}
-    	\item In the linear model, the effect and importance of a feature can be inferred from the estimated $\beta$-coefficients.
+    	\item Should we always prefer interpretable models? Explain and describe for which use cases interpretable models would be inconvenient?
+    	\begin{itemize}
+    		\item[$\Rightarrow$] If the performance of more complex models is much better than the one of an interpretable model.
+    	\end{itemize}
+    	\item In the linear model, the effect and importance of a feature can be inferred from the estimated $\beta$-coefficients. Is this statement true or false. Explain!
     	\begin{itemize}
     		\item[$\Rightarrow$] \textbf{Wrong}, for the importance of a feature in a linear model one has to calculate other statistical quantities such as the t-statistic or the p-value.
     	\end{itemize}
-    	\item Regularization using LASSO can make a linear model easier to interpret.
+    	\item What is so special about LASSO compared to a LM with regards to interpretability? Would you always prefer LASSO over a LM?
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Correct.}
+    		\item[$\Rightarrow$] Penalty leads to feature selection, is probably often preferable but maybe not always (optimization more difficult, has hyperparameters to tune, inference more difficult $\rightarrow$ keyword: post-selection inference!)
     	\end{itemize}
-    	\item Feature effects in GLM are determined by the changes in odds ratios.
+    	\item Do the beta-coefficients of GLM always provide simple explanations with respect to the target outcome to be predicted? 
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Correct.}
+    		\item[$\Rightarrow$] No, only for GLM with Gaussian link, for logistic regression e.g. interpretations are w.r.t. log-odds which is not understandable for everyone
     	\end{itemize}
-    	\item In model-based boosting, feature importance can always be deduced from the estimated model.
+    	\item Explain the feature importance provided by model-based boosting. What is the difference to the (Gini) feature importance from decision trees?
+    	\item How can we use inherently interpretable models to provide insights whether two features are dependent?
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Wrong}, during model estimation the aggregate change in risk in each iteration for the respective feature is taken to determine the feature importance.
+    		\item[$\Rightarrow$] Model $x_1$ on $x_2$ (linear or non-linear) and look at the goodness of fit measures like $R^2$
+    	\end{itemize}
+    	\item What are the disadvantages of CART? What methods address them and how?
+    	\begin{itemize}
+    		\item[$\Rightarrow$] Two problems: 
+    		\begin{enumerate}[1.]
+    			\item Selection bias towards high-cardinal/continuous features 
+    			\item Does not consider significant improvements when splitting ($\leadsto$ overfitting)
+    		\end{enumerate}
+    		Solution provided by unbiased recursive partitioning via conditional inference trees (\texttt{ctree}) or model-based recursive partitioning (\texttt{mob}): Separate selection of feature used for splitting and split point AND hypothesis test as stopping criteria 
     	\end{itemize}
 	\end{enumerate}
