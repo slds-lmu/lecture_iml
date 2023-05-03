@@ -27,7 +27,7 @@
 
 \begin{frame}{Generalized Additive Model (GAM) \citebutton{Hastie and Tibshirani (1986)}{https://www.jstor.org/stable/2245459}}
 
-\textbf{Problem}: LM not suitable if relationship between features and target variable is not linear % $\leadsto$ standard 
+\textbf{Problem}: LM not great if features act on outcome non-linearly % $\leadsto$ standard 
 
 \begin{columns}[totalwidth=\textwidth]
     \begin{column}{0.55\textwidth}
@@ -99,7 +99,7 @@ s(temp) & 5.8 & 0.00 \\
 \textbf{Interpretation}
 \begin{itemize}
     %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
-    \item Interpretation needs to be done visually and relative to average prediction
+    \item Interpretation needs to be done visually and relative to average prediction, also see PDPs
     \item Edf (effective degrees of freedom) represents complexity of smoothness
 \end{itemize}
 \end{column}
@@ -118,38 +118,32 @@ s(temp) & 5.8 & 0.00 \\
 
 \begin{itemize}%[<+->]
 %\setlength\itemsep{2em}
-\item<1-> Recall: Boosting iteratively combines weak base learners (BL) %to create a powerful ensemble model
-\item<1->
-Idea: Use simple linear BL to ensure interpretability (in general also spline BL possible)\\
+\item Boosting iteratively combines weak base learners to create powerful ensemble 
+\item
+Idea: Use simple BLs (e.g univariate, with splines) to ensure interpretability
 %$\leadsto$ e.g., linear BL with single features in each iteration
 %Boosting with gradient descent using interpretable base learners (e.g., use base learners with single features in each iteration $\leadsto$ coordinate gradient descent)
 %The resulting ensemble is also interpretable.
 %\pause
-\item<2->
-Possible to combine linear BL of same type (with distinct parameters $\thetab$ and $\ts$):
+\item
+Possible to combine BL of same type (with distinct parameters $\thetab$ and $\ts$):
 %Two linear base learners $b_j(x, \theta)$ and $b_j(x, \theta^{\star})$ of the same type, but distinct parameter vectors $\theta$ and $\theta^{\star}$ can be combined in a base learner of the same type:
 $$\bljt + \bljts = \bl[j](\xv, \thetab + \ts) $$
-%\pause
-\item<3-> %In each iteration, a set of BLs is fitted on pseudo residuals. The one with the best fit is added to the previously computed model (using step-size $\nu$), e.g.,
-In each iteration, fit a set of BLs and add the best BL to previous model (using step-size $\nu$):
+\pause
+\item %In each iteration, a set of BLs is fitted on pseudo residuals. The one with the best fit is added to the previously computed model (using step-size $\nu$), e.g.,
+In each iteration, fit a set of BLs, add best one to model (with step-size $\nu$):
 %\medskip
 \begin{align*}
 \fmh[1] &= \hat{f}_0 + \nu \textcolor{blue}{\bl[3](\xv_3, \thetam[1])} \\
-\visible<4->{\fmh[2] &= \fmh[1] + \nu \textcolor{blue}{\bl[3](\xv_3, \thetam[2])} 
+\fmh[2] &= \fmh[1] + \nu \textcolor{blue}{\bl[3](\xv_3, \thetam[2])} \\
 %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})}
-\\
-\visible<5->{
-\fmh[3] &= \fmh[2] + \nu \textcolor{orange}{\bl[1](\xv_1, \thetam[3])} 
+\fmh[3] &= \fmh[2] + \nu \textcolor{orange}{\bl[1](\xv_1, \thetam[3])} \\
 %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
-\\
 &= \hat{f}_0 + \nu \left(\textcolor{blue}{\bl[3](\xv_3, \thetam[1] + \thetam[2])} + \textcolor{orange}{\bl[1](\xv_1, \thetam[3])}\right) 
 \\
 &= \hat{f}_0 + \textcolor{blue}{\hat{f}_3(\xv_3)} + \textcolor{orange}{\hat{f}_1(\xv_1)}
-}
-}
 \end{align*}
-\item<6-> Final model is additive (as GAMs), where each component function is interpretable
-
+\item Final model is additive GAM, we can read off effect curves
 \end{itemize}
 \end{frame}
 
@@ -163,8 +157,8 @@ $$
 
 \begin{itemize}
 \item<1-> Here: Interpretation of weights as in LM
-\item<1-> After many iterations, it converges to same solution as least square estimate of LMs
-\item<2-> Early stopping allows feature selection and might prevent overfitting (regularization)
+\item<1-> After many iterations, it converges to same solution as LM %least square estimate of
+\item<2-> Early stopping allows feature selection \& may prevent overfitting (regularization)
 %\item Specifying loss and link function according to exponential family leads a (regularized) GLM
 \end{itemize}
 \begin{columns}[T, totalwidth=\linewidth]
@@ -265,9 +259,9 @@ $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 \begin{frame}{Linear Example: Interpretation}
 
 \medskip
-\textbf{Feature importance:} aggregated change in risk in each iteration per feature. 
+\textbf{Feature importance:} aggregated change in risk in each iteration per feature
 \begin{itemize}
-    \item E.g. iteration 1: \code{days\_since\_2011} causes a risk reduction (MSE) of 140,782.94
+    \item E.g. iteration 1: \code{days\_since\_2011} with risk reduction (MSE) of 140,782.94
     \item For every iteration the change in risk can be attributed to a feature
 \end{itemize}
 \medskip
@@ -277,7 +271,7 @@ $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 \hspace{46pt}{\scriptsize{1000 iterations}}
 \includegraphics[width = \linewidth]{figure/compboost_pfi_base2.pdf}\\
 \centering \scriptsize
-Overall risk: 434,686.0 \\
+In-bag-risk: 434,686.0 \\
 OOB risk (10-fold CV): 446,450.0
 \end{column}
 
@@ -286,7 +280,7 @@ OOB risk (10-fold CV): 446,450.0
 \hspace{46pt}{\scriptsize{20 iterations}}
 \includegraphics[width = \linewidth]{figure/compboost_pfi_base1.pdf}\\
 \centering \scriptsize
-Overall risk: 693,505.0\\
+In-bag-risk: 693,505.0\\
 OOB risk (10-fold CV): 705,776.0
 \end{column}
 \end{columns}
@@ -333,10 +327,11 @@ Difference in OOB risk: 259,326.0\\
 \end{columns}
 \smallskip
 \scriptsize
-\only<2->{\qquad $\Rightarrow$ In-bag-Risk: 250,202.0 \, ; \, OOB risk (10-fold CV): 267,497.0 (Difference: 178,953.0)}
+\only<2->{\qquad $\Rightarrow$ In-bag-risk: 250,202.0 \, ; \, OOB risk (10-fold CV): 267,497.0 (difference to lin. example: 178,953.0)\\
+\qquad $\Rightarrow$ In-bag-risk: 434,686.0 \, ; \, OOB risk (10-fold CV): 446,450.0 (previous lin. example with 1000 iter.)}
 \begin{itemize}
     \normalsize
-    \item<2->  Feature importance (risk reduction over iter.) $\leadsto$ \code{days\_since\_2011} most important
+    \item<2->  Feature importance (risk reduction over iter.) \\ $\leadsto$ \code{days\_since\_2011} most important
     \item<2-> Total effect for \code{days\_since\_2011}\\
 $\leadsto$ Combination of partial effects of linear BL and centered spline BL
 \end{itemize}

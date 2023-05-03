@@ -433,35 +433,40 @@ days\_since\_2011 & 79.53 \\
 Differences to CART:
 \begin{itemize}
     \item Two-step approach (1. find most significant split feature, 2. find best split point)
+    \item Parametric model (e.g. LM instead of constant) can be fitted in leave nodes % OLS regression, GLMs, and survival regression    
     \item Significance of split (p-value) given in each node
-    \item Parametric model can be fitted in leave nodes % OLS regression, GLMs, and survival regression
-    \item \texttt{ctree} and \texttt{mob} differ in hypothesis test used for selecting the split feature% and split point
+    \item \texttt{ctree} and \texttt{mob} differ in hypothesis test used for selecting the split feature (independence test vs. fluctuation test) and how to find the best split point
 \end{itemize}
 
 \medskip
 
-% \begin{columns}[T, totalwidth = \textwidth]
-%     \begin{column}{0.775\textwidth}
+\begin{columns}[c, totalwidth = \textwidth]
+     \begin{column}{0.83\textwidth}
 \only<2>{
 \textbf{Example} (\texttt{ctree}): Bike data (constant model in final nodes)
-\centerline{\includegraphics[width =0.8\textwidth]{figure/bike_ctree.pdf}}
+\centerline{\includegraphics[width =\textwidth]{figure/bike_ctree.pdf}}
 }
 \only<3>{
 \textbf{Example}  (\texttt{mob}): Bike data (linear model with \texttt{temp} in final nodes)
-\centerline{\includegraphics[width = 0.8\textwidth]{figure/bike_mob.pdf}}
+\centerline{\includegraphics[width = \textwidth]{figure/bike_mob.pdf}}
 }
-\only<3>{
-\centerline{Train error (MSE): 758,844.0 (\texttt{ctree}), 742,244.4 (\texttt{mob})}
-}
-%     \end{column}
-%     \begin{column}{0.225\textwidth}
+% \only<3>{
+% \centerline{Train error (MSE): 758,844.0 (\texttt{ctree}), 742,244.4 (\texttt{mob})}
+% }
+     \end{column}
+     \begin{column}{0.18\textwidth}
+     \only<2-3>{\scriptsize
+     Train error (MSE): \\
+     758,844.0 (\texttt{ctree})\\
+     742,244.4 (\texttt{mob})
+     }
 % \only<3>{
 % Comparison MSE: \\
 % \texttt{ctree}: 758,844.0 \\
 % \texttt{mob}: 742,244.4
 % }
-%     \end{column}
-% \end{columns}
+     \end{column}
+ \end{columns}
 \end{frame}
 
 
@@ -499,15 +504,37 @@ Differences to CART:
 %------------------------------------------------------------------
 
 
-\begin{frame}[c]{Other Rule-based Models}
+\begin{frame}[t]{Other Rule-based Models}
 
 \begin{columns}[c, totalwidth=\textwidth]
     \begin{column}{0.6\textwidth}
-        \textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
+        \textbf{Decision Rules} \citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
+        \begin{itemize}
+            \item (Chaining of) simple ``if -- then'' statements\\
+            $\leadsto$ very intuitive and easy-to-interpret
+            \item Most methods work only for classification and categorical features
+        \end{itemize}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+    \vspace{\dimexpr-2\parsep-2\parskip\relax}
+        \begin{center}
+            \includegraphics[width = 0.8\textwidth]{figure/decision_rules.png}
+            % \only<4->{\includegraphics[width = 0.7\textwidth]{figure/knn.png} 
+            % \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}}
+        \end{center}
+    \end{column}
+\end{columns}
+
+\bigskip
+
+\begin{columns}[c, totalwidth=\textwidth]
+    \begin{column}{0.6\textwidth}
+        \only<2->{\textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
         \begin{itemize}
             \item Combination of LM and decision trees 
+            \item Uses (many) decision trees to extract important decision rules $r_1, r_2, r_3, r_4$ which are used as features in a (regularized) LM
             \item Allows for feature interactions and non-linearities
-        \end{itemize}
+        \end{itemize}}
 
         % \only<3->{\textbf{Naive Bayes}
         % \citebutton{Zhang 2004}{https://www.aaai.org/Papers/FLAIRS/2004/Flairs04-097.pdf}
@@ -531,35 +558,14 @@ Differences to CART:
     \begin{column}{0.4\textwidth}
     \vspace{\dimexpr-2\parsep-2\parskip\relax}
         \begin{center}
-            \includegraphics[width = 0.6\textwidth]{figure/RuleFit.png} 
-            % \only<4->{\includegraphics[width = 0.7\textwidth]{figure/knn.png} 
-            % \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}}
-        \end{center}
-    \end{column}
-\end{columns}
-
-\medskip
-
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.6\textwidth}
-        \only<2->{\textbf{Decision Rules} \citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
-        \begin{itemize}
-            \item Simple ``if -- then'' statements - very intuitive and easy-to-interpret
-            \item Most methods work only for classification and categorical feat.
-        \end{itemize}}
-    \end{column}
-    \begin{column}{0.4\textwidth}
-    \vspace{\dimexpr-2\parsep-2\parskip\relax}
-        \begin{center}
-            \only<2->{\includegraphics[width = 0.8\textwidth]{figure/decision_rules.png} \\
+            \only<2->{\includegraphics[width = 0.6\textwidth]{figure/RuleFit.png}\\
             \citebutton{Molnar 2022}{https://christophm.github.io/interpretable-ml-book/}\\
-            \smallskip}
+            \smallskip }
             % \only<4->{\includegraphics[width = 0.7\textwidth]{figure/knn.png} 
             % \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}}
         \end{center}
     \end{column}
 \end{columns}
-
 \end{frame}
 \endlecture
 \end{document}

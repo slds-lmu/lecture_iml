@@ -60,8 +60,8 @@
 % \end{align*}
 $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g^{-1}(\xv^\top \theta)$$
 \vspace*{-0.5cm}
-    \begin{itemize}[<+->]
-        \item Link function $g$ links linear predictor $\xv^\top \theta$ to expectation $\E$ of specified distribution of $y \mid \xv$\\
+    \begin{itemize}
+        \item Link function $g$ links linear predictor $\xv^\top \theta$ to expectation of distribution of $y \mid \xv$\\ %$\E$ of specified distribution of
         $\leadsto$ LM is special case: Gaussian distribution for $y \mid \xv$ with $g$ as identity function 
         \item Link function $g$ and distribution need to be specified 
         \item High-order and interaction effects can be manually added as in LMs
@@ -83,18 +83,18 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 \end{frame}
  	
 \begin{frame}{GLM - Logistic Regression}
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.45\textwidth}
+%\begin{columns}[T, totalwidth=\textwidth]
+%\begin{column}{0.45\textwidth}
 
 \begin{itemize}
     \item Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function: 
-\end{itemize}
+
 \begin{align*}
-    g(x) &= \log\left(\frac{x}{1 - x}\right) \\ 
+    g(x) &= \log\left(\frac{x}{1 - x}\right)  
     \Rightarrow \; g^{-1}(x) &= \frac{1}{1+\exp(-x)}
 \end{align*}
-\end{column}
-\begin{column}{0.55\textwidth}
+%\end{column}
+%\begin{column}{0.55\textwidth}
 
 % \begin{columns}[c, totalwidth=\linewidth]
 % \begin{column}{0.005\linewidth}
@@ -102,29 +102,31 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 % \rotatebox[origin=c]{90}{\hspace{10pt}$P(y = 1)$}
 % \end{column}
 % \begin{column}{0.995\linewidth}
-\includegraphics[width = \textwidth]{figure/reg_class_log_6.pdf}
+%\includegraphics[width = \textwidth]{figure/reg_class_log_6.pdf}
 % \scriptsize\centerline{$\xv^\top \theta$}
 % \end{column}
 % \end{columns}
-\end{column}
-\end{columns}
+%\end{column}
+%\end{columns}
 
-\bigskip
+%\bigskip
 
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.65\textwidth}
-\begin{itemize}
+% \begin{columns}[T, totalwidth=\textwidth]
+% \begin{column}{0.65\textwidth}
+% \begin{itemize}
     \item Models probabilities for binary classification by
     $$\pi(\xv) = \E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \theta) = \frac{1}{1 + \exp(- \xv^\top \theta)} $$
     %\item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification 
     %\item Logistic regression formula:
     %$$P(y = 1) =\frac{1}{1 + \exp(-( \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p ))} $$
 \end{itemize}
-\end{column}
-\begin{column}{0.35\textwidth}
-\end{column}
-\end{columns}
-
+% \end{column}
+% \begin{column}{0.35\textwidth}
+% \end{column}
+% \end{columns}
+\centering
+\includegraphics[width=0.3\textwidth]{figure/logreg-2vars-surface.png} \qquad
+\includegraphics[width=0.4\textwidth]{figure/reg_class_log_7} 
 \end{frame}
 
 
@@ -141,8 +143,7 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 
 \medskip
 \centering
-\includegraphics[width=0.4\textwidth]{figure/logreg-2vars-surface.png} \qquad
-\includegraphics[width=0.5\textwidth]{figure/reg_class_log_7} 
+\includegraphics[width = \textwidth]{figure/reg_class_log_6.pdf}
 % figs from i2ml course, Chapter 03.04: Logistic Regression, slide 7 
 \end{frame}
 
@@ -179,8 +180,9 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 \begin{frame}[c]{GLM - Logistic Regression - Interpretation}
 
     \begin{itemize}
-        \item \textbf{Recall:} Odds is quotient of two probabilities, odds ratio compares ratio of two odds 
-        \item Weights $\theta_j$ interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
+        \item \textbf{Recall:} Odds is ratio of two probabilities, odds ratio compares ratio of two odds 
+        \item Weights $\theta_j$ are interpreted linear as in LM (but w.r.t. log-odds) \\
+        $\leadsto$ difficult to comprehend
         %relate to log-odds %$\leadsto$ Effects are linear as in LM (but w.r.t. log-odds)
         $$log\text{-}odds = \log \left(\frac{\pi(\xv)}{1 - \pi(\xv)}\right) = \log \left(\frac{P(y=1)}{P(y=0)}\right) = \theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p  $$
         \textbf{Interpretation:} \\ Changing $x_j$ by one unit, changes log-odds of class 1 compared to class 0 by $\theta_j$%\\
@@ -188,7 +190,7 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
         \pause
         \item Odds for class 1 vs. class 0: %Odds can be caulculated by:
         $odds = \displaystyle\frac{\pi(\xv)}{1 - \pi(\xv)}= \exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p)$
-        \item Instead of interpreting changes w.r.t. log-odds, it is more common to use $odds\text{ }ratio$
+        \item Instead of interpreting changes w.r.t. log-odds,  $odds\text{ }ratio$ is more common
         $$ = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j (x_j+1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp{(\theta_j)} $$
         \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\theta_j)$
         %\pause
