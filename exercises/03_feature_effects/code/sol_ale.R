@@ -103,8 +103,8 @@ prepare_ale = function(model, X, s, n_intervals = 100, centered = TRUE) {
   ale <- calculate_ale(model, X, s, n_intervals, centered)
   
   ### Get the bounds and y from the list.
-  boundary_points <- array(unlist(ale[1]))
-  y <- array(unlist(ale[2]))
+  boundary_points <- unlist(ale[1])
+  y <- unlist(ale[2])
   
   ### Reconstruct the lowerbounds and upperbounds vectors.
   lowerbounds <- bounds[1:n_intervals]
