@@ -1,15 +1,37 @@
-\loesung{
+\textbf{Solution Quiz:}\\\noindent
+\medskip
+
 \begin{enumerate}
-  \item Which of the following statement(s) apply to feature effect methods? 
-        \begin{enumerate}
-        \item The value of the PDP at a point $x_j$, corresponds to the point-wise average of the values of the ICE curves at this point. $\Rightarrow$ \textbf{Correct}
-        \item The PDP of a feature provides information about possible interaction effects of the feature. $\Rightarrow$ \textbf{Wrong}
-        \item ICE curves of a feature for multiple data points provide information about possible interaction effects of the feature with others. $\Rightarrow$ \textbf{Correct}
-        \item If we center the ICE/PDPs for categorical features, the expected changes always refer to a selected reference category. $\Rightarrow$ \textbf{Correct}
-        \item ALE plots are based on conditional distributions, PDPs on marginal distributions. $\Rightarrow$ \textbf{Correct}
-        \item If features are uncorrelated, ALE plots are equal to PDPs. $\Rightarrow$ \textbf{Wrong}
-        \item ALE plots are faster to compute than PDPs if they are based on the same grid. $\Rightarrow$ \textbf{Correct}
-        \end{enumerate}
+  \item What is the problem of PDP when interactions between features are present? How about extrapolation?
+        \begin{itemize}
+        	\item[$\Rightarrow$] When interactions are apparent, the effects may in average cancel each other out, i.e. PDP shows no effect.
+        	\item[$\Rightarrow$] Extrapolation can cause issues in regions with few observations or if features are correlated, i.e. resulting data point may be unrealistic or very unlikely.
+        \end{itemize}
+        \item How do PDPs and ICE curves correspond with each other?
+        \begin{itemize}
+        	\item[$\Rightarrow$] The value of the PDP at a point $x_j$, corresponds to the point-wise average of the values of the ICE curves at this point.
+        \end{itemize}
+        \item Which problem do we need to keep in mind when using centered ICE/PDP for categorical features? 
+        \begin{itemize}
+        	\item[$\Rightarrow$] If we center the ICE/PDPs for categorical features, the expected changes always refer to a selected reference category. 
+        \end{itemize}
+        \item M-Plots handle correlated data well and do not suffer from extrapolation. Which disadvantage does this method have?
+        \begin{itemize}
+        	\item[$\Rightarrow$] M-plots suffer from omitted variable bias.
+        \end{itemize}
+        \item Name the advantages of ALE over PDP.
+        \begin{itemize}
+        	\item[$\Rightarrow$] Computationally faster (measurable when they are based on the same grid); less to no extrapolation.
+        \end{itemize}
+    	\item Can you think of a situation in which ALE equals PDP?
+    	\begin{itemize}
+    		\item[$\Rightarrow$] If features are uncorrelated, ALE plots are equal to PDPs. 
+    	\end{itemize}
+        \item How does the interpretation between M-Plots and ALE differ?
+        \begin{itemize}
+        	\item[$\Rightarrow$] In the M-Plot one can not infer, if the effect is due to the feature of interest or due to correlated features. ALE only shows the effect of the feature of interest.
+        \end{itemize}
+
 
 \item You fitted a model that should predict the value of a property depending on 
     the number of rooms and square meters. 
@@ -24,4 +46,3 @@
 \end{enumerate}
 
 \end{enumerate}
-}
