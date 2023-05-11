@@ -1,0 +1,56 @@
+\loesung{	
+\begin{enumerate}[a)]
+	\item $$\text{payoff}(\lbrace\texttt{t,m}\rbrace) = 10 + 10 + 20 = 40$$
+	$$\text{payoff}(\lbrace\texttt{t,j,s}\rbrace) = 10 + 10 + 2 - 30 = -8$$
+	\item Pseudocode of \texttt{payoff\_func()}
+	
+	\begin{algorithm}[h]
+		\caption{\texttt{payoff\_func()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{coalition}: Coalition vector
+			\State \texttt{t} $\gets$ boolean if \texttt{'t'} is in \texttt{coalition}
+			\State \texttt{s} $\gets$ boolean if \texttt{'s'} is in \texttt{coalition}
+			\State \texttt{m} $\gets$ boolean if \texttt{'m'} is in \texttt{coalition}
+			\State \texttt{j} $\gets$ boolean if \texttt{'j'} is in \texttt{coalition}
+			\State \texttt{l} $\gets$ boolean if \texttt{'l'} is in \texttt{coalition}
+			\State \textbf{return} 10 * \texttt{t} + 10 * \texttt{m} + 2 * \texttt{j} + 20 * (\texttt{t} and \texttt{m}) + 20 * (\texttt{t} and \texttt{m} and \texttt{s}) - 30 * ((\texttt{t} or \texttt{m} or \texttt{s}) and \texttt{j})
+		\end{algorithmic}
+	\end{algorithm}
+
+	Pseudocode of \texttt{all\_unique\_subsets()}
+	
+	\begin{algorithm}[h]
+		\caption{\texttt{all\_unique\_subsets()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{population}: vector containing all available players
+			\If{population = $\emptyset$} \texttt{subsets} $\gets$ $\emptyset$
+			\ElsIf{population $\neq \emptyset$} \texttt{subsets} $\gets$ all subsets of \texttt{population}
+			\EndIf
+			\State \textbf{return} \texttt{subsets}
+		\end{algorithmic}
+	\end{algorithm}
+
+	Pseudocode of \texttt{shapley()}
+	
+	\begin{algorithm}[h]
+		\caption{\texttt{shapley()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{population}: vector containing all available players
+			\Require \texttt{member}: vector containing the player(s) of interest
+			\Require \texttt{vfunc}: value function
+			\State \texttt{remainder} $\gets$ everyone from the \texttt{population} but \texttt{member}
+			\State \texttt{all\_sets} $\gets$ \texttt{all\_unique\_subsets(remainder)}
+			\State \texttt{F} $\gets$ length of \texttt{population}
+			\For{\texttt{s} in \texttt{all\_sets}}
+			\State \texttt{S} $\gets$ length \texttt{s}
+			\State \texttt{diff} $\gets$ \texttt{vfunc(s + member) - vfunc(s)}
+			\State \texttt{factor} $\gets$ \texttt{S}! * (\texttt{F} - \texttt{S} - 1)! / \texttt{F}!
+			\State \texttt{val} $\gets$ \texttt{val + factor * diff}
+			\EndFor
+			\State \textbf{return} \texttt{val}
+		\end{algorithmic}
+	\end{algorithm}
+\end{enumerate}
+
+
+}
