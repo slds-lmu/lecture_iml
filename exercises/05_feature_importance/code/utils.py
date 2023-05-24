@@ -29,6 +29,7 @@ def nearestPD(A):
         return A3
 
     spacing = np.spacing(la.norm(A))
+
     # The above is different from [1]. It appears that MATLAB's `chol` Cholesky
     # decomposition will accept matrixes with exactly 0-eigenvalue, whereas
     # Numpy's will not. So where [1] uses `eps(mineig)` (where `eps` is Matlab
@@ -38,6 +39,7 @@ def nearestPD(A):
     # `spacing` will, for Gaussian random matrixes of small dimension, be on
     # othe order of 1e-16. In practice, both ways converge, as the unit test
     # below suggests.
+    
     Imat = np.eye(A.shape[0])
     k = 1
     while not isPD(A3):
