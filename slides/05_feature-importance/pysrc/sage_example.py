@@ -177,3 +177,5 @@ df_msage['type'] = 'mSAGE'
 
 df_interactions_res = pd.concat([df_pfi, df_msage]).reset_index()
 df_interactions_res.to_csv(savepath+'df_interactions_res.csv')
+
+print(model.coef_, model.intercept_)
