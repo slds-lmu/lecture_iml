@@ -13,7 +13,7 @@ theme_set(theme_bw())
 # DATA -------------------------------------------------------------------------
 
 set.seed(123)
-load("data/bike.RData")
+load("../../../data/bike.RData")
 tsk = TaskRegr$new(id = "bike", backend = bike, target = "cnt")
 mod = lrn("regr.ranger")$train(tsk)
 
@@ -29,4 +29,4 @@ shap = Shapley$new(pred.bike, x.interest = bike[instance.index, names(bike) != '
 strongest.feature = shap$results[shap$results$phi == max(shap$results$phi),]
 p = plot(shap)
 
-ggsave("slides/shapley/figure/shapley-bike.pdf", p, width = 9, height = 4)
+ggsave("../figure/shapley-bike.pdf", p, width = 9, height = 4)
