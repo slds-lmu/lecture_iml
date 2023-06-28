@@ -66,7 +66,7 @@ p = p + theme_bw()
 p
 
 #ggplot(results, aes(x=type, y=importance)) + geom_boxplot()
-ggsave('slides/feature-importance/figure_man/pfi_test_vs_train.pdf', width=8, height=2)
+ggsave('../figure_man/pfi_test_vs_train.pdf', width=8, height=2)
 
 
 
@@ -98,12 +98,12 @@ imp_test <- FeatureImp$new(predictor_test,loss = "mae", n.repetitions = 10, comp
 p_pfi = plot(imp_test)
 p_pfi
 
-#ggsave("slides/feature-importance/figure_man/pfi_extrapolation.pdf", width=5, height=3)
+#ggsave("../figure_man/pfi_extrapolation.pdf", width=5, height=3)
 
 p2 = ggplot(data, aes(x=x1, y=x2)) + geom_hex(bins = 20) + scale_fill_viridis_c() #+ theme_bw()
 p2
 
-#ggsave("slides/feature-importance/figure_man/pfi_hexbin_pre.pdf", width=6, height=4.5)
+#ggsave("../figure_man/pfi_hexbin_pre.pdf", width=6, height=4.5)
 
 data_perm = data.frame(data)
 data_perm$x1 = data_perm$x1[sample(nrow(data_perm))]
@@ -135,7 +135,7 @@ library(patchwork)
 
 res = p2 + p3 + p_pfi & theme(aspect.ratio=1)#, legend.position = "bottom") #+ plot_layout(guides = 'collect')
 
-ggsave(plot = res, "slides/feature-importance/figure_man/pfi_hexbin_extrapolation.pdf", width=10, height=3)
+ggsave(plot = res, "../figure_man/pfi_hexbin_extrapolation.pdf", width=10, height=3)
 
 # interactions
 
@@ -163,7 +163,7 @@ imp_test <- FeatureImp$new(predictor_test,loss = "mae", n.repetitions = 10, comp
 p = plot(imp_test)
 p
 
-ggsave("slides/feature-importance/figure_man/pfi_interactions.pdf", width=5, height=3)
+ggsave("../figure_man/pfi_interactions.pdf", width=5, height=3)
 
 
 # pimp
@@ -222,8 +222,8 @@ for (ii in 1:1000) {
   df = rbind(df_tmp, df)
 }
 
-saveRDS(df, file = "slides/feature-importance/rsrc/pimp.Rds")
-df = readRDS("slides/feature-importance/rsrc/pimp.Rds")
+saveRDS(df, file = "pimp.Rds")
+df = readRDS("pimp.Rds")
 
 library(data.table)
 df_dt = as.data.table(df)
@@ -245,13 +245,13 @@ p = p +
 p = p + facet_wrap(. ~ paste0(feature, ", p-val: ", round(V1, 3)), scales = "free", nrow = 1)
 p
 
-ggsave("slides/feature-importance/figure_man/pimp.pdf", width=10, height=2.5)
+ggsave("../figure_man/pimp.pdf", width=10, height=2.5)
 
 
 #p2 = ggplot(data, aes(x=x1, y=x2)) + geom_de() #+ theme_bw()
 #p2
 
-#ggsave("slides/feature-importance/figure_man/pfi_hexbin_pre.pdf", width=4, height=3)
+#ggsave("../figure_man/pfi_hexbin_pre.pdf", width=4, height=3)
 
 
 # data_perm = data.frame(data)
@@ -259,5 +259,5 @@ ggsave("slides/feature-importance/figure_man/pimp.pdf", width=10, height=2.5)
 #
 # p3 = ggplot(data_perm, aes(x=x1, y=x2)) + geom_hex() #+ theme_bw()
 # p3
-# ggsave("slides/feature-importance/figure_man/pfi_hexbin_post.pdf", width=4, height=3)
+# ggsave("../figure_man/pfi_hexbin_post.pdf", width=4, height=3)
 #
