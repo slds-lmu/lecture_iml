@@ -161,7 +161,7 @@ f = ggplot(data = dat2, aes(x = x1, y = x2, z = y)) +
 (res = (f | (p0 + p1) / (p2 | p12)) +
     patchwork::plot_layout(widths = c(1, 1.75), guides = "collect"))
 
-ggsave("slides/feature-effects/figure/decomposition.pdf",
+ggsave("../figure/decomposition.pdf",
   height = 5, width = 12, res)
 
 #
