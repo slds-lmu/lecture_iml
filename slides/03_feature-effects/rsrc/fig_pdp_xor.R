@@ -1,6 +1,7 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(mlr3)
+thene_set(theme_bw())
 
 # DATA -------------------------------------------------------------------------
 
@@ -26,4 +27,4 @@ p1 = pdp$plot()
 ggxor = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
   scale_x_continuous(name = expression(x[1]))
 
-ggsave("slides/feature-effects/figure/pdp_xor.pdf", ggxor, width = 6, height = 4)
+ggsave("../figure/pdp_xor.pdf", ggxor, width = 6, height = 4)
