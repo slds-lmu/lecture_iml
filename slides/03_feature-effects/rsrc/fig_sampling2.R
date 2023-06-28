@@ -1,6 +1,7 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(ggplot2)
+theme_set(thene_bw())
 
 # DATA -------------------------------------------------------------------------
 
@@ -71,4 +72,4 @@ p = p +
             colour = "red", fill = "red") +
   theme(plot.title = element_text(hjust = 0.5))
 
-ggsave("slides/03_feature-effects/figure/sampling2.pdf", p, height = 2.5, width = 7.5)
+ggsave("../figure/sampling2.pdf", p, height = 2.5, width = 7.5)
