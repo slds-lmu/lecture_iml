@@ -3,7 +3,7 @@
 library(ggplot2)
 library(patchwork)
 library(data.table)
-source("slides/feature-effects/rsrc/anova_bike.R")
+source("anova_bike.R")
 theme_set(theme_bw())
 
 # DATA -------------------------------------------------------------------------
@@ -30,4 +30,4 @@ cpdcat = ggplot(d[d$.type=="ice"], aes(x = season, y = .value)) +
   stat_summary(fun = mean, geom = "line", aes(group = 1), col = "gold", lty = 2, lwd = 1.5) +
   scale_y_continuous('Predicted bike rentals')
 
-ggsave("slides/feature-effects/figure/cICEcat.pdf", cpdcat, width = 5.5, height = 3)
+ggsave("../figure/cICEcat.pdf", cpdcat, width = 5.5, height = 3)
