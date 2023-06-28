@@ -2,7 +2,8 @@
 
 library(patchwork)
 library(ggplot2)
-source("slides/feature-effects/rsrc/anova_bike.R")
+theme_set(theme_bw())
+source("../../03_feature-effects/rsrc/anova_bike.R")
 
 # DATA -------------------------------------------------------------------------
 
@@ -26,4 +27,4 @@ pws = pdp_ws$plot() +
                      limits = range(pdp_tmp$results$.value)) +
   xlim(range(bike$windspeed))
 
-ggsave("slides/feature-importance/figure_man/pdps_bike.pdf", height = 2, width = 8, ptmp+pws)
+ggsave("../figure_man/pdps_bike.pdf", height = 2, width = 8, ptmp+pws)
