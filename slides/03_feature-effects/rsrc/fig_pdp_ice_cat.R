@@ -2,7 +2,7 @@
 
 library(ggplot2)
 library(patchwork)
-source("slides/feature-effects/rsrc/anova_bike.R")
+source("anova_bike.R")
 theme_set(theme_bw())
 
 # DATA -------------------------------------------------------------------------
@@ -33,4 +33,4 @@ ice_cat = p + geom_path(aes(group = .id), alpha = 0.2) +
   stat_summary(fun = mean, geom = "line", aes(group = 1), col = "gold", lwd = 1, lty = 2) +
   scale_y_continuous("Predicted number of bike rentals") + ggtitle("ICE plot for a categorical feature")
 
-ggsave("slides/feature-effects/figure/pdp_ice_cat.pdf", pd_cat + ice_cat, width = 8, height = 3)
+ggsave("../figure/pdp_ice_cat.pdf", pd_cat + ice_cat, width = 8, height = 3)
