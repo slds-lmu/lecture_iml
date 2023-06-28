@@ -2,7 +2,7 @@
 
 library(ggplot2)
 library(patchwork)
-load("data/bike.RData")
+load("../../../data/bike.RData")
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 # PLOT -------------------------------------------------------------------------
@@ -23,4 +23,4 @@ p2 = ggplot(data = bike, aes(x = temp, y = cnt)) +
         plot.title = element_text(hjust = 0.5)) +
   ggtitle("GAM")
 
-ggsave("slides/feature-effects/figure/lm_main_effects.pdf", p1 + p2, width = 8, height = 3)
+ggsave("../figure/lm_main_effects.pdf", p1 + p2, width = 8, height = 3)
