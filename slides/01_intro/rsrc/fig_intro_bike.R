@@ -1,5 +1,6 @@
 library(ggpubr)
 library(ggcorrplot)
+theme_set(theme_bw())
 load("../../../data/bike.RData")
 
 p = ggplot(data = bike, aes(y = cnt)) #+ ylim(c(0, 10000))
