@@ -1,7 +1,8 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(ggplot2)
-source("slides/feature-effects/rsrc/anova_bike.R")
+theme_set(theme_bw())
+source("anova_bike.R")
 
 # DATA -------------------------------------------------------------------------
 
@@ -23,4 +24,4 @@ p12 = pdp12$plot() +
   scale_x_continuous('Temperature', limits = c(0, NA))+
   scale_y_continuous('Humidity', limits = c(0, NA))
 
-ggsave("slides/feature-effects/figure/anova_bike12.jpg", plot = p12, width = 6.5, height = 5)
+ggsave("../figure/anova_bike12.jpg", plot = p12, width = 6.5, height = 5)
