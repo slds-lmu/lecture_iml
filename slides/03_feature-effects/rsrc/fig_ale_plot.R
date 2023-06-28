@@ -1,7 +1,7 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(ggplot2)
-p = readRDS("slides/feature-effects/figure/ale_scatter.RDS")
+p = readRDS("../figure/ale_scatter.RDS")
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 # DATA -------------------------------------------------------------------------
@@ -43,6 +43,6 @@ aleplot = p +
   annotate(geom = "label", x = -5, y = 5, label = label6,
            hjust = "left") + ylim(c(-10,10))
 
-ggsave("slides/feature-effects/figure/ale_plot.pdf", aleplot, width = 7,
+ggsave("../figure/ale_plot.pdf", aleplot, width = 7,
        height = 4)
 
