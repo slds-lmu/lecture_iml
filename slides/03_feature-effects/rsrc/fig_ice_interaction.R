@@ -1,6 +1,6 @@
 library(plot3D)
 library(cowplot)
-#pdf("slides/feature-effects/figure/ice_motivation.pdf", width = 11, height = 4)
+#pdf("../figure/ice_motivation.pdf", width = 11, height = 4)
 
 set.seed(100)
 x = rnorm(100, 0, 5)#runif(100, -11, 11)
