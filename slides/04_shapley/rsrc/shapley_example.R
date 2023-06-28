@@ -13,7 +13,7 @@ set.seed(123)
 
 
 # bike rental dataset
-load("slides/shapley/rsrc/bike.RData")
+load("../../../data/bike.RData")
 
 
 # train an ML model
@@ -87,7 +87,7 @@ p_shap = ggplot(data = data.frame("feature" = paste(features,"=",round(X[i,],2))
 # mean_pred = mean(predict(rf, newdata = random_sample))
 # force_plot(sh, baseline = mean_pred, feature_values = X[i,])
 
-ggsave("slides/shapley/figure/shapley2shap.pdf", p_shap, width = 4, height = 2.5)
+ggsave("../figure/shapley2shap.pdf", p_shap, width = 4, height = 2.5)
 
 #---------------------------------------------------------------------------------------------------
 # kernel shap
