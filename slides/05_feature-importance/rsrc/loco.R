@@ -13,7 +13,7 @@ target = "cnt"
 nruns = 30
 
 set.seed(123)
-load("data/bike.RData")
+load("bike.RData")
 bike = na.omit(bike)
 
 
@@ -74,7 +74,7 @@ ggplot(res, aes(y = feature, x = importance)) +
   #scale_x_continuous(sprintf("Feature Importance (loss: %s)", private$loss_string)) +
   #scale_y_discrete("")
 
-ggsave('slides/feature-importance/figure_man/bike_sharing_loco.pdf', width=8, height=4)
+ggsave('../figure_man/bike_sharing_loco.pdf', width=8, height=4)
 
 
 # simulation
@@ -147,7 +147,7 @@ ggplot(res, aes(y = feature, x = importance)) +
 
 learner$model
 
-ggsave('slides/feature-importance/figure_man/simulation_loco.pdf', width=3, height=1)
+ggsave('../figure_man/simulation_loco.pdf', width=3, height=1)
 
 library(ggcorrplot)
 
@@ -156,4 +156,4 @@ corr = cor(simulation)
 ggcorrplot(corr, #hc.order = TRUE,# type = "lower",
   lab = TRUE, method = "circle", colors = c("#E46726", "white", "#6D9EC1"))
 
-ggsave('slides/feature-importance/figure_man/simulation_loco_corr.pdf', width = 3.5, height = 2.5)
+ggsave('../figure_man/simulation_loco_corr.pdf', width = 3.5, height = 2.5)
