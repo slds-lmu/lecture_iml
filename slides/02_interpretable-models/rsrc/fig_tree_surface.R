@@ -6,7 +6,7 @@ library(plotly)
 set.seed(1)
 
 
-load("../../data/bike.RData")
+load("../../../data/bike.RData")
 task = as_task_regr(bike, target = "cnt")$select(c("temp", "hum"))
 # task = tsk("bike_sharing")$select(c("temperature", "humidity"))
 
@@ -15,7 +15,7 @@ learner = lrn("regr.rpart")
 # 2D plot
 p = plot_learner_prediction(learner, task)
 p 
-ggsave("figure/tree_surface1.pdf", p, width = 6, height = 3.5)
+ggsave("../figure/tree_surface1.pdf", p, width = 6, height = 3.5)
 
 # 3D surface plot
 dat = data.frame(p$data)[,c(2,3,5)]
