@@ -6,10 +6,11 @@ library(vcd)
 library(iml)
 library(gridExtra)
 library(gower)
+theme_set(theme_bw())
 
 
 set.seed(123)
-load("data/bike.RData")
+load("../../../data/bike.RData")
 task = makeRegrTask(data = bike, target = "cnt")
 mod = train("regr.randomForest", task)
 predictor = Predictor$new(mod, data = bike[-which(names(bike) == "cnt")], y = bike$cnt)
