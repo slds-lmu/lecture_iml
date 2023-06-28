@@ -52,4 +52,4 @@ p2 = ggplot() +
   labs(colour = "Method", x = expression(x[1]), y = expression("Marginal Effect "~hat(f)[1](x[1]))) +
   theme_minimal() + theme(legend.position="bottom")
 
-ggsave("slides/feature-effects/figure/pd_vs_mplot.pdf", p1 + p2, width = 10/1.25, height = 4/1.25)
+ggsave("../figure/pd_vs_mplot.pdf", p1 + p2, width = 10/1.25, height = 4/1.25)
