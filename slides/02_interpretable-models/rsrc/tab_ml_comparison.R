@@ -3,7 +3,7 @@ library("mlr3learners")
 library("xtable")
 set.seed(1)
 
-load("data/bike.RData")
+load("../../../data/bike.RData")
 bike_task = as_task_regr(bike, target = "cnt")
 # bh_task = tsk("boston_housing")
 # bh_task$select(setdiff(bh_task$feature_names, c("town")))
