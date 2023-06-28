@@ -1,7 +1,7 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(ggplot2)
-p = readRDS("slides/feature-effects/figure/ale_scatter.RDS")
+p = readRDS("../figure/ale_scatter.RDS")
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 # DATA -------------------------------------------------------------------------
@@ -20,5 +20,5 @@ pgrid = p + ylim(-10, 10) +
   labs(colour = "Data Points") +
   theme(legend.position = c(0.2, 0.875), legend.title = element_blank())
 
-ggsave("slides/feature-effects/figure/ale_scatter_grid.pdf", pgrid, width = 5.5,
+ggsave("../figure/ale_scatter_grid.pdf", pgrid, width = 5.5,
        height = 4)
