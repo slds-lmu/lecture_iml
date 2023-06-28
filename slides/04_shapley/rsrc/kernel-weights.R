@@ -14,9 +14,9 @@ ggplot(kernel10_df) +
   scale_x_continuous("coalition size", breaks = 0:(nrow(kernel10_df)-1)) +
   scale_y_continuous("kernel weight") +
   coord_cartesian(clip = "off") +
-  theme_minimal() +
+  theme_bw() +
   geom_label(aes(x = coalition_size, y = kernel_weight,label=z), fill = "black", colour = "white")
   
-ggsave(file = "kernel-weights.pdf", height = 3, width = 4)
+ggsave(file = "../figure_man/kernel-weights.pdf", height = 3, width = 4)
 
 
