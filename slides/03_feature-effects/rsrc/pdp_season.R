@@ -3,7 +3,8 @@
 library(ggplot2)
 library(data.table)
 library(patchwork)
-source("slides/feature-effects/rsrc/anova_bike.R")
+theme_set(theme_bw())
+source("anova_bike.R")
 
 # DATA -------------------------------------------------------------------------
 
@@ -20,4 +21,4 @@ d = as.data.table(pdp.2feature$results)[, list(temp = temp, .value = .value - me
 
 pdp = pdp.2feature$plot() / ggplot(data = bike) + geom_density(aes(x = temp, col = season))
 
-ggsave("slides/feature-effects/figure/pdp_season.pdf", pdp)
+ggsave("../figure/pdp_season.pdf", pdp)
