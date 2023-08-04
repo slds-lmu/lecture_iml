@@ -28,13 +28,13 @@
 
 \begin{frame}{Shapley Values in ML - A short Recap}
   
-  \textbf{Question:} How much does a feature $j$ contribute to the prediction of a single observation. \\
+  \textbf{Question:} How much does a feat. $j$ contribute to the prediction of a single obs. \\
   \textbf{Idea:} Use Shapley values from cooperative game theory \\
   \pause
   \textbf{Procedure:} 
   \begin{itemize}
     \item Compare ``reduced prediction function'' of feature coalition $S$ with $\Scupj$ 
-    \item Iterate over possible coalitions to calculate the marginal contribution of feature $j$ to sample $\xv$
+    \item Iterate over possible coalitions to calculate marginal contribution of feature $j$ to sample $\xv$
 \end{itemize}
 
 $$\phi_j 
@@ -46,7 +46,7 @@ $$\phi_j
 
 \begin{itemize}
     \item $\fh$ is the prediction function, $p$ denotes the number of features
-    \item Non-existent features in a coalition are replaced by values of random feature values 
+    \item Non-existent feat. in a coalition are replaced by values of random feat. values 
     \item Recall $\Stau$ defines the coalition as the set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$% states from the feature
     
   \centerline{
@@ -133,9 +133,9 @@ $$
 Find an additive combination that explains the prediction of an observation $\xv$ by computing the contribution of each feature to the prediction using a (more efficient) estimation procedure. \\\medskip
 \only<1-4>{\textbf{Definition}
 \begin{itemize}
-    \item Define simplified (binary) coalition feature space $\mathbf{Z}^\prime \in \{0,1\}^{K \times p}$ with $K$ rows and $p$ columns 
+    \item Define simplified coalition feat. space $\mathbf{Z}^\prime \in \{0,1\}^{K \times p}$ with $K$ rows and $p$ cols.
     \item Rows are referred to as $\mathbf{z}^{\prime (k)} = \{z^{\prime (k)}_1, \ldots, z^{\prime (k)}_p\}$ with $k \in \{1,\ldots, K\}$ (indexes $k$-th coalition)
-    \item Columns: $\mathbf{z}_j$ with $j \in \{1, \ldots, p\}$ being the index of the original feature
+    \item Cols. are referred to as $\mathbf{z}_j$ with $j \in \{1, \ldots, p\}$ being the index of the original feat.
 \end{itemize}
 }
 \only<1>{
@@ -178,31 +178,31 @@ g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
   {$\mathbf{z}^{\prime (k)}$: \textbf{Coalition} \\ simplified features};
 \node<3-4>[expl] 
   (ph0ex) 
-  at (5,-.5cm)
+  at (4,-.5cm)
   {$\phi_0$: \textbf{Null Output} \\ Average Model Baseline ($\E(\fh))$};
 \node<4>[expl] 
   (phjex) 
-  at (12,0cm)
+  at (10,0cm)
   {$\phi_j$: \textbf{Attribution} \\ How much does feature $j$ change the output for coaltion $k$};
 
 \draw<2-4>[arrow]
-  (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.9ex]{pic cs:zp});  
+  (zex.east) to[out=0,in=120] ([xshift= 1ex, yshift=2.3ex]{pic cs:zp});  
 \draw<3-4>[arrow]
-  (ph0ex.east) to[out=180,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:ph0});  
+  (ph0ex.east) to[out=0,in=270] ([xshift= 1ex, yshift=-0.8ex]{pic cs:ph0});  
 \draw<4>[arrow]
-  (phjex.west) to[out=90,in=270] ([xshift= 1ex, yshift=-0.5ex]{pic cs:phj});
+  (phjex.west) to[out=180,in=270] ([xshift= 1ex, yshift=-1ex]{pic cs:phj});
  \node<5>[expl] 
   (zex)  
   at (2,1cm)
   {$g(\mathbf{z}^{\prime (k)})$: \textbf{Marginal Contribution} \\ Contribution of coalition $\mathbf{z}^{\prime (k)}$ to the prediction};
   \draw<5>[arrow]
-  (zex.east) to[out=180,in=90] ([xshift= 1ex, yshift=1.9ex]{pic cs:zp});  
+  (zex.east) to[out=0,in=140] ([xshift= 1ex, yshift=2.3ex]{pic cs:zp});  
 \node<5>[expl] 
   (phjsh) 
-  at (12,1.5cm)
+  at (10,1.5cm)
   {$\phi_j$: \textbf{Shapley Values}};
 \draw<5>[arrow]
-  (phjsh.west) to[out=90,in=90] ([xshift= 1ex, yshift=2ex]{pic cs:phj}); 
+  (phjsh.west) to[out=180,in=50] ([xshift= 1ex, yshift=2ex]{pic cs:phj}); 
 \draw<5> [
     thick,
     decoration={
@@ -211,7 +211,7 @@ g\left(\tikzmark{zp} \mathbf{z}^{\prime (k)}\right)=
         raise=0.5cm
     },
     decorate
-] (7,0.7) -- (9.5,0.7)
+] (5.7,0.7) -- (8.2,0.7)
 node[pos=0.5,below=15pt,black]{\textbf{Additive Feature Attribution}};
 \end{tikzpicture}
 \end{exampleblock}
@@ -334,6 +334,7 @@ How do we estimate the Shapley values $\phi_j$?
 \begin{tikzpicture}
 \centering
 
+\fontsize{8}{12}
 
 \node (tab1) {%
        \begin{tabular}{l |cccc}
@@ -397,6 +398,7 @@ $h_x\left(\mathbf{z}^{\prime (k)}\right)=\mathbf{z}^{(k)} \text { where } h_x:\{
 \begin{tikzpicture}
 \centering
 
+\fontsize{7}{12}
 
 \node (tab1) {%
        \begin{tabular}{l |ccc | c}
@@ -471,22 +473,22 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 ]
 \node[expl] 
   (piex) 
-  at (4,0cm)
+  at (2,2.5cm)
   {$\pi_x(\mathbf{z}^{\prime (k)})$: kernel weight for coalition $\mathbf{z}^{\prime (k)}$};
 \node[expl] 
   (Mex) 
-  at (13,2cm)
+  at (8,3cm)
   {$p$: Number of features in $\xv$};
 \node[expl] 
   (zex) 
-  at (8,-1cm)
+  at (6,-1cm)
   {$\mid \mathbf{z}^{\prime (k)}\mid$: coalition size / sum of 1s in $\mathbf{z}^{\prime (k)}$};
 \draw[arrow]
-  (piex.west) to[out=180,in=135] ([xshift= 0.5ex, yshift=2ex]{pic cs:pi}); 
+  (piex.south) to[out=270,in=135] ([xshift= 0.5ex, yshift=2ex]{pic cs:pi}); 
 \draw[arrow]
-  (Mex.west) to[out=180,in=135] ([xshift= 0.5ex, yshift=2ex]{pic cs:M}); 
+  (Mex.south) to[out=270,in=90] ([xshift= 0.5ex, yshift=2ex]{pic cs:M}); 
 \draw[arrow]
-  (zex.north) to[out=180,in=250] ([xshift= 0.5ex, yshift=-1ex]{pic cs:z}); 
+  (zex.north) to[out=90,in=250] ([xshift= 0.5ex, yshift=-1ex]{pic cs:z}); 
 \end{tikzpicture}
 \end{exampleblock}
 \end{onlyenv}
@@ -660,9 +662,9 @@ with $\phi_0 = \E(\fh)$ and $\phi_p = \fh(x) - \sum_{j=0}^{p-1} \phi_j$ we recei
 \begin{frame}{Kernel shap - in 5 steps}
 \textbf{Step 5: Return SHAP values}\\\medskip
 \textbf{Intuition}: Estimated Kernel SHAP values are equivalent to Shapley values 
-$$
-g(\mathbf{z}^{\prime (8)}) = \fh(h_x(\mathbf{z}^{\prime (8)}) ) = 4515 + 34 \cdot 1 - 1654 \cdot 1 - 323 \cdot 1 = \underbrace{\E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws} = \fh(\xv) = 2573
-$$
+\begin{align*}
+g(\mathbf{z}^{\prime (8)}) &= \fh(h_x(\mathbf{z}^{\prime (8)}) ) = 4515 + 34 \cdot 1 - 1654 \cdot 1 - 323 \cdot 1\\&= \underbrace{\E(\fh)}_{\phi_0} + \phi_{hum} + \phi_{temp} + \phi_{ws} = \fh(\xv) = 2573
+\end{align*}
 
 \begin{figure}
     \centering
