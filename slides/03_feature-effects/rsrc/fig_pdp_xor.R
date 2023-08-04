@@ -1,6 +1,11 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(mlr3)
+library(mlr3learners)
+library(mlr3extralearners)
+library(gbm)
+library(iml)
+library(ggplot2)
 
 # DATA -------------------------------------------------------------------------
 
