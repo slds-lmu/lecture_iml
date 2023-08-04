@@ -3,7 +3,7 @@
 library(ggplot2)
 library(patchwork)
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
-source("slides/feature-effects/rsrc/anova_bike.R")
+source("anova_bike.R")
 
 # DATA -------------------------------------------------------------------------
 
@@ -23,6 +23,6 @@ ale_plot <- ale$plot() + scale_y_continuous('First order ALE of hum') +
 ale_plot_t <- alet$plot() + scale_y_continuous('First order ALE of temp') +
   xlab("temp: Temperature")
 
-ggsave("slides/feature-effects/figure/ale1d.pdf",
+ggsave("../figure/ale1d.pdf",
   (pdp_plot + pdp_plot_t) / (ale_plot + ale_plot_t),
   width = 8, height = 4)

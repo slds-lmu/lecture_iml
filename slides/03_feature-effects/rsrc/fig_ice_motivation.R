@@ -1,7 +1,10 @@
+# PREREQ -----------------------------------------------------------------------
 library(plot3D)
+library(mlr)
 
-pdf("slides/feature-effects/figure/ice_motivation.pdf", width = 11, height = 4)
+pdf("../figure/ice_motivation.pdf", width = 11, height = 4)
 
+# DATA -------------------------------------------------------------------------
 set.seed(100)
 x = rnorm(100, 0, 5)#runif(100, -11, 11)
 y = rnorm(100, 0, 5)#runif(100, -11, 11)
@@ -10,7 +13,6 @@ errors = rnorm(100, 0, 10)
 z = (x + y^3 + x*y) + errors
 df = data.frame(x, y, z)
 
-library(mlr)
 tsk = makeRegrTask(data = df, target = "z")
 mod = train("regr.ksvm", tsk)
 
@@ -24,8 +26,7 @@ z.pred = matrix(predict(mod, newdata = xy)$data$response,
   nrow = grid.lines, ncol = grid.lines)
 fitpoints <- predicted#predict(fit)
 
-library(plot3D)
-
+# PLOT -------------------------------------------------------------------------
 par(mar = c(2,2,1,1))
 layout(matrix(c(1,1,1,1,2,2,2,2,2), nrow = 1, byrow = TRUE))
 p = persp3D(x.pred, y.pred, z.pred, ticktype = "detailed",
