@@ -1,0 +1,10 @@
+library(effects)
+library(mgcViz)
+library(mgcv)
+library(rpart)
+library(rpart.plot)
+library(mboost)
+
+load("../../../data/bike.RData")
+bike$cnt = as.numeric(bike$cnt)
+str(bike)

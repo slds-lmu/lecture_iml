@@ -25,20 +25,20 @@
 
 \begin{itemize}
 \itemsep1em
-\item LM: Change in $x_1$ by $\Delta x_1$ results in change in $y$ by $\Delta y = \Delta x_1 \cdot \beta_1$
+\item LM: Change in $x_1$ by $\Delta x_1$ results in change in $y$ by $\Delta y = \Delta x_1 \cdot \theta_1$
 %interpretation  characterized by feature coefficients:
 \begin{equation*}
-y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
+y = \theta_0 + \theta_1 x_1 + \dots + \theta_p x_p + \dots + \epsilon
 \end{equation*}
-%\item A change in $x_1$ by $\Delta x_1$ results in a change in $y$ by $\Delta y = \Delta x_1 \cdot \beta_1$
-\item Default interpretations correspond to $\Delta x_1 = 1$, i.e., $\Delta y = \beta$
+%\item A change in $x_1$ by $\Delta x_1$ results in a change in $y$ by $\Delta y = \Delta x_1 \cdot \theta_1$
+\item Default interpretations correspond to $\Delta x_1 = 1$, i.e., $\Delta y = \theta$
 \item All under "ceteris paribus", i.e., all remaining features are kept constant
 \item For polynomial models with higher-order or interaction terms, interpretations via single coefficients are not possible anymore, e.g.:
 %\begin{equation*}
 
 \medskip
 
-\centerline{$y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1 \cdot x_2 + \epsilon$}
+\centerline{$y = \theta_0 + \theta_{1} x_1^2 + \theta_{2} x_2^2 + \theta_{1, 2} x_1 \cdot x_2 + \epsilon$}
 
 \medskip
 
@@ -48,7 +48,7 @@ y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
 %
 \item Marginal effect of feature $x_1$ varies across different values for feature $x_2$ (and vice versa)
 \item Interaction depends on values of another feature
-%\item If $x_1$ changes, $y$ is affected by $\beta_1$ and $\beta_{1,2}$ 
+%\item If $x_1$ changes, $y$ is affected by $\theta_1$ and $\theta_{1,2}$ 
 \end{itemize}
 \end{itemize}
 \end{frame}
@@ -60,7 +60,7 @@ y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \dots + \epsilon
 % \itemsep1em
 % \item If higher-order terms or interactions are present, parameter-based interpretations are not possible anymore:
 % \begin{equation}
-% y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1, x_2 + \epsilon
+% y = \theta_0 + \theta_{1} x_1^2 + \theta_{2} x_2^2 + \theta_{1, 2} x_1, x_2 + \epsilon
 % \label{eq:poly_model}
 % \end{equation}
 % \item The isolated main effects of both features vary across different values
@@ -81,11 +81,11 @@ $$dME_j(x) = \frac{\partial f(x)}{\partial x_j} \approx \frac{f(x + h) - f(x - h
 \begin{equation*}
 fME_j(x, h_j) = f(x_1, \dots, x_j + h_j, \dots, x_p) - f(x)
 \end{equation*}
-\item Example: For model equation $y = \beta_0 + \beta_{1} x_1^2 + \beta_{2} x_2^2 + \beta_{1, 2} x_1 \cdot x_2 + \epsilon$
+\item Example: For model equation $y = \theta_0 + \theta_{1} x_1^2 + \theta_{2} x_2^2 + \theta_{1, 2} x_1 \cdot x_2 + \epsilon$
 \begin{itemize}
-\item dME of $x_1$ is $dME_1(x) = 2\beta_1 x_1 +  \beta_{1, 2} x_2$
+\item dME of $x_1$ is $dME_1(x) = 2\theta_1 x_1 +  \theta_{1, 2} x_2$
 \item fME of $x_1$ with step size $h_1 = 1$ is
-$fME_1(x, h_1) = 2\beta_1 h_1^2 +  \beta_{1, 2} x_2 h_1$
+$fME_1(x, h_1) = 2\theta_1 h_1^2 +  \theta_{1, 2} x_2 h_1$
 \end{itemize}
 \end{itemize}
 \end{frame}

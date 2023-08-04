@@ -1,0 +1,17 @@
+\aufgabe{SHAP}{
+\label{ex:shap}
+	Now we apply Shapley as a local feature relevance quantification tool. Therefore we implement the marginal SHAP payoff function.
+
+\begin{enumerate}
+    \item Load the \href{https://github.com/slds-lmu/lecture_iml/blob/master/exercises/04_shapley/code/fifa.csv}{FIFA dataset} into a data table (e.g. using the pandas library in python) and predict the Man of the Match probability through a random forest. \\ \textit{Hint:} Note that many of the float variables in the data set contain missing values and hence, consider integer variables only. Transform the target variable 'Man of the Match' into a binary format suitable for a prediction task and select only explanatory variables of type integer (e.g. dtype int64). Don't forget to split the data into a training and test set before fitting the random forest! Use an instance from your test set to generate an exemplary prediction for the probability of a team having the 'Man of the Match' amongst them. \label{a}
+    \item Implement the marginal sampling based SHAP value function \texttt{m\_vfunc()}. Compute the marginal sampling based value functions $v(j)$ for the instance. 
+    \item We could use the value function implemented above in combination with our Shapley implementations from Exercise \ref{ex:shapley} to compute SHAP. A more efficient equivalent definition has been proposed, which is based on locally fitting a weighted linear model: KernelSHAP. Implement KernelSHAP and calculate the SHAP values for the instance. Do this by writing the following functions:
+    \begin{itemize}
+    	\item \texttt{shap\_weights(mask)}: A function to return the weights for a given \texttt{mask} containing the sampled coalitions ((binary) coalition feature space). 
+    	\item \texttt{replace\_dataset(obs, X, nr\_samples)}: A function to create the dataset of \texttt{nr\_samples} samples generated during the SHAP calculations and mapping the binary feature space back to the original feature space. The positions in the mask indicate where we replace the original values with the ones of the given observation \texttt{obs}.
+    	\item \texttt{shap\_data(obs, X, nr\_samples, predict)}: A function summarizing \texttt{mask, pred, weight}.
+    	\item \texttt{kernel\_shap(obs, X, nr\_samples, predict)}: Implement the sampling based KernelSHAP function.
+    \end{itemize}
+	\item Calculate \texttt{kernel\_shap(X\_test[1, ], X\_train, 1000, classifier\_RF)} using the random forest from \ref{a}.
+\end{enumerate}
+}

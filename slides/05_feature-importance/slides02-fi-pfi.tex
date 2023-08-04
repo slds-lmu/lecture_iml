@@ -29,7 +29,7 @@
 	
 	% Defines macros and environments
 
-	\lecturechapter{Permutation Feature Importance}
+	\lecturechapter{Permutation Feature Importance (PFI)}
 	\lecture{Interpretable Machine Learning}
 	
 	% ------------------------------------------------------------------------------
@@ -63,14 +63,16 @@
 
 % TODO: explain this idea better in one separate slide, e.g. we have a fixed model we want to analyze and a data set. Our aim is to understand the importance of features. We would like to remove a feature and measure its "added value" w.r.t. performance compared to not removing it. But we cannot remove it as the model is fixed and was already trained with that feature -> permuting is the next best thing we can do to "destroy" the information of the feature -> another possibility could be to add some noise to the feature to perturb it but this would change the marginal distribution
 
-\textbf{Idea:} "Destroy" feature of interest $x_j$ by perturbing it such that it becomes uninformative, e.g., randomly permute observations in $x_j$ (marginal distribution $\P(x_j)$ stays the same).  %Therefore, resample the variable from its marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.
+\textbf{Idea:} "Destroy" feat. of interest $x_j$ by perturbing it s.t. it becomes uninformative, e.g., randomly permute obs. in $x_j$ (marginal distribution $\P(x_j)$ stays the same).  %Therefore, resample the variable from its marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.
 
 PFI for features $x_S$ using test data $\D$:
 \begin{itemize}
-  \item Measure the error {\color{blue}\textbf{without permuting features}} and {\color{red}\textbf{with permuted feature values}} $\pert{x}{}{}_S$
-  \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
-$$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske (\fh, {\color{blue}\D}), \text{ where }
-\riske(\fh, \D) = \frac{1}{n} \sum\nolimits_{(x, y) \in \D}  L(\fh(x), y)$$
+  \item Measure the error {\color{blue}\textbf{without permuting feat.}} and {\color{red}\textbf{with permuted feat. values}} $\pert{x}{}{}_S$
+  \item Repeat permuting the feat. (e.g., $m$ times) and avg. the difference of both errors: 
+\begin{align*}
+&\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske (\fh, {\color{blue}\D}),\\&\text{ where }
+\riske(\fh, \D) = \frac{1}{n} \sum\nolimits_{(x, y) \in \D}  L(\fh(x), y)
+\end{align*}
 \end{itemize}
 \pause
 The data $\D$ where $x_S$ is replaced with $\pert{x}{S}{}$ is denoted as $\pert{\D}{S}{}$.\\
@@ -167,7 +169,7 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
         \item<4-> Take the difference of both losses $\Delta L$ for each observation%
         \item<5-> Average this change in loss across all observations%
         \only<5>{\\ Note: This is equivalent to computing $\riske$ on both data sets and taking the difference}%
-        \item<6-> Repeat pertubation and average over multiple repetitions%
+        \item<6-> Repeat perturbation and average over multiple repetitions%
       \end{itemize}
     % \only<3-4>{\item[3.] \textbf{Aggregation:}
     %   \begin{itemize}
@@ -239,7 +241,7 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
 %   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
 %   \includegraphics[width=0.39\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
 \centerline{\includegraphics[width=0.9\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}}
-\centerline{Hexbin plot of $x_1, x_2$ before permuting $x_1$ (left), after permuting $x_1$ (center), and PFI scores (right)}
+Hexbin plot of $x_1, x_2$ before permuting $x_1$ (left), after permuting $x_1$ (center), and PFI scores (right)
 \lz\pause
 % \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
 %\end{figure}
@@ -248,7 +250,7 @@ $\Rightarrow$ $x_1$ and $x_2$ should be irrelevant for the prediction $\fh(\xv)$
 $\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$, $x_2$ are considered relevant (PFI $> 0$)
 %$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 
- \end{frame}
+\end{frame}
 
 \begin{frame}{Comments on PFI - Interactions}
 

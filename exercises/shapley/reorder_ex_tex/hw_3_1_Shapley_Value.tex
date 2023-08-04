@@ -1,0 +1,25 @@
+\aufgabe{The Shapley value}{
+\label{ex:shapley}
+	
+First, we implement the original Shapley value for a cooperative game. In the AI quiz we have four players: Timnit, Margret, Samy, Jeff and Larry. The overall performance is given as
+
+$$\text{payoff}(S) = 10t+10m+10s+2j + 20(t\wedge m) + 20(t \wedge m \wedge s) - 30((t \vee m \vee s) \wedge j) $$
+
+where $t, m, s, j, l$ indicate whether Timnit, Margret, Samy, Jeff and Larry are in the set $S$. The function `payoff(set)` implements this functionality, where a set is a list/set of the respective characters (\texttt{'t', 's', 'm', 'j', 'l'}).
+
+\begin{enumerate}
+    \item Implement the original, exact Shapley value algorithm.
+    \item Implement the permutation based approximation of the Shapley value with a fixed number of iterations.
+    \item In this subsection, we want to identify whether the Shapley values or  specific sets fulfill the axioms. Please write the functions \textit{check\_symmetry}, \textit{check\_dummy}, \textit{check\_additivity}, \textit{check\_efficiency} to check the respective properties, all of which return a Boolean value. We briefly recall the properties below:
+    \begin{enumerate}
+        \item \textit{Symmetry:} Assess whether two features with the same contributions have the same Shapley value. I.e., if for $S \subseteq P - \{j,k\}$
+            $$v(S \cup \{j\}) - v(S) = v(S \cup \{k\}) -  v(S).$$
+        then the Shapley values should be identical.
+        \item \textit{Dummy:} Given player $j$ for whom for all subsets $S \subseteq P$ no contribution is made ($v(S) = v(S \cup \{j\})$) then also the Shapley value must be zero.
+        \item \textit{Additivity:} If $v$ is the sum two games $v_1$ and $v_2$ (i.e. $v(S) = v_1(S) + v_2(S)$) then the Shapley values are identical.
+        \item \textit{Efficiency:} Player contributions add up to the total payout of the game:
+            $$\sum\nolimits_{j=1}^p\phi_j = v(P)$$
+    \end{enumerate}
+\end{enumerate}
+
+}

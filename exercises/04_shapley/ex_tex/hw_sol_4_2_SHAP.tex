@@ -1,0 +1,124 @@
+\loesung{
+\begin{enumerate}[a)]
+	\item Pseudocode for predicting the Man of the Match probability through a random forest
+	
+	\begin{algorithm}[H]
+		\caption{Man of the Match}
+		\begin{algorithmic}[1]
+			\State \texttt{df} $\gets$ read in \textit{fifa.csv}
+			\State \texttt{df}['Man of the Match'] $\gets$ replace 'Yes' by TRUE (else FALSE)
+			\State \texttt{df} $\gets$ adapt \texttt{df} if needed for random forest model (e.g. removing NAs)
+			\State \texttt{train, test} $\gets$ split \texttt{df} in train and test data
+			\State \texttt{rf} $\gets$ random forest fit using train
+		\end{algorithmic}
+	\end{algorithm}
+
+	\item Pseudocode of \texttt{m\_vfunc()}
+	
+	\begin{algorithm}[H]
+		\caption{\texttt{m\_vfunc()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{j}: feature index
+			\Require \texttt{obs}: observation
+			\Require \texttt{X}: feature matrix
+			\Require \texttt{predict}: ML model
+			\Require \texttt{nr\_samples}: number of samples
+			\State \texttt{remainder} $\gets$ all features in \texttt{X} but \texttt{j}
+			\State \texttt{X\_tmp} $\gets$ sample \texttt{nr\_samples} samples from \texttt{X} (with replacing)
+			\State \texttt{X\_tmp} $\gets$ replace features \texttt{J} with respective values from \texttt{obs}
+			\State \texttt{pred} $\gets$ use \texttt{model} for prediction with \texttt{X\_tmp}
+			\State \textbf{return} mean of \texttt{pred}
+		\end{algorithmic}
+	\end{algorithm}
+
+	\item Pseudocode of \texttt{shap\_weights()}
+	
+	\begin{algorithm}[H]
+		\caption{\texttt{shap\_weights()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{mask}: (binary) coalition feature space
+			\State \texttt{p} $\gets$ number of features in \texttt{mask}
+			\State \texttt{zs} $\gets$ coalition size 
+			\State \texttt{nominator} $\gets$ \texttt{p} - 1
+			\State \texttt{denominator} $\gets$ (binomial coefficient of \texttt{p} over \texttt{zs}) $*$ \texttt{zs} $*$ (\texttt{p} - \texttt{zs})
+			\State \textbf{return} \texttt{nominator} / \texttt{denominator}
+		\end{algorithmic}
+	\end{algorithm}
+
+	Pseudocode of \texttt{replace\_dataset()}
+	
+	\begin{algorithm}[H]
+		\caption{\texttt{replace\_dataset()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{obs}: observation
+			\Require \texttt{X}: feature matrix
+			\Require \texttt{nr\_samples}: number of samples
+			\State \texttt{X\_new} $\gets$ sample \texttt{nr\_samples} samples from \texttt{X} (with replacing)
+			\State \texttt{obs\_rep} $\gets$ matrix with \texttt{nr\_samples} columns containing \texttt{obs} in each column
+			\State \texttt{mask} $\gets$ matrix with randomly drawn entries from a binomial distribution ($\mathcal{B}(0, 0.5)$)
+			\State \texttt{X\_new} $\gets$ replace entries where mask equals 1 with entry from \texttt{obs}
+			\State \textbf{return} \texttt{X\_new}, \texttt{mask}
+		\end{algorithmic}
+	\end{algorithm}
+
+	Pseudocode of \texttt{shap\_data()}
+	
+	\begin{algorithm}[H]
+		\caption{\texttt{shap\_data()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{obs}: observation
+			\Require \texttt{X}: feature matrix
+			\Require \texttt{nr\_samples}: number of samples
+			\Require \texttt{predict}: prediction model
+			\State \texttt{X\_new, mask} $\gets$ \texttt{replace\_dataset(obs, X, nr\_samples)}
+			\State \texttt{weight} $\gets$ \texttt{shap\_weights(mask)}
+			\State \texttt{pred} $\gets$ \texttt{predict(X\_new)}
+			\State \textbf{return} \texttt{mask, pred, weight}
+		\end{algorithmic}
+	\end{algorithm}
+
+	Pseudocode of \texttt{kernel\_shap()}
+	
+	\begin{algorithm}[H]
+		\caption{\texttt{kernel\_shap()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{obs}: observation
+			\Require \texttt{X}: feature matrix
+			\Require \texttt{nr\_samples}: number of samples
+			\Require \texttt{predict}: prediction model
+			\State \texttt{mask, pred, weight} $\gets$ \texttt{shap\_data(obs, X, nr\_samples, predict)}
+			\State \texttt{lm} $\gets$ weighted linear regression model using \texttt{mask, pred} and \texttt{weight}
+			\State \textbf{return} coefficients of \texttt{lm}
+		\end{algorithmic}
+	\end{algorithm}
+
+	\item \texttt{kernel\_shap(X\_test[1, ], X\_train, 1000, rf)}
+	\begin{table}[H]
+		%\scriptsize
+		\centering
+		\begin{tabular}{rrrr}
+			\hline 
+			(Intercept) &Goal.Scored & Ball.Possession..  & Attempts \\
+
+			1.65457557 & -3.28284372& -1.35771246 &-0.64907257  \\
+			\hline
+			On.Target& Off.Target & Blocked &  Corners  \\
+
+			-0.53569517& 0.06829845 & 0.55281192 & -2.18349575  \\
+			\hline
+			Offsides & Free.Kicks & Saves & Pass.Accuracy..  \\
+
+			-0.74949804  & -0.51869972 & 2.86721030 & -0.75230186   \\
+			\hline
+			Passes & Distance.Covered..Kms. & Fouls.Committed & Yellow.Card   \\
+
+			-0.42714693 & -0.84923274  & -0.96198507 & 0.70772339  \\
+			\hline
+			Yellow...Red & Red & Goals.in.PSO &   \\
+
+			0.18069980 & -0.12571821  &  0.08003492 & \\
+			\hline
+		\end{tabular} 
+	\end{table}	
+\end{enumerate} 
+}

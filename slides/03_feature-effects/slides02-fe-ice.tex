@@ -35,21 +35,25 @@
 
 \smallskip
 
-\textbf{Example:} Prediction surface of a model (left), select observation and visualize changes in prediction for different values of $x_2$ while keeping $x_1$ fixed $\Rightarrow$ \textbf{local interpretation}
+\textbf{Example:} Prediction surface of a model (left), select observation and visualize changes in prediction for different values of $x_2$ while keeping $x_1$ fixed \\ $\Rightarrow$ \textbf{local interpretation}
 
+\bigskip
 \centering
-\includegraphics[width=0.85\textwidth]{figure/ice_motivation}
+\includegraphics[width=\textwidth]{figure/ice_motivation}
 
 %$\Rightarrow$ Repeat for all observations and average the curves for global feature effect ($\leadsto$ PD plots)
 \end{frame}
 
-\begin{frame}{Individual Conditional Expectation (ICE) \citebutton{Goldstein et. al (2013)}{https://doi.org/10.1080/10618600.2014.907095}}
+
+
+
+\begin{frame}[c]{Individual Conditional Expectation (ICE) \citebutton{Goldstein et. al (2013)}{https://doi.org/10.1080/10618600.2014.907095}}
 
 %Consider an index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
 %\lz
 \begin{columns}[T]
 \begin{column}{0.16\textwidth} % 0.2 4.26cm
-\includegraphics[page=1, trim=0cm 0.35cm 4.53cm 0.35cm, clip, width=0.9\textwidth]{figure_man/ice_plot_demo}
+\includegraphics[page=1, trim=0cm 0.35cm 4.53cm 0.35cm, clip, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.84\textwidth}
 
@@ -58,18 +62,35 @@
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values from the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing values from features addressed by the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
-Partition each observation $\xv$ into $\xv_S$ (features of interest) and remaining features $\xv_{-S}$.\\
-$\leadsto$ In practice, $\xv_S$ consists of one or two features (i.e., $|S| \leq 2$ and ${-S} = S^\complement$).
-%, containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
+Partition each observation $\xv$ into $\xv_S$ (features of interest) and $\xv_{-S}$ (remaining features)
+\begin{itemize}
+    \item[$\leadsto$] In practice, $\xv_S$ consists of one or two features \\ (i.e., $|S| \leq 2$ and ${-S} = S^\complement$).
+    %, containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
+\end{itemize}
 
 \medskip
 
-ICE curves visualize how prediction of $i$-th observation changes after varying its feature values indexed by $S$ using grid points $\xv_S^*$ while keeping all values in $-S$ fixed:
-%by replacing the feature values $\xv_S^{(i)}$ with other values $\xv_S$ while keeping all other features in $\xi_C$ fixed:
-%by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed:
-$$\fh_{S}^{(i)}(\xv_S^*) \; \text{ vs. } \; \xv_S^*$$
+Formal definition of ICE curves: 
+\begin{itemize}
+    \item Choose grid points $\xv_S^* = \xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$ to vary $\xv_S$
+    \item Plot point pairs $ \Bigl\{\left(\xv_S^{*^{(k)}}, \fhice{S}^{(i)}(\xv_S^{*^{(k)}}) \right) \Bigr\}_{k=1}^g$
+    \\where $\fhice{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$
+    \item For each $k$ connect point pairs to obtain \textbf{ICE curve}
+\end{itemize}
 
-where $\fh_{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$ is prediction of $i$-th observation in which original feature value $\xi_S$ was replaced by $\xv_S^*$.
+\medskip
+
+\begin{itemize}
+    \item[$\leadsto$] ICE curves visualize how prediction of $i$-th observation changes after varying its feature values indexed by $S$ using grid points $\xv_S^*$ while keeping all values in $-S$ fixed
+%by replacing the feature values $\xv_S^{(i)}$ with other values $\xv_S$ while keeping all other features in $\xi_C$ fixed:
+%by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed.
+
+% \begin{itemize}
+%     \item[$\leadsto$] Plot \quad $\fh_{S}^{(i)}(\xv_S^*) \; \text{ vs. } \; \xv_S^*$ \\
+%     where $\fh_{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$ is prediction of $i$-th observation in which original feature value $\xi_S$ was replaced by $\xv_S^*$.
+% \end{itemize}
+\end{itemize}
+
 
 %Visualize for \textbf{I}ndividual observations and \textbf{C}onditional on all other features how \textbf{E}xpected prediction changes
 
@@ -128,9 +149,9 @@ where $\fh_{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$ is prediction of $i$-th 
 
 \begin{frame}{ICE Curves - Illustration}
 
-\begin{columns}[T]
+\begin{columns}[c]
 \begin{column}{0.4\textwidth}
-\includegraphics[page=2, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+\includegraphics[page=2, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
 
@@ -146,17 +167,17 @@ Sample grid values $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$ along feature of in
 and replace vector $\xv^{(i)}$ in data with grid
 %h observation with these sampled grid values.
 %$\Rightarrow$ New artificial data points for $i$-th observation.
-\newline $\Rightarrow$ Creates new artificial points for the $i$-th observation (here: $\xv_S^* = x_1^* \in \{1, 2, 3\}$ is a scalar)
+\newline $\Rightarrow$ Creates new artificial points for $i$-th observation (here: $\xv_S^* = x_1^* \in \{1, 2, 3\}$ scalar)
 
 \end{frame}
 
 \begin{frame}{ICE Curves - Illustration}
 
-\begin{columns}[T]
+\begin{columns}[c]
 \begin{column}{0.4\textwidth}
-\includegraphics<1>[page=3, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
-\includegraphics<2>[page=4, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
-\includegraphics<3>[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+\includegraphics<1>[page=3, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
+\includegraphics<2>[page=4, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
+\includegraphics<3>[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
 \includegraphics<1>[page=1, width=0.85\textwidth]{figure/ICE}
@@ -168,9 +189,9 @@ and replace vector $\xv^{(i)}$ in data with grid
 
 \textbf{2. Step - Predict and visualize:}
 
-For each artificially created data point of $i$-th observation, plot prediction $\fh_{S}^{(i)}(\xv_S^*)$ vs. grid values $\xv_S^*$:
+For each artificially created data point of $i$-th observation, plot prediction $\fhice{S}^{(i)}(\xv_S^*)$ vs. grid values $\xv_S^*$:
 
-$$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
+$$\fhice{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
 
 \end{frame}
 
@@ -239,8 +260,8 @@ $$\fh_{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3
 
 \begin{columns}[T]
 \begin{column}{0.4\textwidth}
-\includegraphics<1>[page=6, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
-\includegraphics<2>[page=7, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{figure_man/ice_plot_demo}
+\includegraphics<1>[page=6, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
+\includegraphics<2>[page=7, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
 \end{column}
 \begin{column}{0.55\textwidth}
 \includegraphics<1>[page=4, width=0.85\textwidth]{figure/ICE}
@@ -278,23 +299,29 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
 % % ICE curves involve plotting the pairs $ \{(\xv_S^{*^{(k)}}, \fh_{S}^{(i)}(\xv_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$.
 % \end{frame}
 
+\begin{frame}{ICE Curves - Interpretation}
+\textbf{Example:} Prediction surface of a model (left), select observation and visualize changes in prediction for different values of $x_2$ while keeping $x_1$ fixed \\ $\Rightarrow$ \textbf{local interpretation}
+
+\bigskip
+\centering
+\includegraphics[width=\textwidth]{figure/ice_motivation}
+
+%% Wie nutzt man ICE Kurven zur lokalen Interpretation?
+\end{frame}
+
 
 \begin{frame}{Comments on Grid values}
 \begin{itemize}
 %\item ICE curves show how different feature values of an observation affect its prediction \newline $\Rightarrow$ \textbf{local interpretation method}
-\item Plotting ICE curves involves generating grid values $\xv_S^*$ that are visualized on the x-axis
+\item Plotting ICE curves involves generating grid values $\xv_S^*$; visualized on x-axis
 \item Common choices for grid values are
 \begin{itemize}
 \item equidistant grid values within feature range
 \item randomly sampled values or quantile values of observed feature values
 \end{itemize}
 \item Except equidistant grid, the other two options preserve (approximately) the marginal distribution of feature of interest
-$\Rightarrow$ Avoids unrealistic feature values for distributions with outliers %or dependencies
-
-\vspace{3pt}
-\centering
-\includegraphics[width=0.75\textwidth, trim=0cm 0cm 0cm 0cm, clip]{figure/sampling}
-
+%$\Rightarrow$ Avoids unrealistic feature values for distributions with outliers %or dependencies
+\item<2> Correlations/interactions $\leadsto$ unrealistic values in all three methods
 %Preferable for skewed distributions (with outliers) to avoid using unrealistic feature values.
 % \begin{itemize}
 % \item equidistant grid values:
@@ -302,6 +329,13 @@ $\Rightarrow$ Avoids unrealistic feature values for distributions with outliers 
 % \item quantile grid values:
 % \end{itemize}
 \end{itemize}
+
+\vspace{0.3cm}
+\centering
+\includegraphics<1>[width=0.85\textwidth, trim=0cm 0cm 0cm 0cm, clip]{figure/sampling2}
+\includegraphics<2>[width=0.85\textwidth, trim=0cm 0cm 0cm 0cm, clip]{figure/sampling}
+
+
 \end{frame}
 
 \endlecture

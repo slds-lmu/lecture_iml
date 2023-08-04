@@ -1,0 +1,44 @@
+\aufgabe{LIME}{
+
+In the following, you are guided to implement LIME to interpret a Support Vector Machine (SVM). We use \textbf{two} (numeric) features and explore LIME on a multiclass classification problem with only two (numeric) features. The associated files for this exercise are \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/06_lime_ce/code/lime.py}{\textit{lime.py}} or \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/06_lime_ce/code/lime.R}{\textit{lime.R}} depending on your preferred programming language. 
+In these files, helper functions for plotting (\texttt{get\_grid()}, \texttt{plot\_grid()} and \texttt{plot\_points\_in\_grid()}) were already implemented.
+
+\begin{enumerate}[a)]
+
+\item Inspect Implemented Functions
+
+First of all, make yourself familiar with the already implemented functions in the template files. 
+\begin{itemize}
+  \item The function \texttt{get\_grid()} prepares data to visualize the feature space. It creates a $N\times N$ grid, and every point in this grid is associated with a value. This value is obtained by the model's predict method.
+  \item The function \texttt{plot\_grid()}, visualizes the prediction surface. 
+  \item The created plot is an input to the function \texttt{plot\_points\_in\_grid()}, which adds given data points to the plot. 
+\end{itemize}
+
+\item Sample Points
+
+Your first implementation task is to sample points, which are later used to train the local surrogate model. Complete
+\texttt{sample\_points()} by randomly sampling from a uniform distribution. Consider the lower and
+upper bounds from the input datapoints. 
+
+\textit{Hint:} In Python, you can use the method \texttt{dataset.get\_configspace().get\_hyperparameters\_dict()} 
+implemented in the file \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/06_lime_ce/code/utils/dataset.py}{\textit{utils/dataset.py}} to retrieve the lower and upper values. 
+For an example, have a look on the already implemented function  \texttt{get\_grid()}.
+
+\item Weight Points
+
+Given a selected point $\xv$ and the sampled points $Z$ from the previous task, we now want to weight the points. Use the following equation with $d$ as Euclidean distance to calculate the weight of a single point $\mathbf{z} \in Z$:
+
+\begin{equation}
+    \phi_{\xv}(\mathbf{z}) = exp(-d(\xv, \mathbf{z})^2/\sigma^2).
+    \label{eq:dist}
+\end{equation}
+
+\noindent To make plotting easier later on, the weights should be normalized between zero and one. Finally, return the normalized weights in \texttt{weight\_points()}.
+
+\item Fit Local Surrogate Model
+
+Finally, fit a decision tree with training data and weights. Return the fitted tree in the function \texttt{fit\_explainer\_model()}. 
+What could be problematic?
+
+\end{enumerate}
+}
