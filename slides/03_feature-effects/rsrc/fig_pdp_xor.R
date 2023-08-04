@@ -2,15 +2,11 @@
 
 library(ggplot2)
 library(mlr3)
-<<<<<<< HEAD
 library(mlr3learners)
 library(mlr3extralearners)
 library(gbm)
 library(iml)
-library(ggplot2)
-=======
 source("anova_bike.R")
->>>>>>> 695105b2b72f4ffa5ce2cd9d55cdf2d154fab5b5
 
 # DATA -------------------------------------------------------------------------
 
