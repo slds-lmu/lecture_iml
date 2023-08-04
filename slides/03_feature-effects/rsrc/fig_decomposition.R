@@ -1,7 +1,9 @@
+# PREREQ -----------------------------------------------------------------------
 library(iml)
 library(ggplot2)
 theme_set(theme_bw())
 
+# DATA -------------------------------------------------------------------------
 x1 = seq(from = -10, to = 10, length.out = 21)
 x2 = seq(from = -10, to = 10, length.out = 21)
 f = function(x1, x2){
@@ -89,7 +91,7 @@ f0 + f1 + f2 + f12
 
 f(x1val, x2val)
 
-
+# PLOT -------------------------------------------------------------------------
 
 lab0 = paste("g[0] ==", round(f0, 2))
 p0 = ggplot(data = NULL) +
@@ -161,7 +163,7 @@ f = ggplot(data = dat2, aes(x = x1, y = x2, z = y)) +
 (res = (f | (p0 + p1) / (p2 | p12)) +
     patchwork::plot_layout(widths = c(1, 1.75), guides = "collect"))
 
-ggsave("slides/feature-effects/figure/decomposition.pdf",
+ggsave("../figure/decomposition.pdf",
   height = 5, width = 12, res)
 
 #

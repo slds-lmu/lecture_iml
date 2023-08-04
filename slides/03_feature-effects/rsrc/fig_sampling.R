@@ -69,25 +69,6 @@ p = p +
   geom_rect(data = ann_text, mapping = aes(ymax = x2 + 0.5, ymin = x2 - 0.5,
                                            xmax = x1 - 0.3, xmin = (x1-diff) + 0.3), alpha = 0, size = 0.5,
             colour = "red", fill = "red") +
-  geom_rect(data = ann_text, mapping = aes(ymax = x2 + 0.5, ymin = x2 - 0.5,
-                                           xmax = (x1-diff) - 0.45, xmin = -0.1), alpha = 0, size = 0.5,
-            colour = "red", fill = "red") +
   theme(plot.title = element_text(hjust = 0.5))
 
-ann_text = data.frame(x1 = max(x1), x2 = x2[ind], diff = max(diff(sort(x1))), #lab = "Text",
-                      method = factor("randomly sampled grid", levels = levels(data$method)))
-p = p + 
-  geom_rect(data = ann_text, mapping = aes(ymax = x2 + 0.5, ymin = x2 - 0.5,
-                                           xmax = (x1-diff) - 0.45, xmin = -0.1), alpha = 0, size = 0.5,
-            colour = "red", fill = "red") +
-  theme(plot.title = element_text(hjust = 0.5))
-
-ann_text = data.frame(x1 = max(x1), x2 = x2[ind], diff = max(diff(sort(x1))), #lab = "Text",
-                      method = factor("quantile grid", levels = levels(data$method)))
-p = p + 
-  geom_rect(data = ann_text, mapping = aes(ymax = x2 + 0.5, ymin = x2 - 0.5,
-                                           xmax = (x1-diff) - 0.45, xmin = -0.1), alpha = 0, size = 0.5,
-            colour = "red", fill = "red") +
-  theme(plot.title = element_text(hjust = 0.5))
-
-ggsave("slides/03_feature-effects/figure/sampling.pdf", p, height = 2.5, width = 7.5)
+ggsave("../figure/sampling.pdf", p, height = 2.5, width = 7.5)

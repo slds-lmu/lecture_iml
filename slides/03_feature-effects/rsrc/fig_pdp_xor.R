@@ -1,11 +1,16 @@
 # PREREQ -----------------------------------------------------------------------
 
+library(ggplot2)
 library(mlr3)
+<<<<<<< HEAD
 library(mlr3learners)
 library(mlr3extralearners)
 library(gbm)
 library(iml)
 library(ggplot2)
+=======
+source("anova_bike.R")
+>>>>>>> 695105b2b72f4ffa5ce2cd9d55cdf2d154fab5b5
 
 # DATA -------------------------------------------------------------------------
 
@@ -31,4 +36,4 @@ p1 = pdp$plot()
 ggxor = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
   scale_x_continuous(name = expression(x[1]))
 
-ggsave("slides/feature-effects/figure/pdp_xor.pdf", ggxor, width = 6, height = 4)
+ggsave("../figure/pdp_xor.pdf", ggxor, width = 6, height = 4)

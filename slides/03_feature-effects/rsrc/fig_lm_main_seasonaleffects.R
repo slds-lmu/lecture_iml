@@ -18,4 +18,4 @@ p2 = ggplot(data = bike, aes(x = temp, y = cnt, fill = season)) +
 
 p = gridExtra::grid.arrange(p1 + ggtitle("LM"), p2 + ggtitle("GAM"), ncol = 2)
 
-ggsave("slides/feature-effects/figure_man/lm_main_seasonaleffects.pdf", p, width = 8, height = 3)
+ggsave("../figure_man/lm_main_seasonaleffects.pdf", p, width = 8, height = 3)

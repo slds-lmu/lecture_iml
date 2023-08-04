@@ -1,7 +1,7 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(ggplot2)
-source("slides/feature-effects/rsrc/anova_bike.R")
+source("anova_bike.R")
 
 # DATA -------------------------------------------------------------------------
 
@@ -14,4 +14,4 @@ p1 = pdp$plot() +
   scale_y_continuous('Predicted number of bike rentals') +
   xlim(range(bike$temp))
 
-ggsave("slides/feature-effects/figure/pdp_bike.pdf", height = 3, width = 6, p1)
+ggsave("../figure/pdp_bike.pdf", height = 3, width = 6, p1)

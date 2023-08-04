@@ -1,10 +1,10 @@
 # PREREQ -----------------------------------------------------------------------
 
-source("slides/feature-effects/rsrc/feature_effect_helpers.R")
+source("feature_effect_helpers.R")
 
 # PLOT -------------------------------------------------------------------------
 
-pdf(file = "slides/feature-effects/figure/PD.pdf", width = 5.5, height = 3.75)
+pdf(file = "../figure/PD.pdf", width = 5.5, height = 3.75)
 
 par(mar = c(3,3.5,0.25,0.25))
 plotImportanceDemo(x, dL, ylab = expression(hat(f)[S]), main = "",

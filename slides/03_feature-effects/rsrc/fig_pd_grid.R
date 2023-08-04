@@ -32,4 +32,4 @@ p2 = ggplot() +
 p2 = p2 + geom_line(data = d, aes(x = sort(x1)[19] + 5*y, y = x), alpha = 0.25, color = "red")
 grid = grid.arrange(p1, p2, ncol = 2, respect = TRUE)
 
-ggsave("slides/feature-effects/figure/pd_grid.pdf", grid, width = 8, height = 4)
+ggsave("../figure/pd_grid.pdf", grid, width = 8, height = 4)
