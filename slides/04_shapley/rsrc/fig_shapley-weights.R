@@ -23,5 +23,5 @@ ggplot(plt_data) +
   geom_line(aes(x = s, y = weight)) +
   scale_x_continuous("Coalition size |S|", breaks = 0:p) +
   scale_y_continuous("Shapley weight: |S|!(|P| - |S| - 1)/|P|!")
-ggsave(file = "shapley-weights.pdf", height = 3, width = 4)
+ggsave(file = "../figure/shapley-weight.pdf", height = 3, width = 4)
 
