@@ -17,7 +17,7 @@
 \newcommand{\learninggoals}{
 \item Optimization problems in hard-masking
 \item Generative masking
-\item Sampling based instance-wise feature selection}
+\item Sampling-based instance-wise feature selection}
 
 \lecturechapter{Learning to Explain}
 \lecture{Interpretable Machine Learning}
@@ -25,7 +25,7 @@
  
 \begin{frame}[c]{Instance-wise Feature Selection}
     \begin{itemize}
-        \item What happens when we do not have explanation data ?
+        \item What happens when we do not have explanation data?
         \bigskip
         \item Need to use the task-specific supervision signal to create explanations
         \bigskip
@@ -52,9 +52,9 @@ space
     \begin{itemize}
         \item Selector network selects the mask, predictor network predicts using the masked input
         \item Binary masking introduces discontinuity in the neural network
-\item Discontinuity $\rightarrow$ gradient based optimisation is not possible
+\item Discontinuity $\rightarrow$ gradient-based optimisation is not possible
 \bigskip
-\item How can we learn parameters of such a network using gradient-based optimisation ?
+\item How can we learn the parameters of such a network using gradient-based optimization?
     \end{itemize}
     \begin{figure}
         \centering
@@ -65,13 +65,13 @@ space
 \begin{frame}{Generative masks}
     \begin{itemize}
         \item Masks are generated from a probability distribution
-        \item Instance wise feature selection as finding the expectation of the predictor function
+        \item Instance-wise feature selection as finding the expectation of the predictor function
 distributed according to human interpretability
     \end{itemize}
     \bigskip
    \begin{equation*}
              \centering
-    \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
+    \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
 \end{equation*}
     
     
@@ -84,8 +84,8 @@ distributed according to human interpretability
 	
 \begin{frame}{Instance-wise Feature Selection}
 \begin{itemize}
-    \item The distribution over explanations is parameterised by a neural network
-    \item The predictor network is also parameterised by a neural network
+    \item The distribution over explanations is parameterized by a neural network
+    \item The predictor network is also parameterized by a neural network
 \end{itemize}
 \bigskip
 \begin{equation*}
@@ -106,15 +106,18 @@ distributed according to human interpretability
 \begin{frame}{Monte Carlo Sampling}
  
 $$
-\mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})] 
+\mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})] 
 $$
 
 
     \begin{itemize}
         \item \textbf{Trick:} $\nabla_{\boldsymbol{\theta}} \log p(\mathbf{x} ; \boldsymbol{\theta})=\frac{\nabla_{\boldsymbol{\theta}} p(\mathbf{x} ; \boldsymbol{\theta})}{p(\mathbf{x} ; \boldsymbol{\theta})}$
     \end{itemize}
+\medskip
+
+$\leadsto$ In a simplified notation (ignoring $\mathbf{m}$), we get the following:
 $$
-\bigskip
+\smallskip
     \begin{aligned}
         \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,
         \boldsymbol{\eta}:=\nabla_{\boldsymbol{\theta}} \mathcal{F}(\boldsymbol{\theta}) &=\nabla_{\boldsymbol{\theta}} \mathbb{E}_{p(\mathbf{x} ; \boldsymbol{\theta})}[f(\mathbf{x} ; \boldsymbol{\phi})] \\
@@ -128,7 +131,7 @@ $$
 \begin{frame}{Monte Carlo Estimator}
    
 \begin{equation*}
-     \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
+     \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
 \end{equation*}
 
 $$
@@ -156,7 +159,7 @@ $$
 \begin{frame}{Reducing variance}
   
   \begin{equation*}
-     \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
+     \mathcal{F}(\boldsymbol{\theta}):=\int p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta}) f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi}) \mathrm{d} \mathbf{x}=\mathbb{E}_{p(\mathbf{m} ; \mathbf{x}, \boldsymbol{\theta})}[f(\mathbf{m} \odot \mathbf{x} ; \boldsymbol{\phi})]
 \end{equation*}
 
   \bigskip

@@ -71,4 +71,4 @@ p = p +
             colour = "red", fill = "red") +
   theme(plot.title = element_text(hjust = 0.5))
 
-ggsave("slides/feature-effects/figure/sampling.pdf", p, height = 2.5, width = 7.5)
+ggsave("../figure/sampling.pdf", p, height = 2.5, width = 7.5)

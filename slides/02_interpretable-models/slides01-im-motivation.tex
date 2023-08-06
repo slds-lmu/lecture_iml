@@ -9,7 +9,7 @@
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
 \date{}
 
-\begin{document}
+\begin{document} 
 
 \newcommand{\titlefigure}{figure/whitebox}
 \newcommand{\learninggoals}{
@@ -22,27 +22,25 @@
 \lecture{Interpretable Machine Learning}
 
 \begin{frame}{Motivation}
-Achieving interpretability by using interpretable models is the most straightforward approach
-\bigskip
+%Achieving interpretability by using interpretable models is the most straightforward approach
+%\bigskip
 \begin{columns}[T, totalwidth = \linewidth]
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.55\textwidth}
     \begin{itemize}
         %\item Obtaining interpretations by using interpretable models is the easiest and least error-prone approach
-       % \item Achieving interpretability by using interpretable models is the most straightforward approach
+       \item Achieving interpretability by using interpretable models is the most straightforward approach
         \bigskip
         \item Classes of models deemed interpretable:
-        \begin{itemize}
             %\item Linear regression models
-            \item (Generalized) linear models (LM, GLM)
-            \item Generalized additive models (GAM)
-            \item Decision trees
-            \item Rule-based learning
-            \item Model-based boosting / component-wise boosting
-            \item ...
-        \end{itemize}
+            \item[] $\bullet$ (Generalized) linear models (LM, GLM)
+            \item[] $\bullet$ Generalized additive models (GAM)
+            \item[] $\bullet$ Decision trees
+            \item[] $\bullet$ Rule-based learning
+            \item[] $\bullet$ Model-based boosting / component-wise boosting
+            \item[] $\bullet$ ...
     \end{itemize}
     \end{column}
-    \begin{column}{0.45\textwidth}  %%<--- here
+    \begin{column}{0.44\textwidth}  %%<--- here
   \includegraphics[width = \textwidth]{figure/main_effect_lm_temp.pdf}
   \begin{center}
     $\leadsto$ LM provides straightforward interpretation
@@ -52,78 +50,197 @@ Achieving interpretability by using interpretable models is the most straightfor
 \end{frame}
 
 \begin{frame}{Advantages}
-
+\begin{columns}[T, totalwidth=\textwidth]
+\begin{column}{0.75\textwidth}
     \begin{itemize}[<+->]
     \itemsep1em
-        \item Inherently interpretable - additional model-agnostic interpretation techniques not required \\
+        \item For inherently interpretable models some additional model-agnostic interpretation methods not required \\
         $\leadsto$ Eliminates a source of error
-        \item Since interpretable models are often simple, training time is fairly small
-        \item Some interpretable models fulfill the monotonicity constraint \\
-        $\leadsto$ Larger feature values always lead to higher (or smaller) outcomes (e.g., GLMs)
-        \item Many people are familiar with traditional interpretable models \\
-        $\leadsto$ Increases trust in the model and facilitates communication about its results
-        \item Implementations are available in many programming languages \\
-        $\leadsto$ Simple models are easier to deploy in practice or implement from scratch
+        \item Interpretable models often simple \\
+        $\leadsto$ training time is fairly small
+        \item Some interpretable models estimate monotonic effects \\
+        %the monotonicity constraint \\
+        $\leadsto$ Simple to explain as larger feature values always lead to higher (or smaller) outcomes (e.g., GLMs)
+        \item Many people are familiar with simple interpretable models \\
+        $\leadsto$ Increases trust, facilitates communication of results
+        %\item Implementations are available in many programming languages \\
+        %$\leadsto$ Simple models are easier to deploy in practice or implement from scratch
     \end{itemize}
-
+\end{column}
+\begin{column}{0.25\textwidth}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.6, transform shape]
+        \usetikzlibrary{arrows}
+            \usetikzlibrary{shapes}
+            \tikzset{treenode/.style={draw, circle, font=\small}}
+            \tikzset{line/.style={draw, thick}}
+            \node [treenode, draw=red] (a0) {$a_0$};
+            \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
+            \node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
+     
+            \node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
+            \node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
+     
+            \node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
+            \node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
+     
+            \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
+            \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
+     
+            \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};;
+            \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
+     
+          
+            \path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};;
+            \path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
+     
+        \end{tikzpicture}
+        
+        \vspace{0.5cm}
+        
+        \includegraphics<3->[height = 2.5cm, width = \textwidth]{figure/intro_lm_bike.pdf}
+    \end{center}
+\end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}{Disadvantages}
-
+\begin{columns}
+\begin{column}{0.75\textwidth}
     \begin{itemize}%[<+->]
     \itemsep1em
-        \item<1-> Certain assumptions about data and / or model structure are often reqiured\\
-        $\leadsto$ If assumptions are wrong, models may have bad predictive performance
+        \item<1-> Often require assumptions about data / model structure \\%Often certain assumptions about data / model structure required\\
+        $\leadsto$ If assumptions are wrong, models may perform bad 
         %\item In high-dimensional settings, it may not be feasible to find and define all feature relationships
         %\item If the wrong assumptions are made, interpretable models may have a bad predictive performance
         %\pause
-        \item<2-> Often not able to automatically model complex relationships due to limited model flexibility, \\
-        e.g., high-order main or interaction effects need to be specified manually in a LM
-        %\pause
-        \item<3-> A complex structure of an interpretable model may also be difficult to interpret, e.g.:
-        \begin{itemize}
-            \item Linear model with hundreds of features and interactions 
-            \item Decision trees with huge tree depth
-        \end{itemize}
-        %\pause
-        \item<4-> Inherently interpretable models do not provide all types of explanations one might be interested\\
-        $\leadsto$ Methods providing other types of explanations still useful (e.g., counterfactual explanations)
-        %Still requires application of model-agnostic interpretation techniques if certain types of explanations are of interest (e.g., counterfactual explanations)
+        \item<2-> Interpretable models may also be hard to interpret, e.g.:
+    \begin{itemize}
+        \item Linear model with lots of features and interactions 
+        \item Decision trees with huge tree depth
     \end{itemize}
+    \end{itemize}
+\end{column}
+\begin{column}{0.25\textwidth}
+    \begin{center}
+        \includegraphics[width = \textwidth]{figure/lm_bad_fit.pdf} 
+    \end{center}
+\end{column}
+\end{columns}
+\quad \\
 
+\begin{itemize}
+\itemsep1em
+        \item<3-> 
+        %No automatic modeling of complex relationships due to limited model flexibility
+        Often do not automatically model complex relationships due to limited flexibility
+        \\
+        e.g., high-order main or interaction effects need to be specified manually in a LM
+
+        %\pause
+     \item<4-> Inherently interpretable models do not provide all types of explanations
+     %% one might be interested
+     \\
+     $\leadsto$ Methods providing other types of explanations still useful  (e.g., counterfactual explanations)
+     %Methods providing other types of explanations still useful  (e.g., counterfactual explanations)
+     %Still requires application of model-agnostic interpretation techniques if certain types of explanations are of interest (e.g., counterfactual explanations)
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Further Comments}
 
     \begin{itemize}
-    \itemsep1em
-        \item<1-> Some argue that one should always use interpretable models in the first place \citebutton{Rudin 2019}{https://www.nature.com/articles/s42256-019-0048-x}
+    %\itemsep1em
+        \item<1-> Some argue that interpretable models should be preferred \citebutton{Rudin 2019}{https://www.nature.com/articles/s42256-019-0048-x}
         \begin{itemize}
-            \item \ldots and not try to explain uninterpretable models post-hoc
-            \item Can sometimes work out by spending enough time and energy on data pre-processing %feat. engineering and data cleaning
+            \item \ldots instead of explaining uninterpretable models post-hoc
+            \item Can sometimes work out by spending enough time and energy on data pre-processing or manual feature engineering
+            %, or data cleaning
         \end{itemize}
         %\pause
         %\footnote[frame]{Rudin, C. Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. Nat Mach Intell 1, 206–215 (2019).}
         % {https://www.nature.com/articles/s42256-019-0048-x}
        %\item Interpretable models also have the potential for a high predictive performance, but require more knowledge and time spent on data preprocessing
        \item<2->[$\leadsto$] Drawback: Hard to achieve for data for which end-to-end learning is crucial\\ 
-        (e.g., hard to extract good features for image / text data $\leadsto$ information loss = bad performance)
+       e.g., hard to extract good features for image / text data\\ $\leadsto$ information loss = bad performance
        %(e.g., for image / text data extraction of good features is hard $\leadsto$ information loss = bad performance)
        %(e.g., image and text data would require good feature extraction steps $\leadsto$ information loss)
         %\pause
         %\item One can assume a trade-off between interpretability and model performance which generally (but not always) holds
-        \item<3-> Often there is a trade-off between interpretability and model performance (but not always)
-        %\pause
-        \item<4-> \textbf{Recommendation:}
-        \begin{itemize}
-            \item Start with most simple model that makes sense for application at hand
-            \item Gradually increase complexity if performance is insufficient\\
-            $\leadsto$ will usually lower interpretability and require additional interpretation methods
-            \item Choose the most simple, sufficient model (Occam's razor)
-        \end{itemize} 
+        \item<3-> Often there is a trade-off between interpretability and model performance 
+        %(but not always)
     \end{itemize}
+    
+    \smallskip
+    
+    \only<3>{\centering\includegraphics[width=0.65\textwidth]{figure/performance_vs_interpretability.pdf}}
+    % Quelle: https://docs.google.com/presentation/d/12ZPrTjBKEUT-7drdyUJCQGK0oHVDtYIVd2_6byE62f0/edit?usp=sharing
 
 \end{frame}
+
+
+\begin{frame}{Recommendation}
+    \begin{itemize}
+        \item Start with most simple model that makes sense for application at hand
+        \item Gradually increase complexity if performance is insufficient\\
+        $\leadsto$ will usually lower interpretability and require additional interpretation methods
+        \item Choose the most simple, sufficient model (Occam's razor)
+    \end{itemize} 
+
+    \bigskip
+
+% \begin{columns}[T, totalwidth=\textwidth]
+% \begin{column}{0.5\textwidth}
+% \centering \textbf{Bike Data}
+%     \begin{table}[ht]
+%         \centering
+%         \begin{tabular}{lrr}
+%             \hline
+%             Model & RMSE & $R^2$ \\ 
+%             \hline
+%             LM & 142.39 & 0.38 \\ 
+%             Tree & 98.71 & 0.70 \\ 
+%             Random Forest & 57.07 & 0.90 \\ 
+%             Boosting & 197.42 & -0.18 \\  
+%             \hline
+%         \end{tabular}
+%     \end{table}
+% \end{column}
+% \begin{column}{0.5\textwidth}
+% \centering \textbf{Boston Housing Data}
+%     \begin{table}[ht]
+%         \centering
+%         \begin{tabular}{lrr}
+%             \hline
+%             Model & RMSE & $R^2$ \\ 
+%             \hline
+%             LM & 0.43 & 1.00 \\ 
+%             Tree & 1.81 & 0.96 \\ 
+%             Random Forest & 1.77 & 0.96 \\ 
+%             Boosting & 16.89 & -2.43 \\
+%             \hline
+%         \end{tabular}
+%     \end{table}
+% \end{column}
+% \end{columns}
+% code for tables in rsrc/tab_ml_comparison.R
+
+\centering \textbf{Bike Data, 4-fold CV}
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrr}
+  \hline
+Model & RMSE & $R^2$ \\ 
+  \hline
+  LM & 800.15 & 0.83 \\ 
+  Tree & 981.83 & 0.74 \\ 
+  Random Forest & 653.25 & 0.88 \\ 
+  Boosting (tuned) & 638.42 & 0.89 \\ 
+   \hline
+\end{tabular}
+\end{table}
+\end{frame}
+
 
 
 \endlecture

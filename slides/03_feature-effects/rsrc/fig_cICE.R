@@ -3,7 +3,7 @@
 library(ggplot2)
 library(patchwork)
 library(ggrastr)
-source("slides/feature-effects/rsrc/anova_bike.R")
+source("anova_bike.R")
 theme_set(theme_bw())
 
 # DATA -------------------------------------------------------------------------
@@ -31,4 +31,4 @@ prest = pt + ggtitle("ICE plot (temp)") +
 pres = rasterise(pres, dev = "ragg")
 prest = rasterise(prest, dev = "ragg")
 
-ggsave("slides/feature-effects/figure/cICE.pdf", pres / prest, width = 8, height = 5)
+ggsave("../figure/cICE.pdf", pres / prest, width = 8, height = 5)

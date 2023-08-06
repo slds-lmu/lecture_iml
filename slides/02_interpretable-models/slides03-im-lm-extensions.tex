@@ -1,0 +1,376 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\def\firstrowcolor{}
+\def\secondrowcolor{}
+\def\thirdrowcolor{}
+\def\fourthrowcolor{}
+
+\definecolor{winter}{RGB} {243,117,108}
+\definecolor{spring}{RGB} {121,174,65}
+\definecolor{summer}{RGB} {25,188,195}
+\definecolor{fall}{RGB} {166,128,185}
+\setlength{\leftmargini}{1.5em}
+\setlength{\leftmarginii}{1em}
+\begin{document}
+
+\newcommand{\titlefigure}{figure/lm_example}
+\newcommand{\learninggoals}{
+\item Inclusion of high-order and interaction effects
+\item Regularization via LASSO
+%\item Examples of popular interpretable models
+%\item Properties of some interpretable models
+%\item Focus on how to interpret them, not on math details
+}
+
+\lecturechapter{Extensions of Linear Regression Models}
+\lecture{Interpretable Machine Learning}
+
+\begin{frame}{Interaction and High-order Effects}
+
+$$\text{LM Equation: } y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon$$
+
+Equation above can be extended (polynomial regression) by including
+
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.65\linewidth}
+    \begin{itemize}
+        \item \textbf{high-order effects} which have their own weights\\
+        $\leadsto$ e.g., quadratic effect: $\theta_{x_j^2} \cdot x_j^2$
+        \item \textbf{interaction effects} as the product of multiple feat.\\
+        $\leadsto$ e.g., 2-way interaction: $\theta_{x_i, x_j} \cdot x_i \cdot x_j$
+    \end{itemize}
+\end{column}
+\begin{column}{0.34\linewidth}
+    \vspace{-0.2cm}
+    \centering
+    \begin{scriptsize}
+    \begin{table}[ht]
+    \textbf{Bike Data}
+        \begin{tabular}{lrr}
+        \hline
+        Method & $R^2$ & adj. $R^2$ \\ 
+        \hline
+        Simple LM & 0.85 & 0.84 \\ 
+        High-order & 0.87 & 0.87 \\ 
+        Interaction  & 0.96 & 0.93 \\ 
+    %    Both Types & 0.96 & 0.93 \\ 
+        \hline
+        \end{tabular}
+    \end{table}
+    \end{scriptsize}
+    % code for tables in rsrc/tab_lm_comparison.R
+\end{column}
+\end{columns}
+
+\pause
+Implications of including high-order and interaction effects: 
+\begin{itemize}
+    \item Both make the model more flexible but also less interpretable\\
+    $\leadsto$ More weights to interpret
+    \item Both need to be specified manually (inconvenient and sometimes infeasible)\\
+    $\leadsto$ Other ML models learn them often automatically
+    \item Marginal effect of a feature cannot be interpreted by single weights anymore\\
+$\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equation
+\end{itemize}
+
+%Weights cannot be interpreted in isolation as before
+% $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon$$
+
+% \begin{itemize}
+% \item Results in polynomial regression 
+% \item Weights cannot be interpreted in isolation as before
+% \end{itemize}
+\end{frame}
+
+% \begin{frame}{Linear and Polynomial Regression}
+
+% \begin{align*}
+% \mathbb{E}_Y(Y \vert X) &= \theta_0 + \theta_1 x_1 + \dots + \theta_p x_p + \epsilon \\
+%  &= X^T\theta + \mathcal{E}
+% \end{align*}
+
+% \begin{itemize}
+% \itemsep1em
+% \item Model equation is identical across the entire feature space.
+% %\item The predictive power of LMs is determined by specifying the correct model structure.
+% \item Polynomial regression extends the LM by non-linear effects.
+% %A polynomial regression model is an extension of the LM that includes higher order terms or interactions.
+% %This enables us to model non-linear data while making use of the entire arsenal of LM functionality.
+% \item We can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
+% %By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
+% \item For higher order effects or interactions, beta coefficients cannot be interpreted in isolation.
+% \item Note: For inference-based metrics (p-values, confidence intervals) to be valid, error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \theta, \sigma^2)$.\\
+% $\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data.
+% \end{itemize}
+% \end{frame}
+
+\begin{frame}{Example: Interaction Effect}
+\textbf{Example}: Interaction between \code{temp} and \code{season} will affect marginal effect of \code{temp}% with (right) and without (left) interaction.
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.65\linewidth}
+\includegraphics[width = \textwidth]{figure/lm_main_vs_interaction_effects.pdf}
+\end{column}
+\begin{column}{0.35\linewidth}
+\begin{scriptsize}
+%\begin{table}[ht]
+\only<2->{\def\firstrowcolor{\rowcolor{lightgray}}}
+\only<3>{\def\secondrowcolor{\rowcolor{lightgray}}}
+\only<4>{\def\thirdrowcolor{\rowcolor{lightgray}}}
+\only<5>{\def\fourthrowcolor{\rowcolor{lightgray}}}
+\centering
+\begin{tabular}{rr}
+  \hline
+ & Weights \\ 
+  \hline
+(Intercept) & 3453.9 \\ 
+  seasonSPRING & 1317.0 \\ 
+  seasonSUMMER & 4894.1 \\ 
+  seasonFALL & -114.2 \\ 
+  \firstrowcolor temp & 160.5 \\ 
+  hum & -37.6 \\ 
+  windspeed & -61.9 \\ 
+  days\_since\_2011 & 4.9 \\
+  \hline
+  \secondrowcolor seasonSPRING:temp & -50.7 \\ 
+  \thirdrowcolor seasonSUMMER:temp & -222.0 \\ 
+  \fourthrowcolor seasonFALL:temp & 27.2 \\ 
+   \hline
+\end{tabular}
+%\end{table}
+\end{scriptsize}
+\end{column}
+\end{columns}
+\vfill
+\pause
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.65\linewidth}
+\textbf{Interpretation}: If \code{temp} increases by 1 $^{\circ}$C, bike rentals
+\begin{itemize}[<+->]
+    \item increase by 160.5 in \code{WINTER} (reference)
+    \item increase by 109.8 (= 160.5 - 50.7) in \code{SPRING}
+    \item decrease by -61.5 (= 160.5 - 222) in \code{SUMMER}
+    \item increase by 187.7 (= 160.5 + 27.2) in \code{FALL}
+\end{itemize} %\\\vspace*{0.2cm}
+\end{column}
+\begin{column}{0.35\linewidth}
+% \lz
+% \only<6>{\textbf{Note:}
+% Temperature values (on x-axis) depend on \code{season}\\
+% $\leadsto$ not acknowledged by LM\\
+% $\leadsto$ misleading interpretation due to extrapolation in regions with few points (e.g. low \code{temp} in \code{SUMMER})
+% }
+\end{column}
+\end{columns}
+%Value ranges of temperature differ depending on the season $\leadsto$ not acknowledged by LM
+\end{frame}
+
+
+\begin{frame}{Example: Quadratic Effect}
+\textbf{Example}: Adding quadratic effect for \code{temp} \only<2>{(left) and interaction with \code{season} (right)}
+\begin{columns}[T, totalwidth=\textwidth]
+\begin{column}{0.685\textwidth}
+\includegraphics[width=0.5\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}\invisible<1>{\includegraphics[width=0.5\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}}
+%\includegraphics[width = \textwidth]{figure/poly_main_vs_interaction_effects.pdf}
+%\begin{columns}
+%\begin{center}
+%\adjincludegraphics[width=\textwidth, trim={0 0 {.55\width} 0}, clip]{figure/poly_main_vs_interaction_effects.pdf}
+
+\textbf{Interpretation}: Not linear anymore!
+\begin{itemize}
+    \only<1>{\item \code{temp} depends on two weights: $ 280.2 \cdot x_{temp} -  5.6 \cdot x_{temp}^2$}
+    \item<2> \code{temp} depends on multiple weights due to \code{season}:\\
+    $\leadsto$ \code{WINTER}: ${\color{winter}39.1} \cdot x_{temp} + {\color{winter}8.6} \cdot x_{temp}^2$ \\
+    $\leadsto$ \code{SPRING}: 
+    $({\color{winter}39.1} {\color{spring}+407.4}) \cdot x_{temp} + ({\color{winter}8.6} {\color{spring} - 18.7}) \cdot x_{temp}^2$ \\
+    $\leadsto$ \code{SUMMER}: $({\color{winter}39.1}  {\color{summer}+801.1}) \cdot x_{temp} + ({\color{winter}8.6} {\color{summer} - 27.2}) \cdot x_{temp}^2$  \\
+    $\leadsto$ \code{FALL}: $({\color{winter}39.1}  {\color{fall}+217.4}) \cdot x_{temp} + ({\color{winter}8.6} {\color{fall} - 11.3}) \cdot x_{temp}^2$ 
+    % \item<2>[$\leadsto$] High-order and interaction effects make the model more flexible but also less interpretable (more weights)
+    % \item<2>[$\leadsto$] High-order and interaction effects need to be specified manually (inconvenient) - ML models do this automatically
+\end{itemize}
+
+\end{column}
+\begin{column}{0.32\linewidth}
+%\hfill
+\begin{scriptsize}
+% \begin{table}[ht]
+% %\centering
+
+\def\firstrowcolor{\rowcolor{lightgray}}%
+\def\secondrowcolor{\rowcolor{spring}}%
+\def\thirdrowcolor{\rowcolor{summer}}%
+\def\fourthrowcolor{\rowcolor{fall}}%
+
+\only<1>{%
+%\addtolength{\tabcolsep}{-1pt}
+\begin{tabular}{rr}
+  \hline
+ & Weights \\ 
+  \hline
+(Intercept) & 3094.1 \\ 
+  seasonSPRING & 619.2 \\ 
+  seasonSUMMER & 284.6 \\ 
+  seasonFALL & 123.1 \\ 
+  hum & -36.4 \\ 
+  windspeed & -65.7 \\ 
+  days\_since\_2011 & 4.7 \\ 
+  \firstrowcolor temp & 280.2 \\ 
+  \firstrowcolor temp$^2$ & -5.6 \\ 
+  \hline
+\end{tabular}%
+%\addtolength{\tabcolsep}{1pt}
+}
+% \end{table}
+\only<2>{%
+\def\firstrowcolor{\rowcolor{winter}}%
+\addtolength{\tabcolsep}{-3pt}%
+\begin{tabular}{rr}
+  \hline
+ & Weights \\ 
+  \hline
+(Intercept) & 3802.1 \\ 
+  seasonSPRING & -1345.1 \\ 
+  seasonSUMMER & -6006.3 \\ 
+  seasonFALL & -681.4 \\ 
+  hum & -38.9 \\ 
+  windspeed & -64.1 \\ 
+  days\_since\_2011 & 4.8 \\ 
+ \firstrowcolor temp & 39.1 \\ 
+ \firstrowcolor temp$^2$ & 8.6 \\ 
+  \hline
+  \hline
+  \secondrowcolor seasonSPRING:temp & 407.4 \\ 
+ \secondrowcolor seasonSPRING:temp$^2$ & -18.7 \\ 
+  \thirdrowcolor seasonSUMMER:temp & 801.1 \\ 
+ \thirdrowcolor seasonSUMMER:temp$^2$ & -27.2 \\ 
+  \fourthrowcolor seasonFALL:temp & 217.4 \\ 
+ \fourthrowcolor seasonFALL:temp$^2$ & -11.3 \\ 
+   \hline
+\end{tabular}%
+\addtolength{\tabcolsep}{3pt}
+}%
+%Table: Weights for main effect model
+\end{scriptsize}
+%\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Regularization via LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
+% \begin{itemize}
+%     \item LASSO adds an $L_1$-norm penalization term ($\lambda||\theta||_1$) to the least squares optimization problem%\\
+%     % $\leadsto$ Shrinks some feature weights to zero (feature selection)\\
+%     % $\leadsto$ Sparser models (with fewer features) are more interpretable
+%     % %Aim: Feature selection (sparsity) and regularization of feature weights
+%     % \item Penalization parameter $\lambda$ must be chosen (e.g., by CV) %or depending on the number of features to keep
+% \end{itemize}
+
+\begin{columns}[T, totalwidth=\linewidth]
+\begin{column}{0.6\textwidth}
+\begin{itemize}
+    \item LASSO adds an $L_1$-norm penalization term ($\lambda||\theta||_1$) to least squares optimization problem
+    \begin{itemize}
+        \item[$\leadsto$] Shrinks some feature weights to zero\\ (feature selection)
+        \item[$\leadsto$] Sparser models (fewer features): \\ more interpretable
+    \end{itemize}
+    %Aim: Feature selection (sparsity) and regularization of feature weights
+    \item Penalization parameter $\lambda$ must be chosen (e.g., by CV) %or depending on the number of features to keep
+\end{itemize}
+\vspace{0.2cm}
+$$
+min_{\theta} \bigg(\underbrace{\frac{1}{n} \sum_{i=1}^{n} (y^{(i)} - {\xi}^{\top} \theta)^2}_\text{Least square estimate for LM} + \lambda||\theta||_1\bigg) 
+$$
+\end{column}
+\begin{column}{0.4\textwidth}
+\centerline{\includegraphics[width=.8\textwidth]{figure/l1_hat.png}} 
+\centerline{\includegraphics[width=.8\textwidth]{figure/lm_example}} 
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Regularization via LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
+\textbf{Example} (interpretation of weights analogous to LM):
+
+\begin{itemize}
+    \item LASSO with main effects and interaction \code{temp} with \code{season}
+\end{itemize}
+\vspace{-0.5\topsep}
+\begin{columns}[c, totalwidth=\linewidth]
+\begin{column}{0.65\textwidth}
+\begin{itemize}
+    %\item LASSO with main effects and interaction \code{temp} with \code{season}
+    \item $\lambda$ is chosen $\leadsto$ 6 selected features ($\neq 0$)
+    \item LASSO shrinks weights of single categories separately (due to dummy encoding)\\
+    %only weights of single categories are set to zero (due to dummy encoding) not the whole feature\\
+    $\leadsto$ No feature selection of whole categorical features (only w.r.t. category levels)\\
+    %May be problematic for categorical features as only weights of single categories are set to zero (due to dummy encoding) instead of the whole categorical feature\\ %, polynomials and interactions
+    $\leadsto$ Solution: group LASSO \citebutton{Yuan and Lin (2006)}{https://doi.org/10.1111/j.1467-9868.2005.00532.x}
+\end{itemize}
+\smallskip
+\centering
+\includegraphics[width = 0.6\textwidth]{figure/reg_lm_plot_interpreted.pdf}
+
+\end{column}
+\begin{column}{0.35\textwidth}
+
+\scriptsize
+\centering
+\begin{tabular}{rr}
+  \hline
+ & Weights \\ 
+  \hline
+(Intercept) & 3135.2 \\ 
+  seasonSPRING & 767.4 \\ 
+  seasonSUMMER & 0.0 \\ 
+  seasonFALL & 0.0 \\ 
+  temp & 116.7 \\ 
+  hum & -28.9 \\ 
+  windspeed & -50.5 \\ 
+  days\_since\_2011 & 4.8 \\ 
+  \hline
+  seasonSPRING:temp & 0.0 \\ 
+  seasonSUMMER:temp & 0.0 \\ 
+  seasonFALL:temp & 30.2 \\ 
+   \hline
+\end{tabular}
+%\end{table}
+% \begin{table}[ht]
+% \centering
+% \begin{tabular}{rr}
+%   \hline
+%  & Weights \\ 
+%   \hline
+% (Intercept) & 2665.50 \\ 
+%   seasonSPRING & 489.34 \\ 
+%   seasonSUMMER & 0.00 \\ 
+%   seasonFALL & 0.00 \\ 
+%   hum & -19.44 \\ 
+%   windspeed & -35.54 \\ 
+%   days\_since\_2011 & 4.71 \\ 
+%   poly(temp, 2)1 & 109.25 \\ 
+%   poly(temp, 2)2 & 0.00 \\ 
+%   \hline
+% \end{tabular}
+% \end{table}
+\end{column}
+\end{columns}
+
+
+%\includegraphics[width = 0.8\textwidth]{figure/reg_lm_plot_interpreted.pdf}
+
+
+\end{frame}
+\endlecture
+
+\end{document}

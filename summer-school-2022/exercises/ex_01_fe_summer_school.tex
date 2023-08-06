@@ -1,0 +1,65 @@
+\documentclass[a4paper]{article}
+
+\input{../../style/preamble_ex_summer_school.tex}
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/ml-trees.tex}
+\input{../../latex-math/ml-interpretable.tex}
+
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\begin{document}
+
+\kopf{1}
+
+%\input{ex_tex/ex_inclass.tex}
+
+\aufgabe{Quiz}{
+\begin{enumerate}
+        \item Which of the following statement(s) is/are correct?  
+        \begin{enumerate}
+        \item Interpretation methods are mainly needed to better explain real world phenomena. 
+        \item Model-agnostic methods need access to gradients to explain a model.
+        \item In IML we distinguish between global IML methods, which explain the behavior of the model over the entire feature space, and local IML methods, which only explain the prediction of individual observations. 
+        \item We can also draw conclusions about feature importance from feature effect methods.
+        \item Technically, correlation is a measure of \textit{linear} statistical dependence.
+        \item Features that have an equal feature effect are correlated.
+        \end{enumerate}
+        \item Which of the following statement(s) apply to feature effect methods? 
+        \begin{enumerate}
+        \item The value of the PDP at a point $x_j$, corresponds to the point-wise average of the values of the ICE curves at this point. 
+        \item The PDP of a feature provides information about possible interaction effects of the feature. 
+        \item ICE curves of a feature for multiple data points provide information about possible interaction effects of the feature with others. 
+        \item If we center the ICE/PDPs for categorical features, the expected changes always refer to a selected reference category. 
+        \item ALE plots are based on conditional distributions, PDPs on marginal distributions.
+        %\item If features are uncorrelated, ALE plots are equal to PDPs. 
+        \item ALE plots are faster to compute than PDPs.
+        \end{enumerate}
+    \item You fitted a model that should predict the value of a property depending on 
+    the number of rooms and square meters. 
+    You want to compute feature effects using the following methods: 
+    PDP, M-plots and ALE plots. 
+    Which of the following strategies reflect which method? \\
+    The feature effect for a 30 m$^2$ corresponds to... 
+\begin{enumerate}
+  \item ... what the model predicts on average for flats that also have around 30 m$^2$, for example, 28 m$^2$ to 32 m$^2$. 
+  \item ... how the model predictions changes on average when flats with 28 m$^2$ to 32 m$^2$ have 32 m$^2$ vs. 28 m$^2$. 
+  \item ... what the model predicts on average when all properties in the dataset have 30 m$^2$. 
+\end{enumerate}
+\end{enumerate}
+}
+
+\dlz
+
+\aufgabe{Application}{
+Make yourself familiar with the iml package in R and the method FeatureEffects.
+Answer the following questions for your chosen dataset
+\begin{enumerate}
+\item Create PDP and ALE plots for at least 6 features of your dataset you are most interested in how they affect your target variable. Can you see any differences between PDP and ALE plots? Can you explain those differences?
+\item Are your chosen features interacting with any other features? Does your chosen visualization technique show you with which other features they are interacting?
+\item Based on the PDPs: Which of the 6 features would you consider most and which one least important?
+\end{enumerate}
+}
+
+\end{document}

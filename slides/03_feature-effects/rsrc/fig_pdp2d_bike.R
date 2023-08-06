@@ -3,7 +3,7 @@
 library(ggplot2)
 library(mlr3verse)
 theme_set(theme_bw())
-source("slides/feature-effects/rsrc/anova_bike.R")
+source("anova_bike.R")
 
 # future::plan("multisession")
 #
@@ -123,4 +123,4 @@ library(patchwork)
 plot = pdp2d_bike + pdp_temp + pdp_hum + plot_layout(widths = c(1.5,1,1))
 #+ plot_layout(design = layout)
 
-ggsave("slides/feature-effects/figure/pdp2d_bike.pdf", height = 5, width = 12, plot = plot)
+ggsave("../figure/pdp2d_bike.pdf", height = 5, width = 12, plot = plot)

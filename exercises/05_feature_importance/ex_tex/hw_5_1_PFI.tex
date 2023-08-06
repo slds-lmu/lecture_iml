@@ -1,0 +1,34 @@
+\aufgabe{Permutation feature importance}{
+\label{ex:pfi}
+	
+Permutation Feature Importance is one of the oldest and most widely used IML techniques.
+It is defined as 
+%
+$$\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, \pert{\D}{S}{}_{(k)}) - \riske (\fh, \D)$$
+%
+where $\pert{\D}{S}{}_{(k)}$ is the dataset where features $S$ were replaced with a perturbed version that preserves the variables marginal distribution $P(X_S)$. We can approximate sampling from the marginal distribution by random permutation of the original feature's observations.
+
+\begin{enumerate}
+    \item PFI has been criticized to evaluate the model on unrealistic observations. Describe in a few words why this extrapolation happens, e.g. using an illustrative example.
+    \item Under a (seldom realistic) assumption PFI does not suffer from the extrapolation issue. What is that assumption? Briefly explain why.
+    \item Download the \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/05_feature_importance/code/extrapolation.csv}{\texttt{extrapolation.csv}} dataset. Fit an unregularized ordinary least squares linear regression model without interactions to the data. Do not look at the model's coefficients or perform an exploratory analysis of the data yet. Assess the MSE of the model on test data.
+    \item Implement Permutation Feature Importance. Apply Permutation Feature Importance to the model (on test data) and plot the results using a barplot with an error bar indicating the standard deviation. In order to make your code reusable for the upcoming exercises, break down the implementation into three functions:
+    \begin{itemize}
+        \item \texttt{pfi\_fname} which returns the PFI for a feature \texttt{fname}
+        \item \texttt{fi} a function that computes the importances for all features using a single-feature importance function such as \texttt{pfi\_fname}
+        \item \texttt{n\_times} a function that repeats the computation $n$ times and returns mean and standard deviation of the importance values
+    \end{itemize}
+    \textit{Hint: By passing the single-feature importance function as an argument you can reuse \texttt{fi} and \texttt{n\_times} later on for other feature importance method and only have to adjust \texttt{fi\_fname} accordingly. In order to allow for different function signatures you may use \texttt{f(*args, **kwargs)} in python (more info \href{https://realpython.com/python-kwargs-and-args/}{here}) and \texttt{f(...)} in R (more info \href{https://stackoverflow.com/questions/8165837/how-to-pass-a-function-and-its-arguments-through-a-wrapper-function-in-r-simila}{here}).}
+    \item Interpret the PFI result. What insight into model and data do we gain?
+    \begin{enumerate}
+        \item Which features are (mechanistically) used by the model for it's prediction?
+        \item Which features are (in)dependent with $Y$?
+        \item Which features are (in)dependent with its covariates?
+        \item Which features are dependent with $Y$, given all covariates?
+    \end{enumerate}
+    \item Perform an exploratory analysis of the data (correlation structure between features and with $y$) and print the model's coefficient and intercept. Compare your PFI interpretation with the ground truth.
+    \item What additional insight into the relationship of the features with $y$ do we gain by looking at the correlation structure of the covariates in addition to the PFI (assuming that all dependencies are linear)?
+    \item Demonstrate the extrapolation problem on a dataset of your choice, e.g. on the \text{extrapolation.csv} dataset. \textit{Hint:} For the extrapolation dataset all dependencies can be assumed to be pairwise. In order to assess the data distribution before and after perturbation, you can therefore do pairwise density or scatterplots before and after perturbing the features of interest.
+\end{enumerate}
+
+}

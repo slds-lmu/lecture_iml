@@ -1,0 +1,165 @@
+\loesung{	
+\begin{enumerate}[a)]
+	\item $$\text{payoff}(S) = 10t+10m+10s+2j + 20(t\wedge m) + 20(t \wedge m \wedge s) - 30((t \vee m \vee s) \wedge j) $$
+	$$\text{payoff}(\lbrace\texttt{t,m}\rbrace) = 10 + 10 + 20 = 40$$
+	$$\text{payoff}(\lbrace\texttt{t,j,s}\rbrace) = 10 + 10 + 2 - 30 = -8$$
+	\item Pseudocode of \texttt{payoff\_func()}
+	
+	\begin{algorithm}[h]
+		\caption{\texttt{payoff\_func()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{coalition}: Coalition vector
+			\State \texttt{t} $\gets$ boolean if \texttt{'t'} is in \texttt{coalition}
+			\State \texttt{s} $\gets$ boolean if \texttt{'s'} is in \texttt{coalition}
+			\State \texttt{m} $\gets$ boolean if \texttt{'m'} is in \texttt{coalition}
+			\State \texttt{j} $\gets$ boolean if \texttt{'j'} is in \texttt{coalition}
+			\State \texttt{l} $\gets$ boolean if \texttt{'l'} is in \texttt{coalition}
+			\State \textbf{return} 10 * \texttt{t} + 10 * \texttt{m} + 2 * \texttt{j} + 20 * (\texttt{t} and \texttt{m}) + 20 * (\texttt{t} and \texttt{m} and \texttt{s}) - 30 * ((\texttt{t} or \texttt{m} or \texttt{s}) and \texttt{j})
+		\end{algorithmic}
+	\end{algorithm}
+
+	Pseudocode of \texttt{all\_unique\_subsets()}
+	
+	\begin{algorithm}[h]
+		\caption{\texttt{all\_unique\_subsets()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{population}: vector containing all available players
+			\If{population = $\emptyset$} \texttt{subsets} $\gets$ $\emptyset$
+			\ElsIf{population $\neq \emptyset$} \texttt{subsets} $\gets$ all subsets of \texttt{population}
+			\EndIf
+			\State \textbf{return} \texttt{subsets}
+		\end{algorithmic}
+	\end{algorithm}
+
+	Pseudocode of \texttt{shapley()}
+	
+	\begin{algorithm}[h]
+		\caption{\texttt{shapley()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{population}: vector containing all available players
+			\Require \texttt{member}: individual player, i.e. feature of interest
+			\Require \texttt{vfunc}: value function
+			\State \texttt{remainder} $\gets$ everyone from the \texttt{population} but \texttt{member}
+			\State \texttt{all\_sets} $\gets$ \texttt{all\_unique\_subsets(remainder)}
+			\State \texttt{F} $\gets$ length of \texttt{population}
+			\For{\texttt{s} in \texttt{all\_sets}}
+			\State \texttt{S} $\gets$ length \texttt{s}
+			\State \texttt{diff} $\gets$ \texttt{vfunc(s + member) - vfunc(s)}
+			\State \texttt{factor} $\gets$ \texttt{S}! * (\texttt{F} - \texttt{S} - 1)! / \texttt{F}!
+			\State \texttt{val} $\gets$ \texttt{val + factor * diff}
+			\EndFor
+			\State \textbf{return} \texttt{val}
+		\end{algorithmic}
+	\end{algorithm}
+
+	\item Pseudocode of \texttt{shapley\_perm()}
+	
+	\begin{algorithm}[H]
+		\caption{\texttt{shapley\_perm()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{member}: individual player, i.e. feature of interest
+			\Require \texttt{population}: vector containing all available players
+			\Require \texttt{vfunc}: value function
+			\Require \texttt{its}: number of iterations
+			\For{\texttt{i} in \texttt{its}} 
+			\State \texttt{perm} $\gets$ permutation of \texttt{population}
+			\State \texttt{member\_ix} $\gets$ index of \texttt{member} in \texttt{population}
+			\State \texttt{s} $\gets$ coalition of \texttt{perm} until \texttt{member\_ix}
+			\State \texttt{diff} $\gets$ difference of \texttt{vfunc} of \texttt{s} with \texttt{member} minus \texttt{vfunc} of \texttt{s}
+			\State \texttt{vals[i]} $\gets$ diff
+			\EndFor
+			\State \texttt{val} $\gets$ sum of \texttt{vals} divided by length of \texttt{vals}
+			\State \textbf{return} \texttt{val}
+		\end{algorithmic}
+	\end{algorithm}
+	
+	\item 
+	\begin{enumerate}[(i)]
+	\item Pseudocode of \texttt{symmetry\_check()}
+	
+	\begin{algorithm}[H]
+		\caption{\texttt{symmetry\_check()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{j}: first feature index
+			\Require \texttt{k}: second feature index
+			\Require \texttt{population}: vector containing all available players
+			\Require \texttt{vfunc}: value function
+			\Require \texttt{shapley\_func}: Shapley function
+			\State \texttt{remainder} $\gets$ everyone from the \texttt{population} but \texttt{j, k}
+			\State \texttt{all\_S} $\gets$ \texttt{all\_unique\_subsets(remainder)}
+			\For{\texttt{S} in \texttt{all\_S}}
+			\State \texttt{surplus\_j} $\gets$ difference of \texttt{vfunc} of \texttt{S} with \texttt{j} minus \texttt{vfunc} of \texttt{S}
+			\State \texttt{surplus\_k} $\gets$ difference of \texttt{vfunc} of \texttt{S} with \texttt{k} minus \texttt{vfunc} of \texttt{S}
+			\State save \texttt{surplus\_j} and \texttt{surplus\_k} in vectors \texttt{surpluss\_j} and \texttt{surpluss\_k}, respectively, for every iteration
+			\EndFor
+			\If{\texttt{surpluss\_j} equal \texttt{surpluss\_k}}
+			\State \textbf{print} \textit{equal surplus}
+			\State \texttt{val\_j} $\gets$ \texttt{shapley\_func(j, population, vfunc)}
+			\State \texttt{val\_k} $\gets$ \texttt{shapley\_func(k, population, vfunc)}
+			\State \textbf{return} \texttt{val\_j} == \texttt{val\_k}
+			\EndIf
+			\State \textbf{return} \texttt{TRUE}
+		\end{algorithmic}
+	\end{algorithm}
+	
+	\item Pseudocode of \texttt{dummy\_check()}
+	
+	\begin{algorithm}[H]
+		\caption{\texttt{dummy\_check()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{j}: feature index
+			\Require \texttt{population}: vector containing all available players
+			\Require \texttt{vfunc}: value function
+			\Require \texttt{shapley\_func}: Shapley function
+			\State \texttt{remainder} $\gets$ everyone from the \texttt{population} but \texttt{j}
+			\State \texttt{all\_S} $\gets$ \texttt{all\_unique\_subsets(remainder)}
+			\For{\texttt{S} in \texttt{all\_S}}
+			\State \texttt{surplus\_j} $\gets$ difference of \texttt{vfunc} of \texttt{S} with \texttt{j} minus \texttt{vfunc} of \texttt{S}
+			\State save \texttt{surplus\_j} in vector \texttt{surpluss\_j} for every iteration
+			\EndFor
+			\If{sum of $|$\texttt{surpluss\_j}$|$ \textgreater\, 0}
+			\State \textbf{print} \textit{has contribution}
+			\State \texttt{val\_j} $\gets$ \texttt{shapley\_func(j, population, vfunc)}
+			\State \textbf{return} \texttt{val\_j} \textgreater\, 0
+			\EndIf
+			\State \textbf{return} \texttt{TRUE}
+		\end{algorithmic}
+	\end{algorithm}
+
+	\item Pseudocode of \texttt{additivity\_check()}
+	
+	\begin{algorithm}[H]
+		\caption{\texttt{additivity\_check()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{population}: vector containing all available players
+			\Require \texttt{vfunc1}: value function 1
+			\Require \texttt{vfunc2}: value function 2
+			\Require \texttt{shapley\_func}: Shapley function
+			\State \texttt{combined} $\gets$ addition of \texttt{vfunc1} and \texttt{vfunc2}
+			\State \texttt{vals1} $\gets$ Shapley values for all features using \texttt{vfunc1}
+			\State \texttt{vals2} $\gets$ Shapley values for all features using \texttt{vfunc2}
+			\State \texttt{vals\_comb} $\gets$ Shapley values for all features using \texttt{combined}
+			\State \texttt{vals\_additive} $\gets$ \texttt{vals1} + \texttt{vals2}
+			\State \textbf{return} \texttt{vals\_comb} == \texttt{vals\_additive}
+		\end{algorithmic}
+	\end{algorithm}
+
+	\item Pseudocode of \texttt{efficiency\_check()}
+	
+	\begin{algorithm}[H]
+		\caption{\texttt{efficiency\_check()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{population}: vector containing all available players
+			\Require \texttt{vfunc}: value function
+			\Require \texttt{shapley\_func}: Shapley function
+			\State \texttt{payoff\_total} $\gets$ \texttt{vfunc} of \texttt{population}
+			\State \texttt{shapley\_vals} $\gets$ Shapley values for all features using \texttt{vfunc}
+			\State \texttt{total\_shapley\_vals} $\gets$ sum of \texttt{shapley\_vals}
+			\State \textbf{return} \texttt{payoff\_total} == \texttt{total\_shapley\_vals}
+		\end{algorithmic}
+	\end{algorithm}
+	\end{enumerate}
+\end{enumerate}
+
+
+}

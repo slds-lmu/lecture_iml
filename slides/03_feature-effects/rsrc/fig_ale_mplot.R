@@ -1,10 +1,17 @@
 # PREREQ -----------------------------------------------------------------------
 
 library(ggplot2)
-p = readRDS("slides/feature-effects/figure/ale_scatter.RDS")
+p = readRDS("../figure/ale_scatter.RDS")
 theme_set(theme_bw() + theme(plot.margin=grid::unit(c(1,5.5,1,1), "pt")))
 
 # DATA -------------------------------------------------------------------------
+
+set.seed(10)
+
+# Generate Pseudo Random Variables
+x1 = runif(50, -5, 5)
+x2 = x1 + rnorm(50, 0, 1)
+df_observed = data.frame(x1, x2)
 
 eps = 0.3
 df_cond = subset(df_observed, x1 < (0 + eps) & x1 > (0 - eps))
@@ -44,5 +51,5 @@ mplot = p +
   annotate(geom = "label", x = -5, y = 5, label = label2,
            hjust = "left") + ylim(c(-10,10))
 
-ggsave("slides/feature-effects/figure/ale_mplot.pdf", mplot, width = 5.5,
+ggsave("../figure/ale_mplot.pdf", mplot, width = 5.5,
        height = 4)

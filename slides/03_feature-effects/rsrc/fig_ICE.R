@@ -1,10 +1,10 @@
 # PREREQ -----------------------------------------------------------------------
 
-source("slides/feature-effects/rsrc/feature_effect_helpers.R")
+source("feature_effect_helpers.R")
 
 # PLOT -------------------------------------------------------------------------
 
-pdf(file = "slides/feature-effects/figure/ICE.pdf", width = 5.5, height = 3.75)
+pdf(file = "../figure/ICE.pdf", width = 5.5, height = 3.75)
 pch.sym = paste0("i=", c("1","2","3"))
 p = pch.sym[pch]
 #p[p == x] = NA
