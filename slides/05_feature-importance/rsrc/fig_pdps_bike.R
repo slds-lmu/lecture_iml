@@ -2,6 +2,7 @@
 
 library(patchwork)
 library(ggplot2)
+theme_set(theme_bw())
 source("../../03_feature-effects/rsrc/anova_bike.R")
 
 # DATA -------------------------------------------------------------------------
