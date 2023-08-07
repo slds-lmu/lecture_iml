@@ -19,11 +19,11 @@ y = x3 + rnorm(n, sd=0.1)
 
 data = data.frame(x1=x1, x2=x2, x3=x3, x4=x4, y=y)
 
-write.csv(data, 'slides/feature-importance/rsrc/extrapolation.csv')
+write.csv(data, 'extrapolation.csv')
 
 lp = 'slides/feature-importance/pysrc/'
 
-df = read.csv(paste0(lp, 'df_res.csv'))
+df = read.csv('../pysrc/df_rex.csv')
 colnames(df)[3] <- "importance"
 
 #df = df[df$type != 'conditional sage',]
@@ -35,7 +35,7 @@ p = ggplot(data=df, aes(x=reorder(type, importance), y=importance, fill=reorder(
 p = p + labs(x='IML technique', y='importance', fill='feature')
 p + coord_flip()
 
-ggsave('slides/feature-importance/figure_man/cfi_pfi.pdf', width=6, height=2)
+ggsave('../figure_man/cfi_pfi.pdf', width=6, height=2)
 
 
 library(latex2exp)
@@ -78,7 +78,7 @@ pplot_cond = p_scatter +
 
 res = ((pplot_marg + pplot_cond) / (p1 + p2) + plot_layout(heights = c(2, 1))) & theme(plot.margin = unit(c(0,0,0,0), "pt"))
 
-ggsave('slides/feature-importance/figure_man/conditional_sampling.pdf', width=7, height=4)
+ggsave('../figure_man/conditional_sampling.pdf', width=7, height=4)
 
 # # explain conditional permutation scheme
 # p2 = ggplot(data, aes(x=x1, y=x2)) + geom_hex(bins = 20) + scale_fill_viridis_c() #+ theme_bw()
