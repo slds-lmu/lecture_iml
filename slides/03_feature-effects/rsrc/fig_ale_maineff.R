@@ -30,7 +30,7 @@ yhat <- function(X.model, newdata) predict(X.model, newdata = newdata)
 
 # PLOT -------------------------------------------------------------------------
 
-pdf("../slides/feature-effects/figure/ale_maineff.pdf")
+pdf("../figure/ale_maineff.pdf")
 
 par(mfrow = c(2, 2), mar = c(4,4,2,2) + 0.1)
 ALE.1 = ALEPlot(DAT[,2:3], autolrn, pred.fun = yhat, J = 1, K = 50, NA.plot = TRUE)
