@@ -4,6 +4,7 @@ library(pbv)
 #library(CopulaModel) # devtools::install_github("vincenzocoia/CopulaModel")
 devtools::source_url("https://github.com/giuseppec/CopulaModel/blob/master/R/copcdfpdf.R?raw=TRUE")
 devtools::source_url("https://github.com/UBC-MDS/DSCI_551_stat-prob-dsci/blob/master/supplementary/ggjointmarg.R?raw=TRUE")
+theme_set(theme_bw())
 
 set.seed(1)
 x = rnorm(200)
