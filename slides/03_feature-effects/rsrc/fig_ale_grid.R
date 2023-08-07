@@ -5,6 +5,7 @@ library(mlr3)
 library(mlr3learners)
 library(iml)
 library(patchwork)
+theme_set(theme_bw())
 source("ale_dat.R")
 
 # DATA -------------------------------------------------------------------------
@@ -68,4 +69,4 @@ pdp2 = pdp[[2]]$plot() + ylab("") +
 p = surf | ((ale1 + ale2) / (pdp1 + pdp2))
 p_final = p + plot_layout(heights = c(3, 2, 2), guides = "collect") & theme(legend.position = 'bottom')
 
-ggsave("../figure/ale_grid.pdf", p_final, width = 10/1.25, height = 4/1.25)
+ggsave("../slides/feature-effects/figure/ale_grid.pdf", p_final, width = 10/1.25, height = 4/1.25)
