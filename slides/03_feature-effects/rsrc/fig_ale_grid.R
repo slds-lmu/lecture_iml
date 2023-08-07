@@ -69,4 +69,4 @@ pdp2 = pdp[[2]]$plot() + ylab("") +
 p = surf | ((ale1 + ale2) / (pdp1 + pdp2))
 p_final = p + plot_layout(heights = c(3, 2, 2), guides = "collect") & theme(legend.position = 'bottom')
 
-ggsave("../slides/feature-effects/figure/ale_grid.pdf", p_final, width = 10/1.25, height = 4/1.25)
+ggsave("../figure/ale_grid.pdf", p_final, width = 10/1.25, height = 4/1.25)
