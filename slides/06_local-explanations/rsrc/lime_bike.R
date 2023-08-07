@@ -6,6 +6,7 @@ library(vcd)
 library(iml)
 library(gridExtra)
 library(gower)
+theme_set(theme_bw())
 
 
 set.seed(123)
