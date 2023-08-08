@@ -3,9 +3,8 @@ library(latex2exp)
 theme_set(theme_bw())
 #path = "~/university/phd/2021/teaching/lecture_iml/slides/feature-importance/"
 #setwd(path)
-path = "slides/feature-importance/"
 
-df = read.csv(paste(path,'pysrc/df_res2.csv', sep=''))
+df = read.csv('../pysrc/df_res2.csv')
 colnames(df)[3] <- "importance"
 #df$importance = abs(df$importance)
 
@@ -26,9 +25,7 @@ p = p + scale_y_continuous(trans='sqrt') +
 p = p + coord_flip()
 p
 
-sp = paste(path, 'figure_man/sage_variants.pdf', sep='')
-
-ggsave(sp, width=6, height=2)
+ggsave('../figure_man/sage_variants.pdf', width=6, height=2)
 
 
 # interactions
@@ -47,14 +44,10 @@ y = x1 * x2 + x3 + rnorm(n)
 
 data = data.frame(x1=x1, x2=x2, x3=x3, x4=x4, y=y)
 
-basepath = "~/university/phd/2021/teaching/lecture_iml/slides/feature-importance/"
-rpath = paste(basepath, "rsrc/", sep='')
-pypath = paste(basepath, "pysrc/", sep='')
-
-write.csv(data, paste(rpath, 'df_interactions.csv', sep=''))
+write.csv(data, 'df_interactions.csv')
 
 
-df_res = read.csv(paste(pypath, 'df_interactions_res.csv', sep=''))
+df_res = read.csv('df_interactions_res.csv')
 colnames(df_res)[3] <- "importance"
 
 p = ggplot(data=df_res, aes(x=type, y=importance, fill=reorder(feature, -importance))) + geom_bar(stat='identity', position=position_dodge()) + geom_errorbar(aes(ymin=q.05, ymax=q.95), width=.2, position=position_dodge(.9)) + theme_bw()
