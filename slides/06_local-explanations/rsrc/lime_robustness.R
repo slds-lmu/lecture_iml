@@ -3,6 +3,7 @@ library(mlr3viz)
 library(iml)
 library(mlr3learners)
 library(ggplot2)
+theme_set(theme_bw())
 
 #### linear task 
 set.seed(1234)
