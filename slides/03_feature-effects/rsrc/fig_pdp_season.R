@@ -3,6 +3,7 @@
 library(ggplot2)
 library(data.table)
 library(patchwork)
+theme_set(theme_bw())
 source("anova_bike.R")
 
 # DATA -------------------------------------------------------------------------

@@ -6,6 +6,7 @@ library(mlr3learners)
 library(mlr3extralearners)
 library(gbm)
 library(iml)
+theme_set(theme_bw())
 source("anova_bike.R")
 
 # DATA -------------------------------------------------------------------------

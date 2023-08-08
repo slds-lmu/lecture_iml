@@ -5,6 +5,7 @@ library(mlr3)
 library(mlr3learners)
 library(iml)
 library(patchwork)
+theme_set(theme_bw())
 source("ale_dat.R")
 
 # DATA -------------------------------------------------------------------------
