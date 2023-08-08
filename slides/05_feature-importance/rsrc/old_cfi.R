@@ -21,9 +21,9 @@ data = data.frame(x1=x1, x2=x2, x3=x3, x4=x4, y=y)
 
 write.csv(data, 'extrapolation.csv')
 
-lp = 'slides/feature-importance/pysrc/'
+lp = '../pysrc/'
 
-df = read.csv('../pysrc/df_rex.csv')
+df = read.csv('../pysrc/df_res.csv')
 colnames(df)[3] <- "importance"
 
 #df = df[df$type != 'conditional sage',]
