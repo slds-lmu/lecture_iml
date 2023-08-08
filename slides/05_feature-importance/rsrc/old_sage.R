@@ -25,7 +25,7 @@ p = p + scale_y_continuous(trans='sqrt') +
 p = p + coord_flip()
 p
 
-ggsave('--/figure_man/sage_variants.pdf', width=6, height=2)
+ggsave('../figure_man/sage_variants.pdf', width=6, height=2)
 
 
 # interactions
