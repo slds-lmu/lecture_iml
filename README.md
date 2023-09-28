@@ -1,9 +1,9 @@
 # Interpretable Machine Learning (IML)
 
+ [![Course Website](https://img.shields.io/badge/Main_Course_Site-517FF7)](https://slds-lmu.github.io/iml/)
+ [![Slide Check](https://img.shields.io/badge/Slide_Check-E0911F)](https://slds-lmu.github.io/lecture_iml/)
+
 This Project offers a free, open source introductory and an overview of interpretable machine learning methods. 
-
-Main course site: TBA
-
 
 # Contents, License, Team and Further Info
 Please see the main course site.
