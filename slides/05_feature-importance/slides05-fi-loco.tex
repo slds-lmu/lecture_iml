@@ -55,9 +55,9 @@
 
 \pause\lz
 
-\textbf{Definition:} Given training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\inducer$ and a model $\fh = \inducer(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
+\textbf{Definition:} Given training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\ind$ and a model $\fh = \ind(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
   \begin{enumerate}
-    \item learn model on dataset ${\Dtrain}_{,-j}$ where feature $x_j$ was removed, i.e. $\fh_{-j} = \inducer({\Dtrain}_{,-j})$\pause
+    \item learn model on dataset ${\Dtrain}_{,-j}$ where feature $x_j$ was removed, i.e. $\fh_{-j} = \ind({\Dtrain}_{,-j})$\pause
     \item compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |y^{(i)} - \fh_{-j}(x_{-j}^{(i)}) \right | - \left |y^{(i)} - \fh(x^{(i)}) \right | $ with $i \in \Dtest$\pause
     \item yield the importance score $\text{LOCO}_j = \text{med} \left ( \Delta_j  \right )$
   \end{enumerate}
