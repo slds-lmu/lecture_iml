@@ -10,7 +10,7 @@
 \newcommand{\xtil}{\tilde{\mathbf{x}}} % vector x-tilde (bold)
 \newcommand{\yv}{\mathbf{y}} % vector y (bold)
 \newcommand{\xy}{(\xv, y)} % observation (x, y)
-\newcommand{\xvec}{\left(x_1, \ldots, x_p\right)^T} % (x1, ..., xp) 
+\newcommand{\xvec}{\left(x_1, \ldots, x_p\right)^\top} % (x1, ..., xp) 
 \newcommand{\Xmat}{\mathbf{X}} % Design matrix
 \newcommand{\allDatasets}{\mathds{D}} % The set of all datasets
 \newcommand{\allDatasetsn}{\mathds{D}_n}  % The set of all datasets of size n 
@@ -23,12 +23,13 @@
 \newcommand{\defAllDatasetsn}{(\Xspace \times \Yspace)^n} % Def. of the set of all datasets of size n 
 \newcommand{\defAllDatasets}{\bigcup_{n \in \N}(\Xspace \times \Yspace)^n} % Def. of the set of all datasets 
 \newcommand{\xdat}{\left\{ \xv^{(1)}, \ldots, \xv^{(n)}\right\}} % {x1, ..., xn}, input data
-\newcommand{\yvec}{\left(y^{(1)}, \hdots, y^{(n)}\right)^T} % (y1, ..., yn), vector of outcomes
+\newcommand{\ydat}{\left\{ \yv^{(1)}, \ldots, \yv^{(n)}\right\}} % {y1, ..., yn}, input data
+\newcommand{\yvec}{\left(y^{(1)}, \hdots, y^{(n)}\right)^\top} % (y1, ..., yn), vector of outcomes
 \renewcommand{\xi}[1][i]{\xv^{(#1)}} % x^i, i-th observed value of x
 \newcommand{\yi}[1][i]{y^{(#1)}} % y^i, i-th observed value of y 
-\newcommand{\xivec}{\left(x^{(i)}_1, \ldots, x^{(i)}_p\right)^T} % (x1^i, ..., xp^i), i-th observation vector
+\newcommand{\xivec}{\left(x^{(i)}_1, \ldots, x^{(i)}_p\right)^\top} % (x1^i, ..., xp^i), i-th observation vector
 \newcommand{\xj}{\xv_j} % x_j, j-th feature
-\newcommand{\xjvec}{\left(x^{(1)}_j, \ldots, x^{(n)}_j\right)^T} % (x^1_j, ..., x^n_j), j-th feature vector
+\newcommand{\xjvec}{\left(x^{(1)}_j, \ldots, x^{(n)}_j\right)^\top} % (x^1_j, ..., x^n_j), j-th feature vector
 \newcommand{\phiv}{\mathbf{\phi}} % Basis transformation function phi
 \newcommand{\phixi}{\mathbf{\phi}^{(i)}} % Basis transformation of xi: phi^i := phi(xi)
 
@@ -39,7 +40,7 @@
 \newcommand{\preimageInducer}{\left(\defAllDatasets\right)\times\Lam} % Set of all datasets times the hyperparameter space
 \newcommand{\preimageInducerShort}{\allDatasets\times\Lam} % Set of all datasets times the hyperparameter space
 % Inducer / Inducing algorithm
-\newcommand{\inducer}{\mathcal{I}} % Inducer, inducing algorithm, learning algorithm 
+\newcommand{\ind}{\mathcal{I}} % Inducer, inducing algorithm, learning algorithm 
 
 % continuous prediction function f
 \newcommand{\ftrue}{f_{\text{true}}}  % True underlying function (if a statistical model is assumed)
@@ -76,6 +77,7 @@
 % yhat
 \newcommand{\yh}{\hat{y}} % yhat for prediction of target
 \newcommand{\yih}{\hat{y}^{(i)}} % yhat^(i) for prediction of ith targiet
+\newcommand{\resi}{\yi- \yih}
 
 % theta
 \newcommand{\thetah}{\hat{\theta}} % theta hat
@@ -118,6 +120,7 @@
 \newcommand{\pibayes}{\pi^{\ast}} % Bayes-optimal classification model
 \newcommand{\pixbayes}{\pi^{\ast}(\xv)} % Bayes-optimal classification model
 \newcommand{\pix}{\pi(\xv)} % pi(x), P(y = 1 | x)
+\newcommand{\piv}{\bm{\pi}} % pi, bold, as vector
 \newcommand{\pikx}[1][k]{\pi_{#1}(\xv)} % pi_k(x), P(y = k | x)
 \newcommand{\pikxt}[1][k]{\pi_{#1}(\xv ~|~ \thetab)} % pi_k(x | theta), P(y = k | x, theta)
 \newcommand{\pixh}{\hat \pi(\xv)} % pi(x) hat, P(y = 1 | x) hat
@@ -144,12 +147,14 @@
 
 % ml - loss, risk, likelihood
 \newcommand{\Lyf}{L\left(y, f\right)} % L(y, f), loss function
+\newcommand{\Lypi}{L\left(y, \pi\right)} % L(y, pi), loss function
 \newcommand{\Lxy}{L\left(y, \fx\right)} % L(y, f(x)), loss function
 \newcommand{\Lxyi}{L\left(\yi, \fxi\right)} % loss of observation
 \newcommand{\Lxyt}{L\left(y, \fxt\right)} % loss with f parameterized
 \newcommand{\Lxyit}{L\left(\yi, \fxit\right)} % loss of observation with f parameterized
 \newcommand{\Lxym}{L\left(\yi, f\left(\bm{\tilde{x}}^{(i)} ~|~ \thetab\right)\right)} % loss of observation with f parameterized
 \newcommand{\Lpixy}{L\left(y, \pix\right)} % loss in classification
+\newcommand{\Lpiv}{L\left(y, \piv\right)} % loss in classification
 \newcommand{\Lpixyi}{L\left(\yi, \pixii\right)} % loss of observation in classification
 \newcommand{\Lpixyt}{L\left(y, \pixt\right)} % loss with pi parameterized
 \newcommand{\Lpixyit}{L\left(\yi, \pixit\right)} % loss of observation with pi parameterized
@@ -186,5 +191,5 @@
 \newcommand{\errexp}{\overline{\text{err}_{\text{test}}}} % avg training error
 
 % lm
-\newcommand{\thx}{\thetab^T \xv} % linear model
-\newcommand{\olsest}{(\Xmat^T \Xmat)^{-1} \Xmat^T \yv} % OLS estimator in LM 
+\newcommand{\thx}{\thetab^\top \xv} % linear model
+\newcommand{\olsest}{(\Xmat^\top \Xmat)^{-1} \Xmat^\top \yv} % OLS estimator in LM 
