@@ -11,7 +11,7 @@ copy:
 	cp -u *.pax ../../slides-pdf
 
 pax:
-	pdfannotextractor *.pdf
+	pdfannotextractor.pl *.pdf
 
 delete:
 	rm -rf slides*.pdf
