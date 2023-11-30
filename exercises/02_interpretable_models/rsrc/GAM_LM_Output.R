@@ -5,6 +5,7 @@ library(sjmisc)
 library(sjlabelled)
 library(psycModel)
 library(xtable)
+library(pagedown)
 # DATA -------------------------------------------------------------------------
 set.seed(1234L)
 x1 = round(seq(-1, 1, 0.2), 2)
@@ -22,8 +23,8 @@ mod2 <- lm(x2 ~ x1, data = d)
 
 tab_model(mod2, mod, transform = NULL, auto.label = FALSE,  
           p.style = "scientific", dv.labels = c("LM", "GAM"), 
-          file = "GAM_LM_Output.html")
-html_to_pdf(file_path = "GAM_LM_Output.html")
+          file = "../figure/GAM_LM_Output.html")
+html_to_pdf(file_path = "../figure/GAM_LM_Output.html")
 
 
 pdf("../figure/gam.pdf", width = 6, height = 5)
