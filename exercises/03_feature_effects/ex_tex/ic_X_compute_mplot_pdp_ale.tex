@@ -1,0 +1,58 @@
+\aufgabe{Understanding M, PD, and ALE Plots}{
+
+You are given a dataset with two features \(x_1, x_2 \in \mathbb{R}\) and a target variable \(y\), where:
+\[
+y = -x_1 + 2 \cdot x_2 + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma_\epsilon^2).
+\]
+The features \(x_1\) and \(x_2\) are jointly normally distributed with
+$
+x_1 \sim \mathcal{N}(0, \sigma^2), x_2 \sim \mathcal{N}(0, \sigma^2)$ (i.e., same variance $\sigma^2$) and $\text{Cov}(x_1, x_2) = \rho \cdot \sigma^2
+$ with Pearson correlation coefficient $\rho \approx 1$ (i.e., both features are highly correlated). %and we have $x_1 \approx x_2$
+The model prediction function is:
+$
+\hat{f}(x_1, x_2) = -x_1 + 2 \cdot x_2.
+$
+
+Your task is to calculate and analyze the following plots for feature \(x_1\):
+
+\begin{enumerate}
+
+\item \textbf{M Plot:} 
+The M plot for \(x_1\) is defined as:
+$\hat{f}_{1, M}(x_1) = \mathbb{E}_{x_2 \mid x_1} \left[ \hat{f}(x_1, x_2) \mid x_1 \right].
+$
+
+Derive the mathematical expression for \(\hat{f}_{1, M}(x_1)\) and provide a step-by-step explanation of the derivation.
+
+Hint: For two jointly normal variables \(x_1\) and \(x_2\) with means \(\mu_1, \mu_2\), variances \(\sigma_1^2, \sigma_2^2\), and covariance \(\text{Cov}(x_1, x_2) = \rho \sigma_1 \sigma_2\), the conditional expectation of \(x_2\) given \(x_1\) is: $
+\mathbb{E}[x_2 \mid x_1] = \mu_2 + \rho \frac{\sigma_2}{\sigma_1} (x_1 - \mu_1).$
+
+%This formula reflects the linear relationship between \(x_1\) and \(x_2\) in the multivariate normal case.
+
+\item \textbf{PD Plot:} 
+The Partial Dependence (PD) Plot for \(x_1\) is defined as:
+$
+\hat{f}_{1, \text{pdp}}(x_1) = \mathbb{E}_{x_2} \left[ \hat{f}(x_1, x_2) \right].
+$
+\begin{enumerate}
+    \item Derive the mathematical expression for \(\hat{f}_{1, \text{pdp}}(x_1)\).
+    \item Compare the PD plot with the M plot and explain any differences.
+\end{enumerate}
+
+\item \textbf{ALE Plot:}
+The Accumulated Local Effect (ALE) plot for \(x_1\) is defined as:
+\[
+\text{ALE}_1(x_1) = \int_{z_{\min}}^{x_1} \mathbb{E}_{x_2 \mid x_1 = z} \left[ \frac{\partial \hat{f}(z, x_2)}{\partial x_1} \right] dz.
+\]
+The centered ALE plot is:
+\[
+\text{ALE}_1^{\text{centered}}(x_1) = \text{ALE}_1(x_1) - \mathbb{E}_{x_1} \left[ \text{ALE}_1(x_1) \right].
+\]
+\begin{enumerate}
+    \item Derive the expression for the uncentered ALE plot \(\text{ALE}_1(x_1)\).
+    \item Compute the centered ALE plot \(\text{ALE}_1^{\text{centered}}(x_1)\) and explain the centering process.
+    \item Compare the centered ALE plot with the M and PD plots. %Discuss how they handle feature dependencies.
+\end{enumerate}
+
+\end{enumerate}
+}
