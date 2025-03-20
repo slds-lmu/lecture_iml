@@ -1,0 +1,88 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+\newcommand{\open}{}
+\newcommand{\close}{}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\begin{document}
+
+\newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\learninggoals}{
+\item Understanding why fANOVA theoretically works and what constraints it satisfies
+\item Understand the important role further constraints play for any functional decomposition?
+\item ??}
+
+\lecturechapter{Theory of Functional Decompositions}
+\lecture{Interpretable Machine Learning}
+
+\begin{frame}{Example: fANOVA Algorithm}
+
+    See before: The definition of functional decompositions is by far not unique \\
+
+    BUT: The fANOVA Algo. yields a unique output / unique decomposition, seemingly "arbitrarily chosen".\\
+
+    \(\rightarrow\) Idea: Uniquely (Eindeutig?) characterize the solution of the fANOVA by its properties. These properties are expressed as mathematical constraints that describe the calculated decomposition.
+
+    \(\rightarrow\) Two equivalent ways of uniquely / completely defining this decomposition: Either by computation formula defining the single components, or by mathematical equations (the "constraints") defining what properties the components must fulfill
+    
+\end{frame}
+
+\begin{frame}{Constraints for fANOVA Algorithm}
+
+    One can prove that our definition of the components fulfills the following conditions, called \textit{vanishing condition}:
+    \begin{equation*}
+        \mathbb{E}_{X_j} (g_{S}(\xv_S)) = \int g_{S}(\xv_S) d \mathbb{P}(x_j) = 0, \forall j \in S, \forall S \subseteq \{1, \ldots, p\}
+    \end{equation*}
+
+    % For independent inputs, the \textit{vanishing condition} is required to obtain a unique solution:
+    % $$\mathbb{E}_{X_j} (g_{S}(\xv_S)) = \int g_{S}(\xv_S) d \mathbb{P}(x_j) = 0, \forall j \in S, \forall S \subseteq \{1, \ldots, p\}$$
+
+    \textit{Proof that our definition fulfills these constraints? Not here}
+    
+    \pause 
+    
+    Vanishing conditions have the following implications:
+    
+    \begin{itemize}
+        \item Marginalizing out $x_j, \forall j \in S$ for component $g_S(\xv_S)$ yields a constant 0\\
+        %As we integrate out the marginal effect of $x_j, \forall j \in S$ on component $g_S(\xv_S)$ is zero (vanishes)\\
+        $\leadsto$ Makes sure that component $g_S(\xv_S)$ does not contain effects of $x_j, \forall j \in S$
+        %For $|S| = 1$ this is equivalent to mean-centering the component $g_S(\xv_S)$. For $|S| > 1$
+        \item Components are orthogonal (i.e., mutually independent and uncorrelated):
+        $$\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \neq S$$
+        \item Variance can be decomposed:
+    $ Var[\fh(\xv)] =  \textstyle\sum_{S \subseteq \{1,\ldots,p\}}  Var\left[ g_{S}(\xv_S)\right]$
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{...}
+
+    [Proofs that these constraints hold / are fulfilled by our definition?? Only briefly]
+    
+\end{frame}
+
+\begin{frame}{...}
+
+    NB: One can also start the other way around, i.e. define fANOVA using the constraints it should fulfill, and then mathematically prove that the single components must have this form.
+    
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+\endlecture
+\end{document}
