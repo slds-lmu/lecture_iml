@@ -329,7 +329,7 @@ region $\mathcal{N} \subseteq \Xspace$:
 
 
 
-\begin{frame}{Regional Effect Plots - Example}
+\begin{frame}{Regional Effect Plots - Synthetic Example}
 
    
 %\textbf{How can we use ICE curves to find regions with representative PDPs?}
@@ -549,6 +549,77 @@ $\leadsto$ Model: Random forest
 %\footnote[frame]{\textbf{AISTATS 2022:} \textit{REPID - Regional Effect Plots with implicit Interaction Detection}}
 
 \end{frame}
+
+
+\begin{frame}{Regional Effect Plots - Real Example}
+\begin{itemize}
+    \item introduce bike sharing dataset
+    \item fit a neural network
+\end{itemize}    
+\end{frame}
+
+\begin{frame}{Regional Effect Plots - Real Example}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.3\linewidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_18_0.png}
+    \includegraphics[width=0.3\linewidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_18_1.png}
+    \includegraphics[width=0.3\linewidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_18_2.png}\\
+    \includegraphics[width=0.3\linewidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_18_4.png}
+    \includegraphics[width=0.3\linewidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_18_5.png}    
+    \caption{Global effect of features: month, hour, temperature, windspeed, humidity}
+    \label{fig:enter-label}
+\end{figure}
+\begin{itemize}
+    \item<2> \textcolor{ForestGreen}{\texttt{hour}: Most important and highly heterogeneous feature}
+    \item<2> \texttt{temperature}: Second most important feature
+    \item<2> Other features have less impact
+\end{itemize}
+% Now drawing the rectangle around the second image on the second slide
+\only<2>{
+    \begin{tikzpicture}[overlay, remember picture]
+        \draw[ForestGreen, thick] (4.25, 5.7) rectangle (4.25 + 3.75, 5.7 + 3); % Adjust these coordinates
+    \end{tikzpicture}
+}
+\end{frame}
+
+
+
+\begin{frame}{Regional Effect Plots - Real Example}
+    \centering
+    \begin{tikzpicture}[every node/.style={anchor=south, align=center}]
+        % Root image
+        \node (root) {\includegraphics[width=0.25\textwidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_18_1.png}};
+
+        % Depth 1 (Appears on Slide 2)
+        \node[below left=-.2cm and .8cm of root] (child1) {\includegraphics[width=0.25\textwidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_28_0.png}};
+        \node[below right=-.2cm and .8cm of root] (child2) {\includegraphics[width=0.25\textwidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_28_1.png}};
+        \draw (root) -- node[pos=0.15, left] {workingday=False} (child1);
+        \draw (root) -- node[pos=0.15, right] {workingday=True} (child2);
+
+
+        % Depth 2 (Appears on Slide 3)
+        \node[below left=0.3cm and -1cm of child1] (child11) {\includegraphics[width=0.25\textwidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_29_0.png}};
+        \node[below right=0.3cm and -1cm of child1] (child21) {\includegraphics[width=0.25\textwidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_29_1.png}};
+        \node[below left=0.3cm and -1cm of child2] (child12) {\includegraphics[width=0.25\textwidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_29_2.png}};
+        \node[below right=.3cm and -1cm of child2] (child22) {\includegraphics[width=0.25\textwidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_29_3.png}};
+        
+        \draw (child1) -- node[midway, left] {temp=cold} (child11);
+        \draw (child1) -- node[midway, right] {temp=hot} (child21);
+        \draw (child2) -- node[midway, left] {temp=cold} (child12);
+        \draw (child2) -- node[midway, right] {temp=hot} (child22);
+
+    \end{tikzpicture}
+
+    \begin{tikzpicture}
+        % Draw a generic textbox anywhere
+        \node[draw, fill=yellow!20, text width=3cm] at (3,-15) {This is a generic textbox!};
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Regional Effect Plots - Real Example}
+Takeaways:
+\end{frame}
+
 
 %we want to split $\mathcal{N}$ in such a way that ICE curves within the obtained regions have a similar shape meaning that the distance of these ICE curves to the REP estimate (i.e., $\hat{f}^{PD}_{S|\mathcal{N}_g} (\xv_j):= \frac{1}{|\mathcal{N}_g|}\sum_{i \in \mathcal{N}_g} \hat{f}\left(\xv_j, \xv_C^{(i)}\right)$) is small.
 

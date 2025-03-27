@@ -33,12 +33,12 @@
 \lecture{Interpretable Machine Learning}
 
 \begin{frame}{Generalized Additive Models}
-\textbf{Recall idea of GAMs}: $$g(\E (y \mid \xv)) = \theta_0 + f_1(x_1) + f_2(x_2) + \ldots + f_p(x_p)$$
+\textbf{Recall idea of GAMs}: $$g(\E (y_i \mid \mathbf{x}_i)) = \theta_0 + f_1(x_{i1}) + f_2(x_{i2}) + \ldots + f_p(x_{ip}),\quad i=1,\cdots, N$$
 \begin{itemize}
-    \item One shape function (spline) for each feature $\leadsto$ Intelligible    
+    \item One shape function (spline) $f_j$ for each feature $\leadsto$ Intelligible    
     \item Including non-linear effects
     \item Better than GLMs in accuracy
-    \item \textbf{Explainable Boosting Machines} $\leftarrow$ GAM + Gradient Boosting + Tree ensembles \citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}\\$\leadsto$ Much more intelligible than unrestricted full complexity models \&\\ \:\:\:\:\:\:High accuracy close to unrestricted full complexity models
+    \item \textbf{Explainable Boosting Machines} $\leftarrow$ GAM + Gradient Boosting + Tree ensembles \citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}\\$\leadsto$ More intelligible than unrestricted full complexity models (e.g. random forest) + High accuracy close to unrestricted full complexity models
 \end{itemize}
 \end{frame}
 
@@ -50,8 +50,14 @@
     \label{fig:Intelligible EBM_Step1}
 \end{figure}
 \begin{itemize}
-    \item Train a small bootstrapping tree with 2 to 4 leaves only using the first feature
-    \item Update the residual w.r.t. the original target
+    \item Set all shape functions $f_j^{(0)}$ to zero, $j=1,\cdots,p$
+    \item Calculate the initial pseudo-residual (i.e. the negative gradient of the loss function w.r.t. the current model prediction), e.g.\\
+    1. for squared error loss: $\tilde{r}_i^{(0)}=-\frac{\partial L}{\partial \hat{y}_i}=y_i-\hat{y}_i^{(0)}=y_i-\sum_jf_j^{(0)}(x_{ij})$\\
+    2. for log loss: $\tilde{r}_i^{(0)}=-\frac{\partial L}{\partial \hat{y}_i}=y_i-\sigma(\hat{y}_i^{(0)})$ with $\sigma(\cdot)$ being the sigmoid function
+    \item Fit a shallow bagging tree with 2-4 leaves $S_1^{(1)}: x_{i1}\to \tilde{r}_i$ \textbf{only using the first feature} to predict the pseudo-residuals, with $\{x_{i1},\tilde{r}_i\}_1^N$ as training dataset
+    \item Update $f_1$: $f_1^{(1)}(x_{i1})=f_1^{(0)}+\eta\cdot S_1^{(1)}(x_{i1})$
+    \item Update $\hat{y}_i$: $\hat{y}_i^{(1)}=\sum_jf_j^{(1)}(x_{ij})$
+    \item Update the residual w.r.t. the original target, e.g. $\tilde{r}_i^{(1)}=y_i-\hat{y}_i^{(1)}$
     \item Go to the second feature
 \end{itemize}
 \end{frame}
@@ -63,8 +69,9 @@
     \label{fig:Intelligible EBM_Step2}
 \end{figure}
 \begin{itemize}
-    \item Train a small bagging tree only using the $\text{feat}_2$
-    \item Update the residual; this residual takes into account both what was learned on the first tree and second tree for the first two features
+    \item Fit a shallow bagging tree $S_2^{(1)}$ \textbf{only using the second feature} to predict the updated residuals
+    \item Update $f_2$ with $f_2^{(1)}(x_{i2})=f_2^{(0)}+\eta\cdot S_2^{(1)}(x_{i2})$ and then update $\hat{y}_i^{(1)}$
+    \item Update the residual: this residual takes into account both what was learned on the first tree and second tree for the first two features
     \item Go to $\text{feat}_3$
 \end{itemize}
 
@@ -78,9 +85,9 @@
 \end{figure}
 \begin{itemize}
     \item Go through every feature and keep updating the residual
-    \item Grow a small tree on each feature but just one at a time
+    \item Grow a small tree on each feature but just one at a time in each iteration
     \item Do $M$ iterations through these features until convergence (e.g. $M=10000$) \\
-    $\leadsto$ keep the learning rate so small that feature ordering does not matter
+    $\leadsto$ keep the learning rate $\eta$ so small that feature ordering does not matter
 \end{itemize}
 
 \end{frame}
@@ -91,8 +98,8 @@
     \qquad\;\; + $M$ trees which were only trained on $\text{feat}_2$ \\
     \qquad\;\; $\cdots$ \\
     \qquad\;\; + $M$ trees which were only trained on $\text{feat}_p$
-    \item Summarize the weighted predictions of $M$ trees for each value of $\text{feat}_1$ as a 2D graph
-    \item Generate a 2D graph for every feature in the same way (trained in parallel)
+    \item Summarize the weighted predictions of $M$ trees for each unique value of $\text{feat}_1$ $\hat{f}_1(x_1)=\sum_{m=1}^{M}\eta\cdot S_1^{(m)}(x_1)$, and plot $\hat{f}_1(x_1)$ vs. $x_1$ as a 2D graph
+    \item Generate a 2D graph for every feature in the same way
 \end{itemize}
 \quad $\leadsto$ Intelligible GAM: A series of 2D graphs as a perfect summary of predictions
 \begin{figure}
@@ -138,25 +145,28 @@
     \centering
     \includegraphics[width=0.6\linewidth]
     {slides//02_interpretable-models//figure/T_ij.png}
-    \label{fig:tree-like predictor1}
+    \label{fig:tree-like predictor}
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]
-    {slides//02_interpretable-models//figure/FAST.png}
+    \includegraphics[width=0.65\linewidth]
+    {slides//02_interpretable-models//figure/FAST1.png}
     \label{fig:FAST1}
 \end{figure}
 \end{column}
 \hfill
 \centering
-\begin{column}{0.5\textwidth}
+\begin{column}{0.6\textwidth}
 \begin{itemize}
     \item $T_{ij}$: A tree-like interaction predictor with 4 leaves for each pair of features
-    \item $c_i$, $c_j$: One cut (grid point) on the sorted values of feature $x_i$ and $x_j$, respectively
+    \item $c_i$, $c_j$: One cut (grid point) on the \textbf{sorted} values of feature $x_i$ and $x_j$, respectively
     \item $A$, $B$, $C$, $D$: Notation for 4 leaf regions
     \item \textbf{Idea}: Search for all possible $(c_i, c_j)$ and pick the best $T_{ij}$ with the lowest RSS
     \item Prediction value on region r, $r\in\{A, B, C, D\}$:
-    $$\hat{y}_r=T_{ij}.r=\frac{1}{\vert r\vert}\sum_{(\mathbf{x},y)\in r}y$$
+    $$\hat{y}_r=T_{ij}.r=\frac{1}{\vert r\vert}\sum_{(\mathbf{x},y)\in r}y=\frac{\text{Sum of targets in }r}{\text{Sum of counts in }r}$$
+    \item $\text{RSS}=\sum_{k=1}^N(y_k-T_{ij}(\mathbf{x}_k))^2$ \\
+    \qquad\;$=\sum_{k=1}^Ny_k^2-2\sum_r\left(\hat{y}_r\cdot\sum_{(\mathbf{x},y)\in r}y\right)$\\
+    \qquad\;\;\;\;$+\sum_r\hat{y}_r^2\cdot\vert r\vert$
 \end{itemize}
 \end{column}
 \end{columns}
@@ -167,31 +177,30 @@
 
 \begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.5\textwidth}
-\begin{figure}
-    \centering
-    \includegraphics[width=0.6\linewidth]
-    {slides//02_interpretable-models//figure/T_ij.png}
-    \label{fig:tree-like predictor2}
-\end{figure}
+\begin{itemize}
+\item How to quickly get sum of targets and sum of counts for all possible cuts?\\
+    $\leadsto$ Use \textbf{marginal cumulative histograms} (CH)
+\end{itemize}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]
     {slides//02_interpretable-models//figure/FAST.png}
+    \\An illustration for computing sum of targets for each quadrant
     \label{fig:FAST2}
 \end{figure}
 \end{column}
 \hfill
 \centering
-\begin{column}{0.5\textwidth}
+\begin{column}{0.6\textwidth}
 \begin{itemize}
-    \item How to quickly get sum of targets and sum of counts for all possible cuts?\\
-    $\leadsto$ Use \textbf{marginal} cumulative histograms 
-    \item Given certain $(c_i, c_j)$:\\
-    $CH_i^t(c_i)$: cumulative sum of targets for points with $x_i\leq c_i$;\\
-    $\overline{CH_j^w }(c_j)$: cumulative sum of counts for points with $x_j>c_j$
-    \item $a$, $b$, $c$, $d$: Sum of targets (or counts) in the corresponding region
-    \item Given any $(c_i, c_j)$, compute $a$ by dynamic programming
-    \item $b$, $c$, $d$ can be easily derived with known $a$
+    \item For example:\\
+    $CH_j^t(c_j)$: cumulative sum of targets for data points with $x_j\leq c_j$;\\
+    $\overline{CH_j^t }(c_j)$: cumulative sum of targets for data points with $x_j>c_j$
+    \item Create \textbf{two lookup tables} to store values for every $(c_i, c_j)$, :\\
+    1. Compute the cumulative sum of targets in four regions, and store the values in the \textbf{table of targets} $L^t(c_i,c_j)=[a,b,c,d]$\\
+    2. Compute the cumulative sum of counts in four regions, and store the values in the \textbf{table of counts} $L^w(c_i,c_j)=[a,b,c,d]$
+    \item Given any $(c_i, c_j)$, values of $(b,c,d)$ can be easily derived with known $\color{red}a$\\
+    $\leadsto$Construct lookup tables using dynamic programming
 \end{itemize}
 \end{column}
 \end{columns}
@@ -202,11 +211,11 @@
 
 \begin{itemize}
     \item For $x_i$ with $d_i$ possible values and $x_j$ with $d_j$ possible values:\\
-    $\leadsto$ compute and save $d_id_j$ matrices of $\left(\begin{matrix}a & b \\c & d \end{matrix}\right)$ for both sum of targets and sum of counts
-    \item For each pair, calculate RSS for each $\left(\begin{matrix}a & b \\c & d \end{matrix}\right)$ and pick the best $T_{ij}$ with the lowest RSS
+    $\leadsto$ compute and store $d_id_j$ records of $[a,b,c,d]$ in both table of targets and table of counts
+    \item For each pair of $(x_i,x_j)$, calculate RSS for each possible $(c_i, c_j)$ and pick the best $T_{ij}$ with the lowest RSS [Note: $\hat{y}_A$ can be simply calculated as $L^t(c_i,c_j).a/L^w(c_i,c_j).a$]
 \end{itemize}
 \[
-\text{\qquad$d_id_j$ matrices}
+\text{\qquad$d_id_j$ possible $(c_i, c_j)$}
 \left\{
 \begin{array}{@{}l@{\quad}l@{\quad}l@{\quad}l@{\quad}l}
     \begin{tikzpicture}[baseline=(current bounding box.center)]
@@ -275,19 +284,19 @@
     $\leadsto$ Complexity per pair: $O(N+d_id_j)$ 
     \item Discretize continuous feature values in $b$ bins ($b\leq256$)\\
     $\leadsto O(N+b^2)$ per pair\\
-    $\leadsto$ Choose optimal number of bins $b$ w.r.t. bias-variance tradeoff
+    $\leadsto$ Choose optimal number of bins $b$ w.r.t. bias-variance trade-off
     \item Quick ranking and select top K pairs
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Accurate GAM - Two-stage Construction}
 \begin{enumerate}
-    \item Fit Main Effects
+    \item Fit main effects
     \begin{itemize}
         \item Fit model only using univariate terms
         \item Fix the main effects model
     \end{itemize}
-    \item Fit Pairwise residual of main effects model to original targets
+    \item Fit pairwise residual of main effects model to original targets
     \begin{itemize}
         \item Use FAST to sort through $O(p^2)$ pairs
         \item User selects number $K$ of pairs to be added
@@ -320,7 +329,7 @@
             \item To model the pairwise interactions effectively and efficiently\\
             $\leadsto$Replace the shallow tree ensembles used in Intelligible GAM with a tree-like predictor (similar to FAST)
             \item 3 cuts instead of 2 cuts
-            \item Re-use the stored values in the matrices for sum of targets and sum of counts from FAST
+            \item Re-use the stored values in the lookup tables for sum of targets and sum of counts from FAST
             \item Greedy search for the best combination of cuts (lowest RSS)
         \end{itemize}
     \end{column}
