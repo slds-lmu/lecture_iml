@@ -246,8 +246,7 @@ $h_x\left(\mathbf{z}^{\prime (k)}\right)=\mathbf{z}^{(k)} \text { where } h_x:\{
 \begin{frame}{Kernel shap - in 5 steps}
 \textbf{Step 3: Compute weights through Kernel \only<2>{\citebutton{see shapley\_kernel\_proof.pdf}{https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Supplemental.zip}}}\\\medskip
 \textbf{Intuition}: We learn most about individual features if we can study their effects in isolation or at maximal interaction:
-Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the largest weights 
-
+Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the largest weights\\NB: the figure is independent from the running example
 
 \begin{onlyenv}<1>
 \begin{figure}
@@ -342,9 +341,10 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
  
   \end{tabular}
 \end{table}
-\medskip
+% \medskip
 \only<2>{
-$\leadsto$ weights for empty and full set are infinity and not used as observations for the linear regression\\ $\leadsto$ instead constraints are used such that properties (local accuracy and missingness) are satisfied
+$\leadsto$ all the finite weights being equal to the same value (0.33) is the result of coalition size being equal to 3. In general the weight distribution is not uniform. 
+\\$\leadsto$ weights for empty and full set are infinity (since they result in division by 0 when calculating $\pi_{x}\left(\mathbf{z}^{\prime}\right)$) and not used as observations for the linear regression\\ $\leadsto$ instead constraints are used such that properties (local accuracy and missingness) are satisfied
 }
 
   
