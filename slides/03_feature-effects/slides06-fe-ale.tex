@@ -13,9 +13,8 @@
 
 \newcommand{\titlefigure}{figure/ale_plot.pdf}
 \newcommand{\learninggoals}{
-\item PD plots and its extrapolation issue
-\item M plots and its omitted-variable bias
 \item Understand ALE plots
+\item Difference between ALE and PD plots
 }
 
 \lecturechapter{Accumulated Local Effect (ALE) plot}
@@ -303,9 +302,9 @@ $$
   $$
   \begin{aligned}
   x \in [\min(\xv_S), \max(\xv_S)] \iff &x \in [z_{0, S}, z_{1, S}] \\
-  \lor &x \in \; ]z_{1, S}, z_{2, S}] \\
+  \lor &x \in \; [z_{1, S}, z_{2, S}] \\
   &\dots \\
-  \lor &x \in \; ]z_{K-1, S}, z_{K, S}]
+  \lor &x \in \; [z_{K-1, S}, z_{K, S}]
   \end{aligned}
   $$
   \item Create $K$ intervals for feature $\xv_S$, e.g., using quantiles as interval bounds 
@@ -337,7 +336,7 @@ $$
  \begin{itemize}
   %\item Now let us define it more formalized
   %\item Consider the $i$-th observation $\xi = (x_S^{(i)}, \xi_C)$ for which $x_S^{(i)}$ is located within the $k$-th interval of $\xv_S$, i.e., $x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]$
-  \item For $\xi = (x_S^{(i)}, \xi_{-S})$, value $x_S^{(i)}$ is located within $k$-th interval of $\xv_S$ ($x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]$)
+  \item For $\xi = (x_S^{(i)}, \xi_{-S})$, value $x_S^{(i)}$ is located within $k$-th interval of $\xv_S$ ($x_S^{(i)} \in \; [z_{k-1, S}, z_{k, S}]$)
   \item Replace $x_S^{(i)}$ by upper/lower interval bound while all other feature values $\xi_{-S}$ are kept constant
   \item Finite differences correspond to $\fh(z_{k, S}, \xi_{-S}) - \fh(z_{k-1, S}, \xi_{-S})$
   %and approximates the local effect of the $i$-th observation
@@ -445,7 +444,7 @@ $$
 \item Estimated uncentered first order ALE $\hat{\tilde{f}}_{S, ALE}(x)$ at point $x$:
 $$
 \begin{aligned}
-\hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_{-S}) -\fh(z_{k-1, S}, \xi_{-S})\right]
+\hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; [z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_{-S}) -\fh(z_{k-1, S}, \xi_{-S})\right]
 \end{aligned}
 $$
 \item $k_S(x)$ denotes the interval index a feature value $x \in \xv_S$ falls in
@@ -497,7 +496,7 @@ $$
 
 \begin{frame}{Bike Sharing Dataset: First Order ALE}
 
-Shape of PD plot (left) often looks similar to (centered) first order ALE plot (right) but on different $y$-axis scale.
+Shape of PD plot (top) often looks similar to (centered) first order ALE plot (bottom) but on different $y$-axis scale.
 In case of correlated features, ALE might be better due to PD's extrapolation issue.
 
 
