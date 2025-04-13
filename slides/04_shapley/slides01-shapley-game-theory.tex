@@ -171,24 +171,48 @@ This idea refers to the \textbf{Shapley value} which assigns a payout value to e
   %$\leadsto$ marginal contributions are weighted differently
   \item Shapley value via \textbf{set definition} (weighting via multinomial coefficient): 
   $$\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$$
-  \item The coefficient tells us the probability that, when randomly arranging all $|P|$ players, the exact set $S$ appears before player $j$, and the remaining players appear afterward.   
-  \centerline{
-    \begin{tabular}{|c|c|c|c|c|c|c|}
-      \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{|S|! \text{ permutations}}$}} &
-      \multicolumn{1}{c}{\enspace\raisebox{-3.3ex}[0pt][1.1ex]{$ \overbrace{\vphantom{-}\hspace{3em}}^{\text{player } j}$}} &
-      \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
-      \hline
-      $\tau^{(1)}$ & \ldots & $\tau^{(|S|)}$ & $\tau^{(|S| + 1)}$ & $\tau^{(|S| + 2)}$ & \ldots & $\tau^{(|P|)}$ \\
-      \hline
-    \end{tabular}}
-  
-
+    
   %\item Shapley values are the \texthetit{only} solution for the attribution with the specified axioms.
 %   \item Equivalent Shapley value definition via \textbf{orders}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stau \cup \{j\}) - v(\Stau))$$
 %     $\leadsto$ $\Pi$: All possible $|P|!$ orders/permutations of players\\
 %     $\leadsto$ $\Stau$: The set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$ % j, \dots, 
 \end{itemize}
 
+\end{frame}
+
+\begin{frame}{Shapley Value - Mulinomal coefficent intuition}
+\[
+\frac{|S|!(|P| - |S| - 1)!}{|P|!}
+\]
+  \item The coefficient tells us the probability that, when randomly arranging all $|P|$ players, the exact set $S$ appears before player $j$, and the remaining players appear afterward.
+\centerline{
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{|S|! \text{ permutations}}$}} &
+    \multicolumn{1}{c}{\enspace\raisebox{-3.3ex}[0pt][1.1ex]{$ \overbrace{\vphantom{-}\hspace{3em}}^{\text{player } j}$}} &
+    \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
+    \hline
+    $\tau^{(1)}$ & \ldots & $\tau^{(|S|)}$ & $\tau^{(|S| + 1)}$ & $\tau^{(|S| + 2)}$ & \ldots & $\tau^{(|P|)}$ \\
+    \hline
+  \end{tabular}}
+
+\pause
+\begin{figure}[h!]
+    \centering
+    % Left side: image
+    \begin{minipage}[b]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{figure_man/multinom_coef_over_size.png}
+    \end{minipage}
+    \hspace{0.05\textwidth} % Horizontal spacing between columns (adjust as needed)
+    % Right side: text
+    \begin{minipage}[b]{0.5\textwidth}
+        \small
+        \begin{itemize}
+          \item Joining early yields a larger weight, because it is harder to contribute when the coalition is still small.
+          \item Joining last can also lead to a high weight, since it is challenging to add value to an almost-complete coalition.
+          \item Being in the middle results in a lower weight.
+        \end{itemize}
+    \end{minipage}
+\end{figure}
 \end{frame}
 
 % \begin{frame}{How to Weight Differences in Payout?}
