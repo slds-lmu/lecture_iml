@@ -70,7 +70,7 @@
 
 
 \begin{frame}[c]{Aims \& Roles}
-	CEs can serve various purposes, the user can decide what to learn from them.
+	CEs can serve various purposes; the user can decide what to learn from them.
 	For example:  \\[0.2cm]
 	``If the person had been \textbf{one year older} and the \textbf{credit amount had been increased} to \$12.000,\\ the credit would have been granted."  \\[0.2cm]
 	\pause
@@ -160,7 +160,7 @@ $$\argmin_{\xv'} \lambda_1 o_p(\fh(\xv'), y') + \lambda_2 o_f(\xv', \xv)$$
 	\begin{itemize}
 		\item Regression: $o_p$ could be the L$_1$-distance $o_p(\fh(\xv'), y') = |\fh(\xv')-y'|$
 		\item Classification:
-		L$_1$-distance for scores and 0-1 Loss for labels, e.g., $o_p(\fh(\xv'), y') = \Ind_{\{ \fh(\xv') \neq y' \}}$
+		L$_1$-distance for scores and 0-1 Loss for labels, e.g., $o_p(\fh(\xv'), y') = \ind_{\{ \fh(\xv') \neq y' \}}$
 		\pause
 		\item $o_f$ could be the Gower distance (suitable for mixed feature space):
 		$$o_f(\xv', \xv) = \Gower(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(x'_j, x_j)	\in [0, 1]$$
@@ -169,7 +169,7 @@ $$\argmin_{\xv'} \lambda_1 o_p(\fh(\xv'), y') + \lambda_2 o_f(\xv', \xv)$$
 		\delta_G(x'_j, x_j) =
 		\begin{cases}
 		\frac{1}{\widehat{R}_j}|x_j'- x_j| & \text{if $x_j$ is numerical} \\
-		\Ind_{\{ x_j' \neq x_j \}} & \text{if $x_j$ is categorical}
+		\ind_{\{ x_j' \neq x_j \}} & \text{if $x_j$ is categorical}
 		\end{cases}
 		\end{equation*}
 		with $\widehat{R}_j$ as the value range of feature $j$ in the training dataset (to ensure that $\delta_G(x'_j, x_j)	\in [0, 1]$)
@@ -195,7 +195,7 @@ $$\argmin_{\xv'} \lambda_1 o_p(\fh(\xv'), y') + \lambda_2 o_f(\xv', \xv)$$
 %		\item There could be a trade-off between the number of features changed and the total amount of change made to obtain a certain prediction.
         \item Independently from $o_f$, sparsity in the changes can be additionally considered by another objective that counts the number of changed features via the L0-norm:
         %we can also account for sparsity by adding an extra term to our objective that counts the number of changed features via the L0-norm
-        $$o_s(\xv', \xv) = \sum_{j = 1}^p {\Ind}_{\{ x'_j \neq x_j \}}$$
+        $$o_s(\xv', \xv) = \sum_{j = 1}^p {\ind}_{\{ x'_j \neq x_j \}}$$
 	\end{itemize}
 \end{frame}
 
@@ -212,7 +212,7 @@ $$\argmin_{\xv'} \lambda_1 o_p(\fh(\xv'), y') + \lambda_2 o_f(\xv', \xv)$$
 			$\leadsto$ Proxy: ensure that $\xv'$ is close to training data $\Xmat$
 		\end{itemize}	
 	\only<4>{
-	\begin{columns}[c]
+	\begin{columns}[c, totalwidth=\textwidth]
 	\begin{column}{0.4\textwidth}
 	\includegraphics[width=1\textwidth]{figure/counterfactuals_obj}			
 	\end{column}

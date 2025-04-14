@@ -49,15 +49,16 @@
 \begin{frame}{Cooperative Games in Game Theory \citebutton{Shapley (1951)}{https://www.rand.org/pubs/research_memoranda/RM0670.html}}
 \begin{itemize}[<+->]
 %\itemsep1em
-  \item Game theory is the study of strategic games between players, \enquote{game} refers to any series of interactions between actors / agents with gains and losses of quantifiable utility value
+  \item Game theory is the study of strategic games between players, where \enquote{game} refers to interactions between \enquote{players} involving quantifiable gains and losses
   \item Cooperative games: For all possible players $P = \{1, \hdots, p\}$, each subset of players $\SsubP$ forms a coalition -- each coalition $S$ achieves a certain payout
   %\item A value function $v(S): 2^{|P|}\mapsto \R$ describes the payout (or gain) achieved by any coalition $S \subseteq P$
-  \item A value function $v: 2^{|P|}\mapsto \R$ maps all $2^{|P|}$ possible coalitions to their payout (or gain)
-  \item $v(S)$ is the payout of coalition $S \subseteq P$ (payout of empty coalition must be zero: $v(\emptyset) = 0$)
+  \item Value function $v: 2^P\mapsto \R$ maps all $2^{|P|}$ possible coalitions to their payout/gain
+  \item $v(S)$ denotes the payout of coalition $S \subseteq P$; payout of empty coalition must be 0 ($v(\emptyset) = 0$). $v(P)$ denotes the total achievable payout.
   %\\
-  %\textit{Note:} The payout or gain not necessarily has a positive meaning. In the example on the prisoner's dilemma, the payout is the total number of years spend in prison.
-  \item As some players contribute more than others, we want to fairly divide the total achievable payout $v(P)$ among the players according to a player's individual contribution
-  \item We call the individual payout per player $\phi_j$, $j \in P$ (later: Shapley value)
+  %\textit{Note:} The payout or gain not necessarily has a positive meaning. In the example of the prisoner's dilemma, the payout is the total number of years spent in prison.
+  \item We denote by $\phi_j$ the individual payout of player $j \in P$, referred to later as the Shapley value. 
+  \item As some players may contribute differently, we want to fairly divide the total achievable payout $v(P)$ among the players according to a player's individual contribution
+
   %\item What would be properties of a fair distribution of the payout?
 \end{itemize}
 \end{frame}
@@ -104,15 +105,16 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 \begin{itemize}
 \itemsep0em
 %\addtolength{\itemindent}{-1cm}
-    \item Compute the total payout of each coalition
-    \item Compute difference in payouts for each coalition with and without player \enquote{yellow} (= marginal contribution)
-    \item Average marginal contributions using appropriate weights
+    \item Compute the total payout of each coalition without \enquote{yellow}
+    \item Compute the total payout of each coalition after adding \enquote{yellow}
+    \item The difference between the second and the first will show \enquote{yellow}'s marginal contribution
+    \item Compute the average marginal contributions using appropriate weights
 \end{itemize}
 \end{column}
 \begin{column}{0.47\textwidth}
 \pause
 \textbf{Note:} Each marginal contribution is weighted w.r.t. number of possible orders of its coalition\\
-$\leadsto$ More players in $S$ $\Rightarrow$ more orderings of $S$
+$\leadsto$ More players in $S$ $\Rightarrow$ more ways to order players before adding \enquote{yellow}
 %The more players in a coalition, the more possible orderings inside the coalition %more possibilities of ordering the players inside the coalition
 %\includegraphics[page=15, width = \textwidth, trim=122px 10px 82px 10px, clip]{figure/Shapley.pdf}
 \includegraphics[page=7, width = \textwidth, trim=182px 10px 0px 10px, clip]{figure/Shapley.pdf}
@@ -169,12 +171,47 @@ This idea refers to the \textbf{Shapley value} which assigns a payout value to e
   %$\leadsto$ marginal contributions are weighted differently
   \item Shapley value via \textbf{set definition} (weighting via multinomial coefficient): 
   $$\phi_j = \sum_{\SsubPnoj} \frac{|S|!(|P| - |S| - 1)!}{|P|!}(v(\Scupj) - v(S))$$
-  %\item Shapley values are the \textit{only} solution for the attribution with the specified axioms.
+    
+  %\item Shapley values are the \texthetit{only} solution for the attribution with the specified axioms.
 %   \item Equivalent Shapley value definition via \textbf{orders}: $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stau \cup \{j\}) - v(\Stau))$$
 %     $\leadsto$ $\Pi$: All possible $|P|!$ orders/permutations of players\\
 %     $\leadsto$ $\Stau$: The set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$ % j, \dots, 
 \end{itemize}
 
+\end{frame}
+
+\begin{frame}{Shapley Value - Mulinomal coefficent intuition}
+\[
+\frac{|S|!(|P| - |S| - 1)!}{|P|!}
+\]
+  \item The coefficient tells us the probability that, when randomly arranging all $|P|$ players, the exact set $S$ appears before player $j$, and the remaining players appear afterward.
+\centerline{
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{|S|! \text{ permutations}}$}} &
+    \multicolumn{1}{c}{\enspace\raisebox{-3.3ex}[0pt][1.1ex]{$ \overbrace{\vphantom{-}\hspace{3em}}^{\text{player } j}$}} &
+    \multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
+    \hline
+    $\tau^{(1)}$ & \ldots & $\tau^{(|S|)}$ & $\tau^{(|S| + 1)}$ & $\tau^{(|S| + 2)}$ & \ldots & $\tau^{(|P|)}$ \\
+    \hline
+  \end{tabular}}
+
+\pause
+\begin{figure}[h!]
+    \centering
+    % code for the figure (https://colab.research.google.com/drive/1kOEZkT2jgjgaK9OFRbnfx8-_C8z7t8v3?usp=sharing)
+    \begin{minipage}[b]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{figure_man/multinom_coef_over_size.png}
+    \end{minipage}
+    \hspace{0.05\textwidth} 
+    \begin{minipage}[b]{0.5\textwidth}
+        \small
+        \begin{itemize}
+          \item Joining early yields a larger weight, because it is harder to contribute when the coalition is still small.
+          \item Joining last can also lead to a high weight, since it is challenging to add value to an almost-complete coalition.
+          \item Being in the middle results in a lower weight.
+        \end{itemize}
+    \end{minipage}
+\end{figure}
 \end{frame}
 
 % \begin{frame}{How to Weight Differences in Payout?}
@@ -349,7 +386,8 @@ $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stau \cup \{j\}) - v(\Stau))$$
   \itemsep1em
     \item \textbf{Efficiency}: Player contributions add up to the total payout of the game:
       $\sum\nolimits_{j=1}^p\phi_j = v(P)$
-    \item \textbf{Symmetry}: Players $j,k \in P$ who contribute the same to any coalition get the same payout: \\
+    % symmetry - "any" confused me a bit since we actually look into coalitions that do not include both j and k. Maybe we can state this more as "for any coalition it make no difference whether we add $j$ or $k$"
+    \item \textbf{Symmetry}: Players $j,k \in P$ who contribute the same to any coalition get the same payout: \\ 
       If $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$, then $\phi_j=\phi_k$
     \item \textbf{Dummy/Null Player}: Payout is 0 for players who don't contribute to the value of any coalition: \\
       If $v(\Scupj)=v(S)\quad  \forall \quad \SsubP \setminus \{j\}$, then $\phi_j=0$

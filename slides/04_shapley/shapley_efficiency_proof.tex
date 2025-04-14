@@ -1,0 +1,435 @@
+\documentclass{article}
+\usepackage{hyperref}       % hyperlinks
+\usepackage{graphicx} % Required for inserting images
+\usepackage{xcolor}         % colors
+
+%%%%%%%% MY PACKAGES
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{amsmath}
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+%\usepackage[pdftex]{graphicx}
+%\usepackage{ngerman} % für deutsche Anführungszeichen
+%\usepackage[inline]{enumitem} % inline enumeration
+%\usepackage{dsfont}         % Real numbers symbol etc. => wieder entfernt, nehme stattdessen \mathbb{R} aus dem amsfonts package wie von neurips vorgeschlagen
+\usepackage{caption}        % For subfigures and captions
+\usepackage{subcaption}     % For subfigures and captions
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+% \usepackage[linesnumbered,ruled,vlined]{algorithm2e}        % For algos with referencable line numbers
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{multirow}
+%\usepackage{pdfpages}
+\usepackage{amsthm, amssymb}
+\usepackage{bm}
+\usepackage{pifont}         % For checkmark symbols with \ding{...}
+%\usepackage{ulem}
+\usepackage{enumitem}   % Custom enumerate labels
+\usepackage[textsize=small]{todonotes}
+
+
+\newtheorem{definition}{Definition}[section] % Defines the definition environment
+\newtheorem{proposition}[definition]{Proposition} % Defines the proposition environment, numbering it along with definitions
+\newtheorem{example}[definition]{Example}
+
+% Set paragraph indent to zero
+\setlength{\parindent}{0pt}
+
+\include{latex-math/basic-math}
+\include{latex-math/basic-ml}
+
+\begin{document}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proof_sketch}{Proof}
+\newtheorem{proofsketch}{Proof (Step-by-Step)}
+
+\section*{Set-based Shapley Values for Privilege Score Contributions}
+
+\textbf{Setup.} 
+$k \hat{=} |P|$. Let the Shapley value for $j \in P$ be
+\[
+\phi_j \;=\;
+\sum_{S \subseteq P \setminus \{j\}}
+\frac{|S|!\,\bigl(k - |S| -1\bigr)!}{k!}
+\;
+\bigl[v(S \cup \{j\}) - v(S)\bigr].
+\]
+
+\begin{theorem}[Efficiency]
+Let $\{\phi_j\}_{j \in P}$ be the Shapley values induced by $v$. Then
+\[
+\sum_{j=1}^k \phi_j
+\;=\;
+v(P).
+\]
+\end{theorem}
+
+\begin{proof_sketch}
+The Shapley value for player $j \in P$ is 
+\[
+\phi_j 
+\;=\;
+\sum_{S \subseteq P \setminus \{j\}}
+\frac{|S|!\,\bigl(k - |S| - 1\bigr)!}{k!}
+\;\Bigl[\,v\bigl(S \cup \{j\}\bigr) \;-\; v(S)\Bigr].
+\]
+Hence
+\[
+\sum_{j=1}^k \phi_j
+\;=\;
+\sum_{j=1}^k
+\sum_{S \subseteq P \setminus \{j\}}
+\frac{|S|!\,(k - |S| - 1)!}{k!}
+\;\bigl[v(S \cup \{j\}) \;-\; v(S)\bigr].
+\]
+Re-index over nonempty subsets $T \subseteq P$ by setting $T = S \cup \{j\}$. This shows each $v(T)$ with $T\neq \varnothing$ arises exactly $|T|$ times in the sum (once for each $j \in T$), but for subsets $T \neq P$, there is also a corresponding negative occurrence that cancels out the positive one. Concretely:
+\[
+\bigl[v(T) - v(T \setminus \{i\})\bigr]
+\quad \text{and} \quad
+\bigl[v(T \cup \{i'\}) - v(T)\bigr]
+\]
+yield $+\,v(T)$ and $-\,v(T)$, respectively, for some $i,i'\notin T$. 
+All intermediate $T \neq P$ vanish in pairs, leaving only the net term $v(P) - v(\varnothing)$. Because $v(\varnothing)=0$, the total sum equals $v(P)$. 
+\[
+\sum_{j=1}^k \phi_j \;=\; v(P).
+\]
+\end{proof_sketch}
+
+\begin{proofsketch}
+\noindent \textbf{Step 1: Split the sum into pieces.}
+\[
+\sum_{j=1}^k \phi_j 
+\;=\;
+\sum_{j=1}^k 
+\;\sum_{\,S \subseteq P\setminus\{j\}}
+\;\frac{|S|!\,\bigl(k - |S| -1\bigr)!}{k!}
+\;\Bigl[\,v\bigl(S \cup \{j\}\bigr) - v(S)\Bigr].
+\]
+Each pair $(j,S)$ contributes a difference $v(S \cup \{j\}) - v(S)$. Let $T = S \cup \{j\}$.
+
+\medskip
+\noindent
+\textbf{Step 2: Identify how $v(P)$ appears exactly once overall.}
+
+\begin{itemize}
+    \item Whenever $T = P$, we must have $j \in P$ and $S = P \setminus \{j\}$. There are exactly $k$ such pairs \((j,S)\) because $j$ can be any of the $k$ elements in $P$.
+    \item For each such pair, $\lvert S\rvert = k-1$, so the coefficient becomes
+    \[
+       \frac{(k-1)!\,(k - (k-1) - 1)!}{k!}
+       \;=\;
+       \frac{(k-1)!\,(0)!}{k!}
+       \;=\;
+       \frac{1}{k}.
+    \]
+    \item Hence each of the $k$ occurrences of $v(P)$ is multiplied by $\tfrac{1}{k}$, summing to $\bigl(\frac{1}{k}\times k\bigr)=1$. Thus \emph{overall}, $v(P)$ is counted once in total. 
+\end{itemize}
+
+\medskip
+\noindent
+\textbf{Step 3: Show that all $v(T)$ with $T \neq P$ cancel.}
+
+For each nonempty $T \subset P$:
+% \begin{itemize}
+%     \item \textit{Positive occurrence.} If $T = S \cup \{j\}$ for some $j \in T$, then $v(T)$ appears with a $+$ sign in the term $v(S \cup \{j\}) - v(S)$. 
+%     \item \textit{Negative occurrence.} If \(T \subset P\) is not the full set, there is at least one element \(j' \notin T\). Hence, we can form the larger set \(T \cup \{j'\}\). In the Shapley sum, this larger set contributes a term
+% \[
+% v\bigl(T \cup \{j'\}\bigr) \;-\; v(T),
+% \]
+% which includes precisely the \textit{negative occurrence} of \(v(T)\).  
+
+%     \item Check the multinomial coefficient: Consider a fixed nonempty $T$. Its size is $|T|$. In the inner sum, $T$ arises precisely once for the unique $j \in T$ and $S = T \setminus \{j\}$. The corresponding coefficient is
+% \[
+% \frac{|T\setminus\{j\}|!\,\bigl(k - |T\setminus\{j\}| -1\bigr)!}{k!}
+% \;=\;
+% \frac{(|T|-1)!\,\bigl(k - (|T|-1) -1\bigr)!}{k!}
+% \;=\;
+% \frac{(|T|-1)!\,(k - |T|)!}{k!}.
+% \]
+% Multiplying by $|T|$ (because there are $|T|$ ways to pick $j$ in $T$ as shown in Step 1) yields
+% \[
+% |T| \;\cdot\; \frac{(|T|-1)!\,(k - |T|)!}{k!}
+% \;=\;
+% \frac{|T|! \,(k - |T|)!}{k!}
+% \;=\;
+% 1.
+% \]
+% Thus each $v(T)$ with $T\neq \varnothing$ appears with a total net weight of $+1$ (when summing across all $j\in T$).
+%     \item Every nonempty \(T \neq P\) appears positively in some difference \(v(T) - v(\cdot)\) and also appears negatively in a difference \(v(\cdot) - v(T)\) as part of a larger set. These two occurrences nullify each other, ensuring that \(v(T)\) does not remain in the final sum.
+% \end{itemize}
+\begin{itemize}
+    \item \textbf{Positive occurrence.} 
+    If $T = S \cup \{j\}$ for some $j \in T$, then $v(T)$ appears \emph{positively} in the difference 
+    \[
+      v(S \cup \{j\}) \;-\; v(S).
+    \]
+
+    \item \textbf{Negative occurrence.} 
+    If \(T \subset P\) is not the full set, then there exists at least one element \(j' \notin T\). We can thus form the larger set \(T \cup \{j'\}\). In the Shapley sum, this larger set contributes
+    \[
+      v\bigl(T \cup \{j'\}\bigr) \;-\; v(T),
+    \]
+    which contains \(-\,v(T)\) as the \emph{negative} appearance of \(v(T)\).
+
+    \item \textbf{Multinomial coefficient.} 
+    Fix a nonempty $T$. Let $|T|$ denote its size. Inside the sum, $T$ appears once for each $j \in T$ with $S = T \setminus \{j\}$. The coefficient in front of $v(T)$ for such a pair $(j,S)$ is
+    \[
+      \frac{|T\setminus\{j\}|!\,\bigl(k - |T\setminus\{j\}| -1\bigr)!}{k!}
+      \;=\;
+      \frac{(|T|-1)!\,(k - |T|)!}{k!}.
+    \]
+    Since there are $|T|$ possible ways to choose $j\in T$, multiplying by $|T|$ yields
+    \[
+      |T| 
+      \;\cdot\; 
+      \frac{(|T|-1)!\,(k - |T|)!}{k!}
+      \;=\;
+      \frac{|T|!\,(k - |T|)!}{k!}
+      \;=\;
+      \frac{k!}{k!}
+      \;=\;
+      1.
+    \]
+    Where the identity $|T|!\,(k - |T|)! = k!$ holds because to permute $k$ distinct elements, 
+we can imagine first choosing which $|T|$ are in one group and ordering them 
+(in $|T|!$ ways), then ordering the remaining $k - |T|$ (in $(k - |T|)!$ ways). 
+Overall, this accounts for all $k!$ permutations. 
+    Therefore, each nonempty $T$ receives a total \emph{positive} weight of exactly $+1$ when summing over all $j \in T$.
+
+    \item \textbf{Cancellation.} 
+    Every nonempty \(T \neq P\) also appears \emph{negatively} as part of a larger set’s difference, ensuring one positive and one negative occurrence of $v(T)$. Consequently, these contributions cancel each other out, so \(v(T)\) does not remain in the final sum unless $T=P$.
+\end{itemize}
+\medskip
+\noindent
+\textbf{Step 4: Conclusion.}
+
+Since $v(\varnothing) = 0$ does not contribute and $v(P)$ remains once in total, we get
+\[
+\sum_{j=1}^k \phi_j 
+\;=\;
+\underbrace{v(P)}_{\text{one net positive}} 
+\;+\; 
+\underbrace{\sum_{T \neq P} \bigl[v(T)\ \text{terms cancel}\bigr]}_{0} 
+\;=\;
+v(P).
+\]
+\qedhere
+\end{proofsketch}
+
+% \begin{proofsketch}
+% \noindent \textbf{Step 1: Expand the total Shapley sum.}
+
+% \[
+% \sum_{j=1}^k \phi_j
+% \;=\;
+% \sum_{j=1}^k
+% \;\sum_{\,S \subseteq P \setminus \{j\}}
+% \frac{|S|!\,(k-|S|-1)!}{k!}
+% \;\Bigl[v\bigl(S \cup \{j\}\bigr) - v(S)\Bigr].
+% \]
+
+% \noindent \textbf{Step 2: Re-index to track each $v(T)$ term.}
+
+% Each nonempty subset \(T \subseteq P\) appears exactly \(\lvert T\rvert\) times positively in the expanded total Shapley sum from Step 1. More precisely, for each \(j \in T\), there is a unique set \(S = T \setminus \{j\}\) such that \(T = S \cup \{j\}\). Consequently, each \(v(T)\) appears exactly once in the difference \(v(S \cup \{j\}) - v(S)\) if and only if \(S = T \setminus \{j\}\).
+
+% \textbf{Example:} 
+% Let $P = \{1,2,3\}$ and focus on $T = \{1,3\}$.  
+% In the Shapley sum, we form terms $v(S \cup \{j\}) - v(S)$ for each $j \in P$ and each $S \subseteq P \setminus \{j\}$. 
+% We list all such $(j,S)$ pairs:
+
+% \begin{itemize}
+%   \item \textbf{Case $j=1$}, so $S \subseteq \{2,3\}$:
+%     \begin{itemize}
+%       \item $S = \varnothing$: $S \cup \{1\} = \{1\} \implies v(\{1\}) - v(\varnothing).$
+%       \item $S = \{2\}$: $S \cup \{1\} = \{1,2\} \implies v(\{1,2\}) - v(\{2\}).$
+%       \item \textbf{$S = \{3\}$:} $S \cup \{1\} = \{1,3\} \implies \textbf{v(\{1,3\}) - v(\{3\})}.$
+%       \item $S = \{2,3\}$: $S \cup \{1\} = \{1,2,3\} \implies v(\{1,2,3\}) - v(\{2,3\}).$
+%     \end{itemize}
+
+%   \item \textbf{Case $j=2$}, so $S \subseteq \{1,3\}$:
+%     \begin{itemize}
+%       \item $S = \varnothing$: $S \cup \{2\} = \{2\} \implies v(\{2\}) - v(\varnothing).$
+%       \item $S = \{1\}$: $S \cup \{2\} = \{1,2\} \implies v(\{1,2\}) - v(\{1\}).$
+%       \item $S = \{3\}$: $S \cup \{2\} = \{2,3\} \implies v(\{2,3\}) - v(\{3\}).$
+%       \item $S = \{1,3\}$: $S \cup \{2\} = \{1,2,3\} \implies v(\{1,2,3\}) - v(\{1,3\}).$
+%     \end{itemize}
+
+%   \item \textbf{Case $j=3$}, so $S \subseteq \{1,2\}$:
+%     \begin{itemize}
+%       \item $S = \varnothing$: $S \cup \{3\} = \{3\} \implies v(\{3\}) - v(\varnothing).$
+%       \item \textbf{$S = \{1\}$:} $S \cup \{3\} = \{1,3\} \implies \textbf{v(\{1,3\}) - v(\{1\})}.$
+%       \item $S = \{2\}$: $S \cup \{3\} = \{2,3\} \implies v(\{2,3\}) - v(\{2\}).$
+%       \item $S = \{1,2\}$: $S \cup \{3\} = \{1,2,3\} \implies v(\{1,2,3\}) - v(\{1,2\}).$
+%     \end{itemize}
+% \end{itemize}
+
+% \noindent
+% \textbf{Observation:} $T = \{1,3\}$ occurs \emph{only} in $|T| = 2$ cases, i.e. for the pairs
+% \[
+% (j,S) = (1,\{3\}) \quad \text{and} \quad (j,S) = (3,\{1\}),
+% \]
+% matching the principle: $T$ appears once for each $j\in T$, with $S = T \setminus\{j\}$.  
+% No other $(j,S)$ pair produces $T=\{1,3\}$, so $T$ cannot arise for $j=2$ or for different $S$.
+
+
+
+% \noindent \textbf{Step 3: Check the multinomial coefficient contribution.}
+
+% Consider a fixed nonempty $T$. Its size is $|T|$. In the inner sum, $T$ arises precisely once for the unique $j \in T$ and $S = T \setminus \{j\}$. The corresponding coefficient is
+% \[
+% \frac{|T\setminus\{j\}|!\,\bigl(k - |T\setminus\{j\}| -1\bigr)!}{k!}
+% \;=\;
+% \frac{(|T|-1)!\,\bigl(k - (|T|-1) -1\bigr)!}{k!}
+% \;=\;
+% \frac{(|T|-1)!\,(k - |T|)!}{k!}.
+% \]
+% Multiplying by $|T|$ (because there are $|T|$ ways to pick $j$ in $T$ as shown in Step 1) yields
+% \[
+% |T| \;\cdot\; \frac{(|T|-1)!\,(k - |T|)!}{k!}
+% \;=\;
+% \frac{|T|! \,(k - |T|)!}{k!}
+% \;=\;
+% 1.
+% \]
+% Thus each $v(T)$ with $T\neq \varnothing$ appears with a total net weight of $+1$ (when summing across all $j\in T$).
+
+% \noindent \textbf{Step 4: Telescoping.}
+
+% \begin{itemize}
+%     \item $v(\varnothing)$ never appears positively, because $\varnothing$ cannot be formed by adding some $j$.
+%     \item $v(P)$ never appears negatively, because $P$ cannot be “further extended.”
+%     \item All intermediate $v(T)$ terms with $T \neq \varnothing,P$ appear exactly once positively and once negatively, and hence cancel out except for $v(P) - v(\varnothing)$.
+% \end{itemize}
+
+% \noindent \textbf{Step 5: Conclude.}
+
+% Since $v(\varnothing) = 0$, the only remaining term is $v(P)$. Hence
+% \[
+% \sum_{j=1}^k \phi_j \;=\; v(P).
+% \]
+% \qedhere
+% \end{proofsketch}
+
+
+\section*{Order-Based Shapley Values for Privilege Score Contributions}
+
+\paragraph{Setup.}
+Let $P = \{1,\dots,k\}$ be the set of $k$ players.  
+We aim to allocate $v(P)$ among the $k$ players (arrows) in a principled way.
+
+\medskip
+
+\paragraph{Permutation-Based Definition of Shapley Values.}
+A \emph{permutation} of $P$ is any ordering $\pi = (\pi(1), \pi(2), \dots, \pi(k))$.  
+Let $\mathrm{Pred}_\pi(j)$ be the set of players that appear \emph{before} $j$ in the permutation $\pi$.  
+Then the \textbf{Shapley value} of player $j$ is
+\[
+\phi_j 
+\;=\;
+\frac{1}{k!}\;
+\sum_{\pi \in \mathfrak{S}_P}
+\Bigl[v\!\bigl(\mathrm{Pred}_\pi(j) \cup \{\,j\}\bigr)
+\;-\;
+v\!\bigl(\mathrm{Pred}_\pi(j)\bigr)\Bigr],
+\]
+where $\mathfrak{S}_P$ is the set of all $k!$ permutations of $P$.  
+In words, we look at the “marginal contribution” of $j$ each time it arrives in a permutation (given whichever players arrived before it), and then average over all permutations.
+
+\begin{theorem}[Efficiency]
+Let $\{\phi_j\}_{j \in P}$ be the order-based Shapley values induced by $v$. Then
+\[
+\sum_{j=1}^k \phi_j
+\;=\;
+v(P).
+\]
+\end{theorem}
+
+\begin{proofsketch}
+\noindent
+\textbf{Step 1: Sum the Shapley values over all players.}
+
+\[
+\sum_{j=1}^k \phi_j 
+\;=\;
+\sum_{j=1}^k
+\frac{1}{k!}
+\sum_{\pi \in \mathfrak{S}_P}
+\Bigl[v\bigl(\mathrm{Pred}_\pi(j)\cup\{j\}\bigr)
+- 
+v\bigl(\mathrm{Pred}_\pi(j)\bigr)\Bigr].
+\]
+Swap the sums:
+\[
+=
+\frac{1}{k!}
+\sum_{\pi \in \mathfrak{S}_P}
+\sum_{j=1}^k
+\Bigl[v\bigl(\mathrm{Pred}_\pi(j)\cup\{j\}\bigr)
+- 
+v\bigl(\mathrm{Pred}_\pi(j)\bigr)\Bigr].
+\]
+
+\medskip
+\noindent
+\textbf{Step 2: Telescoping within each permutation.}
+
+Fix a particular permutation $\pi$.  List its elements in order:
+\[
+\bigl(\pi(1), \pi(2), \dots, \pi(k)\bigr).
+\]
+Within this permutation, the inner sum
+\(\sum_{j=1}^k
+\bigl[v(\mathrm{Pred}_\pi(j)\cup\{j\}) - v(\mathrm{Pred}_\pi(j))\bigr]\)
+can be viewed as a chain of marginal contributions:
+\[
+v\bigl(\{\pi(1)\}\bigr) - v(\varnothing)
+\;+\;
+v\bigl(\{\pi(1), \pi(2)\}\bigr) - v\bigl(\{\pi(1)\}\bigr)
+\;+\;\dots\;+\;
+v\bigl(\{\pi(1),\ldots,\pi(k)\}\bigr) - v\bigl(\{\pi(1),\ldots,\pi(k-1)\}\bigr).
+\]
+All intermediate terms telescope, leaving exactly
+\[
+v\bigl(\{\pi(1),\ldots,\pi(k)\}\bigr)
+\;-\;
+v(\varnothing)
+\;=\;
+v(P)
+\;-\;
+0
+\;=\;
+v(P).
+\]
+
+\medskip
+\noindent
+\textbf{Step 3: Average over all permutations.}
+
+Since every permutation $\pi$ yields exactly $v(P)$ in the telescoped sum, we have
+\[
+\sum_{j=1}^k \phi_j
+\;=\;
+\frac{1}{k!}
+\sum_{\pi \in \mathfrak{S}_P} 
+v(P)
+\;=\;
+\frac{1}{k!} \times \bigl(k! \cdot v(P)\bigr)
+\;=\;
+v(P).
+\]
+Hence
+\[
+\sum_{j=1}^k \phi_j 
+\;=\;
+v(P).
+\]
+\end{proofsketch}
+
+\end{document}

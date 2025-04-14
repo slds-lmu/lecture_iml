@@ -13,9 +13,8 @@
 
 \newcommand{\titlefigure}{figure/ale_plot.pdf}
 \newcommand{\learninggoals}{
-\item PD plots and its extrapolation issue
-\item M plots and its omitted-variable bias
 \item Understand ALE plots
+\item Difference between ALE and PD plots
 }
 
 \lecturechapter{Accumulated Local Effect (ALE) plot}
@@ -24,7 +23,7 @@
 % \frame{
 % \frametitle{Motivation}
 %
-% \begin{columns}[T]
+% \begin{columns}[T, totalwidth=\textwidth]
 % \begin{column}{0.5\textwidth}
 % \centering
 % \includegraphics[width=\textwidth]{figure_man/ale_scatter}
@@ -57,7 +56,7 @@
 
 % \begin{frame}{Motivation - Correlated Features}
 
-% \begin{columns}[T]
+% \begin{columns}[T, totalwidth=\textwidth]
 % \begin{column}{0.5\textwidth}
 % \centering
 % \includegraphics[width=0.9\textwidth]{figure/ale_scatter_grid}
@@ -101,7 +100,7 @@
 % $x_1 = x + \epsilon_1$, 
 % $x_2 = x + \epsilon_2$ and $\epsilon_1, \epsilon_2 \sim N(0, 0.05)$.}
 
-% \begin{columns}[T]
+% \begin{columns}[T, totalwidth=\textwidth]
 % \begin{column}{0.65\textwidth}
 % \centering
 % \only<1>{\includegraphics[width=\textwidth]{figure/ale_vs_pdp_surf}}
@@ -134,7 +133,7 @@
 % % \tiny{Source: Figure taken from Apley et al. (2020)}
 % % \end{center}
 
-% \begin{columns}[T]
+% \begin{columns}[T, totalwidth=\textwidth]
 % \visible<1-2>{\begin{column}{0.5\textwidth}
 % \vspace*{-1em}
 % \centering
@@ -163,7 +162,7 @@
 
 % \begin{frame}{M Plot vs. PD plot}
 
-% \begin{columns}[T]
+% \begin{columns}[T, totalwidth=\textwidth]
 % \begin{column}{0.5\textwidth}
 % \centering
 % \includegraphics[width=0.9\textwidth]{figure/ale_scatter}
@@ -231,7 +230,7 @@
 % \end{frame}
 
 \begin{frame}{Accumulated Local Effects (ALE) \citebutton{Apley, Zhu (2020)}{https://arxiv.org/abs/1612.08468}}
-%\begin{columns}[T]
+%\begin{columns}[T, totalwidth=\textwidth]
 %\begin{column}{0.65\textwidth}
 ALE plots use the idea of integrating partial derivatives. They do not suffer from the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent.
 %\end{column}
@@ -281,7 +280,7 @@ $$
 \end{aligned}
 $$
 \pause
-\item Substract average of uncentered ALE curve (constant) to obtain centered ALE curve $f_{S, ALE}(x)$ with zero mean regarding marginal distribution of feature of interest $x_S$:
+\item Subtract average of uncentered ALE curve (constant) to obtain centered ALE curve $f_{S, ALE}(x)$ with zero mean regarding marginal distribution of feature of interest $x_S$:
 $$
 \begin{aligned}
 f_{S, ALE}(x) = \tilde{f}_{S, ALE}(x) - \underbrace{\int_{-\infty}^{\infty}\tilde{f}_{S, ALE}(x_S) \, d\P(x_S)}_{:= constant}
@@ -303,9 +302,9 @@ $$
   $$
   \begin{aligned}
   x \in [\min(\xv_S), \max(\xv_S)] \iff &x \in [z_{0, S}, z_{1, S}] \\
-  \lor &x \in \; ]z_{1, S}, z_{2, S}] \\
+  \lor &x \in \; [z_{1, S}, z_{2, S}] \\
   &\dots \\
-  \lor &x \in \; ]z_{K-1, S}, z_{K, S}]
+  \lor &x \in \; [z_{K-1, S}, z_{K, S}]
   \end{aligned}
   $$
   \item Create $K$ intervals for feature $\xv_S$, e.g., using quantiles as interval bounds 
@@ -337,7 +336,7 @@ $$
  \begin{itemize}
   %\item Now let us define it more formalized
   %\item Consider the $i$-th observation $\xi = (x_S^{(i)}, \xi_C)$ for which $x_S^{(i)}$ is located within the $k$-th interval of $\xv_S$, i.e., $x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]$
-  \item For $\xi = (x_S^{(i)}, \xi_{-S})$, value $x_S^{(i)}$ is located within $k$-th interval of $\xv_S$ ($x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]$)
+  \item For $\xi = (x_S^{(i)}, \xi_{-S})$, value $x_S^{(i)}$ is located within $k$-th interval of $\xv_S$ ($x_S^{(i)} \in \; [z_{k-1, S}, z_{k, S}]$)
   \item Replace $x_S^{(i)}$ by upper/lower interval bound while all other feature values $\xi_{-S}$ are kept constant
   \item Finite differences correspond to $\fh(z_{k, S}, \xi_{-S}) - \fh(z_{k-1, S}, \xi_{-S})$
   %and approximates the local effect of the $i$-th observation
@@ -445,12 +444,12 @@ $$
 \item Estimated uncentered first order ALE $\hat{\tilde{f}}_{S, ALE}(x)$ at point $x$:
 $$
 \begin{aligned}
-\hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; ]z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_{-S}) -\fh(z_{k-1, S}, \xi_{-S})\right]
+\hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; [z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_{-S}) -\fh(z_{k-1, S}, \xi_{-S})\right]
 \end{aligned}
 $$
 \item $k_S(x)$ denotes the interval index a feature value $x \in \xv_S$ falls in
 \item $n_S(k)$ denotes the number of observations inside the $k$-th interval of $\xv_S$
-\item Substract average of estimated uncentered ALE to obtain centered ALE estimate: %  $\hat{f}_{S, ALE}(x)$ at point $x$
+\item Subtract average of estimated uncentered ALE to obtain centered ALE estimate: %  $\hat{f}_{S, ALE}(x)$ at point $x$
 $$
 \begin{aligned}
 \hat{f}_{S, ALE}(x) = \hat{\tilde{f}}_{S, ALE}(x) - \frac{1}{n}\sum_{i = 1}^n \hat{\tilde{f}}_{S, ALE}(x_S^{(i)})
@@ -497,7 +496,7 @@ $$
 
 \begin{frame}{Bike Sharing Dataset: First Order ALE}
 
-Shape of PD plot (left) often looks similar to (centered) first order ALE plot (right) but on different $y$-axis scale.
+Shape of PD plot (top) often looks similar to (centered) first order ALE plot (bottom) but on different $y$-axis scale.
 In case of correlated features, ALE might be better due to PD's extrapolation issue.
 
 

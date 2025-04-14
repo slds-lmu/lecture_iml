@@ -1,0 +1,83 @@
+\loesung{
+\begin{enumerate}
+
+\item \textbf{M Plot:}
+The M plot for \(x_1\) is defined as:
+$
+\hat{f}_{1, M}(x_1) = \mathbb{E}_{x_2 \mid x_1} \left[ \hat{f}(x_1, x_2) \mid x_1 \right].
+$
+
+\textbf{Derivation:}
+Substituting \(\hat{f}(x_1, x_2) = -x_1 + 2x_2\):
+$$\hat{f}_{1, M}(x_1) = \mathbb{E}_{x_2 \mid x_1} \left[ -x_1 + 2x_2 \mid x_1 \right] \overset{(-x_1 \text{ const.})}{=} -x_1 + 2 \cdot \mathbb{E}[x_2 \mid x_1].$$
+    
+    % Since \(-x_1\) is constant, it simplifies to:
+    % $$
+    % \hat{f}_{1, M}(x_1) = -x_1 + 2 \cdot \mathbb{E}[x_2 \mid x_1].
+    % $$
+     
+If \(\mu_1 = \mu_2 = 0\) (as in the given exercise), the conditional expectation reduces to: 
+$$\mathbb{E}[x_2 \mid x_1] = \rho \frac{\sigma_2}{\sigma_1} x_1 \overset{(\sigma_1 = \sigma_2)}{=} \rho x_1.
+$$
+
+    Using this property of multivariate normal distributions, \(\mathbb{E}[x_2 \mid x_1] = \rho x_1\) and $\rho \approx 1$, we have:
+    \[
+    \hat{f}_{1, M}(x_1) = -x_1 + 2 \cdot (\rho x_1) = x_1(-1 + 2\rho) \approx x_1(-1 + 2) =  x_1.
+    \]
+
+\item \textbf{PD Plot:}
+The PD plot for \(x_1\) is defined as:
+$$
+\hat{f}_{1, \text{pdp}}(x_1) = \mathbb{E}_{x_2} \left[ \hat{f}(x_1, x_2) \right].
+$$
+\begin{enumerate}
+    \item \textbf{Derivation:}
+    Substituting \(\hat{f}(x_1, x_2) = -x_1 + 2x_2\): 
+    $$\hat{f}_{1, \text{pdp}}(x_1) = \mathbb{E}_{x_2} \left[ -x_1 + 2x_2 \right] \overset{(-x_1 \text{ const.})}{=}  -x_1 + 2 \cdot \mathbb{E}[x_2].
+    $$
+    
+    The marginal expectation of \(x_2\) is \(\mathbb{E}[x_2] = 0\), so:
+    $$\hat{f}_{1, \text{pdp}}(x_1) = -x_1.$$
+
+    \item \textbf{Comparison:}
+    The PD plot and M plot differ because the M plot incorporates the dependency between \(x_1\) and \(x_2\) (via \(\rho\)) and integrates over the conditional distribution, while the PD plot integrates over the marginal distribution and thereby considers \(x_1\) and \(x_2\) as if they were independent (which is ok if we are interested in the model's behavior).
+\end{enumerate}
+
+\item \textbf{ALE Plot:}
+The ALE plot for \(x_1\) is defined as:
+\[
+\text{ALE}_1(x_1) = \int_{z_{\min}}^{x_1} \mathbb{E}_{x_2 \mid x_1 = z} \left[ \frac{\partial \hat{f}(z, x_2)}{\partial x_1} \right] dz.
+\]
+\begin{enumerate}
+    \item \textbf{Uncentered ALE Plot:}
+    Compute the partial derivative of \(\hat{f}(x_1, x_2)\) with respect to \(x_1\):
+    \[
+    \frac{\partial \hat{f}(x_1, x_2)}{\partial x_1} = -1.
+    \]
+    Substituting into the ALE definition:
+    \[
+    \text{ALE}_1(x_1) = \int_{z_{\min}}^{x_1} \mathbb{E}_{x_2 \mid x_1 = z}[-1] \, dz = \int_{z_{\min}}^{x_1} -1 \, dz.
+    \]
+    Solve the integral:
+    \[
+    \text{ALE}_1(x_1) = -(x_1 - z_{\min}).
+    \]
+
+    \item \textbf{Centered ALE Plot:}
+    To center the ALE plot, compute the mean of the uncentered ALE values:
+    \[
+    \mathbb{E}_{x_1}[\text{ALE}_1(x_1)] = \mathbb{E}_{x_1}[-(x_1 - z_{\min})] = -( \mathbb{E}[x_1] - z_{\min}) = z_{\min},
+    \]
+    since \(\mathbb{E}[x_1] = 0\). Therefore, the centered ALE plot is:
+    \[
+    \text{ALE}_1^{\text{centered}}(x_1) = \text{ALE}_1(x_1) - z_{\min} = -(x_1 - z_{\min}) - z_{\min} = -x_1.
+    \]
+
+    \item \textbf{Comparison:}
+    The ALE plot accounts for the conditional dependence of \(x_2\) on \(x_1\), unlike the PD plot.
+    The centered ALE plot and uncentered ALE plot differ only by a constant.
+\end{enumerate}
+
+\end{enumerate}
+
+}

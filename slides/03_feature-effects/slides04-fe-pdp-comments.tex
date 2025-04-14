@@ -13,8 +13,6 @@
 
 \newcommand{\titlefigure}{figure/pdp_bike}
 \newcommand{\learninggoals}{
-\item PD plots and relation to ICE plots
-\item Interpretation of PDP
 \item Extrapolation and Interactions in PDPs
 \item Centered ICE and PDP
 }
@@ -30,7 +28,7 @@
 
 Extrapolation can cause issues in regions with few observations or if features are correlated
  
-\begin{columns}[T]
+\begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.5\textwidth}
 \centering
 \includegraphics[width=0.8\textwidth]{figure/ale_scatter_grid}
@@ -46,8 +44,8 @@ Extrapolation can cause issues in regions with few observations or if features a
 \item \textbf{Black points:} Observed points of the original data
 \item \textbf{\textcolor{red}{Red:}} Grid points used to calculate the ICE and PD curves (several unrealistic values)\\ %combination of feature values
 $\Rightarrow$ %Unrealistic combination of feature values are used, e.g., the
-PD plot at $x_1=0$ averages predictions over the whole marginal distribution of feature $x_2$\\
-$\Rightarrow$ May be problematic if model behaves strange outside training distribution
+PD plot at $x_1=0$ averages predictions over the \textit{whole} marginal distribution of feature $x_2$\\
+$\Rightarrow$ May be problematic if model behaves strange outside training distribution (e.g. model overfits)
 %can bias ICE and PD curves Be careful with interpretations 
 %\item For correlated features and in regions with few observations with care
 %Extrapolation: interpret curves for highly correlated features and in feature regions with few observations with care
@@ -105,7 +103,7 @@ $\Rightarrow$ May be problematic if model behaves strange outside training distr
 
 \item PD plots: averaging of ICE curves might \textbf{obfuscate} heterogeneous effects and interactions \\ 
 \(\Rightarrow\) Ideally plot ICE curves and PD plots together to uncover this fact\\
-\(\Rightarrow\) Different shapes of ICE curves suggest interaction (but does not tell with which  feature)
+\(\Rightarrow\) Different shapes of ICE curves suggest interaction (but do not tell with which  feature)
 
 \begin{center}\includegraphics[width=0.5\textwidth]{figure/pdp_xor.pdf} \end{center}
 \end{itemize}
@@ -141,7 +139,7 @@ $\Rightarrow$ May be problematic if model behaves strange outside training distr
 \textbf{Solution:} Center ICE curves at fixed reference value $x' \sim \P(\xv_S)$, often $x' = \min(\xv_S)$\\
 $\Rightarrow$ Easier to identify heterogenous shapes with c-ICE curves
 \vspace{-0.2cm}
-\begin{columns}[c]
+\begin{columns}[c, totalwidth=\textwidth]
 \begin{column}{0.45\textwidth}
 %\centering
 $$\begin{aligned}
@@ -155,7 +153,7 @@ $\Rightarrow$ Visualize $\fh_{S, cICE}^{(i)}(\xv_S^*)$ vs. $\xv_S^*$
 \lz
 \pause
 \textbf{Interpretation} \\
-(yellow curve: analogue to PDP the average of c-ICE curves): \\
+(yellow curve: analog to PDP the average of c-ICE curves): \\
 On average, the number of bike rentals at $\sim 97$ \% humidity decreased by 1000 bikes compared to a humidity of 0 \%
 \end{column}
 \begin{column}{0.54\textwidth}
@@ -175,7 +173,7 @@ On average, the number of bike rentals at $\sim 97$ \% humidity decreased by 100
 
 For categorical features, c-ICE plots can be interpreted as in LMs due to reference value
 
-\begin{columns}[c]
+\begin{columns}[c, totalwidth=\textwidth]
 \begin{column}{0.44\textwidth}
 
 \begin{center}

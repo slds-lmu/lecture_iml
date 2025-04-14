@@ -1,0 +1,172 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+\newcommand{\open}{}
+\newcommand{\close}{}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+\date{}
+
+\begin{document}
+
+\newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\learninggoals}{
+\item Understand one classical kind of functional decomposition: functional ANOVA (fANOVA).
+\item [...]
+\item Algorithm for calculating the components in a fANOVA}
+
+\lecturechapter{Functional ANOVA}
+\lecture{Interpretable Machine Learning}
+
+\begin{frame}{??? History of fANOVA ?????}
+    
+\end{frame}
+
+\begin{frame}{Frame Title}
+
+    Assumption: Independent features \\
+    Today, we look at one method to obtain a functional decomposition; Funcational ANOVA (fANOVA).
+    
+\end{frame}
+
+\begin{frame}{Idea}
+
+    Consider example from before:
+
+    \begin{equation}
+        \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2
+    \end{equation}
+
+    Goal: Interaction term \(g_{1,2}\) should only contain the pure interaction, in this case only \(|x_1|x_2\), all the rest are actually main effects. \\
+    General idea: Try to move as much as possible into lower-order effects, and only keep the rest in the higher-order term. \\
+    \(\Rightarrow\) First compute the lower-order terms, then the higher order terms.
+    
+\end{frame}
+
+\begin{frame}{Idea}
+
+    \begin{equation}
+        \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2
+    \end{equation}
+
+    Question: How to compute lower-order terms? \\
+    Starting with the main effects: % One can use one of the global feature effect plots, since they exactly provide a function only depending on one feature, which models the effect of this feature on \(\fh\).
+    \textit{Link to PDP??} \\
+    \(\Rightarrow\) fANOVA uses the same idea as PDPs, but also for higher-order terms: the resp. feature is fixed and all other features are simply averaged out. \\
+
+    Total formula for calculating the components \(g_S\) in the fANOVA algorithm:
+
+    \begin{equation*}
+        g_{S} (\xv_S) = (\text{average out all features not contained in } S) - (\text{All lower-order components})
+    \end{equation*}
+    
+\end{frame}
+
+\begin{frame}{Formal Definition and Computation
+\citebutton{Hooker (2004)}{https://dl.acm.org/doi/10.1145/1014052.1014122}
+}
+
+Components are recursively defined using marginals (here $-S = \{1, \ldots, p \} \setminus S$ denotes the set of all indizes not contained in \(S\)):
+
+$$g_{S}(\xv_S) = \mathbb{E}_{X_{-S}}\left[\fh(\xv) \; \vert  \; x_S \right] - \sum_{V \subset S} g_V(x_V)$$
+
+\begin{itemize}
+    \item Expectation integrates $\fh(\xv)$ over all input features except $\xv_S$
+    \item Subtract all components $g_V$ with $V \subset S$ to remove all lower-order effects and center the effect
+\pause
+\item Recursive computation:
+\begin{align*}
+ g_{\open \emptyset \close} &= \mathbb{E}_X\left[\fh(\xv)\right] \\
+ g_{\open j \close}(x_j) &= \mathbb{E}_{X_{-j}}\left[\fh(\xv) \; \vert  \; x_j \right] - g_{\open \emptyset \close}, \; \forall j \in \{1, \ldots, p\} \\% \text{ and } g_{\open 2 \close}(x_2) = \mathbb{E}_{X_{-2}}\left[\fh(\xv) \; \vert  \; x_2 \right] - g_{\open \emptyset \close}  \\
+ %g_{\open 2 \close}(x_2) &= \mathbb{E}_{X_{-2}}\left[\fh(\xv) \; \vert  \; x_2 \right] - g_{\open \emptyset \close} \\
+ g_{\open j, k \close}(x_j, x_k) &= \mathbb{E}_{X_{-\{ j,k \}}}\left[\fh(\xv) \; \vert \; x_j, x_k \right] - g_{\open k \close}(x_k) - g_{\open j \close}(x_j) - g_{\open \emptyset \close}, \; \forall j < k\\%,  \text{ etc.}\\
+ &\vdots \\
+ g_{\open 1, \dots, p \close}(\xv) &= \fh(\xv) -
+ %\textstyle\sum_{S \subsetneqq \{1,\ldots,p\}} g_{S}(\xv_S) 
+ g_{\open 1, \dots, p-1 \close}(x_{1}, \dots x_{p-1}) - \dots - g_{\open 1, 2 \close}(x_1, x_2)
+ %&\phantom{{}={}} 
+ - g_{\open p \close}(x_p)  - \dots - g_{\open 2 \close}(x_2) - g_{\open 1 \close}(x_1) - g_{\open \emptyset \close}\\
+ &= \fh(\xv) -
+ \textstyle\sum_{S \subsetneqq \{1,\ldots,p\}} g_{S}(\xv_S) 
+\end{align*}
+
+\end{itemize}
+        
+\end{frame}
+
+\begin{frame}{Example}
+
+    [calculate a full complete example] \\
+    
+    [problem with examples from beginning: If using fANOVA, we do not get the original components out of it again, right?]
+    
+\end{frame}
+
+\begin{frame}{How to compute fANOVA in practice $\rightarrow$ Estimating Expectations}
+
+    Estimating expectations over uniform distribution using e.g. Monte-Carlo sampling
+    
+\end{frame}
+
+\begin{frame}{Example: More realistic calculation ?}
+    
+\end{frame}
+
+\begin{frame}{Variance decomposition - Why is this method even called functional ANOVA?}
+
+\begin{itemize}[<+->]
+\item Decomposition of $\hat{f}(\xv)$ allows to conduct functional analysis of variance (fANOVA)
+%$$ Var\left[\hat{f}(\xv)\right] = Var\left[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \right]$$
+% \begin{align*}
+% Var\left[\hat{f}(\xv)\right] &= Var\left[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) \right. \\
+% &\phantom{{}={}} \left. + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \right]
+% \end{align*}
+\item If features are independent, one can prove that with the components defined in the fANOVA, the variance can be additively decomposed without covariances:
+ \begin{align*}Var\left[\hat{f}(\xv)\right] &=  Var\left[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \right] \\
+&= Var\left[g_{\open \emptyset \close}\right] + Var\left[g_{\open 1 \close}(x_1)\right] + \;\dots\; + Var\left[g_{\open 1, 2 \close}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\open 1,\ldots,p \close}(\xv)\right]\end{align*}
+% \begin{align*}
+% Var\left[\hat{f}(\xv)\right] &= Var\left[g_{\open \emptyset \close}\right] + Var\left[g_{\open 1 \close}(x_1)\right] + Var\left[g_{\open 2 \close}(x_2)\right] \\
+% &\phantom{{}={}} + Var\left[g_{\open 1, 2 \close}(x_1, x_2)\right] + \;\dots\; + Var\left[g_{\open 1,\ldots,p \close}(\xv)\right]
+% \end{align*}
+% \end{itemize}
+% \end{frame}
+
+In other words: The single components are uncorrelated.
+
+% \begin{frame}{Variance decomposition}
+
+% \begin{itemize}
+\item Dividing by the prediction variance, yields fraction of variance explained by each term:
+\begin{align*}
+1 &= \frac{Var\left[g_{\open \emptyset \close}\right]}{\predvar} + \frac{Var\left[g_{\open 1 \close}(x_1)\right]}{\predvar} + %\frac{Var\left[g_{\open 2 \close}(x_2)\right]}{\predvar} \\
+%&\phantom{{}={}} 
+\;\dots\;
++ \frac{Var\left[g_{\open 1, 2 \close}(x_1, x_2)\right]}{\predvar} + \;\dots\; + \frac{Var\left[g_{\open 1,\ldots,p \close}(\xv)\right]}{\predvar}
+\end{align*}
+
+\item Fraction of variance explained by a component $g_{\open V \close}(\xv_V)$ is the Sobol index:
+$
+S_V = \frac{Var\left[g_{\open V \close}(\xv_V)\right]}{Var\left[\hat{f}(\xv)\right]}
+$\\
+$\leadsto$ Importance measure of component $g_{\open V \close}(\xv_V)$\\
+$\leadsto$ Small $S_V$ values $\Rightarrow$ Component $g_{\open V \close}$ does not explain much of total variance of $\fh$
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+\endlecture
+\end{document}
