@@ -38,17 +38,16 @@
     \item Players: Features $x_j, j \in \pset$ which cooperate to produce a prediction\\
     $\leadsto$ How can we make a prediction with a subset of features without changing the model?
     \\ 
-    $\leadsto$ PD function: $\fh_{S}(\xv_S) := \int_{X_{-S}} \fh(\xv_S, X_{-S})d \P_{X_{-S}}$ (``removing'' by marginalizing over $-S$)
-    \item  Value function / payout of coalition $S \subseteq P$ for observation $\xv$:
+    $\leadsto$ Partial Dependence (PD) function: $\fh_{S}(\xv_S) := \int_{X_{-S}} \fh(\xv_S, X_{-S})d \P_{X_{-S}}$ (``removing'' by marginalizing over $-S$)
+    \item For $S = \emptyset \quad \fh_{S}(\xv_S) = \E_{\xv}(\fh(\xv))$ (average over all possible values of all the features) $\leadsto$ Can't be used as a value function since $v(\emptyset)$ must be $0$ but $\E_{\xv}(\fh(\xv))$ can be  non zero. \\$\leadsto$ Solution: subtract $\E_{\xv}(\fh(\xv))$ from the PD.
+    \item We define the value function / payout of coalition $S \subseteq P$ for observation $\xv$:
     $$v(S) =  \fh_{S} (\xv_S) - \E_{\xv}(\fh(\xv)), \text{ where } %\xv_S = \{x_j\}_{j \in S} \text{ and } 
     \fh_S: \Xspace_S \mapsto \Yspace$$
-    $\leadsto$ subtraction of $\E_{\xv}(\fh(\xv))$ ensures that $v$ is a value function with $v(\emptyset) = 0$
     \centerline{\includegraphics[width=0.5\textwidth, trim=20 0 0 100, clip]{figure_man/shapley_valuefct}}
     \item Marginal contribution: $v(\Scupj) - v(S) =  \fh_{\Scupj} (\xv_{\Scupj}) - \fh_{S} (\xv_{S})$\\
     $\leadsto$ $\E_{\xv}(\fh(\xv))$ cancels out due to the subtraction of value functions
 \end{itemize}
 \end{frame}
-
 % \begin{frame}{Shapley Values}
 %   We can use Shapley values to explain individual predictions $\fh(\xv)$ of a machine learning model $\fh$:
 % \begin{itemize}
@@ -93,7 +92,7 @@
    $\fh_{S}(\xv_S) = \frac{1}{n} \sum_{i=1}^n \fh(\xv_S, \xv_{-S}^{(i)})$ 
    for any set of features $S$ can be used which yields
    %$$ \phi_j(\xv) = \frac{1}{|P|! \cdot n} \sum_{\tau \in \Pi} \sum_{i = 1}^n \fh_{\Smj}^{(i)}(\xv_{\Smj}) -  \fh_{\Sm }^{(i)}(\xv_{\Sm}) $$
-    $$ \phi_j(\xv) = \frac{1}{|P|! \cdot n} \sum_{\tau \in \Pi} \sum_{i = 1}^n
+    $$ \phi_j(\xv) = \frac{1}{|P|!} \sum_{\tau \in \Pi} \frac{1}{n} \sum_{i = 1}^n
    \fh(\xv_{\Stauj}, \xv_{\minusStauj}^{(i)}) - \fh(\xv_{\Stau}, \xv_{- \Stau}^{(i)})
    $$
    $\leadsto$ Note: $\fh_S$ marginalizes over all other features $-S$ using all observations $i = 1, \ldots, n$
@@ -148,7 +147,7 @@ Estimation of $\phi_j$ for observation $\xv$ of model $\fh$ fitted on data $\D$ 
             %(with value of feature $j$ from $\xv$)
             \item % \xjm =
             $ \xjm = (\underbrace{x_{\tau^{(1)}}, \ldots, x_{\tau^{(|\Sm|)}}}_{\xv_{\Sm}}, \underbrace{z_{j}^{(m)} , z_{\tau^{(|\Sm|+2)}}^{(m)} , \ldots, z_{\tau^{(p)}}^{(m)}}_{\mathbf{z}^{(m)}_{-\Sm}} )$
-            takes features $\Sm$ from $\xv$
+            takes features $\quad$  $\Sm$ from $\xv$ (takes $\{j\}$ randomly)
             %(without value of feature $j$ from $\xv$)
           \end{itemize}
         \item Compute difference $\phi_j^m = \fh(\xjp) - \fh(\xjm)$ \\
