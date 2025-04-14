@@ -83,6 +83,55 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 \lecturechapter{Regional Effects}
 \lecture{Interpretable Machine Learning}
 
+
+\begin{frame}
+  \frametitle{Why Regional Explanations?}
+  \begin{itemize}
+    \item Global explanations
+    \begin{itemize}
+      \item \textbf{Pro}: Universal explanation (applies to the whole model)
+      \item \textbf{Con}: Oversimplify, lack fidelity
+    \end{itemize}
+    \item Local explanations
+    \begin{itemize}
+      \item \textbf{Pro}: Precise explanations
+      \item \textbf{Con}: Limited to individual instances (not the whole model)
+    \end{itemize}
+    \item Regional explanations
+    \begin{itemize}
+      \item $\cup_i (\texttt{regional\_explanation}_i) = \texttt{global\_explanation} $
+      \item $Fidelity (\texttt{regional\_explanation}_i ) > Fidelity(\texttt{global\_explanation} ) $
+      \end{itemize}
+  \end{itemize}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{columns}
+      \column{0.33\textwidth}
+      \centering
+      \textbf{Global Effect}
+      \begin{figure}
+          \centering
+          \includegraphics[width=.9\linewidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_18_1.png}
+      \end{figure}
+
+      \hspace{2.5cm} % Horizontal spacing before the line      
+      \column{0.33\textwidth}
+      \centering
+      \textbf{Regional Effect (1)}
+        \begin{figure}
+          \centering
+          \includegraphics[width=.9\linewidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_28_0.png}
+      \end{figure}
+
+     \column{0.33\textwidth}
+     \centering
+      \textbf{Regional Effect (2)}
+        \begin{figure}
+          \centering
+          \includegraphics[width=.9\linewidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_28_1.png}
+      \end{figure}     
+  \end{columns}
+\end{frame}
+
 \begin{frame}{ICE Curve: Local Feature Effects for ML Models}
 %ICE curves show how different feature values of an observation affect its model prediction \newline $\Rightarrow$ \textbf{local interpretation method}
 %From a local perspective, one might be interested in how changing feature values of an observation affect model prediction
@@ -551,12 +600,63 @@ $\leadsto$ Model: Random forest
 \end{frame}
 
 
+
+
 \begin{frame}{Regional Effect Plots - Real Example}
-\begin{itemize}
-    \item introduce bike sharing dataset
-    \item fit a neural network
-\end{itemize}    
+    \begin{columns}
+        % First column (Design matrix and target variable)
+        \column{0.5\textwidth}
+        \textbf{Dataset Overview}  % Title for the first column
+        \vspace{0.5em}  % Adds a small space after the title
+        \begin{itemize}
+            \item Hourly count of bike-rentals (2011, 2012)
+            \item Design-matrix $X$:
+            \begin{itemize}
+                \item Seasonal information:
+                \begin{itemize}
+                    \item year, month, day
+                    \item hour
+                    \item working day vs. non-working day
+                \end{itemize}
+                \item Weather information:
+                \begin{itemize}
+                    \item temperature
+                    \item humidity
+                    \item windspeed
+                \end{itemize}
+            \end{itemize}
+            \item Target variable $Y$:
+            \begin{itemize}
+                \item bike-rentals per hour
+                \item $Y_\mu = 189.5$, $Y_\sigma = 181.4$
+            \end{itemize}
+        \end{itemize}
+
+        % Second column (ML model and explanation plots)
+        \column{0.5\textwidth}
+        \only<2>{
+        \textbf{Modeling and Analysis}  % Title for the first column
+        \vspace{0.5em}  % Adds a small space after the title
+        \begin{itemize}
+            \item We trained a Neural Network
+            \begin{itemize}
+                \item Any ML model could be used
+                \item Error: $\texttt{RMSE} \approx 45.35$ counts ($0.25Y_\sigma$)
+            \end{itemize}
+            \vspace{0.5em} 
+            
+            \item Use global/regional effects to understand:
+            \begin{itemize}
+                \item which feature(s) are the most important
+                \item how each feature affects the output
+                \item which feature effects are heterogeneous 
+                \item try regional effects for better explanations
+            \end{itemize}
+        \end{itemize}
+        }
+    \end{columns}
 \end{frame}
+
 
 \begin{frame}{Regional Effect Plots - Real Example}
 \begin{figure}
@@ -587,6 +687,8 @@ $\leadsto$ Model: Random forest
 \begin{frame}{Regional Effect Plots - Real Example}
     \centering
     \begin{tikzpicture}[every node/.style={anchor=south, align=center}]
+
+        \node[draw, fill=yellow!20, text width=4cm] at (-4.5, 1.3) {Regional effects of \texttt{hour}};
         % Root image
         \node (root) {\includegraphics[width=0.25\textwidth]{slides/03_feature-effects/figure/01_bike_sharing_dataset_18_1.png}};
 
@@ -609,15 +711,25 @@ $\leadsto$ Model: Random forest
         \draw (child2) -- node[midway, right] {temp=hot} (child22);
 
     \end{tikzpicture}
-
-    \begin{tikzpicture}
-        % Draw a generic textbox anywhere
-        \node[draw, fill=yellow!20, text width=3cm] at (3,-15) {This is a generic textbox!};
-    \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Regional Effect Plots - Real Example}
-Takeaways:
+\begin{frame}{Regional Effect Plots - \texttt{Effector}}
+\begin{figure}
+    \includegraphics[width=0.5\linewidth]{slides/03_feature-effects/figure/effector_logo.png}
+    \label{fig:effector-logo}
+\end{figure}
+\begin{itemize}
+    \item A \texttt{Python} package for global and regional effects
+    \item Developed as part of the LMU-IML group
+    \item Work in progress
+    \begin{itemize}
+        \item Keeps updating with novel methods
+        \item Check future directions at the end of the presentation
+    \end{itemize}
+    \item \href{https://github.com/givasile/effector}{Github repo}
+    \item \href{https://xai-effector.github.io/}{Documentation}
+
+\end{itemize}
 \end{frame}
 
 
