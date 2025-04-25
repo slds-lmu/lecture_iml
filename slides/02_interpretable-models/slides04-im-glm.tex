@@ -58,10 +58,10 @@
 % \xv^\top \theta\\
 % \Leftrightarrow \; & \E (y \mid \xv) = g^{-1}(\xv^\top \theta)
 % \end{align*}
-$$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g^{-1}(\xv^\top \theta)$$
+$$g(\E (y \mid \xv)) = \xv^\top \thetav \; \Leftrightarrow \; \E (y \mid \xv) = g^{-1}(\xv^\top \thetav)$$
 \vspace*{-0.5cm}
     \begin{itemize}
-        \item Link function $g$ links linear predictor $\xv^\top \theta$ to expectation of distribution of $y \mid \xv$\\ %$\E$ of specified distribution of
+        \item Link function $g$ links linear predictor $\xv^\top \thetav$ to expectation of distribution of $y \mid \xv$\\ %$\E$ of specified distribution of
         $\leadsto$ LM is special case: Gaussian distribution for $y \mid \xv$ with $g$ as identity function 
         \item Link function $g$ and distribution need to be specified 
         \item High-order and interaction effects can be manually added as in LMs
@@ -89,10 +89,17 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 \begin{itemize}
     \item Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function: 
 
-\begin{align*}
-    g(x) &= \log\left(\frac{x}{1 - x}\right)  
-    \Rightarrow \; g^{-1}(x) &= \frac{1}{1+\exp(-x)}
-\end{align*}
+%\begin{align*}
+%    g(x) &= \log\left(\frac{x}{1 - x}\right)  
+%    \Rightarrow \; g^{-1}(x) &= \frac{1}{1+\exp(-x)}
+%\end{align*}
+
+$$
+g(x) = \log\left(\frac{x}{1 - x}\right)  
+\Rightarrow \; g^{-1}(x) = \frac{1}{1+\exp(-x)}
+$$
+
+
 %\end{column}
 %\begin{column}{0.55\textwidth}
 
@@ -115,7 +122,7 @@ $$g(\E (y \mid \xv)) = \xv^\top \theta \; \Leftrightarrow \; \E (y \mid \xv) = g
 % \begin{column}{0.65\textwidth}
 % \begin{itemize}
     \item Models probabilities for binary classification by
-    $$\pi(\xv) = \E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \theta) = \frac{1}{1 + \exp(- \xv^\top \theta)} $$
+    $$\pi(\xv) = \E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \thetav) = \frac{1}{1 + \exp(- \xv^\top \thetav)} $$
     %\item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification 
     %\item Logistic regression formula:
     %$$P(y = 1) =\frac{1}{1 + \exp(-( \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p ))} $$

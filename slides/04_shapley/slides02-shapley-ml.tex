@@ -36,10 +36,11 @@
     %\itemsep1em
     \item Game: Make prediction $\fh(x_1, x_2, \ldots, x_p)$ for a single observation $\xv$
     \item Players: Features $x_j, j \in \pset$ which cooperate to produce a prediction\\
-    $\leadsto$ How can we make a prediction with a subset of features without changing the model?
+    $\leadsto$ How can we predict with a subset of features without changing the model?
     \\ 
-    $\leadsto$ Partial Dependence (PD) function: $\fh_{S}(\xv_S) := \int_{X_{-S}} \fh(\xv_S, X_{-S})d \P_{X_{-S}}$ (``removing'' by marginalizing over $-S$)
-    \item For $S = \emptyset \quad \fh_{S}(\xv_S) = \E_{\xv}(\fh(\xv))$ (average over all possible values of all the features) $\leadsto$ Can't be used as a value function since $v(\emptyset)$ must be $0$ but $\E_{\xv}(\fh(\xv))$ can be  non zero. \\$\leadsto$ Solution: subtract $\E_{\xv}(\fh(\xv))$ from the PD.
+    $\leadsto$ PD function (``removing'' by marginalizing): 
+    $\fh_{S}(\xv_S) := \int_{X_{-S}} \fh(\xv_S, X_{-S})d \P_{X_{-S}}$
+    \item For $S = \emptyset \quad \fh_{S}(\xv_S) = \E_{\xv}(\fh(\xv))$ (average over all possible values of all the features) $\leadsto$ Can't be used as a value function since $v(\emptyset)$ must be $0$ but $\E_{\xv}(\fh(\xv))$ can be non zero. \\$\leadsto$ Solution: subtract $\E_{\xv}(\fh(\xv))$ from the PD.
     \item We define the value function / payout of coalition $S \subseteq P$ for observation $\xv$:
     $$v(S) =  \fh_{S} (\xv_S) - \E_{\xv}(\fh(\xv)), \text{ where } %\xv_S = \{x_j\}_{j \in S} \text{ and } 
     \fh_S: \Xspace_S \mapsto \Yspace$$

@@ -3,9 +3,9 @@
 
 Which of the following statement(s) is/are correct?  
 	\begin{enumerate}
-        \item Interpretation methods are \textit{only} used ot explain the global behavior of a model.
+        \item Interpretation methods are \textit{only} used to explain the global behavior of a model.
         \begin{itemize}
-        	\item[$\Rightarrow$] \textbf{Wrong}, there are several needs for interpretability. (Gain global and local insights how the IML model works, better control, improve and debug the IML model, justify decisions)
+        	\item[$\Rightarrow$] \textbf{Wrong}, there are several needs for interpretability. (1. There are global, regional, and local methods to gain insights into how the IML model works globally / regionally / locally. 2. Other motivations: better control, improve, and debug the IML model, justify decisions.)
         \end{itemize}
         %\item Model-agnostic methods need access to gradients to explain a model. 
 %        \begin{itemize}
@@ -13,34 +13,37 @@ Which of the following statement(s) is/are correct?
 %        \end{itemize}
     	\item If a model-agnostic and a model-specific interpretation method are applied on the same ML model, the output of the two methods will always be the same.
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Wrong}, as the methods work different they will probably give a divergent output.
+    		\item[$\Rightarrow$] \textbf{Wrong}, as the methods work different they will probably give a divergent output. Often, model-specific methods can give more precise or more insightful explanations, as they can make use of the specific model structure.
     	\end{itemize}
     	\item While feature effects methods show the influence of a feature on the target, feature importance methods focus on a feature's impact on the model performance.
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Correct}.
+    		\item[$\Rightarrow$] \textbf{Correct}. Recall: loss-based vs. variance-based feature importance. \\
+            On the other hand: "How important is each feature / contributes each feature to an individual prediction" \(\rightarrow\) Shapley values \\
+            "How important is each feature when the prediction changes (when changing feature values)" \(\rightarrow\) average marginal effects.
     	\end{itemize}
     	\item In IML we distinguish between global IML methods, which explain the behavior of the model over the entire feature space, and local IML methods, which only explain the prediction of individual observations. 
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Correct}.
+    		\item[$\Rightarrow$] \textbf{Partially Correct}, since we did not introduce regional methods in this lecture yet.
     	\end{itemize}
 %        \item We can also draw conclusions about feature importance from feature effect methods. 
 %        \begin{itemize}
 %        	\item[$\Rightarrow$] \textbf{Correct}, but it should be noted that this does not hold vice versa.
 %        \end{itemize}
-        \item Technically, Pearson correlation is a measure of \textit{linear} statistical dependence. 
+        \item Technically, Pearson's correlation is a measure of \textit{linear} statistical dependence. 
         \begin{itemize}
-        	\item[$\Rightarrow$] \textbf{Correct}.
+        	\item[$\Rightarrow$] \textbf{Correct}. Could mention alternatives here (e.g. "How would a measure of quadratic dependence look like?")
         \end{itemize}
     	\item All in the lecture mentioned measures for correlation and dependencies are limited to continuous random variables.
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Wrong}, mutual information is not limited to continuous random variables.
+    		\item[$\Rightarrow$] \textbf{Wrong.} 1. First, all measures introduced in the lecture are applicable to any numerical features (so e.g. discrete, but numerical features, like e.g. integer-valued features, are also possible). 2. Mutual information is not even limited to numerical random variables, but can also be used for categorical ones.
     	\end{itemize}
-%        \item Features that have an equal feature effect are correlated. 
-%        \begin{itemize}
-%        	\item[$\Rightarrow$] \textbf{Wrong}, as correlation is a measure of linear dependence and feature effects can also be based on non-linear dependencies.
-%        \end{itemize}
+        \item Features that have an equal feature effect are correlated. 
+        \begin{itemize}
+        	\item[$\Rightarrow$] (i.e. have the same effect on the prediction) \textbf{Wrong}, two features can be completely independent and still their respective effect on the target can be numerically exactly equal.
+                % as correlation is a measure of linear dependence and feature effects can also be based on non-linear dependencies.
+        \end{itemize}
     	\item A feature interaction between two features $x_j$ and $x_k$ is apparent if a change in $x_j$ influences the impact of $x_k$ on the target.
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Correct}.
+    		\item[$\Rightarrow$] \textbf{Correct}. Note that this is also the case for non-differentiable or non-numerical (e.g. categorical) features. One can use this idea to derive a definition of interactions in more general situations.
     	\end{itemize}
 	\end{enumerate}
