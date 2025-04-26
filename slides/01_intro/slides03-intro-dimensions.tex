@@ -160,10 +160,14 @@
 		
 		\begin{itemize}
 		%\itemsep1em
-			\item Examples: linear model, decision tree, decision rule, GLMs
-			\item Interpretable because of simple model structure, \\
-			e.g., weighted combination of feature values or tree structure
-			\item Difficult to interpret with many features / complex interactions
+			\item Simple model structure (e.g., weighted sum or tree)
+			\item Examples: GLMs, decision trees
+            \item Pro: Additional IML methods not necessarily required
+			\item Con: Limited model complexity can reduce performance; \\can still be hard to interpret with many features /interactions
+			% \item Examples: linear model, decision tree, decision rule, GLMs
+			% \item Interpretable because of simple model structure, \\
+			% e.g., weighted combination of feature values or tree structure
+			% \item Difficult to interpret with many features or interactions
 		\end{itemize}
 
 	\end{column}
@@ -201,42 +205,46 @@
 
 	
 	\only<2>{\begin{columns}[totalwidth=\textwidth]
-	\begin{column}{0.77\linewidth}
+	\begin{column}{0.7\linewidth}
 	    \textbf{Model-specific Methods:}
 		    \medskip
 			\begin{itemize}
 		    %\itemsep1em
-		        \item Interpretation method applicable to a specific ML model
-		        \item Example: implicitly integrated feature interpretation methods in tree based models, e.g., Gini Importance
-    			\item Advantage: Can exploit model structure
-                \item Visualize activations of NNs
+		        \item Designed for specific model types (e.g., NNs)
+		        \item Examples: Gini importance of tree-based models,\\
+                Layer-wise relevance propagation (LRP)
+                \item Pro: Exploit model structure
+                \item Con: Restricted to specific model class
+                %\item Example: implicitly integrated feature interpretation methods in tree based models, e.g., Gini Importance
+    			% \item Advantage: Can exploit model structure
+       %          \item Visualize activations of NNs
 		    \end{itemize}
 	\end{column}  
-	\begin{column}{0.23\linewidth}
+	\begin{column}{0.3\linewidth}
 	
-    \centering \includegraphics[page=1, width=\textwidth]{figure/nn_model}
+    \centering \includegraphics[page=1, width=\textwidth]{figure/catLRP.jpg}
     \end{column}
 	\end{columns}}
 		
 	
 	
 	\only<3>{\begin{columns}[totalwidth=\textwidth]
-	\begin{column}{0.77\linewidth}
+	\begin{column}{0.7\linewidth}
 	    \textbf{Model-agnostic Methods:}
 		\medskip
 		\begin{itemize}
 		%\itemsep1em
 			\item In ML: Tune over many model classes \\ 
             $\leadsto$ Unknown which model is best / deployed \\
-            $\leadsto$ Need for interpretation methods applicable to any model
+            $\leadsto$ Need for IML methods that work for any model
 		    \item Applied after training (post-hoc)
       \item Applicable to intrinsically interpretable models\\
-       $\leadsto$ provides insights into other types of explanations \\
+       $\leadsto$ provides insights into  explanations \\
 		      %\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations 
 		      %$\leadsto$ feature or data attribution, counterfactual explanations
    \end{itemize}
 	\end{column}
-	\begin{column}{0.23\linewidth}
+	\begin{column}{0.3\linewidth}
 	\quad \vspace{0.15cm} \quad \\
     \centering \includegraphics[page=1, width=\textwidth]{figure/model_agnostic.jpg}
     \end{column}
@@ -372,36 +380,41 @@
     \end{columns}
 	}
     
-	\only<5-6>{\textbf{Data Attribution:} Identify training instances most responsible for a decision 
+	\only<5-6>{\textbf{Data Attribution:} Identify which training instances most influenced a prediction.
     \medskip
     
-    \textbf{Example:} Consider a model which should distinguish muffins and dogs
+    \textbf{Example:} A model should distinguish muffins and dogs.
     
     \medskip
     } % (e.g. Influence Functions)
 	
 	\only<5>{
-    	Question: How does this incorrect prediction come about? 
+    	Question: Why does it misclassify this dog image (test point) as a muffin?
+        %How does this incorrect prediction come about? 
 	\begin{center}
-		\includegraphics[page=1, width=0.65\textwidth]{figure/Chihuahua_or_muffin_model.png}
+		\includegraphics[page=1, width=0.5\textwidth]{figure/Chihuahua_or_muffin_model.png}
 	\end{center}
 }
 	
 	\only<6>{
-	Answer: Look at training data and find data points caused the model prediction.
+	Approach: Measure how perturbations to training instances affect prediction or loss.
+
+    %Look at training data and find data points caused the model prediction.
 	\begin{columns}[c, totalwidth=\textwidth]
     \begin{column}{0.5\linewidth}
 	\begin{center}
-		\includegraphics[page=1, width=0.9\textwidth]{figure/Chihuahua_or_muffin.png} 
+		\includegraphics[page=1, width=0.88\textwidth]{figure/Chihuahua_or_muffin.png} 
 	\end{center}
 	
 	\end{column}
 	\begin{column}{0.5\linewidth}
 	
-    Method searches for the most similar images and bases the decision on them
+    %Method searches for the most similar images and bases the decision on them
     \begin{itemize}
-        \item[$\leadsto$] Training images looking most like new input show a muffin 
-        \item[$\leadsto$] Wrong output (muffin instead of dog)
+        \item[$\leadsto$] Influential training instances drive prediction of test points.
+        %Training images looking most like new input show a muffin 
+        \item[$\leadsto$] If these resemble muffins, the model may predict muffin instead of dog.
+        %Wrong output (muffin instead of dog)
     \end{itemize}
     \end{column}
 	\end{columns}}
@@ -428,7 +441,7 @@
 	\only<8>{
 	\textbf{Example} (loan application):
 	\begin{center}
-	\includegraphics[page=1, width=0.7\textwidth]{figure/counterfactual.pdf}
+	\includegraphics[page=1, width=0.6\textwidth]{figure/counterfactual.pdf}
 	\end{center}}
 \end{frame}
 
@@ -512,16 +525,17 @@
 % \end{frame}
 
 \begin{frame}{Local, Global, and Regional Explanations}
-\begin{columns}[c, totalwidth=\textwidth]
+\begin{columns}[T, totalwidth=\textwidth]
     \begin{column}{0.67\textwidth}
-    \only<1>{
+    \only<1->{
     \textbf{Local} -- Explain model behavior for \textbf{single instances}:
     \begin{itemize}
         \item Provide nuanced instance-specific insights
         \item Crucial for complex models where features typically affect instances differently (due to interactions)
         \item Examples: Counterfactuals, LIME, SHAP, ICE
     \end{itemize}
-
+}
+   \only<2->{
         \textbf{Global} -- Explain model behavior for \textbf{entire input space}:
     \begin{itemize}
         \item Provide high-level insights into model behavior, often by aggregating local explanations
@@ -529,6 +543,8 @@
         \item Easier to communicate but loss of detail \& over-simplification (hides differences)
         \item Examples: PD plots, ALE plots, PFI
     \end{itemize}
+}
+   \only<3->{
     \textbf{Regional explanations} -- for \textbf{subspaces} / \textbf{regions}:
     \begin{itemize}
         \item Compromise between nuanced \& high-level insights
@@ -589,11 +605,11 @@
     \begin{column}{0.6\linewidth}
       \small
       \begin{itemize}
-        \item \textbf{Local} (red): ICE curves for one instance\\
+        \item<1-> \textbf{Local} (red): ICE curves for one instance\\
         $\leadsto$ Detailed but cluttered/obscure pattern
-        \item \textbf{Global} (blue): PDP averaged over \emph{all} days\\
+        \item<1-> \textbf{Global} (blue): PDP averaged over \emph{all} days\\
         $\leadsto$ Averaged curve hides heterogeneity
-        \item \textbf{Regional}: Split data on \texttt{workingday}
+        \item<2-> \textbf{Regional}: Split data on \texttt{workingday}
              \begin{itemize}%\scriptsize
              \item Region 1: morning and  evening peak
              \item Region 2: late-morning leisure peak
@@ -606,7 +622,7 @@
 
   % 1) Local vs. Global
   %{\scriptsize Local (red) vs.\ Global (blue)}
-  \includegraphics[trim=0 0 0 20, clip, width=\textwidth]{figure/01_bike_sharing_dataset_18_1.png}
+  \includegraphics<1->[trim=0 0 0 20, clip, width=\textwidth]{figure/01_bike_sharing_dataset_18_1.png}
 
   % {\scriptsize Region 1 (working day)}
   % % 2) Region 1 – working day
@@ -624,14 +640,14 @@
     %          \item Region 1 – working days: broad morning and single evening peak.
     %          \item Region 2 – non-working days: late-morning leisure peak.
     %     \end{itemize}
-    \item[]
+    \item<2->[]
     $\leadsto$ Preserves detail without overload (challenge: find regions automatically)
     %—yet learning meaningful data-driven regions is non-trivial.
     %Capture detail without information overload (challenge: finding good regions)
 %\textbf{Take-away}: %interaction between \texttt{hr} and \texttt{workingday} is crucial;
 %Regional explanations capture detail without information overload
 \end{itemize}
-
+\only<2->{
 \begin{columns}[c, totalwidth=\textwidth]
     \begin{column}{0.125\textwidth}
     \centering
@@ -649,7 +665,7 @@
     \centering
         \scriptsize Region 2 (non-working day)
     \end{column}
-\end{columns}
+\end{columns}}
 \end{frame}
 
 
@@ -872,11 +888,11 @@
     \end{tabular}
     
 \only<1>{\vspace{0.3cm}}
-\includegraphics<1>[page=1, width=0.8\textwidth]{figure/model_agnostic3.jpg}
+\includegraphics<1>[page=1, width=0.8\textwidth]{figure/blackbox levels.pdf}
 \only<2>{\vspace{-0.3cm}}
-\includegraphics<2>[page=1, width=0.8\textwidth]{figure/model_agnostic2.jpg}
+\includegraphics<2>[page=2, width=0.8\textwidth]{figure/blackbox levels.pdf}
 \only<3>{\vspace{0.05cm}}
-\includegraphics<3>[page=1, width=0.8\textwidth]{figure/model_agnostic4.jpg}
+\includegraphics<3>[page=3, width=0.8\textwidth]{figure/blackbox levels.pdf}
 \end{center}
 \end{frame}
 
