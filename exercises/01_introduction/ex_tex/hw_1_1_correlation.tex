@@ -1,3 +1,4 @@
+% Quadratic / Parabel-like dependency
 \aufgabe{}{
 
 You received a dataset with 9 observations and two features:
@@ -23,7 +24,7 @@ The formula is:
 $$ 
 \rho(x_1, x_2) = \frac{\sum_{i = 1}^n (x_1^{(i)} - \overline{x}_1)(x_2^{(i)} - \overline{x}_2)}{\sqrt{\sum_{i = 1}^n (x_1^{(i)} - \overline{x}_1)^2} \sqrt{\sum_{i = 1}^n (x_2^{(i)} - \overline{x}_2)^2}}
 $$ 
-To speed up things, the individual differences to the means ($x_1^{(i)} - \overline{x_1}$, $x_2^{(i)} - \overline{x_2}$),  are given in the following table.  
+To speed things up, the individual differences to the means ($x_1^{(i)} - \overline{x_1}$, $x_2^{(i)} - \overline{x_2}$),  are given in the following table.  
 
 \begin{table}[H]
 \centering
@@ -37,9 +38,9 @@ $x_2^{(i)} - \overline{x_2}$ & 0.55 & 0.17 & -0.11 & -0.43 & -0.38 & -0.32 & -0.
 \end{tabular}
 \end{table}
 
-Interprete the results. Based on $\rho(x_1, x_2)$, are $x_1$ and $x_2$ correlated? 
+Interpret the results. Based on $\rho(x_1, x_2)$, are $x_1$ and $x_2$ correlated? 
 
-\vspace*{2cm}
+%\vspace*{1cm}
 
 \item Add points ($x_1$, $x_2$) to the following figure: 
 
@@ -49,6 +50,19 @@ Interprete the results. Based on $\rho(x_1, x_2)$, are $x_1$ and $x_2$ correlate
 
 Based on your drawing, do you consider the Pearson correlation coefficient a reliable measure to 
 detect dependencies for the above use case?
+
+%\vspace*{1cm}
+
+\item We now want to consider the mutual information (MI) instead of the Pearson correlation coefficient in the above example.
+The formula for the MI is:
+
+\[
+  	MI(x_1 ; x_2 ) =  \mathbb{E}_{p(x_1, x_2)} \left[ \log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \right] = \sum_{x_1} \sum_{x_2} p(x_1, x_2) \log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right)
+\]
+
+What problem do you encounter when using this formula to calculate the mutual information between $x_1$ and $x_2$? Decide on a way to work around this problem and calculate the MI between $x_1$ and $x_2$.
+
+Interpret the result and compare it with your previous findings.
 
 %\item One method to detect non-linear relationships is the usage of 
 %generalized additive models (GAM).
