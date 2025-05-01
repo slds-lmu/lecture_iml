@@ -48,9 +48,9 @@ $$
 \textbf{Idea of EBM:} \textbf{GAMs} trained with \textbf{gradient boosting} over \textbf{shallow bagged trees}
 \begin{itemize}
     \item \textbf{GAMs} - provide feature-wise interpretability via separate shape functions $f_j(x_j)$\\
-    $\leadsto$ Potentially include pa
+    $\leadsto$ Potentially include pairwise interactions
     \item \textbf{Gradient Boosting} - incrementally fits residuals to improve predictive performance while retaining additivity
-    \item \textbf{Shallow Bagged Trees} - low-depth trees (2–4 leaves) reduce variance and create discrete, interpretable shape functions
+    \item \textbf{Shallow Bagged Trees} - low-depth trees (2–4 leaves) reduce variance and create interpretable shape functions
 \end{itemize}
 
 % \textbf{Idea of EBM}: \textbf{GAMs} trained with \textbf{gradient boosting} over \textbf{shallow bagged trees}\\
@@ -64,7 +64,32 @@ $$
 
 
 
-\begin{frame}{EBM Training – Initialization}
+
+\begin{frame}{EBM - Two-Stage Model Construction}
+\begin{enumerate}
+    \item \textbf{Stage 1: Fit Main Effects (Univariate Terms)}
+    \begin{itemize}
+        \item Train EBM using only feature-wise shape functions $f_j(x_j)$
+        \item Freeze the univariate model after convergence
+    \end{itemize}
+    
+    \item \textbf{Stage 2: Add Selected Pairwise Interactions}
+    \begin{itemize}
+        \item Apply \textbf{FAST} to rank all $O(p^2)$ feature pairs by potential reduction in RSS
+        \item User or heuristic selects top $K$ interactions and stores them in $\mathcal{K}$
+        \item Use boosting to fit pairwise terms $f_{ij}(x_i, x_j)$ on residuals
+        \item Final model: $\hat{f}(\xv) = \sum_{j=1}^p f_j(x_j) + \sum_{(i,j)\in\mathcal{K}} f_{ij}(x_i, x_j)$
+    \end{itemize}
+\end{enumerate}
+
+% \includegraphics[width=1\linewidth]{figure/GA2M_Step1.png}
+\end{frame}
+
+
+
+\begin{frame}{EBM Stage I - Initialization}
+
+%\textbf{Initialization:}
 \begin{itemize}
     \item Set all shape functions to zero:
     $$
@@ -82,7 +107,7 @@ $$
 
 \end{frame}
 
-\begin{frame}{EBM Training – First Feature Update}
+\begin{frame}{EBM Stage I – First Feature Update}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step1.png}
@@ -107,7 +132,7 @@ $$
 \end{frame}
 
 
-\begin{frame}{EBM Training – Cycle Through Features}
+\begin{frame}{EBM Stage I – Cycle Through Features}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step2.png}
@@ -124,7 +149,7 @@ $$
 \end{itemize}
 \end{frame}
 
-\begin{frame}{EBM Training – Iterate Boosting Process}
+\begin{frame}{EBM Stage I – Iterate Boosting Process}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step3.png}
@@ -204,7 +229,7 @@ $$
 % \end{frame}
 
 
-\begin{frame}{EBM Prediction and Interpretability}
+\begin{frame}{EBM Stage I - Prediction and Interpretability}
 \begin{itemize}
     \item Final model consists of $M$ shallow trees per feature:
     $$
@@ -289,7 +314,7 @@ $$
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{EBM with Pairwise Interactions}
+\begin{frame}{EBM Stage 2 - Include Pairwise Interactions}
 \textbf{Generalized Additive Models plus Interactions (GA2M):}
 $$
 g\big(\mathbb{E}[y \mid \xv]\big) = \theta_0 + \sum_{j=1}^p f_j(x_j) + \sum_{i<j} f_{ij}(x_i, x_j)
@@ -572,27 +597,6 @@ n_r = |r|
 
 \end{frame}
 
-
-
-\begin{frame}{EBM - Two-Stage Model Construction}
-\begin{enumerate}
-    \item \textbf{Stage 1: Fit Main Effects (Univariate Terms)}
-    \begin{itemize}
-        \item Train EBM using only feature-wise shape functions $f_j(x_j)$
-        \item Freeze the univariate model after convergence
-    \end{itemize}
-    
-    \item \textbf{Stage 2: Add Selected Pairwise Interactions}
-    \begin{itemize}
-        \item Apply \textbf{FAST} to rank all $O(p^2)$ feature pairs by potential reduction in RSS
-        \item User or heuristic selects top $K$ interactions and stores them in $\mathcal{K}$
-        \item Use boosting to fit pairwise terms $f_{ij}(x_i, x_j)$ on residuals
-        \item Final model: $\hat{f}(\xv) = \sum_{j=1}^p f_j(x_j) + \sum_{(i,j)\in\mathcal{K}} f_{ij}(x_i, x_j)$
-    \end{itemize}
-\end{enumerate}
-
-% \includegraphics[width=1\linewidth]{figure/GA2M_Step1.png}
-\end{frame}
 
 
 
