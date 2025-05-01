@@ -15,12 +15,6 @@ Which of the following statement(s) is/are correct?
     	\begin{itemize}
     		\item[$\Rightarrow$] \textbf{Wrong}, as the methods work different they will probably give a divergent output. Often, model-specific methods can give more precise or more insightful explanations, as they can make use of the specific model structure.
     	\end{itemize}
-    	\item While feature effects methods show the influence of a feature on the target, feature importance methods focus on a feature's impact on the model performance.
-    	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Correct}. Recall: loss-based vs. variance-based feature importance. \\
-            On the other hand: "How important is each feature / contributes each feature to an individual prediction" \(\rightarrow\) This is reflected by Shapley values. \\
-            "How important is each feature when the prediction changes (when changing feature values)" \(\rightarrow\) This is computed / reflected by marginal effects, or average marginal effects, or the partial derivative.
-    	\end{itemize}
     	\item In IML we distinguish between global IML methods, which explain the behavior of the model over the entire feature space, and local IML methods, which only explain the prediction of individual observations. 
     	\begin{itemize}
     		\item[$\Rightarrow$] \textbf{Partially Correct}, since we did not introduce regional methods in this lecture yet.
@@ -31,7 +25,7 @@ Which of the following statement(s) is/are correct?
 %        \end{itemize}
         \item Technically, Pearson's correlation is a measure of \textit{linear} statistical dependence. 
         \begin{itemize}
-        	\item[$\Rightarrow$] \textbf{Correct}. \(R^2\) is as well, whereas the mutual information is not. Could mention other alternatives here (e.g. "How would a measure of quadratic dependence look like?")
+        	\item[$\Rightarrow$] \textbf{Correct}. \(R^2\) is as well, whereas the mutual information is not. Could mention other alternatives here (e.g. "How would a measure of quadratic dependence look like?") Compare also to generalized \(R^2\)-measures for non-linear models.
         \end{itemize}
     	\item All in the lecture mentioned measures for correlation and dependencies are limited to continuous random variables.
     	\begin{itemize}
@@ -42,8 +36,48 @@ Which of the following statement(s) is/are correct?
         	\item[$\Rightarrow$] (i.e. have the same effect on the prediction) \textbf{Wrong}, two features can be completely independent and still their respective effect on the target can be numerically exactly equal.
                 % as correlation is a measure of linear dependence and feature effects can also be based on non-linear dependencies.  ->  NO, feature effects of single features are not necessarily connected to dependency or correlation at all.
         \end{itemize}
+
+        % Interactions - definition
     	\item A feature interaction between two features $x_j$ and $x_k$ is apparent if a change in $x_j$ influences the impact of $x_k$ on the target.
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Correct}. Note that this is also the case for non-differentiable or non-numerical (e.g. categorical) features. One can use this idea to derive a definition of interactions in more general situations.
+    		\item[$\Rightarrow$] \textbf{Correct}. Note that this is also the case for non-differentiable or non-numerical (e.g. categorical) features. One can use this idea to derive a definition of interactions in more general situations (using finite differences).
     	\end{itemize}
-	\end{enumerate}
+
+        % interpretability vs. performance tradeoff
+    	\item When training two different ML-models (denote them with model \(m_1\) and model $m_2$), and if $m_1$ is inherently more interpretable than \(m_2\), then $m_1$ will always perform better (i.e. make more accurate predictions) than $m_2$.
+        % After having trained some ML-model, when training another, more interpretable model, this always increases performance.
+    	\begin{itemize}
+    		\item[$\Rightarrow$] \textbf{Wrong}. There is no rule for the general case, this may happen, but not necessarily. In most cases, performance will decrease due to the interpretability-performance-tradeoff. Another situation may be that insights from interpreting a model (or using an inherently interpretable model) can of course lead to insights about the DGP or the problem itself, which again may result in a model with better performance.
+    	\end{itemize}
+
+        % Dimension: Model refitting
+    	\item For using IML methods, access to the training data is always enough.
+    	\begin{itemize}
+    		\item[$\Rightarrow$] \textbf{Wrong}. Often additional data points are necessary to obtain unbiased interpretation results. This is why some IML methods use model refitting.
+    	\end{itemize}
+
+        % Feature interactions vs. data dependence, interpretability-performance-tradeoff
+    	\item % Feature interactions can be easily learned by an ML-model.
+        Feature interactions are difficult to learn for an ML-model.
+    	\begin{itemize}
+    		\item[$\Rightarrow$] \textbf{Often correct}, but this depends on the model complexity. In general, this depends on the type of model, so whether the model is able at all to learn the interactions (e.g. possible for big neural networks, possible for general tree ensembles, impossible for GAMs, for linear models this depends on the terms included). Additionally, interactions are often difficult to learn / to identify if not using a very complex model (e.g. an ensemble or NN), i.p. if one has many features (number of possible interactions increases exponentially) or there are dependencies between the features (as is often the case in practice).
+    	\end{itemize}
+
+        % Dimension: Model refitting, permuting / changing data
+    	\item Machine learning interpretability methods never consider changing the original data.
+    	\begin{itemize}
+    		\item[$\Rightarrow$] \textbf{Wrong}.
+            E.g. counterfactual explanations explicitly consider changes in a data point (can also be a training data point). Also e.g. ALE or permutation-based feature importance can be considered to do this.
+    	\end{itemize}
+
+        % Feature effect methods vs. feature importance methods
+    	\item While feature effect methods show the influence of a feature on the target, feature importance methods focus on a feature's impact on the model performance.
+    	\begin{itemize}
+    		\item[$\Rightarrow$] \textbf{Correct}. Recall: loss-based vs. variance-based feature importance. \\
+            On the other hand: "How important is each feature / contributes each feature to an individual prediction" \(\rightarrow\) This is reflected by Shapley values. (See also Shapley-value-based feature importance methods.) \\
+            "How important is each feature when the prediction changes (when changing feature values)" \(\rightarrow\) This is computed / reflected by marginal effects, or average marginal effects, or the partial derivative. \\
+            Overall better: "Feature effect methods show the influence of a feature on the model prediction."
+    	\end{itemize}
+        
+    \end{enumerate}
+
