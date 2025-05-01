@@ -8,7 +8,7 @@
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
-%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+%\institute{\href{https://compstat-lmu.github.io/lectureml/}{compstat-lmu.github.io/lecture\ml}}
 \date{}
 
 \def\firstrowcolor{}
@@ -33,7 +33,7 @@
 \lecture{Interpretable Machine Learning}
 
 \begin{frame}{Generalized Additive Models}
-\textbf{Recall idea of GAMs}: $$g(\E (y_i \mid \mathbf{x}_i)) = \theta_0 + f_1(x_{i1}) + f_2(x_{i2}) + \ldots + f_p(x_{ip}),\quad i=1,\cdots, N$$
+\textbf{Recall idea of GAMs}: $$g(\E (y \mid \mathbf{x})) = \theta_0 + f_1(x_{i1}) + f_2(x_{i2}) + \ldots + f_p(x_{ip}),\quad i=1,\cdots, N$$
 \begin{itemize}
     \item One shape function (spline) $f_j$ for each feature $\leadsto$ Intelligible    
     \item Including non-linear effects
@@ -52,12 +52,12 @@
 \begin{itemize}
     \item Set all shape functions $f_j^{(0)}$ to zero, $j=1,\cdots,p$
     \item Calculate the initial pseudo-residual (i.e. the negative gradient of the loss function w.r.t. the current model prediction), e.g.\\
-    1. for squared error loss: $\tilde{r}_i^{(0)}=-\frac{\partial L}{\partial \hat{y}_i}=y_i-\hat{y}_i^{(0)}=y_i-\sum_jf_j^{(0)}(x_{ij})$\\
-    2. for log loss: $\tilde{r}_i^{(0)}=-\frac{\partial L}{\partial \hat{y}_i}=y_i-\sigma(\hat{y}_i^{(0)})$ with $\sigma(\cdot)$ being the sigmoid function
-    \item Fit a shallow bagging tree with 2-4 leaves $S_1^{(1)}: x_{i1}\to \tilde{r}_i$ \textbf{only using the first feature} to predict the pseudo-residuals, with $\{x_{i1},\tilde{r}_i\}_1^N$ as training dataset
+    1. for squared error loss: $\tilde{r}^{(0)}=-\frac{\partial L}{\partial \hat{y}}=y-\hat{y}^{(0)}=y-\sum_jf_j^{(0)}(x_{ij})$\\
+    2. for log loss: $\tilde{r}^{(0)}=-\frac{\partial L}{\partial \hat{y}}=y-\sigma(\hat{y}^{(0)})$ with $\sigma(\cdot)$ being the sigmoid function
+    \item Fit a shallow bagging tree with 2-4 leaves $S_1^{(1)}: x_{i1}\to \tilde{r}$ \textbf{only using the first feature} to predict the pseudo-residuals, with $\{x_{i1},\tilde{r}\}_1^N$ as training dataset
     \item Update $f_1$: $f_1^{(1)}(x_{i1})=f_1^{(0)}+\eta\cdot S_1^{(1)}(x_{i1})$
-    \item Update $\hat{y}_i$: $\hat{y}_i^{(1)}=\sum_jf_j^{(1)}(x_{ij})$
-    \item Update the residual w.r.t. the original target, e.g. $\tilde{r}_i^{(1)}=y_i-\hat{y}_i^{(1)}$
+    \item Update $\hat{y}$: $\hat{y}^{(1)}=\sum_jf_j^{(1)}(x_{ij})$
+    \item Update the residual w.r.t. the original target, e.g. $\tilde{r}^{(1)}=y-\hat{y}^{(1)}$
     \item Go to the second feature
 \end{itemize}
 \end{frame}
@@ -70,7 +70,7 @@
 \end{figure}
 \begin{itemize}
     \item Fit a shallow bagging tree $S_2^{(1)}$ \textbf{only using the second feature} to predict the updated residuals
-    \item Update $f_2$ with $f_2^{(1)}(x_{i2})=f_2^{(0)}+\eta\cdot S_2^{(1)}(x_{i2})$ and then update $\hat{y}_i^{(1)}$
+    \item Update $f_2$ with $f_2^{(1)}(x_{i2})=f_2^{(0)}+\eta\cdot S_2^{(1)}(x_{i2})$ and then update $\hat{y}^{(1)}$
     \item Update the residual: this residual takes into account both what was learned on the first tree and second tree for the first two features
     \item Go to $\text{feat}_3$
 \end{itemize}
@@ -128,7 +128,7 @@
 \end{frame}
 
 \begin{frame}{Accurate GAM plus Pairwise Interactions}
-\textbf{Generalized Additive Models plus Interactions}: $$g(\E (y \mid \xv)) = \theta_0 + \sum f_i(x_i) + \sum f_{ij}(x_i,x_j)\quad for\quad i,j=1,\cdots,p,\quad i\neq j$$
+\textbf{Generalized Additive Models plus Interactions}: $$g(\E (y \mid \xv)) = \theta_0 + \sum f(x) + \sum f_{ij}(x,x_j)\quad for\quad i,j=1,\cdots,p,\quad i\neq j$$
 \begin{itemize}
     \item $O(p^2)$: a large number of pairwise interactions if $p$ is big\\
     $\leadsto$ Select only a small number of the most important interactions
@@ -144,7 +144,7 @@
 \begin{figure}
     \centering
     \includegraphics[width=0.6\linewidth]
-    {figure/T_ij.png}
+    {figure/Tij.png}
     \label{fig:tree-like predictor}
 \end{figure}
 \begin{figure}
@@ -159,9 +159,9 @@
 \begin{column}{0.6\textwidth}
 \begin{itemize}
     \item $T_{ij}$: A tree-like interaction predictor with 4 leaves for each pair of features
-    \item $c_i$, $c_j$: One cut (grid point) on the \textbf{sorted} values of feature $x_i$ and $x_j$, respectively
+    \item $c$, $c_j$: One cut (grid point) on the \textbf{sorted} values of feature $x$ and $x_j$, respectively
     \item $A$, $B$, $C$, $D$: Notation for 4 leaf regions
-    \item \textbf{Idea}: Search for all possible $(c_i, c_j)$ and pick the best $T_{ij}$ with the lowest RSS
+    \item \textbf{Idea}: Search for all possible $(c, c_j)$ and pick the best $T_{ij}$ with the lowest RSS
     \item Prediction value on region r, $r\in\{A, B, C, D\}$:
     $$\hat{y}_r=T_{ij}.r=\frac{1}{\vert r\vert}\sum_{(\mathbf{x},y)\in r}y=\frac{\text{Sum of targets in }r}{\text{Sum of counts in }r}$$
     \item $\text{RSS}=\sum_{k=1}^N(y_k-T_{ij}(\mathbf{x}_k))^2$ \\
@@ -196,10 +196,10 @@
     \item For example:\\
     $CH_j^t(c_j)$: cumulative sum of targets for data points with $x_j\leq c_j$;\\
     $\overline{CH_j^t }(c_j)$: cumulative sum of targets for data points with $x_j>c_j$
-    \item Create \textbf{two lookup tables} to store values for every $(c_i, c_j)$, :\\
-    1. Compute the cumulative sum of targets in four regions, and store the values in the \textbf{table of targets} $L^t(c_i,c_j)=[a,b,c,d]$\\
-    2. Compute the cumulative sum of counts in four regions, and store the values in the \textbf{table of counts} $L^w(c_i,c_j)=[a,b,c,d]$
-    \item Given any $(c_i, c_j)$, values of $(b,c,d)$ can be easily derived with known $\color{red}a$\\
+    \item Create \textbf{two lookup tables} to store values for every $(c, c_j)$, :\\
+    1. Compute the cumulative sum of targets in four regions, and store the values in the \textbf{table of targets} $L^t(c,c_j)=[a,b,c,d]$\\
+    2. Compute the cumulative sum of counts in four regions, and store the values in the \textbf{table of counts} $L^w(c,c_j)=[a,b,c,d]$
+    \item Given any $(c, c_j)$, values of $(b,c,d)$ can be easily derived with known $\color{red}a$\\
     $\leadsto$Construct lookup tables using dynamic programming
 \end{itemize}
 \end{column}
@@ -210,12 +210,12 @@
 \begin{frame}{FAST feature interaction detection - PART III}
 
 \begin{itemize}
-    \item For $x_i$ with $d_i$ possible values and $x_j$ with $d_j$ possible values:\\
-    $\leadsto$ compute and store $d_id_j$ records of $[a,b,c,d]$ in both table of targets and table of counts
-    \item For each pair of $(x_i,x_j)$, calculate RSS for each possible $(c_i, c_j)$ and pick the best $T_{ij}$ with the lowest RSS [Note: $\hat{y}_A$ can be simply calculated as $L^t(c_i,c_j).a/L^w(c_i,c_j).a$]
+    \item For $x$ with $d$ possible values and $x_j$ with $d_j$ possible values:\\
+    $\leadsto$ compute and store $dd_j$ records of $[a,b,c,d]$ in both table of targets and table of counts
+    \item For each pair of $(x,x_j)$, calculate RSS for each possible $(c, c_j)$ and pick the best $T_{ij}$ with the lowest RSS [Note: $\hat{y}_A$ can be simply calculated as $L^t(c,c_j).a/L^w(c,c_j).a$]
 \end{itemize}
 \[
-\text{\qquad$d_id_j$ possible $(c_i, c_j)$}
+\text{\qquad$dd_j$ possible $(c, c_j)$}
 \left\{
 \begin{array}{@{}l@{\quad}l@{\quad}l@{\quad}l@{\quad}l}
     \begin{tikzpicture}[baseline=(current bounding box.center)]
@@ -269,10 +269,10 @@
         \node at (1,0.2) {$\hat{y}_D$};
         \node at (0.4,0.8) {$\hat{y}_A$};
         \node at (1,0.8) {$\hat{y}_B$};
-    \end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_{d_id_j}$}\\ 
+    \end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_{dd_j}$}\\ 
 \end{array}
 \right\}
-\text{\parbox[t]{6cm}{select the lowest RSS and assign it as the weight for $(x_i, x_j)$ to measure the strength of interaction}}
+\text{\parbox[t]{6cm}{select the lowest RSS and assign it as the weight for $(x, x_j)$ to measure the strength of interaction}}
 \]
 \end{frame}
 
@@ -280,8 +280,8 @@
 \begin{itemize}
     \item Complexity analysis: \\
     Computing cumulative histograms: $O(N)$ ($N$: number of observations)\\
-    Constructing matrices of sum values: $O(N+d_id_j)$\\
-    $\leadsto$ Complexity per pair: $O(N+d_id_j)$ 
+    Constructing matrices of sum values: $O(N+dd_j)$\\
+    $\leadsto$ Complexity per pair: $O(N+dd_j)$ 
     \item Discretize continuous feature values in $b$ bins ($b\leq256$)\\
     $\leadsto O(N+b^2)$ per pair\\
     $\leadsto$ Choose optimal number of bins $b$ w.r.t. bias-variance trade-off
