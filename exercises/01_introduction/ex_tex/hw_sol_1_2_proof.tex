@@ -1,21 +1,76 @@
 \loesung{
 
-Recall that the formula for the coefficient of determination $R^2$ is:
+\textbf{Prerequisites:}
+
+We will need a few general facts about least-squares linear regression for this exercise:
+
+\begin{enumerate}[1.]
+
+\item 
+The formulae for estimating the parameters $\hat{\beta}_0$ and $\hat{\beta}_1$ of the linear regression model.
+These formulae can be calculated from the model equation $\hat{f}_{LM} (x) = \hat{y} = \hat{\beta}_0 + \hat{\beta}_1 x$ and the loss equation $SSE_{LM} = \sum_{i=1}^n \left( y^{(i)} - \hat{f}_{LM}(x^{(i)}) \right)^2$ using standard calculus.
+
+\begin{gather*}
+\bar{y} = \hat{\beta}_0 + \hat{\beta}_1 \bar{x}
+\, \Longleftrightarrow \,
+\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}
+\\
+\hat{\beta}_1 = \frac{ \sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y}) }{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}  
+\end{gather*}
+
+One can prove (with standard multivariate calculus) that these values of the parameters are the unique minimizers of the loss function.
+
+\item
+With the notation
+
 \begin{align*}
-	R^2 = 1-\frac{SSE_{LM}}{SSE_{c}} = 1 - \frac{\sum_{i=1}^n (y^{(i)} - \hat{f}_{LM}(x^{(i)}))^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
-	= 1 - \frac{\sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
+    SSE_{LM} &= \sum_{i=1}^n (y^{(i)} - \hat{f}_{LM}(x^{(i)}))^2 = \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2 &\text{ for the sum of squared errors from the regression,} \\
+	SSE_{c} &= \sum_{i=1}^n (y^{(i)} - \bar{y})^2 &\text{ for the total sum of squares / the variance of the data points,}\\
+	SSE_{LM-c} &= \sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2 = \sum_{i=1}^n (\hat{f}_{LM}(x^{(i)}) - \bar{y})^2 &\text{ for the total sum of squares / the variance of the predictions,}
 \end{align*}
-where $SSE_{LM} = \sum_{i=1}^n (y^{(i)} - \hat{f}_{LM}(x^{(i)}))^2$ is the sum of squares due to regression (error) and $SSE_{c} = \sum_{i=1}^n (y^{(i)} - \bar{y})^2$ is the total sum of squares. 
+
+the following holds:
+
+\begin{equation}\label{eq:lin_model_pythagoras}
+    SSE_{c} = SSE_{LM} + SSE_{LM-c} \
+    \Longleftrightarrow \
+    \sum_{i=1}^n (y^{(i)} - \bar{y})^2
+    = \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2
+    + \sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2
+\end{equation}
+
+This basically means that the model predictions \(\hat{y}_i\) and the residuals \( (y_i - \hat{y}_i) \) are uncorrelated.
+(The sums of squares are "orthogonal" to each other.)
+A proof for formula \eqref{eq:lin_model_pythagoras} is given below.
+
+We can then use \eqref{eq:lin_model_pythagoras} to rewrite the coefficient of determination as follows:
+
+\begin{align*}
+    R^2 = 1-\frac{SSE_{LM}}{SSE_{c}} = \frac{SSE_{LM-c}}{SSE_{c}} = \frac{\sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
+\end{align*}
+
+%Recall that the formula for the coefficient of determination $R^2$ is:
+%\begin{align*}
+%	R^2 = 1-\frac{SSE_{LM}}{SSE_{c}} = 1 - \frac{\sum_{i=1}^n (y^{(i)} - \hat{f}_{LM}(x^{(i)}))^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
+%	= 1 - \frac{\sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
+%\end{align*}
+%where $SSE_{LM} = \sum_{i=1}^n (y^{(i)} - \hat{f}_{LM}(x^{(i)}))^2$ is the sum of squares due to regression (error) and $SSE_{c} = \sum_{i=1}^n (y^{(i)} - \bar{y})^2$ is the total sum of squares. 
+
+An illustration of this relation:
 
 \begin{center}
 	\includegraphics[width=0.75\maxwidth]{figure/r_squared.pdf}
 \end{center}
 
-First it is shown that 
-\begin{align} \label{P2}
-	R^2 = 1-\frac{SSE_{LM}}{SSE_{c}} = 1 - \frac{\sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
-	= \frac{\sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2} = \frac{SSE_{LM-c}}{SSE_{c}}
-\end{align}
+\end{enumerate}
+
+%First it is shown that 
+%\begin{align} \label{P2}
+%	R^2 = 1-\frac{SSE_{LM}}{SSE_{c}} = 1 - \frac{\sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
+%	= \frac{\sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2} = \frac{SSE_{LM-c}}{SSE_{c}}
+%\end{align}
+
+\textbf{Proof of equation \eqref{eq:lin_model_pythagoras}:}
 
 \fbox{\parbox{\linewidth}{
 		
@@ -48,31 +103,40 @@ where we have used the fact that $\sum_{i=1}^n (y^{(i)}-\hat{y}^{(i)})\hat{y}^{(
 
 \bigskip
 
-It follows: 
-\begin{align*}
-	R^2 &=  1 - \frac{\sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2} 
-	= \frac{\sum_{i=1}^n (y^{(i)} - \bar{y})^2 - \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}\\
-	&= \frac{\sum_{i=1}^n (y^{(i)}-\hat{y}^{(i)})^2 + \sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2 - \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
-	= \frac{\sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
-\end{align*}
-\hfill (proof of (\ref{P2})) $\Box$ \\ 
+%It follows: 
+%\begin{align*}
+%	R^2 &=  1 - \frac{\sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2} 
+%	= \frac{\sum_{i=1}^n (y^{(i)} - \bar{y})^2 - \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}\\
+%	&= \frac{\sum_{i=1}^n (y^{(i)}-\hat{y}^{(i)})^2 + \sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2 - \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
+%	= \frac{\sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
+%\end{align*}
+%\hfill (proof of (\ref{P2})) $\Box$ \\ 
 
-And further: 
+\textbf{Proof of \(R^2 = \rho^2\):}
+
+%And further: 
+We start with $R^2$ and plug in the functional equation as well as the functional equation for the sample averages. A little more calculation yields the desired result:
 \begin{align*}
-	R^2 &= \frac{\sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
+	R^2
+    &= \frac{\sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
 	= \frac{\sum_{i=1}^n(\hat{\beta}_0 + \hat{\beta}_1 x^{(i)}- (\hat{\beta}_0 + \hat{\beta}_1 \bar{x}))^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
-	= \frac{\hat{\beta}_1^2 \sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2} 
+	%= \frac{\hat{\beta}_1^2 \sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
+    = \hat{\beta}_1^2 \, \frac{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}  \\
+    &= \left(\frac{\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})}{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}\right)^2 \frac{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2} 
+    = \frac{ \left( \sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y}) \right)^2 }{\sum_{i=1}^n (x^{(i)} - \bar{x})^2 \sum_{i=1}^n (x^{(i)} - \bar{x})^2} \frac{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2} \\
+    &= \frac{\left(\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})\right)^2}{\sum_{i=1}^n (x^{(i)} - \bar{x})^2\sum_{i=1}^n (y^{(i)} - \bar{y})^2} \\
+    &= \rho^2
 \end{align*}
 
-Now, starting with $\rho^2$, we can write:
-\begin{align*}
-	\rho^2 &= \left(\frac{\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})}{\sqrt{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}\sqrt{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}}\right)^2 \\
-	&= \frac{\left(\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})\right)^2}{\sum_{i=1}^n (x^{(i)} - \bar{x})^2\sum_{i=1}^n (y^{(i)} - \bar{y})^2}\\
-	&= \frac{\left(\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})\right)^2}{\sum_{i=1}^n (x^{(i)} - \bar{x})^2\sum_{i=1}^n (y^{(i)} - \bar{y})^2} \frac{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}\\
-	&= \left(\frac{\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})}{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}\right)^2 \frac{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2} \\
-	&= \hat{\beta}_1^2 \, \frac{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
-	= R^2
-\end{align*}
+%Now, starting with $\rho^2$, we can write:
+%\begin{align*}
+% 	\rho^2 &= \left(\frac{\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})}{\sqrt{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}\sqrt{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}}\right)^2 \\
+%	&= \frac{\left(\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})\right)^2}{\sum_{i=1}^n (x^{(i)} - \bar{x})^2\sum_{i=1}^n (y^{(i)} - \bar{y})^2}\\
+%	&= \frac{\left(\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})\right)^2}{\sum_{i=1}^n (x^{(i)} - \bar{x})^2\sum_{i=1}^n (y^{(i)} - \bar{y})^2} \frac{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}\\
+%	&= \left(\frac{\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})}{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}\right)^2 \frac{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2} \\
+%	&= \hat{\beta}_1^2 \, \frac{\sum_{i=1}^n (x^{(i)} - \bar{x})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2}
+%	= R^2
+%\end{align*}
 
 %$\Rightarrow R^2 = \rho^2$.
 %
@@ -84,8 +148,12 @@ Now, starting with $\rho^2$, we can write:
 %	&= \frac{\sum_{i=1}^n (\hat{y}^{(i)} - \bar{y})^2}{\sum_{i=1}^n (y^{(i)} - \bar{y})^2} 
 %\end{align*}
 
-Hence, we have shown that $R^2 = \rho^2$, which completes the proof. Note that this result is valid only for simple linear regression, where there is only one independent variable. For multiple regression, the coefficient of determination is defined differently and does not necessarily equal the square of the Pearson correlation coefficient.
+This shows $R^2 = \rho^2$, which completes the proof. Note that this result is valid only for simple linear regression, where there is only one independent variable, and also only for regression with ordinary least squares (OLS). For multiple regression, the coefficient of determination is defined differently and does not necessarily equal the square of the Pearson correlation coefficient.
 
 \hfill $\Box$ \\
 \vspace*{-0.3cm}
+
+Similar proofs togehter with more information: https://statproofbook.github.io/P/slr-rsq.html
+https://math.stackexchange.com/questions/129909/correlation-coefficient-and-determination-coefficient
+
 }

@@ -87,7 +87,7 @@ $$
 
 
 
-\begin{frame}{EBM Stage I - Initialization}
+\begin{frame}{Univariate EBM - Initialization}
 
 %\textbf{Initialization:}
 \begin{itemize}
@@ -107,7 +107,7 @@ $$
 
 \end{frame}
 
-\begin{frame}{EBM Stage I – First Feature Update}
+\begin{frame}{Univariate EBM – First Feature Update}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step1.png}
@@ -123,16 +123,16 @@ $$
     $$
     \hat{y}^{(1)} = \sum_{j=1}^p f_j^{(1)}(x_j)
     $$
-    \item Recompute pseudo residuals:
+    \item Recompute pseudo-residuals:
     $$
-    \tilde{r}^{(1)} = y - \hat{y}^{(1)}
+    \tilde{r}^{(1)} =  -\frac{\partial L}{\partial \hat{y}} = y - \hat{y}^{(1)}
     $$
 \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{EBM Stage I – Cycle Through Features}
+\begin{frame}{Univariate EBM – Cycle Through Features}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step2.png}
@@ -149,7 +149,7 @@ $$
 \end{itemize}
 \end{frame}
 
-\begin{frame}{EBM Stage I – Iterate Boosting Process}
+\begin{frame}{Univariate EBM – Iterate Boosting Process}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step3.png}
@@ -229,7 +229,7 @@ $$
 % \end{frame}
 
 
-\begin{frame}{EBM Stage I - Prediction and Interpretability}
+\begin{frame}{Univariate EBM - Prediction \& Interpretability}
 \begin{itemize}
     \item Final model consists of $M$ shallow trees per feature:
     $$
@@ -314,22 +314,21 @@ $$
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{EBM Stage 2 - Include Pairwise Interactions}
+\begin{frame}{EBM with Pairwise Interactions}
 \textbf{Generalized Additive Models plus Interactions (GA2M):}
 $$
 g\big(\mathbb{E}[y \mid \xv]\big) = \theta_0 + \sum_{j=1}^p f_j(x_j) + \sum_{i<j} f_{ij}(x_i, x_j)
 $$
 
 \begin{itemize}
-    \item \textbf{Motivation}: EBM captures only univariate effects 
-    $\leadsto$ misses interactions
-    \item \textbf{Challenge}: $O(p^2)$ potential interactions
-    $\leadsto$ infeasible %to include all pairs directly
+    \item \textbf{Motivation}: Univariate EBM does not model interactions
+    \item \textbf{Challenge}: $O(p^2)$ potential pairwise interactions
+    $\leadsto$ often infeasible %to include all pairs directly
     \item \textbf{Solution - FAST algorithm} \citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}:
     \begin{itemize}
         \item Efficiently estimates importance of all feature pairs
         \item Ranks pairs by reduction in residual sum of squares (RSS)
-        \item Avoids full model fitting for each candidate
+        \item Avoids fitting EBM with each pairwise interaction
     \end{itemize}
     \item \textbf{Result}: Add only top-ranked interactions $f_{ij}$ via a second-stage boosting step\\
     $\leadsto$ Performed after the univariate EBM has been trained
@@ -338,13 +337,255 @@ $$
 \end{frame}
 
 
-\begin{frame}{FAST Feature Interaction Detection}
-\begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.4\textwidth}
+% \begin{frame}{FAST Algorithm for Interaction Detection}
+% \begin{columns}[c, totalwidth=\textwidth]
+% \begin{column}{0.4\textwidth}
+% % \begin{figure}
+% %     \centering
+% %     \includegraphics[width=0.8\linewidth]{figure/Tij.png}
+% % \end{figure}
+
 % \begin{figure}
-%     \centering
-%     \includegraphics[width=0.8\linewidth]{figure/Tij.png}
+% \scalebox{0.85}{
+% \begin{tikzpicture}[
+%   level 1/.style={sibling distance=28mm},
+%   level 2/.style={sibling distance=15mm},
+%   level distance=10mm,
+%   every node/.style = {circle, draw, minimum size=7mm},
+%   edge from parent/.style={draw,-latex}
+% ]
+
+% \node (root) {$c_i$}
+%   child { node {$c_j$}
+%     child { node {A} }
+%     child { node {B} }
+%   }
+%   child { node {$c_j$}
+%     child { node {C} }
+%     child { node {D} }
+%   };
+
+% %\node[draw=none] at (-2.8,0.8) {$T_{ij}:$};
+
+% \end{tikzpicture}
+% }
 % \end{figure}
+
+% \end{column}
+% \hfill
+% \begin{column}{0.6\textwidth}
+% \begin{itemize}
+%     \item $T_{ij}$: Tree-like predictor with 4 leaf regions for a feature pair $(x_i, x_j)$
+%     \item Define axis-aligned cut points $(c_i, c_j)$ on the sorted values of $x_i$ and $x_j$
+%     \item Each split induces 4 regions: $A$, $B$, $C$, $D$
+% \end{itemize}
+% \end{column}
+% \end{columns}
+
+% \pause
+
+% \begin{columns}[c, totalwidth=\textwidth]
+% \begin{column}{0.4\textwidth}
+% \begin{figure}
+% \scalebox{0.9}{
+% \begin{tikzpicture}[scale=1]
+
+% % Rectangle dimensions
+% \def\W{2.8}  % total width
+% \def\H{2.8}  % total height
+% \def\cx{0.9} % vertical cut
+% \def\cy{1.7} % horizontal cut
+
+% % Draw outer box and cuts
+% \draw[thick] (0,0) rectangle (\W,\H);
+% \draw[thick] (\cx,0) -- (\cx,\H);
+% \draw[thick] (0,\cy) -- (\W,\cy);
+
+% % Fill region a
+% \fill[red!70] (0,\cy) rectangle (\cx,\H);
+
+% % Region labels
+% \node at (0.45,2.25) {$\hat{y}_A$};
+% \node at (1.85,2.25) {$\hat{y}_B$};
+% \node at (0.45,0.85) {$\hat{y}_C$};
+% \node at (1.85,0.85) {$\hat{y}_D$};
+
+% % Axes
+% % x_j axis
+% \draw[->] (0,-0.5) -- (\W+0.5,-0.5);
+% \node at (0,-0.8) {small};
+% \node at (\W,-0.8) {big};
+% \node at (\W/2,-1.2) {$x_j$};
+
+% % x_i axis
+% \draw[->] (-0.5,0) -- (-0.5,\H+0.5);
+% \node[rotate=90] at (-0.8,0) {small};
+% \node[rotate=90] at (-0.8,\H) {big};
+% \node[rotate=90] at (-1.2,\H/2) {$x_i$};
+
+% % Cut point labels
+% \node at (\cx,-0.3) {$c_j$};
+% \node at (-0.3,\cy) {$c_i$};
+
+% \end{tikzpicture}
+% }
+% \end{figure}
+% \end{column}
+% \hfill
+% \begin{column}{0.6\textwidth}
+% \begin{itemize}
+%     \item Compute mean target in each region:
+%     $$
+%     \hat{y}_r = \frac{1}{|r|} \sum_{(\mathbf{x}, y) \in r} y, \quad r \in \{A, B, C, D\}
+%     $$
+%     \item Evaluate split quality via RSS:
+%     %$$\text{RSS}(c_i, c_j) = \sum_{i=1}^n (y^{(i)} - \hat{y}_r^{(i)})^2$$
+% $$\text{RSS}(c_i, c_j) = \sum_r \sum_{(\mathbf{x}, y) \in r} (y - \hat{y}_r)^2$$
+    
+%     \item Goal: find cut $(c_i, c_j)$ minimizing RSS
+% \end{itemize}
+% \end{column}
+% \end{columns}
+% \end{frame}
+
+
+
+
+% \begin{frame}{FAST Algorithm for Interaction Detection}
+% % For each pair of $(x_i,x_j)$ with $d_i$ and $d_j$ distinct values, calculate RSS for each possible $(c_i, c_j)$ and pick the best $T_{ij}$ with the lowest RSS ($\leadsto$ $N = d_i \cdot d_j$ different RSS values)
+
+% For every feature pair $(x_i,x_j)$:
+%       \begin{itemize}
+%           \item Discretise each axis into $b\le 256$ ordered bins (uniform‐width or quantile).
+%           \item Evaluate all $b^{2}$ axis-aligned splits $(c_i,c_j)$ at the bin boundaries.
+%       \end{itemize}
+
+
+% \begin{columns}[c, totalwidth=\textwidth]
+%     \begin{column}{0.45\textwidth}
+% \[
+%         \begin{array}{@{}l@{\quad}l@{\quad}l@{\quad}l@{\quad}l}
+%     \begin{tikzpicture}[baseline=(current bounding box.center)]
+%         \draw (0,0) rectangle (1.2,1.2);
+%         \draw (0.4,0) -- (0.4,1.2); 
+%         \draw (0,0.8) -- (1.2,0.8); 
+%         \node at (0.2,0.4) {C};
+%         \node at (0.8,0.4) {D};
+%         \node at (0.2,1) {A};
+%         \node at (0.8,1) {B};
+%     \end{tikzpicture} & \text{$\Rightarrow$} & \begin{tikzpicture}[baseline=(current bounding box.center)]
+%         \draw (0,0) rectangle (1.2,1.2);
+%         \draw (0.4,0) -- (0.4,1.2); 
+%         \draw (0,0.8) -- (1.2,0.8); 
+%         \node at (0.2,0.4) {$\hat{y}_C$};
+%         \node at (0.8,0.4) {$\hat{y}_D$};
+%         \node at (0.2,1) {$\hat{y}_A$};
+%         \node at (0.8,1) {$\hat{y}_B$};
+%     \end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_1$}\\[0.7cm] 
+%     \begin{tikzpicture}[baseline=(current bounding box.center)]
+%         \draw (0,0) rectangle (1.2,1.2);
+%         \draw (0.6,0) -- (0.6,1.2); 
+%         \draw (0,0.6) -- (1.2,0.6); 
+%         \node at (0.3,0.3) {C};
+%         \node at (0.9,0.3) {D};
+%         \node at (0.3,0.9) {A};
+%         \node at (0.9,0.9) {B};
+%     \end{tikzpicture} & \text{$\Rightarrow$} & \begin{tikzpicture}[baseline=(current bounding box.center)]
+%         \draw (0,0) rectangle (1.2,1.2);
+%         \draw (0.6,0) -- (0.6,1.2); 
+%         \draw (0,0.6) -- (1.2,0.6); 
+%         \node at (0.3,0.3) {$\hat{y}_C$};
+%         \node at (0.9,0.3) {$\hat{y}_D$};
+%         \node at (0.3,0.9) {$\hat{y}_A$};
+%         \node at (0.9,0.9) {$\hat{y}_B$};
+%     \end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_2$}\\[0.7cm] 
+%     \makebox[1cm][c]{\vdots} & & \makebox[1cm][c]{\vdots} & & \makebox[1cm][c]{\vdots}\\[0.3cm]
+%     \begin{tikzpicture}[baseline=(current bounding box.center)]
+%         \draw (0,0) rectangle (1.2,1.2);
+%         \draw (0.8,0) -- (0.8,1.2); 
+%         \draw (0,0.4) -- (1.2,0.4); 
+%         \node at (0.4,0.2) {C};
+%         \node at (1,0.2) {D};
+%         \node at (0.4,0.8) {A};
+%         \node at (1,0.8) {B};
+%     \end{tikzpicture} & \text{$\Rightarrow$} & \begin{tikzpicture}[baseline=(current bounding box.center)]
+%         \draw (0,0) rectangle (1.2,1.2);
+%         \draw (0.8,0) -- (0.8,1.2); 
+%         \draw (0,0.4) -- (1.2,0.4); 
+%         \node at (0.4,0.2) {$\hat{y}_C$};
+%         \node at (1,0.2) {$\hat{y}_D$};
+%         \node at (0.4,0.8) {$\hat{y}_A$};
+%         \node at (1,0.8) {$\hat{y}_B$};
+%     \end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_{b^2}$}\\ 
+% \end{array}
+% \]
+%     \end{column}
+%         \begin{column}{0.53\textwidth}
+%         For each candidate cut $(c_i, c_j)$:
+%   \begin{itemize}
+%     \item Divide 2D input space into 4 quadrants: A, B, C, D
+%     \item Compute average target $\hat{y}_r$ in each region $r \in \{A, B, C, D\}$
+%     \item Predict using a constant in each region
+%     \item Compute total RSS of this piecewise predictor
+%   \end{itemize}
+% Select the cut with minimal RSS - its value quantifies the interaction strength of $(x_i, x_j)$
+
+%     \end{column}
+% \end{columns}
+% % \medskip
+% % \textbf{Why is this fast?}\\
+% % Precompute cumulative sums (targets and counts) over sorted features\\
+% % $\leadsto$ Fast lookup of region totals for any cut $(c_i, c_j)$ without scanning data
+
+
+% %\text{\parbox[t]{6cm}{Select the lowest RSS and measure interaction strength of $(x_i, x_j)$ via risk reduction}}
+% \end{frame}
+
+
+
+% \begin{frame}{RSS in FAST: Region-Based Derivation}
+
+% \textbf{Goal:} Efficiently compute RSS over $r \in \{A, B, C, D\}$ defined by cuts $(c_i, c_j)$
+
+% \textbf{Step 1: Expand squared residuals}
+% \[
+% \text{RSS}(c_i, c_j) = \sum_{r} \sum_{(x, y) \in r} (y - \hat{y}_r)^2
+% = \sum_{r} \left( \sum y^2 - 2 \hat{y}_r \sum y + \hat{y}_r^2 \cdot n_r \right)
+% \]
+
+% \textbf{Step 2: Define region-wise statistics}
+% \[
+% \mu_r = \frac{T_r}{n_r}, \quad
+% T_r = \sum_{(x, y) \in r} y, \quad
+% Q_r = \sum_{(x, y) \in r} y^2, \quad
+% n_r = |r|
+% \]
+
+% \textbf{Step 3: Substitute and simplify}
+% \[
+% \text{RSS}(c_i, c_j) = \sum_r \left( Q_r - \frac{T_r^2}{n_r} \right)
+% \]
+
+% \textbf{Why is this fast?}
+% \begin{itemize}
+%     \item Precompute cumulative sums of $y$, $y^2$, and counts
+%     \item Allows fast lookup of $T_r$, $Q_r$, and $n_r$ for any rectangle defined by $(c_i, c_j)$
+% \end{itemize}
+
+
+% \end{frame}
+
+
+
+
+
+
+\begin{frame}{FAST: scoring a feature pair $(x_i,x_j)$}
+
+\begin{columns}[T,totalwidth=\textwidth]
+% ----- left: predictor diagram ---------------------------------
+\begin{column}{0.4\textwidth}\centering
+\only<1>{
 
 \begin{figure}
 \scalebox{0.85}{
@@ -372,93 +613,32 @@ $$
 }
 \end{figure}
 
-\end{column}
-\hfill
-\begin{column}{0.6\textwidth}
-\begin{itemize}
-    \item $T_{ij}$: Tree-like predictor with 4 leaf regions for a feature pair $(x_i, x_j)$
-    \item Define axis-aligned cut points $(c_i, c_j)$ on the sorted values of $x_i$ and $x_j$
-    \item Each split induces 4 regions: $A$, $B$, $C$, $D$
-\end{itemize}
-\end{column}
-\end{columns}
-
-\pause
-
-\begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.4\textwidth}
-\begin{figure}
-\scalebox{0.9}{
-\begin{tikzpicture}[scale=1]
-
-% Rectangle dimensions
-\def\W{2.8}  % total width
-\def\H{2.8}  % total height
-\def\cx{0.9} % vertical cut
-\def\cy{1.7} % horizontal cut
-
-% Draw outer box and cuts
-\draw[thick] (0,0) rectangle (\W,\H);
-\draw[thick] (\cx,0) -- (\cx,\H);
-\draw[thick] (0,\cy) -- (\W,\cy);
-
-% Fill region a
-\fill[red!70] (0,\cy) rectangle (\cx,\H);
-
-% Region labels
-\node at (0.45,2.25) {$\hat{y}_A$};
-\node at (1.85,2.25) {$\hat{y}_B$};
-\node at (0.45,0.85) {$\hat{y}_C$};
-\node at (1.85,0.85) {$\hat{y}_D$};
-
-% Axes
-% x_j axis
-\draw[->] (0,-0.5) -- (\W+0.5,-0.5);
-\node at (0,-0.8) {small};
-\node at (\W,-0.8) {big};
-\node at (\W/2,-1.2) {$x_j$};
-
-% x_i axis
-\draw[->] (-0.5,0) -- (-0.5,\H+0.5);
-\node[rotate=90] at (-0.8,0) {small};
-\node[rotate=90] at (-0.8,\H) {big};
-\node[rotate=90] at (-1.2,\H/2) {$x_i$};
-
-% Cut point labels
-\node at (\cx,-0.3) {$c_j$};
-\node at (-0.3,\cy) {$c_i$};
-
+\begin{tikzpicture}[scale=0.9,baseline=(current bounding box.center)]
+% outer box
+\draw[thick] (0,0) rectangle (3,3);
+% axis-aligned cuts
+\def\xc{1.2}\def\yc{1.9}
+\draw[thick] (\xc,0)--(\xc,3);
+\draw[thick] (0,\yc)--(3,\yc);
+% region labels
+\node at (0.6,2.5) {$A$};
+\node at (2.1,2.5) {$B$};
+\node at (0.6,0.9) {$C$};
+\node at (2.1,0.9) {$D$};
+% axis labels
+\node[below] at (1.5,-0.4) {$x_j$};
+\node[rotate=90] at (-0.4,1.5) {$x_i$};
+% cut labels
+\node[below] at (\xc,0) {$c_j$};
+\node[left]  at (0,\yc) {$c_i$};
 \end{tikzpicture}
+
+{\small tree $T_{ij}$ with 4 leaves}
 }
-\end{figure}
-\end{column}
-\hfill
-\begin{column}{0.6\textwidth}
-\begin{itemize}
-    \item Compute mean target in each region:
-    $$
-    \hat{y}_r = \frac{1}{|r|} \sum_{(\mathbf{x}, y) \in r} y, \quad r \in \{A, B, C, D\}
-    $$
-    \item Evaluate split quality via RSS:
-    %$$\text{RSS}(c_i, c_j) = \sum_{i=1}^n (y^{(i)} - \hat{y}_r^{(i)})^2$$
-$$\text{RSS}(c_i, c_j) = \sum_r \sum_{(\mathbf{x}, y) \in r} (y - \hat{y}_r)^2$$
-    
-    \item Goal: find cut $(c_i, c_j)$ minimizing RSS
-\end{itemize}
-\end{column}
-\end{columns}
-\end{frame}
 
-
-
-
-\begin{frame}{FAST feature interaction detection}
-For each pair of $(x_i,x_j)$ with $d_i$ and $d_j$ distinct values, calculate RSS for each possible $(c_i, c_j)$ and pick the best $T_{ij}$ with the lowest RSS ($\leadsto$ $N = d_i \cdot d_j$ different RSS values)
-
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.45\textwidth}
+\only<2>{
 \[
-        \begin{array}{@{}l@{\quad}l@{\quad}l@{\quad}l@{\quad}l}
+\begin{array}{@{}l@{\hskip 0.6em}l@{\hskip 0.6em}l@{\hskip 0.6em}l@{\hskip 0.6em}l}
     \begin{tikzpicture}[baseline=(current bounding box.center)]
         \draw (0,0) rectangle (1.2,1.2);
         \draw (0.4,0) -- (0.4,1.2); 
@@ -510,101 +690,75 @@ For each pair of $(x_i,x_j)$ with $d_i$ and $d_j$ distinct values, calculate RSS
         \node at (1,0.2) {$\hat{y}_D$};
         \node at (0.4,0.8) {$\hat{y}_A$};
         \node at (1,0.8) {$\hat{y}_B$};
-    \end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_{N}$}\\ 
+    \end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_{b^2}$}\\ 
 \end{array}
 \]
-    \end{column}
-        \begin{column}{0.53\textwidth}
-        For each candidate cut $(c_i, c_j)$:
-  \begin{itemize}
-    \item Divide 2D input space into 4 quadrants: A, B, C, D
-    \item Compute average target $\hat{y}_r$ in each region $r \in \{A, B, C, D\}$
-    \item Predict using a constant in each region
-    \item Compute total RSS of this piecewise predictor
-  \end{itemize}
-Select the cut with minimal RSS - its value quantifies the interaction strength of $(x_i, x_j)$
+}
+\end{column}
+% ----- right: algorithm steps ----------------------------------
+\begin{column}{0.6\textwidth}
+\small
+\begin{enumerate}\itemsep4pt
+  \item<1-> {\bf Discretise}\,: Map each axis to \(b\!\le\!256\) ordered
+        bins (quantile or equal-width).
+  \item<2-> {\bf Enumerate}\,: \(b^{2}\) candidate cuts
+        \((c_i,c_j)\) at bin boundaries.
+  \item<2-> {\bf Fit}\,: For each cut, assign a constant
+        \(\hat y_r\!=\!\text{mean}(y\!\in\!r)\) to
+        \(r\!\in\!\{A,B,C,D\}\).
+  \item<2-> {\bf Score}\,: Compute  
+        \(\text{RSS}(c_i,c_j)=\sum_{r}
+         \sum_{(x,y)\in r}(y-\hat y_r)^{2}\).
+  \item<2-> {\bf Select}\,: Keep the split with minimal RSS.\\
+  $\leadsto$ RSS drop measures interaction strength \\% of \((x_i,x_j)\) \\
+  $\leadsto$ $\mathcal{O}(n+b^{2})$ per pair.
+\end{enumerate}
 
-    \end{column}
+\end{column}
 \end{columns}
-% \medskip
-% \textbf{Why is this fast?}\\
-% Precompute cumulative sums (targets and counts) over sorted features\\
-% $\leadsto$ Fast lookup of region totals for any cut $(c_i, c_j)$ without scanning data
-
-
-%\text{\parbox[t]{6cm}{Select the lowest RSS and measure interaction strength of $(x_i, x_j)$ via risk reduction}}
 \end{frame}
 
 
-% \begin{frame}{RSS in FAST: Region-Based Derivation}
-% \textbf{Objective:} Compute RSS for a 2D predictor $T_{ij}$ with four regions $r \in \{A, B, C, D\}$
 
-% \medskip
-% \textbf{Step 1: Expand squared residuals}
-% \[
-% \text{RSS}(c_i, c_j) = \sum_r \sum_{(x_k, y_k) \in r} (y_k - \hat{y}_r)^2
-% = \sum_r \left( \sum_{(x_k, y_k) \in r} y_k^2 - 2 \hat{y}_r \sum_{(x_k, y_k) \in r} y_k + \hat{y}_r^2 \cdot |r| \right)
-% \]
+\begin{frame}{FAST: constant-region RSS in closed form}
 
-% \medskip
-% \textbf{Step 2: Define region aggregates}
-% \[
-% S_r^{(1)} = \sum_{(x_k, y_k) \in r} y_k, \quad
-% S_r^{(2)} = \sum_{(x_k, y_k) \in r} y_k^2, \quad
-% N_r = |r|, \quad
-% \hat{y}_r = \frac{S_r^{(1)}}{N_r}
-% \]
+\small
+\textbf{Pre-compute for every rectangle}  
+\(r\in\{A,B,C,D\}\):
+\[
+T_r=\!\!\sum_{(x,y)\in r}\!y, \qquad 
+Q_r=\!\!\sum_{(x,y)\in r}\!y^{2}, \qquad 
+n_r=|r|, \qquad
+y_r=\frac{T_r}{n_r}.
+\]
 
-% \medskip
-% \textbf{Step 3: Substitute and simplify}
-% \[
-% \text{RSS}(c_i, c_j) = \sum_r \left( S_r^{(2)} - \frac{(S_r^{(1)})^2}{N_r} \right)
-% \]
+\medskip
+\textbf{RSS:}
 
-% \bigskip
-% \textbf{Efficient computation:} All $S_r^{(1)}$, $S_r^{(2)}$, and $N_r$ can be precomputed and stored in lookup tables
-% \end{frame}
-
-\begin{frame}{RSS in FAST: Region-Based Derivation}
-
-\textbf{Goal:} Efficiently compute RSS over $r \in \{A, B, C, D\}$ defined by cuts $(c_i, c_j)$
-
-\textbf{Step 1: Expand squared residuals}
 \[
 \text{RSS}(c_i, c_j) = \sum_{r} \sum_{(x, y) \in r} (y - \hat{y}_r)^2
 = \sum_{r} \left( \sum y^2 - 2 \hat{y}_r \sum y + \hat{y}_r^2 \cdot n_r \right)
 \]
 
-\textbf{Step 2: Define region-wise statistics}
+\medskip
+\textbf{Plug into RSS:}
 \[
-\mu_r = \frac{T_r}{n_r}, \quad
-T_r = \sum_{(x, y) \in r} y, \quad
-Q_r = \sum_{(x, y) \in r} y^2, \quad
-n_r = |r|
+\text{RSS}(c_i,c_j)=
+\sum_{r}\!\left(
+      Q_r-\frac{T_r^{2}}{n_r}\right).
 \]
 
-\textbf{Step 3: Substitute and simplify}
-\[
-\text{RSS}(c_i, c_j) = \sum_r \left( Q_r - \frac{T_r^2}{n_r} \right)
-\]
-
+\medskip
 \textbf{Why is this fast?}
 \begin{itemize}
-    \item Precompute cumulative sums of $y$, $y^2$, and counts
-    \item Allows fast lookup of $T_r$, $Q_r$, and $n_r$ for any rectangle defined by $(c_i, c_j)$
+  \item Precompute cummulative sums of \(y\), \(y^2\), and counts across the binned grid
+  \item Enables constant-time \(O(1)\) lookup of region statistics \(T_r, Q_r, n_r\) for any cut
+  \item No additional data scan or recomputation needed across the \(b^2\) candidate cuts
 \end{itemize}
 
-
+% \vspace{1ex}
+% \hfill{\footnotesize Lou et al.\ 2013, §4.1}
 \end{frame}
-
-
-
-
-
-
-
-
-
 
 
 
@@ -933,6 +1087,7 @@ n_r = |r|
     \begin{itemize}
         \item Axes: feature values of $x_i$ and $x_j$
         \item Color: contribution to the final prediction
+        \item Preserves human interpretability 
     \end{itemize}
     \item One heatmap is generated per selected pairwise interaction
 \end{itemize}
