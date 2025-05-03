@@ -1,0 +1,282 @@
+%------------------------------------------------------------
+% Bike-sharing logistic-regression exercise
+%------------------------------------------------------------
+\documentclass[a4paper,11pt]{article}
+\usepackage{amsmath,booktabs}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[utf8]{inputenc}   % ensure this is in your preamble
+
+\usepackage{siunitx}   % nice numbers
+\sisetup{round-mode=places,round-precision=3}
+
+\title{Exercise: Interpreting a Logistic Model for Bike Rentals}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+%====================================================================
+\section*{Exercise}
+
+A logistic regression predicts whether a day shows
+\emph{high bike-rental demand} (\(y=1\)) or \emph{low/medium demand} (\(y=0\)).
+The fitted model with four predictors is
+
+\[
+\eta  \;=\;
+\beta_0
++ \beta_1\,\text{Temp}
++ \beta_2\,\text{Humidity}
++ \beta_3\,\text{Windspeed}
++ \beta_4\,\text{DaysSince2011},
+\qquad
+p=\sigma(\eta)=\frac{1}{1+e^{-\eta}} .
+\]
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Predictor & Symbol & Coefficient \\
+\midrule
+Temperature (\si{\celsius})            & \(x_1\) & \(\beta_1 =  0.29\) \\
+Humidity (\si{\percent})               & \(x_2\) & \(\beta_2 = -0.0627\) \\
+Windspeed (\si{\kilo\metre\per\hour})  & \(x_3\) & \(\beta_3 = -0.0925\) \\
+Days since 01-Jan-2011                 & \(x_4\) & \(\beta_4 =  0.0166\) \\
+\midrule
+Intercept                              & —       & \(\beta_0 = -8.52\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Sample means of the non-temperature features:
+
+\[
+\bar{x}_2 = 62.79,\qquad
+\bar{x}_3 = 12.76,\qquad
+\bar{x}_4 = 365.00 .
+\]
+
+\begin{enumerate}
+  \item[(a)]  \textbf{Offset.}  
+    Hold \(x_2,x_3,x_4\) at their means and compute the offset
+    \(\displaystyle \delta = \beta_2\bar{x}_2+\beta_3\bar{x}_3+\beta_4\bar{x}_4\).
+
+  \item[(b)]  \textbf{Probability table.}  
+    Using the reduced model
+    \(\eta(x_1)=\beta_0+\delta+\beta_1 x_1\),
+    fill in \(p(x_1)=\sigma(\eta)\) for
+    \(x_1=\{10,15,20,25,30,35\}\,^\circ\text{C}\):
+    \begin{center}
+\begin{tabular}{cccc}
+\toprule
+\(x_1\) (\si{\celsius}) & \(\eta(x_1)\) & \(p(x_1)\) \\
+\midrule
+10 &  -4.677 & 0.009 \\
+15 &  -3.227 & 0.038 \\
+20 &  -1.777 & 0.144 \\
+25 &  -0.327 & 0.419 \\
+30 &   ? & ? \\
+35 &   2.573 & 0.929 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+  \item[(c)]  \textbf{Derive the marginal effect.}  
+    Show step by step that
+    \(\displaystyle \frac{dp}{dx_1}=p(1-p)\,\beta_1\).
+
+  \item[(d)]  \textbf{Evaluate \(dp/dx_1\).}  
+    Compute \(dp/dx_1\) at \(x_1=15,30,35\;^\circ\text{C}\).  
+    Where is the temperature effect largest?
+
+  % \item[(e)]  \textbf{Classification.}  
+  %   With a 0.5 threshold, which of the six temperatures are predicted
+  %   “high-rental”?
+\end{enumerate}
+
+\newpage
+%====================================================================
+\section*{Solution}
+
+\paragraph{(a) Offset:} 
+$
+\delta=
+(-0.0627)(62.79)
++(-0.0925)(12.76)
++(0.0166)(365.00)
+=\boxed{0.94}.
+$
+
+\paragraph{(b) Probabilities.}
+
+%Effective intercept: \(\beta_0+\delta=-7.58\).
+
+\[
+\beta_0+\delta=-7.58
+\qquad
+\eta(x_1)=-7.58 + 0.29\,x_1,
+\qquad
+p(x_1)=\sigma\!\bigl(\eta(x_1)\bigr).
+\]
+
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+\(x_1\) (\si{\celsius}) & \(\eta(x_1)\) & \(p(x_1)\) \\
+\midrule
+10 &  -4.677 & 0.009 \\
+15 &  -3.227 & 0.038 \\
+20 &  -1.777 & 0.144 \\
+25 &  -0.327 & 0.419 \\
+30 &   1.123 & 0.755 \\
+35 &   2.573 & 0.929 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{(c) Marginal-effect derivation.}
+
+Goal: compute the instantaneous change in predicted probability when
+temperature \(x_{1}\) increases, keeping all other features fixed:
+\[
+\frac{\partial p}{\partial x_{1}}
+   \;=\;
+   \frac{\partial}{\partial x_{1}}
+   \sigma\!\bigl(\eta\bigr),
+   \qquad
+   \eta=\beta_{0}+\delta+\beta_{1}x_{1}.
+\]
+
+\begin{enumerate}
+  \item \textbf{Apply the chain rule}
+  \[
+    \frac{\partial p}{\partial x_{1}}
+     = \frac{\partial p}{\partial \eta}\,
+       \frac{\partial \eta}{\partial x_{1}} .
+  \]
+
+  \item \textbf{Derivative of the sigmoid}
+  \[
+    \frac{\partial p}{\partial \eta}
+      = \sigma(\eta)\bigl[1-\sigma(\eta)\bigr]
+      = p(1-p).
+  \]
+
+  \item \textbf{Derivative of the linear predictor}
+  \[
+    \frac{\partial \eta}{\partial x_{1}}
+      = \beta_{1},
+    \qquad\text{because }
+    \eta=\beta_{0}+\delta+\beta_{1}x_{1}.
+  \]
+
+  \item \textbf{Combine the two results}
+  \[
+    \boxed{\displaystyle
+      \frac{\partial p}{\partial x_{1}}
+        = p\,(1-p)\,\beta_{1}} .
+  \]
+\end{enumerate}
+
+\noindent%
+The scaling term \(p(1-p)\le 0.25\) peaks at \(p=0.5\), explaining
+why the same coefficient \(\beta_{1}=0.29\) produces the largest
+probability change near the mid-range and almost none in the tails.
+
+% \[
+% \frac{dp}{dx_1}
+% =\frac{dp}{d\eta}\,\frac{d\eta}{dx_1}
+% \;\;=\;
+% \sigma(\eta)\bigl(1-\sigma(\eta)\bigr)\,\beta_1
+% \;=\; p(1-p)\beta_1 .
+% \]
+
+% Steps:
+
+% 1. \(p=\sigma(\eta)\), \(\dfrac{d\sigma}{d\eta}=\sigma(1-\sigma)\).
+% 2. \(\eta=\beta_0+\delta+\beta_1x_1 \;\Longrightarrow\; d\eta/dx_1=\beta_1\).
+
+\paragraph{(d) Numeric marginal effects:}
+$
+dp/dx_1 = p(1-p)\beta_1 = 0.29\,p(1-p).
+$
+
+$\Rightarrow$ Largest effect occurs near \(x_1\approx30^\circ\text{C}\) where \(p\approx0.5\).
+
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+\(x_1\) & \(p\) & \(dp/dx_1\) \\
+\midrule
+15 °C & 0.038 & 0.011 \\
+30 °C & 0.755 & \textbf{0.054} \\
+35 °C & 0.929 & 0.019 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+% \paragraph{(e) Classification at threshold 0.5.}
+
+% Predicted “high-rental” for temperatures with \(p\ge0.5\):
+% \(\boxed{30^\circ\text{C},\,35^\circ\text{C}}\).
+
+\bigskip
+\noindent
+\textit{R verification}
+
+% \begin{verbatim}
+% beta0 <- -8.52; beta1 <- 0.29
+% delta <- -0.06266594*62.79 - 0.09247547*12.76 + 0.01659578*365
+% T <- c(10,15,20,25,30,35)
+% eta <- beta0 + delta + beta1*T
+% p   <- plogis(eta)
+% dp  <- p*(1-p)*beta1
+% data.frame(T, eta=round(eta,3), p=round(p,3), dp=round(dp,3))
+% \end{verbatim}
+<<echo=F, fig.height = 5>>=
+# ---------------------------------------------
+# Logistic-regression effect of temperature
+# ---------------------------------------------
+library(ggplot2)
+
+## coefficients
+beta0 <- -8.52 + 0.9426783
+beta1 <-  0.29
+
+## temperature grid
+Tseq <- -5:35
+eta  <- beta0 + beta1 * Tseq
+p    <- 1 / (1 + exp(-eta))                # predicted probability
+dp   <- p * (1 - p) * beta1               # marginal effect
+
+## data frame
+df <- data.frame(
+    temp = Tseq,
+    prob = p,
+    dprob_dT = dp
+)
+
+## plot
+ggplot(df, aes(temp, prob)) +
+    geom_line(color = "steelblue4", size = 1.2) +
+    labs(
+        x = "Temperature (°C)",
+        y = "P(high rentals)",
+        title = "Probability of High Bike Rentals vs. Temperature"
+    ) +
+    theme_minimal(base_size = 12)
+
+## plot marginal change
+ggplot(df, aes(temp, dprob_dT)) +
+    geom_line(color = "firebrick", size = 1.2) +
+    labs(
+        x = "Temperature (°C)",
+        y = "dp/dx1",
+        title = "Instantaneous Change in Probability per +1 C"
+    ) +
+    theme_minimal(base_size = 12)
+
+@
+\end{document}
