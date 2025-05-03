@@ -1,7 +1,8 @@
 \loesung{
 \label{ex_sol:Interaction_calculation}
 
-First step: We need to calculate the second partial derivative.
+\textbf{First step:}
+We need to calculate the respective second order partial derivative.
 
 Problem: The function $	f(\xv) = 2 x_1 + 3 x_2 - x_1 |x_2|$ is not differentiable for $x_2 = 0$. Hence, different cases need to be considered:
 \begin{center}
@@ -30,35 +31,36 @@ Case 3: $x_2 = 0$
 
 % Not considered, as analysis of interactions via definition requires the consideration of intervals. Examining single points does not make sense.
 
-Whenever \(x_1 \neq 0\), we know that the function has the form $ f(\xv) = 2 x_1 + 3 x_2 + x_1 x_2$ left from the point \((x_1, 0)\) and the form $ f(\xv) = 2 x_1 + 3 x_2 - x_1 x_2$ on the right hand side, hence at \((x_1, 0)\) it is not differentiable with respect to \(x_2\), and therefore our definition cannot be applied.
+Whenever \(x_1 \neq 0\), we know that the function has the form $ f(\xv) = 2 x_1 + 3 x_2 + x_1 x_2$ left from the point \((x_1, 0)\), and the form $ f(\xv) = 2 x_1 + 3 x_2 - x_1 x_2$ right from the point, hence at \((x_1, 0)\) it is not differentiable with respect to \(x_2\), and therefore our definition cannot be applied.
 
-However, for the point \((x_1, x_2) = 0\), the function takes the form $f(\xv) = 2 x_1$ on both sides in \(x_1\)-direction, and the form $f(\xv) = 3 x_2$ on both sides in \(x_2\)-direction. We can conclude that $f$ is twice differentiable at \((0,0)\) with $\frac{\partial^2 f(\xv)}{\partial x_1 \partial x_2} = 0$ at this point.
+However, for the point \((x_1, x_2) = 0\), the function takes the form $f(\xv) = 2 x_1$ on both sides in \(x_1\) direction, and the form $f(\xv) = 3 x_2$ on both sides in \(x_2\) direction. We can conclude that $f$ is twice differentiable at \((0,0)\) with $\frac{\partial^2 f(\xv)}{\partial x_1 \partial x_2} = 0$ at this point.
 
 % $\Rightarrow$
 
-Second step: Computing the expected value
+\textbf{Second step:}
+Computing the expected value.
 
-The squared second derivative is a constant \(1\) or \(0\), if defined. Hence, as long as only we have \(\P(x_2 \neq 0) > 0\), we will always have that the expected value is \(> 0\), and therefore, $x_1$ and $x_2$ interact with each other.
+The squared second derivative is a constant \(1\) or \(0\), if defined. Hence, as long as we have \(\P(x_2 \neq 0) > 0\), we will always have that the expected value is \(> 0\), and therefore, $x_1$ and $x_2$ interact with each other.
 
-On the other hand, in the case where \(\P(x_2 \neq 0) = 0\), it follows that \(\P(x_2 = 0) = 1\), which means that $x_2$ is constant almost surely (with 100\% probability).
+On the other hand, in the case where \(\P(x_2 \neq 0) = 0\), it follows that \(\P(x_2 = 0) = 1\), which means that $x_2$ is the constant 0 almost surely (with 100\% probability).
 In this case (when one variable is constant with probability 1), it does not make much sense to analyze for interactions.
 
 $\Rightarrow$ In this example, there is an interaction between $x_1$ and $x_2$.
 
 }
 
-
+\dlz
 
 \bonusloesung{
-% \begin{enumerate}[a)]
+\begin{enumerate}[a)]
 
-% \item 
+\item \label{Ex_sol:interaction_depending_on_distribution_a}
 As in exercise \ref{ex_sol:Interaction_calculation}, we first calculate the second derivative.
 Again, we have to distinguish three cases with respect to \(x_1\).
 
 Case 1: $x_1 > 0$
 \begin{align*}
-	\left( \frac{\partial^2 f(\xv)}{\partial x_1 \partial x_2} \right)^2 
+	\left( \frac{\partial^2 g(\xv)}{\partial x_1 \partial x_2} \right)^2 
 	& =  \left( \frac{\partial^2}{\partial x_1 \partial x_2} \, \left(0.01e^{x_1^2} + \sin(x_2) \sqrt{x_1} - 1.5 x_2^3 \right)\right)^2 
 	=  \left( \frac{\partial }{\partial x_2}\, \left( 0.01e^{x_1^2} \cdot 2 x_1 + \sin(x_2) \frac{1}{2 \sqrt{x_1}}  \right) \right)^2 \\ 
 	& =  \left( \frac{\cos(x_2)}{2 \sqrt{x_1}} \right) ^2  = \frac{\cos^2(x_2)}{2 x_1} \geq 0 ,    
@@ -68,7 +70,7 @@ because we assumed \(x_1 > 0\) in this case.
 
 Case 2: $x_1 < 0$
 $$
-	\left( \frac{\partial^2 f(\xv)}{\partial x_1 \partial x_2} \right)^2 
+	\left( \frac{\partial^2 g(\xv)}{\partial x_1 \partial x_2} \right)^2 
 	=  \left( \frac{\partial^2}{\partial x_1 \partial x_2} \, \left(0.01e^{x_1^2} + \sin(x_2) \sqrt{0} - 1.5 x_2^3 \right)\right)^2 
 	=  \left( \frac{\partial }{\partial x_2}\, \left( 0.01e^{x_1^2} \cdot 2 x_1 \right) \right)^2 
 	= 0
@@ -77,35 +79,34 @@ $$
 Case 3: $x_1 = 0$
 
 In this case, for any point $(0, x_2)$, the right-side limit of the partial derivative in $x_1$-direction is \(\infty\), i.e. the partial derivative has a singularity in this point, whereas the left-side limit is $0$.
-Therefore, $f$ can never be partially differentiable in $x_1$ direction in such a point (only differentiable from the left-hand side), and therefore the required second-order derivative also does not exist.
+Therefore, $g$ can never be partially differentiable in $x_1$ direction in such a point (only differentiable from the left-hand side), and therefore the required second-order derivative also does not exist.
 
 Expected value:
 
 Very similarly to exercise \ref{ex_sol:Interaction_calculation}, we can conclude again that the expected value will be greater than 0 as long as \(\P (X_1 > 0) > 0\), i.e. as long as there is a non-zero chance of \(x_1\) being greater than 0. \\
-On the other hand, for any distribution with \(\P (X_1 \geq 0) = 0\), that is with \(\P (X_1 < 0) = 1\), we actually get an expected value of 0, because in any region with probability \(> 0\), the second derivative is 0, and the expected value of 0 is 0.
+On the other hand, for any distribution with \(\P (X_1 \geq 0) = 0\), that is with \(\P (X_1 < 0) = 1\) (meaning that $X_1$ is negative with a probability of 1), we actually get an expected value of 0, because in any region with probability \(> 0\), the second derivative is 0, and the expected value of 0 is 0.
 
 \textbf{Examples for two probability distributions:}
 
-For this example we will use an exponential probability distribution with an arbitrary parameter \(\lambda\).
-We know that if some random variable \(X\) is distributed exponentially with parameter $\lambda$ (written $X \distas{} \Exp_\lambda$), then \( \P(X>0) = 1 \) and \( P(X<0) = 0 \). You can also construct this example with any other distribution satisfying this property (e.g. a geometric distribution or a binomial distribution).
+For this example we will use an exponential probability distribution with an arbitrary parameter \(\lambda > 0\).
+We know that if some random variable \(X\) is distributed exponentially with parameter $\lambda$ (written $X \distas{} \Exp_\lambda$), then \( \P(X>0) = 1 \) and \( P(X<0) = 0 \). You can also construct this example with any other distribution which is concentrated on the positive half-axis, e.g. a geometric distribution or a binomial distribution.
 
 \textbf{With interactions:}
-Choose \(X_1 \indep X_2\) (this means that $X_1$ and $X_2$ are independent), $X_1 \distas{} \Exp_\lambda$ exponentially and $X_2 \distas{} \normal(\mu, \sigma)$ normally distributed.
+Choose \(X_1 \indep X_2\) (this means that $X_1$ and $X_2$ are independent), $X_1 \distas{} \Exp_\lambda$ exponentially and $X_2 \distas{} \normal(\mu, \sigma)$ normally distributed. (You can also choose any other probability distribution for $X_2$.)
 Then we get from the independence that \( \P (X_1 > 0) = 1 \), and therefore
 $$
-\E_\Xv \left[ \left( \frac{\partial^2 f(\Xv)}{\partial x_i \partial x_j} \right)^2 \right]
+\E_\Xv \left[ \left( \frac{\partial^2 g(\Xv)}{\partial x_i \partial x_j} \right)^2 \right]
 = \E_\Xv \left[ \frac{\cos^2(X_2)}{2 X_1} \right] > 0,
 $$
 because the function inside is greater than 0 on the half-space \(\{ x_1 > 0 \}\), on which the distribution is concentrated.
 So there are interactions in this case.
 
 \textbf{Without interactions:}
-
 Again choose \(X_1 \indep X_2\) and $X_2 \distas{} \normal(\mu, \sigma)$ normally distributed, but now choose $ -X_1 \distas{} \Exp_\lambda$, so $X_1$ follows the symmetric mirror of an exponential distribution.
 In this case we have \( \P (X_1 < 0) = 1 \).
 Hence
 $$
-\E_\Xv \left[ \left( \frac{\partial^2 f(\Xv)}{\partial x_i \partial x_j} \right)^2 \right]
+\E_\Xv \left[ \left( \frac{\partial^2 g(\Xv)}{\partial x_i \partial x_j} \right)^2 \right]
 = \E_\Xv \left[ 0 \right] = 0,
 $$
 because \( \P (X_1 > 0) = 0 \).
@@ -113,10 +114,16 @@ Therefore, no interactions are present for this distribution.
 
 \textbf{Summary:}
 
-In a nutshell, the function \(f\) exhibits interactions only on the half-space \( \left\{ (x_1,x_2) \middle| x_1 > 0 \right\} \) of \(\R^2\).
-Therefore, there are interactions present if and only if the data distribution is at least partially contained in this half-space, so there is at least some data inside some region in this half-space.
+In a nutshell, the function \(g\) exhibits interactions only on the half-space \( \left\{ (x_1,x_2) \middle| x_1 > 0 \right\} \) of \(\R^2\).
+Therefore, there are interactions present if and only if the data distribution is at least partially contained in this half-space, so there is at least some data inside this half-space.
 
-% \item 
+\item
+For both distributions in part \ref{Ex_sol:interaction_depending_on_distribution_a}), the function $f$ from exercise \ref{ex_sol:Interaction_calculation} would exhibit interactions, since its second partial derivative squared is 1 whenever $x_2 \neq 0$, so we would take the expected value of 1, which is 1.
+This also holds when swapping the roles of $x_1$ and $x_2$, so that $x_2$ is exponentially distributed and concentrated on one half-space.
 
-% \end{enumerate}
+We can even prove that no other distribution could change this result.
+As discussed in the solution for exercise \ref{ex_sol:Interaction_calculation}, the function $f$ always contains interactions except if \(\P(X_2 = 0) = 1\), 
+So the only kind of distribution where $f$ exhibits no interactions is that where all probability of $x_2$ is concentrated on the single point $0$.
+
+\end{enumerate}
 }

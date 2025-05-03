@@ -701,17 +701,17 @@ $$
 \begin{enumerate}\itemsep4pt
   \item<1-> {\bf Discretise}\,: Map each axis to \(b\!\le\!256\) ordered
         bins (quantile or equal-width).
-  \item<2-> {\bf Enumerate}\,: \(b^{2}\) candidate cuts
-        \((c_i,c_j)\) at bin boundaries.
+  \item<2-> {\bf Iterate} over \(b^{2}\) candidate cuts
+        \((c_i,c_j)\). %at bin boundaries.
   \item<2-> {\bf Fit}\,: For each cut, assign a constant
         \(\hat y_r\!=\!\text{mean}(y\!\in\!r)\) to
         \(r\!\in\!\{A,B,C,D\}\).
-  \item<2-> {\bf Score}\,: Compute  
+  \item<2-> {\bf Compute}\,:   
         \(\text{RSS}(c_i,c_j)=\sum_{r}
          \sum_{(x,y)\in r}(y-\hat y_r)^{2}\).
   \item<2-> {\bf Select}\,: Keep the split with minimal RSS.\\
-  $\leadsto$ RSS drop measures interaction strength \\% of \((x_i,x_j)\) \\
-  $\leadsto$ $\mathcal{O}(n+b^{2})$ per pair.
+  $\leadsto$ RSS drop measures interaction strength. \\% of \((x_i,x_j)\) \\
+  %$\leadsto$ $\mathcal{O}(n+b^{2})$ per pair.
 \end{enumerate}
 
 \end{column}
@@ -752,7 +752,7 @@ y_r=\frac{T_r}{n_r}.
 \textbf{Why is this fast?}
 \begin{itemize}
   \item Precompute cummulative sums of \(y\), \(y^2\), and counts across the binned grid
-  \item Enables constant-time \(O(1)\) lookup of region statistics \(T_r, Q_r, n_r\) for any cut
+  \item Enables fast lookup of region statistics \(T_r, Q_r, n_r\) for any cut
   \item No additional data scan or recomputation needed across the \(b^2\) candidate cuts
 \end{itemize}
 
