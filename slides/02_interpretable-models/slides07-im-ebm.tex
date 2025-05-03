@@ -1111,5 +1111,113 @@ y_r=\frac{T_r}{n_r}.
 \includegraphics[width=\linewidth]{figure/final_ebm.png}
 
 \end{frame}
+
+
+
+% % ---------- SLIDE 1: headline comparison ---------------------------
+% \begin{frame}{EBM \textit{vs.} Model-based Boosting}
+% \small
+% \setlength{\tabcolsep}{5pt}
+% \begin{tabular}{@{}p{2.5cm}p{4.5cm}p{4.5cm}@{}}
+% \toprule
+% \textbf{Aspect} &
+% \textbf{EBM \phantom{XXXXXXXXX} \citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf} \citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}} &
+% \textbf{Model-based Boosting \phantom{XXXX} 
+% \citebutton{Bühlmann, 2003}{https://doi.org/10.1198/016214503000125} \citebutton{Bühlmann, 2008}{https://arxiv.org/abs/0804.2752}} \\
+% \midrule
+% \emph{Base learner} &
+% Bagged trees (2–4 leaves), one feature at a time; piece-wise constant shape functions &
+% Custom learner per component (linear, spline, tree) \\
+% \addlinespace[2pt]\pause
+% \emph{Iteration policy} &
+% Round-robin cycle over \emph{all} features at every boosting iteration &
+% Greedy: update \emph{single} component that most reduces risk \\
+% \addlinespace[2pt]\pause
+% \emph{Regularisation} &
+% $\eta\!\approx\!0.01$;\; high $M$ (5–10k) + early stopping via internal CV on OOB samples;\; bagging lowers variance &
+% Shrinkage $\nu\!\in\!(0,1]$;\; early stopping;\; intrinsic variable selection \\
+% \addlinespace[2pt]\pause
+% \emph{Interactions} &
+% FAST ranks and selects top-$K$ interaction pairs, fitted as bivariate trees (GA2M) &
+% Only included if user provides explicit interaction terms; no automatic pairwise search\\
+% \addlinespace[2pt]\pause
+% \emph{Interpretability} &
+% 1-D step plots ($f_j$) + selected 2-D heat-maps ($f_{ij}$) &
+% Depends on base learner: coefficients, smooth splines, random-effect curves, etc.\\
+% \bottomrule
+% \end{tabular}
+% \end{frame}
+%------------- SLIDE 1 -------------------------------------------------
+\begin{frame}{EBM \textit{vs.} Model-based Boosting}
+\small
+\begin{itemize}
+  %-- BASE LEARNER -----------------------------------------------------
+  \item \textbf{Base learner}
+        \begin{itemize}
+          \item \textbf{EBM}: bagged 2--4-leaf trees, \emph{one feature} per tree  
+                $\Rightarrow$ step-function shape $f_j$  % ASCII arrow macro
+                \citebutton{Lou et al.\ 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}
+          \item \textbf{MB-boost}: user chooses component-wise learner  
+                (linear term, P-spline, tree, random effect, \dots)  
+                \citebutton{B\"uhlmann \& Hothorn 2007}{https://doi.org/10.1214/07-STS242}
+        \end{itemize}
+\pause
+  %-- ITERATION POLICY -------------------------------------------------
+  \item \textbf{Iteration policy}
+        \begin{itemize}
+          \item \textbf{EBM}: round-robin ($\forall j$) each boosting pass; tiny
+                learning rate $\eta \approx 0.01$.
+          \item \textbf{MB-boost}: greedy; update the \emph{single} component that yields the largest loss reduction.
+        \end{itemize}
+\pause
+  %-- REGULARISATION ---------------------------------------------------
+  \item \textbf{Regularisation}
+        \begin{itemize}
+          \item \textbf{EBM}: many iterations $M$ (5--10k);  
+                early stopping via \emph{internal} CV on out-of-bag samples;  
+                bagging further lowers variance.
+          \item \textbf{MB-boost}: shrinkage $\nu \in (0,1]$;  
+                early stop by CV/AIC; component selection acts like an
+                $L_0/L_1$ penalty $\rightarrow$ sparsity.
+        \end{itemize}
+\end{itemize}
+\end{frame}
+
+%------------- SLIDE 2 -------------------------------------------------
+\begin{frame}{EBM \textit{vs.} Model-based Boosting}
+\small
+\begin{itemize}
+  %-- INTERACTIONS -----------------------------------------------------
+  \item \textbf{Interactions}
+        \begin{itemize}
+          \item \textbf{EBM}: FAST ranks and selects top-$K$ interaction pairs, fitted as bivariate trees $\Rightarrow$ GA2M  
+                \citebutton{Lou et~al.\ 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
+          \item \textbf{MB-boost}: interactions are modelled only when the
+                user supplies dedicated interaction base learners;
+                no automatic pairwise search
+        \end{itemize}
+\pause
+  %-- INTERPRETABILITY -------------------------------------------------
+  \item \textbf{Interpretability}
+        \begin{itemize}
+          \item \textbf{EBM}:
+          \begin{itemize}
+              \item one\;1-D step plot for each $f_{j}$
+              \item small number of 2-D heat-maps for selected $f_{ij}$
+          \end{itemize} 
+          \item \textbf{MB-boost}: depends on selected learner: linear
+                coefficients, smooth splines, random-effect curves, etc. %; statistical inference (confidence intervals, $p$-values) available for many bases
+        \end{itemize}
+\pause
+  %-- TAKE-AWAY --------------------------------------------------------
+  \item \textbf{Take-away}  
+  \begin{itemize}
+      \item \emph{EBM} provides fast, interpretable, and interaction-sparse models
+      \item \emph{MB-boost} offers flexible statistical modelling with built-in variable selection %and formal inference
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+
 \endlecture
 \end{document}

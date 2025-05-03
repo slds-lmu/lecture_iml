@@ -37,15 +37,16 @@
 %\medskip
 %\pause
 
-\textbf{Idea of decision trees}: 
+\textbf{Idea}: 
 %Split data in different subsets based on cut-off values in features 
-Partition data into subsets based on cut-off values in features (found by minimizing a split criterion via greedy search) and predict constant mean $c_m$ in leaf node $\mathcal{R}_m$:
+Partition data into axis-aligned regions via greedy search for feature cut points (minimizing a split criterion), then predict a constant mean $c_m$ in each leaf region $\mathcal{R}_m$:
+%Partition data into subsets based on cut-off values in features (found by minimizing a split criterion via greedy search) and predict constant mean $c_m$ in leaf node $\mathcal{R}_m$:
 
 \begin{columns}[T, totalwidth=\textwidth]
 
 \begin{column}{0.65\textwidth}
 $$
-\hat f(x) = \sum_{m=1}^M c_m \mathds{1}_{\{x \in \mathcal{R}_m\}}
+\textstyle\hat f(x) = \sum\limits_{m=1}^M c_m \mathds{1}_{\{x \in \mathcal{R}_m\}}
 $$
 
 % \begin{itemize}
@@ -56,8 +57,8 @@ $$
 \begin{itemize}
     %\item Finding best split point (CART): Greedy search for the point that minimizes the variance of $y$ (regression) or the Gini index (classification)
     \item Applicable to regression and classification
-    \item Able to model interactions and non-linear effects
-    \item Able to handle mixed feature spaces and missing values
+    \item Models interactions and non-linear effects
+    \item Handles mixed feature spaces \& missing values
 \end{itemize}
 
 \end{column}
@@ -99,7 +100,7 @@ $$
    
 \end{column}
 \end{columns}
-\vspace{-0.4cm}
+%\vspace{-0.4cm}
 \begin{center}
 \includegraphics[width=0.45\textwidth]{figure/tree_surface1.pdf} \qquad  
 \includegraphics[width=0.33\textwidth]{figure/tree_surface2.png}
@@ -108,16 +109,119 @@ $$
 \end{frame}
 
 
-\begin{frame}{Interpretation}
+% \begin{frame}{Interpretation}
+% \begin{itemize}
+%     \item Directly by following the tree structure (i.e., sequence of decision rules)
+%     \item Importance of $x_j$: Aggregate ``improvement in split criterion'' over all splits where $x_j$ was involved\\
+%     \item[] $\leadsto$ e.g., variance for regression or Gini index for classification
+%     %Feature importance: How much did split criterion improve compared to parent node% by (scaled) score of how much splitting criterion (e.g. variance) is reduced compared to a parent node
+% \end{itemize}
+
+% \end{frame}
+
+\begin{frame}{Interpretation of Tree-Based Models}
 \begin{itemize}
-    \item Directly by following the tree structure (i.e., sequence of decision rules)
-    \item Importance of $x_j$: Aggregate ``improvement in split criterion'' over all splits where $x_j$ was involved\\
-    \item[] $\leadsto$ e.g., variance for regression or Gini index for classification
-    %Feature importance: How much did split criterion improve compared to parent node% by (scaled) score of how much splitting criterion (e.g. variance) is reduced compared to a parent node
+    \item Interpretation via path of decision rules along tree branches
+    \item \textbf{Feature importance} (quantifies how often and how usefully $x_j$ is used): 
+    \begin{itemize}
+        \item For each split on feature $x_j$, record the decrease in the split criterion 
+        \item Aggregate this over the tree: sum or average over all splits involving $x_j$
+        \item Split criterion: variance (regression), Gini index / entropy (classification)
+    \end{itemize}
+    %\item[] $\leadsto$ Quantifies how often and how usefully $x_j$ is used
 \end{itemize}
+\begin{columns}[T, totalwidth=\textwidth]
+  \begin{column}{0.6\textwidth}
+    %\begin{center}
+    % \begin{tikzpicture}[scale=0.7, every node/.style={font=\small}]
+    %   % Nodes
+    %   \node[draw, circle] (root) at (0,0) {$x_j < 5$};
+    %   \node[draw, circle] (left) at (-3,-2.5) {$x_k < 3$};
+    %   \node[draw, rectangle] (L1) at (-4.2,-5) {$c_1$};
+    %   \node[draw, rectangle] (L2) at (-1.8,-5) {$c_2$};
+
+    %   \node[draw, circle] (right) at (3,-2.5) {$x_k < 7$};
+    %   \node[draw, rectangle] (R1) at (2,-5) {$c_3$};
+    %   \node[draw, rectangle] (R2) at (4,-5) {$c_4$};
+
+    %   % Edges with labels
+    %   \draw[->] (root) -- node[above left] {\scriptsize } node[midway, left=3pt] {\scriptsize  $\Delta\text{Var} = 0.18$} (left);
+    %   \draw[->] (root) -- node[above right] {\scriptsize } node[midway, right=3pt] {\scriptsize } (right);
+
+    %   \draw[->] (left) -- node[left] {\scriptsize $\Delta\text{Var} = 0.07$} (L1);
+    %   \draw[->] (left) -- (L2);
+
+    %   \draw[->] (right) -- node[left] {\scriptsize $\Delta\text{Var} = 0.10$} (R1);
+    %   \draw[->] (right) -- (R2);
+    % \end{tikzpicture}
+    \begin{tikzpicture}[scale=0.75, every node/.style={font=\small}]
+  % Nodes: rectangular with split condition + delta
+  \node[draw, ellipse, align=center] (root) at (0,0) {$x_j < 5$\\ \scriptsize$ \Delta\text{Var} = 0.18$};
+  \node[draw, ellipse, align=center] (left) at (-3,-2.5) {$x_k < 3$\\ \scriptsize$\Delta\text{Var} = 0.07$};
+  \node[draw, ellipse, align=center] (right) at (3,-2.5) {$x_k < 7$\\ \scriptsize$\Delta\text{Var} = 0.10$};
+
+  % Leaf nodes
+  \node[draw, rectangle] (L1) at (-4.2,-5) {$c_1$};
+  \node[draw, rectangle] (L2) at (-1.8,-5) {$c_2$};
+  \node[draw, rectangle] (R1) at (2,-5) {$c_3$};
+  \node[draw, rectangle] (R2) at (4,-5) {$c_4$};
+
+  % Edges (unlabeled)
+  \draw[->] (root) -- (left);
+  \draw[->] (root) -- (right);
+  \draw[->] (left) -- (L1);
+  \draw[->] (left) -- (L2);
+  \draw[->] (right) -- (R1);
+  \draw[->] (right) -- (R2);
+\end{tikzpicture}
+
+    %\end{center}
+  \end{column}
+
+  \begin{column}{0.4\textwidth}
+    \begin{itemize}
+  \item Each $\Delta\text{Var}$ is assigned to the splitting feature
+  % Variance reductions $\Delta\text{Var}$ from splits are attributed to the splitting feature.
+  \item Feature importance = sum of all $\Delta\text{Var}$ for that feature:
+  \begin{itemize}
+    \item[$x_j$:]  $0.18$
+    \item[$x_k$:]  $0.07 + 0.10 = 0.17$
+  \end{itemize}
+    \end{itemize}
+  \end{column}
+\end{columns}
+% \vspace{0.4cm}
+% \begin{center}
+% \begin{tikzpicture}[scale=0.7, every node/.style={font=\small}]
+%   % Nodes
+%   \node[draw, circle] (root) at (0,0) {$x_j < 5$};
+%   \node[draw, circle] (left) at (-3,-2.5) {$x_k < 3$};
+%   \node[draw, rectangle] (L1) at (-4.2,-5) {$c_1$};
+%   \node[draw, rectangle] (L2) at (-1.8,-5) {$c_2$};
+
+%   \node[draw, circle] (right) at (3,-2.5) {$x_k < 7$};
+%   \node[draw, rectangle] (R1) at (2,-5) {$c_3$};
+%   \node[draw, rectangle] (R2) at (4,-5) {$c_4$};
+
+%   % Edges with labels
+%   \draw[->] (root) -- node[above left] {\scriptsize yes} node[midway, left=3pt] {\scriptsize  $\Delta\text{Var} = 0.18$} (left);
+%   \draw[->] (root) -- node[above right] {\scriptsize no} node[midway, right=3pt] {\scriptsize $\Delta\text{Var} = 0.10$} (right);
+
+%   \draw[->] (left) -- node[left] {\scriptsize $\Delta\text{Var} = 0.07$} (L1);
+%   \draw[->] (left) -- (L2);
+
+%   \draw[->] (right) -- (R1);
+%   \draw[->] (right) -- (R2);
+% \end{tikzpicture}
+% \end{center}
+
+% \vspace{0.2cm}
+% \begin{itemize}
+%     \item[] $\Rightarrow$ Feature importance($x_j$) += 0.18
+%     \item[] $\Rightarrow$ Feature importance($x_k$) += 0.07 + 0.10 = 0.17
+% \end{itemize}
 
 \end{frame}
-
 
 
 \begin{frame}{Decision Trees - Example}
@@ -509,18 +613,27 @@ Differences to CART:
     \begin{column}{0.6\textwidth}
         \textbf{Decision Rules} \citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
         \begin{itemize}
-            \item (Chaining of) simple ``if -- then'' statements\\
+            \item Flat list of simple ``if -- then'' statements\\
             $\leadsto$ very intuitive and easy-to-interpret
-            \item Most methods work only for classification and categorical features
+            \item Mainly devised for classification \\
+            (support for regression is limited)
+            \item Numeric features are typically discretised
         \end{itemize}
     \end{column}
     \begin{column}{0.4\textwidth}
-    \vspace{\dimexpr-2\parsep-2\parskip\relax}
-        \begin{center}
-            \includegraphics[width = 0.8\textwidth]{figure/decision_rules.png}
-            % \only<4->{\includegraphics[width = 0.7\textwidth]{figure/knn.png} 
-            % \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}}
-        \end{center}
+        %\vspace{\dimexpr-2\parsep-2\parskip\relax}
+        %\begin{center}
+        \scriptsize
+\textcolor{blue}{IF}  $x_{1} \le 2.3$  \textcolor{blue}{AND}  $x_{4} = \text{``A''}$   \hfill\textcolor{blue}{THEN} \hspace{5pt} y = 1\\[2pt]
+\textcolor{blue}{ELSE IF}  $x_{2} > 5.0$  \hfill \textcolor{blue}{THEN} \hspace{5pt} y = 2\\[2pt]
+\textcolor{blue}{ELSE}  \hfill y = 3
+      %  \end{center}
+    % \vspace{\dimexpr-2\parsep-2\parskip\relax}
+    %     \begin{center}
+    %         \includegraphics[width = 0.8\textwidth]{figure/decision_rules.png}
+    %         % \only<4->{\includegraphics[width = 0.7\textwidth]{figure/knn.png} 
+    %         % \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}}
+    %     \end{center}
     \end{column}
 \end{columns}
 
@@ -528,12 +641,24 @@ Differences to CART:
 
 \begin{columns}[c, totalwidth=\textwidth]
     \begin{column}{0.6\textwidth}
-        \only<2->{\textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
-        \begin{itemize}
-            \item Combination of LM and decision trees 
-            \item Uses (many) decision trees to extract important decision rules $r_1, r_2, r_3, r_4$ which are used as features in a (regularized) LM
-            \item Allows for feature interactions and non-linearities
-        \end{itemize}}
+        \only<2->{
+        % \textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
+        % \begin{itemize}
+        %     \item Combination of LM and decision trees 
+        %     \item Uses (many) decision trees to extract important decision rules $r_1, r_2, r_3, r_4$ which are used as features in a (regularized) LM
+        %     \item Allows for feature interactions and non-linearities
+        % \end{itemize}
+        \textbf{RuleFit} \citebutton{Friedman \& Popescu 2008}{https://arxiv.org/abs/0811.1679}
+\begin{itemize}
+  \item Extract binary rules \(r_m(\mathbf{x}) \in \{0,1\}\) from many shallow trees (one per root-to-leaf path)
+  \item Fit an $L_1$-regularized LM
+$\hat f(\mathbf x)=\beta_0+\textstyle\sum_m\beta_m r_m(\mathbf x)+\sum_j\gamma_j x_j$
+  \item Regularization retains only a few rules\\
+  $\Rightarrow$ sparse, non-linear, interaction-aware
+  \item Coefficients relate to rule/feature importance
+\end{itemize}
+
+        }
 
         % \only<3->{\textbf{Naive Bayes}
         % \citebutton{Zhang 2004}{https://www.aaai.org/Papers/FLAIRS/2004/Flairs04-097.pdf}
