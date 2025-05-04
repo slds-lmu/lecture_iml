@@ -3,7 +3,7 @@
 %------------------------------------------------------------
 \documentclass[a4paper,11pt]{article}
 \usepackage{amsmath,booktabs}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[margin=1.5cm]{geometry}
 \usepackage[utf8]{inputenc}   % ensure this is in your preamble
 
 \usepackage{siunitx}   % nice numbers
@@ -17,7 +17,7 @@
 \maketitle
 
 %====================================================================
-\section*{Exercise}
+%\section*{Exercise}
 
 A logistic regression predicts whether a day shows
 \emph{high bike-rental demand} (\(y=1\)) or \emph{low/medium demand} (\(y=0\)).
@@ -134,41 +134,79 @@ p(x_1)=\sigma\!\bigl(\eta(x_1)\bigr).
 \bottomrule
 \end{tabular}
 \end{center}
+\paragraph{(c) Marginal‐effect derivation.}
 
-\paragraph{(c) Marginal-effect derivation.}
-
-Goal: compute the instantaneous change in predicted probability when
-temperature \(x_{1}\) increases, keeping all other features fixed:
+\textbf{Goal:} Compute the instantaneous change in the predicted probability  
+when temperature \(x_{1}\) increases, holding all other features constant:
 \[
 \frac{\partial p}{\partial x_{1}}
    \;=\;
    \frac{\partial}{\partial x_{1}}
    \sigma\!\bigl(\eta\bigr),
    \qquad
-   \eta=\beta_{0}+\delta+\beta_{1}x_{1}.
+   \eta=\beta_{0}+\delta+\beta_{1}x_{1},
 \]
+where \(p=\sigma(\eta)=\bigl(1+e^{-\eta}\bigr)^{-1}\) and  
+\(\delta\) collects the fixed contributions of the remaining covariates.
 
 \begin{enumerate}
   \item \textbf{Apply the chain rule}
   \[
     \frac{\partial p}{\partial x_{1}}
-     = \frac{\partial p}{\partial \eta}\,
-       \frac{\partial \eta}{\partial x_{1}} .
+     \;=\;
+     \frac{\partial \sigma(\eta)}{\partial \eta}\,
+     \frac{\partial \eta}{\partial x_{1}} .
   \]
 
   \item \textbf{Derivative of the sigmoid}
-  \[
-    \frac{\partial p}{\partial \eta}
-      = \sigma(\eta)\bigl[1-\sigma(\eta)\bigr]
-      = p(1-p).
-  \]
+  
+  We begin with the definition of the sigmoid function:
+\[
+\sigma(\eta) = \frac{1}{1 + e^{-\eta}}.
+\]
+
+We aim to compute its derivative with respect to \( \eta \):
+\[
+\frac{d}{d\eta} \left( \frac{1}{1 + e^{-\eta}} \right).
+\]
+
+Rewriting using the power rule:
+\[
+\sigma(\eta) = (1 + e^{-\eta})^{-1},
+\]
+so by the chain rule:
+\[
+\frac{d\sigma}{d\eta}
+  = -1 \cdot (1 + e^{-\eta})^{-2} \cdot \frac{d}{d\eta}(1 + e^{-\eta})
+  = \frac{e^{-\eta}}{(1 + e^{-\eta})^2}.
+\]
+
+To express this in terms of \( \sigma(\eta) \), note:
+\[
+\sigma(\eta) = \frac{1}{1 + e^{-\eta}},
+\quad\text{and}\quad
+1 - \sigma(\eta) = \frac{e^{-\eta}}{1 + e^{-\eta}}.
+\]
+
+Hence:
+\[
+\sigma(\eta)\,(1 - \sigma(\eta)) = \frac{1}{1 + e^{-\eta}} \cdot \frac{e^{-\eta}}{1 + e^{-\eta}} = \frac{e^{-\eta}}{(1 + e^{-\eta})^2}.
+\]
+
+So the derivative simplifies to:
+\[
+\frac{\partial p}{\partial \eta}
+  = \frac{d\sigma}{d\eta}
+  = \sigma(\eta)\,(1 - \sigma(\eta))
+  = p\,(1 - p).
+\]
 
   \item \textbf{Derivative of the linear predictor}
   \[
     \frac{\partial \eta}{\partial x_{1}}
-      = \beta_{1},
-    \qquad\text{because }
-    \eta=\beta_{0}+\delta+\beta_{1}x_{1}.
+      =\beta_{1},
+    \qquad
+    \text{because } \eta=\beta_{0}+\delta+\beta_{1}x_{1}.
   \]
 
   \item \textbf{Combine the two results}
@@ -177,6 +215,14 @@ temperature \(x_{1}\) increases, keeping all other features fixed:
       \frac{\partial p}{\partial x_{1}}
         = p\,(1-p)\,\beta_{1}} .
   \]
+
+  \item \textbf{Interpretation}  
+  The factor \(p(1-p)\) is maximal at \(p=0.5\) and vanishes as \(p\to0\) or \(p\to1\),
+  illustrating that the marginal effect of \(x_{1}\) is largest when the model is
+  most uncertain and negligible in the extreme–probability regions.  The coefficient
+  \(\beta_{1}\) scales this intrinsic sensitivity, so the overall effect is
+  \emph{context‐dependent}: it varies with the current value of the linear predictor
+  through \(p\).
 \end{enumerate}
 
 \noindent%
@@ -222,9 +268,9 @@ $\Rightarrow$ Largest effect occurs near \(x_1\approx30^\circ\text{C}\) where \(
 % Predicted “high-rental” for temperatures with \(p\ge0.5\):
 % \(\boxed{30^\circ\text{C},\,35^\circ\text{C}}\).
 
-\bigskip
-\noindent
-\textit{R verification}
+%\bigskip
+%\noindent
+%\textit{R verification}
 
 % \begin{verbatim}
 % beta0 <- -8.52; beta1 <- 0.29
@@ -235,7 +281,7 @@ $\Rightarrow$ Largest effect occurs near \(x_1\approx30^\circ\text{C}\) where \(
 % dp  <- p*(1-p)*beta1
 % data.frame(T, eta=round(eta,3), p=round(p,3), dp=round(dp,3))
 % \end{verbatim}
-<<echo=F, fig.height = 5>>=
+<<echo=F, fig.height = 6>>=
 # ---------------------------------------------
 # Logistic-regression effect of temperature
 # ---------------------------------------------
@@ -259,17 +305,17 @@ df <- data.frame(
 )
 
 ## plot
-ggplot(df, aes(temp, prob)) +
+p1 = ggplot(df, aes(temp, prob)) +
     geom_line(color = "steelblue4", size = 1.2) +
     labs(
         x = "Temperature (°C)",
         y = "P(high rentals)",
         title = "Probability of High Bike Rentals vs. Temperature"
-    ) +
+    ) + ylim(0,1) +
     theme_minimal(base_size = 12)
 
 ## plot marginal change
-ggplot(df, aes(temp, dprob_dT)) +
+p2 = ggplot(df, aes(temp, dprob_dT)) +
     geom_line(color = "firebrick", size = 1.2) +
     labs(
         x = "Temperature (°C)",
@@ -277,6 +323,7 @@ ggplot(df, aes(temp, dprob_dT)) +
         title = "Instantaneous Change in Probability per +1 C"
     ) +
     theme_minimal(base_size = 12)
-
+library(gridExtra)
+grid.arrange(p1, p2, nrow = 2)
 @
 \end{document}

@@ -271,6 +271,107 @@ $$
 \end{itemize}
 \end{frame}
 
+
+
+
+% % --- Begin Embedded Slides on Marginal Effects in Logistic Regression ---
+
+% \begin{frame}{Logistic Regression: Goal of Marginal Effect Calculation}
+% \textbf{Objective:} Compute the instantaneous change in the predicted probability $p$ when the covariate $x_1$ (e.g., temperature) increases, holding other variables constant.
+
+% \vspace{1ex}
+% Model specification:
+% \[
+% p = \sigma(\eta), \quad \sigma(\eta) = \frac{1}{1 + e^{-\eta}}, \quad \eta = \beta_0 + \delta + \beta_1 x_1,
+% \]
+% where $\delta$ collects all other fixed covariate contributions.
+
+% We are interested in:
+% \[
+% \frac{\partial p}{\partial x_1}.
+% \]
+% \end{frame}
+
+% \begin{frame}{Marginal Effect: Chain Rule Decomposition}
+% Apply the multivariable chain rule:
+% \[
+% \frac{\partial p}{\partial x_1}
+%   = \frac{\partial p}{\partial \eta} \cdot \frac{\partial \eta}{\partial x_1}.
+% \]
+
+% \begin{itemize}
+%   \item The first term captures the sensitivity of the sigmoid function.
+%   \item The second term is the direct effect of $x_1$ on the linear predictor.
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Sigmoid Derivative: Algebraic Derivation}
+% Start with the definition:
+% \[
+% \sigma(\eta) = \frac{1}{1 + e^{-\eta}} = (1 + e^{-\eta})^{-1}.
+% \]
+
+% Differentiate:
+% \[
+% \frac{d\sigma}{d\eta} = - (1 + e^{-\eta})^{-2} \cdot (-e^{-\eta}) = \frac{e^{-\eta}}{(1 + e^{-\eta})^2}.
+% \]
+
+% Express in terms of $\sigma(\eta)$:
+% \[
+% \sigma(\eta) = \frac{1}{1 + e^{-\eta}}, \quad 1 - \sigma(\eta) = \frac{e^{-\eta}}{1 + e^{-\eta}},
+% \]
+% so:
+% \[
+% \frac{d\sigma}{d\eta} = \sigma(\eta)(1 - \sigma(\eta)) = p(1 - p).
+% \]
+% \end{frame}
+
+% \begin{frame}{Linear Predictor Derivative with Respect to $x_1$}
+% Assume:
+% \[
+% \eta = \beta_0 + \delta + \beta_1 x_1.
+% \]
+
+% Then:
+% \[
+% \frac{\partial \eta}{\partial x_1} = \beta_1.
+% \]
+% This captures the direct (linear) contribution of $x_1$ to $\eta$.
+% \end{frame}
+
+% \begin{frame}{Marginal Effect Formula for Covariate $x_1$}
+% Combine results from the sigmoid and predictor derivatives:
+% \[
+% \frac{\partial p}{\partial x_1}
+%   = \frac{\partial p}{\partial \eta} \cdot \frac{\partial \eta}{\partial x_1}
+%   = p(1 - p)\,\beta_1.
+% \]
+
+% \begin{block}{Final Expression}
+% \[
+% \boxed{\displaystyle \frac{\partial p}{\partial x_1} = p(1 - p)\,\beta_1}
+% \]
+% \end{block}
+
+% \textbf{Interpretation of the Marginal Effect}
+% \begin{itemize}
+%   \item $p(1 - p)$ is the slope of the sigmoid function:
+%   \begin{itemize}
+%     \item Maximal at $p = 0.5$ (most uncertain region).
+%     \item Approaches $0$ as $p \to 0$ or $p \to 1$ (saturation).
+%   \end{itemize}
+%   \item $\beta_1$ scales the effect: larger values imply steeper increases in predicted probability with $x_1$.
+%   \item The overall marginal effect is context-dependent and nonlinear in $x_1$ due to the form of $\sigma(\eta)$.
+% \end{itemize}
+% \end{frame}
+
+% % --- End Embedded Slides on Marginal Effects ---
+
+
+
+
+
+
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
