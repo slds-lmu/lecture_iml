@@ -1,25 +1,42 @@
 \textbf{Solution Quiz:}\\\noindent
 \medskip
 
-Which of the following statement(s) is/are correct?  
+% Which of the following statement(s) is/are correct?  
+   	
 	\begin{enumerate}
-        \item In which scenarios are inherently interpretable models usually much harder to interpret?
+   	    \item In which scenarios are inherently interpretable models usually much harder to interpret?
     	\begin{itemize}
     		\item[$\Rightarrow$] E.g. linear models with many features and interactions or decision trees with deep trees are not easy to interpret.
     	\end{itemize}
-    	\item Why does usually interpretability become worse or more difficult if the generalization performance of the model improves?
+    	\item Why does interpretability usually become worse or more difficult when the generalization performance of the model improves?
     	\begin{itemize}
     		\item[$\Rightarrow$] Methods become more complex.
     	\end{itemize}
-    	\item Should we always prefer interpretable models? Explain and describe for which use cases interpretable models would be inconvenient?
+    	\item Should we always prefer interpretable models? Explain and describe for which use cases interpretable models would be inconvenient.
     	\begin{itemize}
     		\item[$\Rightarrow$] If the performance of more complex models is much better than the one of an interpretable model.
     	\end{itemize}
-    	\item In the linear model, the effect and importance of a feature can be inferred from the estimated $\beta$-coefficients. Is this statement true or false. Explain!
+        \item Can we always fully interpret "inherently interpretable" models without needing further, more advanced interpretability methods?
+        \begin{itemize}
+            \item \textbf{Wrong}, e.g. counterfactuals
+        \end{itemize}
+    	\item ``In the linear model, the effect and importance of a feature can be inferred from the estimated $\beta$-coefficients.'' Is this statement true or false? Explain your answer.
     	\begin{itemize}
     		\item[$\Rightarrow$] \textbf{Wrong}, for the importance of a feature in a linear model one has to calculate other statistical quantities such as the t-statistic or the p-value.
     	\end{itemize}
-    	\item What is so special about LASSO compared to a LM with regards to interpretability? Would you always prefer LASSO over a LM?
+        \item What assumptions does the classical linear model impose on the data?
+        \begin{itemize}
+            \item normal distribution
+            \item homoskedasticity
+            \item I.I.d. observations
+            \item features uncorrelated
+            \item features independent from error
+        \end{itemize}
+        \item How can we model categorical or other non-numerical features and / or targets with a linear model? How about a decision tree?
+        \begin{itemize}
+            \item Remember: Tree can model extremely broad spectrum of different kinds of features.
+        \end{itemize}
+    	\item What is so special about LASSO compared to an LM with respect to interpretability? Would you always prefer LASSO over an LM?
     	\begin{itemize}
     		\item[$\Rightarrow$] Penalty leads to feature selection, is probably often preferable but maybe not always (optimization more difficult, has hyperparameters to tune, inference more difficult $\rightarrow$ keyword: post-selection inference!)
     	\end{itemize}
@@ -27,18 +44,26 @@ Which of the following statement(s) is/are correct?
     	\begin{itemize}
     		\item[$\Rightarrow$] No, only for GLM with Gaussian link, for logistic regression e.g. interpretations are w.r.t. log-odds which is not understandable for everyone
     	\end{itemize}
-    	\item Explain the feature importance provided by model-based boosting. What is the difference to the (Gini) feature importance from decision trees?
-    	\item How can we use inherently interpretable models to provide insights whether two features are dependent?
+        \item How would the interpretation of single coefficients for GLMs other than logistic regression work?
+        \begin{itemize}
+            \item Basically same as logistic regression, but now important: Effect (or derivative) of the link function.
+            We have: Change in feature $\Rightarrow$ Corresponding change by $\hat{\beta}$ on the linear model $\Rightarrow$ effect of a change by $\hat{\beta}$ on the inverse link function must be known.
+        \end{itemize}
+        \item Since one can add arbitrary complex terms to a linear model, why is it still not used much more for more complex problems?
+        \begin{itemize}
+            \item Terms need to be specified manually, often unknown or too tedious
+        \end{itemize}
+    	\item How can we use inherently interpretable models to provide insights as to whether two features are dependent?
     	\begin{itemize}
-    		\item[$\Rightarrow$] Model $x_1$ on $x_2$ (linear or non-linear) and look at the goodness of fit measures like $R^2$
+    		\item[$\Rightarrow$] Model $x_1$ on $x_2$ (linear or non-linear) and look at the goodness of fit measures like $R^2$.
     	\end{itemize}
-    	\item What are the disadvantages of CART? What methods address them and how?
+    	\item What are the disadvantages of CART? Which methods address them and how?
     	\begin{itemize}
-    		\item[$\Rightarrow$] Two problems: 
+    		\item[$\Rightarrow$] Two problems:
     		\begin{enumerate}[1.]
     			\item Selection bias towards high-cardinal/continuous features 
     			\item Does not consider significant improvements when splitting ($\leadsto$ overfitting)
     		\end{enumerate}
-    		Solution provided by unbiased recursive partitioning via conditional inference trees (\texttt{ctree}) or model-based recursive partitioning (\texttt{mob}): Separate selection of feature used for splitting and split point AND hypothesis test as stopping criteria 
+    		Solution provided by unbiased recursive partitioning via conditional inference trees (\texttt{ctree}) or model-based recursive partitioning (\texttt{mob}): Separate selection of the feature used for splitting and the split point AND hypothesis test as stopping criteria.
     	\end{itemize}
 	\end{enumerate}
