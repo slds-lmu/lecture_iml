@@ -1,5 +1,32 @@
-\aufgabe{Improving CART decision trees and interpretability-performance-tradeoff}{
 
 
+% \aufgabe{Improving CART decision trees and interpretability-performance-tradeoff}{
+\aufgabe{Improving CART decision trees}{
+
+This exercise is about implementing an efficient algorithm for finding the splits in the CART algorithm.
+Recall that in CART, for every node, every possible split value for every possible feature is considered and the corresponding loss reduction calculated, in order to greedily find the optimal split in the current node.
+Alternatively, a quantile grid is used for every possible feature.
+
+In this task, we consider regression problems and use the standard split criterion of impurity inside a node, in other words, the total variance within each node.
+Since we use a constant estimator inside each node, this is equivalent to minimizing the \(L_2\)-loss.
+Therefore, in order to calculate the loss reduction for some potential split, we have to evaluate the variance inside both potential child nodes.
+Since calculating the variance of some data set takes linear computation time, we end up with a total computation time of the order of \(d \cdot n^2\) to compute one split.
+Here, $d$ denotes the total number of features and $n$ the number of data points inside the node to be split.
+
+The idea to speed up this computation is to order the data points with respect to the feature of interest as well as the potential split values for this feature, and then to compute the potential loss reductions for the single split values in this order.
+We additionally keep track of the sum of target values and the sum of squares left and right to the current split value.
+In this way, we can simply update each of these sums by one summand when moving to the next potential split value.
+The loss reduction can then be calculated each time using these sums.
+This reduces the total computation time to an order of \(d \cdot n\).
+
+Your task in this exercise is to implement this more efficient algorithm.
+
+We provide you with an implementation of the naive CART splitting algorithm for a single feature in the files "\textit{CART.R}" and "\textit{CART.py}" (depending on your programming language) on the Moodle website.
+The code also contains a function which uses some splitting algorithm to find the optimal split, i.e., the optimal feature and value.
+You should now complete the implementation of the function \texttt{search\_split\_fast}, by implementing the alternative algorithm described above.
+
+On Moodle, you can also find the files "\textit{CART\_test.R}" and "\textit{CART\_test.py}", which you can use to test these different algorithms on some artificial data set.
+In the end, your implementation should produce the same results as the existing naive implementation or the reference implementations from the respective programming languages (from the rpart or the scikit-learn package).
 
 }
+

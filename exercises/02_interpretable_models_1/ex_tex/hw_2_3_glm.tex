@@ -1,4 +1,4 @@
-\aufgabe{Logistic Regression}{
+\aufgabe{Interpreting logistic regression for bike rentals}{
 %You are given data about a Hepatitis A infection ($y=1$: infection, $y=0$: no infection) after eating salsa in a restaurant ($x=1$: salsa eaten, $x=0$: salsa not eaten).
 %
 %\begin{table}[ht]
@@ -15,13 +15,18 @@
 %	\end{tabular}
 %\end{table}
 
-You are given the bike rental data with the features \texttt{season}, \texttt{temp}, \texttt{hum}, \texttt{windspeed}, and \texttt{days\_since\_2011}. A binary target variable $y$ is created:
-\vspace{-0.1cm} 
+In this exercise, we want to analyze and interpret a logistic regression model which, for the bike rental data set, predicts whether a day shows high or low/medium bike-rental demand.
+You are given the bike rental data with the features \texttt{season}, \texttt{temp}, \texttt{hum}, \texttt{wind\_speed}, and \texttt{days\_since\_2011}.
+For our task, a binary target variable $y$ is created as follows:
+
 \begin{itemize}
-	\item Class $y$=1: ``high number of bike rentals'' $>70\%$ quantile (i.e., \texttt{cnt} $> 5531$)
-	\item Class $y$=0: ``low to medium number of bike rentals'' (i.e., \texttt{cnt} $\leq$ 5531)
+	\item Class $y$=1: ``high number of bike rentals'', defined by $>70\%$ quantile (i.e., \texttt{cnt} $> 5531$),
+	\item Class $y$=0: ``low to medium number of bike rentals'', meaning $\leq70\%$ quantile (i.e., \texttt{cnt} $\leq 5531$).
 \end{itemize}
-The following table shows the absolute joint and marginal probabilities of $y$ and \texttt{season}.
+
+For the first part of the exercise, we will have a look at the feature \texttt{season}.
+The following table shows the joint and marginal absolute frequencies of $y$ and \texttt{season}.
+
 \begin{table}[H]
 	\centering
 	\begin{tabular}{rrrrrr}
@@ -37,10 +42,30 @@ The following table shows the absolute joint and marginal probabilities of $y$ a
 
 \vspace{-0.3cm}
 \begin{enumerate}[a)]
-	\item Calculate and interpret the odds of ``high number of bike rentals'' vs. ``low to medium number of bike rentals'' in winter ($\text{odds}_{\text{winter}}$).
-	\item Calculate and interpret the odds ratio of high vs. low number of bike rentals when \texttt{season} changes from winter to spring.
-	\item Consider the output of a GLM on $y \sim \texttt{season}$:
-	
+
+	\item
+    Calculate and interpret the odds of ``high number of bike rentals'' vs. ``low to medium number of bike rentals'' in winter ($\text{odds}_{\text{winter}}$).
+    
+	\item
+    Calculate and interpret the odds ratio of high vs. low number of bike rentals when \texttt{season} changes from winter to spring, from winter to summer, and from winter to fall.
+    
+	\item\label{ex:logreg_GLM_single_feature}
+    We now fit a GLM on $y \sim \texttt{season}$, i.e., with only this single feature.
+    That means the GLM has the form
+
+    \[
+    p=\sigma(\eta)=\frac{1}{1+e^{-\eta}}
+    \qquad
+    \eta \;=\;
+    \beta_0
+    + \beta_{\texttt{SPRING}} \,\text{seasonSPRING}
+    + \beta_{\texttt{SUMMER}} \,\text{seasonSPRING}
+    + \beta_{\texttt{FALL}} \,\text{seasonSPRING}.
+    \]
+
+    We could also write \(\beta_{\texttt{WINTER}}\) for the intercept \(\beta_0\).
+    We receive the following output from the GLM:
+    
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{rrrr}
@@ -55,26 +80,123 @@ The following table shows the absolute joint and marginal probabilities of $y$ a
 		\end{tabular}
 	\end{table}
 
-	Interpret the $\beta$-estimate for the intercept and seasonSPRING. 
+	Interpret the $\beta$-estimates for the intercept and the different seasons in terms of the odds and the odds ratio. 
+
+    \item\label{ex:logreg_GLM_more_features}
+    Next, we fit another (somewhat ``orthogonal'') GLM model which considers the other four features except season.
+    For this model, we want to look at a different way of interpretation, which was already briefly discussed in the lecture.
+    
+    The model with four predictors then has the form:
+    
+    \[
+    \eta  \;=\;
+    \beta_0
+    + \beta_1\,\text{temp}
+    + \beta_2\,\text{hum}
+    + \beta_3\,\text{wind\_speed}
+    + \beta_4\,\text{days\_since\_2011},
+    \qquad
+    p=\sigma(\eta)=\frac{1}{1+e^{-\eta}} .
+    \]
+
+    The fitted model is
+    
+    \begin{center}
+    \begin{tabular}{lcc}
+        \toprule
+            Predictor & Symbol & Coefficient \\
+        \midrule
+            Temperature (\si{\celsius})            & \(x_1\) & \(\beta_1 =  0.29\) \\
+            Humidity (\si{\percent})               & \(x_2\) & \(\beta_2 = -0.0627\) \\
+            Wind\_speed (\si{\kilo\metre\per\hour})  & \(x_3\) & \(\beta_3 = -0.0925\) \\
+            Days since 01-Jan-2011                 & \(x_4\) & \(\beta_4 =  0.0166\) \\
+        \midrule
+            Intercept                              & —       & \(\beta_0 = -8.52\) \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+
+    We want to calculate the effect of the first feature, \texttt{temperature}, on the probability of a day seeing a high number of bike rentals. 
+    This time, we will not look at the odds but at the probability directly, using the first derivative of the model.
+    
+    \begin{enumerate}[(i)]
+    
+        \item\textbf{Offset.}  
+        First, hold \(x_2,x_3,x_4\) at their means and compute the offset for \(x_1\), defined by
+        \(\displaystyle \delta = \beta_2\bar{x}_2+\beta_3\bar{x}_3+\beta_4\bar{x}_4\).
+
+        The sample means of the non-temperature features are:
+    
+        \[
+        \bar{x}_2 = 62.79,\qquad
+        \bar{x}_3 = 12.76,\qquad
+        \bar{x}_4 = 365.00.
+        \]
+    
+        \item\textbf{Probability table.}  
+        Using the reduced model
+        \(\eta(x_1)=\beta_0+\delta+\beta_1 x_1\),
+        which only takes into account the effect of the temperature, calculate the probabilities
+        \(p(x_1)=\sigma(\eta(x_1))\)
+        for the remaining values of $x_1$ in the following table:
+        % for the values of $x_1$ in the following table for which they are missing:
+        % for \(x_1=\{10,15,20,25,30,35\}\,^\circ\text{C}\):
+        \begin{center}
+        \begin{tabular}{cccc}
+            \toprule
+            \(x_1\) (\si{\celsius}) & \(\eta(x_1)\) & \(p(x_1)\) \\
+            \midrule
+            10 &  -4.677 & 0.009 \\
+            15 &  -3.227 & 0.038 \\
+            20 &  -1.777 & ? \\
+            25 &  -0.327 & ? \\
+            30 &   ? & ? \\
+            35 &   ? & ? \\
+            \bottomrule
+        \end{tabular}
+        \end{center}
+    
+        \item\textbf{Derive the marginal effect.}  
+        Show step by step that
+        \(\displaystyle \frac{dp(x_1)}{dx_1}=p(1-p)\,\beta_1\).
+        
+        This was already briefly discussed in the lecture, here we want to complete the proof.
+        Also show why it does not matter whether we use the original model or the reduced model in this step.
+    
+        \item\textbf{Evaluate \(dp/dx_1\).} % \label{ex:logreg_more_features_eval}
+        Compute \(dp/dx_1\) at \(x_1=15,30,35\;^\circ\text{C}\).  
+        Where is the temperature effect the largest?
+    
+        \item\textbf{Classification.} % \label{ex:logreg_more_features_class}
+        With a $0.5$ threshold, which of the six temperatures in the table above are predicted “high-rental”?
+
+    \end{enumerate}
 	
-	\item Now compare the two coefficients with the ones in the full model: 
-		\begin{table}[H]
-			\centering
-			\begin{tabular}{rrrr}
-				\hline
-				& Estimate & Std. Error & Pr($>$$|$z$|$) \\ 
-				\hline
-				(Intercept) & -8.5176 & 1.2066 & 0.0000 \\ 
-				seasonSPRING & 1.7427 & 0.5977 & 0.0035 \\ 
-				seasonSUMMER & -0.8566 & 0.7660 & 0.2635 \\ 
-				seasonFALL & -0.6417 & 0.5543 & 0.2470 \\ 
-				temp & 0.2902 & 0.0391 & 0.0000 \\ 
-				hum & -0.0627 & 0.0124 & 0.0000 \\ 
-				windspeed & -0.0925 & 0.0305 & 0.0024 \\ 
-				days\_since\_2011 & 0.0166 & 0.0014 & 0.0000 \\ 
-				\hline
-			\end{tabular}
-		\end{table}
+	\item
+    Last, we compare the above results with the full model containing all features:
+    % Now compare the two coefficients with the ones in the full model: 
+    
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{rrrr}
+            \hline
+            & Estimate & Std. Error & Pr($>$$|$z$|$) \\ 
+            \hline
+            (Intercept) & -8.5176 & 1.2066 & 0.0000 \\ 
+            seasonSPRING & 1.7427 & 0.5977 & 0.0035 \\ 
+            seasonSUMMER & -0.8566 & 0.7660 & 0.2635 \\ 
+            seasonFALL & -0.6417 & 0.5543 & 0.2470 \\ 
+            temp & 0.2902 & 0.0391 & 0.0000 \\ 
+            hum & -0.0627 & 0.0124 & 0.0000 \\ 
+            wind\_speed & -0.0925 & 0.0305 & 0.0024 \\ 
+            days\_since\_2011 & 0.0166 & 0.0014 & 0.0000 \\ 
+            \hline
+        \end{tabular}
+    \end{table}
+
+    Again, look at your interpretations of the \(\beta\)-coefficients and of the effects of single features from parts \ref{ex:logreg_GLM_single_feature}) and \ref{ex:logreg_GLM_more_features}).
+    What changes now in the full model?
+        
 \end{enumerate}
 
 }
