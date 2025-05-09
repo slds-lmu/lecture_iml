@@ -53,7 +53,7 @@
 \begin{frame}{Naive Split Selection: Explicit Computation}
   \begin{itemize}
     \item Sort data by feature $X$, examine $n-1$ potential split points
-    \item For each split $i$:
+    \item For each split at split point $s_i$:
     \begin{itemize}
       \item Compute group sizes $N_L$, $N_R$
       \item Compute means $\bar{y}_L$, $\bar{y}_R$ and $\text{SSE}_L = \sum (y^{(i)} - \bar{y}_L)^2$
@@ -84,8 +84,8 @@
       $\displaystyle\bar{y}_L,\;\bar{y}_R$\\[-1pt]
       $\displaystyle\text{SSE}_L,\;\text{SSE}_R$};
   \draw[->,>=latex] (2.5,-0.55) -- (comp.north);
-  \node[font=\tiny,anchor=west] at (1,-3)
-        {$\color{gray}{\mathcal{O}(n^2)\ \text{operations (recompute for each }s_j)}$};
+  \node[font=\tiny,anchor=west] at (0.2,-3)
+        {$\color{gray}{\mathcal{O}(n^2)\ \text{operations (recompute for each split } s_i \text{ per feature})}$};
 \end{tikzpicture}
 \end{frame}
 
@@ -107,7 +107,7 @@
 % --- Slide 4: Illustration of Prefix-Sum Computation ---
 \begin{frame}{Prefix-Sum Trick: Visual Example}
   \centering
-  $$
+  $$\scriptsize
 \boxed{y^{(1)} = 1.2,\; y^{(2)} = 2.0,\; y^{(3)} = 1.5,\; y^{(4)} = 3.2,\; y^{(5)} = 2.8,\; y^{(6)} = 4.1} \; \text{(sorted wrt feature)}
 $$
 % --- TikZ figure: prefix-sum trick (spacing optimised, no overlaps) ---------------
@@ -119,7 +119,7 @@ $$
   % ------------------------------------------------------------------
   % (1) sorted target values y^{(i)}
   \foreach \x/\i in {0/1, 1/2, 2/3, 3/4, 4/5, 5/6}{
-    \node[circle, draw, fill=blue!12, inner sep=2pt] (y\i) at (\x,0) {$y_{\i}$};
+    \node[circle, draw, fill=blue!12, inner sep=2pt] (y\i) at (\x,0) {$y^{(\i)}$};
   }
 
   % ------------------------------------------------------------------
