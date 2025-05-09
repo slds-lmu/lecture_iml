@@ -733,7 +733,9 @@ $$
 
 
 
-\begin{frame}{FAST: scoring a feature pair $(x_i,x_j)$}
+\begin{frame}{FAST: Pair-wise Interaction Strength}
+
+We evaluate a 4-leaf, axis-aligned tree $T_{ij}$ over the 2D feature projection $(x_i, x_j)$.
 
 \begin{columns}[T,totalwidth=\textwidth]
 % ----- left: predictor diagram ---------------------------------
@@ -780,7 +782,7 @@ $$
 \node at (2.1,0.9) {$D$};
 % axis labels
 \node[below] at (1.5,-0.4) {$x_j$};
-\node[rotate=90] at (-0.4,1.5) {$x_i$};
+\node[rotate=90] at (-0.6,1.5) {$x_i$};
 % cut labels
 \node[below] at (\xc,0) {$c_j$};
 \node[left]  at (0,\yc) {$c_i$};
@@ -852,7 +854,7 @@ $$
 \begin{column}{0.6\textwidth}
 \small
 \begin{enumerate}\itemsep4pt
-  \item<1-> {\bf Discretise}\,: Map each axis to \(b\!\le\!256\) ordered
+  \item<1-> {\bf Discretize}\,: Map each axis to \(b\!\le\!256\) ordered
         bins (quantile or equal-width).
   \item<2-> {\bf Iterate} over \(b^{2}\) candidate cuts
         \((c_i,c_j)\). %at bin boundaries.
@@ -860,10 +862,24 @@ $$
         \(\hat y_r\!=\!\text{mean}(y\!\in\!r)\) to
         \(r\!\in\!\{A,B,C,D\}\).
   \item<2-> {\bf Compute}\,:   
-        \(\text{RSS}(c_i,c_j)=\sum_{r}
-         \sum_{(x,y)\in r}(y-\hat y_r)^{2}\).
+  \[
+  \footnotesize
+\begin{aligned}
+&\text{RSS}(c_i, c_j) 
+= \sum_{r} \sum_{(x,y) \in r} (y - \hat{y}_r)^2 \\
+&= \sum_{r} \left( \sum_{(x,y) \in r} y^2 - 2 \hat{y}_r \sum_{(x,y) \in r} y + \hat{y}_r^2 \cdot n_r \right)
+\end{aligned}
+\]
+        % \(\text{RSS}(c_i,c_j)=\sum_{r}
+        %  \sum_{(x,y)\in r}(y-\hat y_r)^{2}
+        %  \)
+         
+ % \(\text{RSS}_0\;=\;\sum_{i=1}^{n}\bigl(y_k-\bar y\bigr)^2
+ %              =\sum_{i}y_k^{2}-\frac{T^{2}}{n}\)
+              
+ % \(\Delta\text{RSS}(c_i,c_j) =\text{RSS}_0-\text{RSS}(c_i,c_j)\)
   \item<2-> {\bf Select}\,: Keep the split with minimal RSS.\\
-  $\leadsto$ RSS drop measures interaction strength. \\% of \((x_i,x_j)\) \\
+  $\leadsto$ largest RSS drop = strongest interaction. \\% of \((x_i,x_j)\) \\
   %$\leadsto$ $\mathcal{O}(n+b^{2})$ per pair.
 \end{enumerate}
 
@@ -873,45 +889,146 @@ $$
 
 
 
-\begin{frame}{FAST: constant-region RSS in closed form}
 
+
+
+
+
+
+
+
+\begin{frame}{FAST: Use RSS Drop}
 \small
-\textbf{Pre-compute for every rectangle}  
-\(r\in\{A,B,C,D\}\):
-\[
-T_r=\!\!\sum_{(x,y)\in r}\!y, \qquad 
-Q_r=\!\!\sum_{(x,y)\in r}\!y^{2}, \qquad 
-n_r=|r|, \qquad
-y_r=\frac{T_r}{n_r}.
-\]
 
-\medskip
-\textbf{RSS:}
+To evaluate a cut pair $(c_i, c_j)$, we use precomputed per-region statistics:
 
-\[
-\text{RSS}(c_i, c_j) = \sum_{r} \sum_{(x, y) \in r} (y - \hat{y}_r)^2
-= \sum_{r} \left( \sum y^2 - 2 \hat{y}_r \sum y + \hat{y}_r^2 \cdot n_r \right)
-\]
-
-\medskip
-\textbf{Plug into RSS:}
-\[
-\text{RSS}(c_i,c_j)=
-\sum_{r}\!\left(
-      Q_r-\frac{T_r^{2}}{n_r}\right).
-\]
-
-\medskip
-\textbf{Why is this fast?}
 \begin{itemize}
-  \item Precompute cummulative sums of \(y\), \(y^2\), and counts across the binned grid
-  \item Enables fast lookup of region statistics \(T_r, Q_r, n_r\) for any cut
-  \item No additional data scan or recomputation needed across the \(b^2\) candidate cuts
+  \item For each region $r \in \{A, B, C, D\}$, compute:
+    \[
+    T_r = \sum_{(x,y)\in r} y,\quad
+    %Q_r = \sum_{(x,y)\in r} y^2,\quad
+    n_r = |\{(x,y)\in r\}|,\quad
+    \hat y_r = T_r / n_r
+    \]
+  \item Plug into RSS: $$
+\text{RSS}(c_i, c_j) = \sum_{r} \left( \sum_{(x,y) \in r} y^2 - 2 \hat{y}_r \sum_{(x,y) \in r} y + \hat{y}_r^2 \cdot n_r \right) = 
+%\sum_{r}\!\left(\sum_{(x,y)\in r} y^2-\frac{T_r^{2}}{n_r}\right)
+\sum_{r}\sum_{(x,y)\in r} y^2+\sum_{r}\frac{T_r^{2}}{n_r}
+$$
+  %\item Requires only scalar summaries $(T_r, Q_r, n_r)$
+  %\item No access to individual samples needed at scoring time
+  %\item Baseline (unsplit) RSS: $\text{RSS}_0 = \sum_k y_k^2 - \frac{T^2}{n}$, with $T = \sum_k y_k$ and $\bar y = T/n$
+  \item 
+For a candidate cut, compute \textbf{RSS drop}:
+\begin{align*}
+  \Delta\text{RSS}(c_i,c_j)
+     &=\text{RSS}_0-\text{RSS}(c_i,c_j)
+     &=\left(\sum_{k}y_k^{2}-\frac{T^{2}}{n}\right)
+       -  \sum_{r}\sum_{(x,y)\in r} y^2+\sum_{r}\frac{T_r^{2}}{n_r}
+\end{align*}
 \end{itemize}
 
-% \vspace{1ex}
-% \hfill{\footnotesize Lou et al.\ 2013, §4.1}
+
 \end{frame}
+% ============================================================================
+\begin{frame}{FAST: Use RSS drop}
+
+Because $\sum_k y_k^{2} = \sum_{r}\sum_{(x,y)\in r} y^2$, \emph{all squared target terms cancel}:
+\[
+  \boxed{\displaystyle
+  \Delta\text{RSS}(c_i,c_j)
+     =\sum_{r}\frac{T_r^{2}}{n_r}\;-
+      \frac{T^{2}}{n}}
+\]
+The parent term $T^{2}/n$ is constant across all cuts.  Hence
+\[
+  \textbf{maximize }S(c_i,c_j)=\sum_{r}\frac{T_r^{2}}{n_r}
+  \quad\Longleftrightarrow\quad
+  \textbf{minimize }\text{RSS}(c_i,c_j).
+\]
+
+
+\textbf{Why is this fast?}
+\begin{itemize}
+  \item Precompute cummulative sums of \(y\) and counts across the binned grid
+  \item Enables fast lookup of region statistics \(T_r, n_r\) for any cut
+  \item No additional data scan or recomputation needed across the \(b^2\) candidate cuts
+  \item For the best cut: Compare and select the largest
+$S(c_i,c_j)=\sum_{r}T_r^{2}/n_r$.
+\end{itemize}
+
+
+\end{frame}
+
+% % ============================================================================
+% \begin{frame}{Step 4: FAST search in $\mathcal O(b^2)$ per pair}
+% \small
+% \begin{enumerate}\itemsep4pt
+%   \item \textbf{Discretise}: map each feature axis to $b\,(\le256)$ bins.
+%   \item \textbf{Iterate}: enumerate the $b^{2}$ cut pairs $(c_i,c_j)$.
+%   \item \textbf{Lookup stats}: obtain $(T_r,n_r)$ for the four rectangles
+%         in $O(1)$s.
+%   \item \textbf{Score}: compute $S(c_i,c_j)=\sum_{r}T_r^{2}/n_r$.
+%   \item \textbf{Select}: keep the cut with the \emph{largest} $S$ (largest
+%         RSS drop).
+% \end{enumerate}
+% \medskip
+% %Overall cost per feature pair: $\mathcal O(n+b^{2})$ preprocessing for thevcumulative tables, then $\mathcal O(b^{2})$ scoring.
+% \end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \begin{frame}{FAST: constant-region RSS in closed form}
+
+% \small
+% \textbf{Pre-compute for every rectangle}  
+% \(r\in\{A,B,C,D\}\):
+% \[
+% T_r=\!\!\sum_{(x,y)\in r}\!y, \qquad 
+% Q_r=\!\!\sum_{(x,y)\in r}\!y^{2}, \qquad 
+% n_r=|r|, \qquad
+% y_r=\frac{T_r}{n_r}.
+% \]
+
+% \medskip
+% \textbf{RSS:}
+
+% \[
+% \text{RSS}(c_i, c_j) = \sum_{r} \sum_{(x, y) \in r} (y - \hat{y}_r)^2
+% = \sum_{r} \left( \sum y^2 - 2 \hat{y}_r \sum y + \hat{y}_r^2 \cdot n_r \right)
+% \]
+
+% \medskip
+% \textbf{Plug into RSS:}
+% \[
+% \text{RSS}(c_i,c_j)=
+% \sum_{r}\!\left(
+%       Q_r-\frac{T_r^{2}}{n_r}\right).
+% \]
+
+% \medskip
+% \textbf{Why is this fast?}
+% \begin{itemize}
+%   \item Precompute cummulative sums of \(y\), \(y^2\), and counts across the binned grid
+%   \item Enables fast lookup of region statistics \(T_r, Q_r, n_r\) for any cut
+%   \item No additional data scan or recomputation needed across the \(b^2\) candidate cuts
+% \end{itemize}
+
+% % \vspace{1ex}
+% % \hfill{\footnotesize Lou et al.\ 2013, §4.1}
+% \end{frame}
 
 
 
