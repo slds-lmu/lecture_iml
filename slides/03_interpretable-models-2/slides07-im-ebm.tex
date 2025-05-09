@@ -5,6 +5,7 @@
 \input{../../style/common.tex}
 
 \tikzset{main node/.style={rectangle,draw,minimum size=1cm,inner sep=4pt},}
+\usetikzlibrary{decorations.pathreplacing,calc,positioning}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -31,6 +32,158 @@
 
 \lecturechapter{Explainable Boosting Machines}
 \lecture{Interpretable Machine Learning}
+
+% Improved and streamlined version of regression tree splitting slides
+% --- Slide 1: SSE as Impurity Measure ---
+\begin{frame}{Regression Tree: Impurity and Splitting}
+  \begin{itemize}
+    \item \textbf{Impurity (Regression):} Variance of target $Y$ in a node:
+    \[ \text{Var}(Y) = \frac{1}{n}\sum_{i=1}^n (y^{(i)} - \bar{y})^2 = \frac{1}{n} \sum_{i=1}^n (y^{(i)})^2 - \bar{y}^2 \]
+    \item \textbf{Sum of Squared Errors}: $$SSE = n \cdot \text{Var}(Y) = \sum_{i=1}^n (y^{(i)} - \bar{y})^2 = \sum (y^{(i)})^2 - n \bar{y}^2 %= SS - \frac{S^2}{n}
+    $$
+    \item \textbf{Split criterion:} Minimize post-split SSE:
+    \[ \Delta = \frac{1}{n} \left[ \text{SSE}_{\text{parent}} - (\text{SSE}_L + \text{SSE}_R) \right] \]
+    % \item \textbf{Key identity:} \[ \text{SSE} = \sum (y^{(i)})^2 - n \bar{y}^2 = SS - \frac{S^2}{n} \]
+  \end{itemize}
+  % \vspace{0.5em}
+  % \textit{Used in CART for regression (Breiman et al., 1984)}
+\end{frame}
+
+% --- Slide 2: Naive Split Computation ---
+\begin{frame}{Naive Split Selection: Explicit Computation}
+  \begin{itemize}
+    \item Sort data by feature $X$, examine $n-1$ potential split points
+    \item For each split at split point $s_i$:
+    \begin{itemize}
+      \item Compute group sizes $N_L$, $N_R$
+      \item Compute means $\bar{y}_L$, $\bar{y}_R$ and $\text{SSE}_L = \sum (y^{(i)} - \bar{y}_L)^2$
+      \item Total impurity: $\text{SSE}_L + \text{SSE}_R$
+    \end{itemize}
+    \item Select split that minimizes total SSE
+    \item \textbf{Computational cost:} $O(n^2)$ per feature (recomputes means/SSE from scratch in L and R node)
+  \end{itemize}
+
+  % --- TikZ figure: explicit computation for naïve split selection ---
+  \centering
+\begin{tikzpicture}[x=1.2cm,y=0.9cm]
+  \foreach \x/\val/\i in {0/1.2/1, 1/2.0/2, 2/1.5/3, 3/3.2/4, 4/2.8/5, 5/4.1/6} {
+    \node[circle, draw, fill=blue!12, inner sep=2pt] (y\i) at (\x,0) {$y^{(\i)}$};
+  }
+  \foreach \s/\j in {0.5/1,1.5/2,2.5/3,3.5/4,4.5/5}{
+    \draw[dashed] (\s,0.55) -- (\s,-0.55);
+    \node[font=\scriptsize] at (\s,0.8) {$s_{\j}$};
+  }
+  \draw[decorate, decoration={brace,mirror, amplitude=4pt}]
+        (-0.25,-0.75) -- (2.5,-0.75)
+        node[midway,below=4pt,font=\scriptsize] {left: $N_L=3$};
+  \draw[decorate, decoration={brace,mirror, amplitude=4pt}]
+        (2.5,-0.75) -- (5.25,-0.75)
+        node[midway,below=4pt,font=\scriptsize] {right: $N_R=3$};
+  \node[draw,rounded corners,align=left,font=\scriptsize] (comp) at (2.5,-2.0) {
+      Compute\\[-1pt]
+      $\displaystyle\bar{y}_L,\;\bar{y}_R$\\[-1pt]
+      $\displaystyle\text{SSE}_L,\;\text{SSE}_R$};
+  \draw[->,>=latex] (2.5,-0.55) -- (comp.north);
+  \node[font=\tiny,anchor=west] at (0.2,-3)
+        {$\color{gray}{\mathcal{O}(n^2)\ \text{operations (recompute for each split } s_i \text{ per feature})}$};
+\end{tikzpicture}
+\end{frame}
+
+% --- Slide 3: Optimized Split via Prefix Sums ---
+\begin{frame}{Efficient Split Selection: Prefix-Sum Trick}
+  \begin{itemize}
+    \item \textbf{Cumulative sums:} For sorted $y^{(1)} \leq \dots \leq y^{(n)}$:
+    \[ S_k = \sum_{i=1}^k y^{(i)}, \quad SS_k = \sum_{i=1}^k (y^{(i)})^2 \]
+    \item \textbf{SSE via prefix sums:}
+    \[ \text{SSE}_{1..k} = SS_k - \frac{(S_k)^2}{k} \]
+    \[ \text{SSE}_{k+1..n} = SS_N - SS_k - \frac{(S_N - S_k)^2}{n-k} \]
+    \item \textbf{Key identity:} \[ \text{SSE} = SS - \frac{S^2}{n} \quad \text{(algebraic variance expansion)} \]
+    \item \textbf{Total SSE:} Compute in $O(1)$ per split using prefix sums
+    \item \textbf{Total complexity:} $O(n)$ per feature (after sorting and $O(n)$ precomputation)
+  \end{itemize}
+\end{frame}
+
+
+% --- Slide 4: Illustration of Prefix-Sum Computation ---
+\begin{frame}{Prefix-Sum Trick: Visual Example}
+  \centering
+  $$\scriptsize
+\boxed{y^{(1)} = 1.2,\; y^{(2)} = 2.0,\; y^{(3)} = 1.5,\; y^{(4)} = 3.2,\; y^{(5)} = 2.8,\; y^{(6)} = 4.1} \; \text{(sorted wrt feature)}
+$$
+% --- TikZ figure: prefix-sum trick (spacing optimised, no overlaps) ---------------
+\begin{tikzpicture}[>=latex,
+                    x=1.75cm,   % ⟵ wider columns
+                    y=0.8cm,   % ⟵ more vertical room
+                    font=\tiny]
+
+  % ------------------------------------------------------------------
+  % (1) sorted target values y^{(i)}
+  \foreach \x/\i in {0/1, 1/2, 2/3, 3/4, 4/5, 5/6}{
+    \node[circle, draw, fill=blue!12, inner sep=2pt] (y\i) at (\x,0) {$y^{(\i)}$};
+  }
+
+  % ------------------------------------------------------------------
+  % (2) prefix sums S_k  = Σ y^{(i)}  ---- wider boxes
+  \foreach \x/\val/\i in {0/1.2/1, 1/3.2/2, 2/4.7/3, 3/7.9/4, 4/10.7/5, 5/14.8/6}{
+    \node[draw, minimum width=1.4cm, minimum height=0.52cm,
+          fill=green!12, align=center] (S\i) at (\x,-1.1) {$S_{\i}=\,\val$};
+  }
+  \node[anchor=east] at (-0.4,-1.1) {Prefix $S_k$};
+
+  % ------------------------------------------------------------------
+  % (3) prefix sums SS_k = Σ y^{(i)}²
+  \foreach \x/\val/\i in {0/1.44/1, 1/5.44/2, 2/7.69/3, 3/17.93/4,
+                          4/25.77/5, 5/42.58/6}{
+    \node[draw, minimum width=1.4cm, minimum height=0.52cm,
+          fill=orange!12, align=center] (SS\i) at (\x,-2.3) {$SS_{\i}=\,\val$};
+  }
+  \node[anchor=east] at (-0.4,-2.3) {Prefix $SS_k$};
+
+  % ------------------------------------------------------------------
+  % (4) candidate split between y4 and y5  (k = 4)
+  \draw[dashed] (3.5,0.55) -- (3.5,-2.9);
+  \node[anchor=south] at (3.5,0.7) {$k=4$};
+
+  % braces indicating left / right partitions  (y-shifted to avoid boxes)
+  \draw[decorate, decoration={brace,mirror,amplitude=4pt}]
+        (-0.25,-2.75) -- (3.5,-2.75)
+        node[midway,below=4pt] {left: $N_L=k=4$};
+
+  \draw[decorate, decoration={brace,mirror,amplitude=4pt}]
+        (3.5,-2.75) -- (5.25,-2.75)
+        node[midway,below=4pt] {right: $N_R=n-k=2$};
+
+  % ------------------------------------------------------------------
+  % (5) computation box  (placed lower to clear everything)
+  \node[draw, rounded corners, align=left, anchor=north,
+        minimum width=7.3cm] (comp) at (2.5,-4.0) {
+      \strut$\displaystyle
+         \text{SSE}_{1..k}=SS_{k}-\frac{S_{k}^{2}}{k}
+         \qquad\text{\color{purple}{\scriptsize($\mathcal{O}(1)$)}}$\\[4pt]
+      $\displaystyle
+         \text{SSE}_{k+1..n}=SS_N-SS_{k}-\frac{(S_N-S_{k})^{2}}{n-k}$};
+
+  \draw[->,>=latex] (3,-2.5) -- ++(0,-0.3) -- (comp.north);
+
+  % complexity foot-note
+  \node[anchor=west,font=\tiny] at (1.5,-6.5)
+        {\color{gray}$\mathcal{O}(1)$ per split \ $\Rightarrow$ \ $\mathcal{O}(n)$ per feature};
+\end{tikzpicture}
+
+\end{frame}
+
+
+% --- Slide 5: Complexity Comparison ---
+\begin{frame}{Naive vs. Cumulative-Sum Split}
+  \begin{itemize}
+    \item \textbf{Naive:} $O(n^2)$ per feature (explicit recomputation of SSE)
+    \item \textbf{Prefix sum:} $O(n)$ per feature (after $O(n \log n)$ sorting)
+    \item \textbf{Speedup:} For $n = 10^4$: $\sim10^8$ vs. $10^4$ operations per feature
+    \item \textbf{Same optimal split:} Numerically identical result, algorithmically faster
+    \item \textbf{Constraint:} Only valid if both partitions are non-empty: split between distinct $x_i$
+  \end{itemize}
+\end{frame}
+
 
 \begin{frame}{Explainable Boosting Machines (EBM) \citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}}
 \textbf{Recall GAM}: 
@@ -190,7 +343,7 @@ $$
 %     \item Calculate the initial pseudo-residual (i.e. the negative gradient of the loss function w.r.t. the current model prediction), e.g.\\
 %     1. for squared error loss: $\tilde{r}^{(0)}=-\frac{\partial L}{\partial \hat{y}}=y-\hat{y}^{(0)}=y-\sum_jf_j^{(0)}(x_{ij})$\\
 %     2. for log loss: $\tilde{r}^{(0)}=-\frac{\partial L}{\partial \hat{y}}=y-\sigma(\hat{y}^{(0)})$ with $\sigma(\cdot)$ being the sigmoid function
-%     \item Fit a shallow bagging tree with 2-4 leaves $S_1^{(1)}: x_{i1}\to \tilde{r}$ \textbf{only using the first feature} to predict the pseudo-residuals, with $\{x_{i1},\tilde{r}\}_1^N$ as training dataset
+%     \item Fit a shallow bagging tree with 2-4 leaves $S_1^{(1)}: x_{i1}\to \tilde{r}$ \textbf{only using the first feature} to predict the pseudo-residuals, with $\{x_{i1},\tilde{r}\}_1^n$ as training dataset
 %     \item Update $f_1$: $f_1^{(1)}(x_{i1})=f_1^{(0)}+\eta\cdot S_1^{(1)}(x_{i1})$
 %     \item Update $\hat{y}$: $\hat{y}^{(1)}=\sum_jf_j^{(1)}(x_{ij})$
 %     \item Update the residual w.r.t. the original target, e.g. $\tilde{r}^{(1)}=y-\hat{y}^{(1)}$
@@ -452,7 +605,7 @@ $$
 
 
 % \begin{frame}{FAST Algorithm for Interaction Detection}
-% % For each pair of $(x_i,x_j)$ with $d_i$ and $d_j$ distinct values, calculate RSS for each possible $(c_i, c_j)$ and pick the best $T_{ij}$ with the lowest RSS ($\leadsto$ $N = d_i \cdot d_j$ different RSS values)
+% % For each pair of $(x_i,x_j)$ with $d_i$ and $d_j$ distinct values, calculate RSS for each possible $(c_i, c_j)$ and pick the best $T_{ij}$ with the lowest RSS ($\leadsto$ $n = d_i \cdot d_j$ different RSS values)
 
 % For every feature pair $(x_i,x_j)$:
 %       \begin{itemize}
@@ -796,7 +949,7 @@ y_r=\frac{T_r}{n_r}.
 %     \item \textbf{Idea}: Search for all possible $(c, c_j)$ and pick the best $T_{ij}$ with the lowest RSS
 %     \item Prediction value on region r, $r\in\{A, B, C, D\}$:
 %     $$\hat{y}_r=T_{ij}.r=\frac{1}{\vert r\vert}\sum_{(\mathbf{x},y)\in r}y=\frac{\text{Sum of targets in }r}{\text{Sum of counts in }r}$$
-%     \item $\text{RSS}=\sum_{k=1}^N(y_k-T_{ij}(\mathbf{x}_k))^2$ \\
+%     \item $\text{RSS}=\sum_{k=1}^n(y_k-T_{ij}(\mathbf{x}_k))^2$ \\
 %     \qquad\;$=\sum_{k=1}^Ny_k^2-2\sum_r\left(\hat{y}_r\cdot\sum_{(\mathbf{x},y)\in r}y\right)$\\
 %     \qquad\;\;\;\;$+\sum_r\hat{y}_r^2\cdot\vert r\vert$
 % \end{itemize}
@@ -911,11 +1064,11 @@ y_r=\frac{T_r}{n_r}.
 % \begin{frame}{FAST feature interaction detection - PART IV}
 % \begin{itemize}
 %     \item Complexity analysis: \\
-%     Computing cumulative histograms: $O(N)$ ($N$: number of observations)\\
-%     Constructing matrices of sum values: $O(N+dd_j)$\\
-%     $\leadsto$ Complexity per pair: $O(N+dd_j)$ 
+%     Computing cumulative histograms: $O(n)$ ($n$: number of observations)\\
+%     Constructing matrices of sum values: $O(n+dd_j)$\\
+%     $\leadsto$ Complexity per pair: $O(n+dd_j)$ 
 %     \item Discretize continuous feature values in $b$ bins ($b\leq256$)\\
-%     $\leadsto O(N+b^2)$ per pair\\
+%     $\leadsto O(n+b^2)$ per pair\\
 %     $\leadsto$ Choose optimal number of bins $b$ w.r.t. bias-variance trade-off
 %     \item Quick ranking and select top K pairs
 % \end{itemize}

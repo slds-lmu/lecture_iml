@@ -18,7 +18,8 @@
     	\end{itemize}
         \item Can we always fully interpret "inherently interpretable" models without needing further, more advanced interpretability methods?
         \begin{itemize}
-            \item \textbf{Wrong}, e.g. counterfactuals
+            \item \textbf{Wrong}, e.g. counterfactuals, or too complex, e.g. too complex features (e.g. from PCA)
+
         \end{itemize}
     	\item ``In the linear model, the effect and importance of a feature can be inferred from the estimated $\beta$-coefficients.'' Is this statement true or false? Explain your answer.
     	\begin{itemize}
@@ -40,7 +41,7 @@
     	\begin{itemize}
     		\item[$\Rightarrow$] Penalty leads to feature selection, is probably often preferable but maybe not always (optimization more difficult, has hyperparameters to tune, inference more difficult $\rightarrow$ keyword: post-selection inference!)
     	\end{itemize}
-    	\item Do the beta-coefficients of GLM always provide simple explanations with respect to the target outcome to be predicted? 
+    	\item Do the beta-coefficients of a GLM always provide simple explanations with respect to the target outcome to be predicted? 
     	\begin{itemize}
     		\item[$\Rightarrow$] No, only for GLM with Gaussian link, for logistic regression e.g. interpretations are w.r.t. log-odds which is not understandable for everyone
     	\end{itemize}
@@ -65,5 +66,10 @@
     			\item Does not consider significant improvements when splitting ($\leadsto$ overfitting)
     		\end{enumerate}
     		Solution provided by unbiased recursive partitioning via conditional inference trees (\texttt{ctree}) or model-based recursive partitioning (\texttt{mob}): Separate selection of the feature used for splitting and the split point AND hypothesis test as stopping criteria.
+
+                - unstable !
+                tuning \& pruning !
+            
+                CART more efficient or MOB / ctree more efficient?
     	\end{itemize}
 	\end{enumerate}

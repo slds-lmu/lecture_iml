@@ -1,0 +1,256 @@
+\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+
+\usepackage{../../style/lmu-lecture}
+% Defines macros and environments
+\input{../../style/common.tex}
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lectureml/}{compstat-lmu.github.io/lecture\ml}}
+\date{}
+
+\begin{document}
+
+\newcommand{\titlefigure}{figure/2023_paper_skizze_Planted_Tree.jpg}
+\newcommand{\learninggoals}{
+\item Motivation for RPFs
+\item Understand node types and restricting interactions in decision trees
+\item Understand planted trees: non-binary decision trees and inner leaves
+}
+
+\lecturechapter{Random Planted Forests}
+\lecture{Interpretable Machine Learning}
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+
+\begin{frame}{Random Planted Forests (RPF) \citebutton{Hiabu et al. 2023}{https://arxiv.org/abs/2012.14563}}
+
+\textbf{Goal:} Create a powerful tree ensemble, but still interpretable
+
+\textbf{Idea:}
+\begin{itemize}
+    \item GAMs easily interpretable, because no interaction $\leadsto$ Plot 1D functions
+    
+    \begin{columns}[T, totalwidth=\textwidth]
+    \begin{column}{0.5\textwidth}
+    $$
+    \hat{f}(x) = \theta_0 + f_1(x_{1}) + f_2(x_{2}) + \ldots + f_p(x_{p}),
+    $$
+    \end{column}
+    \hspace*{0.4cm}\hfill
+    \centering
+    \begin{column}{0.5\textwidth}
+    \includegraphics[width = .4\textwidth]{figure/gam_effects.pdf}
+    \end{column}
+    \end{columns}
+    
+    \item Same for function containing interactions between max. 2 features 
+    \\ $\leadsto$ function of 2 features, Plot 2D functions (i.e. 3D plot)
+
+    $$
+    \hat{f}(x) = \theta_0 + f_1(x_{1}) + f_2(x_{2}) + \ldots + f_p(x_{p}) + f_{1,2}(x_{1}, x_{2}) + \ldots + f_{1,p}(x_{1}, x_{p}) + \ldots + f_{p-1,p}(x_{p-1}, x_{p}),
+    $$
+
+    $\leadsto$ Visualize single functions $f_1, f_2, f_{1,2}(x_{1}, x_{2}), f_{1,3}(x_{1}, x_{3}) \ldots$
+
+    % TODO Also figures ?
+    
+\end{itemize}
+
+$\Rightarrow$ Interpretability possible via restricting degree of interactions
+
+\textbf{Problem:} How to know degree of interactions?
+
+\textbf{Solution:} Easy to determine for trees / tree ensembles!
+
+\end{frame}
+
+\begin{frame}{RPF: Determine interaction type in trees}
+
+Define the \textit{interaction type $t$} of a node as the subset of features involved in constructing this node.
+
+\textbf{Example:}
+
+\begin{center}
+    \begin{tikzpicture}[
+    node/.style = {scale=1},
+    scale = 1
+    ]
+        
+        % \node[node] at (0,0)(root){\(x_2 \leq 0\)};
+        % 
+        % \node[node] at (3,-1)(right_child){\(x_3 \leq 1\)};
+        % \node[node] at (4,-2)(rightright_grandchild){$0.6$};
+        % \node[node] at (2,-2)(rightleft_grandchild){\(-0.3\)};
+        % 
+        % \node[node] at (-3,-1)(left_child){\(x_4 \leq -1\)};
+        % \node[node] at (-4,-2)(leftleft_grandchild){$0.2$};
+        % \node[node] at (-2,-2)(leftright_grandchild){\(x_1 \leq -0.5\)};
+        % 
+        % \node[node] at (-2.5,-3)(low_child_1){$-0.1$};
+        % \node[node] at (-1.5,-3)(low_child_2){$0.7$};
+        
+        \node[node] at (0,2)(root){\(\R^d\)};
+        
+        \node[node] at (3,.5)(right_child){\(x_2 > 0\)};
+        \node[node] at (4,-1)(rightright_grandchild){$x_3 > 1$};
+        \node[node] at (2,-1)(rightleft_grandchild){\(x_3 \leq 1\)};
+        
+        \node[node] at (-3,.5)(left_child){\(x_2 \leq 0\)};
+        \node[node] at (-4,-1)(leftleft_grandchild){$x_4 \leq -1$};
+        \node[node] at (-1,-1)(leftright_grandchild){\(x_4 > -1\)};
+        
+        \node[node] at (-2,-2.5)(low_child_1){$x_1 \leq -0.5$};
+        \node[node] at (-0,-2.5)(low_child_2){$x_1 > -0.5$};
+
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (root) -- (left_child);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (root) -- (right_child);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (left_child) -- (leftleft_grandchild);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (left_child) -- (leftright_grandchild);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (right_child) -- (rightright_grandchild);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (right_child) -- (rightleft_grandchild);
+        
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (leftright_grandchild) -- (low_child_1);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (leftright_grandchild) -- (low_child_2);
+
+        \only<2>{
+        \node[node, color=red] at (0,1.5)(root_type){$t=\{\}$};
+        
+        \node[node, color=red] at (3,0)(right_child_type){$t=\{2\}$};
+        \node[node, color=red] at (4,-1.5)(rightright_grandchild_type){$t=\{2,3\}$};
+        \node[node, color=red] at (2,-1.5)(rightleft_grandchild_type){$t=\{2,3\}$};
+        
+        \node[node, color=red] at (-3,0)(left_child_type){$t=\{2\}$};
+        \node[node, color=red] at (-4,-1.5)(leftleft_grandchild_type){$t=\{2,4\}$};
+        \node[node, color=red] at (-1,-1.5)(leftright_grandchild_type){$t=\{2,4\}$};
+        
+        \node[node, color=red] at (-2,-3)(low_child_1_type){$t=\{1,2,4\}$};
+        \node[node, color=red] at (0,-3)(low_child_2_type){$t=\{1,2,4\}$};
+        % \draw (-2,-3.3) ellipse (1.1cm and 0.6cm);
+        % \draw (0,0) ellipse (2cm and 1cm);
+        }
+
+        
+    \end{tikzpicture}
+\end{center}
+
+\only<2>{
+$\Rightarrow$ Degree of interaction in each node is \(|t|\).
+}
+    
+\end{frame}
+
+\begin{frame}{RPF: bounded interaction order + Planted trees}
+
+    Goal: restrict this interaction degree
+    
+    $\leadsto$ In RPFs: 
+
+    \begin{itemize}
+        \item Always keep track of interaction type in each node
+        
+        \item For each new split, make sure max. degree of interactions is not exceeded $\Rightarrow$ When max. number of features reached, no new features are allowed
+    \end{itemize}
+
+    \textbf{Problem: } For small interaction order, single trees quickly limited
+
+    \begin{itemize}
+        \item E.g. interaction order 1: Every tree only one feature
+        \item[$\Rightarrow$] Many trees needed for more complex model
+    \end{itemize}
+
+    \textbf{Idea:} Allow inner nodes to split again
+
+    Define \textit{Planted Trees}: Decision trees in which each inner nodes can be \textit{leaves}:
+    \begin{itemize}
+        \item Add prediction to final output
+        \item Can be split again $\Rightarrow$ several splits possible
+    \end{itemize}
+    
+\end{frame}
+
+% \begin{frame}{RPF: Example}
+
+%     \begin{figure}[h]
+%         \centering
+%         % \vspace{-10pt} % Note that this is only to ensure a normal, not to big margin around the figure
+%         \includegraphics[width=1.1\linewidth]{figure/2023_paper_skizze_Planted_Tree.jpg}
+%         % \vspace{-10pt}
+%         \caption{Example of a single fully grown planted tree}
+%         \label{fig:Planted_Tree_example_paper}
+%     \end{figure}
+
+% \end{frame}
+
+\begin{frame}{RPF: Example}
+
+\begin{center}
+    \begin{figure}[h]
+    
+    \begin{tikzpicture}[
+    node/.style = {scale=.5},
+    scale = 1
+    ]
+        \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=1.1\linewidth]{figure/2023_paper_skizze_Planted_Tree.jpg}};
+        
+        \only<2>{
+        \node[node, color=red] at (8,6)(root_type){$t=\{\}$};
+        
+        \node[node, color=red] at (3.35,4.8)(leftleft_type){$\{1\}$};
+        \node[node, color=red] at (5.55,4.8)(leftright_type){$\{1\}$};
+        
+        \node[node, color=red] at (3.95,4.1)(leftleft_right_type){$\{1,2\}$};
+        \node[node, color=red] at (2.75,4.1)(leftleft_left_type){$\{1,2\}$};
+        
+        \node[node, color=red] at (3.35,2.8)(leftleft_right_left_type){$\{1,2\}$};
+        \node[node, color=red] at (4.35,2.8)(leftleft_right_right_type){$\{1,2\}$};
+        
+        \node[node, color=red] at (3.95,1.9)(leftright_leftleft_type){$\{1,3\}$};
+        \node[node, color=red] at (4.95,1.9)(leftright_leftright_type){$\{1,3\}$};
+        
+        % \node[node, color=red] at (5,1)(left_right_type_dummy){$\{1\}$};
+        \node[node, color=red] at (5.15,1.25)(leftright_rightleft_type){$\{1\}$};
+        \node[node, color=red] at (6.15,1.25)(leftright_rightright_type){$\{1\}$};
+        
+        \node[node, color=red] at (7.75,.65)(midright_type){$\{3\}$};
+        \node[node, color=red] at (6.15,.65)(midleft_type){$\{3\}$};
+        }
+        
+    \end{tikzpicture}
+    
+    \caption{Example of a single fully grown planted tree, green nodes: ``leaves''}
+    \label{fig:Planted_Tree_example_paper}
+    \end{figure}
+
+\end{center}
+    
+\end{frame}
+
+\begin{frame}{RPF: Algo}
+
+\begin{itemize}
+    \item Max. interaction degree is a hyperparameter
+    \item Total number of trees is a hyperparameter
+    \item End growing tree after max. total number of splits instead of max. depth \\
+    (min. number of samples also possible, but then higher nodes would split too often)
+    \item Randomization as in Random Forests:
+    \begin{itemize}
+        \item Only optimize over subset of features, randomly chosen
+        \item Only optimize over subset of possible split values
+    \end{itemize}
+    \item Make an inner leaf an inner node (i.e. delete ``leaf'' property), if it has children with the same type
+\end{itemize}
+    
+\end{frame}
+
+\begin{frame}{RPF: Example results and interpretation}
+    
+\end{frame}
+
+\begin{frame}{RPF: Conclusion}
+    
+\end{frame}
+
+\endlecture
+\end{document}
