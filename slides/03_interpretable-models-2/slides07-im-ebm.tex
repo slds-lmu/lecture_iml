@@ -34,16 +34,43 @@
 \lecture{Interpretable Machine Learning}
 
 % Improved and streamlined version of regression tree splitting slides
-% --- Slide 1: SSE as Impurity Measure ---
-\begin{frame}{Regression Tree: Impurity and Splitting}
+% --- Slide 1: RSS as Impurity Measure ---
+\begin{frame}{Recap: Split Selection Decision Tree}
   \begin{itemize}
     \item \textbf{Impurity (Regression):} Variance of target $Y$ in a node:
     \[ \text{Var}(Y) = \frac{1}{n}\sum_{i=1}^n (y^{(i)} - \bar{y})^2 = \frac{1}{n} \sum_{i=1}^n (y^{(i)})^2 - \bar{y}^2 \]
-    \item \textbf{Sum of Squared Errors}: $$SSE = n \cdot \text{Var}(Y) = \sum_{i=1}^n (y^{(i)} - \bar{y})^2 = \sum (y^{(i)})^2 - n \bar{y}^2 %= SS - \frac{S^2}{n}
-    $$
-    \item \textbf{Split criterion:} Minimize post-split SSE:
-    \[ \Delta = \frac{1}{n} \left[ \text{SSE}_{\text{parent}} - (\text{SSE}_L + \text{SSE}_R) \right] \]
-    % \item \textbf{Key identity:} \[ \text{SSE} = \sum (y^{(i)})^2 - n \bar{y}^2 = SS - \frac{S^2}{n} \]
+    \item \textbf{Sum of squared errors (SSE) =  residual sum of squares (RSS)}: 
+$$%\Rightarrow
+%    \begin{aligned}
+%\textstyle
+\text{RSS} 
+= n \cdot \text{Var}(Y) = \sum_{i=1}^n (y^{(i)} - \bar{y})^2 = 
+\dots = 
+%\sum_{i=1}^n \left( (y^{(i)})^2 - 2 y^{(i)} \bar{y} + \bar{y}^2 \right) = 
+\sum_{i=1}^n (y^{(i)})^2 - \frac{1}{n} \left(\sum_{i=1}^n y^{(i)}\right)^2
+%\\
+%&= \sum_{i=1}^n (y^{(i)})^2 - 2 \bar{y} \underbrace{\sum_{i=1}^n y^{(i)}}_{n \bar{y}} + n \bar{y}^2 
+%= \sum_{i=1}^n (y^{(i)})^2 - n \bar{y}^2
+%\end{aligned}
+$$
+%\Rightarrow \text{RSS} = SS_n - \frac{S_n^2}{n}$ with $S_n = \sum_{i=1}^n y^{(i)}, \quad SS_n = \sum_{i=1}^n (y^{(i)})^2$
+      \[
+        \text{Hence: } \boxed{\text{RSS}=SS_{n}-\dfrac{S_{n}^{2}}{n}
+        \quad\text{with}\quad
+        S_{n}=\sum_{i=1}^{n}y^{(i)},\;
+        SS_{n}=\sum_{i=1}^{n}(y^{(i)})^{2}}
+      \]
+    \item \textbf{Split criterion:} 
+    \begin{itemize}
+    \item \textbf{Minimize post-split RSS:}
+    $
+    \text{RSS}_{\text{split}} = \text{RSS}_L + \text{RSS}_R
+    $
+    \item \textbf{Maximize reduction in RSS:}
+    $
+    \Delta \text{RSS} = \text{RSS}_{\text{parent}} - (\text{RSS}_L + \text{RSS}_R)
+    $
+  \end{itemize}
   \end{itemize}
   % \vspace{0.5em}
   % \textit{Used in CART for regression (Breiman et al., 1984)}
@@ -51,18 +78,42 @@
 
 % --- Slide 2: Naive Split Computation ---
 \begin{frame}{Naive Split Selection: Explicit Computation}
-  \begin{itemize}
-    \item Sort data by feature $X$, examine $n-1$ potential split points
-    \item For each split at split point $s_i$:
-    \begin{itemize}
-      \item Compute group sizes $N_L$, $N_R$
-      \item Compute means $\bar{y}_L$, $\bar{y}_R$ and $\text{SSE}_L = \sum (y^{(i)} - \bar{y}_L)^2$
-      \item Total impurity: $\text{SSE}_L + \text{SSE}_R$
-    \end{itemize}
-    \item Select split that minimizes total SSE
-    \item \textbf{Computational cost:} $O(n^2)$ per feature (recomputes means/SSE from scratch in L and R node)
-  \end{itemize}
+  % \begin{itemize}
+  %   \item Sort data by feature $X$, examine $n-1$ potential split points
+  %   \item For each split at split point $s_i$:
+  %   \begin{itemize}
+  %     \item Compute group sizes $N_L$, $N_R$
+  %     \item Compute means $\bar{y}_L$, $\bar{y}_R$ and $\text{RSS}_L = \sum (y^{(i)} - \bar{y}_L)^2$
+  %     \item Total impurity: $\text{RSS}_L + \text{RSS}_R$
+  %   \end{itemize}
+  %   \item Select split that minimizes total RSS
+  %   \item \textbf{Computational cost:} $O(n^2)$ per feature (recomputes means/RSS from scratch in L and R node)
+  % \end{itemize}
+\begin{itemize}
+  \item For a given feature \( X_j \), sort the pairs \( (x_j^{(i)}, y^{(i)}) \) by increasing \( x_j^{(i)} \).
 
+  \item For each of the \( n - 1 \) potential split points at \( s_k =  \frac{1}{2}(x_j^{(k)} + x_j^{(k+1)})\):
+  \begin{itemize}
+    \item Define partitions:
+    $\mathcal{I}_L = \{ i : x^{(i)} \leq s_k \}, \quad \mathcal{I}_R = \{ i : x^{(i)} > s_k \}
+    $
+    \item Compute group means and counts after splitting at $s_k$:
+    \[\textstyle 
+    \bar{y}_L = \frac{1}{N_L} \sum_{i \in \mathcal{I}_L} y^{(i)}, \quad
+    \bar{y}_R = \frac{1}{N_R} \sum_{i \in \mathcal{I}_R} y^{(i)}, \text{ with }   N_L = |\mathcal{I}_L|, \quad N_R = |\mathcal{I}_R|
+    \]
+    \item Compute RSS after splitting at $s_k$:
+    \[\textstyle
+    \text{RSS}_\text{split}(s_k) = \text{RSS}_L(s_k) + \text{RSS}_R(s_k) = \sum_{i \in \mathcal{I}_L} (y^{(i)} - \bar{y}_L)^2 + \sum_{i \in \mathcal{I}_R} (y^{(i)} - \bar{y}_R)^2
+    \]
+    % \item Total impurity after split:
+    % \[
+    % \text{RSS}_{\text{split}} = \text{RSS}_L + \text{RSS}_R
+    % \]
+  \end{itemize}
+  \item Select the split point \( s_k \) that minimizes \( \text{RSS}_\text{split}(s_k) \)
+  \item \textbf{Computational cost:} \( O(n^2) \) per feature (recompute mean \& RSS at each split)
+\end{itemize}
   % --- TikZ figure: explicit computation for naïve split selection ---
   \centering
 \begin{tikzpicture}[x=1.2cm,y=0.9cm]
@@ -80,108 +131,297 @@
         (2.5,-0.75) -- (5.25,-0.75)
         node[midway,below=4pt,font=\scriptsize] {right: $N_R=3$};
   \node[draw,rounded corners,align=left,font=\scriptsize] (comp) at (2.5,-2.0) {
-      Compute\\[-1pt]
-      $\displaystyle\bar{y}_L,\;\bar{y}_R$\\[-1pt]
-      $\displaystyle\text{SSE}_L,\;\text{SSE}_R$};
+      Compute: 
+      $\displaystyle\bar{y}_L,\;\bar{y}_R\;$ and 
+      $\displaystyle\text{RSS}_L + \text{RSS}_R$};
   \draw[->,>=latex] (2.5,-0.55) -- (comp.north);
-  \node[font=\tiny,anchor=west] at (0.2,-3)
+  \node[font=\tiny,anchor=west] at (0.2,-2.55)
         {$\color{gray}{\mathcal{O}(n^2)\ \text{operations (recompute for each split } s_i \text{ per feature})}$};
 \end{tikzpicture}
 \end{frame}
 
-% --- Slide 3: Optimized Split via Prefix Sums ---
-\begin{frame}{Efficient Split Selection: Prefix-Sum Trick}
-  \begin{itemize}
-    \item \textbf{Cumulative sums:} For sorted $y^{(1)} \leq \dots \leq y^{(n)}$:
-    \[ S_k = \sum_{i=1}^k y^{(i)}, \quad SS_k = \sum_{i=1}^k (y^{(i)})^2 \]
-    \item \textbf{SSE via prefix sums:}
-    \[ \text{SSE}_{1..k} = SS_k - \frac{(S_k)^2}{k} \]
-    \[ \text{SSE}_{k+1..n} = SS_N - SS_k - \frac{(S_N - S_k)^2}{n-k} \]
-    \item \textbf{Key identity:} \[ \text{SSE} = SS - \frac{S^2}{n} \quad \text{(algebraic variance expansion)} \]
-    \item \textbf{Total SSE:} Compute in $O(1)$ per split using prefix sums
-    \item \textbf{Total complexity:} $O(n)$ per feature (after sorting and $O(n)$ precomputation)
-  \end{itemize}
+% % --- Slide 3: Optimized Split via Prefix Sums ---
+% \begin{frame}{Efficient Split Selection: Prefix-Sum Trick}
+%   \begin{itemize}
+%     \item \textbf{Cumulative sums:} For sorted $y^{(1)} \leq \dots \leq y^{(n)}$:
+%     \[ S_k = \sum_{i=1}^k y^{(i)}, \quad SS_k = \sum_{i=1}^k (y^{(i)})^2 \]
+%     \item \textbf{RSS via prefix sums:}
+%     \[ \text{RSS}_{1..k} = SS_k - \frac{(S_k)^2}{k} \]
+%     \[ \text{RSS}_{k+1..n} = SS_N - SS_k - \frac{(S_N - S_k)^2}{n-k} \]
+%     \item \textbf{Key identity:} \[ \text{RSS} = SS - \frac{S^2}{n} \quad \text{(algebraic variance expansion)} \]
+%     \item \textbf{Total RSS:} Compute in $O(1)$ per split using prefix sums
+%     \item \textbf{Total complexity:} $O(n)$ per feature (after sorting and $O(n)$ precomputation)
+%   \end{itemize}
+% \end{frame}
+
+
+
+\begin{frame}{Efficient Split Selection}
+\begin{itemize}
+  \item \textbf{Setup:} For feature \(X_j\), sort the data \((x_j^{(i)}, y^{(i)})_{i=1}^n\) by increasing \(x_j^{(i)}\)
+  % \item \textbf{Candidate split at threshold } \(s_k := \tfrac{1}{2}(x_j^{(k)} + x_j^{(k+1)})\)
+
+  % \item \textbf{Define index sets (based on split at } \(s_k\)\textbf{):}
+  %   \[
+  %     \mathcal{I}_L = \{ i : x_j^{(i)} \leq s_k \}, \quad
+  %     \mathcal{I}_R = \{ i : x_j^{(i)} > s_k \}
+  %   \]
+
+  \item \textbf{Define group statistics (cumulative sums) after split at $s_k$:}
+    % \[
+    % \begin{aligned}
+    %   S_L &= \textstyle\sum_{i \in \mathcal{I}_L} y^{(i)}, \qquad
+    %   SS_L = \sum_{i \in \mathcal{I}_L} (y^{(i)})^2, \qquad
+    %   N_L = |\mathcal{I}_L| \\
+    %   S_R &= \textstyle\sum_{i \in \mathcal{I}_R} y^{(i)}, \qquad
+    %   SS_R = \sum_{i \in \mathcal{I}_R} (y^{(i)})^2, \qquad
+    %   N_R = |\mathcal{I}_R|
+    % \end{aligned}
+    % \]
+      \[
+    \begin{aligned}
+      S_L &= \textstyle\sum_{i \in \mathcal{I}_L} y^{(i)}, \qquad
+      SS_L = \sum_{i \in \mathcal{I}_L} (y^{(i)})^2, \qquad
+      N_L = |\mathcal{I}_L| \\
+      S_R &= \textstyle S_n - S_L, \qquad
+      SS_R = SS_n - SS_L, \qquad
+      N_R = n - N_L
+    \end{aligned}
+    \]
+
+  \item \textbf{RSS for child nodes and parent node:}
+    \[
+      \text{RSS}_L(s_k) = SS_L - \frac{S_L^2}{N_L}, 
+      \text{RSS}_R(s_k) = SS_R - \frac{S_R^2}{N_R}, 
+      \text{RSS}_{\text{parent}} = SS_L + SS_R - \frac{S_n^2}{n}
+    \]
+
+  \item \textbf{Reduction in RSS:}
+    \[
+      \Delta\text{RSS}(s_k) = \text{RSS}_{\text{parent}} - (\text{RSS}_L + \text{RSS}_R)
+      = \frac{S_L^2}{N_L} + \frac{S_R^2}{N_R} - \frac{S_n^2}{n}
+    \]
+
+    \emph{All squared-target terms \( SS_L \), \( SS_R \) cancel. Only first-order sums are needed.}
+
+  \item \textbf{Search:} Choose best split \(s_k^\star = \arg\max_{s_k} \Delta\text{RSS}(s_k)\)
+
+  \item \textbf{Complexity per feature:}\; \(O(n\log n)\) (sorting) + \(O(n)\) (cumulative sums \& scan)
+\end{itemize}
 \end{frame}
 
 
-% --- Slide 4: Illustration of Prefix-Sum Computation ---
-\begin{frame}{Prefix-Sum Trick: Visual Example}
-  \centering
-  $$\scriptsize
-\boxed{y^{(1)} = 1.2,\; y^{(2)} = 2.0,\; y^{(3)} = 1.5,\; y^{(4)} = 3.2,\; y^{(5)} = 2.8,\; y^{(6)} = 4.1} \; \text{(sorted wrt feature)}
-$$
-% --- TikZ figure: prefix-sum trick (spacing optimised, no overlaps) ---------------
-\begin{tikzpicture}[>=latex,
-                    x=1.75cm,   % ⟵ wider columns
-                    y=0.8cm,   % ⟵ more vertical room
-                    font=\tiny]
 
-  % ------------------------------------------------------------------
-  % (1) sorted target values y^{(i)}
-  \foreach \x/\i in {0/1, 1/2, 2/3, 3/4, 4/5, 5/6}{
-    \node[circle, draw, fill=blue!12, inner sep=2pt] (y\i) at (\x,0) {$y^{(\i)}$};
+
+% % --- Slide 4: Illustration of Prefix-Sum Computation ---
+% \begin{frame}{Prefix-Sum Trick: Visual Example}
+%   \centering
+%   $$\scriptsize
+% \boxed{y^{(1)} = 1.2,\; y^{(2)} = 2.0,\; y^{(3)} = 1.5,\; y^{(4)} = 3.2,\; y^{(5)} = 2.8,\; y^{(6)} = 4.1} \; \text{(sorted wrt feature)}
+% $$
+% % --- TikZ figure: prefix-sum trick (spacing optimised, no overlaps) ---------------
+% \begin{tikzpicture}[>=latex,
+%                     x=1.75cm,   % ⟵ wider columns
+%                     y=0.8cm,   % ⟵ more vertical room
+%                     font=\tiny]
+
+%   % ------------------------------------------------------------------
+%   % (1) sorted target values y^{(i)}
+%   \foreach \x/\i in {0/1, 1/2, 2/3, 3/4, 4/5, 5/6}{
+%     \node[circle, draw, fill=blue!12, inner sep=2pt] (y\i) at (\x,0) {$y^{(\i)}$};
+%   }
+
+%   % ------------------------------------------------------------------
+%   % (2) prefix sums S_k  = Σ y^{(i)}  ---- wider boxes
+%   \foreach \x/\val/\i in {0/1.2/1, 1/3.2/2, 2/4.7/3, 3/7.9/4, 4/10.7/5, 5/14.8/6}{
+%     \node[draw, minimum width=1.4cm, minimum height=0.52cm,
+%           fill=green!12, align=center] (S\i) at (\x,-1.1) {$S_{\i}=\,\val$};
+%   }
+%   \node[anchor=east] at (-0.4,-1.1) {Prefix $S_k$};
+
+%   % ------------------------------------------------------------------
+%   % (3) prefix sums SS_k = Σ y^{(i)}²
+%   \foreach \x/\val/\i in {0/1.44/1, 1/5.44/2, 2/7.69/3, 3/17.93/4,
+%                           4/25.77/5, 5/42.58/6}{
+%     \node[draw, minimum width=1.4cm, minimum height=0.52cm,
+%           fill=orange!12, align=center] (SS\i) at (\x,-2.3) {$SS_{\i}=\,\val$};
+%   }
+%   \node[anchor=east] at (-0.4,-2.3) {Prefix $SS_k$};
+
+%   % ------------------------------------------------------------------
+%   % (4) candidate split between y4 and y5  (k = 4)
+%   \draw[dashed] (3.5,0.55) -- (3.5,-2.9);
+%   \node[anchor=south] at (3.5,0.7) {$k=4$};
+
+%   % braces indicating left / right partitions  (y-shifted to avoid boxes)
+%   \draw[decorate, decoration={brace,mirror,amplitude=4pt}]
+%         (-0.25,-2.75) -- (3.5,-2.75)
+%         node[midway,below=4pt] {left: $N_L=k=4$};
+
+%   \draw[decorate, decoration={brace,mirror,amplitude=4pt}]
+%         (3.5,-2.75) -- (5.25,-2.75)
+%         node[midway,below=4pt] {right: $N_R=n-k=2$};
+
+%   % ------------------------------------------------------------------
+%   % (5) computation box  (placed lower to clear everything)
+%   \node[draw, rounded corners, align=left, anchor=north,
+%         minimum width=7.3cm] (comp) at (2.5,-4.0) {
+%       \strut$\displaystyle
+%          \text{RSS}_{1..k}=SS_{k}-\frac{S_{k}^{2}}{k}
+%          \qquad\text{\color{purple}{\scriptsize($\mathcal{O}(1)$)}}$\\[4pt]
+%       $\displaystyle
+%          \text{RSS}_{k+1..n}=SS_N-SS_{k}-\frac{(S_N-S_{k})^{2}}{n-k}$};
+
+%   \draw[->,>=latex] (3,-2.5) -- ++(0,-0.3) -- (comp.north);
+
+%   % complexity foot-note
+%   \node[anchor=west,font=\tiny] at (1.5,-6.5)
+%         {\color{gray}$\mathcal{O}(1)$ per split \ $\Rightarrow$ \ $\mathcal{O}(n)$ per feature};
+% \end{tikzpicture}
+
+% \end{frame}
+
+% --- Slide 4: Worked Example --------------------------------------
+% \begin{frame}{Prefix-Sum Trick: Worked Example (RSS)}
+% \centering
+% {\scriptsize
+% \[
+%   \boxed{y^{(1)}\!=\!1.2,\;
+%          y^{(2)}\!=\!2.0,\;
+%          y^{(3)}\!=\!1.5,\;
+%          y^{(4)}\!=\!3.2,\;
+%          y^{(5)}\!=\!2.8,\;
+%          y^{(6)}\!=\!4.1}
+%   \quad\text{s.t.\ }x_{j}^{(1)}\le\dots\le x_{j}^{(6)}
+% \]
+% }
+
+% \begin{tikzpicture}[>=latex,
+%                     x=1.75cm,
+%                     y=0.75cm,
+%                     font=\tiny]
+
+% % (1) sorted targets
+% \foreach \x/\i in {0/1,1/2,2/3,3/4,4/5,5/6}{
+%   \node[circle, draw, fill=blue!12, inner sep=2pt] (y\i) at (\x,0)
+%         {$y^{(\i)}$};
+% }
+
+% % (2) prefix sums S_k
+% \foreach \x/\val/\i in {0/1.2/1,1/3.2/2,2/4.7/3,3/7.9/4,4/10.7/5,5/14.8/6}{
+%   \node[draw, minimum width=1.4cm, minimum height=0.5cm,
+%         fill=green!12, align=center] (S\i) at (\x,-1.0)
+%         {$S_{\i}=\val$};
+% }
+% \node[anchor=east] at (-0.4,-1.0) {Prefix $S_k$};
+
+% % dashed split after k = 4
+% \draw[dashed] (3.5,0.55) -- (3.5,-1.6);
+% \node[anchor=south] at (3.5,0.7) {$k=4$};
+
+% % braces
+% \draw[decorate,decoration={brace,mirror,amplitude=4pt}]
+%       (-0.25,-1.45) -- (3.5,-1.45)
+%       node[midway,below=4pt] {left $N_L=4$};
+% \draw[decorate,decoration={brace,mirror,amplitude=4pt}]
+%       (3.5,-1.45) -- (5.25,-1.45)
+%       node[midway,below=4pt] {right $N_R=2$};
+
+% % (3) computation box
+% \node[draw, rounded corners, align=left, anchor=north,
+%       minimum width=7.2cm] (comp) at (2.5,-2.8) {
+%   \strut$\displaystyle
+%     \Delta\text{RSS}(k{=}4)
+%     = \frac{S_4^{2}}{4}
+%       +\frac{(S_6-S_4)^{2}}{2}
+%       -\frac{S_6^{2}}{6}$\\[2pt]
+%   $\displaystyle
+%     =\frac{7.9^{2}}{4}
+%       +\frac{(14.8-7.9)^{2}}{2}
+%       -\frac{14.8^{2}}{6}
+%       \;\approx\;2.08$
+% };
+
+% \draw[->] (3.0,-1.25) -- (comp.north);
+
+% % complexity foot-note
+% \node[anchor=west,font=\tiny,gray] at (1.5,-3.7)
+%       {\(\mathcal{O}(1)\) per split \(\;\Longrightarrow\;\) \(\mathcal{O}(n)\) per feature};
+% \end{tikzpicture}
+% \end{frame}
+
+% % --- Slide 5: Complexity Comparison ---
+% \begin{frame}{Naive vs. Cumulative-Sum Split}
+%   \begin{itemize}
+%     \item \textbf{Naive:} $O(n^2)$ per feature (explicit recomputation of RSS)
+%     \item \textbf{Prefix sum:} $O(n)$ per feature (after $O(n \log n)$ sorting)
+%     \item \textbf{Speedup:} For $n = 10^4$: $\sim10^8$ vs. $10^4$ operations per feature
+%     \item \textbf{Same optimal split:} Numerically identical result, algorithmically faster
+%     \item \textbf{Constraint:} Only valid if both partitions are non-empty: split between distinct $x_i$
+%   \end{itemize}
+% \end{frame}
+
+% ------------------------------------------------------------
+% --- Slide : Prefix-Sum Trick – Worked Example  -------------
+% ------------------------------------------------------------
+\begin{frame}{Efficient Split Selection - Example}
+\centering
+{
+\scriptsize
+\[
+  \boxed{y^{(1)}\!=\!1.2,\;
+         y^{(2)}\!=\!2.0,\;
+         y^{(3)}\!=\!1.5,\;
+         y^{(4)}\!=\!3.2,\;
+         y^{(5)}\!=\!2.8,\;
+         y^{(6)}\!=\!4.1}
+  \quad(\,x_j^{(1)}\le\dots\le x_j^{(6)}\,)
+\]
+}
+\begin{tikzpicture}[>=latex,x=1.75cm,y=0.75cm,font=\tiny]
+  % sorted targets --------------------------------------------------
+  \foreach \x/\i in {0/1,1/2,2/3,3/4,4/5,5/6}{
+    \node[circle,draw,fill=blue!12,inner sep=2pt] (y\i) at (\x,0) {$y^{(\i)}$};
   }
 
-  % ------------------------------------------------------------------
-  % (2) prefix sums S_k  = Σ y^{(i)}  ---- wider boxes
-  \foreach \x/\val/\i in {0/1.2/1, 1/3.2/2, 2/4.7/3, 3/7.9/4, 4/10.7/5, 5/14.8/6}{
-    \node[draw, minimum width=1.4cm, minimum height=0.52cm,
-          fill=green!12, align=center] (S\i) at (\x,-1.1) {$S_{\i}=\,\val$};
+  % prefix sums S_k -------------------------------------------------
+  \foreach \x/\val/\i in {0/1.2/1,1/3.2/2,2/4.7/3,3/7.9/4,4/10.7/5,5/14.8/6}{
+    \node[draw,fill=green!10,minimum width=1.4cm,minimum height=0.5cm,
+          align=center] (S\i) at (\x,-1.0) {$S_{\i}=\val$};
   }
-  \node[anchor=east] at (-0.4,-1.1) {Prefix $S_k$};
+  \node[anchor=east] at (-0.35,-1.0) {cumulative sums $S_k$ \;};
 
-  % ------------------------------------------------------------------
-  % (3) prefix sums SS_k = Σ y^{(i)}²
-  \foreach \x/\val/\i in {0/1.44/1, 1/5.44/2, 2/7.69/3, 3/17.93/4,
-                          4/25.77/5, 5/42.58/6}{
-    \node[draw, minimum width=1.4cm, minimum height=0.52cm,
-          fill=orange!12, align=center] (SS\i) at (\x,-2.3) {$SS_{\i}=\,\val$};
-  }
-  \node[anchor=east] at (-0.4,-2.3) {Prefix $SS_k$};
-
-  % ------------------------------------------------------------------
-  % (4) candidate split between y4 and y5  (k = 4)
-  \draw[dashed] (3.5,0.55) -- (3.5,-2.9);
+  % split after k = 4 ----------------------------------------------
+  \draw[dashed] (3.5,0.55) -- (3.5,-1.6);
   \node[anchor=south] at (3.5,0.7) {$k=4$};
 
-  % braces indicating left / right partitions  (y-shifted to avoid boxes)
-  \draw[decorate, decoration={brace,mirror,amplitude=4pt}]
-        (-0.25,-2.75) -- (3.5,-2.75)
-        node[midway,below=4pt] {left: $N_L=k=4$};
+  \draw[decorate,decoration={brace,mirror,amplitude=4pt}]
+        (-0.25,-1.45) -- (3.5,-1.45)
+        node[midway,below=4pt] {$N_L=4$};
+  \draw[decorate,decoration={brace,mirror,amplitude=4pt}]
+        (3.5,-1.45) -- (5.25,-1.45)
+        node[midway,below=4pt] {$N_R=2$};
 
-  \draw[decorate, decoration={brace,mirror,amplitude=4pt}]
-        (3.5,-2.75) -- (5.25,-2.75)
-        node[midway,below=4pt] {right: $N_R=n-k=2$};
-
-  % ------------------------------------------------------------------
-  % (5) computation box  (placed lower to clear everything)
-  \node[draw, rounded corners, align=left, anchor=north,
-        minimum width=7.3cm] (comp) at (2.5,-4.0) {
-      \strut$\displaystyle
-         \text{SSE}_{1..k}=SS_{k}-\frac{S_{k}^{2}}{k}
-         \qquad\text{\color{purple}{\scriptsize($\mathcal{O}(1)$)}}$\\[4pt]
-      $\displaystyle
-         \text{SSE}_{k+1..n}=SS_N-SS_{k}-\frac{(S_N-S_{k})^{2}}{n-k}$};
-
-  \draw[->,>=latex] (3,-2.5) -- ++(0,-0.3) -- (comp.north);
-
-  % complexity foot-note
-  \node[anchor=west,font=\tiny] at (1.5,-6.5)
-        {\color{gray}$\mathcal{O}(1)$ per split \ $\Rightarrow$ \ $\mathcal{O}(n)$ per feature};
+  % computation box -------------------------------------------------
+  \node[draw,rounded corners,align=left,anchor=north,
+        minimum width=7.1cm] (box) at (2.5,-2.8) {
+     \strut$\displaystyle
+       G(k{=}4)=\frac{S_4^{2}}{4}
+               +\frac{(S_6-S_4)^{2}}{2}$\\[2pt]
+     \phantom{$G(k{=}4)$}$=\dfrac{7.9^{2}}{4}
+       +\dfrac{(14.8-7.9)^{2}}{2}
+       \;\approx\;39.41$
+  };
+  \draw[->] (3.0,-1.25) -- (box.north);
 \end{tikzpicture}
 
-\end{frame}
-
-
-% --- Slide 5: Complexity Comparison ---
-\begin{frame}{Naive vs. Cumulative-Sum Split}
-  \begin{itemize}
-    \item \textbf{Naive:} $O(n^2)$ per feature (explicit recomputation of SSE)
-    \item \textbf{Prefix sum:} $O(n)$ per feature (after $O(n \log n)$ sorting)
-    \item \textbf{Speedup:} For $n = 10^4$: $\sim10^8$ vs. $10^4$ operations per feature
-    \item \textbf{Same optimal split:} Numerically identical result, algorithmically faster
-    \item \textbf{Constraint:} Only valid if both partitions are non-empty: split between distinct $x_i$
-  \end{itemize}
+\vspace{0.5em}
+\begin{itemize}
+  \item $G(k)$ omits $-\!S_n^{2}/n$  
+        (identical for all splits $\Rightarrow$ does not affect $\arg\max$).
+  \item Only cumulative sums $S_k$ are required, no $SS_k$ is stored or updated.
+  \item \(\mathcal{O}(1)\) per split \(\Rightarrow\) \(\mathcal{O}(n)\) per feature.
+\end{itemize}
 \end{frame}
 
 
@@ -294,8 +534,8 @@ $$
     \item 1st boosting iteration: \\
     Cycle through each feature $j = 2,\dots,p$:
     \begin{itemize}
-        \item Fit shallow bagged tree $S_j^{(1)}$ using feature $x_j$ and previous residual $\tilde{r}^{(j-1)}$ %to $(x_j, \tilde{r}^{(j-1)})$
-        \item Update $f_j$: $f_j^{(1)}(x_j) = f_j^{(0)}(x_j) + \eta \cdot S_j^{(1)}(x_j)$
+        \item Fit shallow bagged tree $T_j^{(1)}$ using feature $x_j$ and previous residual $\tilde{r}^{(j-1)}$ %to $(x_j, \tilde{r}^{(j-1)})$
+        \item Update $f_j$: $f_j^{(1)}(x_j) = f_j^{(0)}(x_j) + \eta \cdot T_j^{(1)}(x_j)$
         \item Recompute $\hat{y}$ and residuals: $\tilde{r}^{(j)} = y - \hat{y}^{(j)}$
     \end{itemize}
     \item After one full pass over features, we complete one boosting iteration
@@ -386,11 +626,11 @@ $$
 \begin{itemize}
     \item Final model consists of $M$ shallow trees per feature:
     $$
-    \text{EBM Model} = \sum_{j=1}^p \sum_{m=1}^M \eta \cdot S_j^{(m)}(x_j)
+    \text{EBM Model} = \sum_{j=1}^p \sum_{m=1}^M \eta \cdot T_j^{(m)}(x_j)
     $$
     \item For each feature $x_j$, combine its $M$ trees into a shape function:
     $$
-    \hat{f}_j(x_j) = \sum_{m=1}^M \eta \cdot S_j^{(m)}(x_j)
+    \hat{f}_j(x_j) = \sum_{m=1}^M \eta \cdot T_j^{(m)}(x_j)
     $$
     \item Plot $\hat{f}_j(x_j)$ vs. $x_j$ $\leadsto$ Shows univariate marginal effect of feature $j$
     \item One plot per feature $\leadsto$ Model is fully explainable via $p$ additive plots
@@ -708,21 +948,21 @@ $$
 
 % \textbf{Step 2: Define region-wise statistics}
 % \[
-% \mu_r = \frac{T_r}{n_r}, \quad
-% T_r = \sum_{(x, y) \in r} y, \quad
+% \mu_r = \frac{S_r}{n_r}, \quad
+% S_r = \sum_{(x, y) \in r} y, \quad
 % Q_r = \sum_{(x, y) \in r} y^2, \quad
 % n_r = |r|
 % \]
 
 % \textbf{Step 3: Substitute and simplify}
 % \[
-% \text{RSS}(c_i, c_j) = \sum_r \left( Q_r - \frac{T_r^2}{n_r} \right)
+% \text{RSS}(c_i, c_j) = \sum_r \left( Q_r - \frac{S_r^2}{n_r} \right)
 % \]
 
 % \textbf{Why is this fast?}
 % \begin{itemize}
 %     \item Precompute cumulative sums of $y$, $y^2$, and counts
-%     \item Allows fast lookup of $T_r$, $Q_r$, and $n_r$ for any rectangle defined by $(c_i, c_j)$
+%     \item Allows fast lookup of $S_r$, $Q_r$, and $n_r$ for any rectangle defined by $(c_i, c_j)$
 % \end{itemize}
 
 
@@ -861,13 +1101,14 @@ We evaluate a 4-leaf, axis-aligned tree $T_{ij}$ over the 2D feature projection 
   \item<2-> {\bf Fit}\,: For each cut, assign a constant
         \(\hat y_r\!=\!\text{mean}(y\!\in\!r)\) to
         \(r\!\in\!\{A,B,C,D\}\).
-  \item<2-> {\bf Compute}\,:   
+  \item<2-> {\bf Compute RSS summed over all regions}:   
   \[
   \footnotesize
 \begin{aligned}
-&\text{RSS}(c_i, c_j) 
-= \sum_{r} \sum_{(x,y) \in r} (y - \hat{y}_r)^2 \\
-&= \sum_{r} \left( \sum_{(x,y) \in r} y^2 - 2 \hat{y}_r \sum_{(x,y) \in r} y + \hat{y}_r^2 \cdot n_r \right)
+\text{RSS}(c_i, c_j) 
+&= \sum_{r} \sum_{(x,y) \in r} (y - \hat{y}_r)^2 \\
+&= \sum_{r} \left( \sum_{(x,y) \in r} y^2 - \frac{1}{n_r} \left(\sum_{(x,y) \in r} y \right)^2 \right)
+%\sum_{r} \left( \sum_{(x,y) \in r} y^2 - 2 \hat{y}_r \sum_{(x,y) \in r} y + \hat{y}_r^2 \cdot n_r \right)
 \end{aligned}
 \]
         % \(\text{RSS}(c_i,c_j)=\sum_{r}
@@ -905,26 +1146,26 @@ To evaluate a cut pair $(c_i, c_j)$, we use precomputed per-region statistics:
 \begin{itemize}
   \item For each region $r \in \{A, B, C, D\}$, compute:
     \[
-    T_r = \sum_{(x,y)\in r} y,\quad
+    S_r = \sum_{(x,y)\in r} y,\quad
     %Q_r = \sum_{(x,y)\in r} y^2,\quad
     n_r = |\{(x,y)\in r\}|,\quad
-    \hat y_r = T_r / n_r
+    \hat y_r = S_r / n_r
     \]
-  \item Plug into RSS: $$
-\text{RSS}(c_i, c_j) = \sum_{r} \left( \sum_{(x,y) \in r} y^2 - 2 \hat{y}_r \sum_{(x,y) \in r} y + \hat{y}_r^2 \cdot n_r \right) = 
-%\sum_{r}\!\left(\sum_{(x,y)\in r} y^2-\frac{T_r^{2}}{n_r}\right)
-\sum_{r}\sum_{(x,y)\in r} y^2+\sum_{r}\frac{T_r^{2}}{n_r}
+  \item Plug into RSS summed over all regions: $$
+\text{RSS}(c_i, c_j) = \sum_{r} \left( \sum_{(x,y) \in r} y^2 - \frac{1}{n_r} \left(\sum_{(x,y) \in r} y \right)^2 \right) = 
+%\sum_{r}\!\left(\sum_{(x,y)\in r} y^2-\frac{S_r^{2}}{n_r}\right)
+\sum_{r}\sum_{(x,y)\in r} y^2+\sum_{r}\frac{S_r^{2}}{n_r}
 $$
-  %\item Requires only scalar summaries $(T_r, Q_r, n_r)$
+  %\item Requires only scalar summaries $(S_r, Q_r, n_r)$
   %\item No access to individual samples needed at scoring time
   %\item Baseline (unsplit) RSS: $\text{RSS}_0 = \sum_k y_k^2 - \frac{T^2}{n}$, with $T = \sum_k y_k$ and $\bar y = T/n$
   \item 
 For a candidate cut, compute \textbf{RSS drop}:
 \begin{align*}
   \Delta\text{RSS}(c_i,c_j)
-     &=\text{RSS}_0-\text{RSS}(c_i,c_j)
-     &=\left(\sum_{k}y_k^{2}-\frac{T^{2}}{n}\right)
-       -  \sum_{r}\sum_{(x,y)\in r} y^2+\sum_{r}\frac{T_r^{2}}{n_r}
+     &=\text{RSS}_{\text{parent}}-\text{RSS}(c_i,c_j)\\
+     &=\left(\sum_{i = 1}^n \left(y^{(i)}\right)^{2} -\frac{S_n^{2}}{n}\right)
+       -  \sum_{r}\sum_{(x,y)\in r} y^2+\sum_{r}\frac{S_r^{2}}{n_r}
 \end{align*}
 \end{itemize}
 
@@ -933,16 +1174,16 @@ For a candidate cut, compute \textbf{RSS drop}:
 % ============================================================================
 \begin{frame}{FAST: Use RSS drop}
 
-Because $\sum_k y_k^{2} = \sum_{r}\sum_{(x,y)\in r} y^2$, \emph{all squared target terms cancel}:
+Because $\sum_{i = 1}^n \left(y^{(i)}\right) ^{2} = \sum_{r}\sum_{(x,y)\in r} y^2$, \emph{all squared target terms cancel}:
 \[
   \boxed{\displaystyle
   \Delta\text{RSS}(c_i,c_j)
-     =\sum_{r}\frac{T_r^{2}}{n_r}\;-
-      \frac{T^{2}}{n}}
+     =\sum_{r}\frac{S_r^{2}}{n_r}\;-
+      \frac{S_n^{2}}{n}}
 \]
-The parent term $T^{2}/n$ is constant across all cuts.  Hence
+The parent term $S_n^{2}/n$ is constant across all cuts.  Hence
 \[
-  \textbf{maximize }S(c_i,c_j)=\sum_{r}\frac{T_r^{2}}{n_r}
+  \textbf{maximize }\Delta\text{RSS}(c_i,c_j)=\sum_{r}\frac{S_r^{2}}{n_r}
   \quad\Longleftrightarrow\quad
   \textbf{minimize }\text{RSS}(c_i,c_j).
 \]
@@ -951,10 +1192,10 @@ The parent term $T^{2}/n$ is constant across all cuts.  Hence
 \textbf{Why is this fast?}
 \begin{itemize}
   \item Precompute cummulative sums of \(y\) and counts across the binned grid
-  \item Enables fast lookup of region statistics \(T_r, n_r\) for any cut
+  \item Enables fast lookup of region statistics \(S_r, n_r\) for any cut
   \item No additional data scan or recomputation needed across the \(b^2\) candidate cuts
   \item For the best cut: Compare and select the largest
-$S(c_i,c_j)=\sum_{r}T_r^{2}/n_r$.
+$\Delta\text{RSS}(c_i,c_j)$.
 \end{itemize}
 
 
@@ -966,9 +1207,9 @@ $S(c_i,c_j)=\sum_{r}T_r^{2}/n_r$.
 % \begin{enumerate}\itemsep4pt
 %   \item \textbf{Discretise}: map each feature axis to $b\,(\le256)$ bins.
 %   \item \textbf{Iterate}: enumerate the $b^{2}$ cut pairs $(c_i,c_j)$.
-%   \item \textbf{Lookup stats}: obtain $(T_r,n_r)$ for the four rectangles
+%   \item \textbf{Lookup stats}: obtain $(S_r,n_r)$ for the four rectangles
 %         in $O(1)$s.
-%   \item \textbf{Score}: compute $S(c_i,c_j)=\sum_{r}T_r^{2}/n_r$.
+%   \item \textbf{Score}: compute $S(c_i,c_j)=\sum_{r}S_r^{2}/n_r$.
 %   \item \textbf{Select}: keep the cut with the \emph{largest} $S$ (largest
 %         RSS drop).
 % \end{enumerate}
@@ -996,10 +1237,10 @@ $S(c_i,c_j)=\sum_{r}T_r^{2}/n_r$.
 % \textbf{Pre-compute for every rectangle}  
 % \(r\in\{A,B,C,D\}\):
 % \[
-% T_r=\!\!\sum_{(x,y)\in r}\!y, \qquad 
+% S_r=\!\!\sum_{(x,y)\in r}\!y, \qquad 
 % Q_r=\!\!\sum_{(x,y)\in r}\!y^{2}, \qquad 
 % n_r=|r|, \qquad
-% y_r=\frac{T_r}{n_r}.
+% y_r=\frac{S_r}{n_r}.
 % \]
 
 % \medskip
@@ -1015,14 +1256,14 @@ $S(c_i,c_j)=\sum_{r}T_r^{2}/n_r$.
 % \[
 % \text{RSS}(c_i,c_j)=
 % \sum_{r}\!\left(
-%       Q_r-\frac{T_r^{2}}{n_r}\right).
+%       Q_r-\frac{S_r^{2}}{n_r}\right).
 % \]
 
 % \medskip
 % \textbf{Why is this fast?}
 % \begin{itemize}
 %   \item Precompute cummulative sums of \(y\), \(y^2\), and counts across the binned grid
-%   \item Enables fast lookup of region statistics \(T_r, Q_r, n_r\) for any cut
+%   \item Enables fast lookup of region statistics \(S_r, Q_r, n_r\) for any cut
 %   \item No additional data scan or recomputation needed across the \(b^2\) candidate cuts
 % \end{itemize}
 
