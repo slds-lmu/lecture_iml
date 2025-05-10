@@ -1,4 +1,7 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[11pt,compress,t,n
+otes=noshow, aspectratio=169, xcolor=table]{beamer}
+% alternatively combining latex files with subfile package https://tex.stackexchange.com/a/155883/26830 (however, page numbering and some other stuff does not work well)
+
 % deactivate beamer navigation
 %\setbeamertemplate{navigation symbols}{}
 %\usepackage{geometry}
@@ -6,7 +9,7 @@
 
 % set path of iml lecture here, e.g., relative to the current dir
 \newcommand{\pathiml}{../}
-\usepackage{\pathiml/style/lmu-lecture}
+\usepackage[nospeakermargin]{\pathiml/style/lmu-lecture-combine}
 \usepackage{pax}
 \setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
 %\useoutertheme{metropolis}
@@ -20,27 +23,76 @@
 }
 % includepdf slides, pagecommad will set counter for framenumber
 \usepackage{pdfpages}
-\includepdfset{trim=0mm 0mm 0mm 0mm, pagecommand={\global\setcounter{framenumber}{\value{page}}}}
+% if speakermargin, use this
+%\includepdfset{trim=0mm 0mm 0mm 0mm, pagecommand={\global\setcounter{framenumber}{\value{page}}}}
+% if nospeakermargin, use this
+\includepdfset{trim=0mm 0mm 42.6666666667mm 0mm, pagecommand={\global\setcounter{framenumber}{\value{page}}}}
 % trim=0mm 6mm 0mm 0mm, offset=0 15,
 % add footer:
 \usepackage{framed, color}
 \usepackage{xcolor}
-%\iffalse
-\setbeamertemplate{footline}[text line]{%
+
+\newif\ifchapterslideno
+\chapterslidenofalse % default: footline shows only total number
+%\chapterslidenotrue % alternative: footline shows total and chapter no
+
+\ifchapterslideno
+  % ---- Alternative footline ----
+\usepackage{calc}
+\usepackage{transparent} % (optional, for your transparent page numbers)
+  \setbeamertemplate{footline}[text line]{%
+    \noindent\hspace*{\dimexpr-\oddsidemargin-1in\relax}%
+     \colorbox{white}{
+     \makebox[\dimexpr\paperwidth-9ex\relax]{
+     \color{black}
+     \begin{minipage}[c][2.5ex][b]{0.5\linewidth}
+       \secname
+     \end{minipage}
+     \hfill\begin{minipage}[c][2.5ex][b]{0.5\linewidth}
+       \flushright
+       %\insertframenumber{}~/~\inserttotalframenumber~~
+     \end{minipage}
+     }}%
+     \begin{minipage}[c][3.5ex][t]{6.5ex}
+       \flushright
+       \fontsize{4pt}{6}\selectfont\transparent{0.3}\insertframenumber{}~/~\inserttotalframenumber~~
+     \end{minipage}
+    \hspace*{-\paperwidth}
+  }
+\else
+  % ---- Default footline ----
+  \setbeamertemplate{footline}[text line]{%
     \noindent\hspace*{\dimexpr-\oddsidemargin-1in\relax}%
      \colorbox{white}{
      \makebox[\dimexpr\paperwidth-2\fboxsep\relax]{
      \color{black}
-     \begin{minipage}[c][4.5ex][c]{0.5\linewidth}
+     \begin{minipage}[c][2.5ex][b]{0.5\linewidth}
        \secname
      \end{minipage}
-     \hfill\begin{minipage}[c][4.5ex][c]{0.5\linewidth}
+     \hfill\begin{minipage}[c][2.5ex][b]{0.5\linewidth}
        \flushright
        \insertframenumber{}~/~\inserttotalframenumber~~
      \end{minipage}
      }}%
   \hspace*{-\paperwidth}
-}
+  }
+\fi
+
+% \setbeamertemplate{footline}[text line]{%
+%     \noindent\hspace*{\dimexpr-\oddsidemargin-1in\relax}%
+%      \colorbox{white}{
+%      \makebox[\dimexpr\paperwidth-2\fboxsep\relax]{
+%      \color{black}
+%      \begin{minipage}[c][4.5ex][c]{0.5\linewidth}
+%        \secname
+%      \end{minipage}
+%      \hfill\begin{minipage}[c][4.5ex][c]{0.5\linewidth}
+%        \flushright
+%        \insertframenumber{}~/~\inserttotalframenumber~~
+%      \end{minipage}
+%      }}%
+%   \hspace*{-\paperwidth}
+% }
 %\fi
 
 \begin{document}
@@ -48,22 +100,17 @@
 
 % General remark: hyperlinks in included pdfs are not clickable anymore in the combined pdf unless you use pax to extract annotations from original files and complile this file locally (see https://tex.stackexchange.com/questions/497624/merging-multiple-pdf-files-without-breaking-hyperlinks)
 
-\section{Feature Effects - Intro}
-\includepdf[pages={1-last}]{slides-fe-intro.pdf}
+%\section{Interpretable Models - Rule-based Models}
+%\includepdf[pages={1-last}]{slides05-im-gam-boosting.pdf}
+%\includepdf[pages={1-last}]{slides06-im-rule-based.pdf}
+%\includepdf[pages={1-last}]{slides07-im-ebm.pdf}
 
-\section{Feature Effects - ICE curves}
-\includepdf[pages={1-last}]{slides-fe-ice.pdf}
+\section{Interpretable Models - GAM}
+\includepdf[pages={1-last}]{slides06-im-gam-boosting.pdf}
+%\includepdf[pages={1-last}]{slides06-im-rule-based.pdf}
 
-\section{Feature Effects - PD plots}
-\includepdf[pages={1-last}]{slides-fe-pdp.pdf}
-
-\section{Feature Effects - ALE plots}
-\includepdf[pages={1-last}]{slides-fe-ale.pdf}
-%
-% \section{Feature Interactions}
-% \includepdf[pages={1-last}]{slides-fe-h-statistic.pdf}
-%
-% \section{Functional Decomposition}
-% \includepdf[pages={1-last}]{slides-fe-decomposition.pdf}
+\section{Interpretable Models - EBM}
+\includepdf[pages={1-last}]{slides07-im-ebm.pdf}
 
 \end{document}
+
