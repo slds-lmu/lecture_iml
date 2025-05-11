@@ -110,7 +110,7 @@ $$
     % \text{RSS}_{\text{split}} = \text{RSS}_L + \text{RSS}_R
     % \]
   \end{itemize}
-  \item Select the split point \( s_k \) that minimizes \( \text{RSS}_\text{split}(s_k) \)
+  \item Select split point \( s_k \) that minimizes \( \text{RSS}_\text{split}(s_k) \)
   \item \textbf{Computational cost:} \( O(n^2) \) per feature (recompute mean \& RSS at each split)
 \end{itemize}
   % --- TikZ figure: explicit computation for naïve split selection ---
@@ -194,8 +194,7 @@ $$
       \text{RSS}_R(s_k) = SS_R - \frac{S_R^2}{N_R}, 
       \text{RSS}_{\text{parent}} = SS_L + SS_R - \frac{S_n^2}{n}
     \]
-
-  \item \textbf{Reduction in RSS:}
+  \item<2-> \textbf{Reduction in RSS:}
     \[
       \Delta\text{RSS}(s_k) = \text{RSS}_{\text{parent}} - (\text{RSS}_L + \text{RSS}_R)
       = \frac{S_L^2}{N_L} + \frac{S_R^2}{N_R} - \frac{S_n^2}{n}
@@ -203,9 +202,9 @@ $$
 
     \emph{All squared-target terms \( SS_L \), \( SS_R \) cancel. Only first-order sums are needed.}
 
-  \item \textbf{Search:} Choose best split \(s_k^\star = \arg\max_{s_k} \Delta\text{RSS}(s_k)\)
+  \item<2-> \textbf{Search:} Choose best split \(s_k^\star = \arg\max_{s_k} \Delta\text{RSS}(s_k)\)
 
-  \item \textbf{Complexity per feature:}\; \(O(n\log n)\) (sorting) + \(O(n)\) (cumulative sums \& scan)
+  \item<2-> \textbf{Complexity per feature:}\; \(O(n\log n)\) (sorting) + \(O(n)\) (cumulative sums \& scan)
 \end{itemize}
 \end{frame}
 
@@ -1188,7 +1187,7 @@ The parent term $S_n^{2}/n$ is constant across all cuts.  Hence
 \]
 
 
-\textbf{Why is this fast?}
+\textbf{Why is this efficient?}
 \begin{itemize}
   \item Precompute cummulative sums of \(y\) and counts across the binned grid
   \item Enables fast lookup of region statistics \(S_r, n_r\) for any cut
