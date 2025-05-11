@@ -34,9 +34,12 @@
 \begin{document}
 
 % Title Slide
-\begin{frame}
-  \titlepage
-\end{frame}
+% \begin{frame}
+%   \titlepage
+% \end{frame}
+
+\lecturechapter{Marginal Effects}
+\lecture{Interpretable Machine Learning}
 
 % Learning Goals
 \begin{frame}{Learning Goals}
@@ -272,7 +275,7 @@ Then:
 \begin{itemize}
 \item \textbf{For Continuous Features}:
 \[
-\text{FME}_{\xv, \boldh_S} = \widehat{f}(\xv_S + \boldh_S, \xv_{-S}) - \widehat{f}(\xv)
+\text{FME}_{\xv, \boldhS} = \widehat{f}(\xv_S + \boldhS, \xv_{-S}) - \widehat{f}(\xv)
 \]
 \item \textbf{For Categorical Features}:
 \[
@@ -307,7 +310,7 @@ Then:
 \end{itemize}
 \item \textbf{Definition}:
 \[
-\text{NLM}_{\xv, \boldh_S} = 1 - \frac{\int_0^1 [\widehat{f}(\gamma(t)) - g_{\xv, \boldh_S}(t)]^2 \Vert \gamma'(t) \Vert_2 dt}{\int_0^1 [\widehat{f}(\gamma(t)) - \overline{\widehat{f}}]^2 \Vert \gamma'(t) \Vert_2 dt}
+\text{NLM}_{\xv, \boldhS} = 1 - \frac{\int_0^1 [\widehat{f}(\gamma(t)) - g_{\xv, \boldhS}(t)]^2 \Vert \gamma'(t) \Vert_2 dt}{\int_0^1 [\widehat{f}(\gamma(t)) - \overline{\widehat{f}}]^2 \Vert \gamma'(t) \Vert_2 dt}
 \]
 \item \textbf{Interpretation}:
 \begin{itemize}
@@ -323,16 +326,16 @@ Then:
 \begin{itemize}
 \item \textbf{Linear Reference Function}:
 \[
-g_{\xv, \boldh_S}(t) = \widehat{f}(\xv) + t \cdot \text{FME}_{\xv, \boldh_S}
+g_{\xv, \boldhS}(t) = \widehat{f}(\xv) + t \cdot \text{FME}_{\xv, \boldhS}
 \]
 \item \textbf{Path Parameterization}:
 \[
-\gamma(t) = \xv + t \cdot \boldh_S
+\gamma(t) = \xv + t \cdot \boldhS
 \]
 \item \textbf{Line Integrals}:
 \begin{align*}
-\text{(I)} &= \int_0^1 [\widehat{f}(\gamma(t)) - g_{\xv, \boldh_S}(t)]^2 \Vert \boldh_S \Vert_2 dt \\
-\text{(II)} &= \int_0^1 [\widehat{f}(\gamma(t)) - \overline{\widehat{f}}]^2 \Vert \boldh_S \Vert_2 dt
+\text{(I)} &= \int_0^1 [\widehat{f}(\gamma(t)) - g_{\xv, \boldhS}(t)]^2 \Vert \boldhS \Vert_2 dt \\
+\text{(II)} &= \int_0^1 [\widehat{f}(\gamma(t)) - \overline{\widehat{f}}]^2 \Vert \boldhS \Vert_2 dt
 \end{align*}
 \item \textbf{Advantages}:
 \begin{itemize}
@@ -415,7 +418,7 @@ g_{\xv, \boldh_S}(t) = \widehat{f}(\xv) + t \cdot \text{FME}_{\xv, \boldh_S}
 \end{itemize}
 \item \textbf{Definition}:
 \[
-\text{cAME}_{\mathcal{D}_{[\;]}, \boldh_S} = \frac{1}{n_{[\;]}} \sum_{i \,:\, \xv^{(i)} \in \mathcal{D}_{[\;]}} \left[ \widehat{f}\left(\xv_S^{(i)} + \boldh_S, \xv_{-S}^{(i)}\right) - \widehat{f}\left(\xv^{(i)}\right) \right]
+\text{cAME}_{\mathcal{D}_{[\;]}, \boldhS} = \frac{1}{n_{[\;]}} \sum_{i \,:\, \xv^{(i)} \in \mathcal{D}_{[\;]}} \left[ \widehat{f}\left(\xv_S^{(i)} + \boldhS, \xv_{-S}^{(i)}\right) - \widehat{f}\left(\xv^{(i)}\right) \right]
 \]
 \item \textbf{Subgroups}:
 \begin{itemize}
@@ -482,8 +485,8 @@ g_{\xv, \boldh_S}(t) = \widehat{f}(\xv) + t \cdot \text{FME}_{\xv, \boldh_S}
 \end{itemize}
 \item \textbf{Computation}:
 \begin{align*}
-\text{CI}_{\text{cAME}, \; 1 - \alpha} &= \left[\text{cAME}_{\mathcal{D}_{[\;]}, \boldh_S} \pm t_{1-\frac{\alpha}{2}, n_{[\;]}-1} \frac{\text{SD}_{\text{FME}, [\;]}}{\sqrt{n_{[\;]}}} \right] \\
-\text{CI}_{\text{cANLM}, \; 1 - \alpha} &= \left[\text{cANLM}_{\mathcal{D}_{[\;]}, \boldh_S} \pm t_{1-\frac{\alpha}{2}, n_{[\;]}-1} \frac{\text{SD}_{\text{NLM}, [\;]}}{\sqrt{n_{[\;]}}} \right]
+\text{CI}_{\text{cAME}, \; 1 - \alpha} &= \left[\text{cAME}_{\mathcal{D}_{[\;]}, \boldhS} \pm t_{1-\frac{\alpha}{2}, n_{[\;]}-1} \frac{\text{SD}_{\text{FME}, [\;]}}{\sqrt{n_{[\;]}}} \right] \\
+\text{CI}_{\text{cANLM}, \; 1 - \alpha} &= \left[\text{cANLM}_{\mathcal{D}_{[\;]}, \boldhS} \pm t_{1-\frac{\alpha}{2}, n_{[\;]}-1} \frac{\text{SD}_{\text{NLM}, [\;]}}{\sqrt{n_{[\;]}}} \right]
 \end{align*}
 \item \textbf{Interpretation}:
 \begin{itemize}
@@ -597,4 +600,5 @@ g_{\xv, \boldh_S}(t) = \widehat{f}(\xv) + t \cdot \text{FME}_{\xv, \boldh_S}
 % \bibliography{references}
 % \end{frame}
 
+\endlecture
 \end{document}
