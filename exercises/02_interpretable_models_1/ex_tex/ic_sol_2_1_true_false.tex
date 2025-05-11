@@ -4,72 +4,87 @@
 % Which of the following statement(s) is/are correct?  
    	
 	\begin{enumerate}
+    
    	    \item In which scenarios are inherently interpretable models usually much harder to interpret?
     	\begin{itemize}
-    		\item[$\Rightarrow$] E.g. linear models with many features and interactions or decision trees with deep trees are not easy to interpret.
+    		\item[$\Rightarrow$] Whenever they grow more complex. E.g. linear models with many features and (many or high-order) interactions or decision trees with deep trees, big tree ensembles, GAMs with high values for smooth parameters etc. are not easy to interpret. Also dependencies between features can mislead the interpretation an interpretable model provides.
     	\end{itemize}
     	\item Why does interpretability usually become worse or more difficult when the generalization performance of the model improves?
     	\begin{itemize}
-    		\item[$\Rightarrow$] Methods become more complex.
+    		\item[$\Rightarrow$] Models become more complex.
     	\end{itemize}
     	\item Should we always prefer interpretable models? Explain and describe for which use cases interpretable models would be inconvenient.
     	\begin{itemize}
     		\item[$\Rightarrow$] If the performance of more complex models is much better than the one of an interpretable model.
+            Interpretable models always reach a bottleneck in performance, and depending on situation, need to decide whether this is acceptable or not.
     	\end{itemize}
         \item Can we always fully interpret "inherently interpretable" models without needing further, more advanced interpretability methods?
         \begin{itemize}
-            \item \textbf{Wrong}, e.g. counterfactuals, or too complex, e.g. too complex features (e.g. from PCA)
+            \item[$\Rightarrow$] \textbf{Wrong}, e.g. counterfactual explanations are not directly provided by interpretable models (although such interpretability methods are faster / easier to implement for simpler models). Or if models are too complex, s. above questions, or simple models use too complex features (e.g. features obtained from PCA).
 
         \end{itemize}
     	\item ``In the linear model, the effect and importance of a feature can be inferred from the estimated $\beta$-coefficients.'' Is this statement true or false? Explain your answer.
     	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Wrong}, for the importance of a feature in a linear model one has to calculate other statistical quantities such as the t-statistic or the p-value.
+    		\item[$\Rightarrow$] \textbf{Wrong}, the effect is indeed directly described from the \(\beta\)-coefficient, but for the importance of a feature in a linear model one has to calculate other statistical quantities such as the t-statistic or the p-value.
+            Or use loss-based importance methods introduced in later chapters. (``How much does model performance decrease without this feature?'')
     	\end{itemize}
         \item What assumptions does the classical linear model impose on the data?
         \begin{itemize}
             \item normal distribution
-            \item homoskedasticity
-            \item I.I.d. observations
-            \item features uncorrelated
+            \item homoskedasticity (i.e. variance of error is the same independent of feature or target values)
+            \item i.i.d. observations (i.e. feature observations)
             \item features independent from error
+            \item features uncorrelated
         \end{itemize}
-        \item How can we model categorical or other non-numerical features and / or targets with a linear model? How about a decision tree?
+        \item How can we model categorical or other non-numerical features and/or targets with a linear model? How about a decision tree?
         \begin{itemize}
-            \item Remember: Tree can model extremely broad spectrum of different kinds of features.
+            \item Features in linear model: Using one-hot encoding.
+            \item Targets in linear model: Logistic regression for binary targets, multinomial logistic regression (also called multiclass logistic regression or softmax regression) for categorical targets, or ordered logistic regression for ordered categorical / discrete targets.
+            \item Categorical features can be naturally integrated into decisions trees, although CART is biased against them. For unordered features with $K>2$ values, the respective nodes splits into $K$ many children.
+            \item Categorical targets in decision trees: predict probabilities, or most frequent element (mode) within each leaf. 
+            \item Remember: Tree can model extremely broad spectrum of different kinds of features and / or targets.
         \end{itemize}
     	\item What is so special about LASSO compared to an LM with respect to interpretability? Would you always prefer LASSO over an LM?
     	\begin{itemize}
-    		\item[$\Rightarrow$] Penalty leads to feature selection, is probably often preferable but maybe not always (optimization more difficult, has hyperparameters to tune, inference more difficult $\rightarrow$ keyword: post-selection inference!)
+    		\item[$\Rightarrow$] Penalty leads to feature selection and sparser models, is probably often preferable but maybe not always: Feature selection can generalize better and interpretation easier due to less feature, but optimization maybe more difficult, there are hyperparameters to tune, inference (for interpretation) more difficult $\rightarrow$ keyword: post-selection inference.\\
+            Having more features without LASSO can be more informative (for interpretation), but not in case of overfitting $\rightarrow$ interpretation maybe misleading.
     	\end{itemize}
+        
     	\item Do the beta-coefficients of a GLM always provide simple explanations with respect to the target outcome to be predicted? 
     	\begin{itemize}
-    		\item[$\Rightarrow$] No, only for GLM with Gaussian link, for logistic regression e.g. interpretations are w.r.t. log-odds which is not understandable for everyone
+    		\item[$\Rightarrow$] No, only for GLM with Gaussian link (i.e. identity link + normal distribution), e.g. for logistic regression, interpretations are w.r.t. log-odds which is not as easily understandable (e.g. to outsiders / clients in applications). For other link functions and other kinds of models, the interpretation may be more or less complex, depending on the model.
     	\end{itemize}
         \item How would the interpretation of single coefficients for GLMs other than logistic regression work?
         \begin{itemize}
-            \item Basically same as logistic regression, but now important: Effect (or derivative) of the link function.
-            We have: Change in feature $\Rightarrow$ Corresponding change by $\hat{\beta}$ on the linear model $\Rightarrow$ effect of a change by $\hat{\beta}$ on the inverse link function must be known.
+            \item[$\Rightarrow$] Basically same as logistic regression, but now important: Effect (or derivative) of the link function.\\
+            General scheme is the same: Change in feature $\Rightarrow$ Corresponding change by $\hat{\beta_j}$ on the linear model $\Rightarrow$ What effect does a change by $\hat{\beta_j}$ have on the inverse link function?
         \end{itemize}
+        
         \item Since one can add arbitrary complex terms to a linear model, why is it still not used much more for more complex problems?
         \begin{itemize}
-            \item Terms need to be specified manually, often unknown or too tedious
+            \item[$\Rightarrow$] Terms need to be specified manually (manual feature engineering), often too tedious or the respective features are completely unknown (as is the case e.g. for visual or speech data)
         \end{itemize}
     	\item How can we use inherently interpretable models to provide insights as to whether two features are dependent?
     	\begin{itemize}
-    		\item[$\Rightarrow$] Model $x_1$ on $x_2$ (linear or non-linear) and look at the goodness of fit measures like $R^2$.
+    		\item[$\Rightarrow$] Model $x_1$ on $x_2$ (linear or non-linear, or with more features) and look at the goodness of fit measures like $R^2$.
     	\end{itemize}
+        
     	\item What are the disadvantages of CART? Which methods address them and how?
     	\begin{itemize}
     		\item[$\Rightarrow$] Two problems:
     		\begin{enumerate}[1.]
     			\item Selection bias towards high-cardinal/continuous features 
-    			\item Does not consider significant improvements when splitting ($\leadsto$ overfitting)
+    			\item Does not consider whether current improvements from splitting are significant ($\leadsto$ overfitting $\leadsto$ tuning and/or pruning necessary)
+                \item Greedy search may lead to splits in the beginning which do not make the most sense overall
+                \item Unstable: If several possible splits have similar loss reduction, single data points may decide which split (even which feature) is chosen.
     		\end{enumerate}
-    		Solution provided by unbiased recursive partitioning via conditional inference trees (\texttt{ctree}) or model-based recursive partitioning (\texttt{mob}): Separate selection of the feature used for splitting and the split point AND hypothesis test as stopping criteria.
+    		Solution provided by unbiased recursive partitioning via conditional inference trees (\texttt{ctree}) or model-based recursive partitioning (\texttt{mob}): 
+            \begin{enumerate}[1.]
+                \item Separate selection of the feature used for splitting and the split point
+                \item Statistical hypothesis test as stopping criteria
+            \end{enumerate}
+            These methods also partially alleviate the problem of instability w.r.t. single data points.
 
-                - unstable !
-                tuning \& pruning !
-            
-                CART more efficient or MOB / ctree more efficient?
+            % Question: Is CART more efficient or MOB / ctree more efficient?
     	\end{itemize}
 	\end{enumerate}

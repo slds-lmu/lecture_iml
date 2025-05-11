@@ -29,17 +29,37 @@
 
 \begin{enumerate}[a)]
 	\item Odds for ``high number of bike rentals'' vs. ``low to medium number of bike rentals'' in winter: $$\text{odds} = \frac{P(y=1\, | \,\texttt{season}=\text{WINTER})}{P(y=0\, | \,\texttt{season}=\text{WINTER})} = \frac{7}{174} = 0.04 $$
-	\textbf{Interpretation:} In winter the occurrence of \texttt{cnt} $> 5531$ ($y$=1) is $0.04$ times as likely as \texttt{cnt} $\leq 5531$ ($y$=0).
-	\item Odds Ratio: 
+	\textbf{Interpretation:} In winter the occurrence of \texttt{cnt} $> 5531$ ($y=1$) is $0.04$ times as likely as \texttt{cnt} $\leq 5531$ ($y=0$), the odds are $1:25$, which means $y=0$ is 25 times as likely than $y=1$.
+    
+	\item Odds Ratio of spring vs. winter: 
 	\begin{align*}
 		\text{odds ratio} 
 		&= \frac{P(y=1\, | \,\texttt{season}=\text{SPRING})\,/\,P(y=0\, | \,\texttt{season}=\text{SPRING})}{P(y=1\, | \,\texttt{season}=\text{WINTER})\,/\,P(y=0\, | \,\texttt{season}=\text{WINTER})} \\
 		&= \frac{73/111}{7/174} = 16.35
 	\end{align*}
-	\textbf{Interpretation:} there is a $16.35$ times higher chance of having "high bike rentals" in season SPRING compared to the reference category (WINTER).
+
+    For summer we get
+    \[
+    \text{odds ratio} 
+    = \frac{P(y=1\, | \,\texttt{season}=\text{SUMMER})\,/\,P(y=0\, | \,\texttt{season}=\text{SUMMER})}{P(y=1\, | \,\texttt{season}=\text{WINTER})\,/\,P(y=0\, | \,\texttt{season}=\text{WINTER})}
+    = \frac{90/98}{7/174} = 22.83,
+    \]
+
+    and for fall:
+    \[
+    \text{odds ratio} 
+    = \frac{P(y=1\, | \,\texttt{season}=\text{FALL})\,/\,P(y=0\, | \,\texttt{season}=\text{FALL})}{P(y=1\, | \,\texttt{season}=\text{WINTER})\,/\,P(y=0\, | \,\texttt{season}=\text{WINTER})}
+    = \frac{50/128}{7/174} = 9.71.
+    \]
+    
+	\textbf{Interpretation:} The chances (the odds) of having "high bike rentals" are $16.35$ times higher in season SPRING compared to the reference category (WINTER).
+    As in winter the odds of $y=0$ are $25:1$, this means in spring they are roughly $(25:16):1$, which means roughly $5:3$.
+    Similarly, in summer the odds are $22.83$ times higher that in winter, which means that in summer they are close to $1:1$ (since in winter they were $1:25$), so the chances in summer are roughly 50-50.
+
+    \newpage
+    
 	\item Table:
-	
-	\begin{table}[ht]
+	\begin{table}[!ht]
 		\centering
 		\begin{tabular}{rrrr}
 			\hline
@@ -53,11 +73,11 @@
 		\end{tabular}
 	\end{table}
 
-	The intercept gives the odds for ``high number of bike rentals'' vs. ``low to medium number of bike rentals'' in winter: exp$(-3.2131) = 0.04$. Interpretation as in a).
+	The intercept gives the odds for ``high number of bike rentals'' vs. ``low to medium number of bike rentals'' for the default category, in winter: exp$(-3.2131) = 0.04$. Interpretation as in a).
 	
-	Regarding the estimate of seasonSPRING: $\text{odds ratio (when season changes from winter to spring)} = \text{exp}(2.7941) =  16.35$. Interpretation as in b).
-	\item Table:
-	
+	Regarding the estimate of seasonSPRING (and analogous for all the other seasons): $\text{odds ratio (when season changes from winter to spring)} = \text{exp}(2.7941) =  16.35$. Interpretation as in b).
+    
+	\item Table:	
 	\begin{table}[ht]
 		\centering
 		\begin{tabular}{rrrr}
