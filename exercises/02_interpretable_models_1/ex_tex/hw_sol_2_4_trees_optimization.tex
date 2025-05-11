@@ -2,6 +2,26 @@
 
 \loesung{
 
+The implementations of the solution in R or in python can be found on Moodle in the files "\textit{CART\_sol.R}" and "\textit{CART\_sol.py}".
+As described in the exercise, the main idea is to not compute the sums for the two potential child nodes in every step.
+In the following, we present two ways to work around this.
+
+The first one is to compute the cumulative sums for the target vector, that is, compute a vector which at position $k$ contains the entry $\sum_{i=1}^k y_i$ (or $y_i^2$ respectively), and then for each split point find the corresponding index of the feature of interest, and look up the respective sums in the precomputed vector.
+This solution is implemented as ``Solution 1'' in the code.
+
+The other, more direct way of implementation is to maintain two sums, one for the potential left child of the current split point and one for the potential right child.
+These two sums are then updated in every step, so that the left sum always increases and the right sum always decreases.
+This method is implemented as ``Solution 2'' in the code.
+
+Both these solutions in principle achieve the desired result, namely that the whole algorithm of finding the optimal split point has a computational complexity of $O(dn)$ instead of $O(d n^2)$.
+Nevertheless, the two implementations differ in another point, which may be practically even more relevant.
+Namely, the ``Solution 1'' relies on vectorized operations, acting on the whole vector of observations or potential split points in parallel. These vectorized operations in theory require an effort of order $O(n)$ each (linear in the length of the vector), because they perform one operation for every element in the vector, but they are much faster in practice due to parallelization.
+
+The ``Solution 2'' does not use such operations at all and therefore strictly fulfills the theoretical runtime requirement, whereas ``Solution 1'' strictly speaking does not.
+Nevertheless, at least for the implementation in R, ``Solution 1'' actually runs faster in practice.
+
+The solution also contains the calculation of a deeper tree reflecting the structure of the DGP used.
+
 NOTE: This exercise also serves a preparation for the FAST algorithm introduced in chapter 3.
 
 }
