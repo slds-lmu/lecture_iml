@@ -23,14 +23,13 @@
 
 \newcommand{\titlefigure}{figure/ebm.jpg}
 \newcommand{\learninggoals}{
-% \item Model-based boosting with simple base learners
-% \item Feature effect and importance in model-based boosting}
-\item Motivation from GAM
-\item Intelligible GAM
-\item Accurate GAM + Pairwise Interactions
-\item FAST feature interaction detection}
+ \item Understand link between GAM and EBM
+  \item Learn univariate EBMs\\
+  $\hat{=}$ GAM + boosting + shallow bagged trees
+  \item Extend to GA2M: GAMs with selected pairwise interactions
+  \item Detect interactions efficiently using FAST algorithm}
 
-\lecturechapter{Explainable Boosting Machines}
+\lecturechapter{Explainable Boosting Machines (EBM)}
 \lecture{Interpretable Machine Learning}
 
 % Improved and streamlined version of regression tree splitting slides
@@ -425,7 +424,7 @@ $$
 \end{frame}
 
 
-\begin{frame}{Explainable Boosting Machines (EBM) \citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}}
+\begin{frame}{Explainable Boosting Machines (EBM)}
 \textbf{Recall GAM}: 
 $$
 g\big(\mathbb{E}[y \mid \mathbf{x}]\big) = \theta_0 + f_1(x_{1}) + f_2(x_{2}) + \ldots + f_p(x_{p}),
@@ -441,7 +440,7 @@ $$
 \textbf{Idea of EBM:} \textbf{GAMs} trained with \textbf{gradient boosting} over \textbf{shallow bagged trees}
 \begin{itemize}
     \item \textbf{GAMs} - provide feature-wise interpretability via separate shape functions $f_j(x_j)$\\
-    $\leadsto$ Potentially include pairwise interactions
+    $\leadsto$ Potentially include pairwise interactions manually
     \item \textbf{Gradient Boosting} - incrementally fits residuals to improve predictive performance while retaining additivity
     \item \textbf{Shallow Bagged Trees} - low-depth trees (2–4 leaves) reduce variance and create interpretable shape functions
 \end{itemize}
@@ -460,17 +459,17 @@ $$
 
 \begin{frame}{EBM - Two-Stage Model Construction}
 \begin{enumerate}
-    \item \textbf{Stage 1: Fit Main Effects (Univariate Terms)}
+    \item \textbf{Stage 1: Fit Main Effects (Univariate Terms) \citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}}
     \begin{itemize}
         \item Train EBM using only feature-wise shape functions $f_j(x_j)$
         \item Freeze the univariate model after convergence
     \end{itemize}
     
-    \item \textbf{Stage 2: Add Selected Pairwise Interactions}
+    \item \textbf{Stage 2: Add Selected Pairwise Interactions \citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}}
     \begin{itemize}
         \item Apply \textbf{FAST} to rank all $O(p^2)$ feature pairs by potential reduction in RSS
-        \item User or heuristic selects top $K$ interactions and stores them in $\mathcal{K}$
-        \item Use boosting to fit pairwise terms $f_{ij}(x_i, x_j)$ on residuals
+        \item Select top $K$ pairwise interactions and stores them in $\mathcal{K}$
+        \item Use boosting to fit pairwise interaction terms $f_{ij}(x_i, x_j)$ on residuals
         \item Final model: $\hat{f}(\xv) = \sum_{j=1}^p f_j(x_j) + \sum_{(i,j)\in\mathcal{K}} f_{ij}(x_i, x_j)$
     \end{itemize}
 \end{enumerate}
@@ -486,15 +485,15 @@ $$
 \begin{itemize}
     \item Set all shape functions to zero:
     $$
-    f_j^{(0)}(x_j) = 0 \quad \text{for all } j = 1, \dots, p
+    f_j^{[0]}(x_j) = 0 \quad \text{for all } j = 1, \dots, p
     $$
     \item Compute initial model prediction:
     $$
-    \hat{y}^{(0)} = \sum_{j=1}^p f_j^{(0)}(x_j) = 0
+    \hat{y}^{[0]} = \sum_{j=1}^p f_j^{[0]}(x_j) = 0
     $$
     \item Compute initial pseudo-residuals (e.g., for squared loss):
     $$
-    \tilde{r}^{(0)} = -\frac{\partial L}{\partial \hat{y}} = y - \hat{y}^{(0)} = y
+    \tilde{r}^{[0]} = -\frac{\partial L}{\partial \hat{y}} = y - \hat{y}^{[0]} = y
     $$
 \end{itemize}
 
@@ -506,19 +505,19 @@ $$
     \includegraphics[width=\linewidth]{figure/EBM_Step1.png}
 \end{figure}
 \begin{itemize}
-    \item Fit shallow bagged tree $S_1^{(1)}$ (2–4 leaves) to training data $\left\{\left(x_1, \tilde{r}^{(0)}\right)^{(i)}\right\}_{i=1}^n$\\
-    $\leadsto$ Use only feature $x_1$ as input and $\tilde{r}^{(0)}$ as target
-    \item Update first shape function:
+    \item Fit shallow bagged tree $T_1^{[1]}$ (2–4 leaves) to training data $\left\{\left(x_1, \tilde{r}^{[0]}\right)^{(i)}\right\}_{i=1}^n$\\
+    $\leadsto$ Use only feature $x_1$ as input and $\tilde{r}^{[0]}$ as target
+    \item Update first shape function with learning rate $\eta$:
     $$
-    f_1^{(1)}(x_1) = f_1^{(0)}(x_1) + \eta \cdot S_1^{(1)}(x_1)
+    f_1^{[1]}(x_1) = f_1^{[0]}(x_1) + \eta \cdot T_1^{[1]}(x_1)
     $$
     \item Update prediction:
     $$
-    \hat{y}^{(1)} = \sum_{j=1}^p f_j^{(1)}(x_j)
+    \hat{y}^{[1]} = \sum_{j=1}^p f_j^{[1]}(x_j)
     $$
     \item Recompute pseudo-residuals:
     $$
-    \tilde{r}^{(1)} =  -\frac{\partial L}{\partial \hat{y}} = y - \hat{y}^{(1)}
+    \tilde{r}^{[1]} =  -\frac{\partial L}{\partial \hat{y}} = y - \hat{y}^{[1]}
     $$
 \end{itemize}
 
@@ -534,9 +533,9 @@ $$
     \item 1st boosting iteration: \\
     Cycle through each feature $j = 2,\dots,p$:
     \begin{itemize}
-        \item Fit shallow bagged tree $T_j^{(1)}$ using feature $x_j$ and previous residual $\tilde{r}^{(j-1)}$ %to $(x_j, \tilde{r}^{(j-1)})$
-        \item Update $f_j$: $f_j^{(1)}(x_j) = f_j^{(0)}(x_j) + \eta \cdot T_j^{(1)}(x_j)$
-        \item Recompute $\hat{y}$ and residuals: $\tilde{r}^{(j)} = y - \hat{y}^{(j)}$
+        \item Fit shallow bagged tree $T_j^{[1]}$ using feature $x_j$ and previous residual $\tilde{r}^{[j-1]}$ %to $(x_j, \tilde{r}^{[j-1]})$
+        \item Update $f_j$: $f_j^{[1]}(x_j) = f_j^{[0]}(x_j) + \eta \cdot T_j^{[1]}(x_j)$
+        \item Recompute $\hat{y}$ and residuals: $\tilde{r}^{[j]} = y - \hat{y}^{[j]}$
     \end{itemize}
     \item After one full pass over features, we complete one boosting iteration
 \end{itemize}
@@ -579,14 +578,14 @@ $$
 %     \label{fig:Intelligible EBM_Step1}
 % \end{figure}
 % \begin{itemize}
-%     \item Set all shape functions $f_j^{(0)}$ to zero, $j=1,\cdots,p$
+%     \item Set all shape functions $f_j^{[0]}$ to zero, $j=1,\cdots,p$
 %     \item Calculate the initial pseudo-residual (i.e. the negative gradient of the loss function w.r.t. the current model prediction), e.g.\\
-%     1. for squared error loss: $\tilde{r}^{(0)}=-\frac{\partial L}{\partial \hat{y}}=y-\hat{y}^{(0)}=y-\sum_jf_j^{(0)}(x_{ij})$\\
-%     2. for log loss: $\tilde{r}^{(0)}=-\frac{\partial L}{\partial \hat{y}}=y-\sigma(\hat{y}^{(0)})$ with $\sigma(\cdot)$ being the sigmoid function
-%     \item Fit a shallow bagging tree with 2-4 leaves $S_1^{(1)}: x_{i1}\to \tilde{r}$ \textbf{only using the first feature} to predict the pseudo-residuals, with $\{x_{i1},\tilde{r}\}_1^n$ as training dataset
-%     \item Update $f_1$: $f_1^{(1)}(x_{i1})=f_1^{(0)}+\eta\cdot S_1^{(1)}(x_{i1})$
-%     \item Update $\hat{y}$: $\hat{y}^{(1)}=\sum_jf_j^{(1)}(x_{ij})$
-%     \item Update the residual w.r.t. the original target, e.g. $\tilde{r}^{(1)}=y-\hat{y}^{(1)}$
+%     1. for squared error loss: $\tilde{r}^{[0]}=-\frac{\partial L}{\partial \hat{y}}=y-\hat{y}^{[0]}=y-\sum_jf_j^{(0)}(x_{ij})$\\
+%     2. for log loss: $\tilde{r}^{[0]}=-\frac{\partial L}{\partial \hat{y}}=y-\sigma(\hat{y}^{[0]})$ with $\sigma(\cdot)$ being the sigmoid function
+%     \item Fit a shallow bagging tree with 2-4 leaves $T_1^{[1]}: x_{i1}\to \tilde{r}$ \textbf{only using the first feature} to predict the pseudo-residuals, with $\{x_{i1},\tilde{r}\}_1^n$ as training dataset
+%     \item Update $f_1$: $f_1^{[1]}(x_{i1})=f_1^{[0]}+\eta\cdot T_1^{[1]}(x_{i1})$
+%     \item Update $\hat{y}$: $\hat{y}^{[1]}=\sum_jf_j^{[1]}(x_{ij})$
+%     \item Update the residual w.r.t. the original target, e.g. $\tilde{r}^{[1]}=y-\hat{y}^{[1]}$
 %     \item Go to the second feature
 % \end{itemize}
 % \end{frame}
@@ -598,8 +597,8 @@ $$
 %     \label{fig:Intelligible EBM_Step2}
 % \end{figure}
 % \begin{itemize}
-%     \item Fit a shallow bagging tree $S_2^{(1)}$ \textbf{only using the second feature} to predict the updated residuals
-%     \item Update $f_2$ with $f_2^{(1)}(x_{i2})=f_2^{(0)}+\eta\cdot S_2^{(1)}(x_{i2})$ and then update $\hat{y}^{(1)}$
+%     \item Fit a shallow bagging tree $T_2^{[1]}$ \textbf{only using the second feature} to predict the updated residuals
+%     \item Update $f_2$ with $f_2^{[1]}(x_{i2})=f_2^{(0)}+\eta\cdot T_2^{[1]}(x_{i2})$ and then update $\hat{y}^{[1]}$
 %     \item Update the residual: this residual takes into account both what was learned on the first tree and second tree for the first two features
 %     \item Go to $\text{feat}_3$
 % \end{itemize}
@@ -626,11 +625,11 @@ $$
 \begin{itemize}
     \item Final model consists of $M$ shallow trees per feature:
     $$
-    \text{EBM Model} = \sum_{j=1}^p \sum_{m=1}^M \eta \cdot T_j^{(m)}(x_j)
+    \text{EBM Model} = \sum_{j=1}^p \sum_{m=1}^M \eta \cdot T_j^{[m]}(x_j)
     $$
     \item For each feature $x_j$, combine its $M$ trees into a shape function:
     $$
-    \hat{f}_j(x_j) = \sum_{m=1}^M \eta \cdot T_j^{(m)}(x_j)
+    \hat{f}_j(x_j) = \sum_{m=1}^M \eta \cdot T_j^{[m]}(x_j)
     $$
     \item Plot $\hat{f}_j(x_j)$ vs. $x_j$ $\leadsto$ Shows univariate marginal effect of feature $j$
     \item One plot per feature $\leadsto$ Model is fully explainable via $p$ additive plots
@@ -651,7 +650,7 @@ $$
 %     \qquad\;\; + $M$ trees which were only trained on $\text{feat}_2$ \\
 %     \qquad\;\; $\cdots$ \\
 %     \qquad\;\; + $M$ trees which were only trained on $\text{feat}_p$
-%     \item Summarize the weighted predictions of $M$ trees for each unique value of $\text{feat}_1$ $\hat{f}_1(x_1)=\sum_{m=1}^{M}\eta\cdot S_1^{(m)}(x_1)$, and plot $\hat{f}_1(x_1)$ vs. $x_1$ as a 2D graph
+%     \item Summarize the weighted predictions of $M$ trees for each unique value of $\text{feat}_1$ $\hat{f}_1(x_1)=\sum_{m=1}^{M}\eta\cdot T_1^{[m]}(x_1)$, and plot $\hat{f}_1(x_1)$ vs. $x_1$ as a 2D graph
 %     \item Generate a 2D graph for every feature in the same way
 % \end{itemize}
 % \quad $\leadsto$ Intelligible GAM: A series of 2D graphs as a perfect summary of predictions
