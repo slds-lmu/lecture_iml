@@ -1,44 +1,45 @@
-\aufgabe{Interactions in GAMs}{
+\aufgabe{Interactions in GAMs}{\label{ex:GAM_interactions_EBM_1}
 
-This exercise is about training and interpreting GAMs and about their predictive performance, when interactions are present in the data.
-For this, we will train a linear model and a GAM, both with and without interactions, and compare their performance as well as their interpretability.
+This exercise and the following exercise are about the performance and interpretation of GAMs and EBMs, when there are interactions present in the data.
+In this exercise, we will first train a linear model and a GAM, both with and without interactions, and compare their performance as well as interpretability.
 
-In this exercise, we use a small data set contained in the file "\textit{gam\_interactions.csv}" on the Moodle webpage.
-It consists of observations of 2 features $x_1$ and $x_2$ and one prediction target $y$.
-Your task is to fit different models on this data.
+We will use three different small data sets contained in the files "\textit{data\_gam\_interactions\_1.csv}" up to "\textit{data\_gam\_interactions\_3.csv}" on the Moodle webpage.
+Each data set consists of observations of two features $x_1$ and $x_2$ and one prediction target $y$.
+Your task is to fit different models on each of these different data sets.
+
+\textit{Hints:} Useful software packages for this exercise:
+
+\begin{itemize}
+    \item
+    When using Python, you can use the package \href{https://pygam.readthedocs.io/}{\texttt{pyGAM}} together with \texttt{numpy} and \texttt{matplotlib}. To train linear models, you can use the section on linear models from scikit-learn.
+
+    \item 
+    When working with R, the package \texttt{mgcv} contains the \href{https://www.rdocumentation.org/packages/mgcv/versions/1.9-3/topics/gam}{gam} function. Also, the package \texttt{gam} can be used, it contains a \href{https://www.rdocumentation.org/packages/gam/versions/1.22-5/topics/gam}{similar function}.
+\end{itemize}
 
 \begin{enumerate}[a)]
     \item
-    Fit a simple linear model as well as a normal GAM (that is, a GAM with smooth functions each depending only on single features) on the data.
+    For each of the data sets, fit a simple linear model as well as a GAM on the data. (That is, the GAM contains smooth functions depending only on a single feature each.)
     How do the two models perform?
     What can you conclude about the models and about the data from interpreting them?
 
     \textit{Hint:} As discussed in the lecture, one can interpret a GAM by plotting the single one-dimensional components, which each depend only on a single feature.
 
     \item
-    Now fit a linear model additionally containing a simple interaction term.
+    Next, fit a linear model additionally containing a simple interaction term.
     How does it perform compared to the two models above?
     
-    What can you conclude about the data?
-    In particular, given your observations from all three models, do you consider any of them to model the data very well?
+    What can you conclude about the different data sets?
+    In particular, given your observations from all three models, do you consider any of the three data sets to be modeled very well by any of the models so far?
 
     \item
-    Again, fit a GAM to the data, but which also includes an interaction term.
-    You can do this by, for example, adding the interaction term from the linear model as another function to the GAM, or by treating this linear interaction term as an additional third feature and adding a smooth function of this third feature to the GAM.
+    Again, fit a GAM to the data, but this time one which also includes an interaction term.
+    You can do this by, for example, adding the interaction term from the linear model as another function to the GAM, or by treating this linear interaction term as an additional ``third feature'' and adding a smooth function of this ``third feature'' to the GAM.
 
     How does this model now perform?
-    Compare to the three other models.
-    How could you interpret this complex model, if at all?
+    Compare to the three other models on the different data sets each.
+    
+    How could you interpret this complex model, if at all? What insights about the data can you gain from the interpretation?
 \end{enumerate}
-
-\textit{Hint:} Useful software packages for this exercise:
-
-\begin{itemize}
-    \item
-    When using Python, you can use the package \texttt{pyGAM} together with \texttt{numpy} and \texttt{matplotlib}. To train linear models, you can use the section on linear models from scikit-learn.
-
-    \item 
-    When working with R, the package \texttt{mgcv} contains the \href{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm}{gam} function. Also, the package \texttt{gam} can be used.
-\end{itemize}
 
 }
