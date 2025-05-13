@@ -1,0 +1,88 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{amsmath,amssymb,geometry,tikz}
+\geometry{margin=2.5cm}
+\title{Exercise Sheet: Boosting with Decision Stumps}
+\date{}
+\begin{document}
+
+\maketitle
+
+\section*{Exercise: Two Iterations of Componentwise Boosting}
+
+You are given a boosting model using decision stumps (depth-1 trees) as base learners. The goal is to approximate a target function $y$ over a single feature $x_1 \in [0, 2]$. The boosting algorithm proceeds as follows with step size $\nu = 1$.
+
+\subsection*{Iteration 1}
+\begin{itemize}
+    \item Base learner: decision stump splitting at $x_1 > 0.3$
+    \item Predictions: $
+        f_1(x_1) = 1 \cdot \mathbb{I}(x_1 \leq 0.3) + 2 \cdot \mathbb{I}(x_1 > 0.3)$
+    \item Initial model: $\hat{f}^{[1]}(x_1) = f_1(x_1)$
+\end{itemize}
+
+\subsection*{Iteration 2}
+\begin{itemize}
+    \item Residuals: $r^{[1]} = y - \hat{f}^{[1]}$
+    \item Fit a new stump to residuals: split at $x_1 > 1.2$
+    \item Predictions: $f_2(x_1) = 0 \cdot \mathbb{I}(x_1 \leq 1.2) + (-1) \cdot \mathbb{I}(x_1 > 1.2)$
+    \item Updated model: $\hat{f}^{[2]}(x_1) = \hat{f}^{[1]}(x_1) + f_2(x_1)$
+\end{itemize}
+
+
+\subsection*{Tasks}
+\begin{enumerate}
+    \item Derive the predictor in the second iteration $\hat{f}^{[2]}(x_1)$ and sketch $\hat{f}^{[2]}(x_1)$.
+    \item Compute $\hat{f}^{[2]}(x_1)$ for $x_1 = 0.2$, $0.8$, $1.5$.
+\end{enumerate}
+
+
+\newpage
+
+\subsection*{Solution}
+
+
+\paragraph{Final Predictor}
+\begin{align*}
+    \hat{f}^{[2]}(x_1) = 1 \cdot \mathbb{I}(x_1 \leq 0.3) + 2 \cdot \mathbb{I}(0.3 < x_1 \leq 1.2) + 1 \cdot \mathbb{I}(x_1 > 1.2)
+\end{align*}
+
+
+\paragraph{TikZ sketch:}
+\begin{center}
+\begin{tikzpicture}[scale=2]
+\draw[->] (0,0) -- (2.2,0) node[right] {$x_1$};
+\draw[->] (0,0) -- (0,2.5) node[above] {$\hat{f}(x_1)$};
+
+% First iteration
+\draw[thick,dashed,gray] (0,1) -- (0.3,1);
+\draw[thick,dashed,gray] (0.3,2) -- (2,2);
+
+% Final model
+\draw[thick,blue] (0,1) -- (0.3,1);
+\draw[thick,blue] (0.3,2) -- (1.2,2);
+\draw[thick,blue] (1.2,1) -- (2,1);
+
+\draw[dashed] (0.3,0) -- (0.3,2.1);
+\draw[dashed] (1.2,0) -- (1.2,2.1);
+
+\filldraw[blue] (0,1) circle (0.03);
+\filldraw[blue] (0.3,1) circle (0.03);
+\draw[fill=white,draw=blue] (0.3,2) circle (0.03);
+
+\filldraw[blue] (1.2,2) circle (0.03);
+\draw[fill=white,draw=blue] (1.2,1) circle (0.03);
+\filldraw[blue] (2,1) circle (0.03);
+
+\node[below] at (0.3,0) {$0.3$};
+\node[below] at (1.2,0) {$1.2$};
+\node[left] at (0,1) {$1$};
+\node[left] at (0,2) {$2$};
+\end{tikzpicture}
+\end{center}
+
+\paragraph{Step-by-step evaluations:}
+\begin{itemize}
+    \item $x_1 = 0.2$: $\hat{f}^{[1]} = 1$, $f_2 = 0$, $\hat{f}^{[2]} = 1$
+    \item $x_1 = 0.8$: $\hat{f}^{[1]} = 2$, $f_2 = 0$, $\hat{f}^{[2]} = 2$
+    \item $x_1 = 1.5$: $\hat{f}^{[1]} = 2$, $f_2 = -1$, $\hat{f}^{[2]} = 1$
+\end{itemize}
+\end{document}

@@ -470,7 +470,7 @@ $$
     \item \textbf{Stage 2: Add Selected Pairwise Interactions \citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}}
     \begin{itemize}
         \item Apply \textbf{FAST} to rank all $O(p^2)$ feature pairs by potential reduction in RSS
-        \item Select top $K$ pairwise interactions and stores them in $\mathcal{K}$
+        \item Select top $K$ pairwise interactions and store them in $\mathcal{K}$
         \item Use boosting to fit pairwise interaction terms $f_{ij}(x_i, x_j)$ on residuals
         \item Final model: $\hat{f}(\xv) = \sum_{j=1}^p f_j(x_j) + \sum_{(i,j)\in\mathcal{K}} f_{ij}(x_i, x_j)$
     \end{itemize}
@@ -1103,8 +1103,8 @@ We evaluate a 4-leaf, axis-aligned tree $T_{ij}$ over the 2D feature projection 
         \(\hat y_r\!=\!\text{mean}(y\!\in\!r)\) to
         \(r\!\in\!\{A,B,C,D\}\).
   \item<2-> {\bf Compute RSS summed over all regions}:   
+  {\footnotesize
   \[
-  \footnotesize
 \begin{aligned}
 \text{RSS}(c_i, c_j) 
 &= \sum_{r} \sum_{(x,y) \in r} (y - \hat{y}_r)^2 \\
@@ -1120,6 +1120,7 @@ We evaluate a 4-leaf, axis-aligned tree $T_{ij}$ over the 2D feature projection 
  %              =\sum_{i}y_k^{2}-\frac{T^{2}}{n}\)
               
  % \(\Delta\text{RSS}(c_i,c_j) =\text{RSS}_0-\text{RSS}(c_i,c_j)\)
+ }
   \item<2-> {\bf Select}\,: Keep the split with minimal RSS.\\
   $\leadsto$ largest RSS drop = strongest interaction. \\% of \((x_i,x_j)\) \\
   %$\leadsto$ $\mathcal{O}(n+b^{2})$ per pair.
