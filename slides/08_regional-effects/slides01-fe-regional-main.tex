@@ -305,6 +305,40 @@ $
 
 
 
+\begin{frame}{VINE: Visual INteraction Effects \citebutton{Britton (2019)}{https://arxiv.org/abs/1904.00561}}
+\textbf{Question:} How to group similar ICE curves together? \\
+\textbf{Idea:} Cluster similar slopes of ICE curves to obtain clusters where the curves are less affected by interactions. \\
+\textbf{Approach:}
+\begin{enumerate}
+    \item For a feature of interest, find clusters where
+ the ICE curves of that feature have similar slopes for example by using agglomerative clustering
+    \item For each found cluster, create a binary label containing the information of whether an observation belongs to the considered cluster or any other cluster and apply a tree
+    \item Identify the split feature and its split point
+ and merge clusters that use the same feature and a
+ similar split point
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{VINE: Visual INteraction Effects \citebutton{Britton (2019)}{https://arxiv.org/abs/1904.00561}}
+\textbf{Pitfalls:}
+\begin{itemize}
+    \item Does not quantify or rank feature interactions
+    \item Unsupervised approach and needs to be provided with a number of clusters
+    \item VINE fits a separate tree stump for each cluster, as a result the derived decision rules are often not distinct and therefore difficult to interpret.
+\end{itemize}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.7\linewidth]{figure/vine.png}
+  \caption{ICE and regional PD (dashed) plot of $x_2$ clustered by VINE for $k = 2$ (left) and $k = 5$ (right). The
+ 5 clusters are reduced to 3 by post-hoc merging. Cluster
+ numbers 0 and 3 still contain differing individual interaction effects, which are averaged and hence not represented
+ well by the regional PD plot.}    
+\end{figure}
+
+\end{frame}
+
+
 \begin{frame}{REPID: Regional Effect Plots \citebutton{Herbinger et al. (2022)}{https://proceedings.mlr.press/v151/herbinger22a.html}}
 
 \textbf{Recall:} Different shapes of ICE curves indicate interactions (we want to ignore vertical shifts)\\
@@ -329,9 +363,6 @@ The mean-centered ICE curve for obs. $\xv$ evaluated at $m$ grid points $\tilde 
 
 %\includegraphics[width = 0.3\textwidth, trim={13cm 0cm 0cm 0cm}, clip]{figure/interaction_separable_2}
 \end{frame}
-
-
-
 
 
 
@@ -588,7 +619,7 @@ region $\mathcal{N} \subseteq \Xspace$:
 %\medskip
 \begin{itemize}
     \item[$\Rightarrow$] Measures interaction-related heterogeneity (variance) ICE curves in region $\mathcal{N}$
-    \item[$\Rightarrow$] Recursive partitioning (as in CART): Find the best feature-split combination that minimizes
+    \item[$\Rightarrow$] Recursive partitioning(CART): Find best feature-split combination that minimizes
     
 % \medskip
 
