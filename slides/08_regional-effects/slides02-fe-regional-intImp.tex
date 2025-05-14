@@ -93,7 +93,7 @@ It's helpful to know not just how another feature changes the marginal effect of
 \begin{itemize}
     \item \textbf{H-Statistics:} Variance of the deviation between the joint PDP and the sum of marginal PDPs (larger variance $\Rightarrow$ stronger interaction).
     \item \textbf{Greenwell’s Interaction Index:} Difference between the variance of the PDP and the mean variance of centered ICE curves for the same feature pair.
-    \item \textbf{SHAP interaction index:} Proportion of all two-way interactions with $x_i$  to which the $j$-th feature contributes,
+    \item \textbf{SHAP interaction index (\citebutton{Herbinger et al. (2022)}{https://proceedings.mlr.press/v151/herbinger22a.html}, \citebutton{Lundberg et al. 2018}{https://doi.org/10.48550/arXiv.1802.03888}):} Proportion of all two-way interactions with $x_i$  to which the $j$-th feature contributes.
 \end{itemize}
 
 \pause
@@ -110,7 +110,7 @@ It's helpful to know not just how another feature changes the marginal effect of
 \begin{frame}{REPID Interaction Importance}
 
 \begin{columns}[T, totalwidth=\textwidth]
-    \begin{column}{0.59\textwidth}
+    \begin{column}{0.60\textwidth}
 
 \textbf{On parent node level (for {\color{mygreen}$\mathcal{N}_{parent}$}):}
 %Relative interaction importance for each parent node :
@@ -170,7 +170,7 @@ Split reduces 83.5\% of variance.
 \begin{frame}{REPID Interaction Importance}
     
 \begin{columns}[T, totalwidth=\textwidth]%, totalwidth=\textwidth]
-    \begin{column}{0.46\textwidth}
+    \begin{column}{0.5\textwidth}
 
 \textbf{On feature level (for $x_j$):} 
 %Relative interaction importance for feature $x_j$:
@@ -254,6 +254,8 @@ Overall reduction of ICE curve variance due to splits by $X_j$ (in \%).
 
     \centering
     \includegraphics[width=\textwidth]{figure/sim1}
+    
+    \textbf{Note:} \textit{intImp} can also be used as a stopping criterion.
      %\begin{minipage}[t]{.5\textwidth}
     %   \includegraphics[width=0.37\textwidth]{figure/sim1_dt_split1.png}
     %   \scalebox{1}{
@@ -302,6 +304,7 @@ Overall reduction of ICE curve variance due to splits by $X_j$ (in \%).
     %\vspace{150px}
 
     \end{column}
+
 \end{columns}
 
 \end{frame}
@@ -496,10 +499,6 @@ Overall reduction of ICE curve variance due to splits by $X_j$ (in \%).
  \item Test to identify significant interactions
 \end{itemize}
 
-\textbf{Further Directions}: 
-
-Pruning, GADGET as a predictor, comparing regions across models, efficient implementation, more efficient testing and splitting approach, $\dots$
- 
         % \begin{itemize}
         %     \item $f(X) = 3X_1\mathbbm{1}_{X_3>0} - 3X_1\mathbbm{1}_{X_3\leq 0} + X_3 + \epsilon$
         %     \item Features uniformly distributed
@@ -541,6 +540,10 @@ Pruning, GADGET as a predictor, comparing regions across models, efficient imple
     \end{column}
 
 \end{columns}
+
+\textbf{Further Directions}: 
+
+Pruning, GADGET as a predictor, comparing regions across models, efficient implementation, more efficient testing and splitting approach, $\dots$
 \bigskip
 \end{frame}
 
