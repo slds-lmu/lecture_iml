@@ -1,7 +1,9 @@
 \documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table,dvipsnames]{beamer}
 
 \usepackage{../../style/lmu-lecture}
-
+\usepackage{lmodern} 
+\newcommand{\bmmax}{0}
+\newcommand{\hmmax}{0}
 % %  New colors
 \definecolor{ggRed}{HTML}{F8766D}
 \definecolor{ggGreen}{HTML}{00BFC4}
@@ -83,22 +85,26 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 \lecture{Interpretable Machine Learning}
 
 
-\begin{frame}
-  \frametitle{Recap: Local/Global explanations}
-  \begin{itemize}
-    \item Global explanations (e. g. PD plot)
-    \begin{itemize}
-      \item \textbf{Pro}: Universal explanation (applies to the whole model)
-      \item \textbf{Con}: Oversimplify, lack fidelity
-      \item \textbf{Con}: Can produce misleading explanations when feature interactions are present 
-    \end{itemize}
-    \item Local explanations (e. g. ICE curves, Shapley values)
-    \begin{itemize}
-      \item \textbf{Pro}: Precise explanations
-      \item \textbf{Con}: Limited to individual instances (not the whole model)
-    \end{itemize}
-  \end{itemize}
+\begin{frame}{Recap: Global vs.\ Local Explanations}
+
+      \textbf{Global} (e.g.\ Partial Dependence, global feature importance)
+      \begin{itemize}
+        \item[\textbf{+}] Summarises average model behaviour across the whole feature space
+        \item[\textbf{--}] May hide heterogeneous effects and feature interactions
+        \item[\textbf{--}] Lower fidelity for individual predictions
+      \end{itemize}
+
+\lz
+
+      \textbf{Local} (e.g.\ ICE curves, SHAP/LIME)
+      \begin{itemize}
+        \item[\textbf{+}] High-fidelity, instance-specific insight
+        \item[\textbf{+}] Useful for debugging, accountability, and user trust
+        \item[\textbf{--}] Does not generalise to overall model behaviour
+        \item[\textbf{--}] Computationally costly at scale
+      \end{itemize}
 \end{frame}
+
 
 
 \begin{frame}{Why regional explanations?}
