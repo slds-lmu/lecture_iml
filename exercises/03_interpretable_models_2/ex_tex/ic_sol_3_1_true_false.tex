@@ -1,122 +1,151 @@
 \textbf{Solution Quiz:}\\\noindent
 \medskip
 
-Which of the following statement(s) is/are correct?  
-	\begin{enumerate}
-        \item Explain the feature importance provided by model-based boosting. What is the difference from the (Gini / L2) feature importance from decision trees?
-        \begin{itemize}
-            \item[$\Rightarrow$] Two differences:
-            \begin{enumerate}
-                \item Technically, the feature importances at single nodes inside decision tree need to be weighted, whereas for boosting they can be simply summed up.
-                \item The importance in a decision tree is only in a single tree, a single model, whereas in boosting it is a sum over several models (e.g. several trees).
-            \end{enumerate}
-        \end{itemize}
+% Which of the following statement(s) is/are correct?  
+\begin{enumerate}
+    \item Explain the feature importance provided by model-based boosting. What is the difference from the (Gini / L2) feature importance from decision trees?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        No fundamental difference, both calculate feature importance as sum over all loss reductions / objective improvements assigned to this feature. (Sum over single base learners / iterations or over single splits, NB sums may need to be weighted accordingly.)
+        
+        Two differences:
+        \begin{enumerate}
+            \item Technically, the weighting might be different.
+            For boosting, weighting needs to be done with the weight of the respective base learner in the ensemble, in case this differs between the single BLs.
+            For decision trees, weighting with the number of observations needs to be done in case of MSE or Gini impurity, but not in the case of total SSE (over the whole dataset).
+            \item The importance in a decision tree is only inside a single tree, a single model.
+            In tree ensembles (no matter whether they use boosting, bagging or anything else), importance is summed up over all splits in the whole ensemble (with according weights, w.r.t. both the single nodes / single splits and the weights of single trees inside the ensembles), same as in boosting, where it is summed up over all single base learners.
+            On the other hand, in model-based boosting it is a sum over several models (e.g. several trees), each model contributing only to the importance of a single feature.
+        \end{enumerate}
 
-        \item When calculating feature importances in decision trees (or in tree ensembles), can you still use the efficient split selection algorithm explained in the lecture? Why or why not?
-        \begin{itemize}
-            \item[$\Rightarrow$] Yes, because one needs to add up the weighted loss reduction per feature, over all splits where this feature was chosen, so it is enough to save the loss reduction and the sizes of each node (number of observations) in each step.
-        \end{itemize}
+        See also \href{https://stackoverflow.com/questions/49170296/scikit-learn-feature-importance-calculation-in-decision-trees}{here}.
+    \end{itemize}
 
-        \item Does a GAM contain hyperparameters? Which one?
+    \item When calculating feature importances in decision trees (or in tree ensembles), can you still use the efficient split selection algorithm explained in the lecture? Why or why not?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        Yes, because one needs to sum up the weighted loss reduction for each feature, over all splits where this feature was chosen, so it is enough to save the loss reductions and the sizes of each node (number of observations) in each step.
+    \end{itemize}
+
+    \item Does a GAM contain hyperparameters? Which?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        Edf: ``effective degrees of freedom'', basically the degree of complexity of the GAM.
+        
+        Also: Which class of functions? (E.g. splines vs. other kinds of functions, and then: How exactly are splines implemented?)
+    \end{itemize}
+
+    \item Is a GAM always preferred over a linear model, or are there also disadvantages?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        Preferred, if better performance (i.e., if non-linear effects are present in the data).
+        
+        Not preferred due to: Higher computational effort, less interpretable (depending on complexity of visualizations), interactions present in the data can either not be represented by a GAM, but can be represented by an LM, or, when including these interactions in the GAM, the GAM gets very complicated (compare EBMs).
+    \end{itemize}
+
+    \item When using boosting, can we always combine different base learners by simply adding the parameters?
+    \begin{itemize}
+        \item[$\Rightarrow$] No, we can do this if and only if the base learners are linear in their parameters, i.e., if they are linear models.
+    \end{itemize}
+
+    \item Is the following true or false: ``When using boosting with linear models as base learners, the final model will also be a linear model.''
+    Does this statement hold for decision trees (e.g. CART or MOB trees)?
+    \begin{itemize}
+        \item[$\Rightarrow$] Yes, both are correct.
+        For linear models, this is clear; for decision trees, observe that mathematically a decision tree computes a step function, and the sum of two step functions is again a step function.
+        One could find a decision tree which computes the exact same function as the sum of the two original trees.
+    \end{itemize}
+
+    % \item Is the following true or false: ``When using boosting, the final model will always be a linear model.''
+    % \begin{itemize}
+    %     \item[$\Rightarrow$] False, this statement holds only for linear models.
+    % \end{itemize}
+
+    \item For which model classes X (e.g. linear model, decision tree, neural network) does the following hold ``When performing boosting with model type X as base learners, the final model will again be a model of type X.''
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        True for:
         \begin{itemize}
-            \item[$\Rightarrow$] Edf
-            Also kind of functions (E.g. splines vs. other kinds of functions, and then: How exactly are splines implemented?)
+            \item Linear models. Even the most complex linear models, just that the final model needs to include all terms that at least one base learner included.
+            \item Decision trees (s. last question). Tree ensembles for the same reason.
+            \item GAMs: By summing up the single components; this fact is actually used in EBMs for the first step, the univariate EBMs.
+            \item Neural networks: Take two NNs, assemble them next to each other in parallel, and add up the outputs, evtl. weight the single outputs $\leadsto$ This is still an NN, but its size grows linearly with the number of base learners, so for larger networks, this is actually completely infeasible in practice...
+            % \item k-nearest neighbor??
+            % \item Gaussian Processes??
         \end{itemize}
+        False for:
+        \begin{itemize}
+            \item GLMs, whenever the link function is non-linear.
+            % \item SVMs ??
+        \end{itemize}
+    \end{itemize}
+
+    \item Of which model class introduced in the I2ML lecture are EBMs a special case?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        An EBM IS a boosted tree ensemble, which also uses bagging.
+        Hence, they are very close to XGBoost (also a boosted tree ensemble) or to random forests (an ensemlbe of bagged trees).
+    \end{itemize}
+
+    \item How are the final components in an EBM computed and interpreted?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        All components / trees of the same ``type'' (i.e., relying on the same feature or the same pair of features) are summed into a single component.
+        Since the resulting components only rely on one or max. two features each, these single components can be plotted / visualized and thereby interpreted.
+    \end{itemize}
+
+    \item How is the number of features considered in each single tree inside an EBM restricted? Why?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        Restricted to one feature per tree for the univariate EBM stage, and to two features per tree for the GA2M stage.
+        This ensures interpretability, since the final components / summands will (as in a GAM) only depend on one or two features each.
+        This idea (making the model interpretable by restricting interactions) is the same as in GAMs. % and RPFs.
+        See also Chapter 5 of the lecture on interactions and functional decompositions.
+    \end{itemize}
+
+    \item What is the advantage of using low-depth trees in EBMs?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        Basically, having an ensemble of many low-depth trees or of few high-depth trees is the same because adding up low-resolution trees (step functions) results in a higher resolution tree (step function).
+        
+        The advantage in the case of EBMs: In the round-robin algorithm, only performing very few steps per feature (by only choosing very few splits) is a form of regularization: The feature of interest changes more often, and the order plays a less important role.
+    \end{itemize}
+
+    \item In which scenarios are EBMs most useful?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        Idea: Whenever other interpretable models fail / are too simple, but interpretability is still required.
+        (E.g., GAMs may fail due to interactions, LMs due to nonlinearity, single trees / rule-based methods may be too simple, but other tree ensembles are not interpretable.)
+        Otherwise, simpler models / other inherently interpretable models could be preferred (less computational effort, maybe even offering more insights).
+
+        NB: Other, more complex tree ensemble methods can also be made more interpretable very similar to EBMs, by restricting the interaction order in each tree to 1 or 2, so that the single trees can be summed up to components of order 1 or 2, and the whole model can be easily interpreted.
+        % This is the main idea behind random planted forests (RPFs).
+        However, if only restricting the interaction order and not the specific type (meaning all order 2 components are allowed, without selection), this can be too complex to interpret for more than a few features because the number of features increases dramatically.
+        Hence, EBMs still have a significant advantage due to the interactions pair selection algorithm.
+
+        Note also that data types do not actually hamper the usefulness of EBMs: Classification tasks, categorical features and / or categorical targets are also possible, same as they are for decision trees. 
+        
+        (Exercise: Explicitly spell out how an EBM algorithm for this situation works!)
+    \end{itemize}
+
+    % \textit{Advanced, because relies on inclusion-exclusion principle / calculations in FAST:}
+    % \item How can FAST reuse computational results from the first (univariate) part of the EBM training algorithm?
+    % \begin{itemize}
+    %     \item[$\Rightarrow$]
+    %     Fast can reuse all cumulative counts and sums for the single features.
+    %     It still needs the cumulative counts and sums for each pair of features, though.
+    %     That means: It can reuse all the cumulative counts and sums along each feature, it additionally only needs to compute the sums and counts of all regions termed ``A'' in the lecture.
+    %     The values for the other 3 regions (``B'', ``C'', ``D'') can be computed from these.
+    % \end{itemize}
+
+    % Template:
+    % \item 
+    % \begin{itemize}
+    %     \item[$\Rightarrow$] 
+    % \end{itemize}
     
-        \item Is a GAM always preferred over a linear model, or are there also disadvantages?
-        \begin{itemize}
-            \item[$\Rightarrow$] Computational effort, less interpretable? (Depending on visualizations), No interactions or gets very complicated (compare EBMs)
-        \end{itemize}
+\end{enumerate}
 
-        \item When using boosting, can we always combine different base learners by adding up the parameters?
-        \begin{itemize}
-            \item[$\Rightarrow$] 
-        \end{itemize}
 
-        \item Is the following true or false: ``When using boosting with linear models as base learners, the final model will also be a linear model.''
-        Does this statement hold for decision trees (e.g. CART or MOB trees)?
-        \begin{itemize}
-            \item[$\Rightarrow$] 
-        \end{itemize}
 
-        \item Is the following true or false: When using boosting, the final model will always be a linear model.
-        \begin{itemize}
-            \item[$\Rightarrow$] 
-        \end{itemize}
 
-        \item For which model classes X (e.g. linear model, decision tree, neural network) does the following hold ``When performing boosting with X as a base learner, the final model will again be a model of type X.''
-        \begin{itemize}
-            \item[$\Rightarrow$] True for:
-            \begin{itemize}
-                \item linear models (even more complex linear models, only that the final model needs to include all terms that at least one base learner included)
-                \item decision trees (mathematically, decision trees learn step functions
-                \item GAMs (Adding up the single components, this is actually used in EBMs for the first step, the univariate EBMs  )
-                \item NNs (Take two NNs, assemble them next to each other in parallel, and add up the outputs, evtl. weight the single outputs $\leadsto$ This is still an NN, but its size grows linearly with the number of base learners, so actually completely infeasible in practice...)
-            \end{itemize}
-            False for:
-            \begin{itemize}
-                \item ?
-            \end{itemize}
-        \end{itemize}
-
-        \item TO DO: Take a simple example, calculate / interpret / apply EBM and compare to other algos from this chapter.
-        \begin{itemize}
-            \item[$\Rightarrow$] 
-        \end{itemize}
-
-        \item In which scenarios are EBMs most useful?
-        \begin{itemize}
-            \item[$\Rightarrow$]
-            Idea: Where other interpretable models fail / are too simple (e.g. GAMs fail due to interactions, LMs fail due to nonlinearity, single trees / rule-based methods are too simple), but interpretability is still required (other tree ensembles are not interpretable). Otherwise, simpler models / other inherently interpretable models could be preferred (less computational effort, maybe even more insights).
-
-            NB: Other, more complex tree ensemble methods can be made almost as interpretable as EBMs, by restricting the interaction order in each tree, so that the single trees can be summed up to components of order 1 or 2, and the whole model can be easily interpreted.
-            This is the main idea behind RPFs.
-            However, if only restricting the interaction order and not the specific type (meaning all order 2 components are allowed, without selection), this can be too complex to interpret for more than a few features, because the number of features increases dramatically.
-            Hence, EBMs still have a significant advantage due to the interactions pair selection algorithm.
-            
-            Which data types? Only regression? No, classification or categorical features and / or targets are also possible, same as for decision trees. (Show that / Explicitly spell out how an EBM algorithm for this situation works!)
-        \end{itemize}
-
-        \item 
-        \begin{itemize}
-            \item[$\Rightarrow$] 
-        \end{itemize}
-
-        \item Which model class introduced in the I2ML lecture are EBMs a special case of?
-        \begin{itemize}
-            \item[$\Rightarrow$] An EBM IS a boosted tree ensemble.
-            So very close to XGBoost or also random forests (even though RFs use techniques other than boosting).
-        \end{itemize}
-
-        \item How are the final components in an EBM computed and interpreted?
-        \begin{itemize}
-            \item[$\Rightarrow$] All components / trees of the same ``type'' (i.e. relying on the same feature or the same pair of features) are summed up into a single component.
-            Since it only relies on one or max. two features, this single components can be plotted / visualized and thereby interpreted.
-        \end{itemize}
-
-        \item How is the number of features considered in each single tree inside an EBM restricted? Why?
-        \begin{itemize}
-            \item[$\Rightarrow$]
-            Restricted to one feature per tree for the univariate EBM stage, and to two features per tree for the GA2M stage.
-            This ensures interpretability, since the final components / summands will (as in a GAM) only depend on one or two features each.
-            Interactions are restricted, making the model interpretable: Same idea as in GAMs and RPFs.
-            See also Chapter 5 on interactions and functional decompositions.
-        \end{itemize}
-
-        \item What is the advantage of using low-depth trees in EBMs?
-        \begin{itemize}
-            \item[$\Rightarrow$] Basically, having an ensemble of many low-depth trees or of few high-depth trees is the same, because adding up low-resolution trees (step functions) results in a higher resolution tree (step function).
-            Advantage here: In the round-robin algorithm, only performing very few steps per feature (by only choosing very few steps) regularizes: The feature of interest changes more often, and the order plays less a role.
-        \end{itemize}
-
-        \textit{Advanced, because relies on inclusion-exclusion principle / calculations in FAST:}
-        \item How can FAST reuse computational results from the first (univariate) part of the EBM training algorithm?
-        \begin{itemize}
-            \item[$\Rightarrow$]
-            Fast can reuse all cumulative counts and sums for the single features.
-            It still needs the cumulative counts and sums for each pair of features, though.
-            That means: It can reuse all the cumulative counts and sums along each feature, it additionally only needs to compute the sums and counts of all regions termed ``A'' in the lecture.
-            The values for the other 3 regions (``B'', ``C'', ``D'') can be computed from these.
-        \end{itemize}
-    	
-	\end{enumerate}
