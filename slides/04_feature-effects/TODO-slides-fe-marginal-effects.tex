@@ -92,6 +92,195 @@ $fME_1(x, h_1) = 2\theta_1 h_1^2 +  \theta_{1, 2} x_2 h_1$
 
 
 %%%
+%------------------------------------------------------------
+% \begin{frame}{Why Marginal Effects \emph{still} matter}
+% \begin{itemize}
+%   \item \textbf{Scalar answers}: FME/AME $=$ $\Delta\hat y$ per $\Delta x$ - easy to quote, store, regress on.  
+%   \item \textbf{High-dimensional moves}: change several features at once\\
+%   $\leadsto$ PD/ICE plots collapse beyond 2-D
+%   \item \textbf{Categoricals included}: FME\(c_j\) = $\hat f(\text{new cat})-\hat f(\text{old})$ - no dummy coding.  
+%   %\item \textbf{No feature-independence assumption}: we perturb the \emph{observed} point – avoids unrealistic combos that PD may sample.
+%   % \item \textbf{Local trust score}: NLM \(\uparrow\) tells when the linear view holds (LLTR), something PD/ICE can’t quantify numerically.  
+%   % \item \textbf{Statistical workhorses}: averages (AME/cAME), CIs, hypothesis tests, subgroup trees – all built on numeric MEs.  
+%   \item \textbf{Efficiency}: two predictions per observation vs.\ grid\(\times n\) evaluations for PD.  
+% \end{itemize}
+% %\vspace{0.2cm}
+% %\alert{Plots help you \emph{see}; Marginal Effects give numbers you can \emph{use}.}
+
+
+% \begin{block}{Key points}
+% \begin{enumerate}[1.]
+% \item \textbf{PD / ICE} excel at \alert{exploration and storytelling}:  you \emph{see} how predictions evolve.
+% \item \textbf{Forward Marginal Effects} deliver \alert{concise, numeric,
+%       statistically-tractable} answers that
+%       regulators, tables, and downstream pipelines need:
+%       \begin{itemize}
+%           \item single numbers (AME, cAME) with CIs;
+%           \item high-dimensional interventions possible;
+%           \item no independence assumption, no surrogate model.
+%       \end{itemize}
+% \end{enumerate}
+% \end{block}
+
+% \begin{center}
+% \Large\(\Rightarrow\) \textbf{Use both: plots to explore, MEs to quantify.}
+% \end{center}
+% \end{frame}
+% --------------------------------------------------------------- %
+%  Slide – Why Marginal Effects still matter (Concise, Formal)
+% --------------------------------------------------------------- %
+\begin{frame}{Why Marginal Effects \emph{still} matter}
+
+\begin{itemize}\setlength\itemsep{0.4em}
+  \item \textbf{Scalar summary:}  
+        $\text{FME}_j = \widehat f(\xv+h\mathbf e_j)-\widehat f(\xv)$ - interpretable, testable, storable.
+        
+  \item \textbf{Dimension-agnostic:}  
+        Effective with many features, incl.\ categorical; avoids PD/ICE's dimensionality constraints.
+        
+  \item \textbf{Model-faithful:}  
+        Local to $\xv$; preserves interactions without assumptions.
+
+  \item \textbf{Efficient:}  
+        Two predictions per feature suffice.
+  \item \textbf{Conclusion:}
+  \begin{itemize}
+      \item ME yield concise, rigorous insights
+      \item Complementary to PD/ICE visualizations
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+% --------------------------------------------------------------- %
+%  Slide – Clinician use-case: Marginal Effects vs ICE/PD
+% --------------------------------------------------------------- %
+\begin{frame}{Use-case: Scalar vs. Visual Estimation}
+
+\textbf{Clinician’s questions}
+\begin{itemize}\setlength\itemsep{0.3em}
+  \item \emph{"What if this patient’s systolic BP increases by 10 mmHg?"}
+  \item \emph{"What if BP increases by 10 mmHg \& LDL by 15 mg/dL?"}
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Route A – ICE / PD}
+\begin{itemize}
+  \item Visualize effect along 1-D or 2-D feature grid.
+  \item Manual interpretation of curve/surface deltas.
+  \item \(\rightarrow\) local, visual, interaction-limited.
+\end{itemize}
+
+\vspace{0.3em}
+\textbf{Route B – Forward Marginal Effect}: $\mathrm{FME}_{\Delta\xv}
+  = \widehat f(\xv + h) - \widehat f(\xv)$
+\begin{itemize}
+  \item \textbf{1-D case:} \(\Delta\xv = (10, 0) \;\Rightarrow\; \mathbf{+3\;\text{pp}}\)
+  \item \textbf{2-D case:} \(\Delta\xv = (10, 15) \;\Rightarrow\; \mathbf{+4.1\;\text{pp}}\)
+  \item One scalar answer per query, extensible to higher dimensions.
+\end{itemize}
+
+\end{frame}
+
+% % ---------------------------------------------------------------- %
+% %  Slide 1 – Clinician use-case: two interpretation routes
+% % ---------------------------------------------------------------- %
+% \begin{frame}{Use-case}
+
+% \textbf{Clinician’s question}  
+% \emph{"If this patient’s systolic blood pressure rises by 10 mmHg,
+% how will her predicted heart-attack risk change?"}
+
+% \vspace{0.6em}
+% \begin{columns}[t,onlytextwidth]
+
+% % ---------- left column: ICE / PD vs FME ------------------------ %
+% \begin{column}{1\textwidth}
+% \textbf{Route A – ICE / PD}  
+% \begin{itemize}
+%   \item Draw ICE curve for the patient across BP grid.
+%   \item Read the distance between 120 and 130 mmHg.  
+%         \(\rightarrow\) visual, manual, 1-D only.
+% \end{itemize}
+
+% \medskip
+% \textbf{Route B – Forward Marginal Effect}  (\(h=10\))
+% \[
+% \mathrm{FME}_{\Delta\text{BP}=10}
+%   \;=\; \widehat f(\text{BP}+10,\xv_{-\text{BP}})
+%   -   \widehat f(\xv)
+%   \;=\; \mathbf{+3\;\text{pp}}
+% \]
+% \begin{itemize}
+%   \item One scalar answer: "+3 percentage-points risk".
+%   \item Same formula works for any multi-feature change.
+% \end{itemize}
+% \end{column}
+
+% % ---------- right column: space for figure if desired ------------ %
+% % \begin{column}{0.42\textwidth}
+% % \begin{center}
+% % %\includegraphics[width=\linewidth]{figure_man/bp_ice_vs_fme_placeholder} % optional
+% % \end{center}
+% % \end{column}
+
+% \end{columns}
+% \end{frame}
+
+% \begin{frame}{Use-case}
+
+% \textbf{Clinician’s question}  
+% \emph{"If this patient’s systolic blood pressure rises by 10 mmHg, and LDL cholesterol increases by 15 mg/dL, how will her predicted heart-attack risk change?"}
+
+% \vspace{0.6em}
+% \begin{columns}[t,onlytextwidth]
+
+% \begin{column}{1\textwidth}
+% \textbf{Route A – ICE / PD}  
+% \begin{itemize}
+%   \item Examine ICE curves for BP and LDL separately.
+%   \item Joint effect estimation requires visual extrapolation.
+%   \item \(\rightarrow\) limited to pairwise views, ignores interaction.
+% \end{itemize}
+
+% \medskip
+% \textbf{Route B – Forward Marginal Effect}  (\(h = (\Delta\text{BP}, \Delta\text{LDL})\))
+% \[
+% \mathrm{FME}_{\Delta\xv}
+%   = \widehat f(\xv + h) - \widehat f(\xv)
+%   = \mathbf{+4.1\;\text{pp}}
+% \]
+% \begin{itemize}
+%   \item One scalar for the combined directional effect.
+%   \item Automatically incorporates nonlinear interactions.
+% \end{itemize}
+% \end{column}
+
+% \end{columns}
+% \end{frame}
+
+
+% Relation to ICE and PD
+\begin{frame}{Relation to ICE and PD}
+\begin{itemize}
+\item \textbf{Individual Conditional Expectation (ICE)}:
+\begin{itemize}
+\item Visualizes predictions for an observation across a range of feature values.
+\item FME corresponds to vertical differences between points on an ICE curve.
+\end{itemize}
+\item \textbf{Partial Dependence (PD)}:
+\begin{itemize}
+\item Shows average predictions across a range of feature values.
+\item AME is equivalent to vertical differences on PD for linear models.
+\end{itemize}
+\item \textbf{Advantages of FMEs}:
+\begin{itemize}
+\item Provide exact change in prediction.
+\item Applicable to high-dimensional feature changes.
+\item Quantifiable and not limited to visual interpretation.
+\end{itemize}
+\end{itemize}
+\end{frame}
 
 \begin{frame}{Derivative versus Forward Difference}
 
@@ -131,7 +320,7 @@ $\Rightarrow$ fME better suited for non-linear prediction functions
 dME_1(x) &= a \\
 fME_1(x, h_1) &= ah_1
 \end{align*}
-\item MEs remove effects of other features that are linked additively, regardless of how many remaining features exist, and their effect structure
+\item MEs remove effects of other features that are linked additively %, regardless of how many remaining features exist, and their effect structure
 \end{itemize}
 
 \end{frame}

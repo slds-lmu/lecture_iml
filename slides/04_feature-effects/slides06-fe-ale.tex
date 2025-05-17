@@ -340,30 +340,44 @@ f_{S, \text{ALE}}(x) = \tilde{f}_{S, \text{ALE}}(x)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{ALE Estimation}
+% \begin{frame}{ALE Estimation}
 
-\begin{itemize}
-  \item Partial derivatives not useful for all models (e.g., tree-based methods)
-  \item Approximate them by finite differences of predictions within $K$ intervals for $\xv_S$:
-  $$
-  \begin{aligned}
-  x \in [\min(\xv_S), \max(\xv_S)] \iff &x \in [z_{0}, z_{1, S}] \\
-  \lor &x \in \; [z_{1, S}, z_{2, S}] \\
-  &\dots \\
-  \lor &x \in \; [z_{K-1, S}, z_{K, S}]
-  \end{aligned}
-  $$
-  \item Create $K$ intervals for feature $\xv_S$, e.g., using quantiles as interval bounds 
-  %A simple way of creating $K$ intervals for the value range of $\xv_S$ is to use $K-1$ quantiles as interval bounds $z_1, \dots, z_{K-1}$ (not counting the 0\% and 100\% quantiles).
-\end{itemize}
+% \begin{itemize}
+%   \item Partial derivatives not useful for all models (e.g., tree-based methods)
+%   \item Approximate them by finite differences of predictions within $K$ intervals for $\xv_S$:
+%   $$
+%   \begin{aligned}
+%   x \in [\min(\xv_S), \max(\xv_S)] \iff &x \in [z_{0}, z_{1, S}] \\
+%   \lor &x \in \; [z_{1, S}, z_{2, S}] \\
+%   &\dots \\
+%   \lor &x \in \; [z_{K-1, S}, z_{K, S}]
+%   \end{aligned}
+%   $$
+%   \item Create $K$ intervals for feature $\xv_S$, e.g., using quantiles as interval bounds 
+%   %A simple way of creating $K$ intervals for the value range of $\xv_S$ is to use $K-1$ quantiles as interval bounds $z_1, \dots, z_{K-1}$ (not counting the 0\% and 100\% quantiles).
+% \end{itemize}
 
-\end{frame}
+% \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\begin{frame}{ALE Estimation: 2-D Illustration}
 
-\centerline{\includegraphics[width=0.8\textwidth]{figure/ale_interval}}
+
+
+\begin{frame}{ALE Estimation: Illustration}
+
+%\centerline{\includegraphics[width=0.8\textwidth]{figure/ale_interval}}
+
+\begin{columns}[T, totalwidth=\textwidth]
+\begin{column}{0.6\textwidth}
+\centering
+\includegraphics<1>[width=0.7\textwidth, trim=0 0 0 30, clip]{figure/ale_step1_2D.pdf}
+\end{column}
+\begin{column}{0.4\textwidth}
+\centering
+\includegraphics<1>[width=0.8\textwidth, trim=150 40 150 130, clip]{figure/ale_step1_3D_plotly.pdf}
+\end{column}
+\end{columns}
 
 %Compared to PD, ALE avoids averaging predictions of unlikely data instances and blocks the effect of other correlated features.
 % \begin{itemize}
@@ -374,19 +388,66 @@ f_{S, \text{ALE}}(x) = \tilde{f}_{S, \text{ALE}}(x)
 
 \begin{itemize}
 \tightlist
-\item Partition the feature range of $x_S$ into $K$ intervals (vertical lines)
-\item For each data point in interval $k$, i.e., $x_S^{(i)} \in \; [z_{k-1, S}, z_{k, S}]$:
+\item \textbf{Motivation:} Partial derivatives are not well-defined for all models (e.g., tree-based methods).  
+$\Rightarrow$ Use finite differences within intervals instead.
+\item<1-> Partition the feature range of $x_S$ into $K$ intervals (vertical lines)
+    \begin{itemize}
+      \item Define intervals:
+      $$x_S \in [\min(x_S), \max(x_S)] \Rightarrow 
+  x_S \in [z_{0}, z_{1, S}] \cup [z_{1, S}, z_{2, S}] \cup \dots \cup [z_{K-1, S}, z_{K, S}]$$
+      \item \textit{Equidistant}: preserves resolution
+      \item \textit{Quantile-based}: balances sample size per interval
+    \end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}{ALE Estimation: Illustration}
+
+%\centerline{\includegraphics[width=0.8\textwidth]{figure/ale_interval}}
+
+\begin{columns}[T, totalwidth=\textwidth]
+\begin{column}{0.6\textwidth}
+\centering
+%\includegraphics<1>[width=0.7\textwidth, trim=0 0 0 30, clip]{figure/ale_step1_2D.pdf}
+\includegraphics<1>[width=0.7\textwidth, trim=0 0 0 30, clip]{figure/ale_step2_2D.pdf}
+\includegraphics<2>[width=0.7\textwidth, trim=0 0 0 30, clip]{figure/ale_step3_2D.pdf}
+%\includegraphics<4>[width=0.7\textwidth, trim=0 0 0 30, clip]{figure/ale_step4_2D.pdf}
+\end{column}
+\begin{column}{0.4\textwidth}
+\centering
+%\includegraphics<1>[width=0.8\textwidth, trim=150 40 150 130, clip]{figure/ale_step1_3D_plotly.pdf}
+\includegraphics<1>[width=0.8\textwidth, trim=150 40 150 130, clip]{figure/ale_step2_3D_plotly.pdf}
+\includegraphics<2>[width=0.8\textwidth, trim=150 40 150 130, clip]{figure/ale_step3_3D_plotly.pdf}
+%\includegraphics<4>[width=0.7\textwidth, trim=150 40 150 100, clip]{figure/ale_step4_3D_plotly.pdf}
+\end{column}
+\end{columns}
+
+%Compared to PD, ALE avoids averaging predictions of unlikely data instances and blocks the effect of other correlated features.
+% \begin{itemize}
+% \item Divide feature of interest into intervals (vertical lines)
+% \item For all points within an interval, compute \textbf{prediction difference} when we replace feature value with upper/lower interval bound (blue points) while keeping other feature values unchanged
+% \item These \textbf{finite differences} (approximate local effect) are accumulated \& centered $\Rightarrow$ ALE plot %to produce
+% \end{itemize}
+
+\begin{itemize}
+\tightlist
+%\item<1-> Partition the feature range of $x_S$ into $K$ intervals (vertical lines)
+\item<1-> For each observation in $k$-th interval, i.e., $\{i: x_S^{(i)} \in \; [z_{k-1, S}, z_{k, S}]\}$:
   \begin{itemize}
-    \item Replace $x_S^{(i)}$ with \textcolor{blue}{interval bounds ($z_{k-1, S}$ and $z_{k,S}$)}, keeping $\xv_{-S}^{(i)}$ fixed
-    \item Compute \textbf{prediction difference} (local effect) for $i$-th data point \\
-    $\leadsto$ Finite difference: $\fh(z_{k, S}, \xi_{-S}) - \fh(z_{k-1, S}, \xi_{-S})$%\\
+    \item Replace $x_S^{(i)}$ with \textcolor{blue}{upper/lower interval bounds}, keeping $\xv_{-S}^{(i)}$ fixed
+    \item Compute observation-wise finite difference of $i$-th obs. in $k$-th interval \\
+    %Compute \textbf{prediction difference} (local effect) for $i$-th dobservation \\
+    $\leadsto$ $\fh(z_{k, S}, \xi_{-S}) - \fh(z_{k-1, S}, \xi_{-S})$  \; (approximates local effect)  %\\
     %$\leadsto$ Approximates local effect of $x_S$ for $i$-th data point
   \end{itemize}
-\item Average these finite differences over all \( i \) in each interval \\
-$\leadsto$ Approximates the \textbf{inner integral} \( \E_{\xv_{-S} \mid x_S = z_S} \left[ \partial \hat{f}/\partial z_S \right] \)
-
-\item Accumulate these averages from \( z_0 \) to the point of interest \( x \in \mathcal{X}_S \) \\
-$\leadsto$ Approximates the \textbf{outer integral} over \( z_S \in [z_{0}, x] \) to yield the ALE function
+\item<2-> Average these finite differences over all observations in each interval \\
+$\leadsto$ Approximates \textbf{inner integral} \textcolor{red}{\( \E_{\xv_{-S} \mid x_S = z_S} \left[ \partial \hat{f}/\partial z_S \right] \)}
+\item<2-> Accumulate these averages from \( z_0 \) to the point of interest \( x \in \mathcal{X}_S \) \\
+$\leadsto$ Approximates \textbf{outer integral} over \( z_S \in [z_{0}, x] \) $\Rightarrow$ uncentered ALE function
 
 %\item Accumulate and center differences over all data points $\Rightarrow$ ALE curve
 \end{itemize}
@@ -503,43 +564,112 @@ $\leadsto$ Approximates the \textbf{outer integral} over \( z_S \in [z_{0}, x] \
 % \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% \begin{frame}{ALE Estimation: Formula}
+
+% \begin{itemize}
+% \item Estimated uncentered first order ALE $\hat{\tilde{f}}_{S, ALE}(x)$ at point $x$:
+% $$
+% \begin{aligned}
+% \hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; [z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_{-S}) -\fh(z_{k-1, S}, \xi_{-S})\right]
+% \end{aligned}
+% $$
+% \item $k_S(x)$ denotes the interval index a feature value $x \in \xv_S$ falls in
+% \item $n_S(k)$ denotes the number of observations inside the $k$-th interval of $\xv_S$
+% \item Subtract average of estimated uncentered ALE to obtain centered ALE estimate: %  $\hat{f}_{S, ALE}(x)$ at point $x$
+% $$
+% \begin{aligned}
+% \hat{f}_{S, ALE}(x) = \hat{\tilde{f}}_{S, ALE}(x) - \frac{1}{n}\sum_{i = 1}^n \hat{\tilde{f}}_{S, ALE}(x_S^{(i)})
+% \end{aligned}
+% $$
+
+% \end{itemize}
+% \end{frame}
+
 \begin{frame}{ALE Estimation: Formula}
 
-\begin{itemize}
-\item Estimated uncentered first order ALE $\hat{\tilde{f}}_{S, ALE}(x)$ at point $x$:
-$$
-\begin{aligned}
+\textbf{Estimated uncentered ALE:}  
+For a point $x \in \mathcal{X}_S$, define:
+\[
 \hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; [z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_{-S}) -\fh(z_{k-1, S}, \xi_{-S})\right]
-\end{aligned}
-$$
-\item $k_S(x)$ denotes the interval index a feature value $x \in \xv_S$ falls in
-\item $n_S(k)$ denotes the number of observations inside the $k$-th interval of $\xv_S$
-\item Subtract average of estimated uncentered ALE to obtain centered ALE estimate: %  $\hat{f}_{S, ALE}(x)$ at point $x$
-$$
-\begin{aligned}
-\hat{f}_{S, ALE}(x) = \hat{\tilde{f}}_{S, ALE}(x) - \frac{1}{n}\sum_{i = 1}^n \hat{\tilde{f}}_{S, ALE}(x_S^{(i)})
-\end{aligned}
-$$
+\]
 
+\begin{itemize}
+\tightlist
+  \item $[z_{k-1, S}, z_{k,S}]$: $k$-th interval of feature $x_S$
+  \item $k_S(x)$: index of the interval in which $x$ lies
+  \item $n_S(k)$: number of observations in interval $k$
+  \item $\xv_{-S}^{(i)}$: all other features held fixed for $i$-th observation
 \end{itemize}
+
+\pause
+\medskip
+\textbf{Centering:}  
+Ensure identifiability by subtracting the average uncentered ALE:
+\[
+\hat{f}_{S, \text{ALE}}(x) =
+\hat{\tilde{f}}_{S, \text{ALE}}(x)
+- \frac{1}{n} \sum_{i = 1}^n \hat{\tilde{f}}_{S, \text{ALE}}(x_S^{(i)})
+\]
+
 \end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{ALE Estimation: Algorithm}
+% \begin{frame}{ALE Estimation: Algorithm}
 
-\begin{enumerate}
-	\item Create $K$ intervals for value range of $\xv_S$
-	\item Repeat for each interval: %$k \in 1, \dots, k_S(x)$:
-	  \begin{itemize}
-	  %\item Select the subset of observations inside the $k$-th interval
-	  \item Replace observation's feature value $x_S^{(i)}$ with upper/lower interval bound for each observation inside $k$-th interval
-	  \item Compute observation-wise finite difference inside $k$-th interval and average them to estimate interval-wise local effects
-	  \end{itemize}
-  \item Accumulate interval-wise local effects up to value of interest $x$ to estimate uncentered ALE and then center it
-\end{enumerate}
+% \begin{enumerate}
+% 	\item Create $K$ intervals for value range of $\xv_S$
+% 	\item Repeat for each interval: %$k \in 1, \dots, k_S(x)$:
+% 	  \begin{itemize}
+% 	  %\item Select the subset of observations inside the $k$-th interval
+% 	  \item Replace observation's feature value $x_S^{(i)}$ with upper/lower interval bound for each observation inside $k$-th interval
+% 	  \item Compute observation-wise finite difference inside $k$-th interval and average them to estimate interval-wise local effects
+% 	  \end{itemize}
+%   \item Accumulate interval-wise local effects up to value of interest $x$ to estimate uncentered ALE and then center it
+% \end{enumerate}
 
-\end{frame}
+% \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{frame}{Second Order ALE Function}
+
+% \textbf{Goal:} Estimate interaction effects between two features $x_j$ and $x_k$  
+% $\Rightarrow$ Remove both marginal effects and isolate their combined influence
+
+% \medskip
+% \textbf{Uncentered second-order ALE:}
+% \[
+% \tilde{f}_{jk, \text{ALE}}(x_j, x_k) =
+% \int_{z_{0,j}}^{x_j} \int_{z_{0,k}}^{x_k}
+% \E_{\xv_{-\{j,k\}} \mid x_j = z_j, x_k = z_k}
+% \left( \frac{\partial^2 \hat{f}(z_j, z_k, \xv_{-\{j,k\}})}{\partial z_j \partial z_k} \right)
+% dz_k \, dz_j
+% \]
+
+% \begin{itemize}
+% \tightlist
+%   \item $x_j, x_k$: features of interest; $z_j, z_k$ are integration variables
+%   \item $\xv_{-\{j,k\}}$: all remaining features held fixed
+%   \item \textbf{Interpretation:} measures the effect of changing $x_j$ \emph{depending on} the value of $x_k$
+% \end{itemize}
+
+% \pause
+% \textbf{Centering:}
+% \[
+% f_{jk, \text{ALE}}(x_j, x_k) =
+% \tilde{f}_{jk, \text{ALE}}(x_j, x_k)
+% - f_{j, \text{ALE}}(x_j)
+% - f_{k, \text{ALE}}(x_k)
+% \]
+
+% \begin{itemize}
+% \tightlist
+%   \item Removes main effects to isolate interaction
+%   \item Ensures $\E[f_{jk, \text{ALE}}(x_j, x_k)] = 0$
+% \end{itemize}
+
+% \end{frame}
+
 
 % \begin{frame}{Extrapolation and ALE Plot}
 % \begin{itemize}
