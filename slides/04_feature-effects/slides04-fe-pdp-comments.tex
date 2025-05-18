@@ -25,27 +25,28 @@
 % \begin{center}
 % \includegraphics[width=0.8\textwidth]{figure_man/extrapolation01.png}
 % \end{center}
-
-Extrapolation can cause issues in regions with few observations or if features are correlated
  
 \begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.5\textwidth}
 \centering
-\includegraphics[width=0.8\textwidth]{figure/ale_scatter_grid}
+\includegraphics[width=\textwidth]{figure/ale_scatter_grid}
 \end{column}
 \begin{column}{0.5\textwidth}
 \centering
-\includegraphics[width=0.8\textwidth]{figure/ale_pdplot}
+\includegraphics[width=\textwidth]{figure/ale_pdplot}
 \end{column}
 \end{columns}
 
+Extrapolation occurs in regions with few observations or if features are correlated
 \begin{itemize}
 \item \textbf{Example:} Features $x_1$ and $x_2$ are strongly correlated
 \item \textbf{Black points:} Observed points of the original data
-\item \textbf{\textcolor{red}{Red:}} Grid points to calculate the ICE and PD curves (many unrealistic values)\\ %combination of feature values
+\item \textbf{\textcolor{red}{Red:}} Grid points to calculate ICE/PD (many unrealistic $x_1$, $x_2$ combinations)\\ %combination of feature values
 $\Rightarrow$ %Unrealistic combination of feature values are used, e.g., the
-PD plot at $x_1=0$ averages predictions over the \textit{whole} marginal distribution of feature $x_2$\\
-$\Rightarrow$ May be problematic if model behaves strange outside training distribution (e.g. model overfits)
+\textbf{PD at $x_1=0$:} Averages predictions over \textit{full} marginal distribution of $x_2$\\
+$\Rightarrow$ \textbf{Issue:} Model may behave strangely outside training distribution\\
+$\Rightarrow$ Especially problematic for overfitted or interaction-heavy models 
+% which amplify risk of erratic predictions at extrapolated grid point
 %can bias ICE and PD curves Be careful with interpretations 
 %\item For correlated features and in regions with few observations with care
 %Extrapolation: interpret curves for highly correlated features and in feature regions with few observations with care
@@ -97,30 +98,71 @@ $\Rightarrow$ May be problematic if model behaves strange outside training distr
 % \end{frame}
 
 \begin{frame}{Comments on Interactions}
-\begin{itemize}
-%\lz
-%\item Accumulated Local Effects (ALE) plots are a novel alternative to PD plots developed by Apley (2016) that do not suffer from extrapolation in case of correlated features.
+% \begin{itemize}
+% %\lz
+% %\item Accumulated Local Effects (ALE) plots are a novel alternative to PD plots developed by Apley (2016) that do not suffer from extrapolation in case of correlated features.
+% \item PD plots: averaging of ICE curves might \textbf{obfuscate} heterogeneous effects and interactions \\ 
+% \(\Rightarrow\) Ideally plot ICE curves and PD plots together to uncover this fact\\
+% \(\Rightarrow\) Different shapes of ICE curves suggest interaction (but do not tell with which  feature)
 
-\item PD plots: averaging of ICE curves might \textbf{obfuscate} heterogeneous effects and interactions \\ 
-\(\Rightarrow\) Ideally plot ICE curves and PD plots together to uncover this fact\\
-\(\Rightarrow\) Different shapes of ICE curves suggest interaction (but do not tell with which  feature)
+% \end{itemize}
+PD plots average ICE curves \(\Rightarrow\) May \textbf{obscure heterogeneous effects} (interactions)
+    \begin{itemize}
+      \item \textbf{Example:} Feature $x_1$ = treatment dosage; $x_2$ = gender \\
+      \(\Rightarrow\)  Males (increasing) and females (decreasing) respond differently to dosage\\
+      \(\Rightarrow\)  PD curve (yellow) hides this divergence
+      \item Plotting ICE and PD together helps detect interaction
+      \item Diverse ICE shapes suggest interaction  (but not with which feature)
+    \end{itemize}
+    
+\begin{center}\includegraphics[width=0.65\textwidth]{figure/pdp_xor.pdf} \end{center}
 
-\begin{center}\includegraphics[width=0.5\textwidth]{figure/pdp_xor.pdf} \end{center}
-\end{itemize}
 
+%     \begin{columns}[T, totalwidth=\textwidth]
+%   \begin{column}{0.45\textwidth}
+%     \centering
+%     \includegraphics[width=\textwidth]{figure/pdp_xor.pdf}
+%   \end{column}
+%   \begin{column}{0.55\textwidth}
+%     \small
+%     \textbf{Model:}
+%     $
+%     f(x) = 6 x_1 + \beta_2 x_2 - 12 x_1 x_2
+%     $
+%     \vspace{-0.3em}
+%     \textbf{Effect by group ($x_2 \in \{0,1\}$):}
+%     \begin{itemize}
+%       \item $x_2 = 0$: $f(x) = \beta_0 + \beta_1 x_1$
+%       \item $x_2 = 1$: $f(x) = (\beta_0 + \beta_2) + (\beta_1 + \beta_3)x_1$
+%     \end{itemize}
+%     \vspace{-0.3em}
+%     \textbf{Example:} $\beta_1 = 2$, $\beta_3 = -4$
+%     \begin{itemize}
+%       \item Group 0: $x_1 \mapsto$ increasing
+%       \item Group 1: $x_1 \mapsto$ decreasing
+%     \end{itemize}
+%     \(\Rightarrow\) ICE curves diverge, PD appears flat.
+%   \end{column}
+% \end{columns}
 %\footnote[frame]{Apley, Daniel W., and Jingyu Zhu (2020). Visualizing the Effects of Predictor Variables in Black Box Supervised Learning Models. Journal of the Royal Statistical Society: Series B (Statistical Methodology) 82.4: 1059-1086.}
 \end{frame}
 
-\begin{frame}{Comments on Interactions - 2D Partial Dependence}
+\begin{frame}{Comments on Interactions - 2D PD plot}
 
 \begin{center}
-\includegraphics[width=0.9\textwidth]{figure/pdp2d_bike}
+\includegraphics[width=\textwidth]{figure/pdp2d_bike}
 \end{center}
 
 \begin{itemize}
  \item Humidity and temperature interact at high values (see shape difference)\\
- $\leadsto$ Shape of ICE curves at different horizontal and vertical slices varies (for high values)
- \item Low to medium humidity and high temperature $\Rightarrow$ many rented bikes
+ $\leadsto$ Shape of ICE curves changes across different (higher) values of other feature% %(esp. for high values)%at different horizontal and vertical slices varies 
+  \begin{itemize}
+    \item ICE (temp): At high humidity, temp effect flattens (pink line)
+    %or reverses
+    \item ICE (hum): At high temperature, humidity effect falls steeper (blue/pink)
+  \end{itemize}
+
+ \item Most rentals occur at \textit{high temperature} and \textit{low to medium humidity}
  %Many rented bikesThe number of bike rentals is especially high when humidity is below 75 percent and temperature is between 15 $^{\circ}$C and 27 $^{\circ}$C
 \end{itemize}
 
@@ -133,30 +175,37 @@ $\Rightarrow$ May be problematic if model behaves strange outside training distr
 
 \begin{frame}{Centered ICE Plot (c-ICE) \citebutton{Goldstein et al. (2015)}{https://doi.org/10.1080/10618600.2014.907095}}
 
-\textbf{Issue:} Difficult to identify heterogenous ICE curves if curves have different intercepts (are stacked)
+\textbf{Issue:} Varying-intercept (stacked) ICE curves obscure shape heterogeneity
+%Difficult to identify heterogeneous ICE curves if curves have different intercepts (are stacked)
 %When ICE curves start at different intercepts (are stacked), it is difficult to identify heterogenous predictions.
 
-\textbf{Solution:} Center ICE curves at fixed reference value $x' \sim \P(\xv_S)$, often $x' = \min(\xv_S)$\\
-$\Rightarrow$ Easier to identify heterogenous shapes with c-ICE curves
+\textbf{Solution:} Center ICE curves at fixed reference value, often $x' = \min(\xv_S)$\\
+$\Rightarrow$ Easier to identify heterogeneous shapes with c-ICE curves
+$$\begin{aligned}
+\fh_{S, cICE}^{(i)}(\xv_S) = \fh(\xv_S, \xi_{-S}) - \fh(x', \xi_{-S}) = \fh_{S}^{(i)}(\xv_S) - \fh_{S}^{(i)}(x')
+\end{aligned}$$
 \vspace{-0.2cm}
 \begin{columns}[c, totalwidth=\textwidth]
 \begin{column}{0.45\textwidth}
 %\centering
-$$\begin{aligned}
-\fh_{S, cICE}^{(i)}(\xv_S)
-&= \fh(\xv_S, \xi_{-S}) - \fh(x', \xi_{-S}) \\
-&= \fh_{S}^{(i)}(\xv_S) - \fh_{S}^{(i)}(x')
-\end{aligned}$$
-
-$\Rightarrow$ Visualize $\fh_{S, cICE}^{(i)}(\xv_S^*)$ vs. $\xv_S^*$
-
-\lz
+% $$\begin{aligned}
+% \fh_{S, cICE}^{(i)}(\xv_S)
+% &= \fh(\xv_S, \xi_{-S}) - \fh(x', \xi_{-S}) \\
+% &= \fh_{S}^{(i)}(\xv_S) - \fh_{S}^{(i)}(x')
+% \end{aligned}$$
+%$\Rightarrow$ Visualize $\fh_{S, cICE}^{(i)}(\xv_S^*)$ vs. $\xv_S^*$
+%\lz
 \pause
-\textbf{Interpretation} \\
-(yellow curve: analog to PDP the average of c-ICE curves): \\
-On average, the number of bike rentals at $\sim 97$ \% humidity decreased by 1000 bikes compared to a humidity of 0 \%
+\textbf{Interpretation}% \\
+\begin{itemize}
+  \item Yellow: c-PDP (mean of c-ICE)
+  \item \textbf{c-PDP:} At 97\% humidity, predicted rentals are 1000 fewer than at 0\% humidity (on average)
+  \item \textbf{Opening of c-ICE curves:} suggests interaction or varying effect across instances
+\end{itemize}
+%(yellow curve: analog to PDP the average of c-ICE curves): \\
+%On average, the number of bike rentals at $\sim 97$ \% humidity decreased by 1000 bikes compared to a humidity of 0 \%
 \end{column}
-\begin{column}{0.54\textwidth}
+\begin{column}{0.55\textwidth}
 \begin{center}
 %\vspace{-0.3cm}
 \includegraphics[width=\textwidth]{figure/cICE}
@@ -171,7 +220,7 @@ On average, the number of bike rentals at $\sim 97$ \% humidity decreased by 100
 
 \begin{frame}{Centered ICE Plot (c-ICE)}
 
-For categorical features, c-ICE plots can be interpreted as in LMs due to reference value
+Categorical features: c-ICE plots can be interpreted as in LMs due to reference value
 
 \begin{columns}[c, totalwidth=\textwidth]
 \begin{column}{0.44\textwidth}
@@ -187,7 +236,7 @@ For categorical features, c-ICE plots can be interpreted as in LMs due to refere
 \begin{itemize}
 %\item Centered ICE plots are useful for categorical features and can be interpreted as in LMs
 \item The reference category is $x' =$ SPRING
-\item Golden crosses: Average number of bike rentals if we jump from SPRING to any other season\\
+\item Yellow crosses: Average rentals if we jump from SPRING to any other season\\
 $\Rightarrow$ Number of bike rentals drops by $\sim 560$ in \code{WINTER} and is slightly higher in \code{SUMMER} and \code{FALL} compared to \code{SPRING}
 \end{itemize}
 
