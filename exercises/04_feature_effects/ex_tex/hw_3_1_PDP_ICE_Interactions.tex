@@ -31,5 +31,34 @@ Let us assume that we fitted the following linear regression model with two feat
   \item Add the PDP you derived in b) to the plot. 
   Use this example to explain briefly why it is advisable to display not only the PDP but also the ICE curves, 
   when visualizing the feature effects of a specific model. 
+  
+  \item \textbf{Implementation: ICE and PDP.}  
+        Write functions that, given a fitted model object, a data matrix \(\mathbf X\) and a feature index \(j\), a specified grid of values does:
+
+        \begin{enumerate}[1.]
+          \item \verb|ice(model, X, j, grid)| - returns an \emph{n $\times$ g} matrix of ICE predictions  
+                (one curve per row, one grid value per column);
+          \item \verb|pdp(model, X, j, grid)| - returns the length-\(g\) PD vector  
+                by averaging the ICE matrix column-wise.
+        \end{enumerate}
+
+  \item \textbf{Implementation: centred variants.}  
+        Extend the code with
+
+        \begin{enumerate}[1.]
+          \item \verb|c_ice(model, X, j, grid, ref = 1)| - centres every ICE curve by subtracting its value  
+                at the reference grid index \verb|ref| (the "vertical shift" in the slides which is often set to the minimum value);
+          \item \verb|c_pdp(model, X, j, grid, ref = 1)| - averages the centred ICE curves to obtain a centred PDP  
+                which is zero at the reference point.
+        \end{enumerate}
+
+        Use the definitions of c-ICE and c-PDP from the lecture slides to guide your implementation.  
+        % Test the four functions on simulated data from (b) and check that  
+        % 
+        % \[
+        %   \text{c‐PDP}(x_{1,\text{ref}})=0, \qquad
+        %   \text{PDP} = \text{column mean of ICE}.
+        % \]
+
 \end{enumerate}
 }

@@ -1,0 +1,198 @@
+% \loesung{
+% 
+% \textbf{Solution: Derivative, Forward, and Non-Linearity Effects}
+% 
+% \begin{enumerate}[a)]
+%   \item \textbf{Derivative Marginal Effect (dME):}
+% 
+%   Given:
+%   \[
+%     \hat{f}(x_1, x_2) = \theta_0 + \theta_1 x_1^2 + \theta_2 x_2^2 + \theta_{1,2} x_1 x_2
+%   \]
+%   The derivative with respect to \( x_1 \) is:
+%   \[
+%     \text{dME}_1(x_1, x_2) = \frac{\partial \hat{f}}{\partial x_1} = 2 \theta_1 x_1 + \theta_{1,2} x_2
+%   \]
+% 
+%   \item \textbf{Forward Marginal Effect (fME):}
+% 
+%   We compute:
+%   \[
+%     \text{fME}_1(x_1, x_2; h_1) = \hat{f}(x_1 + h_1, x_2) - \hat{f}(x_1, x_2)
+%   \]
+%   Plug in the model:
+%   \begin{align*}
+%     \hat{f}(x_1 + h_1, x_2) &= \theta_1 (x_1 + h_1)^2 + \theta_2 x_2^2 + \theta_{1,2} (x_1 + h_1) x_2 \\
+%     &= \theta_1 (x_1^2 + 2 x_1 h_1 + h_1^2) + \theta_2 x_2^2 + \theta_{1,2} x_1 x_2 + \theta_{1,2} h_1 x_2
+%   \end{align*}
+%   Subtracting \(\hat{f}(x_1, x_2)\), we obtain:
+%   \[
+%     \text{fME}_1(x_1, x_2; h_1) = 2 \theta_1 x_1 h_1 + \theta_1 h_1^2 + \theta_{1,2} x_2 h_1
+%   \]
+% 
+%   \item \textbf{Numerical Evaluation:}
+% 
+%   Given \( x_1 = 1 \), \( x_2 = 2 \), \( h_1 = 0.5 \), and parameters:
+%   \(\theta_1 = 1\), \(\theta_{1,2} = 2\)
+% 
+%   \begin{align*}
+%     \text{dME}_1(1, 2) &= 2 \cdot 1 \cdot 1 + 2 \cdot 2 = 2 + 4 = 6 \\
+%     \text{fME}_1(1, 2; 0.5) &= 2 \cdot 1 \cdot 1 \cdot 0.5 + 1 \cdot 0.5^2 + 2 \cdot 2 \cdot 0.5 \\
+%                            &= 1 + 0.25 + 2 = 3.25
+%   \end{align*}
+% 
+%   \textbf{Interpretation:} The dME overestimates the effect, as it assumes linearity. The fME reflects the actual finite difference. The term \( \theta_1 h_1^2 \) captures curvature in the prediction function.
+% 
+%   \item \textbf{Non-Linearity Measure (NLM):}
+% 
+%   Define the 10 evaluation points:
+%   \[
+%     t_i = \frac{i-1}{9}, \quad x_1^{(i)} = 1 + t_i \cdot 0.5, \quad x_2^{(i)} = 2
+%   \]
+%   Compute:
+%   \begin{itemize}
+%     \item \( f_i = \hat{f}(x_1^{(i)}, x_2) \)
+%     \item \( \bar{f} = \frac{1}{10} \sum f_i \)
+%     \item Secant line: \( g_i = \hat{f}(1, 2) + t_i \cdot \text{fME}_1(1, 2; 0.5) = 6 + 3.25 t_i \)
+%   \end{itemize}
+%   Then evaluate:
+%   \[
+%     \text{NLM} = 1 - \frac{\sum_{i=1}^{10} (f_i - g_i)^2}{\sum_{i=1}^{10} (f_i - \bar{f})^2}
+%   \]
+%   This gives an estimate of how well the linear approximation explains variation along the path. For this example, the NLM is close to—but below—1, indicating mild non-linearity.
+% 
+% \end{enumerate}
+% }
+
+%------------------------------------------------------------
+\loesung
+{
+
+\vspace{0.5em}
+The fitted model is
+\[
+  \hat{f}(x_1,x_2)=\theta_0+\theta_1 x_1^{2}+\theta_2 x_2^{2}+ \theta_{1,2}x_1x_2,
+  \quad
+  (\theta_0,\theta_1,\theta_2,\theta_{1,2})=(0,\,1,\,0.5,\,2).
+\]
+
+\begin{enumerate}[a)]
+%-------------------------------------------------------------------
+\item \textbf{Derivative marginal effect (dME)}\\[0.1em]
+\[
+  \text{dME}_1(x_1,x_2)=
+  \frac{\partial\hat f}{\partial x_1}
+  =2\theta_1x_1+\theta_{1,2}x_2
+  =2x_1+2x_2.
+\]
+
+\emph{Discussion}.  
+Because the model is quadratic in \(x_1\), the derivative is a \emph{linear}
+function of both \(x_1\) and \(x_2\).  
+If the surface were exactly linear, this rate would coincide with any finite
+difference.
+
+%-------------------------------------------------------------------
+\item \textbf{Forward marginal effect (fME)} with step \(h_1>0\)\\[0.1em]
+
+\[
+  \text{fME}_1(x_1,x_2;h_1) \;=\;
+  \hat f(x_1+h_1,x_2)-\hat f(x_1,x_2).
+\]
+
+Expand \(\hat f(x_1+h_1,x_2)\):
+
+\begin{align*}
+  \hat f(x_1\!+\!h_1,x_2)
+  &=\theta_1(x_1+h_1)^2+\theta_2x_2^2+\theta_{1,2}(x_1+h_1)x_2 \\
+  &=\theta_1\bigl[x_1^2+2x_1h_1+h_1^2\bigr]
+    \;+\;\theta_2x_2^2
+    \;+\;\theta_{1,2}x_1x_2+\theta_{1,2}h_1x_2.
+\end{align*}
+
+Subtracting \(\hat f(x_1,x_2)\) gives
+
+\[
+  \boxed{\;
+  \text{fME}_1(x_1,x_2;h_1)=
+  2\theta_1x_1h_1+\theta_1h_1^{2}+\theta_{1,2}x_2h_1
+  \;}
+  \;=\;
+  2x_1h_1+h_1^{2}+2x_2h_1 .
+\]
+
+\emph{Discussion}.  
+The extra term \(\theta_1h_1^{2}\) captures curvature; it vanishes as
+\(h_1\to0\), at which point fME converges to dME.
+
+%-------------------------------------------------------------------
+\item \textbf{Numerical evaluation at} \((x_1,x_2,h_1)=(1,2,0.5)\)
+
+\[
+\begin{aligned}
+  \text{dME}_1(1,2) &= 2(1)+2(2)=6,\\[0.2em]
+  \text{fME}_1(1,2;0.5) &= 2(1)(0.5)+(0.5)^2+2(2)(0.5)=1+0.25+2=3.25.
+\end{aligned}
+\]
+
+\emph{Why different?}  
+The derivative \(6\) is the \emph{instantaneous} slope.  
+The finite step of \(0.5\) exposes curvature; the quadratic term makes the
+actual change only \(3.25\).  
+Hence, using dME for a sizeable perturbation would greatly
+over-predict the effect.
+
+%-------------------------------------------------------------------
+\item \textbf{Non-Linearity Measure (NLM)}  
+(\(R^2\) of the linear secant along the path)
+
+\textit{Hints.}
+\begin{itemize}\setlength\itemsep{0.2em}
+  \item Compute $\text{SSR}=\sum(\hat f - g)^2$ and
+        $\text{SST}=\sum(\hat f -\bar f)^2$ from the table.
+  \item Then evaluate $\mathrm{NLM}=1-\mathrm{SSR}/\mathrm{SST}$.
+  \item Comment: Is the resulting NLM close enough to $1$ to accept the
+        secant as a faithful local explanation?
+\end{itemize}
+
+\paragraph{Step 1: Path points.}  
+For \(T=10\) equidistant \(t_i\in[0,1]\):
+\[
+  t_i=\frac{i-1}{9}, \quad
+  x_1^{(i)} = 1 + t_i h_1 = 1+0.5\,t_i, \quad
+  x_2^{(i)} = 2.
+\]
+
+\paragraph{Step 2: Model and secant values.}
+\[
+  f_i = \hat f(x_1^{(i)},2), 
+  \quad
+  g_i = \hat f(1,2) + t_i\cdot \text{fME}_1(1,2;0.5),
+  \quad
+  \hat f(1,2)=7,\;
+  \text{fME}=3.25.
+\]
+
+\paragraph{Step 3: Compute \(R^2\).}
+\[
+  \text{NLM}=1-\frac{\sum_{i=1}^{9}(f_i-g_i)^2}%
+                     {\sum_{i=1}^{9}(f_i-\bar f)^2},
+  \quad
+  \bar f=\frac1{9}\sum f_i.
+\]
+
+Numerically  
+\[
+  \boxed{\text{NLM}\;\approx\;0.9983}.
+\]
+
+\emph{Interpretation}.  
+Along the half-unit move in \(x_1\), the quadratic surface is
+\emph{almost} linear (NLM very close to 1).  
+If we doubled \(h_1\), the numerator would grow faster than the denominator,
+lowering NLM and signalling stronger curvature.
+
+\end{enumerate}
+
+}
+%------------------------------------------------------------

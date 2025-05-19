@@ -1,0 +1,91 @@
+\aufgabe{Derivative, Forward, and Non-Linearity Effects}{
+
+Let us consider the following non-linear regression model:
+
+\begin{equation}
+  \hat{f}(x_1, x_2) = \theta_0 + \theta_1 x_1^2 + \theta_2 x_2^2 + \theta_{1,2} x_1 x_2
+  \label{eq:nonlinmod}
+\end{equation}
+
+with parameters \( \theta_0 = 0 \), \( \theta_1 = 1 \), \( \theta_2 = 0.5 \), and \( \theta_{1,2} = 2 \).
+
+\begin{enumerate}[a)]
+  \item Derive the analytic expression for the \emph{derivative marginal effect} (dME) of feature $x_1$.
+  % , i.e.\ compute
+  % \[
+  %   \text{dME}_1(x_1, x_2) = \frac{\partial \hat{f}(x_1, x_2)}{\partial x_1}.
+  % \]
+
+  \item Derive the expression for the \emph{forward marginal effect} (fME) of $x_1$ with step size $h_1 > 0$.
+  % , i.e.\
+  % \[
+  %   \text{fME}_1(x_1, x_2; h_1) = \hat{f}(x_1 + h_1, x_2) - \hat{f}(x_1, x_2).
+  % \]
+
+  \item Let \( x_1 = 1 \), \( x_2 = 2 \), and \( h_1 = 1 \). Compute \( \text{dME}_1(1, 2) \) and \( \text{fME}_1(1, 2; h_1 = 1) \) and explain why these two results differ and interpret the additional terms appearing in the fME.
+% 
+%   \item The \emph{Non-Linearity Measure (NLM)} below quantifies how well the local linear approximation (secant) explains the variation in the model output along the direction of $h_1$. It is defined as:
+%   \[
+%     \text{NLM} = 1 - \frac{\sum_{i=1}^T \left[\hat{f}(\xv^{(i)}) - g(t_i)\right]^2}{\sum_{i=1}^T \left[\hat{f}(\xv^{(i)}) - \bar{f}\right]^2},
+%   \]
+%   where:
+%   \begin{align*}
+%     \xv^{(i)} &= (x_1 + t_i h_1, x_2), \quad \text{with } t_i = \frac{i-1}{T-1}, \quad i = 1, \ldots, T \\
+%     g(t_i) &= \hat{f}(x_1, x_2) + t_i \cdot \text{fME}_1(x_1, x_2; h_1) \\
+%     \bar{f} &= \frac{1}{T} \sum_{i=1}^T \hat{f}(\xv^{(i)})
+%   \end{align*}
+%   Compute the NLM for \( x_1 = 1 \), \( x_2 = 2 \), \( h_1 = 0.5 \), and \( T = 10 \). Interpret your result in relation to the fit of a local linear approximation.
+  \item \textbf{Non-Linearity Measure (NLM):} We want test how well the secant (local linear approximation) fits the model output along the direction of $x_1$. The NLM defined below quantifies how well the local linear approximation (secant) explains the variation in the model output along the direction of $h_1$. For $T$ grid points $(\mathbf x^{(i)})_{i=1}^{T}$, it is defined as:
+\[
+  \mathrm{NLM}
+  = 1 -
+    \frac{\displaystyle
+          \underbrace{\sum_{i=1}^{T}
+            \bigl[\hat f(\mathbf x^{(i)})-g(t_i)\bigr]^2}_{\text{SSR: error of secant}}}
+         {\displaystyle
+          \underbrace{\sum_{i=1}^{T}
+            \bigl[\hat f(\mathbf x^{(i)})-\bar f\bigr]^2}_{\text{SST: total variance}}}.
+\]
+\begin{itemize}\setlength\itemsep{0.2em}
+  \item $\displaystyle t_i \in (0,1)$ param\-e\-tri\-ses the path (here only in $x_1$ direction):
+        \(\mathbf x^{(i)} = (x_1 + t_i h_1,\,x_2)\).
+  \item $\displaystyle g(t_i)
+        = \hat f(x_1,x_2)
+        + t_i\cdot\text{fME}_1(x_1,x_2;h_1)$  
+        is the secant (straight line) through the two end-points.
+  \item $\displaystyle\bar f
+        = \frac1T \sum_{i=1}^{T}\hat f(\mathbf x^{(i)})$
+        is the mean prediction on the path.
+  \item Hence NLM is an $R^{2}$: $1$ means perfect linear fit,
+        values $\ll 1$ reveal curvature.
+\end{itemize}
+
+%--------------------------------------------------------------
+Compute the NLM for \( x_1 = 1 \), \( x_2 = 2 \), and stepsize \( h_1 = 0.5 \). Interpret your result in relation to the fit of a local linear approximation using the $T = 9$ equidistant points below $t_i = 0.1,0.2,\dots,0.9$: %and $(\theta_0,\theta_1,\theta_2,\theta_{1,2})=(0,1,0.5,2)$.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{c|c|c|c|c}
+  $i$ & $t_i$ & $x_1^{(i)}=1+0.5t_i$ & $\hat f(\mathbf x^{(i)})$ & $g(t_i)$ \\ \hline %=7+3.25t_i$
+  1 & 0.1 & 1.05 & 7.3025 & 7.3250 \\
+  2 & 0.2 & 1.10 & 7.6100 & 7.6500 \\
+  3 & 0.3 & 1.15 & 7.9225 & 7.9750 \\
+  4 & 0.4 & 1.20 & 8.2400 & 8.3000 \\
+  5 & 0.5 & 1.25 & 8.5625 & 8.6250 \\
+  6 & 0.6 & 1.30 & 8.8900 & 8.9500 \\
+  7 & 0.7 & 1.35 & 9.2225 & 9.2750 \\
+  8 & 0.8 & 1.40 & 9.5600 & 9.6000 \\
+  9 & 0.9 & 1.45 & 9.9025 & 9.9250
+\end{tabular}
+\end{center}
+
+
+  \item \textbf{Implementation:} Write three functions in either R or Python:
+  \begin{itemize}
+    \item A function \texttt{dME(f, x, j)} that computes a central difference approximation of the derivative marginal effect for feature $x_j$ at input $x$.
+    \item A function \texttt{fME(f, x, h)} that computes the forward marginal effect using a vector of stepsizes $h$.
+    \item A function \texttt{NLM(f, x, h, t\_vals)} that computes the Non-Linearity Measure as described in d) where \texttt{t\_vals} are the grid points used to estimate the NLM.
+  \end{itemize}
+  Use them to confirm the results from sub-tasks c) and d).
+\end{enumerate}
+}
