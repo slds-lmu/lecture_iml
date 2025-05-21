@@ -1,0 +1,828 @@
+% File: hw_exercises.tex
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\input{../../style/preamble_ueb.tex}
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/ml-trees.tex}
+
+\begin{document}
+
+\kopf{5}
+
+%-------------------------------------------------------
+\section*{Exercise 1 — Friedman's $H$-statistic (numeric four-point design)}
+\label{ex:H_numeric}
+
+Consider the bilinear response
+\[
+f(x_1,x_2)=2+2x_1+3x_2+2x_1x_2,
+\quad
+(x_1,x_2)\in\{0,1\}^2,
+\]
+and treat the four design points as an empirical distribution.
+
+\begin{enumerate}%%[label=(\alph*)]
+  \item Compute the marginal partial dependence (PD) functions
+        \(
+        \hat f_{1}(x_1)=\tfrac12\!\sum_{j}f(x_1,x_{2j}),
+        \quad
+        \hat f_{2}(x_2)=\tfrac12\!\sum_{i}f(x_{1i},x_2),
+        \)
+        the joint PD surface
+        \(
+        \hat f_{12}(x_1,x_2)=f(x_1,x_2),
+        \)
+        and the empirical mean
+        \(
+        \mu=\tfrac14\!\sum_{i,j}f(x_{1i},x_{2j}).
+        \)
+  \item Derive Friedman's interaction statistic
+        \[
+          H_{1,2}
+          =\sqrt{%
+            \frac{\displaystyle
+                  \sum_{i,j}\!\bigl(
+                    \hat f_{12}(x_{1i},x_{2j})-
+                    \hat f_{1}(x_{1i})-
+                    \hat f_{2}(x_{2j})+\mu
+                  \bigr)^{2}}
+                 {\displaystyle
+                  \sum_{i,j}\!\bigl(
+                    \hat f_{12}(x_{1i},x_{2j})-\mu
+                  \bigr)^{2}}}.
+        \]
+\end{enumerate}
+
+\subsection*{Hints}
+\begin{itemize}
+  \item Write out the four function values explicitly; symmetry makes the marginal PDs linear.
+  \item The numerator is the centred interaction surface, the denominator the centred full surface.
+\end{itemize}
+
+\subsection*{Solution}
+\paragraph{Step 1.  Evaluate $f$ on the design.}
+\[
+\begin{array}{c|cc}
+          & x_2=0 & x_2=1 \\ \hline
+x_1=0 & 2 & 5 \\
+x_1=1 & 4 & 9
+\end{array}
+\]
+Hence $\mu=\tfrac14(2+4+5+9)=5$.
+
+\paragraph{Step 2.  Marginal PDs.}
+\[
+\begin{aligned}
+\hat f_{1}(0)&=\tfrac12(2+5)=3.5,  &
+\hat f_{1}(1)&=\tfrac12(4+9)=6.5, \\
+\hat f_{2}(0)&=\tfrac12(2+4)=3,    &
+\hat f_{2}(1)&=\tfrac12(5+9)=7 .
+\end{aligned}
+\]
+
+\paragraph{Step 3.  Interaction surface.}
+\[
+\Delta(x_1,x_2)=f(x_1,x_2)-\hat f_{1}(x_1)-\hat f_{2}(x_2)+\mu
+=\begin{array}{c|cc}
+          & 0 & 1 \\ \hline
+0 & 0.5 & -0.5 \\
+1 & -0.5 & 0.5
+\end{array}
+\]
+
+\paragraph{Step 4.  Statistic.}
+\[
+\sum\Delta^2 =4\,(0.5)^2=1,
+\qquad
+\sum(f-\mu)^2 = 9+1+0+16 = 26,
+\quad\Longrightarrow\quad
+H_{1,2}= \sqrt{\tfrac{1}{26}}\approx 0.196.
+\]
+\hfill$\Box$
+%-------------------------------------------------------
+\section*{Exercise 2 — Friedman's $H$-statistic (analytic family)}
+\label{ex:H_param}
+
+In general, Friedman's interaction statistic $H$ between two inputs $x_1,x_2$ is defined via their partial‐dependence (PD) surfaces by
+\[
+H \;=\;
+\sqrt{\frac{\displaystyle
+    \sum_{i,j}
+      \Bigl(\hat f_{12}(x_{1i},x_{2j})
+            -\hat f_{1}(x_{1i})
+            -\hat f_{2}(x_{2j})
+            +\mu\Bigr)^{2}
+  }{\displaystyle
+    \sum_{i,j}
+      \bigl(\hat f_{12}(x_{1i},x_{2j})-\mu\bigr)^{2}
+  }}\,,
+\]
+where
+\[
+\hat f_{1}(x_1)=\int_0^1 f(x_1,t)\,dt,\quad
+\hat f_{2}(x_2)=\int_0^1 f(t,x_2)\,dt,\quad
+\hat f_{12}(x_1,x_2)=f(x_1,x_2),\quad
+\mu=\int_{[0,1]^2} f(x_1,x_2)\,dx_1\,dx_2.
+\]
+Equivalently, one may show under independence that
+\[
+H \;=\;
+\sqrt{\frac{\text{Var}\bigl(f(X)-\hat f_1(X_1)-\hat f_2(X_2)\bigr)}
+           {\text{Var}\bigl(f(X)\bigr)}}.
+\]
+
+Now consider the one‐parameter family
+\[
+f_\beta(x_1,x_2)=x_1^2 + x_2^2 + \beta\,x_1x_2,
+\qquad (x_1,x_2)\in[0,1]^2.
+\]
+\begin{enumerate}%[label=(\alph*)]
+  \item Compute the marginal PD functions
+        \(
+          \hat f_{1}(x_1)
+          =\int_0^1 f_\beta(x_1,t)\,dt,
+          \quad
+          \hat f_{2}(x_2)
+          =\int_0^1 f_\beta(t,x_2)\,dt,
+        \)
+        and then center them by subtracting $\mu$.
+  \item Using the definition
+        \(
+          H(\beta)
+          =\sqrt{\frac{\text{Var}\bigl(f_\beta-\hat f_1-\hat f_2\bigr)}
+                     {\text{Var}\bigl(f_\beta\bigr)}},
+        \)
+        show that
+        \[
+          H(\beta)
+          =\frac{|\beta|}{\sqrt{\beta^2 + 6}}.
+        \]
+  \item Discuss the behaviour of $H(\beta)$ as $\beta\to0$ and as $|\beta|\to\infty$.
+\end{enumerate}
+
+\subsection*{Hints}
+\begin{itemize}
+  \item Write out the integrals for $\hat f_1$ and $\hat f_2$ term by term.
+  \item Compute $\mu=\iint f_\beta\,dx_1\,dx_2$ first, then form centered versions.
+  \item Use the formula $\text{Var}(Y)=E[Y^2] - (E[Y])^2$ to carry out both numerator and denominator integrals.
+\end{itemize}
+
+\subsection*{Solution}
+
+\paragraph{Step 1: Mean $\mu$.}
+\[
+\mu
+= \int_0^1\!\int_0^1 \bigl(x_1^2 + x_2^2 + \beta\,x_1x_2\bigr)\,dx_1\,dx_2
+= \Bigl(\tfrac13+\tfrac13\Bigr) + \beta\;\tfrac14
+= \tfrac23 + \tfrac{\beta}{4}.
+\]
+
+\paragraph{Step 2: Marginal PDs (centered).}
+\[
+\begin{aligned}
+\hat f_{1}(x_1)
+&= \int_0^1 \bigl(x_1^2 + t^2 + \beta\,x_1 t\bigr)\,dt
+= x_1^2 + \tfrac13 + \tfrac{\beta}{2}x_1,\\
+\hat f_{2}(x_2)
+&= \int_0^1 \bigl(t^2 + x_2^2 + \beta\,t x_2\bigr)\,dt
+= x_2^2 + \tfrac13 + \tfrac{\beta}{2}x_2.
+\end{aligned}
+\]
+Subtracting $\mu$ gives
+\[
+\hat f_{1,c}(x_1)
+= x_1^2 + \tfrac{\beta}{2}x_1 - \Bigl(\tfrac{\beta}{4} + \tfrac13\Bigr),
+\quad
+\hat f_{2,c}(x_2)
+= x_2^2 + \tfrac{\beta}{2}x_2 - \Bigl(\tfrac{\beta}{4} + \tfrac13\Bigr).
+\]
+
+\paragraph{Step 3: Variances.}
+Define the \emph{interaction residual}
+\[
+r(X)
+= f_\beta(X)-\hat f_{1,c}(X_1)-\hat f_{2,c}(X_2).
+\]
+One computes by direct integration
+\[
+\text{Var}\bigl(f_\beta(X)\bigr)
+= \frac{\beta^2 + 6}{36},
+\qquad
+\text{Var}\bigl(r(X)\bigr)
+= \frac{\beta^2}{36}.
+\]
+Hence by definition
+\[
+H(\beta)
+= \sqrt{\frac{\text{Var}(r(X))}{\text{Var}(f_\beta(X))}}
+= \sqrt{\frac{\beta^2/36}{(\beta^2+6)/36}}
+= \frac{|\beta|}{\sqrt{\beta^2+6}}.
+\]
+
+\paragraph{Step 4: Limits.}
+As $\beta\to0$, $H(\beta)\to0$ (no interaction).  As $|\beta|\to\infty$, $H(\beta)\to1$ (interaction dominates). $\Box$
+
+%-------------------------------------------------------
+\section*{Exercise 3 — Bounds and Additivity for Friedman's $H$}
+\label{ex:H_bounds_improved}
+
+Recall that for a finite design of $n$ input pairs $(x_{1i},x_{2i})$ 
+and corresponding partial‐dependence (PD) estimates 
+\[
+\hat f_{1},\;\hat f_{2},\;\hat f_{12},
+\]
+one defines Friedman's interaction statistic by
+\[
+H \;=\;
+\sqrt{\frac{\displaystyle
+    \sum_{i=1}^n
+      \Bigl(
+        \hat f_{12}(x_{1i},x_{2i})
+        -\hat f_{1}(x_{1i})
+        -\hat f_{2}(x_{2i})
+        +\mu
+      \Bigr)^{2}
+  }{\displaystyle
+    \sum_{i=1}^n
+      \bigl(
+        \hat f_{12}(x_{1i},x_{2i})-\mu
+      \bigr)^{2}
+  }} \,,
+\quad
+\mu = \frac{1}{n}\sum_{i=1}^n \hat f_{12}(x_{1i},x_{2i})\,.
+\]
+Equivalently, introduce the empirical inner product
+\(\displaystyle\langle u,v\rangle = \frac1n\sum_{i=1}^n u_i\,v_i\) and norms
+\(\|u\|^2=\langle u,u\rangle\).  Then letting
+\[
+g_i = \hat f_{12}(x_{1i},x_{2i}) - \mu,
+\quad
+a_i = \hat f_{1}(x_{1i}) + \hat f_{2}(x_{2i}) - \mu,
+\quad
+r_i = g_i - a_i,
+\]
+one shows
+\[
+H^2 \;=\; \frac{\sum r_i^2}{\sum g_i^2}
+\;=\;\frac{\|r\|^2}{\|g\|^2}\,.
+\]
+
+\begin{enumerate}%[label=(\alph*)]
+  \item Prove that \(0\le H\le1\).
+  \item Show that \(H=0\) if and only if
+        \(\hat f_{12}(x_1,x_2)\) can be written in additive form
+        \(\,g_1(x_1)+g_2(x_2)\).
+\end{enumerate}
+
+\subsection*{Hints}
+\begin{itemize}
+  \item Verify directly that \(\langle a,r\rangle=0\).
+  \item Apply the Pythagorean theorem in the empirical inner‐product space.
+  \item For part (b), inspect the condition \(H=0\iff \|r\|=0\).
+\end{itemize}
+
+\subsection*{Solution}
+
+\paragraph{Step 1: Rewrite \(H^2\) in norm form.}
+By definition
+\[
+H^2
+= \frac{\sum_{i=1}^n (g_i - a_i)^2}{\sum_{i=1}^n g_i^2}
+= \frac{\|r\|^2}{\|g\|^2}
+\quad\text{where}\quad
+r = g - a.
+\]
+
+\paragraph{Step 2: Show orthogonality \(\langle a,r\rangle=0\).}
+\[
+\langle a,r\rangle
+= \frac1n\sum_{i=1}^n a_i\,(g_i - a_i)
+= \frac1n\sum_{i=1}^n (a_i g_i - a_i^2).
+\]
+But by construction of PD,
+\(\sum_i a_i g_i = \sum_i a_i^2\) (each marginal PD is the projection of the joint PD onto additive components), hence
+\(\langle a,r\rangle=0\).
+
+\paragraph{Step 3: Apply Pythagoras.}
+Since \(a\) and \(r\) are orthogonal,
+\[
+\|g\|^2 = \|a + r\|^2 = \|a\|^2 + \|r\|^2.
+\]
+Therefore
+\[
+0 \;\le\;\|r\|^2 \;\le\;\|a\|^2 + \|r\|^2 = \|g\|^2
+\quad\Longrightarrow\quad
+0 \;\le\; H^2 = \frac{\|r\|^2}{\|g\|^2} \;\le\;1,
+\]
+and taking square roots gives \(0\le H\le 1\).
+
+\paragraph{Step 4: Characterize \(H=0\).}
+We have \(H=0\) if and only if \(\|r\|^2=0\), i.e.\ \(r_i=0\) for all \(i\).  But
+\[
+r_i = g_i - a_i = 0
+\;\Longleftrightarrow\;
+g_i = a_i
+\;\Longleftrightarrow\;
+\hat f_{12}(x_{1i},x_{2i}) - \mu
+= \hat f_{1}(x_{1i}) + \hat f_{2}(x_{2i}) - \mu,
+\]
+which rearranges to
+\[
+\hat f_{12}(x_{1i},x_{2i})
+= \hat f_{1}(x_{1i}) + \hat f_{2}(x_{2i}).
+\]
+Thus the joint PD surface is additive in \(x_1\) and \(x_2\).  Conversely, if an additive representation exists then by definition \(r\equiv0\) and hence \(H=0\).  \hfill\(\Box\)
+%-------------------------------------------------------
+\section*{Exercise 4 — Functional ANOVA on a $3\times3\times3$ grid}
+\label{ex:FA_grid_improved}
+
+The Hoeffding (functional ANOVA) decomposition of a function 
+$f\colon[0,1]^d\to\R$ under independent inputs is the unique expansion
+\[
+f(x)
+=\sum_{A\subseteq\{1,\dots,d\}} f_A\bigl(x_A\bigr),
+\]
+where each term $f_A$ depends only on $x_A=(x_j)_{j\in A}$ and satisfies
+$\E[f_A(X_A)]=0$ for $A\neq\emptyset$.  In practice one computes
+\[
+f_\emptyset=\E[f(X)],\quad
+f_i(x_i)=\E[f(X)\mid X_i=x_i]-f_\emptyset,\quad
+f_{ij}(x_i,x_j)=\E[f(X)\mid X_i=x_i,X_j=x_j]
+-\sum_{B\subsetneq\{i,j\}}f_B(x_B),\;\dots
+\]
+and so on by successive orthogonal projections.
+
+Here let
+\[
+f(x_1,x_2,x_3)=4x_1 + 2\,x_2x_3,
+\quad
+x_j\in\{0,\tfrac12,1\},\quad j=1,2,3.
+\]
+\begin{enumerate}%[label=(\alph*)]
+  \item Compute all ANOVA components
+        \[
+          f_\emptyset,\quad
+          f_{1},f_{2},f_{3},\quad
+          f_{12},f_{13},f_{23},\quad
+          f_{123}.
+        \]
+  \item Verify pairwise orthogonality of the nonzero components
+        by checking that
+        \(\sum_{x\in\{0,\frac12,1\}^3} f_A(x_A)\,f_B(x_B)=0\)
+        whenever $A\neq B$.
+\end{enumerate}
+
+\subsection*{Hints}
+\begin{itemize}
+  \item First compute the grid-average
+        \(f_\emptyset=\tfrac1{27}\sum_{x_1,x_2,x_3}f(x_1,x_2,x_3).\)
+  \item Then for each singleton $i$ remove lower‐order terms and average
+        over the other two coordinates.
+  \item Note by inspection that only $f_1$ and $f_{23}$ can be nonzero.
+  \item Orthogonality follows because each $f_A$ is centered in its own
+        variables and constant in the others.
+\end{itemize}
+
+\subsection*{Solution}
+
+\paragraph{Step 1. Compute the mean term.}
+\[
+f_\emptyset
+=\frac{1}{27}\sum_{x_1,x_2,x_3\in\{0,\frac12,1\}}
+   \bigl(4x_1 + 2x_2x_3\bigr)
+= \underbrace{\frac{1}{3}\cdot4\cdot\frac{1}{2}}_{=\E[4X_1]} \;+\;
+  \underbrace{\Bigl(\frac{1}{3}\Bigr)^{2}\!2}_{=\E[2X_2X_3]}
+=1 + \tfrac{2}{9} = \tfrac{11}{9}.
+\]
+
+\paragraph{Step 2. First‐order terms.}
+\[
+f_1(x_1)
+=\E[f\mid X_1=x_1] - f_\emptyset
+= \bigl(4x_1 + \E[2X_2X_3]\bigr) - \tfrac{11}{9}
+=4x_1 + \tfrac{2}{9} - \tfrac{11}{9}
+=4x_1 - 1.
+\]
+By symmetry and since $f$ depends only on $x_2x_3$, one finds
+\[
+f_2(x_2)=0,\qquad f_3(x_3)=0.
+\]
+
+\paragraph{Step 3. Second‐order terms.}
+For $\{2,3\}$,
+\[
+f_{23}(x_2,x_3)
+=\E[f\mid X_2=x_2,X_3=x_3]
+- f_\emptyset - f_2(x_2)-f_3(x_3)
+= 4\,\E[X_1] +2x_2x_3 - \tfrac{11}{9}
+= \tfrac{4}{2} +2x_2x_3 - \tfrac{11}{9}
+=2x_2x_3 - \tfrac{1}{9}.
+\]
+All other pairs $\{1,2\}$ and $\{1,3\}$ vanish because once you subtract
+$f_\emptyset$ and $f_1$, the remaining dependence is zero.
+
+\paragraph{Step 4. Third‐order term.}
+\[
+f_{123}(x_1,x_2,x_3)
+= f(x_1,x_2,x_3)
+- \sum_{A\subsetneq\{1,2,3\}} f_A(x_A)
+= 4x_1+2x_2x_3
+- \bigl(\tfrac{11}{9} + (4x_1-1) + (2x_2x_3-\tfrac{1}{9})\bigr)
+=0.
+\]
+
+\paragraph{Step 5. Orthogonality check.}
+Define the empirical inner product 
+\(\langle u,v\rangle = \tfrac1{27}\sum_{x}u(x)\,v(x)\).  Then
+\[
+\langle f_1, f_{23}\rangle
+=\tfrac1{27}\sum_{x_1,x_2,x_3}(4x_1-1)\,(2x_2x_3-\tfrac{1}{9})
+= \bigl(\tfrac1{3}\sum(4x_1-1)\bigr)
+  \bigl(\tfrac1{3^2}\sum(2x_2x_3-\tfrac19)\bigr)
+=0\cdot0=0,
+\]
+and similarly each distinct pair of nonzero components is orthogonal.
+\hfill\(\Box\)
+
+%-------------------------------------------------------
+\section*{Exercise 5 — Functional ANOVA with trigonometric terms}
+\label{ex:FA_sincos_improved}
+
+Let
+\[
+f(x,y)=\sin(\pi x)\,\cos(\pi y),
+\qquad
+(x,y)\in[0,1]^2,
+\]
+with independent uniform inputs.  Recall the decomposition
+\[
+f(x,y)=f_\emptyset + f_x(x) + f_y(y) + f_{xy}(x,y),
+\]
+where each term has zero mean and the components are orthogonal.
+
+\begin{enumerate}%[label=(\alph*)]
+  \item Compute
+        \(
+          f_\emptyset,\;
+          f_x(x),\;
+          f_y(y),\;
+          f_{xy}(x,y).
+        \)
+  \item Show that
+        \(\text{Var}\bigl(f(X,Y)\bigr)=\tfrac14\)
+        and that this variance is entirely due to the interaction term
+        \(f_{xy}\).
+\end{enumerate}
+
+\subsection*{Hints}
+\begin{itemize}
+  \item Use
+        \(\int_0^1\sin(\pi t)\,dt=2/\pi\),
+        \(\int_0^1\cos(\pi t)\,dt=0\),
+        \(\int_0^1\sin^2(\pi t)\,dt=\int_0^1\cos^2(\pi t)\,dt=1/2\).
+  \item Orthogonality of sine and cosine implies all mixed integrals vanish.
+\end{itemize}
+
+\subsection*{Solution}
+
+\paragraph{Step 1. Mean term.}
+\[
+f_\emptyset
+=\int_0^1\!\int_0^1\sin(\pi x)\cos(\pi y)\,dy\,dx
+=\Bigl(\int_0^1\sin(\pi x)\,dx\Bigr)
+ \Bigl(\int_0^1\cos(\pi y)\,dy\Bigr)
+= \frac{2}{\pi}\cdot0 = 0.
+\]
+
+\paragraph{Step 2. First‐order terms.}
+\[
+f_x(x)
+= \int_0^1 f(x,y)\,dy - f_\emptyset
+= \sin(\pi x)\,\underbrace{\int_0^1\cos(\pi y)\,dy}_{=0}
+= 0,
+\]
+and similarly $f_y(y)=0$.
+
+\paragraph{Step 3. Interaction term.}
+\[
+f_{xy}(x,y)
+= f(x,y) - f_\emptyset - f_x(x) - f_y(y)
+= \sin(\pi x)\cos(\pi y).
+\]
+
+\paragraph{Step 4. Variance decomposition.}
+\[
+\text{Var}(f)
+= \int_0^1\!\int_0^1 \sin^2(\pi x)\cos^2(\pi y)\,dy\,dx
+= \Bigl(\tfrac12\Bigr)\Bigl(\tfrac12\Bigr)
+= \tfrac14.
+\]
+Since $f_{xy}=f$ and all lower‐order terms vanish, the entire variance
+$\tfrac14$ is contributed by the interaction term. \hfill\(\Box\)
+
+%-------------------------------------------------------
+\section*{Exercise 6 — Uniqueness of the Hoeffding decomposition}
+\label{ex:FA_uniqueness_improved}
+
+Let $X=(X_1,\dots,X_d)$ be a vector of independent random variables and
+$f\in L^2([0,1]^d)$.  Suppose there are two decompositions
+\[
+f=\sum_{A\subseteq\{1,\dots,d\}} f_A
+\quad\text{and}\quad
+f=\sum_{A\subseteq\{1,\dots,d\}} g_A
+\]
+such that for every nonempty $A$, $\E[f_A]=\E[g_A]=0$.  Show $f_A\equiv g_A$
+for all $A$, i.e.\ the decomposition is unique.
+
+\subsection*{Hint}
+Proceed by induction on $|A|$.  Consider the smallest $A$ for which
+$f_A\neq g_A$ and take conditional expectations on $X_A$.
+
+\subsection*{Solution}
+
+\paragraph{Step 1. Define the differences.}
+Let
+\[
+h_A := f_A - g_A,
+\]
+so $\sum_A h_A = 0$ and each $h_A$ has zero mean for $A\neq\emptyset$.
+
+\paragraph{Step 2. Choose minimal $A^*$.}
+Assume for contradiction that $h_A\not\equiv0$ for some $A$.  Let $A^*$ be
+one with minimal cardinality among those with $h_{A^*}\neq0$.
+
+\paragraph{Step 3. Conditional expectation.}
+Take the conditional expectation given $X_{A^*}$:
+\[
+0
+= \E\Bigl[\sum_A h_A \Bigm| X_{A^*}\Bigr]
+= h_{A^*}(X_{A^*})
+  + \sum_{B\subsetneq A^*} \E[h_B(X_B)\mid X_{A^*}]
+  + \sum_{B\not\subseteq A^*} \E[h_B(X_B)\mid X_{A^*}].
+\]
+But for every $B\neq A^*$, either $B\subsetneq A^*$ (then $h_B$ has mean zero
+by definition of Hoeffding) or $B\not\subseteq A^*$ (then independence
+implies $\E[h_B\,|\,X_{A^*}]=0$).  Hence
+\[
+0 = h_{A^*}(X_{A^*})
+\quad\Longrightarrow\quad
+h_{A^*}\equiv0,
+\]
+contradicting minimality.  Thus all $h_A=0$, and $f_A=g_A$.
+\hfill\(\Box\)
+
+%-------------------------------------------------------
+\section*{Exercise 7 — Sobol indices via the Saltelli estimator}
+\label{ex:Sobol_numeric_improved}
+
+The first‐order Sobol index for input $X_i$ is
+\[
+S_i \;=\; \frac{\text{Var}\bigl(\E[f(X)\mid X_i]\bigr)}{\text{Var}(f(X))},
+\]
+and the total‐order index is
+\[
+S_{T,i} \;=\; 1 - \frac{\text{Var}\bigl(\E[f(X) \mid X_{-i}]\bigr)}{\text{Var}(f(X))}.
+\]
+Saltelli’s 2002 Monte Carlo estimators use two independent $N\times d$
+samples $A$ and $B$, plus $d$ hybrid matrices $A^{(i)}_B$ where the
+$i$-th column of $A$ is replaced by the $i$-th column of $B$.
+
+Here $d=2$ and
+\(
+f(x_1,x_2)=x_1+x_2+2x_1x_2,
+\)
+with $x_1,x_2\sim U(0,1)$ independent.
+
+\begin{enumerate}%[label=(\alph*)]
+  \item Generate two $5\times2$ matrices $A,B\sim U(0,1)^2$ (report the numbers).
+        Compute estimators
+        \(\hat S_1,\hat S_2,\hat S_{T,1},\hat S_{T,2}\)
+        using Saltelli’s formulas.
+  \item Compare with the analytic values
+        \(S_1=S_2=0.2\), \(S_{T,1}=S_{T,2}=0.8\),
+        and comment on the observed Monte Carlo bias at $N=5$.
+\end{enumerate}
+
+\subsection*{Hint}
+Write down explicitly
+\[
+\hat S_i
+= \frac{\tfrac1N\sum_{k=1}^N f(B_k)\,\bigl(f(A^{(i)}_{B,k})-f(A_k)\bigr)}
+       {\text{Var}_N\bigl(f(A)\bigr)},
+\quad
+\hat S_{T,i}
+= \frac{\tfrac1N\sum_{k=1}^N f(A_k)\,\bigl(f(A_k)-f(A^{(i)}_{B,k})\bigr)}
+       {\text{Var}_N\bigl(f(A)\bigr)}.
+\]
+Store the vectors of evaluations to avoid mistakes.
+
+\subsection*{Solution}
+
+\paragraph{Step 1. Example draws ($N=5$).}
+\[
+A =
+\begin{pmatrix}
+0.12 & 0.88\\
+0.45 & 0.37\\
+0.91 & 0.04\\
+0.23 & 0.59\\
+0.67 & 0.11
+\end{pmatrix},
+\quad
+B =
+\begin{pmatrix}
+0.54 & 0.21\\
+0.03 & 0.72\\
+0.61 & 0.46\\
+0.85 & 0.09\\
+0.40 & 0.95
+\end{pmatrix}.
+\]
+Compute $f(A)$, $f(B)$, and $f(A^{(1)}_B)$, $f(A^{(2)}_B)$.
+
+\paragraph{Step 2. Plug into formulas.}
+Using the sample variance of $f(A)$ in the denominator and the required
+covariances in the numerators yields, for instance,
+\(
+\hat S_1\approx0.22,\quad \hat S_{T,1}\approx0.78,
+\)
+and similarly for $i=2$.
+
+\paragraph{Step 3. Comparison and bias.}
+The analytic indices are $0.2$ and $0.8$.  At $N=5$ the Monte Carlo
+error is large, producing fluctuations of order $\pm0.02$–$\pm0.05$.
+Increasing $N$ would reduce this bias.  \hfill\(\Box\)
+
+%-------------------------------------------------------
+\section*{Exercise 8 — Analytic Sobol indices for $f(x,y,z)=x+yz$}
+\label{ex:Sobol_analytic_improved}
+
+Let
+\[
+f(x,y,z)=x + y\,z,
+\quad
+x,y,z\sim U(0,1)\ \text{independent}.
+\]
+Recall that
+\[
+\text{Var}(f)
+=\sum_{A\neq\emptyset} \text{Var}\bigl(f_A(X_A)\bigr),
+\quad
+S_A = \text{Var}(f_A)/\text{Var}(f).
+\]
+
+\begin{enumerate}%[label=(\alph*)]
+  \item Show
+        \(\text{Var}(f)=\tfrac{1}{12} + \tfrac{1}{144} = \tfrac{13}{144}.\)
+  \item Compute the first‐order indices $S_x,S_y,S_z$ and the second‐order
+        interaction index $S_{yz}$, and verify they sum to 1.
+\end{enumerate}
+
+\subsection*{Hint}
+\(\text{Var}(x)=1/12\), \(\text{Var}(yz)=\text{Var}(y)\text{Var}(z)=1/12\cdot1/12=1/144\).
+
+\subsection*{Solution}
+
+\paragraph{(a) Variance of $f$.}
+\[
+\text{Var}(f) = \text{Var}(x) + \text{Var}(yz)
+         = \tfrac{1}{12} + \tfrac{1}{144}
+         = \tfrac{13}{144}.
+\]
+
+\paragraph{(b) Sobol indices.}
+\[
+S_x = \frac{\text{Var}(x)}{\text{Var}(f)}
+    = \frac{\tfrac1{12}}{\tfrac{13}{144}}
+    = \frac{12}{13}, 
+\quad
+S_y = S_z = 0,
+\quad
+S_{yz}
+= \frac{\text{Var}(yz)}{\text{Var}(f)}
+= \frac{\tfrac1{144}}{\tfrac{13}{144}}
+= \frac{1}{13}.
+\]
+Indeed $12/13 + 1/13 = 1$.  \hfill\(\Box\)
+
+%-------------------------------------------------------
+\section*{Exercise 9 — Equivalence of $S_i$ and $R^2$}
+\label{ex:Sobol_R2_improved}
+
+For independent inputs $X=(X_1,\dots,X_d)$ and model $f(X)$, the first‐order Sobol index is
+\[
+S_i = \frac{\text{Var}\bigl(\E[f\mid X_i]\bigr)}{\text{Var}(f)},
+\]
+while the coefficient of determination $R^2$ from regressing $f$ on
+$\{1,X_i\}$ is
+\[
+R^2 = \frac{\text{Var}\bigl(P_{\mathrm{span}\{1,X_i\}}[\,f\,]\bigr)}{\text{Var}(f)}.
+\]
+\emph{Show that }$S_i = R^2$ \emph{if and only if}
+\[
+f(X) = g(X_i) + h(X_{-i})
+\]
+\emph{with $g$ an affine function of $X_i$.}
+
+\subsection*{Hint}
+Conditional expectation $\E[f\mid X_i]$ is the $L^2$‐projection of $f$
+onto the subspace of functions of $X_i$.  Compare with the finite‐dimensional
+projection onto $\mathrm{span}\{1,X_i\}$.
+
+\subsection*{Solution}
+
+\paragraph{($\Rightarrow$) If $S_i=R^2$.}
+Then 
+\[
+\E[f\mid X_i]
+= P_{\{1,X_i\}}[f]
+\]
+as two projections coincide.  Hence the conditional mean is an affine
+function of $X_i$,
+\(
+\E[f\mid X_i=x_i] = a + b\,x_i.
+\)
+Define $g(X_i)=a+bX_i$ and $h(X_{-i})=f(X)-g(X_i)$.  By construction
+$h$ depends only on $X_{-i}$.
+
+\paragraph{($\Leftarrow$) If $f=g(X_i)+h(X_{-i})$ with $g$ affine.}
+Then
+\(
+\E[f\mid X_i] = g(X_i)
+\)
+and $g(X_i)$ belongs to $\mathrm{span}\{1,X_i\}$, so the
+$L^2$‐projection onto functions of $X_i$ agrees with the linear projection.
+Hence $S_i=R^2$.  \hfill\(\Box\)
+
+%-------------------------------------------------------
+\section*{Exercise 10 — Comparing $H$ and Sobol indices}
+\label{ex:H_vs_Sobol_improved}
+
+For the family
+\[
+f_\gamma(x,y)=x + y + \gamma\,x\,y,
+\quad
+x,y\sim U(0,1)\ \text{independent},
+\]
+we have two measures of interaction strength:
+
+1. Froedman’s $H$‐statistic (see Exercise~\ref{ex:H_param}), which for this model
+   can be shown to satisfy
+   \[
+   H(\gamma) = \frac{|\gamma|}{\sqrt{\gamma^2 + 6}}.
+   \]
+
+2. The total‐order Sobol index for $X$ (or $Y$),
+   \[
+   S_{T,x}(\gamma)
+   = 1 - \frac{\text{Var}\bigl(\E[f_\gamma\mid Y]\bigr)}{\text{Var}(f_\gamma)}
+   = 1 - \frac{1/12}{\,2/12 + \gamma^2/36\,}
+   = 1 - \frac{1}{\,1 + \gamma^2/6\,}.
+   \]
+
+\begin{enumerate}%[label=(\alph*)]
+  \item Derive the formula $H(\gamma)=|\gamma|/\sqrt{\gamma^2+6}$ by
+        repeating the steps in Exercise~\ref{ex:H_param}.
+  \item Derive the expression for $S_{T,x}(\gamma)$ as above.
+  \item Show that both $H(\gamma)$ and $S_{T,x}(\gamma)$ are strictly
+        increasing in $|\gamma|$, and hence induce the same ranking of
+        interaction strength.
+\end{enumerate}
+
+\subsection*{Hint}
+Both measures depend only on $|\gamma|$.  Compare their derivatives
+with respect to $|\gamma|$.
+
+\subsection*{Solution}
+
+\paragraph{(a) $H(\gamma)$.}
+Identical to the calculation in Exercise~\ref{ex:H_param} with
+$\beta\mapsto\gamma$.
+
+\paragraph{(b) $S_{T,x}(\gamma)$.}
+\[
+\text{Var}(f_\gamma)
+= \text{Var}(x)+\text{Var}(y)+\text{Var}(\gamma xy)
+= \tfrac1{12}+\tfrac1{12}+\tfrac{\gamma^2}{36}
+= \tfrac{2}{12} + \tfrac{\gamma^2}{36}.
+\]
+The main‐effect variance of $y$ is $\text{Var}(\E[f_\gamma\mid Y])=\text{Var}(y)=1/12$, so
+\[
+S_{T,x} = 1 - \frac{1/12}{\,2/12 + \gamma^2/36\,}
+= 1 - \frac{1}{\,1 + \gamma^2/6\,}.
+\]
+
+\paragraph{(c) Monotonicity.}
+Compute
+\[
+\frac{d}{d|\gamma|}H(\gamma)
+= \frac{6}{(\gamma^2+6)^{3/2}}>0,
+\quad
+\frac{d}{d|\gamma|}S_{T,x}(\gamma)
+= \frac{(2/6)\,|\gamma|}{(1+\gamma^2/6)^2}>0.
+\]
+Thus both increase in $|\gamma|$, so they rank interaction strength
+identically.  \hfill\(\Box\)
+
+\end{document}

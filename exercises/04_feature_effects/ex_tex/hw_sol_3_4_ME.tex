@@ -122,25 +122,39 @@ Subtracting \(\hat f(x_1,x_2)\) gives
 \]
 
 \emph{Discussion}.  
-The extra term \(\theta_1h_1^{2}\) captures curvature; it vanishes as
-\(h_1\to0\), at which point fME converges to dME.
+The extra term \(\theta_1h_1^{2}\) captures curvature; it vanishes faster than linearly when \(h_1\to0\), at which point fME converges to dME.
 
 %-------------------------------------------------------------------
-\item \textbf{Numerical evaluation at} \((x_1,x_2,h_1)=(1,2,0.5)\)
+% \item \textbf{Numerical evaluation at} \((x_1,x_2,h_1)=(1,2,0.5)\)
+
+% \[
+% \begin{aligned}
+%   \text{dME}_1(1,2) &= 2(1)+2(2)=6,\\[0.2em]
+%   \text{fME}_1(1,2;0.5) &= 2(1)(0.5)+(0.5)^2+2(2)(0.5)=1+0.25+2=3.25.
+% \end{aligned}
+% \]
+
+% \emph{Why different?}  
+% The derivative \(6\) is the \emph{instantaneous} slope.  
+% The finite step of \(0.5\) exposes curvature; the quadratic term makes the
+% actual change only \(3.25\).  
+% Hence, using dME for a sizeable perturbation would greatly
+% over-predict the effect.
+
+%-------------------------------------------------------------------
+\item \textbf{Numerical evaluation at} \((x_1,x_2,h_1)=(1,2,1)\)
 
 \[
 \begin{aligned}
   \text{dME}_1(1,2) &= 2(1)+2(2)=6,\\[0.2em]
-  \text{fME}_1(1,2;0.5) &= 2(1)(0.5)+(0.5)^2+2(2)(0.5)=1+0.25+2=3.25.
+  \text{fME}_1(1,2;1) &= 2 \cdot 1 \cdot 1 + 1^2 + 2 \cdot 2 \cdot 1 =2+1+4=7.
 \end{aligned}
 \]
 
 \emph{Why different?}  
 The derivative \(6\) is the \emph{instantaneous} slope.  
-The finite step of \(0.5\) exposes curvature; the quadratic term makes the
-actual change only \(3.25\).  
-Hence, using dME for a sizeable perturbation would greatly
-over-predict the effect.
+The finite step of \(1\) exposes curvature; the quadratic term makes the actual change go up to \(7\).  
+Hence, using dME for a sizeable perturbation would misestimate (over- or under-predict) the effect.
 
 %-------------------------------------------------------------------
 \item \textbf{Non-Linearity Measure (NLM)}  
@@ -158,7 +172,7 @@ over-predict the effect.
 \paragraph{Step 1: Path points.}  
 For \(T=10\) equidistant \(t_i\in[0,1]\):
 \[
-  t_i=\frac{i-1}{9}, \quad
+  t_i=\frac{i}{9+1}, \quad
   x_1^{(i)} = 1 + t_i h_1 = 1+0.5\,t_i, \quad
   x_2^{(i)} = 2.
 \]

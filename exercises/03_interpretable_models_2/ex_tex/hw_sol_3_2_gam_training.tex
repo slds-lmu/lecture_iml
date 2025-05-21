@@ -3,14 +3,15 @@
 This exercise shows how "inherently interpretable" models (e.g. LMs or GAMs) can become more and more powerful by becoming more and more complex, and that in the end this leads to models not interpretable at all.
 It also shows that manual feature construction (and therefore manual labor) is necessary to make simple or interpretable models powerful, and hence people designing these models have to actually understand the underlying problem structure.
 
-This is, of course, unfeasible for many applications.
+This understanding is, of course, unfeasible for many applications.
 
 The first data set only contains simple interactions and demonstrates that both a linear model with exactly the correct interaction term as well as a normal GAM (without interactions) cannot model this very well.
+The LM lacks the non-linear single effects, the GAM lacks the interactions, whereas a GAM with an additional very simple interaction term can solve this problem.
 
-The second data set is designed particularly for strong GAMs (very complicated, but smooth, interaction terms).
+The second data set is designed particularly for strong GAMs (having very complicated and highly nonlinear, but still smooth, interaction terms).
 
 The third data set could be modeled by a very simple tree (more specifically, a tree with linear models in the leaves, i.e., an MOB).
-So EBMs perform very well here, and LMs as well as GAMs do not due to the large step.
-Although GAMs could perform well if they have a large enough degree of flexibility.
+For this reason, EBMs perform very well here, and LMs as well as GAMs do not. % due to the large step.
+Note that GAMs in this scenario can still perform well if they have a large enough degree of flexibility, so that they can model large noncontinuous steps.
 
 }
