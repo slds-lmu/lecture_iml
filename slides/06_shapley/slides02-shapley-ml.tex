@@ -32,21 +32,33 @@
 \end{frame}
 
 \begin{frame}{From Game Theory to Machine Learning}
-\begin{itemize}[<+->]
+\begin{itemize}%[<+->]
     %\itemsep1em
-    \item Game: Make prediction $\fh(x_1, x_2, \ldots, x_p)$ for a single observation $\xv$
-    \item Players: Features $x_j, j \in \pset$ which cooperate to produce a prediction\\
-    $\leadsto$ How can we predict with a subset of features without changing the model?
-    \\ 
-    $\leadsto$ PD function (``removing'' by marginalizing): 
-    $\fh_{S}(\xv_S) := \int_{X_{-S}} \fh(\xv_S, X_{-S})d \P_{X_{-S}}$
-    \item For $S = \emptyset \quad \fh_{S}(\xv_S) = \E_{\xv}(\fh(\xv))$ (average over all possible values of all the features) $\leadsto$ Can't be used as a value function since $v(\emptyset)$ must be $0$ but $\E_{\xv}(\fh(\xv))$ can be non zero. \\$\leadsto$ Solution: subtract $\E_{\xv}(\fh(\xv))$ from the PD.
-    \item We define the value function / payout of coalition $S \subseteq P$ for observation $\xv$:
-    $$v(S) =  \fh_{S} (\xv_S) - \E_{\xv}(\fh(\xv)), \text{ where } %\xv_S = \{x_j\}_{j \in S} \text{ and } 
-    \fh_S: \Xspace_S \mapsto \Yspace$$
+    \item \textbf{Game:} Predict $\fh(x_1, x_2, \ldots, x_p)$ for a single observation $\xv$
+    \item \textbf{Players:} Features $x_j, j \in \pset$, cooperate to produce a prediction
+    \item \textbf{Value function:} Defines payout of coalition $S \subseteq P$ for observation $\xv$ by
+    
+    \medskip
+    \centerline{$v(S) = \fh_{S} (\xv_S) - \fh_{\emptyset} , \text{ where }$}
+    \medskip
+    
+    \begin{itemize}
+        \item $ \fh_S: \Xspace_S \mapsto \Yspace$ is the PD function 
+  $\fh_S(\xv_S) := \int \fh(\xv_S, X_{-S}) \, d\P_{X_{-S}}$\\
+    $\leadsto$ "Removes" features in $-S$ by marginalizing, keeping $\fh$ fixed
+
+    \item $\fh_{ \emptyset} = \E_{\xv}(\fh(\xv))$ (mean prediction) is subtracted to ensure $v(\emptyset) = 0$
+    %$\fh_{S}(\xv_S) := \int_{X_{-S}} \fh(\xv_S, X_{-S})d \P_{X_{-S}}$
+    \end{itemize}
     \centerline{\includegraphics[width=0.5\textwidth, trim=20 0 0 100, clip]{figure_man/shapley_valuefct}}
-    \item Marginal contribution: $v(\Scupj) - v(S) =  \fh_{\Scupj} (\xv_{\Scupj}) - \fh_{S} (\xv_{S})$\\
-    $\leadsto$ $\E_{\xv}(\fh(\xv))$ cancels out due to the subtraction of value functions
+    
+    \item \textbf{Marginal contribution of feature $j$ joining coalition $S$} ($\fh_{ \emptyset}$ cancels):
+    
+    \medskip
+    \centerline{$\Delta(j, S) = v(\Scupj) - v(S) =  \fh_{\Scupj} (\xv_{\Scupj}) - \fh_{S} (\xv_{S})$}
+    \medskip
+    
+    %$\leadsto$ $\E_{\xv}(\fh(\xv))$ cancels out due to the subtraction of value functions
 \end{itemize}
 \end{frame}
 % \begin{frame}{Shapley Values}
