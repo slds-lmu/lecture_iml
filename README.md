@@ -13,13 +13,13 @@ Please see the main course site.
 
 If you want to cite this repository in your work, please cite it as:
 
-> Casalicchio, G., Bischl, B., Lindauer, M., Wright, M. N., Dandl, S., Ewald, F. K., König, G., Scholbeck, C. & Freiesleben, T. (2025). *Interpretable Machine Learning*. GitHub. https://github.com/slds-lmu/lecture_iml
+> Casalicchio, G., Bischl, B., Lindauer, M., Wright, M. N., Dandl, S., Ewald, F. K., König, G., Scholbeck, C., Freiesleben, T. & Herbinger, J. (2025). *Lecture Materials on Interpretable Machine Learning*. GitHub. https://github.com/slds-lmu/lecture_iml
 
 BibTeX:
 ```bibtex
 @misc{ml_lecture_2025,
-  author       = {Giuseppe Casalicchio and Bernd Bischl and Marius Lindauer and Marvin N. Wright and Susanne Dandl and Fiona Katharina Ewald and Gunnar König and Christian Scholbeck and Timo Freiesleben},
-  title        = {Interpretable Machine Learning},
+  author       = {Giuseppe Casalicchio and Bernd Bischl and Marius Lindauer and Marvin N. Wright and Susanne Dandl and Fiona Katharina Ewald and Gunnar König and Christian Scholbeck and Timo Freiesleben and Julia Herbinger},
+  title        = {Lecture Materials on Interpretable Machine Learning},
   year         = {2025},
   howpublished = {\url{https://github.com/slds-lmu/lecture_iml}},
   note         = {Accessed: 2025-05-25}
