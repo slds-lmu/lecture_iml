@@ -24,6 +24,7 @@ BibTeX:
   howpublished = {\url{https://github.com/slds-lmu/lecture_iml}},
   note         = {Accessed: 2025-05-25}
 }
+```
 
 # Help is appreciated and welcome!
 
