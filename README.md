@@ -9,8 +9,23 @@ This Project offers a free, open source introductory and an overview of interpre
 # Contents, License, Team and Further Info
 Please see the main course site.
 
+# How to Cite
 
-## Help is appreciated and welcome!
+If you want to cite this repository in your work, please cite it as:
+
+> Casalicchio, G., Bischl, B., Lindauer, M., Wright, M. N., Dandl, S., Ewald, F. K., König, G., Scholbeck, C. & Freiesleben, T. (2025). *Interpretable Machine Learning*. GitHub. https://github.com/slds-lmu/lecture_iml
+
+BibTeX:
+```bibtex
+@misc{ml_lecture_2025,
+  author       = {Giuseppe Casalicchio and Bernd Bischl and Marius Lindauer and Marvin N. Wright and Susanne Dandl and Fiona Katharina Ewald and Gunnar König and Christian Scholbeck and Timo Freiesleben},
+  title        = {Interpretable Machine Learning},
+  year         = {2025},
+  howpublished = {\url{https://github.com/slds-lmu/lecture_iml}},
+  note         = {Accessed: 2025-05-25}
+}
+
+# Help is appreciated and welcome!
 
 We hope to continously improve and expand this course over the coming years. 
 We strongly believe in open source and collaborative work. Please contact us if 
@@ -36,5 +51,3 @@ See also our [contributing guidelines](CONTRIBUTING.md)
 
 We would appreciate if you contact us in case you are re-using our course.
 Knowing this helps us to keep the project alive. Thank you!
-
-
