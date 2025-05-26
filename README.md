@@ -17,7 +17,7 @@ If you want to cite this repository in your work, please cite it as:
 
 BibTeX:
 ```bibtex
-@misc{ml_lecture_2025,
+@misc{iml_lecture_2025,
   author       = {Giuseppe Casalicchio and Bernd Bischl and Marius Lindauer and Marvin N. Wright and Susanne Dandl and Fiona Katharina Ewald and Gunnar König and Christian Scholbeck and Timo Freiesleben and Julia Herbinger},
   title        = {Lecture Materials on Interpretable Machine Learning},
   year         = {2025},
