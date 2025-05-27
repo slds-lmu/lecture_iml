@@ -15,7 +15,7 @@ class StyledPlot:
     """
 
     def __init__(self):
-        plt.style.use('seaborn')
+        plt.style.use('seaborn-v0_8')
 
         # Set MatPlotLib defaults
         plt.rcParams.update({
