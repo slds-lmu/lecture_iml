@@ -1,0 +1,65 @@
+\loesung{
+Let expectations be taken with respect to the (factorising) distribution of
+$(X_1,X_2,X_3)$.
+
+\begin{enumerate}
+\item[\textbf{(a)}] \emph{2-D PDP}.
+  \[
+    \begin{aligned}
+    f_{12}^{\mathrm{PD}}(x_1,x_2)
+      &=\mathbb E_{X_3}\bigl[f(x_1,x_2,X_3)\bigr]\\
+      &=\beta_0+\beta_1x_1+\beta_2x_2+\beta_{12}x_1x_2\\
+      &\quad+\beta_3\mu_3+\beta_{13}x_1\mu_3+\beta_{23}x_2\mu_3.
+    \end{aligned}
+  \]
+  \textbf{Contains:}
+  main effects $\beta_1x_1,\;\beta_2x_2$ and interaction
+  $\beta_{12}x_1x_2$, plus constants depending on $\mu_3$.
+
+\item[\textbf{(b)}] \emph{1-D PDPs}.
+  \[
+    \boxed{%
+      f_{1}^{\mathrm{PD}}(x_1)=
+      \beta_0+\beta_1x_1+\beta_2\mu_2+\beta_3\mu_3
+      +\beta_{12}x_1\mu_2+\beta_{13}x_1\mu_3+\beta_{23}\mu_2\mu_3
+    }\tag{b1}
+  \]
+  \[
+    \boxed{%
+      f_{2}^{\mathrm{PD}}(x_2)=
+      \beta_0+\beta_1\mu_1+\beta_2x_2+\beta_3\mu_3
+      +\beta_{12}\mu_1x_2+\beta_{13}\mu_1\mu_3+\beta_{23}x_2\mu_3
+    }\tag{b2}
+  \]
+
+\item[\textbf{(c)}] 
+
+\emph{Global mean}.
+  \[
+    \boxed{%
+      m=\beta_0+\beta_1\mu_1+\beta_2\mu_2+\beta_3\mu_3
+        +\beta_{12}\mu_1\mu_2+\beta_{13}\mu_1\mu_3+\beta_{23}\mu_2\mu_3
+    }\tag{c}
+  \]
+  
+   \emph{Removing main effects}.  
+  Define
+  \(
+    g(x_1,x_2):=
+       f_{12}^{\mathrm{PD}}(x_1,x_2)
+       -f_{1}^{\mathrm{PD}}(x_1)
+       -f_{2}^{\mathrm{PD}}(x_2)
+       +m.
+  \)
+  Insert (a), (b1), (b2), (c) and cancel like terms:
+  \[
+    \begin{aligned}
+    g(x_1,x_2)
+      &=\beta_{12}\bigl[x_1x_2-\mu_2x_1-\mu_1x_2+\mu_1\mu_2\bigr]\\
+      &=\boxed{\beta_{12}\,(x_1-\mu_1)(x_2-\mu_2)}.
+    \end{aligned}
+  \]
+  All constants and main‐effect terms vanish; only the centred
+  interaction survives, as claimed.
+\end{enumerate}
+}

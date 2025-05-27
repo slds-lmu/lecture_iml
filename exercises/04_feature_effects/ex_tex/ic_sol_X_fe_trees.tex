@@ -1,0 +1,113 @@
+\loesung{
+\begin{enumerate}[(a)]
+
+%-----------------------------------------------------------------
+\item \textbf{Partial-dependence function}  
+      For a univariate model
+      \(
+        \hat f_{\mathrm{PD}}(x)=\hat f(x)
+      \)
+      (because the expectation over \(X_{-j}\) is vacuous).
+      Evaluating the piece-wise constant tree:
+
+      \[
+      \boxed{
+      \begin{array}{c|cccc}
+      x & 1.0 & 2.5 & 3.5 & 5.0 \\ \hline
+      \hat f_{\mathrm{PD}}(x) & 2.0 & 2.0 & 5.0 & 8.0
+      \end{array}}
+      \]
+
+%-----------------------------------------------------------------
+\item \textbf{Accumulated local effects (ALE)}
+
+      \vspace{2pt}
+      We follow the slide estimator  
+      \(
+        \widetilde f_{S,\mathrm{ALE}}(x)
+        =\sum_{l=1}^{k_S(x)}
+          \frac{1}{n_S(l)}
+          \sum_{i:x^{(i)}\in I_l}
+          \bigl[\hat f(z_l)-\hat f(z_{l-1})\bigr]
+      \)
+      and then centre by the sample mean.
+
+      \begin{enumerate}[1.]
+      \item \emph{Average local effect in each bin}  
+            (finite differences already span the interval, so no width factor):
+
+            \[
+            \begin{array}{c|c|c|c|c}
+            k & I_k=[z_{k-1},z_k] & \hat f(z_{k-1}) & \hat f(z_k) &
+            \Delta_k:=\tfrac1{n_S(k)}\!\sum\bigl[\hat f(z_k)-\hat f(z_{k-1})\bigr]\\ \hline
+            1 & [1.0,2.5) & 2.0 & 2.0 & 0.0\\
+            2 & [2.5,3.5) & 2.0 & 5.0 & 3.0\\
+            3 & [3.5,5.0] & 5.0 & 8.0 & 3.0
+            \end{array}
+            \]
+
+      \item \emph{Un-centred ALE}  
+            For \(x\in I_{k_S(x)}\)
+            \(
+               \widetilde f_{\mathrm{ALE}}(x)
+               =\sum_{l=1}^{k_S(x)}\Delta_l
+            \).
+
+            \[
+            \boxed{
+            \begin{array}{c|cccc}
+            x & 1.0 & 2.5 & 3.5 & 5.0 \\ \hline
+            \widetilde f_{\mathrm{ALE}}(x) & 0 & 0 & 3 & 6
+            \end{array}}
+            \]
+
+      \item \emph{Centring}  
+            Evaluate \(\widetilde f_{\mathrm{ALE}}\) at the five observations:
+
+            \[
+              \bigl(0,\;0,\;3,\;6,\;6\bigr)
+              \quad\Longrightarrow\quad
+              \bar{\widetilde f}=\tfrac{0+0+3+6+6}{5}=3.
+            \]
+
+            \[
+              f_{\mathrm{ALE}}(x)=\widetilde f_{\mathrm{ALE}}(x)-3.
+            \]
+
+            \[
+            \boxed{
+            \begin{array}{c|cccc}
+            x & 1.0 & 2.5 & 3.5 & 5.0 \\ \hline
+            f_{\mathrm{ALE}}(x) & -3 & -3 & 0 & 3
+            \end{array}}
+            \]
+      \end{enumerate}
+
+%-----------------------------------------------------------------
+\item \textbf{Shape comparison}  
+      Compute the pointwise difference:
+
+      \[
+      \hat f_{\mathrm{PD}}(x)-f_{\mathrm{ALE}}(x)
+      \;=\;
+      \bigl[2-(-3),\;2-(-3),\;5-0,\;8-3\bigr]
+      \;=\;
+      \bigl[5,\,5,\,5,\,5\bigr].
+      \]
+
+      Hence a constant vertical shift exists:
+      \[
+        \boxed{%
+        \hat f_{\mathrm{PD}}(x)=f_{\mathrm{ALE}}(x)+C},
+        \qquad C=5.
+      \]
+
+      \textit{Reason:} For a step-function model the
+      un-centred ALE is the cumulative sum of inter-bin jumps,
+      while the PDP is that sum plus the leaf value of the first bin
+      (\(\theta_0=2\)).  After centring
+      (\(f_{\mathrm{ALE}}=\widetilde f_{\mathrm{ALE}}-\bar{\widetilde f}\))
+      the residual \(\theta_0+\bar{\widetilde f}=5\) is independent of \(x\),
+      so both curves share the same shape.
+\end{enumerate}
+}

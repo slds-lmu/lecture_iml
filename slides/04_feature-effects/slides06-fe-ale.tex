@@ -259,7 +259,7 @@ ALE plots estimate the marginal effect of a feature by accumulating its local ef
 $\Rightarrow$ Removes unwanted main effects of other features $\xv_{-S}$ (unlike M plots)
 \item \textbf{Average local effects} over conditional distribution $\P(\xv_{-S}|x_S)$ similar to M plots\\ %across all values of $\xv_{-S}$, i.e.,
 $\Rightarrow$ Avoids extrapolation (unlike PD plots)\label{ref2}
-\item \textbf{Accumulate:} Integrate averaged local effects up to a specific value $x \sim \P(x_S)$\\ %all values of $z_S$   from $z_0 := \min(x_S)$ u
+\item \textbf{Accumulate:} Integrate averaged local effects up to a specific value $x \in \mathcal{X}_S$\\ %all values of $z_S$   from $z_0 := \min(x_S)$ u
 $\Rightarrow$ Reconstructs main effect of $x_S$ \label{ref3}\\
 %$\Rightarrow$ Avoids OVB issue as other unwanted main effects were removed in \eqref{ref1}
 \end{enumerate}
@@ -311,9 +311,9 @@ $\Rightarrow$ Reconstructs main effect of $x_S$ \label{ref3}\\
 \textbf{Uncentered ALE Function} evaluated at $x \in \mathcal{X}_S$ (domain of feature $x_S$):
 \[
 \tilde{f}_{S, \text{ALE}}(x) 
-= \underbrace{\int_{z_0}^{x}}_{\text{acc.}} 
-\underbrace{\E_{\xv_{-S} \mid x_S = z_S}}_{\text{average locally}} 
-\left( \underbrace{\frac{\partial \hat{f}(z_S, \xv_{-S})}{\partial z_S}}_{\text{local effect}} \right) dz_S
+= \underbrace{\int_{z_0}^{x}}_{\text{\eqref{ref3}}} 
+\underbrace{\E_{\xv_{-S} \mid x_S = z_S}}_{\substack{\text{\eqref{ref2} average} \\ \text{locally }}} 
+\left( \underbrace{\frac{\partial \hat{f}(z_S, \xv_{-S})}{\partial z_S}}_{\text{\eqref{ref1} local effect}} \right) dz_S
 = \int\limits_{z_0}^{x} \int \frac{\partial \hat{f}(z_S, \xv_{-S})}{\partial z_S} d\P(\xv_{-S} \mid z_S) dz_S
 \]
 \begin{itemize}

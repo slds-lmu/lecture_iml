@@ -1,0 +1,52 @@
+\aufgabe{PDP for Decision Tree}{
+Consider a regression task with a single numeric feature \(x\).  
+A depth--2 regression tree produces the piece-wise constant predictions
+
+\[
+\hat{f}(x)=
+\begin{cases}
+2.0,& x\le 2.5,\\[2pt]
+5.0,& 2.5< x\le 3.5,\\[2pt]
+8.0,& x>3.5.
+\end{cases}
+\]
+
+The observed data are
+
+\[
+\begin{array}{c|ccccc}
+\text{Obs.\ }i & 1 & 2 & 3 & 4 & 5\\ \hline
+x^{(i)}            & 1.0 & 2.0 & 3.0 & 4.0 & 5.0\\
+\hat{f}(x^{(i)})   & 2.0 & 2.0 & 5.0 & 8.0 & 8.0
+\end{array}
+\]
+
+\begin{enumerate}[(a)]
+\item\label{it:pdp}  
+Compute the PD function \(\hat{f}_{\mathrm{PD}}(x)\) at the grid points \(x\in\{1.0,\,2.5,\,3.5,\,5.0\}\).
+
+\item\label{it:ale}
+\textbf{Accumulated local effects.}
+
+Let the grid cut-points be \(z=\{1.0,\,2.5,\,3.5,\,5.0\}\), inducing the bins  
+\([1.0,2.5),\,[2.5,3.5),\,[3.5,5.0]\).
+
+\begin{enumerate}[1.]
+\item For each bin \([z_k,z_{k+1}]\) compute the average local effect via finite differences.
+\item Accumulate these local effects to obtain the un-centred ALE function.
+\item Compute the centered ALE function.
+\end{enumerate}
+
+\item\label{it:shift}
+\textbf{Shape comparison.}  
+Show that \(\hat{f}_{\mathrm{PD}}(x)=f_{\mathrm{ALE}}(x)+C\) for all grid points and determine the constant shift \(C\).
+
+% \item\label{it:ame}
+% \textbf{Average marginal effect.}  
+% Using the finite-difference step \(h=0.5\), approximate the derivative at the interior points \(x=\{2.0,\,3.0,\,4.0\}\) by
+% \[
+% \hat{f}'(x^{(i)})\approx\frac{\hat{f}(x^{(i)}+h)-\hat{f}(x^{(i)}-h)}{2h},
+% \]
+% and report the average of these three estimates.
+\end{enumerate}
+}
