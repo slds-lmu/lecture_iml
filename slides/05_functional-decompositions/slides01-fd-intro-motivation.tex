@@ -195,6 +195,8 @@ where
 \begin{frame}{Problem of Definition}
 
     [an example showing that constraints are needed]
+
+    Use $g_{1, \dots, p}(x_1, \dots, x_p) := \fh(\xv)$ and $g_S(\xv_S) := 0$ for all other terms
     \\
     \(\Rightarrow\) The formula from above do not define a unique decomposition, and we need more requirements / constraints to uniquely define a decomposition that is meaningful
     \\
@@ -204,14 +206,76 @@ where
 
 \begin{frame}{Example: Decision Trees}
 
-    [show that one decision tree directly comes with its functional decomposition using indicator functions]\\
+Define the \textit{interaction type $t$} of a node as the subset of features involved in constructing this node.
 
-    Problem again is uniqueness? If only reading from decision tree using indicator functions, lower-order effects may be hidden inside higher-order terms? \\
+\only<1,2>{
+\textbf{Example:}
 
-    [Example for that, could also be used to explain necessity of constraints / problem of non-uniqueness]\\
+\begin{center}
+    \begin{tikzpicture}[
+    node/.style = {scale=1},
+    scale = 1
+    ]
+        
+        \node[node] at (0,2)(root){\(\R^d\)};
+        
+        \node[node] at (3,.5)(right_child){\(x_2 > 0\)};
+        \node[node] at (4,-1)(rightright_grandchild){$x_3 > 1$};
+        \node[node] at (2,-1)(rightleft_grandchild){\(x_3 \leq 1\)};
+        
+        \node[node] at (-3,.5)(left_child){\(x_2 \leq 0\)};
+        \node[node] at (-4,-1)(leftleft_grandchild){$x_4 \leq -1$};
+        \node[node] at (-1,-1)(leftright_grandchild){\(x_4 > -1\)};
+        
+        \node[node] at (-2,-2.5)(low_child_1){$x_1 \leq -0.5$};
+        \node[node] at (-0,-2.5)(low_child_2){$x_1 > -0.5$};
 
-    \(\Rightarrow\) Solution for that in 
-    \citebutton{Yang (2024)}{https://arxiv.org/abs/2410.19098} \(\Rightarrow\) Too complicated? Rather explain this in constraint-chapter or in other methods-chapter?
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (root) -- (left_child);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (root) -- (right_child);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (left_child) -- (leftleft_grandchild);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (left_child) -- (leftright_grandchild);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (right_child) -- (rightright_grandchild);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (right_child) -- (rightleft_grandchild);
+        
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (leftright_grandchild) -- (low_child_1);
+        \draw[->, shorten >= 1pt, shorten <= 1pt] (leftright_grandchild) -- (low_child_2);
+
+        \only<2>{
+        \node[node, color=red] at (0,1.5)(root_type){$t=\{\}$};
+        
+        \node[node, color=red] at (3,0)(right_child_type){$t=\{2\}$};
+        \node[node, color=red] at (4,-1.5)(rightright_grandchild_type){$t=\{2,3\}$};
+        \node[node, color=red] at (2,-1.5)(rightleft_grandchild_type){$t=\{2,3\}$};
+        
+        \node[node, color=red] at (-3,0)(left_child_type){$t=\{2\}$};
+        \node[node, color=red] at (-4,-1.5)(leftleft_grandchild_type){$t=\{2,4\}$};
+        \node[node, color=red] at (-1,-1.5)(leftright_grandchild_type){$t=\{2,4\}$};
+        
+        \node[node, color=red] at (-2,-3)(low_child_1_type){$t=\{1,2,4\}$};
+        \node[node, color=red] at (0,-3)(low_child_2_type){$t=\{1,2,4\}$};
+        
+        }
+
+    \end{tikzpicture}
+\end{center}
+}
+
+\only<2>{
+$\Rightarrow$ Degree of interaction in each node is \(|t|\).
+
+Here: $\fh(\xv) = g_0 + g_{2,4}(x_2, x_4) + g_{2,3}(x_2, x_3) + g_{1, 2, 4}(x_1, x_2, x_4)$
+}
+
+\only<3>{
+[show that one decision tree directly comes with its functional decomposition using indicator functions]\\
+
+Problem again is uniqueness? If only reading from decision tree using indicator functions, lower-order effects may be hidden inside higher-order terms? \\
+
+[Example for that, could also be used to explain necessity of constraints / problem of non-uniqueness]\\
+
+\(\Rightarrow\) Solution for that in 
+\citebutton{Yang (2024)}{https://arxiv.org/abs/2410.19098} \(\Rightarrow\) Too complicated? Rather explain this in constraint-chapter or in other methods-chapter?
+}
     
 \end{frame}
 

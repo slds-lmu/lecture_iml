@@ -113,21 +113,17 @@
 
 \begin{frame}{Cooperative Games - No Interactions}
 % Figure Source: https://docs.google.com/presentation/d/1-bK90Gv1vIDr61s1PfgC51Kvic2Avnb7v8PgoO9iN0I/edit?usp=sharing
-\begin{center}
+%\begin{center}
 \includegraphics<1>[page=1, width = \textwidth]{figure/Shapley.pdf}%
-\includegraphics<2>[page=2, width = \textwidth]{figure/Shapley.pdf}%
-
-\visible<1>{\textbf{Question:} What is a fair payout if contributions are $\tfrac{1}{2}$ (blue), $\tfrac{1}{3}$ (yellow), $\tfrac{1}{6}$ (red)?}
-
-\visible<2>{$\Rightarrow$ Fair payouts are trivial without interactions}
-\end{center}
-\end{frame}
-
-
-
-
-\begin{frame}{Cooperative Games - No Interactions}
-\scriptsize
+\only<2>{
+%\vspace{-\baselineskip}
+\vspace*{-7pt}
+\begin{columns}[T, totalwidth=\textwidth]
+    \begin{column}{0.459\textwidth}
+\includegraphics[page=1, width = \textwidth, trim=0px 0px 390px 0px, clip]{figure/Shapley.pdf}%
+    \end{column}
+    \begin{column}{0.541\textwidth}
+        {\scriptsize
 \begin{tabular}{ll|ll|l}
 \toprule
 Player & Coalition $S$ & $v(S)$ & $v(S \cup \{j\})$ & $\Delta (j, S)$ \\
@@ -147,8 +143,52 @@ Player & Coalition $S$ & $v(S)$ & $v(S \cup \{j\})$ & $\Delta (j, S)$ \\
 \colorcircle{playerblue}{white}{3} & $\{\colorcircle{playeryellow}{white}{2}\}$ & 2000 & 5000 & 3000 \\
 \colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\}$ & 3000 & 6000 & 3000 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
+\begin{itemize}
+\item No interactions: player contributions are additive for any coalition $S$ 
+\item Each player adds same value in all $S$
+\item Fair payout = marginal contribution
+\item Total payout splits exactly by individual contributions: \colorcircle{playerblue}{white}{3} = $\tfrac{1}{2}$, \colorcircle{playeryellow}{white}{2} = $\tfrac{1}{3}$, \colorcircle{playerred}{white}{1} = $\tfrac{1}{6}$ 
+\end{itemize}
+
+    \end{column}
+\end{columns}
+%\vspace*{5pt}
+}
+\includegraphics<3>[page=2, width = \textwidth]{figure/Shapley.pdf}%
+
+\visible<1>{\textbf{Question:} What are the individual marginal contributions and what is a fair payout?}% if contributions are $\tfrac{1}{2}$ (blue), $\tfrac{1}{3}$ (yellow), $\tfrac{1}{6}$ (red)?}
+
+\visible<3>{$\Rightarrow$ Fair payouts are trivial without interactions}
+%\end{center}
 \end{frame}
+
+
+
+
+% \begin{frame}{Cooperative Games - No Interactions}
+% \scriptsize
+% \begin{tabular}{ll|ll|l}
+% \toprule
+% Player & Coalition $S$ & $v(S)$ & $v(S \cup \{j\})$ & $\Delta (j, S)$ \\
+% \hline
+% \colorcircle{playerred}{white}{1}& $\emptyset$ & 0 & 1000 & 1000 \\
+% \colorcircle{playerred}{white}{1}& $\{\colorcircle{playeryellow}{white}{2}\}$ & 2000 & 3000 & 1000 \\
+% \colorcircle{playerred}{white}{1}& $\{\colorcircle{playerblue}{white}{3}\}$ & 3000 & 4000 & 1000 \\
+% \colorcircle{playerred}{white}{1} & $\{\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}\}$ & 5000 & 6000 & 1000 \\
+% \hline
+% \colorcircle{playeryellow}{white}{2} & $\emptyset$ & 0 & 2000 & 2000 \\
+% \colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerred}{white}{1}\}$ & 1000 & 3000 & 2000 \\
+% \colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerblue}{white}{3}\}$ & 3000 & 5000 & 2000 \\
+% \colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3}\}$ & 4000 & 6000 & 2000 \\
+% \hline
+% \colorcircle{playerblue}{white}{3} & $\emptyset$ & 0 & 3000 & 3000 \\
+% \colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1}\}$ & 1000 & 4000 & 3000 \\
+% \colorcircle{playerblue}{white}{3} & $\{\colorcircle{playeryellow}{white}{2}\}$ & 2000 & 5000 & 3000 \\
+% \colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\}$ & 3000 & 6000 & 3000 \\
+% \bottomrule
+% \end{tabular}
+% \end{frame}
 
 
 
