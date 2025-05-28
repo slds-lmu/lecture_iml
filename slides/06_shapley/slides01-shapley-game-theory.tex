@@ -6,6 +6,15 @@
 \definecolor{playeryellow}{RGB}{241, 194, 50}  % #FFCC00
 \definecolor{playerblue}{RGB}{60, 120, 216}   % #3366CC
 
+% Define a generic circle with customizable fill, text color, and content
+\NewDocumentCommand{\colorcircle}{m m m}{%
+  \tikz[baseline=(char.base)]{%
+    \node[shape=circle, draw=none, fill=#1, minimum size=1em, inner sep=0pt] (char) {%
+      \textcolor{#2}{\textbf\scriptsize #3}%
+    };%
+  }%
+}
+
 \usepackage{pifont}
 \usepackage{../../style/lmu-lecture}
 % Defines macros and environments
@@ -117,29 +126,29 @@
 
 
 
-% \begin{frame}{Cooperative Games - No Interactions}
-% \scriptsize
-% \begin{tabular}{ll|ll|l}
-% \toprule
-% Player & Coalition $S$ & $v(S)$ & $v(S \cup \{j\})$ & $\Delta (j, S)$ \\
-% \hline
-% \textcolor{playerred}{\scalebox{1}{\ding{108}}}& $\emptyset$ & 0 & 1000 & 1000 \\
-% \textcolor{playerred}{\scalebox{1}{\ding{108}}}& $\{\textcolor{playeryellow}{\scalebox{1}{\ding{108}}}\}$ & 2000 & 3000 & 1000 \\
-% \textcolor{playerred}{\scalebox{1}{\ding{108}}}& $\{\textcolor{playerblue}{\scalebox{1}{\ding{108}}}\}$ & 3000 & 4000 & 1000 \\
-% \textcolor{playerred}{\scalebox{1}{\ding{108}}} & $\{\textcolor{playeryellow}{\scalebox{1}{\ding{108}}},\textcolor{playerblue}{\scalebox{1}{\ding{108}}}\}$ & 5000 & 6000 & 1000 \\
-% \hline
-% \textcolor{playeryellow}{\scalebox{1}{\ding{108}}} & $\emptyset$ & 0 & 2000 & 2000 \\
-% \textcolor{playeryellow}{\scalebox{1}{\ding{108}}} & $\{\textcolor{playerred}{\scalebox{1}{\ding{108}}}\}$ & 1000 & 3000 & 2000 \\
-% \textcolor{playeryellow}{\scalebox{1}{\ding{108}}} & $\{\textcolor{playerblue}{\scalebox{1}{\ding{108}}}\}$ & 3000 & 5000 & 2000 \\
-% \textcolor{playeryellow}{\scalebox{1}{\ding{108}}} & $\{\textcolor{playerred}{\scalebox{1}{\ding{108}}},\textcolor{playerblue}{\scalebox{1}{\ding{108}}}\}$ & 4000 & 6000 & 2000 \\
-% \hline
-% \textcolor{playerblue}{\scalebox{1}{\ding{108}}} & $\emptyset$ & 0 & 3000 & 3000 \\
-% \textcolor{playerblue}{\scalebox{1}{\ding{108}}} & $\{\textcolor{playerred}{\scalebox{1}{\ding{108}}}\}$ & 1000 & 4000 & 3000 \\
-% \textcolor{playerblue}{\scalebox{1}{\ding{108}}} & $\{\textcolor{playeryellow}{\scalebox{1}{\ding{108}}}\}$ & 2000 & 5000 & 3000 \\
-% \textcolor{playerblue}{\scalebox{1}{\ding{108}}} & $\{\textcolor{playerred}{\scalebox{1}{\ding{108}}},\textcolor{playeryellow}{\scalebox{1}{\ding{108}}}\}$ & 3000 & 6000 & 3000 \\
-% \bottomrule
-% \end{tabular}
-% \end{frame}
+\begin{frame}{Cooperative Games - No Interactions}
+\scriptsize
+\begin{tabular}{ll|ll|l}
+\toprule
+Player & Coalition $S$ & $v(S)$ & $v(S \cup \{j\})$ & $\Delta (j, S)$ \\
+\hline
+\colorcircle{playerred}{white}{1}& $\emptyset$ & 0 & 1000 & 1000 \\
+\colorcircle{playerred}{white}{1}& $\{\colorcircle{playeryellow}{white}{2}\}$ & 2000 & 3000 & 1000 \\
+\colorcircle{playerred}{white}{1}& $\{\colorcircle{playerblue}{white}{3}\}$ & 3000 & 4000 & 1000 \\
+\colorcircle{playerred}{white}{1} & $\{\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}\}$ & 5000 & 6000 & 1000 \\
+\hline
+\colorcircle{playeryellow}{white}{2} & $\emptyset$ & 0 & 2000 & 2000 \\
+\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerred}{white}{1}\}$ & 1000 & 3000 & 2000 \\
+\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerblue}{white}{3}\}$ & 3000 & 5000 & 2000 \\
+\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3}\}$ & 4000 & 6000 & 2000 \\
+\hline
+\colorcircle{playerblue}{white}{3} & $\emptyset$ & 0 & 3000 & 3000 \\
+\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1}\}$ & 1000 & 4000 & 3000 \\
+\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playeryellow}{white}{2}\}$ & 2000 & 5000 & 3000 \\
+\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\}$ & 3000 & 6000 & 3000 \\
+\bottomrule
+\end{tabular}
+\end{frame}
 
 
 
@@ -172,24 +181,24 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 %\end{center}
     \end{column}
     \begin{column}{0.5\textwidth}
-        \textbf{Ordering 1:} \textcolor{playeryellow}{\scalebox{1}{\ding{108}}} $\rightarrow$ \textcolor{playerblue}{\scalebox{1}{\ding{108}}} $\rightarrow$ \textcolor{playerred}{\scalebox{1}{\ding{108}}}
+        \textbf{Ordering 1:} \colorcircle{playeryellow}{white}{2} $\rightarrow$ \colorcircle{playerblue}{white}{3} $\rightarrow$ \colorcircle{playerred}{white}{1}
 \begin{itemize}
-  \item[\textcolor{playeryellow}{\scalebox{1}{\ding{108}}}] joins alone: 2 \ding{73}
-  \item[\textcolor{playerblue}{\scalebox{1}{\ding{108}}}] joins: total = 3 \ding{73}, marginal = +1
-  \item[\textcolor{playerred}{\scalebox{1}{\ding{108}}}] joins: total = 6 \ding{73}, marginal = +3
+  \item[\colorcircle{playeryellow}{white}{2}] joins alone: 2 \ding{73}
+  \item[\colorcircle{playerblue}{white}{3}] joins: total = 3 \ding{73}, marginal = +1
+  \item[\colorcircle{playerred}{white}{1}] joins: total = 6 \ding{73}, marginal = +3
 \end{itemize}
 
 \vspace{0.25em}
 
-\textbf{But what if \textcolor{playerred}{\scalebox{1}{\ding{108}}} joins before \textcolor{playerblue}{\scalebox{1}{\ding{108}}}?}
+\textbf{But what if \colorcircle{playerred}{white}{1} joins before \colorcircle{playerblue}{white}{3}?}
 
 \vspace{0.25em}
 
-\textbf{Ordering 2:} \textcolor{playeryellow}{\scalebox{1}{\ding{108}}} $\rightarrow$ \textcolor{playerred}{\scalebox{1}{\ding{108}}} $\rightarrow$ \textcolor{playerblue}{\scalebox{1}{\ding{108}}}
+\textbf{Ordering 2:} \colorcircle{playeryellow}{white}{2} $\rightarrow$ \colorcircle{playerred}{white}{1} $\rightarrow$ \colorcircle{playerblue}{white}{3}
 \begin{itemize}
-  \item[\textcolor{playeryellow}{\scalebox{1}{\ding{108}}}] joins alone: 2 \ding{73}
-  \item[\textcolor{playerred}{\scalebox{1}{\ding{108}}}] joins: total = 4 \ding{73}, marginal = +2
-  \item[\textcolor{playerblue}{\scalebox{1}{\ding{108}}}] joins: total = 6 \ding{73}, marginal = +2
+  \item[\colorcircle{playeryellow}{white}{2}] joins alone: 2 \ding{73}
+  \item[\colorcircle{playerred}{white}{1}] joins: total = 4 \ding{73}, marginal = +2
+  \item[\colorcircle{playerblue}{white}{3}] joins: total = 6 \ding{73}, marginal = +2
 \end{itemize}
     \end{column}
 \end{columns}
@@ -199,8 +208,8 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
   \item \textbf{Fairness:} Shapley values consider every possible way the team could have formed and average each player's contribution across all possible join orders
   %\item This results in fair credit assignment by accounting for
   \begin{itemize}
-    \item[$\leadsto$] Avoids redundancy (e.g., \textcolor{playerblue}{\scalebox{1}{\ding{108}}}’s contribution overlaps with \textcolor{playerred}{\scalebox{1}{\ding{108}}}’s)
-    \item[$\leadsto$] Accounts for order sensitivity (e.g., \textcolor{playerred}{\scalebox{1}{\ding{108}}} brings more value if added last)
+    \item[$\leadsto$] Avoids redundancy (e.g., \colorcircle{playerblue}{white}{3}’s contribution overlaps with \colorcircle{playerred}{white}{1}’s)
+    \item[$\leadsto$] Accounts for order sensitivity (e.g., \colorcircle{playerred}{white}{1} brings more value if added last)
     \item[$\leadsto$] Ensures no player is advantaged or penalized by order of joining% of evaluation.
   \end{itemize}
 \end{itemize}

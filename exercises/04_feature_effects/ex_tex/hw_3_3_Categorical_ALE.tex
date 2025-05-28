@@ -3,7 +3,8 @@
 % In this exercise, we use the German Credit dataset \href{https://github.com/slds-lmu/lecture_iml/tree/master/exercises/03_feature_effects/code/datasets}{(\textit{datasets/credit.csv})} and a random forest to predict whether customer is a high or low risk for a bank. 
 % The dataset could be found in \textit{credit.csv}. 
 In this exercise, we use the German Credit dataset, which you can find on Moodle in \textit{credit.csv}, and a random forest to predict whether a customer is a high or low risk for a bank. 
-The following table gives an overview: 
+% The following table gives an overview: 
+An overview is given below in table \ref{tab:credit_dataset}.
 
 \begin{table}[ht]
 \centering
@@ -21,6 +22,8 @@ The following table gives an overview:
   8 & purpose & factor &  &  10 \\ 
    \hline
 \end{tabular}
+\caption{Overview of German Credit dataset}
+\label{tab:credit_dataset}
 \end{table}
 
 Since the decision of whether a person gets a loan can have serious implications
@@ -44,7 +47,7 @@ Your colleague provides Figure~\ref{fig:pdp}. Interpret the PDP.
 \end{figure}
 
 \item You also request an ALE plot from your colleague. 
-Give reasons why and in which situations inspecting ALE plots besides PDPs is advisable?
+Explain: Why and in which situations is inspecting ALE plots besides PDPs advisable?
 
 \item 
 Because the ALE models accumulates effects in a specific direction, the feature values must have an order by definition. However, there is no natural order to categorical/nominal features like \texttt{personal\_status\_sex}. 
@@ -77,7 +80,7 @@ Your colleague needs your help with implementing the computation of the distance
   Locate the steps of above's  algorithmic description in the underlying code.
   Examples of code execution are given at the script's end. 
   \item Implement the missing rows in \texttt{get\_diff\_cat()}.\\
-  \textit{Hint:} The command \texttt{expand.grid(levels(feature.j), levels(feature.j))} creates the first two columns in 
+  \textit{Hint:} In R, the command \texttt{expand.grid(levels(feature.j), levels(feature.j))} creates the first two columns in 
 your resulting dataset - the pairwise class combinations for $x_s$.
   \item Test your function with the provided example code (end of script). 
   Your returned \texttt{data.frame} for \texttt{personal\_status\_sex} as $x_s$ 
