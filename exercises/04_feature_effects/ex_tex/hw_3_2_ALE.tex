@@ -2,7 +2,9 @@
 
 Accumulated local effects describe how features influence the prediction of a machine learning model on average.
 The following tasks guide you to implement ALE from scratch.
-The associated files are \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/03_feature_effects/code/ale.R}{\textit{ale.R}} or \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/03_feature_effects/code/ale.py}{\textit{ale.py}} depending on the programming language you prefer.
+% The associated files are \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/03_feature_effects/code/ale.R}{\textit{ale.R}} or \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/03_feature_effects/code/ale.py}{\textit{ale.py}} depending on the programming language you prefer.
+The associated files on Moodle are \textit{ale.R} or \textit{ale.py} depending on the programming language you prefer.
+The files contain functions to test your code on the wheat seeds dataset (contained in \textit{wheat\_seeds.csv}), which can also be found on Moodle.
 
 \begin{enumerate}[a)]
   \item Since ALE works with bins, we have to select bounds first. Usually the bins are chosen s.t. every bin has roughly the same number of data points. However, to make it more simple, we use the same length for every interval. Complete the function \texttt{get\_bounds()} to select bounds between the minimum and maximum value of a feature by using \texttt{n\_intervals}. Those bounds are used for the calculation of ALE in the next tasks.
@@ -10,7 +12,7 @@ The associated files are \href{https://raw.githubusercontent.com/slds-lmu/lectur
   \item Implement the ALE algorithm from scratch inside the function \texttt{calculate\_ale()} using the bounds from the previous task and the help of the lecture material. 
   For each interval \texttt{k}:
 \begin{itemize}
-    \item Select the observations inside the interval (if zero observations are found then return 0 for this interval). In general $x_s$ can be counted as included if it is bigger than the lower bound and smaller equals the upper bound. However, make sure the elements in the first bound are included as well.
+    \item Select the observations inside the interval (if zero observations are found then return 0 for this interval). In general $x_s$ can be counted as included if it is bigger than the lower bound and smaller or equal than the upper bound. However, make sure the elements in the first bound are included as well.
     \item Intervention: Use the relevant observations to create two new datasets:
     \begin{itemize}
         \item \texttt{X\_min}: Values at $s$-th feature position are replaced by the lower interval value $z_{k-1}$.
@@ -23,7 +25,7 @@ The associated files are \href{https://raw.githubusercontent.com/slds-lmu/lectur
 
 \noindent Use \texttt{cumsum} in R or \texttt{np.cumsum} in Python to perform the aggregation step and therefore to get accumulated values for each interval value. 
 Finally, if the \texttt{center} parameter is set, center each interval by subtracting the average of all interval values\\
-\noindent \textit{Hint}: \texttt{mapply} in R or \texttt{zip(bounds, bounds[1:])} in Python are a nice trick to iterate over the lower and upper bounds at the same time.
+\noindent \textit{Hint}: \texttt{mapply} in R or \texttt{zip(bounds, bounds[1:])} in Python are nice tricks to iterate over the lower and upper bounds at the same time.
 
 \item The function \texttt{calculate\_ale()} returns both the used bounds and the ALE data. To use those data with
 \texttt{ggplot2} (R) or \texttt{matplotlib} (Python), you have to get the corresponding interval centers. 
