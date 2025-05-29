@@ -103,7 +103,7 @@
     \centerline{$\Delta (j, S) := v(S \cup \{j\}) - v(S) \quad \; \left(\text{for all } j \in P \; S \subseteq P \setminus \{j\}\right)$}
 
     \medskip
-    
+    \pause
   \item \textbf{Challenge:} Players vary in their contributions \& how they influence each other
   \item \textbf{Goal:} Fairly distribute $v(P)$ among players by accounting for player interactions\\
   $\leadsto$ Assign each player $j \in P$ a fair share $\phi_j$ (\textbf{Shapley value}) 
@@ -120,46 +120,62 @@
 \vspace*{-7pt}
 \begin{columns}[T, totalwidth=\textwidth]
     \begin{column}{0.459\textwidth}
-\includegraphics[page=1, width = \textwidth, trim=0px 0px 390px 0px, clip]{figure/Shapley.pdf}%
+\includegraphics[page=1, width = \textwidth, trim=0px 75px 390px 0px, clip]{figure/Shapley.pdf}%
     \end{column}
     \begin{column}{0.541\textwidth}
-        {\scriptsize
-\begin{tabular}{ll|ll|l}
+        {\footnotesize
+        \begin{tabular}{ll|ll|l}
 \toprule
-Player & Coalition $S$ & $v(S)$ & $v(S \cup \{j\})$ & $\Delta (j, S)$ \\
+\scriptsize Player & \scriptsize Coalition $S$ & \scriptsize $v(S \cup \{j\})$ & \scriptsize $v(S)$ & \scriptsize $\Delta (j, S)$ \\
 \hline
-\colorcircle{playerred}{white}{1}& $\emptyset$ & 0 & 1000 & 1000 \\
-\colorcircle{playerred}{white}{1}& $\{\colorcircle{playeryellow}{white}{2}\}$ & 2000 & 3000 & 1000 \\
-\colorcircle{playerred}{white}{1}& $\{\colorcircle{playerblue}{white}{3}\}$ & 3000 & 4000 & 1000 \\
-\colorcircle{playerred}{white}{1} & $\{\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}\}$ & 5000 & 6000 & 1000 \\
+\colorcircle{playerred}{white}{1} & $\emptyset$ & 1000 & 0 & 1000 \\
+\colorcircle{playerred}{white}{1} & $\{\colorcircle{playeryellow}{white}{2}\}$ & 3000 & 2000 & 1000 \\
+\colorcircle{playerred}{white}{1} & $\{\colorcircle{playerblue}{white}{3}\}$ & 4000 & 3000 & 1000 \\
+\colorcircle{playerred}{white}{1} & $\{\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}\}$ & 6000 & 5000 & 1000 \\
 \hline
-\colorcircle{playeryellow}{white}{2} & $\emptyset$ & 0 & 2000 & 2000 \\
-\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerred}{white}{1}\}$ & 1000 & 3000 & 2000 \\
-\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerblue}{white}{3}\}$ & 3000 & 5000 & 2000 \\
-\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3}\}$ & 4000 & 6000 & 2000 \\
+\colorcircle{playeryellow}{white}{2} & $\emptyset$ & 2000 & 0 & 2000 \\
+\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerred}{white}{1}\}$ & 3000 & 1000 & 2000 \\
+\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerblue}{white}{3}\}$ & 5000 & 3000 & 2000 \\
+\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3}\}$ & 6000 & 4000 & 2000 \\
 \hline
-\colorcircle{playerblue}{white}{3} & $\emptyset$ & 0 & 3000 & 3000 \\
-\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1}\}$ & 1000 & 4000 & 3000 \\
-\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playeryellow}{white}{2}\}$ & 2000 & 5000 & 3000 \\
-\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\}$ & 3000 & 6000 & 3000 \\
+\colorcircle{playerblue}{white}{3} & $\emptyset$ & 3000 & 0 & 3000 \\
+\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1}\}$ & 4000 & 1000 & 3000 \\
+\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playeryellow}{white}{2}\}$ & 5000 & 2000 & 3000 \\
+\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\}$ & 6000 & 3000 & 3000 \\
 \bottomrule
-\end{tabular}}
-\begin{itemize}
-\item No interactions: player contributions are additive for any coalition $S$ 
-\item Each player adds same value in all $S$
-\item Fair payout = marginal contribution
-\item Total payout splits exactly by individual contributions: \colorcircle{playerblue}{white}{3} = $\tfrac{1}{2}$, \colorcircle{playeryellow}{white}{2} = $\tfrac{1}{3}$, \colorcircle{playerred}{white}{1} = $\tfrac{1}{6}$ 
-\end{itemize}
+\end{tabular}
 
+}
+% \begin{itemize}
+% \item No interactions: player contributions are additive for any coalition $S$ 
+% \item Each player adds same value in all $S$
+% \item Fair payout = average marginal contrib.
+% \item Total payout splits exactly by individual contributions: \colorcircle{playerblue}{white}{3} = $\tfrac{1}{2}$, \colorcircle{playeryellow}{white}{2} = $\tfrac{1}{3}$, \colorcircle{playerred}{white}{1} = $\tfrac{1}{6}$ 
+% \end{itemize}
     \end{column}
 \end{columns}
+\begin{itemize}
+  \item \textbf{No interactions:} Each player contributes the same fixed value to each coalition\\
+  $\leadsto$ Player \colorcircle{playerred}{white}{1} always adds 1000, \colorcircle{playeryellow}{white}{2} adds 2000, and \colorcircle{playerblue}{white}{3} adds 3000\\
+  $\leadsto$ Marginal contributions are constant across all coalitions \( S \)
+  %Constant marginal gains of each player to every coalition $S$
+  \item \textbf{Conclusion:} Fair payout $=$ average marginal contribution across all $S$\\
+  $\leadsto$ Total value $v(P) = 6000$ splits proportionally by individual contributions:
+
+\centerline{$
+  \colorcircle{playerred}{white}{1} = \tfrac{1}{6}, \quad
+  \colorcircle{playeryellow}{white}{2} = \tfrac{1}{3}, \quad
+  \colorcircle{playerblue}{white}{3} = \tfrac{1}{2}
+$}
+\end{itemize}
+
 %\vspace*{5pt}
 }
 \includegraphics<3>[page=2, width = \textwidth]{figure/Shapley.pdf}%
 
-\visible<1>{\textbf{Question:} What are the individual marginal contributions and what is a fair payout?}% if contributions are $\tfrac{1}{2}$ (blue), $\tfrac{1}{3}$ (yellow), $\tfrac{1}{6}$ (red)?}
+\visible<1>{\centering \textbf{Question:} What are the individual marginal contributions and what is a fair payout?}% if contributions are $\tfrac{1}{2}$ (blue), $\tfrac{1}{3}$ (yellow), $\tfrac{1}{6}$ (red)?}
 
-\visible<3>{$\Rightarrow$ Fair payouts are trivial without interactions}
+\visible<3>{\centering $\Rightarrow$ Fair payouts are trivial without interactions}
 %\end{center}
 \end{frame}
 
@@ -203,14 +219,68 @@ Player & Coalition $S$ & $v(S)$ & $v(S \cup \{j\})$ & $\Delta (j, S)$ \\
 % \end{frame}
 
 \begin{frame}{Cooperative Games - Interactions}
-\begin{center}
+%\begin{center}
 \includegraphics[page=3, width = \textwidth]{figure/Shapley.pdf}
 
+\centering 
 $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
-\end{center}
+%\end{center}
 \end{frame}
 
 
+\begin{frame}{Cooperative Games - Interactions}
+%\vspace{-\baselineskip}
+\vspace*{-7pt}
+\begin{columns}[T, totalwidth=\textwidth]
+    \begin{column}{0.459\textwidth}
+\includegraphics[page=3, width = \textwidth, trim=0px 75px 390px 0px, clip]{figure/Shapley.pdf}%
+    \end{column}
+    \begin{column}{0.541\textwidth}
+        {\footnotesize
+\begin{tabular}{ll|ll|l}
+\toprule
+\scriptsize Player & \scriptsize Coalition $S$ & \scriptsize $v(S \cup \{j\})$ & \scriptsize $v(S)$ & \scriptsize $\Delta (j, S)$ \\
+\hline
+\colorcircle{playerred}{white}{1} & $\emptyset$ & 1000 & 0 & 1000 \\
+\colorcircle{playerred}{white}{1} & $\{\colorcircle{playeryellow}{white}{2}\}$ & 4000 & 2000 & 2000 \\
+\colorcircle{playerred}{white}{1} & $\{\colorcircle{playerblue}{white}{3}\}$ & 4000 & 3000 & 1000 \\
+\colorcircle{playerred}{white}{1} & $\{\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}\}$ & 6000 & 3000 & 3000 \\
+\hline
+\colorcircle{playeryellow}{white}{2} & $\emptyset$ & 2000 & 0 & 2000 \\
+\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerred}{white}{1}\}$ & 4000 & 1000 & 3000 \\
+\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerblue}{white}{3}\}$ & 3000 & 3000 & 0 \\
+\colorcircle{playeryellow}{white}{2} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3}\}$ & 6000 & 4000 & 2000 \\
+\hline
+\colorcircle{playerblue}{white}{3} & $\emptyset$ & 3000 & 0 & 3000 \\
+\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1}\}$ & 4000 & 1000 & 3000 \\
+\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playeryellow}{white}{2}\}$ & 3000 & 2000 & 1000 \\
+\colorcircle{playerblue}{white}{3} & $\{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\}$ & 6000 & 4000 & 2000 \\
+\bottomrule
+\end{tabular}
+}
+% \begin{itemize}
+% \item Marginal contributions differ across coalitions
+% \item What is a fair payout here?
+% \end{itemize}
+
+    \end{column}
+\end{columns}
+\begin{itemize}
+  \item \textbf{With interactions:} Players contribute different amounts depending on coalition\\
+  %$\leadsto$ \colorcircle{playerblue}{white}{3} adds 3000 alone, but 0 when \colorcircle{playeryellow}{white}{2} is present\\
+  $\leadsto$ Marginal contributions vary across coalitions \( S \) (e.g., due to overlap, synergy)
+  
+  \item Averaging over subsets does not recover total payout $v(P)$ $\leadsto$ unfair payout distr. \\
+  $\leadsto$ average contrib. \colorcircle{playerred}{white}{1} = 1750,
+  \colorcircle{playeryellow}{white}{2} = 1750, 
+  \colorcircle{playerblue}{white}{3} = 2250
+  do not sum to $v(P) = 6000$
+
+  \item Value a player adds depends on joining order, not just who else is in the coalition\\
+  $\leadsto$ Shapley values fairly average over all possible joining orders
+\end{itemize}
+
+\end{frame}
 
 \begin{frame}{Cooperative Games - Interactions}
 
@@ -221,38 +291,49 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 %\end{center}
     \end{column}
     \begin{column}{0.5\textwidth}
-        \textbf{Ordering 1:} \colorcircle{playeryellow}{white}{2} $\rightarrow$ \colorcircle{playerblue}{white}{3} $\rightarrow$ \colorcircle{playerred}{white}{1}
+        \textbf{Ordering 1:} \colorcircle{playerblue}{white}{3} $\rightarrow$ \colorcircle{playeryellow}{white}{2} $\rightarrow$ \colorcircle{playerred}{white}{1}
 \begin{itemize}
-  \item[\colorcircle{playeryellow}{white}{2}] joins alone: 2 \ding{73}
-  \item[\colorcircle{playerblue}{white}{3}] joins: total = 3 \ding{73}, marginal = +1
+  \item[\colorcircle{playerblue}{white}{1}] joins alone: 3 \ding{73}
+  \item[\colorcircle{playeryellow}{white}{2}] joins: total = 3 \ding{73}, marginal = 0
   \item[\colorcircle{playerred}{white}{1}] joins: total = 6 \ding{73}, marginal = +3
 \end{itemize}
 
 \vspace{0.25em}
 
-\textbf{But what if \colorcircle{playerred}{white}{1} joins before \colorcircle{playerblue}{white}{3}?}
+\textbf{But what if \colorcircle{playerred}{white}{1} joins before \colorcircle{playeryellow}{white}{2}?}
 
 \vspace{0.25em}
 
-\textbf{Ordering 2:} \colorcircle{playeryellow}{white}{2} $\rightarrow$ \colorcircle{playerred}{white}{1} $\rightarrow$ \colorcircle{playerblue}{white}{3}
+\textbf{Ordering 2:} \colorcircle{playerblue}{white}{3} $\rightarrow$ \colorcircle{playerred}{white}{1} $\rightarrow$ \colorcircle{playeryellow}{white}{2}
 \begin{itemize}
-  \item[\colorcircle{playeryellow}{white}{2}] joins alone: 2 \ding{73}
-  \item[\colorcircle{playerred}{white}{1}] joins: total = 4 \ding{73}, marginal = +2
-  \item[\colorcircle{playerblue}{white}{3}] joins: total = 6 \ding{73}, marginal = +2
+  \item[\colorcircle{playerblue}{white}{3}] joins alone: 3 \ding{73}
+  \item[\colorcircle{playerred}{white}{1}] joins: total = 4 \ding{73}, marginal = +1
+  \item[\colorcircle{playeryellow}{white}{2}] joins: total = 6 \ding{73}, marginal = +2
 \end{itemize}
     \end{column}
 \end{columns}
 \pause
 \begin{itemize}
-  \item \textbf{Overlapping skills:} Different join orders lead to different marginal contributions
-  \item \textbf{Fairness:} Shapley values consider every possible way the team could have formed and average each player's contribution across all possible join orders
+  \item \textbf{Order sensitivity:} A player's marginal contribution depends on when they join $S$
+  %\textbf{Overlapping skills:} Different join orders lead to different marginal contributions
+  \item \textbf{Shapley value:} Averages each player’s contribution over all possible join orders
+  %\textbf{Fairness:} Shapley values consider every possible way the team could have formed and average each player's contribution across all possible join orders
   %\item This results in fair credit assignment by accounting for
   \begin{itemize}
-    \item[$\leadsto$] Avoids redundancy (e.g., \colorcircle{playerblue}{white}{3}’s contribution overlaps with \colorcircle{playerred}{white}{1}’s)
+    \item[$\leadsto$] Resolves redundancy (e.g., \colorcircle{playerblue}{white}{3}’s contribution overlaps with \colorcircle{playeryellow}{white}{2}’s)
     \item[$\leadsto$] Accounts for order sensitivity (e.g., \colorcircle{playerred}{white}{1} brings more value if added last)
-    \item[$\leadsto$] Ensures no player is advantaged or penalized by order of joining% of evaluation.
+    \item[$\leadsto$] Ensures fairness (no player is advantaged or penalized by order of joining)% of evaluation.
   \end{itemize}
 \end{itemize}
+
+% \begin{itemize}
+%   \item \textbf{Order sensitivity:} A player's marginal contribution depends on when they join $S$
+%   \item \textbf{Shapley value:} Averages each player’s contribution over all possible join orders
+%   \begin{itemize}
+%     \item[$\leadsto$] Resolves redundancy (e.g., \colorcircle{playerblue}{white}{3} adds less if \colorcircle{playerred}{white}{1} is present)
+%     \item[$\leadsto$] Corrects for join-time advantage/disadvantage
+%   \end{itemize}
+% \end{itemize}
 \end{frame}
 
 
