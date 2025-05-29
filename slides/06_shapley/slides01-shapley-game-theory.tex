@@ -115,7 +115,7 @@
 % Figure Source: https://docs.google.com/presentation/d/1-bK90Gv1vIDr61s1PfgC51Kvic2Avnb7v8PgoO9iN0I/edit?usp=sharing
 %\begin{center}
 \includegraphics<1>[page=1, width = \textwidth]{figure/Shapley.pdf}%
-\only<2>{
+\only<2-3>{
 %\vspace{-\baselineskip}
 \vspace*{-7pt}
 \begin{columns}[T, totalwidth=\textwidth]
@@ -154,6 +154,7 @@
 % \end{itemize}
     \end{column}
 \end{columns}
+\only<3>{
 \begin{itemize}
   \item \textbf{No interactions:} Each player contributes the same fixed value to each coalition\\
   $\leadsto$ Player \colorcircle{playerred}{white}{1} always adds 1000, \colorcircle{playeryellow}{white}{2} adds 2000, and \colorcircle{playerblue}{white}{3} adds 3000\\
@@ -168,14 +169,14 @@
   \colorcircle{playerblue}{white}{3} = \tfrac{1}{2}
 $}
 \end{itemize}
-
+}
 %\vspace*{5pt}
 }
-\includegraphics<3>[page=2, width = \textwidth]{figure/Shapley.pdf}%
+\includegraphics<4>[page=2, width = \textwidth]{figure/Shapley.pdf}%
 
 \visible<1>{\centering \textbf{Question:} What are the individual marginal contributions and what is a fair payout?}% if contributions are $\tfrac{1}{2}$ (blue), $\tfrac{1}{3}$ (yellow), $\tfrac{1}{6}$ (red)?}
 
-\visible<3>{\centering $\Rightarrow$ Fair payouts are trivial without interactions}
+\visible<4>{\centering $\Rightarrow$ Fair payouts are trivial without interactions}
 %\end{center}
 \end{frame}
 
@@ -265,6 +266,7 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 
     \end{column}
 \end{columns}
+\pause
 \begin{itemize}
   \item \textbf{With interactions:} Players contribute different amounts depending on coalition\\
   %$\leadsto$ \colorcircle{playerblue}{white}{3} adds 3000 alone, but 0 when \colorcircle{playeryellow}{white}{2} is present\\
@@ -293,7 +295,7 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
     \begin{column}{0.5\textwidth}
         \textbf{Ordering 1:} \colorcircle{playerblue}{white}{3} $\rightarrow$ \colorcircle{playeryellow}{white}{2} $\rightarrow$ \colorcircle{playerred}{white}{1}
 \begin{itemize}
-  \item[\colorcircle{playerblue}{white}{1}] joins alone: 3 \ding{73}
+  \item[\colorcircle{playerblue}{white}{3}] joins alone: 3 \ding{73}
   \item[\colorcircle{playeryellow}{white}{2}] joins: total = 3 \ding{73}, marginal = 0
   \item[\colorcircle{playerred}{white}{1}] joins: total = 6 \ding{73}, marginal = +3
 \end{itemize}
@@ -320,7 +322,7 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
   %\textbf{Fairness:} Shapley values consider every possible way the team could have formed and average each player's contribution across all possible join orders
   %\item This results in fair credit assignment by accounting for
   \begin{itemize}
-    \item[$\leadsto$] Resolves redundancy (e.g., \colorcircle{playerblue}{white}{3}’s contribution overlaps with \colorcircle{playeryellow}{white}{2}’s)
+    \item[$\leadsto$] Resolves redundancy (e.g., \colorcircle{playerblue}{white}{3}’s contribution/skill overlaps with \colorcircle{playeryellow}{white}{2}’s)
     \item[$\leadsto$] Accounts for order sensitivity (e.g., \colorcircle{playerred}{white}{1} brings more value if added last)
     \item[$\leadsto$] Ensures fairness (no player is advantaged or penalized by order of joining)% of evaluation.
   \end{itemize}
@@ -707,30 +709,58 @@ Shapley value via \textbf{set definition} (weighting via multinomial coefficient
 % \end{frame}
 
 
-
-
-
-
 \begin{frame}{Axioms of Fair Payouts}
- Why is this a fair payout solution?
- \\
- One possibility to define fair payouts are the following axioms for a given value function $v$:
-  \vspace{0.25cm}
-  \begin{itemize}[<+->]
-  \itemsep1em
-    \item \textbf{Efficiency}: Player contributions add up to the total payout of the game:
-      $\sum\nolimits_{j=1}^p\phi_j = v(P)$
-    % symmetry - "any" confused me a bit since we actually look into coalitions that do not include both j and k. Maybe we can state this more as "for any coalition it make no difference whether we add $j$ or $k$"
-    \item \textbf{Symmetry}: For any players $j,k \in P$ who contribute the same to any coalition $S$ get the same payout: \\ 
-      If $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$, then $\phi_j=\phi_k$
-    \item \textbf{Dummy/Null Player}: Payout is 0 for players who do not contribute to the value of any coalition: \\
-      If $v(\Scupj)=v(S)\quad  \forall \quad \SsubP \setminus \{j\}$, then $\phi_j=0$
-    \item \textbf{Additivity}: For games with value functions $v_1, v_2$, their combined value function $v(S) = v_1(S) + v_2(S)$ implies that the payout $\phi_{j,v}$ is $\phi_{j,v_1} + \phi_{j, v_2}$
-  \end{itemize}
-  \vspace{0.5cm}
+\textbf{What makes a payout fair?} The Shapley value provides a fair payout $\phi_j$ for each player \( j \in P \) and uniquely satisfies the following axioms for any value function \( v\):
+
+\medskip
+
+\begin{itemize}[<+->]
+  \item \textbf{Efficiency}: Total payout $v(P)$ is fully allocated to players:
+  \[
+  \textstyle \sum_{j \in P} \phi_j = v(P)
+  \]
+
+  \item \textbf{Symmetry}: Indistinguishable players $j,k \in P$ receive equal shares:
+  \[
+  \text{If } v(S \cup \{j\}) = v(S \cup \{k\}) \text{ for all } S \subseteq P \setminus \{j,k\}, \text{ then } \phi_j = \phi_k
+  \]
+
+  \item \textbf{Null Player (Dummy)}: Players who contribute nothing receive nothing:
+  \[
+  \text{If } v(S \cup \{j\}) = v(S) \text{ for all } S \subseteq P \setminus \{j\}, \text{ then } \phi_j = 0
+  \]
+
+  \item \textbf{Additivity}: For two separate games with value functions \( v_1, v_2 \), define a combined game with \( v(S) = v_1(S) + v_2(S) \) for all \( S \subseteq P \). Then:
+  \[
+  \phi_{j, v_1 + v_2} = \phi_{j, v_1} + \phi_{j, v_2}\]
+  $\leadsto$ Payout of combined game = payout of the two separate games
+  %A combined game is one where each coalition's value is the sum of its values in two separate games.
+\end{itemize}
+\end{frame}
+
+
+
+
+% \begin{frame}{Axioms of Fair Payouts}
+%  Why is this a fair payout solution?
+%  \\
+%  One possibility to define fair payouts are the following axioms for a given value function $v$:
+%   \vspace{0.25cm}
+%   \begin{itemize}[<+->]
+%   \itemsep1em
+%     \item \textbf{Efficiency}: Player contributions add up to the total payout of the game:
+%       $\sum\nolimits_{j=1}^p\phi_j = v(P)$
+%     % symmetry - "any" confused me a bit since we actually look into coalitions that do not include both j and k. Maybe we can state this more as "for any coalition it make no difference whether we add $j$ or $k$"
+%     \item \textbf{Symmetry}: For any players $j,k \in P$ who contribute the same to any coalition $S$ get the same payout: \\ 
+%       If $v(\Scupj) = v(\Scupk)$ for all $\SsubP \setminus\{j,k\}$, then $\phi_j=\phi_k$
+%     \item \textbf{Dummy/Null Player}: Payout is 0 for players who do not contribute to the value of any coalition: \\
+%       If $v(\Scupj)=v(S)\quad  \forall \quad \SsubP \setminus \{j\}$, then $\phi_j=0$
+%     \item \textbf{Additivity}: For games with value functions $v_1, v_2$, their combined value function $v(S) = v_1(S) + v_2(S)$ implies that the payout $\phi_{j,v}$ is $\phi_{j,v_1} + \phi_{j, v_2}$
+%   \end{itemize}
+%   \vspace{0.5cm}
   
 
-\end{frame}
+% \end{frame}
 
 
 % \begin{frame}{Banzhaf Value}
