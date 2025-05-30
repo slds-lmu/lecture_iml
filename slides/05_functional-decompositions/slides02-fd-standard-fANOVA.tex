@@ -30,7 +30,7 @@
 
 \begin{frame}{Frame Title}
 
-    Assumption: Independent features \\
+    \textbf{Assumption}: Independent features \\
     Today, we look at one method to obtain a functional decomposition; Funcational ANOVA (fANOVA).
     
 \end{frame}
@@ -65,6 +65,8 @@
     \begin{equation*}
         g_{S} (\xv_S) = (\text{average out all features not contained in } S) - (\text{All lower-order components})
     \end{equation*}
+
+    idea: PD-function = sum of all $g_S$ up to this order
     
 \end{frame}
 
@@ -105,11 +107,45 @@ $$g_{S}(\xv_S) = \mathbb{E}_{\Xv_{-S}} \left[\fh(\xv_S, \Xv_{-S}) \; \middle\ver
     [calculate a full complete example] \\
 
     Analytic examples from Sobol (1993), Sobol (2001) or Hooker(2004))
-    
-    [problem with examples from beginning: If using fANOVA, we do not get the original components out of it again, right?]\\
 
     [several examples needed, can also include those from beginning]
     
+    [problem with examples from beginning: If using fANOVA, we do not get the original components out of it again, right?]
+
+    -> exactly that is the case, explain the reason here: some averaged part of interaction term is moved into lower order, we need this in fANOVA, because we need a data-driven / formula-agnostic way of computing the components
+
+    -> use the in-class calculation task here to illustrate this
+    
+\end{frame}
+
+\begin{frame}{Functional Decomposition -- Example}
+\textbf{Example:} $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., if $x_1 = 5$ and $x_2 = 10$ $\Rightarrow$ $\fh(\xv) = -23$)
+
+\begin{itemize}
+    \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives:
+    \begin{columns}[c, totalwidth=\linewidth]
+    \begin{column}{0.75\textwidth}
+        \includegraphics[width = \textwidth]{figure/decomposition}
+    \end{column}
+    \begin{column}{0.25\textwidth}
+    For $x_1 = 5$ and $x_2 = 10$:\\
+    \begin{itemize}
+        \item $g_{\open \emptyset \close} = 2$
+        \item $g_{\open 1 \close}(x_1) = -9.67$
+        \item $g_{\open 2 \close}(x_2) = -65.33$
+        \item $g_{\open 1,2 \close}(x_1, x_2) = 50$
+        \item[$\Rightarrow$] $\fh(\xv) = -23$
+    \end{itemize}
+    \end{column}
+    \end{columns}
+\pause
+    \item Vanishing condition means:
+    \begin{itemize}
+        \item $g_1$ and $g_2$ are mean-centered w.r.t. marginal distribution of $x_1$ and $x_2$
+        \item Integral of $g_{1,2}$ over marginal distribution $x_1$ (or $x_2$) is always 0.
+        %, i.e., for each slice at $x_1$ (and $x_2$), the integral of $g_{1,2}$ 
+    \end{itemize}
+\end{itemize} 
 \end{frame}
 
 \begin{frame}{How to compute fANOVA in practice $\rightarrow$ Estimating Expectations}
