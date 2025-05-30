@@ -4,11 +4,11 @@ order_levels <- function(data, feature.name) {
   #'  
   #'  @param data (data.frame): data which contains feature which 
   #'  should be ordered but also other features used for ordering.
-  #'  @param feature.name (character(1)): name of categorical feature which shoul 
+  #'  @param feature.name (character(1)): name of categorical feature which should
   #'  be ordered
   #'      
   #'  Returns: the vector of ordered class labels
-  feature <- data[ , feature.name]
+  feature <- data[, feature.name]
   others <- setdiff(colnames(data), feature.name)
   feature.lev <- unique(feature)
   
@@ -24,7 +24,7 @@ order_levels <- function(data, feature.name) {
     dists
   })
   dists.cumulated.long <- as.data.frame(Reduce(function(d1, d2) {
-    d1$dist = d1$dist + d2$dist
+    d1$dist <- d1$dist + d2$dist
     d1
   }, dists))
   # Create a matrix of distances

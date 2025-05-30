@@ -73,7 +73,7 @@ calculate_ale = function(model, X, s, n_intervals = 100, centered = FALSE) {
   }
   
   ### Now we can calculate the ALE values all at once with the mapply()-function. 
-  # We accumulate them via the cumsum()-function.
+  ### We accumulate them via the cumsum()-function.
   ale_values <- cumsum(mapply(uncentered_ale_calculation, lowerbounds, upperbounds))
   
   ### If the centered argument is set to TRUE the user wants us to center the ALE values.

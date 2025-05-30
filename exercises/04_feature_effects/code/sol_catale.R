@@ -28,7 +28,7 @@ order_levels <- function(data, feature.name) {
   }, dists))
   # Create a matrix of distances
   dists.cumulated <- reshape2::dcast(dists.cumulated.long, class1 ~ class2, value.var = "dist")[, -1]
-  rownames(dists.cumulated) = colnames(dists.cumulated)
+  rownames(dists.cumulated) <- colnames(dists.cumulated)
   # conduct multi-dimensional scaling (here: principal coordinates analysis)
   # based on dissimilarity matrix it assigns to each item a location in a low dimensional space 
   # the closer the location, the more similar the items are
