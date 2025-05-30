@@ -6,6 +6,7 @@
     \begin{itemize}
         \item[$\Rightarrow$] When interactions are apparent, the effects may in average cancel each other out, i.e. PDP shows no effect.
         \item[$\Rightarrow$] Extrapolation can cause issues in regions with few observations or if features are correlated, so the resulting data point used in calculating the ICE or PDP may be unrealistic or very unlikely.
+        The information from the joint distribution is missing, it is simply modeled as if it was an independent combination of the marginal distributions.
     \end{itemize}
     \item How do PDPs and ICE curves correspond to each other?
     \begin{itemize}
@@ -13,23 +14,44 @@
     \end{itemize}
     \item What problem do we need to keep in mind when using centered ICE/PDP for categorical features? 
     \begin{itemize}
-        \item[$\Rightarrow$] If we center the ICE/PDPs for categorical features, the expected changes always refer to a selected reference category. 
+        \item[$\Rightarrow$] If we center the ICE/PDPs for categorical features, the expected changes always refer to a selected reference category, same as in linear models with categorical features.
     \end{itemize}
     \item M-Plots handle correlated data well and do not suffer from extrapolation. What disadvantage does this method have?
     \begin{itemize}
         \item[$\Rightarrow$] M-plots suffer from omitted variable bias.
+        That is, an M-plot for some feature $x_j$ can contain feature effects of both $x_j$ itself and other features with which $x_j$ is not independent.
     \end{itemize}
-    \item Name the advantages and disadvantages of different marginal effect (ME) methods.
+    \item Name the advantages and disadvantages of the different marginal effect (ME) methods (dME, fME and AME) in comparison to the other feature effect methods.
     \begin{itemize}
-        \item[$\Rightarrow$] TO DO
+        \item[$\Rightarrow$] Advantages:
+        \begin{itemize}
+            % \item small assumptions, really model-agnostic
+            \item Computationally cheap:\\
+            \textbf{Local methods:} For exact dME one model evaluation per data point (but needs exact derivative), for fME or approximate dME 2 model evaluations per data point, whereas for a ICE curve one needs $g$ (number of grid points) many evaluations. \\
+            \textbf{Global methods:} AMEs need one dME or fME calculation for each observation, PDPs need one ICE curve for each observation. ALE plots require 2 model evaluations per data point, so the same as AMEs.
+            \item MEs not restricted to visualization, but can be visualized, if only for 1 or 2 features (i.e. if only 1D or 2D).
+            \textbf{Note:} One can compute ICE plots, PDPs, M-plots and ALE plots all also for 2 or more features of interest, and for more than 2 features they also cannot be visualized any more.
+            So in this regard there is actually no fundamental difference between the methods.
+            \item Additional non-linearity measure
+        \end{itemize}
+        Disadvantages:
+        \begin{itemize}
+            \item MEs use linear approximation, which may work very badly depending on the function or the model or the specific situation.
+            \item Exact dME needs differentiability, dME makes not much sense for discrete features, but one can workaround this with approximate dME.
+            \item Different vectors $h$ and lengths of it make dME and fME very flexible, can contain interactions / many features / high dimensional effects etc. \\
+            $\Rightarrow$ Very flexible methods, but interpretation depends on specific use case (i.e. specific $h$ vector), needs to be tailored to specific dataset
+            \item How well MEs actually work depends on degree of non-linearity
+            $\Rightarrow$ depends on specific dataset or specific model
+        \end{itemize}
     \end{itemize}
     \item Name the advantages of ALE over PDP.
     \begin{itemize}
-        \item[$\Rightarrow$] Computationally faster (measurable when they are based on the same grid); less to no extrapolation.
+        \item[$\Rightarrow$] Computationally faster (measurable when they are based on the same grid); less to no extrapolation, i.e. recovers the correct feature effect in case of dependencies.
     \end{itemize}
     \item Can you think of a situation in which ALE equals PDP?
     \begin{itemize}
-        \item[$\Rightarrow$] If features are uncorrelated, centered ALE plots (which they are by default) are equal to centered PDPs. 
+        \item[$\Rightarrow$] If features are uncorrelated, centered ALE plots (which they are by default) are equal to centered PDPs.
+        Uncentered ALE and normal PDP are equal, if one forces the ALE to equal the PDP in at least one point.
     \end{itemize}
     \item How does the interpretation between M-Plots and ALE differ?
     \begin{itemize}

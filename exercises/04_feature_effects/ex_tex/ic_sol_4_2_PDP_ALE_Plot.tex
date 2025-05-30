@@ -1,6 +1,7 @@
 \loesung{
 
 \begin{enumerate}
+
     \item 
     Both PDP and ALE plots show a strong linear effect of $x_1$, where higher values of $x_1$ lead to higher values of predicted value.
     The PDP and ALE plots of $x_2$ show a strong decreasing effect of $x_2$ on the prediction. 
@@ -11,12 +12,24 @@
         \item ALE: the model predicts on average an increase of around $2.5$ of $y$ for data instances with $x_1 = 0.5$ 
         compared to the average prediction.
     \end{itemize}
+    
     \item 
     PDPs assume that features are uncorrelated.
     % We know from the GAM output above - as well as the scatter plot - that $x_1$ and $x_2$ are highly correlated.
     But we know from the form of the DGP (or we could find out using a scatter plot, or by trying to model the relationship between $x_1$ and $x_2$, e.g. with a GAM) that $x_1$ and $x_2$ are highly correlated.
-    Since PDPs extrapolate over predictions of artificial points that are out of distribution, the interpretations might be misleading - especially in areas with low data density (values of $x_2$ smaller than 0, or for high values of $x_2$ and small for $x_1$), or if the model contains interactions.
-    ALE plots, on the other hand, do not predict in regions that are far away from the training data and therefore do not suffer from the extrapolation issue of PDPs. 
+    Since PDPs extrapolate over predictions of artificial points that are out of distribution, the interpretation might be misleading, especially in areas with low data density (values of $x_2$ smaller than 0, or for high values of $x_2$ and small for $x_1$), or if the model contains interactions.
+    ALE plots, on the other hand, do not predict in regions that are far away from the training data and, therefore, do not suffer from the extrapolation issue of PDPs. 
+    
+    \item[\textbf{Bonus:}]
+    The observed distribution of each feature is visualized at the bottom of the plot.
+    For $x_1$, it shows a homogeneous distribution between $-1$ and 1, as expected.
+    The empirical distribution of $x_2$ centers in the interval $[0,1]$, which we also expected.
+    But from the DGP given we know that $-1 \leq x_1 \leq 1$ always holds and therefore any values of $x_2$ outside of the interval $[0,1]$ are solely caused by the noise term $\delta$.
+    
+    Now, if $\delta$ is normally distributed with standard variance $0.04$, then $|\delta|>0.1$ is extremely unlikely, hence $x_2 < -0.1$ and $x_2 > 1.1$ should only occur in a very small number of cases.
+    In contrast, we observe that inside the intervals $[-1.5, -1]$ and $[1, 1.5]$, the density of $x_2$ is quite high.
+    This strongly indicates that the data and the plots were actually generated from a different DGP than the one given.
+    
 \end{enumerate}
   
 }
