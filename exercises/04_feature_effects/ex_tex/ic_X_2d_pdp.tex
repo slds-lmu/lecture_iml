@@ -1,16 +1,16 @@
 \aufgabe{2D PDP}{
 
 Let $X_1,X_2,X_3$ be \emph{independent} random variables with
-$\mu_j=\mathbb E[X_j]\;(j=1,2,3)$.
+$\mu_j=\mathbb E[X_j] ,\; j=1,2,3$.
 Consider the linear model
 \[
   f(x_1,x_2,x_3)=
     \beta_0+\beta_1x_1+\beta_2x_2+\beta_3x_3
-    +\beta_{12}x_1x_2+\beta_{13}x_1x_3.%+\beta_{23}x_2x_3.
+    +\beta_{12}x_1x_2+\beta_{13}x_1x_3+\beta_{23}x_2x_3.
 \]
 
 \begin{enumerate}
-\item[\textbf{(a)}] \textbf{Joint 2-D PDP.}  
+\item[\textbf{(a)}] \textbf{Joint 2-D PDP:}  
       Derive an explicit expression for the two-dimensional PD
       function of $(X_1,X_2)$:
       \[
@@ -18,7 +18,7 @@ Consider the linear model
       \]
       %List the main-effect and interaction terms it contains.
 
-\item[\textbf{(b)}] \textbf{1-D PDPs.}  
+\item[\textbf{(b)}] \textbf{1-D PDPs:}  
       Compute the one-dimensional PDPs
       \(
         f_{1}^{\mathrm{PD}}(x_1)
@@ -26,26 +26,39 @@ Consider the linear model
       and
       \(
         f_{2}^{\mathrm{PD}}(x_2)
-      \)
+      \).
 
-% \item[\textbf{(c)}] \textbf{Global mean.}  
-%       Show that the global mean of the model equals
-%       \[
-%         m:=\mathbb E[f(X_1,X_2,X_3)]
-%         =\beta_0+\beta_1\mu_1+\beta_2\mu_2+\beta_3\mu_3
-%         +\beta_{12}\mu_1\mu_2+\beta_{13}\mu_1\mu_3+\beta_{23}\mu_2\mu_3.
-%       \]
+\item[\textbf{(c)}] \textbf{Intercept:}  
+    Calculate the global mean $m:=\mathbb E[f(X_1,X_2,X_3)]$ of the model.
+      % Show that the global mean of the model equals
+      % \[
+      %   m:=\mathbb E[f(X_1,X_2,X_3)]
+      %   =\beta_0+\beta_1\mu_1+\beta_2\mu_2+\beta_3\mu_3
+      %   +\beta_{12}\mu_1\mu_2+\beta_{13}\mu_1\mu_3+\beta_{23}\mu_2\mu_3.
+      % \]
 
-\item[\textbf{(c)}] \textbf{Isolating the pure interaction:}  
-      Prove that subtracting the 1-D PDPs (and adding $m:=\mathbb E[f(X_1,X_2,X_3)]$) removes all main-effect
-      contributions and leaves only the centred interaction surface:
+\item[\textbf{(d)}] \textbf{Isolating the pure interaction, i.e., the second-order fANOVA component:}  
+      % Prove that subtracting the 1-D PDPs (and adding $m:=\mathbb E[f(X_1,X_2,X_3)]$) removes all main-effect
+      % contributions and leaves only the centered interaction surface: 
+      Prove that subtracting the one-dimensional fANOVA components and the intercept from the 2-D PDP removes all main-effect contributions and that only the centered interaction effect remains:
+      % \[
+      %   f_{12}^{\mathrm{PD}, c}(x_1,x_2)
+      %   - f_{1}^{\mathrm{PD}, c}(x_1)
+      %   - f_{2}^{\mathrm{PD}, c}(x_2)
+      %   \;=\;
+      %   \beta_{12}(x_1-\mu_1)(x_2-\mu_2),
+      % \]
       \[
         f_{12}^{\mathrm{PD}}(x_1,x_2)
-        -f_{1}^{\mathrm{PD}}(x_1)
-        -f_{2}^{\mathrm{PD}}(x_2)
-        +m
+        - g_{1}(x_1)
+        - g_{2}(x_2)
+        - g_\emptyset
         \;=\;
-        \beta_{12}\,(x_1-\mu_1)(x_2-\mu_2),
+        f_{12}^{\mathrm{PD}}(x_1,x_2)
+        - \bigl( f_{1}^{\mathrm{PD}}(x_1) - m \bigr)
+        - \bigl( f_{2}^{\mathrm{PD}}(x_2) - m \bigr)
+        - m
+        \;=\;\beta_{12}(x_1-\mu_1)(x_2-\mu_2).
       \]
       
 \end{enumerate}

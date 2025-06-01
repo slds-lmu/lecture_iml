@@ -104,13 +104,38 @@
 
 \begin{frame}{Revisiting ALE Plots}
 
-    Recap: ALE PLots [...]
+    \[
+    \hat{\tilde{f}}_{S, ALE}(x) = \sum_{k = 1}^{k_S(x)}\frac{1}{n_S(k)}\sum_{i: \; x_S^{(i)} \in \; [z_{k-1, S}, z_{k, S}]}\left[\fh(z_{k, S}, \xi_{-S}) -\fh(z_{k-1, S}, \xi_{-S})\right]
+    \]
+
+    \begin{columns}[c, totalwidth=\linewidth]
+    \begin{column}{0.5\textwidth}
+        % \includegraphics[width = \textwidth]{figure/decomposition}
+        \includegraphics{figure/ale1d}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \includegraphics{figure/ale2d}
+    \end{column}
+    \end{columns}
+
+    % \splitV{
+        % \image{figure/ale1d}
+    % }{
+        % \image{figure/ale2d}
+    % }
     
 \end{frame}
 
 \begin{frame}{ALE Decomposition}
-    
-    ALE Plots also can lead to a full functional decomposition: [...]
+
+    \begin{itemize}
+        \item One can define ALE plots for arbitrary many variables \\
+        (similar to PDPs vs. PD-functions)
+        \item[$\rightarrow$] Gives full functional decomposition of ALE plots
+        \item \textbf{Advantages:} Handle dependencies well + computationally fast
+        \item Constraints / orthogonality properties more complicated
+        \item[$\implies$] ALE decomposition theoretically more involved, but good alternative in practice
+    \end{itemize}
     
 \end{frame}
 
@@ -126,10 +151,41 @@
 
 \begin{frame}{Conclusion: How useful are functional decompositions?}
 
-    Obwohl fDecompositions eigtl (aus Interpretability-Sicht) die Lösung für alles wären / theoretisch die Endlösung sind, sind alle anderen Methoden trotzdem nötig, weil fDecompositions sehr schwierig \& kompliziert zu berechnen sind
-    - Computation time skaliert exponentiell mit der Dimension / Anzahl features  =>  i.a. ist Erzwingen einer sparsen decomposition (s. GAMs / RPFs) die einzige realisitische Möglichkeit
+    % Obwohl fDecompositions eigtl (aus Interpretability-Sicht) die Lösung für alles wären / theoretisch die Endlösung sind, sind alle anderen Methoden trotzdem nötig, weil fDecompositions sehr schwierig \& kompliziert zu berechnen sind
+    % - Computation time skaliert exponentiell mit der Dimension / Anzahl features  =>  i.a. ist Erzwingen einer sparsen decomposition (s. GAMs / RPFs) die einzige realisitische Möglichkeit
 
-    Nevertheless, functional decompositions are a very important concept in machine learning interpretability because they explain the idea behind many other methods and enable a much better understanding of other methods.
+    \begin{itemize}
+        
+        \item If computed, offer a lot of insight into a model or function, i.p. high-dimensional
+        \item[$\rightarrow$] Complete analysis of all interactions
+        \item Very important theoretical concept:
+        \begin{itemize}
+            \item Theoretical framework for general definition of interactions (H-statistic)
+            \item Theoretical background for many IML methods:
+                GAMs and EBMs, 
+                ICE, PDPs and PD-functions,
+                ALE plots,
+                Shapley values,
+                Feature importance methods (see later)
+            % \item GAMs and EBMs
+            % \item ICE, PDPs and PD-functions
+            % \item ALE plots
+            % \item Shapley values (see later)
+            % \item Feature importance methods (see later)
+        \end{itemize}
+        \item In practice often infeasible ($2^p$ components for $p$ features)
+        \item[$\implies$] Often only sparse decompositions feasible (E.g. EBMs)
+        \item All single methods have disadvantages:
+        \begin{itemize}
+            \item Standard fANOVA: Only independent features + compute intensive
+            \item Generalized fANOVA: Even more compute intensive, evtl. infeasible
+            \item ALE: No variance decomposition
+        \end{itemize}
+        
+    \end{itemize}
+
+    % Nevertheless, functional decompositions are a very important concept in machine learning interpretability because they explain the idea behind many other methods and enable a much better understanding of other methods.
+    \textbf{Overall:} Very important concept and theoretical background, explains idea behind many other methods
     
 \end{frame}
 

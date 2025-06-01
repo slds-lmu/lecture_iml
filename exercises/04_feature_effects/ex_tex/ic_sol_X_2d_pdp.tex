@@ -1,9 +1,10 @@
 \loesung{
-Let expectations be taken with respect to the (factorising) distribution of
-$(X_1,X_2,X_3)$.
+% Let expectations be taken with respect to the (factorising) distribution of
+% $(X_1,X_2,X_3)$.
+All expectations are taken with respect to the joint distribution of $(X_1,X_2,X_3)$, which factorizes into the marginal distributions due to independence.
 
 \begin{enumerate}
-\item[\textbf{(a)}] \emph{2-D PDP}.
+\item[\textbf{(a)}] \textbf{2-D PDP:}
   \[
     \begin{aligned}
     f_{12}^{\mathrm{PD}}(x_1,x_2)
@@ -11,12 +12,13 @@ $(X_1,X_2,X_3)$.
       &=\beta_0+\beta_1x_1+\beta_2x_2+\beta_{12}x_1x_2\\
       &\quad+\beta_3\mu_3+\beta_{13}x_1\mu_3+\beta_{23}x_2\mu_3.
     \end{aligned}
+    \tag{a}
   \]
   \textbf{Contains:}
-  main effects $\beta_1x_1,\;\beta_2x_2$ and interaction
+  main effects $ (\beta_1 + \beta_{13}\mu_3) x_1 , \; (\beta_2 + \beta_{23}\mu_3) x_2$ and interaction
   $\beta_{12}x_1x_2$, plus constants depending on $\mu_3$.
 
-\item[\textbf{(b)}] \emph{1-D PDPs}.
+\item[\textbf{(b)}] \textbf{1-D PDPs:}
   \[
     \boxed{%
       f_{1}^{\mathrm{PD}}(x_1)=
@@ -34,32 +36,68 @@ $(X_1,X_2,X_3)$.
 
 \item[\textbf{(c)}] 
 
-\emph{Global mean}.
+\textbf{Intercept:}
   \[
     \boxed{%
       m=\beta_0+\beta_1\mu_1+\beta_2\mu_2+\beta_3\mu_3
         +\beta_{12}\mu_1\mu_2+\beta_{13}\mu_1\mu_3+\beta_{23}\mu_2\mu_3
     }\tag{c}
   \]
+
+\item[\textbf{(c)}] 
   
-   \emph{Removing main effects}.  
-  Define
-  \(
-    g(x_1,x_2):=
-       f_{12}^{\mathrm{PD}}(x_1,x_2)
+\textbf{Removing main effects and isolating the pure interaction:}
+
+    % First center all the PDPs by subtracting the mean $m$:
+    % \[
+    % \begin{aligned}
+    %     f_{1}^{\mathrm{PD}, c}(x_1) = f_{1}^{\mathrm{PD}}(x_1) - m
+    %     = \beta_1 (x_1 - \mu_1)
+    %       +\beta_{12} (x_1 - \mu_1) \mu_2
+    %       + \beta_{13} (x_1 - \mu_1) \mu_3 \\
+    %     f_{2}^{\mathrm{PD}, c}(x_2) = f_{2}^{\mathrm{PD}}(x_2) - m
+    %     = \beta_2 (x_2 - \mu_2)
+    %       +\beta_{12} \mu_1 (x_2 - \mu_2) 
+    %       + \beta_{23} (x_2 - \mu_2) \mu_3 \\
+    %     f_{12}^{\mathrm{PD}, c}(x_1, x_2) = f_{12}^{\mathrm{PD}}(x_1, x_2) - m
+    %     = \beta_1 (x_1 - \mu_1)
+    %         + \beta_2 (x_2 - \mu_2)
+    %         + \beta_{12} (x_1 x_2 - \mu_1 \mu_2)
+    %         + \beta_{13} (x_1 - \mu_1) \mu_3
+    %         + \beta_{23} (x_2 - \mu_2) \mu_3.
+    % \end{aligned}
+    % \]
+    
+    First we note
+    $$
+    g(x_1,x_2)
+    \;=\; f_{12}^{\mathrm{PD}}(x_1,x_2)
+        - g_{1}(x_1)
+        - g_{2}(x_2)
+        - g_\emptyset
+    \;=\; f_{12}^{\mathrm{PD}}(x_1,x_2)
        -f_{1}^{\mathrm{PD}}(x_1)
        -f_{2}^{\mathrm{PD}}(x_2)
        +m.
-  \)
-  Insert (a), (b1), (b2), (c) and cancel like terms:
-  \[
+    $$
+    
+    % Define
+    % \(
+    %   g(x_1,x_2):=
+    %      f_{12}^{\mathrm{PD}}(x_1,x_2)
+    %      -f_{1}^{\mathrm{PD}}(x_1)
+    %      -f_{2}^{\mathrm{PD}}(x_2)
+    %      +m.
+    % \)
+    
+    Inserting (a), (b1), (b2), (c) and canceling yields:
+    \[
     \begin{aligned}
-    g(x_1,x_2)
-      &=\beta_{12}\bigl[x_1x_2-\mu_2x_1-\mu_1x_2+\mu_1\mu_2\bigr]\\
-      &=\boxed{\beta_{12}\,(x_1-\mu_1)(x_2-\mu_2)}.
+        g(x_1,x_2)
+        & = \beta_{12} x_1 x_2 - \beta_{12} x_1 \mu_2 - \beta_{12} \mu_1 x_2 + \beta_{12} \mu_1 \mu_2 \\
+        & = \boxed{\beta_{12}\,(x_1-\mu_1)(x_2-\mu_2)}.
     \end{aligned}
-  \]
-  All constants and main‐effect terms vanish; only the centred
-  interaction survives, as claimed.
+    \]
+    All constants and main‐effect terms vanish; only the centered interaction term remains, as claimed.
 \end{enumerate}
 }
