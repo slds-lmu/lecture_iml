@@ -1,6 +1,7 @@
 # PREREQ -----------------------------------------------------------------------
 library(iml)
 library(ggplot2)
+library(patchwork)
 theme_set(theme_bw())
 
 # DATA -------------------------------------------------------------------------
@@ -210,8 +211,8 @@ mod = lm(.value ~ x1*x2, data = pdp12$results)
 dat = expand.grid(x1 = x1, x2 = x2)
 dat$y = predict(mod, newdata = dat)
 
-scatterplot3d(pdp12$results$x1, pdp12$results$x2, pdp12$results$.value)
-scatterplot3d(dat$x1, dat$x2, dat$y)
+scatterplot3d::scatterplot3d(pdp12$results$x1, pdp12$results$x2, pdp12$results$.value)
+scatterplot3d::scatterplot3d(dat$x1, dat$x2, dat$y)
 
 pred.fun = function(model = NULL, newdata) {
   predict(mod, newdata = newdata)
