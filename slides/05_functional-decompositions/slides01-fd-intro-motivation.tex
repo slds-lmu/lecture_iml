@@ -20,7 +20,8 @@
 %- conditions + theory
 %- other methods (gen fANOVA, ALE)
 
-\newcommand{\titlefigure}{figure/open_blackbox}
+% \newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\titlefigure}{figure/25-05-31_Hooker_2004_graph_fANOVA}
 \newcommand{\learninggoals}{
 \item Basic idea of additive functional decompositions
 \item Motivation and usefulness of functional decompositions
@@ -180,7 +181,7 @@ $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., for $x_1 = 5$ and $x_2 = 1
 \begin{definition}
 % For interpretation purposes, one might be interested in decomposing a square-integrable function $\fh: \R^p \mapsto \R$ into sum of components of different dimensions w.r.t. inputs $x_1, \ldots, x_p$: %
 \textit{Functional decomposition}: Additive decomposition of a function $\fh: \R^p \mapsto \R$ into a sum of components of different dimensions w.r.t. inputs $x_1, \ldots, x_p$: \\
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \fh(\xv) = 
 \textstyle\sum_{S \subseteq \{1,\ldots,p\}} g_{S}(\xv_S) = \; & g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \dots + g_{\open p \close}(x_p) + \\
@@ -188,7 +189,7 @@ $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., for $x_1 = 5$ and $x_2 = 1
 & g_{\open 1, 2, 3 \close}(x_1, x_2, x_3) + \dots + g_{\open 1, 2, 3, 4 \close}(x_1, x_2, x_3, x_4) + \\
 & \dots + g_{\open 1,\ldots,p \close}(x_1, \ldots, x_p)
 \end{split}
-\end{equation*}
+\end{equation}
 %\vspace{-5pt}%\pause
 $\leadsto$ one component for every possible combination $S$ of indices
 \end{definition}
@@ -242,7 +243,7 @@ Sort terms according to degree of interaction:
 \end{frame}
 
 \begin{frame}{Functional Decomposition -- Example}
-\textit{TO DO: Use this example in standard fANOVA chapter, here something else, maybe real-world dataset}
+\textit{TO DO: Use the following example in standard fANOVA chapter, here something else, maybe real-world dataset}
 \end{frame}
 
 \begin{frame}{Functional Decomposition -- Example}
@@ -288,7 +289,7 @@ Sort terms according to degree of interaction:
         \item Definition not complete, such decomposition is not unique, and many trivial decompositions are not useful at all (see next slide) \\
             This problem get's much worse, whenever features are not independent \\
         \textbf{N.B.:} %Further constraints are required to obtain an unique and optimal solution for the components
-        A unique solution for the components only exists under certain assumptions
+        A unique solution for the components only exists under certain assumptions $\leadsto$ constraints, see later
         %and constraints
         %independent inputs and a \textit{vanishing condition}
         %$$\mathbb{E}_{X_j} (g_{S}(\xv_S)) = \int g_{S}(\xv_S) d \mathbb{P}(x_j) = 0, \forall j \in S, \forall S \subseteq \{1, \ldots, p\}$$
@@ -377,13 +378,27 @@ $\Rightarrow$ Degree of interaction in each node is \(|t|\).
 
 Here: $\fh(\xv) = g_0 + g_{2,4}(x_2, x_4) + g_{2,3}(x_2, x_3) + g_{1, 2, 4}(x_1, x_2, x_4)$
 
-Problem again is uniqueness? If only reading from decision tree using indicator functions, lower-order effects may be hidden inside higher-order terms? \\
+\textbf{Problem again: uniqueness} If only reading from decision tree using indicator functions, lower-order effects may be hidden inside higher-order terms? \\
 
-[Example for that, could also be used to explain necessity of constraints / problem of non-uniqueness]\\
+Above example: Decomposition no main effect, but model certainly contains main effect of e.g. $x_2$.\\
 
 \(\Rightarrow\) Solution for that in 
 \citebutton{Yang (2024)}{https://arxiv.org/abs/2410.19098} \(\Rightarrow\) Too complicated? Rather explain this in constraint-chapter or in other methods-chapter?
 }
+    
+\end{frame}
+
+\begin{frame}{Example: EBM}
+
+    \begin{itemize}
+        \item See before: \textbf{GAMs} have functional decomposition by definition
+        \item \textbf{Similar: EBMs} Use the final one- and two-dimensional components visualized in the end
+        \item \textit{copy EBM slide here}
+        \only<2>{
+        \item In general: Model with functional decomposition up to max. order 2 is always ``inherently interpretable''
+        \item \textbf{Reason:} Visualization of all components
+        } 
+    \end{itemize}
     
 \end{frame}
 
