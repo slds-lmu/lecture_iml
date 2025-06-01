@@ -57,10 +57,40 @@
         %For $|S| = 1$ this is equivalent to mean-centering the component $g_S(\xv_S)$. For $|S| > 1$
         \item Components are orthogonal (i.e., mutually independent and uncorrelated):
         $$\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \neq S$$
-        \item Variance can be decomposed:
+        \item Variance decomposition and Sobol indices:
     $ Var[\fh(\xv)] =  \textstyle\sum_{S \subseteq \{1,\ldots,p\}}  Var\left[ g_{S}(\xv_S)\right]$
     \end{itemize}
     
+\end{frame}
+
+\begin{frame}{Example revisited}
+\textbf{Example:} $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., for $x_1 = 5$ and $x_2 = 10$ we have $\fh(\xv) = -23$)
+
+\begin{itemize}
+    \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives:
+    \begin{columns}[c, totalwidth=\linewidth]
+    \begin{column}{0.75\textwidth}
+        \includegraphics[width = \textwidth]{figure/decomposition}
+    \end{column}
+    \begin{column}{0.25\textwidth}
+    For $x_1 = 5$ and $x_2 = 10$:\\
+    \begin{itemize}
+        \item $g_{\open \emptyset \close} = 2$
+        \item $g_{\open 1 \close}(x_1) = -9.67$
+        \item $g_{\open 2 \close}(x_2) = -65.33$
+        \item $g_{\open 1,2 \close}(x_1, x_2) = 50$
+        \item[$\Rightarrow$] $\fh(\xv) = -23$
+    \end{itemize}
+    \end{column}
+    \end{columns}
+% \pause
+    \item Vanishing condition means:
+    \begin{itemize}
+        \item $g_1$ and $g_2$ are mean-centered w.r.t. marginal distribution of $x_1$ and $x_2$
+        \item Integral of $g_{1,2}$ over marginal distribution $x_1$ (or $x_2$) is always 0.
+        %, i.e., for each slice at $x_1$ (and $x_2$), the integral of $g_{1,2}$ 
+    \end{itemize}
+\end{itemize} 
 \end{frame}
 
 \begin{frame}{...}
