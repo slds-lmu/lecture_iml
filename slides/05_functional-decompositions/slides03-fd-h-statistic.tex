@@ -13,7 +13,7 @@
 
 \newcommand{\titlefigure}{figure/h-statistic}
 \newcommand{\learninggoals}{
-\item Understand Friedman's H-statistic for two purposes:
+\item Friedman's H-statistic with two purposes:
 \item Measure general $k$-way interactions between arbitrary features
 \item Measure a single feature's overall interaction strength
 }
@@ -26,7 +26,7 @@
 \begin{frame}{Idea \citebutton{Friedman and Popescu (2008)}{https://doi.org/10.1214/07-AOAS148}}
 
     \textbf{2-way interaction:}
-    \begin{itemize}
+    \begin{itemize}[<+->]
         \item Two features $j$ and $k$ do not interact, if their 2-way interaction component in functional decomposition $g_{\{1,2\}}$ is 0
         \item Idea from standard fANOVA: PD-function contains all components:
         $$
@@ -68,7 +68,7 @@
 \begin{frame}{Idea \citebutton{Friedman and Popescu (2008)}{https://doi.org/10.1214/07-AOAS148}}
 
 \textbf{3-way interaction:}
-\begin{itemize}
+\begin{itemize}[<+->]
     \item \textbf{Definition:} $\fh$ contains no 3-way interactions between features $ i, j, k $, if corresponding 3-dimensional PD-function can be decomposed into lower-order terms:
     \begin{align*}
         \fh_{\{ijk\}, PD}(x_i, x_j, x_k)
@@ -101,15 +101,17 @@
     \item \textbf{Analogous} for general $k$-way interactions between features $S = \{ i_1, i_2, \dots, i_k \}$: No interactions, if
     \begin{align*}
         &\fh_{S, PD}( x_{i_1}, x_{i_2}, \dots, x_{i_k} )
-        = \sum_{V \subsetneq S} g_{V}(\xv_V)
+        = \sum_{V \subsetneqq S} g_{V}(\xv_V)
         = \sum_{\substack{V \subseteq S \\ |V|<k}} g_{V}(\xv_V)
     \end{align*}
 \end{itemize}
+\pause
 \textbf{Overall interaction:}
 \begin{itemize}
     \item Question: Does feature $j$ interact with any other feature at all?
     \item[$\Rightarrow$] Completely analogous to 2-way interactions, but for feature sets $S = \{j\}$ and $-S = \{1, \dots, p\}\setminus \{j\}$: \\
     % \item If feature $j$ does not interact with any other feature (denoted by index $-j$), the mean-centered prediction function can be decomposed by
+    \pause
     $$
     \fh(\xv) - g_\emptyset
     = \fh^c_{\{1, \dots, p\}, PD}(\xv)
@@ -128,9 +130,15 @@
 
 
 \begin{frame}{2-way Interaction Strength}
-\begin{itemize}
+\begin{itemize}[<+->]
     \item \textbf{Question:} How to measure interaction strength without computing functional decomposition components $g_S$?
     \item \textbf{Idea:} Only use centered PD-functions
+
+    $$
+    \fh_{\{jk\}, PD}^c(x_j, x_k)
+            = \fh^c_{j, PD}(x_j) + \fh^c_{k, PD}(x_k) \text{ ?}
+    $$
+    
     \item \textbf{H-statistic} for 2-way interaction between feature $j$ and $k$:
     \begin{align*}
     H^2_{jk}
@@ -160,25 +168,44 @@
 
 
 \begin{frame}{H-statistic: Examples}
-\textbf{Note:} Again, definition is usable without any probability or data distribution
+\textbf{Note:} Again, definition also usable without any probability or data distribution
 \begin{example}
-    \begin{multline*}
-    \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2
+    \begin{align*}
+    \fh(x_1, x_2) & = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2
     \quad (x_1, x_2) \in [0,1]^2 \\
-    \Rightarrow H^2_{12} =         
-    \end{multline*}    
+    % g_\emptyset = 2.95 + 0.3 e. \\
+    \fh^c_{1, PD}(x_1) & = -2x_1 + 0.5|x_1| + 0.75 \\
+    \fh^c_{2, PD}(x_2) & = 0.3 e^{x_2} + 0.5x_2 - 0.3e + 0.05 \\
+    \fh^c_{1,2;PD}(x_1, x_2) & = 1.05 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 - 0.3e \\
+    \only<2>{
+    \implies H^2_{12}
+    = & \frac{
+        \var \left[ \fh^c_{jk,PD}(X_j, X_k) - \fh^c_{j, PD}(X_j) - \fh^c_{k, PD}(X_k) \right]
+    }{ \var \left[ \fh^c_{jk,PD}(X_j, X_k) \right] }
+    % = \frac{
+    %     \mathbb{E} \left[ \left( \fh^c_{jk,PD}(X_j, X_k) - \fh^c_{j, PD}(X_j) - \fh^c_{k, PD}(X_k) \right)^2 \right]
+    % }{ \mathbb{E} \left[ \left( \fh^c_{jk,PD}(X_j, X_k) \right)^2 \right] }
+    \\
+    = & \frac{
+        \mathbb{E} \left[ \left( |x_1|x_2 - 0.5|x_1| - 0.5x_2 + 0.25 \right)^2 \right]
+    }{
+        \mathbb{E} \left[ \left( 1.05 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 - 0.3e \right)^2 \right]
+    }
+    > 0
+    }
+    \end{align*}    
 \end{example}
-\begin{example}
-    \textit{from in-class task}
-\end{example}
+% \begin{example}
+%     \textit{from in-class task}
+% \end{example}
 \end{frame}
 
 
 
 \begin{frame}{3-way Interaction Strength}
 \begin{itemize}
-    \item Same idea as for 2-way, but different formula (see before): \\
-    No interaction, if
+    \item Same idea as for 2-way, but different formula (see before): %\\
+    % No interaction, if
     \begin{align*}
         \fh^c_{\{ijk\}, PD}(x_i, x_j, x_k)
         =\; & \fh^c_{\{ij\}, PD}(x_i, x_j) + \fh^c_{\{ik\}, PD}(x_i, x_k) + \fh^c_{\{jk\}, PD}(x_j, x_k) \\
@@ -234,10 +261,10 @@ Measure interactions of a random forest for the bike data set
 \end{center}
 
 \pause
-\textbf{Remarks:}
+\textbf{Remarks and Conclusion:}
 \begin{itemize}
-    \item H-statistic provides general definition of interactions + algorithm \\
-    Also adjustable to classification / discrete function values
+    \item H-statistic provides \textbf{general definition} of interactions + algorithm \\
+    Also adjustable to classification / discrete features and / or function values
     \item For interaction order $k$ still needs $2^k-1$ PD-functions
     \item Statistical test for whether interactions are present can use this statistic
 \end{itemize}

@@ -20,29 +20,50 @@
 %- conditions + theory
 %- other methods (gen fANOVA, ALE)
 
-% \newcommand{\titlefigure}{figure/open_blackbox}
-\newcommand{\titlefigure}{figure/25-05-31_Hooker_2004_graph_fANOVA}
+\newcommand{\titlefigure}{figure/open_blackbox}
+% \newcommand{\titlefigure}{figure/25-05-31_Hooker_2004_graph_fANOVA}
 \newcommand{\learninggoals}{
 \item Basic idea of additive functional decompositions
 \item Motivation and usefulness of functional decompositions
-\item Difficulty of obtaining or even defining a functional decomposition}
+\item Difficulty of obtaining or even defining a functional decomposition
+\item Several examples
+}
 
 \lecturechapter{Introduction to Functional Decomposition}
 \lecture{Interpretable Machine Learning}
 
 
-\begin{frame}{Recap: interaction}
-    Recap: Interactions between features: The effect of some features on the prediction output depends on (one or more) other features \\
-    This cannot be captured by the main feature effects alone (i.e. by a GAM).
-    We want to know, which parts are attributed to effects of single features (s.o. feature effect methods), and which to interactions.
+\begin{frame}{Preliminaries}
 
-    Idea throughout the whole chapter: GAMs have decomposition into main effects and don't contain any interactions
+    \textbf{Recap: Interactions}
+    \begin{itemize}
+        \item Interactions between features: Effect of one feature on the prediction output depends on (one or more) other features
+        \item Definition: $f$ has interacting features $x_j, x_k$, if
+        $$
+        \mathbb{E} \left[ \left( \frac{\partial^2 f(\xv)}{\partial x_j \partial x_k} \right)^2 \right] > 0
+        $$
+    \end{itemize}
+    
+    \pause
+    \textbf{Recap: GAMs}
+    \begin{itemize}
+        \item Decomposition into only main effects
+        \item Do not contain any interactions
+    \end{itemize}
+    $$
+    \fh (\xv) = \theta_0 + g_1(x_1) + g_2(x_2) + \ldots + g_p(x_p)
+    $$
+    % Recap: Interactions between features: The effect of some features on the prediction output depends on (one or more) other features \\
+    % This cannot be captured by the main feature effects alone (i.e. by a GAM).
+    % We want to know, which parts are attributed to effects of single features (s.o. feature effect methods), and which to interactions.
 
-    \textit{
-    TO DO: After introducing PDPs and PD-functions more generally in chapter 3, we would want to introduce H-statistic as a measure / as a possible definition for interactions, maybe even in the general case (i.e. the H-statistic for testing for an \(n\)-way interaction between \(n\) many features). \\
-    First introduce the more general concept of \(k\)-way interactions between any \(k\) groups of variables. \\
-    Remember EBMs at this point: There, strong interactions were defined via reduction in RSS compared to a univariate model / a GAM -> exactly same idea / same formula
-    }
+    % Idea throughout the whole chapter: GAMs have decomposition into main effects and don't contain any interactions
+
+    % \textit{
+    % TO DO: After introducing PDPs and PD-functions more generally in chapter 3, we would want to introduce H-statistic as a measure / as a possible definition for interactions, maybe even in the general case (i.e. the H-statistic for testing for an \(n\)-way interaction between \(n\) many features). \\
+    % First introduce the more general concept of \(k\)-way interactions between any \(k\) groups of variables. \\
+    % Remember EBMs at this point: There, strong interactions were defined via reduction in RSS compared to a univariate model / a GAM -> exactly same idea / same formula
+    % }
 
 \end{frame}
 
@@ -57,10 +78,13 @@
     % The function \( \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \) depends on two features, and contains the interaction \( |x_1|x_2 \) between the two features.
 
     \begin{itemize}
+    
         \item Idea: Additive decomposition depending on which features used:
+        
+        \pause
         \begin{equation}\label{eq:func_decomp_first_min_example}
         \begin{aligned}
-            & g_0(x_1, x_2) = 4 & \text{ Part depending on no features at all (intercept)}  \\
+            & g_\emptyset(x_1, x_2) = 4 & \text{ Part depending on no features at all (intercept)}  \\
             &
             \left.\begin{aligned}
                 & g_1(x_1, x_2) = 2x_1 \\
@@ -70,14 +94,15 @@
             & g_{1,2}(x_1, x_2) = |x_1|x_2 & \text{ Part depending on both features (interaction)}  \\
         \end{aligned}
         % \begin{matrix}
-        %     g_0(x_1, x_2) = 4 &  \text{ Parts depending on no features at all (constant)}  \\
+        %     g_\emptyset(x_1, x_2) = 4 &  \text{ Parts depending on no features at all (constant)}  \\
         %     g_1(x_1, x_2) = 2x_1 & \text{ Parts depending on a single feature (main effects)} \\
         %     g_1(x_1, x_2) =  0.3 e^{x_2} & \\
         %     g_{1,2}(x_1, x_2) = |x_1|x_2 & \text{ Part depending on both features (interaction)}  \\
         % \end{matrix}
         \end{equation}
         \item[$\leadsto$] single terms with immediate interpretation, full understanding of the model
-        
+
+        \pause
         \item[$\leftrightarrow$] Not possible with effects of single features (e.g. PDPs) or GAM surrogate model (miss interaction part)
     
         % Using a GAM or looking at the effects of single features will not allow us to fully understand the function. 
@@ -98,34 +123,40 @@
     % Given a function / black-box model \(\fh: \R^2 \to \R\), we want to find a decomposition
 
     % \begin{equation}
-    %     \fh(x_1, x_2) =  g_{0} + g_1(x_1) + g_2(x_2) + g_{\open 1, 2 \close}(x_1, x_2)
+    %     \fh(x_1, x_2) =  g_\emptyset + g_1(x_1) + g_2(x_2) + g_{\open 1, 2 \close}(x_1, x_2)
     % \end{equation}
     
 % \end{frame}
 
-\begin{frame}{Another Example: Additive decomposition}
+\begin{frame}{Another example: Additive decomposition}
 
-\textbf{Goal} in general:
-Given a black-box model \(\fh: \R^2 \to \R\), find a decomposition
-\begin{equation}
-    \fh(x_1, x_2) =  g_{0} + g_1(x_1) + g_2(x_2) + g_{\open 1, 2 \close}(x_1, x_2)
-\end{equation}
-
-\textit{TO DO: Better use a real-world example, only image here necessary for illustration purposes}
-
-\begin{example}
-% \textbf{Example:}
-$\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., for $x_1 = 5$ and $x_2 = 10$ we get $\fh(\xv) = -23$)
-
-\begin{itemize}
-    \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives:
-        \includegraphics[width = \textwidth]{figure/decomposition}
-\end{itemize}
+    \textbf{Goal} in general:
+    Given a black-box model \(\fh: \R^2 \to \R\), find a decomposition
+    \begin{equation}
+        \fh(x_1, x_2) =  g_\emptyset + g_1(x_1) + g_2(x_2) + g_{\open 1, 2 \close}(x_1, x_2)
+    \end{equation}
     
-\end{example}
+    % \textit{TO DO: Better use a real-world example, only image here necessary for illustration purposes}
+
+    \pause
+    \begin{example}
+    % \textbf{Example:}
+    % $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., for $x_1 = 5$ and $x_2 = 10$ we get $\fh(\xv) = -23$)
+    
+    % \begin{itemize}
+    %     \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives:
+    %         \includegraphics[width = \textwidth]{figure/decomposition}
+    % \end{itemize}
+    
+    \includegraphics[width = \textwidth]{figure/decomposition}
+    
+    $\leadsto$ More details on this example later
+        
+    \end{example}
+    
 \end{frame}
 
-\begin{frame}{Another example}
+\begin{frame}{Another example: Additive decomposition}
 
     \begin{example}
 
@@ -137,9 +168,10 @@ $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., for $x_1 = 5$ and $x_2 = 1
 
         % We can again find the additive decomposition by reading from the functional formula, but some terms are empty, because certain types of effects and interactions are not present:
         Again, read additive decomposition from formula:
+        \pause
         \begin{equation}\label{eq:func_decomp_second_min_example}
         \begin{aligned}
-            & g_0(x_1, x_2, x_3) = 1 & \text{ constant part, no effects}  \\
+            & g_\emptyset(x_1, x_2, x_3) = 1 & \text{ constant part, no effects}  \\
             &
             \left.\begin{aligned}
                 & g_1(x_1, x_2, x_3) = - 2x_1 \\
@@ -157,7 +189,7 @@ $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., for $x_1 = 5$ and $x_2 = 1
             & g_{1,2,3}(x_1, x_2, x_3) = 0.5 x_1 x_2 x_3 & \text{ 3-way interactions}  \\
         \end{aligned}
         % \begin{matrix}
-        %     g_0(x_1, x_2) = 4 &  \text{ Parts depending on no features at all (constant)}  \\
+        %     g_\emptyset(x_1, x_2) = 4 &  \text{ Parts depending on no features at all (constant)}  \\
         %     g_1(x_1, x_2) = 2x_1 & \text{ Parts depending on a single feature (main effects)} \\
         %     g_1(x_1, x_2) =  0.3 e^{x_2} & \\
         %     g_{1,2}(x_1, x_2) = |x_1|x_2 & \text{ Part depending on both features (interaction)}  \\
@@ -192,7 +224,18 @@ $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., for $x_1 = 5$ and $x_2 = 1
 & \dots + g_{\open 1,\ldots,p \close}(x_1, \ldots, x_p)
 \end{split}
 \end{equation}
-%\vspace{-5pt}%\pause
+% \begin{equation}
+% \begin{split}
+% \fh(\xv) = &  %g_{\open \emptyset \close} +
+% \sum_{S \subseteq \{1,\ldots,p\}} g_{S}(\xv_S) \\
+% = & g_{\open \emptyset \close} +
+% g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \dots + g_{\open p \close}(x_p) + \\
+% & g_{\open 1, 2 \close}(x_1, x_2) + \dots + g_{\open p-1, p \close}(x_{p-1}, x_p) + \dots + \\
+% & g_{\open 1, 2, 3 \close}(x_1, x_2, x_3) + \dots +
+% g_{\open 1, 2, 3, 4 \close}(x_1, x_2, x_3, x_4) + \dots +
+% g_{\open 1,\ldots,p \close}(x_1, \ldots, x_p)
+% \end{split}    
+% \end{equation}
 $\leadsto$ one component for every possible combination $S$ of indices
 \end{definition}
 Sort terms according to degree of interaction:
@@ -205,121 +248,124 @@ Sort terms according to degree of interaction:
 \lz
 \end{frame}
 
-\begin{frame}{General Form of Functional Decomposition
-%\\
-%\citebutton{Sobol (1993)}{http://www.andreasaltelli.eu/file/repository/sobol1993.pdf}
-% \citebutton{Sobol (2003)}{https://doi.org/10.1016/S0951-8320(02)00229-6}
-%\citebutton{Li et al. (2001)}{https://doi.org/10.1021/jp010450t}
-\citebutton{Li and Rabitz (2011)}{https://doi.org/10.1007/s10910-011-9898-0}
-\citebutton{Chastaing et al. (2012)}{https://doi.org/10.1214/12-EJS749}
-}
 
-%\textbf{High-Dimensional Model Representation (HDMR):} 
 
-\begin{definition}
-% For interpretation purposes, one might be interested in decomposing a square-integrable function $\fh: \R^p \mapsto \R$ into sum of components of different dimensions w.r.t. inputs $x_1, \ldots, x_p$: %
-\textit{Functional decomposition}: Additive decomposition of a function $\fh: \R^p \mapsto \R$ into a sum of components of different dimensions w.r.t. inputs $x_1, \ldots, x_p$: \\
-\begin{equation}
-\begin{split}
-\fh(\xv) = &  %g_{\open \emptyset \close} +
-\sum_{S \subseteq \{1,\ldots,p\}} g_{S}(\xv_S) \\
-= & g_{\open \emptyset \close} +
-g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \dots + g_{\open p \close}(x_p) + \\
-& g_{\open 1, 2 \close}(x_1, x_2) + \dots + g_{\open p-1, p \close}(x_{p-1}, x_p) + \dots + \\
-& g_{\open 1, 2, 3 \close}(x_1, x_2, x_3) + \dots +
-g_{\open 1, 2, 3, 4 \close}(x_1, x_2, x_3, x_4) + \dots +
-g_{\open 1,\ldots,p \close}(x_1, \ldots, x_p)
-\end{split}    
-\end{equation}
-%\vspace{-5pt}%\pause
-$\leadsto$ one component for every possible combination $S$ of indices
-\end{definition}
-Sort terms according to degree of interaction:
-\begin{itemize}
-\item $g_{\open \emptyset \close} \hat = $ Constant mean (intercept) %$\mathbb{E}_X (\fh(\xv)) $
-\item $g_{\open j \close} \hat = $ first-order or main effect of $j$-th feature alone on $\fh(\xv)$
-\item $g_{\open j, k \close} \hat = $ second-order interaction effect of features $j$ and $k$ w.r.t. $\fh(\xv)$%, etc.
-\item $g_{S}(\xv_S) \hat = $ $|S|$-order effect, depends \textbf{only} on features in $S$ %$x_j$ for all $j \in S$
-\end{itemize}
-\lz
-\end{frame}
+% \begin{frame}{Functional Decomposition -- Example}
+% \textit{TO DO: Use the following example in standard fANOVA chapter, here something else, maybe real-world dataset}
+% \end{frame}
 
-\begin{frame}{Functional Decomposition -- Example}
-\textit{TO DO: Use the following example in standard fANOVA chapter, here something else, maybe real-world dataset}
-\end{frame}
+% \begin{frame}{Functional Decomposition -- Example}
+% \textbf{Example:} $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., if $x_1 = 5$ and $x_2 = 10$ $\Rightarrow$ $\fh(\xv) = -23$)
 
-\begin{frame}{Functional Decomposition -- Example}
-\textbf{Example:} $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., if $x_1 = 5$ and $x_2 = 10$ $\Rightarrow$ $\fh(\xv) = -23$)
-
-\begin{itemize}
-    \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives:
-    \begin{columns}[c, totalwidth=\linewidth]
-    \begin{column}{0.75\textwidth}
-        \includegraphics[width = \textwidth]{figure/decomposition}
-    \end{column}
-    \begin{column}{0.25\textwidth}
-    For $x_1 = 5$ and $x_2 = 10$:\\
-    \begin{itemize}
-        \item $g_{\open \emptyset \close} = 2$
-        \item $g_{\open 1 \close}(x_1) = -9.67$
-        \item $g_{\open 2 \close}(x_2) = -65.33$
-        \item $g_{\open 1,2 \close}(x_1, x_2) = 50$
-        \item[$\Rightarrow$] $\fh(\xv) = -23$
-    \end{itemize}
-    \end{column}
-    \end{columns}
-\pause
-    \item Vanishing condition means:
-    \begin{itemize}
-        \item $g_1$ and $g_2$ are mean-centered w.r.t. marginal distribution of $x_1$ and $x_2$
-        \item Integral of $g_{1,2}$ over marginal distribution $x_1$ (or $x_2$) is always 0.
-        %, i.e., for each slice at $x_1$ (and $x_2$), the integral of $g_{1,2}$ 
-    \end{itemize}
-\end{itemize} 
-\end{frame}
+% \begin{itemize}
+%     \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives:
+%     \begin{columns}[c, totalwidth=\linewidth]
+%     \begin{column}{0.75\textwidth}
+%         \includegraphics[width = \textwidth]{figure/decomposition}
+%     \end{column}
+%     \begin{column}{0.25\textwidth}
+%     For $x_1 = 5$ and $x_2 = 10$:\\
+%     \begin{itemize}
+%         \item $g_{\open \emptyset \close} = 2$
+%         \item $g_{\open 1 \close}(x_1) = -9.67$
+%         \item $g_{\open 2 \close}(x_2) = -65.33$
+%         \item $g_{\open 1,2 \close}(x_1, x_2) = 50$
+%         \item[$\Rightarrow$] $\fh(\xv) = -23$
+%     \end{itemize}
+%     \end{column}
+%     \end{columns}
+% \pause
+%     \item Vanishing condition means:
+%     \begin{itemize}
+%         \item $g_1$ and $g_2$ are mean-centered w.r.t. marginal distribution of $x_1$ and $x_2$
+%         \item Integral of $g_{1,2}$ over marginal distribution $x_1$ (or $x_2$) is always 0.
+%         %, i.e., for each slice at $x_1$ (and $x_2$), the integral of $g_{1,2}$ 
+%     \end{itemize}
+% \end{itemize} 
+% \end{frame}
 
 \begin{frame}{Properties of the definition}
 \begin{itemize}
-    \item \textbf{Interpretability}:
-    Compare to GAM: The same decomposition is used, but in case of GAM, no interactions at all are considered, only main effects. I.p. any GAM already comes with its decomposition! \\
-    Same for linear models / linear regression and GLMs: The decomposition is explicitly modeled and directly follows from the model structure.
-
-    Somewhat similar for decision trees and tree ensembles (see below)
-    Super nice and extremely powerful decomposition! "Holy Gral of interpreting complex models"\\
-    BUT 2 Problems:
+    \item \textbf{Interpretability}: Extremely powerful decomposition, reveals complete interaction structure
+    \pause
+    \item Compare to GAM: Same decomposition, but without interactions \\
+    $\implies$ Any GAM already comes with its decomposition
+    $$
+    \fh (\xv) = g_\emptyset + g_1(x_1) + g_2(x_2) + \ldots + g_p(x_p)
+    $$
+    \item Same for LMs: Decomposition explicitly modeled
+    \pause
+    \item Easy decomposition also for decision trees and tree ensembles (see below)
+    \pause
+    \item \textbf{Problem 1:} Calculating decomposition extremely difficult, often infeasible
     \begin{itemize}
-        \item Definition not complete, such decomposition is not unique, and many trivial decompositions are not useful at all (see next slide) \\
-            This problem get's much worse, whenever features are not independent \\
-        \textbf{N.B.:} %Further constraints are required to obtain an unique and optimal solution for the components
-        A unique solution for the components only exists under certain assumptions $\leadsto$ constraints, see later
+        \item For \(p\) features: Decomposition with \(2^p\) terms \(\rightarrow\) too many different terms, difficult to interpret
+    \end{itemize}
+    \pause
+    \item \textbf{Problem 2:} Definition not complete: Decomposition not unique, many trivial decompositions not useful
+    \begin{itemize}
+        \item[$\rightarrow$] More requirements or constraints needed to ensure decomposition is meaningful
+        \item Even worse once features are dependent or correlated (see later)
+    \end{itemize}
+    % This 
+    % Compare to GAM: The same decomposition is used, but in case of GAM, no interactions at all are considered, only main effects. I.p. any GAM already comes with its decomposition! \\
+    % Same for linear models / linear regression and GLMs: The decomposition is explicitly modeled and directly follows from the model structure.
+
+    % Somewhat similar for decision trees and tree ensembles (see below)
+    % Super nice and extremely powerful decomposition! "Holy Gral of interpreting complex models"\\
+    % BUT 2 Problems:
+    % \begin{itemize}
+    %     \item Definition not complete, such decomposition is not unique, and many trivial decompositions are not useful at all (see next slide) \\
+    %         This problem get's much worse, whenever features are not independent \\
+    %     \textbf{N.B.:} %Further constraints are required to obtain an unique and optimal solution for the components
+    %     A unique solution for the components only exists under certain assumptions $\leadsto$ constraints, see later
         %and constraints
         %independent inputs and a \textit{vanishing condition}
         %$$\mathbb{E}_{X_j} (g_{S}(\xv_S)) = \int g_{S}(\xv_S) d \mathbb{P}(x_j) = 0, \forall j \in S, \forall S \subseteq \{1, \ldots, p\}$$
         %Without further constraints on components, there is no unique solution.
         %\end{itemize}
-        \item Calculating such a decomposition is super, super hard in practice \\
-            See for example: For \(p\) features, the decomposition has \(2^p\) terms \(\Rightarrow\) not very meaningful to interpret so many different terms \\
-    \end{itemize}
+    %     \item Calculating such a decomposition is super, super hard in practice \\
+    %         See for example: For \(p\) features, the decomposition has \(2^p\) terms \(\Rightarrow\) not very meaningful to interpret so many different terms \\
+    % \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Problem: Definition alone not enough}
+\begin{frame}{Problem 2: Definition not enough}
 
-    [an example showing that constraints are needed]
-
-    Use $g_{1, \dots, p}(x_1, \dots, x_p) := \fh(\xv)$ and $g_S(\xv_S) := 0$ for all other terms
-    \\
-    \(\Rightarrow\) The formula from above do not define a unique decomposition, and we need more requirements / constraints to uniquely define a decomposition that is meaningful
-    \\
-    This problem get's even worse once features are dependent or correlated \(\Rightarrow\) see later
+    \begin{example}
+        Again consider
+        $$
+        \fh(x_1, x_2, x_3) = - 2x_1 - 2\sin(x_3) + |x_1|x_2 + 0.5 x_1 x_2 x_3 - \sin(x_2 x_3) + 1
+        $$
+        \pause
+        Two possible decompositions:
+        $$
+            g_{1, \dots, p}(x_1, \dots, x_p) := \fh(\xv) \text{ and for all other terms } g_S(\xv_S) := 0 ,
+        $$
+        or:
+        \begin{align*}
+            g_\emptyset & = 1 \,;\quad
+            g_1(x_1) = x_1 \,;\;
+            g_2(x_2) = 2x_2 \,;\;
+            g_3(x_3) = 3x_3 \,;\quad \\
+            g_{1,2}(x_1, x_2) & = \frac{1}{2} x_1 x_2 \,;\;
+            g_{1,3}(x_1, x_3) = \frac{1}{3} x_1 x_3 \,;\;
+            g_{2,3}(x_2, x_3) = \frac{2}{3} x_2 x_3 \,;\; \\
+            \text{ and} \quad
+            & g_{1,2,3}(x_1, x_2, x_3) = \fh(x_1, x_2, x_3) - \sum_{S \subsetneqq \{1,2,3\}} g_S(\xv_S)
+        \end{align*}
+    \end{example}
+    % Use $g_{1, \dots, p}(x_1, \dots, x_p) := \fh(\xv)$ and $g_S(\xv_S) := 0$ for all other terms
+    \pause
+    \(\implies\) Definition of decomposition not unique \\
     
 \end{frame}
 
 \begin{frame}{Example: Decision Trees}
 
+\only<1,2>{
 Define \textit{interaction type $t$} of a node: subset of features involved in constructing this node.
 
-\only<1,2>{
 \textbf{Example:}
 
 \begin{center}
@@ -374,28 +420,44 @@ Define \textit{interaction type $t$} of a node: subset of features involved in c
 \only<2>{
 $\Rightarrow$ Degree of interaction in each node is \(|t|\).
 }
-
-\only<3>{
-[show that one decision tree directly comes with its functional decomposition using indicator functions]\\
-
-Here: $\fh(\xv) = g_0 + g_{2,4}(x_2, x_4) + g_{2,3}(x_2, x_3) + g_{1, 2, 4}(x_1, x_2, x_4)$
-
-\textbf{Problem again: uniqueness} If only reading from decision tree using indicator functions, lower-order effects may be hidden inside higher-order terms? \\
-
-Above example: Decomposition no main effect, but model certainly contains main effect of e.g. $x_2$.\\
-
-\(\Rightarrow\) Solution for that in 
-\citebutton{Yang (2024)}{https://arxiv.org/abs/2410.19098} \(\Rightarrow\) Too complicated? Rather explain this in constraint-chapter or in other methods-chapter?
-}
     
 \end{frame}
+
+\begin{frame}{Decomposition for Decision Trees}
+    
+% [show that one decision tree directly comes with its functional decomposition using indicator functions]\\
+
+Here: Decomposition via indicator functions
+$$
+\fh(\xv) = g_\emptyset + g_{2,4}(x_2, x_4) + g_{2,3}(x_2, x_3) + g_{1, 2, 4}(x_1, x_2, x_4)
+$$
+$\implies$ Decomposition no main effect, but model certainly contains an effect of e.g. $x_2$
+
+$\implies$ Lower-order effects hidden inside higher-order terms
+
+$\leadsto$ reading from decision tree not enough, ``bad decomposition''
+
+% \textbf{Problem again: uniqueness} If only reading from decision tree using indicator functions, lower-order effects may be hidden inside higher-order terms? \\
+
+% Above example: Decomposition no main effect, but model certainly contains main effect of e.g. $x_2$.\\
+
+\pause
+\textbf{Note:} \citebutton{Yang (2024)}{https://arxiv.org/abs/2410.19098} propose a (quite complicated) solution for this case
+% \(\Rightarrow\) Too complicated? Rather explain this in constraint-chapter or in other methods-chapter?
+
+\end{frame}
+
+
 
 \begin{frame}{Example: EBM}
 
     \begin{itemize}
         \item See before: \textbf{GAMs} have functional decomposition by definition
-        \item \textbf{Similar: EBMs} Use the final one- and two-dimensional components visualized in the end
-        \item \textit{copy EBM slide here}
+        \item \textbf{Similar: EBMs} Use the final one- and two-dimensional components % visualized in the end
+        {
+        \centering
+        \includegraphics[width=\linewidth]{figure/final_ebm.png}
+        }
         \only<2>{
         \item In general: Model with functional decomposition up to max. order 2 is always ``inherently interpretable''
         \item \textbf{Reason:} Visualization of all components
@@ -404,18 +466,11 @@ Above example: Decomposition no main effect, but model certainly contains main e
     
 \end{frame}
 
-\begin{frame}{High-dimensional modl representation (HDMR)}
-    [explain link to HDMR?? Or at end of chapter ?]
+% \begin{frame}{High-dimensional modl representation (HDMR)}
+%     [explain link to HDMR?? Or at end of chapter ?]
 
-    same for Sobol-Hoeffding decomposition
-\end{frame}
-
-
-
-
-
-
-
+%     same for Sobol-Hoeffding decomposition
+% \end{frame}
 
 \endlecture
 \end{document}

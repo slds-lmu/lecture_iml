@@ -13,26 +13,32 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/open_blackbox}
+% \newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\titlefigure}{figure/25-05-31_Hooker_2004_graph_fANOVA}
 \newcommand{\learninggoals}{
-\item Understand one classical kind of functional decomposition: functional ANOVA (fANOVA).
-\item [...]
-\item Algorithm for calculating the components in a fANOVA}
+\item One method for functional decomposition: Classical functional ANOVA (fANOVA).
+\item Algorithm for calculating the components in a fANOVA
+\item Variance decomposition in fANOVA
+}
 
 \lecturechapter{Functional ANOVA}
 \lecture{Interpretable Machine Learning}
 
-\begin{frame}{??? History of fANOVA ?????}
+\begin{frame}{History of fANOVA}
 
-@ Sobol-Hoeffding Decomposition: erstes Paper von (Sobol? Hoeffding?) in 1950, nur im Unit Cube, allererste HDMR \\
+\begin{itemize}
+    \item Since 1940's: Developed under different names in mathematics and sensitivity analysis
+    \item Since 1990's: Developed for probability distributions or statistical data
+    \item Since 2000's: Applied to machine learning, subsequently alternatives developed extending applicability
+\end{itemize}
 
-Sobol in 90'ern
+% @ Sobol-Hoeffding Decomposition: erstes Paper von (Sobol? Hoeffding?) in 1950, nur im Unit Cube, allererste HDMR \\
 
-Sensitivity analysis
+% Sobol in 90'ern
 
-Hooker paper
+% Sensitivity analysis
 
-
+% Hooker paper
     
 \end{frame}
 
@@ -66,17 +72,22 @@ Hooker paper
         \item One possible method to obtain functional decomposition
         \item \textbf{Assumption}: Independent features
         \item Example:
-        \begin{equation}
+        \begin{equation*}
             \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2
-        \end{equation}
-        \item \textbf{First idea:} Make sure higher-order terms don't contain these lower-order terms \\
-        \(\Rightarrow\) First compute lower-order terms, then higher-order terms.
+        \end{equation*}
+        \pause
+        \item \textbf{First idea:} Make sure higher-order terms don't contain lower-order terms \\
+        \(\Rightarrow\) First compute lower-order terms, then higher-order terms. \\
+        % \pause
         % \item \textbf{Question:} How to compute lower-order terms? \\
-        \(\leadsto\) Feature effect methods for main effects, here: PDP
-        \item \textbf{Second idea:} Compute main effects using feature effect methods, here: PDP
-        \item \textbf{Idea for fANOVA:} general PD-function $\fh_{S;PD} =$ sum of all components up to this order
-        \item \textbf{Remember:} Idea of PDPs or general PD-functions: \\
-        Average out all other features
+        % \(\leadsto\) First step: Use feature effect methods for main effects, here: PDP
+        \pause
+        \item \textbf{Second idea:} In first step, compute main effects using feature effect methods \\
+        Here: PDP + more general PD-functions
+        \pause
+        \item \textbf{Idea for fANOVA:} PD-function $\fh_{S;PD} =$ sum of all components $g_{\tilde{S}}$ up to this order
+        \pause
+        \item \textbf{Remember:} \\ Idea of PDPs or general PD-functions: Average out all other features
         \item[$\Rightarrow$] Total formula for calculating the components \(g_S\) in the fANOVA algorithm:
         \begin{equation*}
             g_{S} (\xv_S) = (\text{average out all features not contained in } S) - (\text{All lower-order components})
@@ -100,36 +111,58 @@ Hooker paper
 \begin{definition}
     Recursive computation using PD-functions \\
     (here $-S = \{1, \ldots, p \} \setminus S$ denotes all indices not contained in \(S\)):
-    $$
+    \begin{align*}
     g_{S}(\xv_S)
-    = \fh_{S;PD}(\xv_S) - \sum_{V \subset S} g_V(\xv_V)
-    % = \mathbb{E}_{\Xv_{-S}} \left[\fh(\xv_S, \Xv_{-S}) \; \middle\vert \; \xv_S \right] - \sum_{V \subset S} g_V(\xv_V)
-    = \mathbb{E}_{\Xv_{-S}} \left[ \; \fh(\xv_S, \Xv_{-S}) \; \right] - \sum_{V \subset S} g_V(\xv_V)
-    $$
+        & = \fh_{S;PD}(\xv_S) - \sum_{V \subsetneqq S} g_V(\xv_V)
+        % = \mathbb{E}_{\Xv_{-S}} \left[\fh(\xv_S, \Xv_{-S}) \; \middle\vert \; \xv_S \right] - \sum_{V \subsetneqq S} g_V(\xv_V)
+        = \mathbb{E}_{\Xv_{-S}} \left[ \; \fh(\xv_S, \Xv_{-S}) \; \right] - \sum_{V \subsetneqq S} g_V(\xv_V) \\
+        & = \int \fh(\xv_S, \xv_{-S}) d \mathbb{P}(\xv_{-S}) - \sum_{V \subsetneqq S} g_V(\xv_V)
+    \end{align*}
 \end{definition}
 
 \begin{itemize}
     \item Expectation integrates $\fh(\xv)$ over all input features except $\xv_S$
-    % \item Subtract all components $g_V$ with $V \subset S$ to remove all lower-order effects and center the effect
+    % \item Subtract all components $g_V$ with $V \subsetneqq S$ to remove all lower-order effects and center the effect
     \item Subtract sum of $g_V$ to remove all lower-order effects and center the effect
-\pause
-\item Recursive computation:
-\begin{align*}
- g_{\open \emptyset \close} &= \mathbb{E}_X\left[\fh(\xv)\right] \\
- g_{\open j \close}(x_j) &= \mathbb{E}_{X_{-j}}\left[\fh(\xv) \; \vert  \; x_j \right] - g_{\open \emptyset \close}, \; \forall j \in \{1, \ldots, p\} \\% \text{ and } g_{\open 2 \close}(x_2) = \mathbb{E}_{X_{-2}}\left[\fh(\xv) \; \vert  \; x_2 \right] - g_{\open \emptyset \close}  \\
- %g_{\open 2 \close}(x_2) &= \mathbb{E}_{X_{-2}}\left[\fh(\xv) \; \vert  \; x_2 \right] - g_{\open \emptyset \close} \\
- % g_{\open j, k \close}(x_j, x_k)
- % &= \mathbb{E}_{X_{-\{ j,k \}}}\left[\fh(\xv) \; \vert \; x_j, x_k \right] - g_{\open k \close}(x_k) - g_{\open j \close}(x_j) - g_{\open \emptyset \close}, \; \forall j < k\\%,  \text{ etc.}\\
- &\vdots \\
- g_{\open 1, \dots, p \close}(\xv)
- &= \fh(\xv) -
- \textstyle\sum_{S \subsetneqq \{1,\ldots,p\}} g_{S}(\xv_S) \\
- &= \fh(\xv) -
- %\textstyle\sum_{S \subsetneqq \{1,\ldots,p\}} g_{S}(\xv_S) 
- g_{\open 1, \dots, p-1 \close}(x_{1}, \dots x_{p-1}) - \dots - g_{\open 1, 2 \close}(x_1, x_2)
- %&\phantom{{}={}} 
- - g_{\open p \close}(x_p)  - \dots - g_{\open 2 \close}(x_2) - g_{\open 1 \close}(x_1) - g_{\open \emptyset \close}
-\end{align*}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Formal Definition and Computation
+\citebutton{Hooker (2004)}{https://dl.acm.org/doi/10.1145/1014052.1014122}
+}
+
+% Components are recursively defined using marginals (here $-S = \{1, \ldots, p \} \setminus S$ denotes the set of all indizes not contained in \(S\)):
+\begin{definition}
+    Recursive computation using PD-functions \\
+    (here $-S = \{1, \ldots, p \} \setminus S$ denotes all indices not contained in \(S\)):
+    \begin{align*}
+    g_{S}(\xv_S)
+        & = \fh_{S;PD}(\xv_S) - \sum_{V \subsetneqq S} g_V(\xv_V)
+        % = \mathbb{E}_{\Xv_{-S}} \left[\fh(\xv_S, \Xv_{-S}) \; \middle\vert \; \xv_S \right] - \sum_{V \subsetneqq S} g_V(\xv_V)
+        = \mathbb{E}_{\Xv_{-S}} \left[ \; \fh(\xv_S, \Xv_{-S}) \; \right] - \sum_{V \subsetneqq S} g_V(\xv_V)
+    \end{align*}
+\end{definition}
+
+\begin{itemize}
+    % \pause
+    \item Recursive computation:
+    \begin{align*}
+        g_{\open \emptyset \close} &= \mathbb{E}_\Xv\left[\fh(\Xv)\right] \\
+        g_{\open j \close}(x_j) &= \mathbb{E}_{\Xv_{-j}}\left[\fh(\Xv) \; \vert  \; X_j = x_j \right] - g_{\open \emptyset \close}, \; \forall j \in \{1, \ldots, p\} \\% \text{ and } g_{\open 2 \close}(x_2) = \mathbb{E}_{X_{-2}}\left[\fh(\xv) \; \vert  \; x_2 \right] - g_{\open \emptyset \close}  \\
+        %g_{\open 2 \close}(x_2) &= \mathbb{E}_{X_{-2}}\left[\fh(\xv) \; \vert  \; x_2 \right] - g_{\open \emptyset \close} \\
+        % g_{\open j, k \close}(x_j, x_k)
+        % &= \mathbb{E}_{X_{-\{ j,k \}}}\left[\fh(\xv) \; \vert \; x_j, x_k \right] - g_{\open k \close}(x_k) - g_{\open j \close}(x_j) - g_{\open \emptyset \close}, \; \forall j < k\\%,  \text{ etc.}\\
+        & \vdots \\
+        g_{\open 1, \dots, p \close}(\xv)
+        & = \fh(\xv) -
+        \textstyle\sum_{S \subsetneqq \{1,\ldots,p\}} g_{S}(\xv_S) \\
+        & = \fh(\xv) -
+        %\textstyle\sum_{S \subsetneqq \{1,\ldots,p\}} g_{S}(\xv_S) 
+        g_{\open 1, \dots, p-1 \close}(x_{1}, \dots x_{p-1}) - \dots - g_{\open 1, 2 \close}(x_1, x_2) \\
+        %&\phantom{{}={}} 
+        & \quad - g_{\open p \close}(x_p)  - \dots - g_{\open 2 \close}(x_2) - g_{\open 1 \close}(x_1) - g_{\open \emptyset \close}
+    \end{align*}
 
 \end{itemize}
         
@@ -166,7 +199,7 @@ Hooker paper
 \end{itemize} 
 \end{frame}
 
-\begin{frame}{Example}
+\begin{frame}{Standard fANOVA - Example}
 
 \textit{In-class task}
 
@@ -187,20 +220,23 @@ Hooker paper
 \begin{frame}{Standard fANOVA - Example revisited}
 
 \begin{example}
+
     % $$
     % \fh(x_1, x_2) = x_1^2 + \sin(\pi x_1) \cos(\pi x_2)
     % \qquad (x_1, x_2) \in [0,2]^2,
     % $$
+    
     $$
         \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \qquad (x_1, x_2) \in [0,1]^2 \qquad \text{uniformly distributed}
     $$
+    
     \begin{itemize}
         \item
         \only<1>{
         \textbf{Intercept:}
         \begin{align*}
         g_\emptyset
-        &= %\E\left[ \fh(x_1, x_2) \right]
+        &= \mathbb{E} \Bigl[ \fh(x_1, x_2) \Bigr]
         = \int_0^1 \! \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_1\,dx_2 \\
         &= 4
             - \Bigl( \int_0^1 2x_1 \,dx_1 \Bigr)
@@ -217,23 +253,23 @@ Hooker paper
         \textbf{First-order components:}
         \begin{align*}
         g_{1}(x_1)
-        &= \fh_{1;PD}(x_1) - g_\emptyset \\
-        &= \Bigl( \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_2 \Bigr) - g_\emptyset \\
+        &= \fh_{1;PD}(x_1) - g_\emptyset 
+        = \Bigl( \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_2 \Bigr) - g_\emptyset \\
         &= 4 - 2x_1 + 0.3 (e-1) + |x_1| \cdot \frac{1}{2} - (2.95 + 0.3e) \\
-        &= -2x_1 + 0.5|x_1| + 0.75
-        \end{align*}
-        }
-        \only<3>{
-        \textbf{First-order components:}
-        \begin{align*}
+        &= -2x_1 + 0.5|x_1| + 0.75 \\
+        % \end{align*}
+        % }
+        % \only<2>{
+        % \textbf{First-order components:}
+        % \begin{align*}
         g_{2}(x_2)
-        &= \fh_{2;PD}(x_2) - g_\emptyset \\
-        &= \Bigl( \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_1  \Bigr) - g_\emptyset \\
+        &= \fh_{2;PD}(x_2) - g_\emptyset 
+        = \Bigl( \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_1  \Bigr) - g_\emptyset \\
         &= 4 - 1 + 0.3 e^{x_2} + \frac{1}{2} \cdot x_2 - (2.95 + 0.3e) \\
         &= 0.3 e^{x_2} + 0.5x_2 - 0.3e + 0.05
         \end{align*}
         }
-        \only<4>{
+        \only<3>{
         \textbf{Second-order component:}
         \begin{align*}
         g_{12}(x_1, x_2)
@@ -246,31 +282,6 @@ Hooker paper
         \item[$\Rightarrow$] Parts of interaction term attributed to main effects (correctly!)
         }
         
-% \paragraph{Step 2. First‐order terms.}
-% \[
-% f_x(x)
-% = \int_0^1 f(x,y)\,dy - f_\emptyset
-% = \sin(\pi x)\,\underbrace{\int_0^1\cos(\pi y)\,dy}_{=0}
-% = 0,
-% \]
-% and similarly $f_y(y)=0$.
-
-% \paragraph{Step 3. Interaction term.}
-% \[
-% f_{xy}(x,y)
-% = f(x,y) - f_\emptyset - f_x(x) - f_y(y)
-% = \sin(\pi x)\cos(\pi y).
-% \]
-
-% \paragraph{Step 4. Variance decomposition.}
-% \[
-% \text{Var}(f)
-% = \int_0^1\!\int_0^1 \sin^2(\pi x)\cos^2(\pi y)\,dy\,dx
-% = \Bigl(\tfrac12\Bigr)\Bigl(\tfrac12\Bigr)
-% = \tfrac14.
-% \]
-% Since $f_{xy}=f$ and all lower‐order terms vanish, the entire variance
-% $\tfrac14$ is contributed by the interaction term. \hfill\(\Box\)
     \end{itemize}
 \end{example}
     
@@ -328,7 +339,7 @@ If features independent $\Rightarrow$ additive decomposition of variance of $\fh
 % \end{itemize}
 % \end{frame}
 
-In other words: Single components uncorrelated
+In other words: Single components uncorrelated (see later)
 
 % \begin{frame}{Variance decomposition}
 
@@ -346,7 +357,7 @@ In other words: Single components uncorrelated
 $$
 S_V = \frac{\var\left[g_{\open V \close}(\xv_V)\right]}{\var\left[\hat{f}(\xv)\right]}
 $$
-$\leadsto$ Possible importance measure of component $g_{\open V \close}(\xv_V)$\\
+$\leadsto$ Usable as importance measure of component $g_{\open V \close}(\xv_V)$\\
 % $\leadsto$ Small $S_V$ values $\Rightarrow$ Component $g_{\open V \close}$ does not explain much of total variance of $\fh$
 \end{itemize}
 

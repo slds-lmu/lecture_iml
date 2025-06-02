@@ -13,13 +13,16 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/open_blackbox}
+% \newcommand{\titlefigure}{figure/open_blackbox}
+\newcommand{\titlefigure}{figure/25-05-31_Hooker_2004_graph_fANOVA}
 \newcommand{\learninggoals}{
-\item Understanding why fANOVA theoretically works and what constraints it satisfies
-\item Understand the important role further constraints play for any functional decomposition?
-\item ??}
+\item Properties of classical fANOVA, reason for its popularity
+\item Equivalent definition of classical fANOVA
+% \item Understanding why fANOVA theoretically works and what constraints it satisfies
+\item Understand the role constraints play for any functional decomposition
+}
 
-\lecturechapter{Theory of Functional Decompositions}
+\lecturechapter{Theory of Standard fANOVA}
 \lecture{Interpretable Machine Learning}
 
 \begin{frame}{Example: fANOVA Algorithm}
@@ -71,7 +74,7 @@
         For any component $g_{S}$, all its PD-functions are 0:
         $$
         \mathbb{E}_{X_V}\left[ g_{S}(\xv_S) \right]
-        = \int g_{S}(\xv_S) d \mathbb{P}(\xv_V) = 0 \quad \text{for any } V \subsetneq S \text{ and } S \subseteq \{1, \ldots, p\}
+        = \int g_{S}(\xv_S) d \mathbb{P}(\xv_V) = 0 \quad \text{for any } V \subsetneqq S \text{ and } S \subseteq \{1, \ldots, p\}
         $$
         $\leadsto$ $g_{S}$ contains no lower-order effects, but only pure interaction term \\
         (compare H-statistic)
@@ -133,9 +136,14 @@
             \item[$\implies$] Same for constant terms inside $g_1$ and $g_2$: Ensure centering
         \end{itemize}
     \end{example}
-    
+
+    \pause
     \begin{example}
-        from in-class task
+        From in-class exercise:
+        $
+        g(x_1,x_2)
+         = \beta_{12}\,(x_1-\mu_1)(x_2-\mu_2)
+        $
     \end{example}
     
 \end{frame}
@@ -148,7 +156,7 @@
 
 \begin{frame}{Constraints: Equivalent characterization}
 
-    \begin{itemize}
+    \begin{itemize}[<+->]
     
         \item So far: Definition of standard fANOVA implies vanishing conditions
         \item Opposite is true as well: \\
