@@ -24,12 +24,14 @@
 \lecturechapter{Functional ANOVA}
 \lecture{Interpretable Machine Learning}
 
-\begin{frame}{History of fANOVA}
+\begin{frame}{Introduction and History of fANOVA}
 
 \begin{itemize}
+    \item One possible method to obtain functional decomposition
     \item Since 1940's: Developed under different names in mathematics and sensitivity analysis
     \item Since 1990's: Developed for probability distributions or statistical data
     \item Since 2000's: Applied to machine learning, subsequently alternatives developed extending applicability
+    \item \textbf{Assumption}: Independent features
 \end{itemize}
 
 % @ Sobol-Hoeffding Decomposition: erstes Paper von (Sobol? Hoeffding?) in 1950, nur im Unit Cube, allererste HDMR \\
@@ -69,8 +71,6 @@
 \begin{frame}{Standard fANOVA: Idea}
 
     \begin{itemize}
-        \item One possible method to obtain functional decomposition
-        \item \textbf{Assumption}: Independent features
         \item Example:
         \begin{equation*}
             \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2
@@ -130,6 +130,7 @@
     \item Expectation integrates $\fh(\xv)$ over all input features except $\xv_S$
     % \item Subtract all components $g_V$ with $V \subsetneqq S$ to remove all lower-order effects and center the effect
     \item Subtract sum of $g_V$ to remove all lower-order effects and center the effect
+    \item \textbf{Note:} If no distribution given: Uniform distribution or plain integral
 \end{itemize}
 
 \end{frame}
@@ -178,7 +179,6 @@
 \textbf{Example:} $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., for $x_1 = 5$ and $x_2 = 10$ we have $\fh(\xv) = -23$)
 
 \begin{itemize}
-    \item \textbf{Note:} If no distribution given: Uniform distribution or standard integrals
     \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives:
     \begin{columns}[c, totalwidth=\linewidth]
     \begin{column}{0.75\textwidth}
@@ -231,6 +231,8 @@
     % \fh(x_1, x_2) = x_1^2 + \sin(\pi x_1) \cos(\pi x_2)
     % \qquad (x_1, x_2) \in [0,2]^2,
     % $$
+
+    % Use fANOVA algorithm on example from the beginning:
     
     $$
         \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \qquad (x_1, x_2) \in [0,1]^2 \qquad \text{uniformly distributed}
@@ -297,9 +299,10 @@
 % $\rightarrow$ Estimating Expectations
 }
 
-\textbf{Main part:} Calculate all PD-functions $\rightarrow$ $2^p$ many
+\textbf{Main part:} Calculate all PD-functions $\rightarrow$ \textbf{$2^p$ many PD-functions}
 
-Estimation of \textbf{single PD-functions}: Sampling \\
+Estimation of a single PD-function: \textbf{Sampling}
+
 (so-called \textbf{Monte-Carlo integration})
 \begin{itemize}
     \item Same idea as for PDPs: Fix \textbf{grid values} for features $x_S$ \\
@@ -310,7 +313,7 @@ Estimation of \textbf{single PD-functions}: Sampling \\
     = \mathbb{E}_{\Xv_{-S}} \left[ \; \fh(\xv_S^*, \Xv_{-S}) \; \right]
     \approx \frac{1}{n} \sum_{i=1}^n \fh(\xv_S^*, \xv_{-S}^{(i)})
     $$
-    \item Or: for each grid value $\xv_S^*$, sample only $n_s < n$ many random samples
+    \item Or: for each grid value $\xv_S^*$, sample only $n_s < n$ many random samples (e.g. sampling uniformly)
 \end{itemize}
 
 % Estimating expectations over uniform distribution (or marginal distribution) using e.g. Monte-Carlo sampling

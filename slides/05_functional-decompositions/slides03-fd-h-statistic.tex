@@ -43,14 +43,14 @@
             % & \fh_{\{jk\}, PD}(x_j, x_k)
             % = g_\emptyset + g_j(x_j) + g_k(x_k) \\
             % \Leftrightarrow \quad
-            & \fh_{\{jk\}, PD}^c(x_j, x_k)
+            & \fh_{\{jk\}, PD}^c(x_xj, x_k)
             = g_j(x_j) + g_k(x_k) \\
             \Leftrightarrow \quad
             & \fh_{\{jk\}, PD}^c(x_j, x_k)
             = \fh^c_{j, PD}(x_j) + \fh^c_{k, PD}(x_k)
         \end{align*}
         \item This means: There are interactions \\
-        $\Leftrightarrow$ Every decomposition must contain some non-zero term $g_{\{j,k\}}(x_j, x_k)$
+        $\Leftrightarrow$ Every possible decomposition must contain some non-zero term $g_{\{j,k\}}(x_j, x_k)$
         \item Again: remember GAMs
     \end{itemize}
     
@@ -109,7 +109,7 @@
 \textbf{Overall interaction:}
 \begin{itemize}
     \item Question: Does feature $j$ interact with any other feature at all?
-    \item[$\Rightarrow$] Completely analogous to 2-way interactions, but for feature sets $S = \{j\}$ and $-S = \{1, \dots, p\}\setminus \{j\}$: \\
+    \item[$\Rightarrow$] H-statistic analogous to 2-way interactions, but for feature sets $S = \{j\}$ and $-S = \{1, \dots, p\}\setminus \{j\}$ instead of two single features: \\
     % \item If feature $j$ does not interact with any other feature (denoted by index $-j$), the mean-centered prediction function can be decomposed by
     \pause
     $$
@@ -118,7 +118,7 @@
     = \fh^c_{j, PD}(x_j) +  \fh^c_{-j, PD}(\xv_{-j})
     $$
     \begin{itemize}
-        \item $-j$ denotes $-S$, i.e. all other features
+        \item $-j$ denotes $-S = \{1, \dots, p\}\setminus \{j\}$, i.e. all other features
     	% \item $\fh(\xv)$: mean-centered prediction function
     	% \item $\fh_{j, PD}(x_j)$: 1-dim PD function of feature $j$
     	\item $\fh_{-j, PD}(\xv_{-j})$: $(p-1)$-dim PD function of all $p$ features except feature $j$
@@ -156,6 +156,7 @@
     $H^2_{jk}$ measures strength of this interaction quantitatively \\
     % The smaller the values of $H^2_{jk}$, the weaker the interaction between $x_j$ and $x_k$.
     $H^2_{jk}$ small (close to 0) for weak interaction, close to 1 for strong interaction
+    \item \textbf{Note:} Again, definition also usable without any probabilities or data distribution
 \end{itemize}
 
 % \textbf{Note}: The numerator is $0$ if the two features $x_j$ and $x_k$ do not interact, i.e., $\fh_{jk, PD}(x_j, x_k) - \fh_{j, PD}(x_j) - \fh_{k, PD}(x_k) = 0$.
@@ -222,7 +223,7 @@
         \right]
         }{ \var \left[ \fh^c_{ijk, PD}(X_i, X_j, X_k) \right] }
     \end{align*}
-    \item Analogous for higher order interactions
+    \item Analogous for higher order interactions, but more complicated
 \end{itemize}
 \end{frame}
 
@@ -263,10 +264,10 @@ Measure interactions of a random forest for the bike data set
 \pause
 \textbf{Remarks and Conclusion:}
 \begin{itemize}
-    \item H-statistic provides \textbf{general definition} of interactions + algorithm \\
-    Also adjustable to classification / discrete features and / or function values
-    \item For interaction order $k$ still needs $2^k-1$ PD-functions
-    \item Statistical test for whether interactions are present can use this statistic
+    \item H-statistic provides \textbf{general definition of interactions} + an \textbf{algorithm for computation} \\
+    Also adjustable to categorical / discrete features and / or function values
+    \item For interaction order $k$ still needs $¸\approx 2^k$ PD-functions
+    \item Statistical test for whether interactions are present using this statistic
 \end{itemize}
 
 \end{frame}
