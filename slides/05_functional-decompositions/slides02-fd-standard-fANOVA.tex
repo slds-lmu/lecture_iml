@@ -89,9 +89,15 @@
         \pause
         \item \textbf{Remember:} \\ Idea of PDPs or general PD-functions: Average out all other features
         \item[$\Rightarrow$] Total formula for calculating the components \(g_S\) in the fANOVA algorithm:
-        \begin{equation*}
-            g_{S} (\xv_S) = (\text{average out all features not contained in } S) - (\text{All lower-order components})
-        \end{equation*}
+        % $$
+        % \begin{aligned}
+        \begin{multline*}
+            g_{S} (\xv_S)
+            \;=\; (\text{average out all features not contained in } S) \\
+            \;-\; (\text{All lower-order components})
+        \end{multline*}
+        % \end{aligned}
+        % $$
     \end{itemize}
 
     % \textbf{Idea:} Main effects via feature effect methods, here: PDP\\
@@ -328,9 +334,13 @@ Estimation of \textbf{single PD-functions}: Sampling \\
 \item One can prove: 
 If features independent $\Rightarrow$ additive decomposition of variance of $\fh$ possible without covariances:
 \begin{align*}
-\var\left[\hat{f}(\xv)\right]
-&=  \var \Big[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \Big] \\
-&= \var\left[g_{\open \emptyset \close}\right] + \var\left[g_{\open 1 \close}(x_1)\right] + \;\dots\; + \var\left[g_{\open 1, 2 \close}(x_1, x_2)\right] + \;\dots\; + \var\left[g_{\open 1,\ldots,p \close}(\xv)\right]
+\var & \left[ \hat{f}(\xv) \right]
+ =  \var \Big[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \Big] \\
+% &= \sum_{S \subseteq \{1, \dots, p\}} \var\left[g_{\open S \close}(\xv_S)\right]
+& = \var\left[g_{\open \emptyset \close}\right]
+    + \var\left[g_{\open 1 \close}(x_1)\right] + \;\dots\; 
+    + \var\left[g_{\open 1, 2 \close}(x_1, x_2)\right] + \;\dots\;
+    + \var\left[g_{\open 1,\ldots,p \close}(\xv)\right]
 \end{align*}
 % \begin{align*}
 % \var\left[\hat{f}(\xv)\right] &= \var\left[g_{\open \emptyset \close}\right] + \var\left[g_{\open 1 \close}(x_1)\right] + \var\left[g_{\open 2 \close}(x_2)\right] \\
@@ -339,18 +349,18 @@ If features independent $\Rightarrow$ additive decomposition of variance of $\fh
 % \end{itemize}
 % \end{frame}
 
-In other words: Single components uncorrelated (see later)
+\item In other words: Single components uncorrelated (see later)
 
 % \begin{frame}{Variance decomposition}
 
 % \begin{itemize}
 % \item Dividing by the prediction variance, yields fraction of variance explained by each term:
-\item Fraction of variance explained by each term:
+% \item Fraction of variance explained by each term:
 \begin{align*}
 1 &= \frac{\var\left[g_{\open \emptyset \close}\right]}{\predvar} + \frac{\var\left[g_{\open 1 \close}(x_1)\right]}{\predvar} + %\frac{\var\left[g_{\open 2 \close}(x_2)\right]}{\predvar} \\
 %&\phantom{{}={}} 
 \;\dots\;
-+ \frac{\var\left[g_{\open 1, 2 \close}(x_1, x_2)\right]}{\predvar} + \;\dots\; + \frac{\var\left[g_{\open 1,\ldots,p \close}(\xv)\right]}{\predvar}
+\frac{\var\left[g_{\open 1, 2 \close}(x_1, x_2)\right]}{\predvar} \;\dots\; + \frac{\var\left[g_{\open 1,\ldots,p \close}(\xv)\right]}{\predvar}
 \end{align*}
 
 \item[$\rightarrow$] \textbf{Sobol index}: Fraction of variance explained by some component $g_{\open V \close}(\xv_V)$:
