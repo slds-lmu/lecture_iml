@@ -1,0 +1,95 @@
+\aufgabe{Friedman's H-statistic for categorical features}{ \label{ex:h-statistic_categorical}
+
+As in exercise \ref{ex:fANOVA_categorical}, we consider categorical features, and want to calculate the H-statistic for such a case.
+Calculating the H-statistic for categorical features or targets basically works the same as for the fANOVA in exercise \ref{ex:fANOVA_categorical}.
+
+We are given two independent categorical random variables, which are Bernoulli distributed:
+$$
+(X_1,X_2) \in \{0,1\}^2, \text{ i.e. } \P(X_1 = 0) = \P(X_1 = 1) = \P(X_2 = 0) = \P(X_2 = 1) = \frac12,
+$$
+which means the two-dimensional feature space only contains four points in total.
+We consider the model
+\[
+\fh(x_1,x_2) = 2 + 2 x_1 + 3 x_2 + 2 x_1 x_2.
+\]
+Your task is to compute the H-statistic $H_{1,2}$ for measuring the interaction in this model.
+
+\begin{enumerate}[a)]
+    
+    \item Compute all partial dependence (PD) functions:
+    \begin{align*}
+        \fh_{\emptyset,PD} = \mu
+        & = \E[f(X_1, X_2)], \\
+        \fh_{1,PD}(x_1 )
+        & = \E_{X_2}[\fh(x_1, X_2)] = \tfrac12 \sum_{j=1}^2 f(x_1, x_2^{(j)}), \\
+        \fh_{2, PD}(x_2)
+        & = \E_{X_1}[\fh(X_1, x_2)].
+    \end{align*}
+        % \(
+        % \fh_{1,PD}(x_1 )
+        % = \E_{X_2}[\fh(x_1, X_2)] = \tfrac12 \sum_{j} f(x_1, x_2^{(j)}),
+        % \)
+        % \(
+        % \fh_{2, PD}(x_2) = \E_{X_1}[\fh(X_1, x_2)] = \tfrac12\!\sum_{i}f(x_{1i},x_2),
+        % \)
+        % the joint PD surface
+        % \(
+        % \fh_{12,PD} (x_1,x_2) = f(x_1,x_2),
+        % \)
+        % and the empirical mean
+        % \(
+        % \fh_{\emptyset,PD} = \mu = \E[f(X_1, X_2)].
+        % \)
+    (The last PD function is of course $\fh_{12,PD} (x_1,x_2) = f(x_1,x_2)$.)
+    
+    When computing the PD-functions, you can simply write out the four function values explicitly.
+    
+    \item Compute the interaction statistic $H_{1,2}$ using either one of the formulas
+    \[
+    \begin{aligned}
+        H_{1,2}
+        & = \sqrt{
+            \frac{\displaystyle
+                \sum_{i,j = 1}^2 \bigl(
+                \hat f^c_{12,PD}(x_1^{(i)},x_2^{(j)})-
+                \hat f^c_{1,PD}(x_1^{(i)})-
+                \hat f^c_{2,PD}(x_2^{(j)})
+                \bigr)^2
+            }{\displaystyle
+                \sum_{i,j = 1}^2 \bigl(
+                \hat f^c(x_1^{(i)},x_2^{(j)})
+                \bigr)^2
+            }
+        } \\
+        & = \sqrt{
+            \frac{\displaystyle
+                \sum_{i,j = 1}^2 \bigl(
+                \hat f_{12,PD}(x_1^{(i)},x_2^{(j)})-
+                \hat f_{1,PD}(x_1^{(i)})-
+                \hat f_{2,PD}(x_2^{(j)})+\mu
+                \bigr)^2
+            }{\displaystyle
+                \sum_{i,j = 1}^2 \bigl(
+                \hat f(x_1^{(i)},x_2^{(j)})-\mu
+                \bigr)^2
+            }
+        } \\
+        & = \sqrt{
+            \frac{\var \Bigl[
+                \hat f_{12,PD}(X_1, X_2)-
+                \hat f_{1,PD}(X_1)-
+                \hat f_{2,PD}(X_2)
+                \Bigr]
+            }{\var \Bigl[
+                \hat f( X_1, X_2 )
+                \Bigr]
+            }
+        } \\.  
+    \end{aligned}
+    \]
+
+    \item \textbf{Bonus:} Prove that the three formulas given above for calculating the H-statistic are equivalent in general.
+    
+\end{enumerate}
+
+}

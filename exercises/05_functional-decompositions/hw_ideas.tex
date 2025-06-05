@@ -8,11 +8,13 @@
 
 \begin{document}
 
-\kopf{5}
+\kopf{6}
 
 %-------------------------------------------------------
 \section*{Exercise 1 — Friedman's $H$-statistic (numeric four-point design)}
 \label{ex:H_numeric}
+
+\textit{DONE: This exercise has been used in hw\_5\_2\_H-statistic\_categorical.tex}
 
 Consider the bilinear response
 \[
@@ -337,6 +339,8 @@ Thus the joint PD surface is additive in \(x_1\) and \(x_2\).  Conversely, if an
 \section*{Exercise 4 — Functional ANOVA on a $3\times3\times3$ grid}
 \label{ex:FA_grid_improved}
 
+\textit{DONE: This exercise has been used in hw\_5\_2\_fANOVA\_categorical.tex}
+
 The Hoeffding (functional ANOVA) decomposition of a function 
 $f\colon[0,1]^d\to\R$ under independent inputs is the unique expansion
 \[
@@ -379,61 +383,91 @@ x_j\in\{0,\tfrac12,1\},\quad j=1,2,3.
         \(f_\emptyset=\tfrac1{27}\sum_{x_1,x_2,x_3}f(x_1,x_2,x_3).\)
   \item Then for each singleton $i$ remove lower‐order terms and average
         over the other two coordinates.
-  \item Note by inspection that only $f_1$ and $f_{23}$ can be nonzero.
+  \item Note by inspection that only $f_1$ and $f_{23}$ can be nonzero. $\rightarrow$ WRONG, see solution
   \item Orthogonality follows because each $f_A$ is centered in its own
-        variables and constant in the others.
+        variables and constant in the others.  \textit{??????}
 \end{itemize}
 
 \subsection*{Solution}
 
-\paragraph{Step 1. Compute the mean term.}
+\textit{TO DO: The following solutions are largely wrong, need to be corrected}
+
+\paragraph{Step 1. Compute the mean term}
 \[
 f_\emptyset
 =\frac{1}{27}\sum_{x_1,x_2,x_3\in\{0,\frac12,1\}}
    \bigl(4x_1 + 2x_2x_3\bigr)
-= \underbrace{\frac{1}{3}\cdot4\cdot\frac{1}{2}}_{=\E[4X_1]} \;+\;
-  \underbrace{\Bigl(\frac{1}{3}\Bigr)^{2}\!2}_{=\E[2X_2X_3]}
-=1 + \tfrac{2}{9} = \tfrac{11}{9}.
+= \underbrace{\frac{1}{3}\cdot4\cdot \left( \frac{1}{2} + 1 \right) }_{=\E[4X_1]} \;+\;
+  \underbrace{\Bigl(\frac{1}{3}\Bigr)^{2}\! \cdot 2 \cdot \left( \left( \frac{1}{2} \right)^2 + 2 \cdot \frac12 \cdot 1 + 1^2 \right)}_{=\E[2X_2X_3]}
+= 2 + \tfrac{2}{9} \cdot \tfrac94 = \frac{5}{2}.
 \]
 
-\paragraph{Step 2. First‐order terms.}
+\paragraph{Step 2. First‐order terms}
 \[
 f_1(x_1)
 =\E[f\mid X_1=x_1] - f_\emptyset
-= \bigl(4x_1 + \E[2X_2X_3]\bigr) - \tfrac{11}{9}
-=4x_1 + \tfrac{2}{9} - \tfrac{11}{9}
-=4x_1 - 1.
+= \bigl(4x_1 + \E[2X_2X_3]\bigr) - \tfrac{5}{2}
+=4x_1 + \tfrac{1}{2} - \tfrac{5}{2}
+=4x_1 - 2.
 \]
-By symmetry and since $f$ depends only on $x_2x_3$, one finds
 \[
-f_2(x_2)=0,\qquad f_3(x_3)=0.
+f_2(x_2)
+=\E[f\mid X_2=x_2] - f_\emptyset
+= \bigl(\E[4X_1] + 2 x_2 \E[X_3]\bigr) - \tfrac{5}{2}
+= 2 + 2 x_2 \tfrac{1}{2} - \tfrac{5}{2}
+= x_2 - \tfrac{1}{2}
+\]
+% \textit{WRONG:} By symmetry and since $f$ depends only on $x_2x_3$, one finds
+% \[
+% f_2(x_2)=0,\qquad f_3(x_3)=0.
+% \]
+By symmetry, one finds
+\[
+f_3(x_3) = x_3 - \tfrac{1}{2}.
 \]
 
-\paragraph{Step 3. Second‐order terms.}
+\paragraph{Step 3. Second‐order terms}
+For $\{1,2\}$,
+\begin{align*}
+    f_{12}(x_1,x_2)
+    = \E[f\mid X_1=x_1,X_2=x_2]
+    - f_\emptyset - f_1(x_1) - f_2(x_2)
+    = 4x_1 + \underbrace{2 x_2 \, \E[X_3]}_{=x_2} - 4x_1 + 2 - x_2 + \tfrac{1}{2} - \tfrac{5}{2} 
+    = 0,
+\end{align*}
+showing that $f$ does not contain this kind of interaction.
+
+Again, for symmetry reasons, we can deduce that $f_{13} \equiv 0$.
+
 For $\{2,3\}$,
 \[
-f_{23}(x_2,x_3)
-=\E[f\mid X_2=x_2,X_3=x_3]
-- f_\emptyset - f_2(x_2)-f_3(x_3)
-= 4\,\E[X_1] +2x_2x_3 - \tfrac{11}{9}
-= \tfrac{4}{2} +2x_2x_3 - \tfrac{11}{9}
-=2x_2x_3 - \tfrac{1}{9}.
+\begin{split}
+    f_{23}(x_2,x_3)
+    &= \E[f\mid X_2=x_2,X_3=x_3]
+    - f_\emptyset - f_2(x_2) - f_3(x_3)
+    = 4\,\E[X_1] +2 x_2 x_3 - \tfrac{5}{2} - (x_2 - \tfrac12) - (x_3 - \tfrac12) \\
+    &= \tfrac{4}{2} +2 x_2 x_3 - x_1 - x_2 - \tfrac{3}{2}
+    = 2 x_2 x_3 - x_1 - x_2 + \tfrac{1}{2}.        
+\end{split}
 \]
-All other pairs $\{1,2\}$ and $\{1,3\}$ vanish because once you subtract
-$f_\emptyset$ and $f_1$, the remaining dependence is zero.
 
-\paragraph{Step 4. Third‐order term.}
+\paragraph{Step 4. Third‐order term}
 \[
-f_{123}(x_1,x_2,x_3)
-= f(x_1,x_2,x_3)
-- \sum_{A\subsetneq\{1,2,3\}} f_A(x_A)
-= 4x_1+2x_2x_3
-- \bigl(\tfrac{11}{9} + (4x_1-1) + (2x_2x_3-\tfrac{1}{9})\bigr)
-=0.
+\begin{split}
+    f_{123}(x_1,x_2,x_3)
+    & = f(x_1,x_2,x_3)
+        - \sum_{A\subsetneq\{1,2,3\}} f_A(x_A) \\
+    & = 4 x_1 + 2 x_2 x_3
+        - \Bigl( \tfrac{5}{2} + (4 x_1 - 2) + (x_2 - \tfrac{1}{2}) + (x_3 - \tfrac{1}{2}) + ( 2 x_2 x_3 - x_1 - x_2 + \tfrac{1}{2} ) \Bigr) \\
+    & = - \Bigl( \tfrac{5}{2} - 2 - \tfrac{1}{2} - \tfrac{1}{2} + \tfrac{1}{2} \Bigr)
+    = 0.    
+\end{split}
 \]
 
-\paragraph{Step 5. Orthogonality check.}
-Define the empirical inner product 
+\paragraph{Step 5. Orthogonality check}
+\textit{WRONG, see results from above}
+
+Define the empirical inner product
 \(\langle u,v\rangle = \tfrac1{27}\sum_{x}u(x)\,v(x)\).  Then
 \[
 \langle f_1, f_{23}\rangle
@@ -442,7 +476,7 @@ Define the empirical inner product
   \bigl(\tfrac1{3^2}\sum(2x_2x_3-\tfrac19)\bigr)
 =0\cdot0=0,
 \]
-and similarly each distinct pair of nonzero components is orthogonal.
+and similarly each distinct pair of non-zero components is orthogonal.
 \hfill\(\Box\)
 
 %-------------------------------------------------------
