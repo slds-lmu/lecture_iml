@@ -7,78 +7,104 @@
     % With respect to what property of a function or model do functional decompositions decompose it?
     Functional decompositions are decompositions with respect to what property of a function?
     \begin{itemize}
-        \item[$\Rightarrow$] interaction structure
+        \item[$\Rightarrow$] Additive decomposition according to the interaction structure, that is: Decomposition according to which features or groups of features the output depends on.
     \end{itemize}
     \item 
     What are functional decompositions useful for?
     \begin{itemize}
-        \item[$\Rightarrow$] High interpretability value, w.r.t. interactions / interaction structure, can be sparsified, evtl. enabling more efficient computation, sensitivity analysis
+        \item 
+        High interpretability value, completely reveals interactions / interaction structure, incl. a variance decomposition in case one uses one of the fANOVA algorithms
+        \item Can be sparsified (i.e. removing unimportant components), evtl. enabling more efficient or more robust computation
+        \item 
+        Theoretical inspiration / justification for other methods
+        \item \href{https://en.wikipedia.org/wiki/Sensitivity_analysis}{Sensitivity analysis}
     \end{itemize}
     \item 
     Why is the general definition of functional decompositions insufficient for practical use? How can these problems be alleviated?
     % Alternative: Why are additional constraints besides the general definition necessary to arrive at a useful functional decomposition?
     \begin{itemize}
-        \item[$\Rightarrow$] See standard fANOVA: Remove lower-order terms from higher-order terms, and try to include as much as possible / reasonable in the lower-order terms
+        \item[$\Rightarrow$]
+        General definition does not uniquely determine the components, and arbitrary decompositions may not carry meaningful information or mislead from the actual structure of the model (see different examples in the lecture).
+
+        In general, one needs more conditions or \textbf{constraints} which uniquely determine some decomposition.
+        Usually, each method for finding a decomposition has such properties or constraints it fulfills and which characterize it.
+
+        The goal in general, however, is (as e.g. in the standard fANOVA) to remove lower-order terms from higher-order terms, and try to include as much as possible / reasonable in the lower-order terms
     \end{itemize}
     \item 
     True or false: When given a function explicitly through a formula and applying a functional decomposition algorithm on it, one always recovers the original components of the formula as components in the resulting decomposition.
     \begin{itemize}
-        \item[$\Rightarrow$] Wrong, see examples lecture
+        \item[$\Rightarrow$] Wrong, see examples in the lecture: Higher-order terms partially become part of lower-order terms, depending on the specific domain and distribution.
     \end{itemize}
     \item 
     How do PDPs and general multidimensional PD-functions relate to the components in classical fANOVA?
     \begin{itemize}
-        \item[$\Rightarrow$] 
+        \item[$\Rightarrow$] In general, a PD-function
+        $\fh_{S;PD}(\xv_S)$
+        is the sum of all fANOVA components ``contained'' in this component, completely analogously to the original decomposition of the total function $\fh$:
+        $$ \fh_{S;PD}(\xv_S) = \sum_{V \subseteq S} g_V(\xv_V)$$
+        Special case for 1D-PDPs:
+        $$ \fh_{j;PD}(x_j) = g_j(x_j) + g_\emptyset$$
     \end{itemize}
     \item 
     In what order are the components in the classical fANOVA computed?
     \begin{itemize}
-        \item[$\Rightarrow$] 
+        \item[$\Rightarrow$] Ascending interaction order (i.e. from lower order to higher order).
+        In general, to compute some component $g_S$, one has to already have computed all components $g_V$ with $V \subsetneq S$.
+
+        \textbf{Note:} When completely computing all components, the most efficient way is to first compute all the PD-functions in descending interaction order (from highest to lowest), and then compute all the components in ascending order, see also question \ref{ex:fd_quiz_problems_of_std_fanova}
     \end{itemize}
     \item 
     How are Sobol indices defined, and what property of the classical fANOVA decomposition does one need for them?
     \begin{itemize}
-        \item[$\Rightarrow$] 
+        \item[$\Rightarrow$]
+        The Sobol index $S_S$ of a component $g_S$ is the share of variance from this component within the total variance, i.e. how much of the total variance is explained by this specific kind of interaction:
+        $$
+        S_S = \frac{\var\left[g_S(\xv_S)\right]}{\var\left[\fh(\xv)\right]}.
+        $$
+        One needs the variance decomposition (which only holds under independence of features), or more specifically, the uncorrelatedness of all the components.
+        If the components were correlated, the Sobol indices alone would miss out on the parts of the variance caused by the correlations.
     \end{itemize}
     \item
     You have trained a random forest classifier. Can you easily and directly compute the functional decomposition of the classifier and how would you do it? Or why can you not?
     \begin{itemize}
         \item[$\Rightarrow$] 
-        Trivial / straightforward decomposition of trees also works for tree ensembles like e.g. a random forest \\
-        Problem: This naive decomposition is not very insightful and usually does not capture main effects => Still need one of the model-agnostic methods to compute a functional decomposition
+        The trivial / straightforward decomposition of trees from the lecture (using interaction types, see next question) also works for tree ensembles like e.g. a random forest.
+        
+        Problem: This naive decomposition is not very insightful and usually does not capture main or other lower-order effects, i.p. for deeper or more complex trees it only includes higher-order effects. $\implies$ We still need one of the model-agnostic methods to compute a functional decomposition for decision trees or tree ensembles.
     \end{itemize}
-    \item 
+    \item
     How is the interaction type of a node inside a decision tree defined?
     \begin{itemize}
-        \item[$\Rightarrow$] 
+        \item[$\Rightarrow$]
+        The interactions type $t$ of a node is the set of all features one has to consider on the path from the root to this node.
+        
+        In other words, if the parent node of a node has interaction type $\tilde{t}$, where the interaction type of the root is $t_r = \emptyset$, and the node itself splits upon $x_j$, then this node has interaction type $t = \tilde{t} \cup j$.
+
+        This means that when writing the prediction function of a decision tree as a sum of simple functions (constants multiplied with indicator functions), the component from a leaf with interaction type $t$ is a function of the features in $t$, meaning it is a part of $g_t$.
     \end{itemize}
-    \item 
-    Why are problems of computing and using the classical fANOVA in practice?
+    \item \label{ex:fd_quiz_problems_of_std_fanova}
+    Which problems arise when computing and using the classical fANOVA in practice?
     \begin{itemize}
-        \item[$\Rightarrow$] computationally expensive (as for any functional decomposition), independence assumption, high computational burden of PD-functions (can be alleviated via calculating all PD-functions in an hierarchical manner from the highest-order to the lowest-order, using dynamical programming
+            \item Computationally expensive (as for any functional decomposition)
+            \item Independence assumptions
+            \item High computational burden of calculating PD-functions: For a single PD-function $\fh_{S;PD}(\xv_S)$, one has to evaluate it on $g^{|S|}$ many grid points (when considering $g$ many grid points for each feature), and each evaluation needs $n$ function calls.
+
+            \textbf{Note:}
+            When choosing $g = n$, or whenever choosing exactly $g$ sample points for evaluating the expectations / calculating the averages for the PD-functions, one can greatly speed up this calculation by computing the PD-functions in an hierarchical manner from the highest-order to the lowest-order, using dynamical programming.
+            The reason is that any PD-function is equal to the one-dimensional integral over any PD-function one order higher, if integrating out the correct variable.
+            In other words, all PD-functions are nested as integrals within each other.
     \end{itemize}
-    % \item
-    % Why are problems of computing and using functional decompositions in practice, and how can one deal with them?
-    % \begin{itemize}
-    %     \item[$\Rightarrow$]
-        % Too many features => expensive & complicated to understand => sparse decomposition or only focus on specific interactions of interest, or models like EBMs
-        % Only for tabular data, extracting tabular data from raw data is difficult to address
-        % Need to choose one method, all of which have individual disadvantages
-    % \end{itemize}
-    % \item 
-    % What do the vanishing condition and the orthogonality condition intuitively mean?
-    % \begin{itemize}
-    %     \item[$\Rightarrow$] 
-    % \end{itemize}
     \item 
     Which other IML methods discussed in this lecture so far have used or are related to the concept of functional decomposition?
     \begin{itemize}
-        \item[$\Rightarrow$] LMs, GLMs, GAMs, EBMs, RPFs, PDPs, ALE, Shapley, feature importance (Verify for each one, why!)
+        \item[$\Rightarrow$] LMs, GLMs (explicitly model each component), GAMs, EBMs, RPFs (only allow for specific interactions / specific components), PDPs, ALE (these are the 1D-components of fANOVA resp. ALE), Shapley values, feature importance methods (interactions decomposition is important in constructing these methods).
     \end{itemize}
     \item 
     Given a model $\fh$, what is the advantage of Friedman's H-statistic for some interaction compared to computing the functional decomposition for $\fh$?
     \begin{itemize}
-        \item[$\Rightarrow$] Computes only the single component necessary, and may also give some (although bad) information in case the features are not independent.
+        \item[$\Rightarrow$] Computes only the single necessary component, not all components, although calculating this single interaction is as expensive as in the fANOVA algorithm.
+        Also, the H-statistic may give some (although evtl. bad) information if the features are not independent.
     \end{itemize}
 
 
