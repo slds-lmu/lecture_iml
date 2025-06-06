@@ -1,0 +1,91 @@
+\loesung{
+
+\textit{TO DO}
+
+\subsection*{Solution, 1. part}
+
+\paragraph{Step 1: Mean $\mu$.}
+\[
+\mu
+= \int_0^1\!\int_0^1 \bigl(x_1^2 + x_2^2 + \beta\,x_1x_2\bigr)\,dx_1\,dx_2
+= \Bigl(\tfrac13+\tfrac13\Bigr) + \beta\;\tfrac14
+= \tfrac23 + \tfrac{\beta}{4}.
+\]
+
+\paragraph{Step 2: Marginal PDs (centered).}
+\[
+\begin{aligned}
+\hat f_{1}(x_1)
+&= \int_0^1 \bigl(x_1^2 + t^2 + \beta\,x_1 t\bigr)\,dt
+= x_1^2 + \tfrac13 + \tfrac{\beta}{2}x_1,\\
+\hat f_{2}(x_2)
+&= \int_0^1 \bigl(t^2 + x_2^2 + \beta\,t x_2\bigr)\,dt
+= x_2^2 + \tfrac13 + \tfrac{\beta}{2}x_2.
+\end{aligned}
+\]
+Subtracting $\mu$ gives
+\[
+\hat f_{1,c}(x_1)
+= x_1^2 + \tfrac{\beta}{2}x_1 - \Bigl(\tfrac{\beta}{4} + \tfrac13\Bigr),
+\quad
+\hat f_{2,c}(x_2)
+= x_2^2 + \tfrac{\beta}{2}x_2 - \Bigl(\tfrac{\beta}{4} + \tfrac13\Bigr).
+\]
+
+\paragraph{Step 3: Variances.}
+Define the \emph{interaction residual}
+\[
+r(X)
+= f_\beta(X)-\hat f_{1,c}(X_1)-\hat f_{2,c}(X_2).
+\]
+One computes by direct integration
+\[
+\text{Var}\bigl(f_\beta(X)\bigr)
+= \frac{\beta^2 + 6}{36},
+\qquad
+\text{Var}\bigl(r(X)\bigr)
+= \frac{\beta^2}{36}.
+\]
+Hence by definition
+\[
+H(\beta)
+= \sqrt{\frac{\text{Var}(r(X))}{\text{Var}(f_\beta(X))}}
+= \sqrt{\frac{\beta^2/36}{(\beta^2+6)/36}}
+= \frac{|\beta|}{\sqrt{\beta^2+6}}.
+\]
+
+\paragraph{Step 4: Limits.}
+As $\beta\to0$, $H(\beta)\to0$ (no interaction).  As $|\beta|\to\infty$, $H(\beta)\to1$ (interaction dominates). $\Box$
+
+\subsection*{Solution, 2. part}
+
+\paragraph{(a) $H(\gamma)$.}
+Identical to the calculation in Exercise~\ref{ex:H_param} with
+$\beta\mapsto\gamma$.
+
+\paragraph{(b) $S_{T,x}(\gamma)$.}
+\[
+\text{Var}(f_\gamma)
+= \text{Var}(x)+\text{Var}(y)+\text{Var}(\gamma xy)
+= \tfrac1{12}+\tfrac1{12}+\tfrac{\gamma^2}{36}
+= \tfrac{2}{12} + \tfrac{\gamma^2}{36}.
+\]
+The main‐effect variance of $y$ is $\text{Var}(\E[f_\gamma\mid Y])=\text{Var}(y)=1/12$, so
+\[
+S_{T,x} = 1 - \frac{1/12}{\,2/12 + \gamma^2/36\,}
+= 1 - \frac{1}{\,1 + \gamma^2/6\,}.
+\]
+
+\paragraph{(c) Monotonicity.}
+Compute
+\[
+\frac{d}{d|\gamma|}H(\gamma)
+= \frac{6}{(\gamma^2+6)^{3/2}}>0,
+\quad
+\frac{d}{d|\gamma|}S_{T,x}(\gamma)
+= \frac{(2/6)\,|\gamma|}{(1+\gamma^2/6)^2}>0.
+\]
+Thus both increase in $|\gamma|$, so they rank interaction strength
+identically.  \hfill\(\Box\)
+
+}

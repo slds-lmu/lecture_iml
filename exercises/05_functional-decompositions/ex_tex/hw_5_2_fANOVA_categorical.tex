@@ -2,26 +2,10 @@
 
 In this exercise, your task is to calculate the standard fANOVA decomposition (as introduced in the lecture) for an example with categorical features.
 
-This means that when calculating a PD-function $f_{S,PD}(\xv_S)$ as well as the corresponding fANOVA component $g_S(\xv_S)$, whenever these are dependent on categorical features contained in $S$, we calculate the value of the PD-function and the components at every category instead of at grid values.
+This means that when calculating a PD-function $f_{S,PD}(\xv_S)$ as well as the corresponding fANOVA component $g_S(\xv_S)$, whenever these depend on categorical features contained in $S$, we calculate the value of the PD-function and the components at every category instead of at grid values.
 When integrating over features in the process of computing PD-functions, if some of these features are categorical, we can calculate the average over the data points in the same fashion as for numerical features.
 
 In case of a categorical target that cannot be transformed onto a numerical scale, the average or expected prediction (for computing expected values or marginal expectations) is equal to the mode, i.e. to the category with the highest probability resp. with the highest number of samples.
-% The Hoeffding (functional ANOVA) decomposition of a function 
-% $f\colon[0,1]^d\to\R$ under independent inputs is the unique expansion
-% \[
-% f(x)
-% =\sum_{A\subseteq\{1,\dots,d\}} f_A\bigl(x_A\bigr),
-% \]
-% where each term $f_A$ depends only on $x_A=(x_j)_{j\in A}$ and satisfies
-% $\E[f_A(X_A)]=0$ for $A\neq\emptyset$.
-% In practice one computes
-% \[
-% f_\emptyset=\E[f(X)],\quad
-% f_i(x_i)=\E[f(X)\mid X_i=x_i]-f_\emptyset,\quad
-% f_{ij}(x_i,x_j)=\E[f(X)\mid X_i=x_i,X_j=x_j]
-% -\sum_{B\subsetneq\{i,j\}}f_B(x_B),\;\dots
-% \]
-% and so on by successive orthogonal projections.
 
 In this exercise, we are given three random variables as features, all of which can take at most 3 different categories as values:
 $$
@@ -48,10 +32,5 @@ We further assume that the features are independent and all uniformly distribute
 
         \textit{Hint:} Most of the fANOVA components are 0 in this example, which means that you only need to check the orthogonality condition for the remaining nonzero components.
 \end{enumerate}
-
-% \subsection*{Hints}
-% \begin{itemize}
-%   \item Orthogonality follows because each $f_A$ is centered in its own variables and constant in the others.
-% \end{itemize}
 
 }

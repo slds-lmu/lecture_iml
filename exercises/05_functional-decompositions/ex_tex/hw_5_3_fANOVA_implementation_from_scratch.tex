@@ -1,57 +1,61 @@
 \aufgabe{Implementation of standard fANOVA using PD-functions}{
 
-    Recall exercises 1 e) and f) on exercise sheet 4, which were about implementing ICE curves and PDPs.
-    It implemented the following functions:
+\textit{This exercise still TO DO}
+
+Recall exercises 1 e) and f) on exercise sheet 4, which were about implementing ICE curves and PDPs.
+It implemented the following functions:
+\begin{itemize}
+      \item \texttt{ice(model, X, j, grid)} - returns an $n \times g$ matrix of ICE predictions (one curve per row, one grid value per column);
+      \item \texttt{pdp(model, X, j, grid)} - returns the length-\(g\) vector of PDP values by averaging the ICE matrix column-wise;
+      \item \texttt{c\_ice(model, X, j, grid, ref = 1)} - again, returns an $n \times g$ matrix of ICE predictions, but centers every ICE curve by subtracting its value at the grid point at the reference index \texttt{ref};
+      \item \texttt{c\_pdp(model, X, j, grid, ref = 1)} - analogous to \texttt{pdp}, this function averages the centered ICE curves to obtain a centered PDP which is zero at the reference point.
+\end{itemize}
+Here, \texttt{model} is a given fitted model (as an object), \texttt{X} is the data set of size $n \times p$, $j$ is the index or the name of the feature of interest, and \texttt{grid} is a vector of grid values.
+
+Now, we want to build on that exercise to implement the standard fANOVA algorithm.
+In case you did not finish that other exercise back then, the files \textit{XX.py} and \textit{XX.R} on Moodle contain an implementation of these functionalities, so you can also use those instead of your own solution for this exercise here.
+
+\begin{enumerate}[a)]
+
+    \item
+    Extend the \texttt{pdp} function to a new function \texttt{pd\_func}, which can compute an arbitrary PD-function of arbitrary dimension.
+    This means that the parameters change as follows:
     \begin{itemize}
-          \item \texttt{ice(model, X, j, grid)} - returns an $n \times g$ matrix of ICE predictions (one curve per row, one grid value per column);
-          \item \texttt{pdp(model, X, j, grid)} - returns the length-\(g\) vector of PDP values by averaging the ICE matrix column-wise;
-          \item \texttt{c\_ice(model, X, j, grid, ref = 1)} - again, returns an $n \times g$ matrix of ICE predictions, but centers every ICE curve by subtracting its value at the grid point at the reference index \texttt{ref};
-          \item \texttt{c\_pdp(model, X, j, grid, ref = 1)} - analogous to \texttt{pdp}, this function averages the centered ICE curves to obtain a centered PDP which is zero at the reference point.
+        \item Instead of a single feature index \texttt{j}, we know consider an ordered list of indices \texttt{S}, which must be a subset of $\{1, \dots, p\}$, but can also be empty (for the intercept case),
+        \item the \texttt{grid} is an $\texttt{length(S)} \times g$ matrix, in which the $j$-th row contains all grid values for the $j$-th feature in $S$,
+        \item the output of \texttt{pd\_func(model, X, S, grid)} is a $\underbrace{g \times g \times \dots \times g}_{|S| \text{ many dimensions}}$ matrix / tensor, containing the values of the PD-function at all grid points.
     \end{itemize}
-    Here, \texttt{model} is a given fitted model (as an object), \texttt{X} is the data set of size $n \times p$, $j$ is the index or the name of the feature of interest, and \texttt{grid} is a vector of grid values.
+    You can either change your existing \texttt{ice} function accordingly and generalize it to multiple dimensions, in which case the \texttt{pd\_func} can again simply call the \texttt{ice} function and average over all the ($|S|$-dimensional) ICE functions.
+    Or you can directly implement the model calls and the averaging inside the function \texttt{pd\_func}.
 
-    Now, we want to build on that exercise to implement the standard fANOVA algorithm.
-    In case you did not finish that other exercise back then, the files \textit{XX.py} and \textit{XX.R} on Moodle contain an implementation of these functionalities, so you can also use those instead of your own solution for this exercise here.
+    \item 
+    Implement centered PD-functions, as they are used in this chapter, in a function \texttt{pd\_func\_centered}.
+    That is, subtract the average of the PD-function over the given grid.
 
-    \begin{enumerate}[a)]
-    
-        \item
-        Extend the \texttt{pdp} function to a new function \texttt{pd\_func}, which can compute an arbitrary PD-function of arbitrary dimension.
-        This means that the parameters change as follows:
-        \begin{itemize}
-            \item Instead of a single feature index \texttt{j}, we know consider an ordered list of indices \texttt{S}, which must be a subset of $\{1, \dots, p\}$, but can also be empty (for the intercept case),
-            \item the \texttt{grid} is an $\texttt{length(S)} \times g$ matrix, in which the $j$-th row contains all grid values for the $j$-th feature in $S$,
-            \item the output of \texttt{pd\_func(model, X, S, grid)} is a $\underbrace{g \times g \times \dots \times g}_{|S| \text{ many dimensions}}$ matrix / tensor, containing the values of the PD-function at all grid points.
-        \end{itemize}
-        You can either change your existing \texttt{ice} function accordingly and generalize it to multiple dimensions, in which case the \texttt{pd\_func} can again simply call the \texttt{ice} function and average over all the ($|S|$-dimensional) ICE functions.
-        Or you can directly implement the model calls and the averaging inside the function \texttt{pd\_func}.
-
-        \item 
-        Implement centered PD-functions, as they are used in this chapter, in a function \texttt{pd\_func\_centered}.
-        That is, subtract the average of the PD-function over the given grid.
-
-        \item
-        Implement a function \texttt{fANOVA} that computes the standard fANOVA algorithm, using the function \texttt{pd\_func} from above.
-        There are two possible ideas for the data structure to store the fANOVA components, which is also the data structure of the output of this function:
-        \begin{enumerate}
-            \item As a \textbf{dictionary}:
-            A dictionary in python (or a ??? in R) works similar to an array, but with arbitrarily named indices, called the \texttt{keys} of the dictionary.
-            Here, the idea would be to have tuples of integers as keys (i.e., the component for $S = \{1,3\}$ would be stored under the key \texttt{(1,3)}, and for each key to save a tensor of shape $\underbrace{g \times g \times \dots \times g}_{|S| \text{ many}}$.
-            \item As a big tensor using \textbf{one-hot encoding}:
-            Here, we use binary vectors to encode the sets of features.
-            A subset $S$
-        \end{enumerate}
-
-        \item
-        Implement a function calculating the H-statistic
-
-        \item \textbf{Bonus:}
-        \begin{itemize}
-            \item Extend your functions such that if the \texttt{grid} parameter is not given, they can construct a grid from the data (e.g., via quantiles or equidistantly) automatically.
-            \item Extend your functions to allow for a different number of grid values for different features.
-        \end{itemize}
-        
-            
+    \item
+    Implement a function \texttt{fANOVA} that computes the standard fANOVA algorithm, using the function \texttt{pd\_func} from above.
+    There are two possible ideas for the data structure to store the fANOVA components, which is also the data structure of the output of this function:
+    \begin{enumerate}
+        \item As a \textbf{dictionary}:
+        A dictionary in python (or a ??? in R) works similar to an array, but with arbitrarily named indices, called the \texttt{keys} of the dictionary.
+        Here, the idea would be to have tuples of integers as keys (i.e., the component for $S = \{1,3\}$ would be stored under the key \texttt{(1,3)}, and for each key to save a tensor of shape $\underbrace{g \times g \times \dots \times g}_{|S| \text{ many}}$.
+        \item As a big tensor using \textbf{one-hot encoding}:
+        Here, we use binary vectors to encode the sets of features.
+        A subset $S$
     \end{enumerate}
+
+    \item
+    \textit{TO DO:}
+    Implement a function calculating the H-statistic
+
+    \item \textbf{Bonus:}
+    \begin{itemize}
+        \item Extend your functions such that if the \texttt{grid} parameter is not given, they can construct a grid from the data (e.g., via quantiles or equidistantly) automatically.
+        \item Extend your functions to allow for a different number of grid values for different features.
+        \item Implement a more efficient algorithm for calculating all PD-function of a given model: Each PD-function can be obtained as the one-dimensional integral / expectation of a PD-function one order higher, therefore compute the PD-functions hierarchically starting from the highest order and going to the lowest (using dynamical programming), and then compute the fANOVA components starting from the lowest order, and using the PD-functions computed before.
+    \end{itemize}
+    
+        
+\end{enumerate}
     
 }

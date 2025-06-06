@@ -87,7 +87,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 
 \begin{frame}{Recap: Global vs.\ Local Explanations}
 
-      \textbf{Global} (e.g.\ Partial Dependence, global feature importance)
+      \textbf{Global} (e.g.\ Partial Dependence, SHAP feature importance)
       \begin{itemize}
         \item[\textbf{+}] Summarises average model behaviour across the whole feature space
         \item[\textbf{--}] May hide heterogeneous effects and feature interactions
@@ -96,11 +96,11 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 
 \lz
 
-      \textbf{Local} (e.g.\ ICE curves, SHAP/LIME)
+      \textbf{Local} (e.g.\ ICE curves, SHAP values)
       \begin{itemize}
         \item[\textbf{+}] High-fidelity, instance-specific insight
         \item[\textbf{+}] Useful for debugging, accountability, and user trust
-        \item[\textbf{--}] Does not generalise to overall model behaviour
+        \item[\textbf{--}] Does not generalize to overall model behaviour
         \item[\textbf{--}] Computationally costly at scale
       \end{itemize}
 \end{frame}
@@ -108,9 +108,12 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 
 
 \begin{frame}{Why regional explanations?}
-    \textbf{Question:} How to produce plots in which feature effects are less confounded by interactions? \\
-    \textbf{Idea:} Regional effect plots (REPs): Group homogeneous ICE curves in such a way that reduces the presence of individual interaction effects within a group.
-  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+    \textbf{Problem:} PD \& ICE plots can be confounded by feature interactions.\\
+    %How to produce plots in which feature effects are less confounded by interactions? \\
+    %\textbf{Goal:} Identify groups of instances where ICE curves are homogeneous.\\
+%\textbf{Regional Effect Plots (REPs):} Group similar ICE curves so that interactions within each group are minimized.
+    \textbf{Solution:} Group homogeneous ICE curves in such a way that reduces the presence of individual interaction effects within a group $\leadsto$ Regional effect plots (REPs).
+  \noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
   \begin{columns}
       \column{0.33\textwidth}
       \centering

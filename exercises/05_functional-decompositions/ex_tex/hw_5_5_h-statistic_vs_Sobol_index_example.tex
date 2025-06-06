@@ -1,0 +1,111 @@
+\aufgabe{Comparing H-statistic and Sobol indices}{
+\label{ex:H_vs_Sobol_comparison_example}
+
+\textit{This exercise still TO DO}
+
+\textbf{1. Part:}
+
+In general, Friedman's interaction statistic $H$ between two inputs $x_1,x_2$ is defined via their partial‐dependence (PD) surfaces by
+\[
+H \;=\;
+\sqrt{\frac{\displaystyle
+    \sum_{i,j}
+      \Bigl(\hat f_{12}(x_{1i},x_{2j})
+            -\hat f_{1}(x_{1i})
+            -\hat f_{2}(x_{2j})
+            +\mu\Bigr)^{2}
+  }{\displaystyle
+    \sum_{i,j}
+      \bigl(\hat f_{12}(x_{1i},x_{2j})-\mu\bigr)^{2}
+  }}\,,
+\]
+where
+\[
+\hat f_{1}(x_1)=\int_0^1 f(x_1,t)\,dt,\quad
+\hat f_{2}(x_2)=\int_0^1 f(t,x_2)\,dt,\quad
+\hat f_{12}(x_1,x_2)=f(x_1,x_2),\quad
+\mu=\int_{[0,1]^2} f(x_1,x_2)\,dx_1\,dx_2.
+\]
+Equivalently, one may show under independence that
+\[
+H \;=\;
+\sqrt{\frac{\text{Var}\bigl(f(X)-\hat f_1(X_1)-\hat f_2(X_2)\bigr)}
+           {\text{Var}\bigl(f(X)\bigr)}}.
+\]
+
+Now consider the one‐parameter family
+\[
+f_\beta(x_1,x_2)=x_1^2 + x_2^2 + \beta\,x_1x_2,
+\qquad (x_1,x_2)\in[0,1]^2.
+\]
+\begin{enumerate}%[label=(\alph*)]
+  \item Compute the marginal PD functions
+        \(
+          \hat f_{1}(x_1)
+          =\int_0^1 f_\beta(x_1,t)\,dt,
+          \quad
+          \hat f_{2}(x_2)
+          =\int_0^1 f_\beta(t,x_2)\,dt,
+        \)
+        and then center them by subtracting $\mu$.
+  \item Using the definition
+        \(
+          H(\beta)
+          =\sqrt{\frac{\text{Var}\bigl(f_\beta-\hat f_1-\hat f_2\bigr)}
+                     {\text{Var}\bigl(f_\beta\bigr)}},
+        \)
+        show that
+        \[
+          H(\beta)
+          =\frac{|\beta|}{\sqrt{\beta^2 + 6}}.
+        \]
+  \item Discuss the behaviour of $H(\beta)$ as $\beta\to0$ and as $|\beta|\to\infty$.
+\end{enumerate}
+
+\subsection*{Hints}
+\begin{itemize}
+  \item Write out the integrals for $\hat f_1$ and $\hat f_2$ term by term.
+  \item Compute $\mu=\iint f_\beta\,dx_1\,dx_2$ first, then form centered versions.
+  \item Use the formula $\text{Var}(Y)=E[Y^2] - (E[Y])^2$ to carry out both numerator and denominator integrals.
+\end{itemize}
+
+
+
+\textbf{2. Part:}
+
+For the family
+\[
+f_\gamma(x,y)=x + y + \gamma\,x\,y,
+\quad
+x,y\sim U(0,1)\ \text{independent},
+\]
+we have two measures of interaction strength:
+
+1. Froedman’s $H$‐statistic (see Exercise~\ref{ex:H_param}), which for this model
+   can be shown to satisfy
+   \[
+   H(\gamma) = \frac{|\gamma|}{\sqrt{\gamma^2 + 6}}.
+   \]
+
+2. The total‐order Sobol index for $X$ (or $Y$),
+   \[
+   S_{T,x}(\gamma)
+   = 1 - \frac{\text{Var}\bigl(\E[f_\gamma\mid Y]\bigr)}{\text{Var}(f_\gamma)}
+   = 1 - \frac{1/12}{\,2/12 + \gamma^2/36\,}
+   = 1 - \frac{1}{\,1 + \gamma^2/6\,}.
+   \]
+
+\begin{enumerate}%[label=(\alph*)]
+  \item Derive the formula $H(\gamma)=|\gamma|/\sqrt{\gamma^2+6}$ by
+        repeating the steps in Exercise~\ref{ex:H_param}.
+  \item Derive the expression for $S_{T,x}(\gamma)$ as above.
+  \item Show that both $H(\gamma)$ and $S_{T,x}(\gamma)$ are strictly
+        increasing in $|\gamma|$, and hence induce the same ranking of
+        interaction strength.
+\end{enumerate}
+
+\subsection*{Hint}
+Both measures depend only on $|\gamma|$.  Compare their derivatives
+with respect to $|\gamma|$.
+
+}
