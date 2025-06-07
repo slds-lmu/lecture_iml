@@ -9,7 +9,7 @@
 % Define a generic circle with customizable fill, text color, and content
 \NewDocumentCommand{\colorcircle}{m m m}{%
   \tikz[baseline=(char.base)]{%
-    \node[shape=circle, draw=none, fill=#1, minimum size=1em, inner sep=0pt] (char) {%
+    \node[shape=circle, draw=none, fill=#1, minimum size=0.75em, inner sep=0pt] (char) {%
       \textcolor{#2}{\textbf\scriptsize #3}%
     };%
   }%
@@ -452,9 +452,19 @@ $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stau \cup \{j\}) - v(\Stau))$$
   \item $\Stau$: Set of players before \(j\) joins, for each ordering \(\tau = (\tau^{(1)}, \dots, \tau^{(p)})\)\\
   %Set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$  where $\tau^{(i)}$ is $i$-th element \\ % j, \dots, 
   %\only<3>{\textbf{For $P = \{1,2,3\}$:} $\Pi = \{({\color{red} 1,2},3), (1,3,2), ({\color{red} 2,1},3), (2,3,1), (3,1,2), (3,2,1)\}$  \\}%
-  \only<1->{\textbf{For $P = \{1,2,3\}$:} $\Pi = \{(1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)\}$  \\}%
-  \phantom{$\Rightarrow$} $\leadsto$ For joining order $\tau = (2,1,3)$ and player of interest $j=3$ $\Rightarrow$ $\Stau = \{2, 1\}$\\
-  \phantom{$\Rightarrow$} $\leadsto$ For joining order $\tau = (3,1,2)$ and player of interest $j=1$ $\Rightarrow$ $\Stau = \{3\}$
+  \only<1->{\textbf{E.g.:} 
+  $\Pi = \footnotesize \{
+  (\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}),
+  (\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3},\colorcircle{playeryellow}{white}{2}),
+ (\colorcircle{playeryellow}{white}{2},\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3}),
+  (\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3},\colorcircle{playerred}{white}{1}),
+  (\colorcircle{playerblue}{white}{3},\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}),
+  (\colorcircle{playerblue}{white}{3},\colorcircle{playeryellow}{white}{2},\colorcircle{playerred}{white}{1}) 
+\}$
+  %$\Pi = \{(1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2), (3,2,1)\}$ 
+  \\}%
+  \phantom{$\Rightarrow$} $\leadsto$ For joining order $\tau = \footnotesize(\colorcircle{playeryellow}{white}{2},\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3})$ and player $j=\footnotesize\colorcircle{playerblue}{white}{3}$ $\Rightarrow$ $\Stau = \footnotesize\{\colorcircle{playeryellow}{white}{2},\colorcircle{playerred}{white}{1}\}$\\
+  \phantom{$\Rightarrow$} $\leadsto$ For joining order $\tau = (\footnotesize\colorcircle{playerblue}{white}{3},\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2})$ and player  $j=\footnotesize\colorcircle{playerred}{white}{1}$ $\Rightarrow$ $\Stau = \footnotesize\{\colorcircle{playerblue}{white}{3}\}$
   %\phantom{$\Rightarrow$} $\leadsto$ For joining order $\tau = (3,1,2)$ and player of interest $j=3$ $\Rightarrow$ $\Stau = \emptyset$
   %\item In order definition, we sum the marginal contribution twice for orders that yield set $S = \{1,2\}$\\
   %\item \textbf{Note:} Marginal contribution of orders that yield set {\color{red} $S = \{1,2\}$} is summed twice\\
@@ -487,17 +497,25 @@ where \( \Pi_M \subset \Pi \) is the random sample of \( M \) player orderings
 \item<1-> \textbf{Note:} The same subset \(\Stau\) can occur in multiple permutations (joining orders)\\
 \(\leadsto\) Its marginal contribution is included multiple times in the sum in $\phi_j$
 
-\item<1-> \textbf{Example (for set of players \(P = \{1,2,3\}\), player of interest \(j = 3\)):}
+\item<1-> \textbf{Example (for set of players \(P = \{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}\}\), player of interest \(j = \colorcircle{playerblue}{white}{3}\)):}
 
 \smallskip
 
-\(\Pi = \{({\color{red}1,2},3), (1,3,2), ({\color{red}2,1},3), (2,3,1), (3,1,2), (3,2,1)\}\)
+%\(\Pi = \{({\color{red}1,2},3), (1,3,2), ({\color{red}2,1},3), (2,3,1), (3,1,2), (3,2,1)\}\)
+\(\Pi = \{
+  \underline{\color{black}(\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3})},\ 
+  (\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3},\colorcircle{playeryellow}{white}{2}),\ 
+ \underline{\color{black}(\colorcircle{playeryellow}{white}{2},\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3})},\ 
+  (\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3},\colorcircle{playerred}{white}{1}),\ 
+  (\colorcircle{playerblue}{white}{3},\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}),\ 
+  (\colorcircle{playerblue}{white}{3},\colorcircle{playeryellow}{white}{2},\colorcircle{playerred}{white}{1}) 
+\}\)
 
 \smallskip
 
-\(\leadsto\) In both \((1,2,3)\) and \((2,1,3)\), player 3 joins after coalition \({\color{red} \Stau = \{1,2\}}\)
+\(\leadsto\) In both \(\underline{\color{black}(\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3})}\) and \( \underline{\color{black}(\colorcircle{playeryellow}{white}{2},\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3})}\), player \colorcircle{playerblue}{white}{3} joins after coalition \({\color{black} \Stau = \{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\}}\)
 
-\(\Rightarrow\) Marginal contribution \(v(\{1,2,3\}) - v(\{1,2\})\) occurs twice in $\phi_j$
+\(\Rightarrow\) Marginal contribution \(v(\{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}\}) - v(\{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\})\) occurs twice in $\phi_j$
 % \item<1->  \textbf{Note:} Subsets may appear in multiple orderings $\Rightarrow$ duplicated elements in sum\\
 %   $\leadsto$ For \(j = 3\), joining order \((1,2,3)\) and \((2,1,3)\) yields subset \({\color{red} \Stau= \{1,2\}}\) %and are included separately in the sum
 %   %\item<1-> Order and set definition are equivalent
@@ -540,7 +558,8 @@ where \( \Pi_M \subset \Pi \) is the random sample of \( M \) player orderings
 \end{center}
     \begin{itemize}
       \item \textbf{Order view:} Each of the \( |P|! \) permutations contributes one term with weight \( \tfrac{1}{|P|!} \)
-      \item Subsets \( S \subseteq P \setminus \{j\} \) can appear before \( j \) in multiple permutations
+      \item Same subset \( S \subseteq P \setminus \{j\} \) can appear before \( j \) in multiple orders\\
+      $\leadsto$ e.g., S = \{\colorcircle{playerblue}{playerblue}{3}, \colorcircle{playerred}{playerred}{1}\} = \{\colorcircle{playerred}{playerred}{1}, \colorcircle{playerblue}{playerblue}{3}\}
       \item \textbf{Set view:} Group by unique subsets \( S \), not permutations
       \item Each \( S \) occurs in \( |S|!(|P|-|S|-1)! \) orderings
       \(\leadsto\) Weight:
