@@ -382,7 +382,7 @@ $$
     %\end{onlyenv}
     \begin{onlyenv}<2>
      \item $\Delta(j, \Sm) = \fh(\xjp) -
-\fh(\xjm)$ is the marginal contribution of feature $j$ to coalition $\Sm$
+\fh(\xjm)$ is marginal contribution of feature $j$ to coalition $\Sm$
     \item Here: Feature \textit{year} contributes +700 bike rentals if it joins coalition $\Sm = \{temp, hum\}$ %compared to the expected prediction conditioned on features in coalition $\Sm$ (while other features were taken from a random obs.)
     \end{onlyenv}
     \begin{onlyenv}<3>
@@ -411,22 +411,57 @@ $$
 
 
 
+% \begin{frame}{Revisited: Axioms for Fair Attributions}
+%   We take the general axioms for Shapley Values and apply it to predictions:
+%   \vspace{0.25cm}
+%   \begin{itemize}[<+->]
+%   \itemsep1em
+%     \item \textbf{Efficiency}: Shapley values add up to the (centered) prediction: %. 
+%     %That means, unlike, e.g., LIME, we get a dense attribution, and not a sparse one.
+%     $\sum\nolimits_{j=1}^p\phi_j=\fh(\xv)-\E_{\xv}(\fh(X))$
+%     \item \textbf{Symmetry}: If $x_j$, $x_k$ contribute the same, they receive the same payout\\
+%     $\leadsto$ interaction effects between features are fairly divided \\
+%       $\fh_{S\cup\{j\}}(\xv_{\Scupj}) = \fh_{\Scupk}(\xv_{\Scupk})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_j=\phi_k$
+%     \item \textbf{Dummy / Null Player}: Shapley value of a feature that does not influence the prediction is zero $\leadsto$ if a feature was not selected by the model (e.g., tree or LASSO), its Shapley value is zero  \\
+%       $\fh_{\Scupj}(\xv_{\Scupj})=\fhS(\xv_S)$ for all $S \subseteq P$ then $\phi_j=0$
+%     \item \textbf{Additivity}:  For a prediction with combined payouts, the
+%       payout is the sum of payouts: $\phi_j(v_1) + \phi_j(v_2)$\\
+%       $\leadsto$ Shapley values for model ensembles can be combined
+%   \end{itemize}
+% \end{frame}
+
 \begin{frame}{Revisited: Axioms for Fair Attributions}
-  We take the general axioms for Shapley Values and apply it to predictions:
-  \vspace{0.25cm}
-  \begin{itemize}[<+->]
-  \itemsep1em
-    \item \textbf{Efficiency}: Shapley values add up to the (centered) prediction: %. 
-    %That means, unlike, e.g., LIME, we get a dense attribution, and not a sparse one.
-    $\sum\nolimits_{j=1}^p\phi_j=\fh(\xv)-\E_{\xv}(\fh(X))$
-    \item \textbf{Symmetry}: Two features $j$ and $k$ that contribute the same to the prediction get the same payout\\
-    $\leadsto$ interaction effects between features are fairly divided \\
-      $\fh_{S\cup\{j\}}(\xv_{\Scupj}) = \fh_{\Scupk}(\xv_{\Scupk})$ for all $S \subseteq P\setminus\{j,k\}$ then $\phi_j=\phi_k$
-    \item \textbf{Dummy / Null Player}: Shapley value of a feature that does not influence the prediction is zero $\leadsto$ if a feature was not selected by the model (e.g., tree or LASSO), its Shapley value is zero  \\
-      $\fh_{\Scupj}(\xv_{\Scupj})=\fhS(\xv_S)$ for all $S \subseteq P$ then $\phi_j=0$
-    \item \textbf{Additivity}:  For a prediction with combined payouts, the
-      payout is the sum of payouts: $\phi_j(v_1) + \phi_j(v_2)$ $\leadsto$ Shapley values for model ensembles can be combined
-  \end{itemize}
+We adapt the classic Shapley axioms to the setting of model predictions:
+\vspace{0.25cm}
+
+\begin{itemize}%[<+->]
+%\itemsep1em
+\item \textbf{Efficiency}: Sum of Shapley values adds up to the centered prediction:
+\[
+\textstyle\sum_{j=1}^p \phi_j(\xv) = \fh(\xv) - \E_\xv[\fh(\xv)]
+\]
+$\leadsto$ All predictive contribution is fully distributed among features
+
+\item \textbf{Symmetry}: Identical contributors receive equal value:
+\[
+\fh_{\Scupj}(\xv_{\Scupj}) = \fh_{\Scupk}(\xv_{\Scupk}) \ \forall S \subseteq P \setminus \{j,k\}
+\Rightarrow \phi_j = \phi_k
+\]
+$\leadsto$ Interaction effects are shared equitably
+
+\item \textbf{Dummy (Null Player)}: Irrelevant features receive zero attribution:
+\[
+\fh_{\Scupj}(\xv_{\Scupj}) = \fh_S(\xv_S) \ \forall S \subseteq P \Rightarrow \phi_j = 0
+\]
+$\leadsto$ Shapley value is zero for unused features (e.g., trees or LASSO)
+
+\item \textbf{Additivity}: Attributions are additive across models:
+\[
+\phi_j(v_1 + v_2) = \phi_j(v_1) + \phi_j(v_2)
+\]
+$\leadsto$ Enables combining Shapley values for model ensembles
+
+\end{itemize}
 \end{frame}
 
 
@@ -471,12 +506,22 @@ $$
 \includegraphics[width=0.6\textwidth]{figure/shapley-bike.pdf}%{figure_man/bike-sharing03.png}%
 \end{center}
 
-\begin{itemize}
-    \item Shapley values of observation $i = 200$ from the bike sharing data
-    \item Difference between model prediction of this observation and the average prediction of the data is fairly distributed among the features (i.e., $4434 - 4507 \approx -73 $)
-    \item Feature value temp = 28.5 has the most positive effect, with a contribution (increase of prediction) of about +400
+% \begin{itemize}
+%     \item Shapley values of observation $i = 200$ from the bike sharing data
+%     \item Difference between model prediction of this observation and the average prediction of the data is fairly distributed among the features (i.e., $4434 - 4507 \approx -73 $)
+%     \item Feature value temp = 28.5 has the most positive effect, with a contribution (increase of prediction) of about +400
+% \end{itemize}
+\begin{itemize}%[<+->]
+  \item Shapley decomposition for a single prediction in bike sharing dataset %(observation $i = 200$)
+  \item Model prediction: $\fh(\xv^{(200)}) = \textbf{4434.86}$ vs. dataset average: $\E_\xv[\fh(\xv)] = \textbf{4507.67}$
+  \item Total feature attribution: $\sum_j \phi_j = \textbf{-72.81}$\\
+  $\leadsto$ Explain downward shift from mean prediction
+  \item Temperature (with value $28.5^\circ$C) is the strongest positive contributor: $+400$
+  \item Features \texttt{yr = 2011} and \texttt{days\_since\_2011 = 199} strongly reduce prediction\\
+  $\leadsto$ Model captures lower bike demand in 2011 compared to 2012
 \end{itemize}
 \end{frame}
+
 
 % \begin{frame}{Versions of the Shapley Value}
 
@@ -488,30 +533,49 @@ $$
 %     \tiny{Lundberg, Scott M., Gabriel G. Erion, and Su-In Lee. "Consistent individualized feature attribution for tree ensembles." arXiv preprint arXiv:1802.03888 (2018).}
 % \end{frame}
 
-\begin{frame}{ADVANTAGES AND DISADVANTAGES}
-	\textbf{Advantages:}
-	\begin{itemize}
-	 \item \textbf{Solid theoretical foundation} in game theory
-        \item Prediction is \textbf{fairly distributed} among the feature values $\leadsto$ easy to interpret for a user
-        \item \textbf{Contrastive explanations} that compare the prediction with the average prediction
-	\end{itemize}
-\vspace{0.25cm}
-	\textbf{Disadvantages:}
-	\begin{itemize}
-		\item Without sampling, Shapley values need a lot of computing time to
-		inspect all possible coalitions
-		%\item The Shapley value of a feature value can be easily misinterpreted:
-		%It is not the difference of the predicted value after removing the
-		%feature from the model training; it is the contribution of a feature
-		%value to the difference between the actual prediction and the mean
-		%prediction, given the current set of features
-		\item Like many other IML methods, Shapley values suffer from the
-		inclusion of unrealistic data observations when features are correlated
-	\end{itemize}
+% \begin{frame}{ADVANTAGES AND DISADVANTAGES}
+% 	\textbf{Advantages:}
+% 	\begin{itemize}
+% 	 \item \textbf{Solid theoretical foundation} in game theory
+%         \item Prediction is \textbf{fairly distributed} among the feature values $\leadsto$ easy to interpret for a user
+%         \item \textbf{Contrastive explanations} that compare the prediction with the average prediction
+% 	\end{itemize}
+% \vspace{0.25cm}
+% 	\textbf{Disadvantages:}
+% 	\begin{itemize}
+% 		\item Without sampling, Shapley values need a lot of computing time to
+% 		inspect all possible coalitions
+% 		%\item The Shapley value of a feature value can be easily misinterpreted:
+% 		%It is not the difference of the predicted value after removing the
+% 		%feature from the model training; it is the contribution of a feature
+% 		%value to the difference between the actual prediction and the mean
+% 		%prediction, given the current set of features
+% 		\item Like many other IML methods, Shapley values suffer from the
+% 		inclusion of unrealistic data observations when features are correlated
+% 	\end{itemize}
+% \end{frame}
 
+\begin{frame}{Advantages and Disadvantages}
 
+\textbf{Advantages:}
+\begin{itemize}%[<+->]
+  \item \textbf{Strong theoretical foundation} from cooperative game theory
+  \item \textbf{Fair attribution:} Prediction is additively distributed across features\\
+  $\leadsto$ Easy to interpret for users
+  \item \textbf{Contrastive explanations:} Quantify each feature's role in deviating from the average prediction
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Disadvantages:}
+\begin{itemize}%[<+->]
+  \item \textbf{Computational cost:} Exact computation scales factorially with feature count\\
+  $\leadsto$  Without sampling, all $2^p$ coalitions (or $p!$ permutations) must be evaluated
+  \item \textbf{Issue with correlated features:} Shapley values may evaluate the model on feature combinations that do not occur in the real data
+\end{itemize}
 
 \end{frame}
+
 
 \endlecture
 \end{document}
