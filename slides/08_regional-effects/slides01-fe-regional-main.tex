@@ -89,7 +89,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 
       \textbf{Global} (e.g.\ Partial Dependence, SHAP feature importance)
       \begin{itemize}
-        \item[\textbf{+}] Summarises average model behaviour across the whole feature space
+        \item[\textbf{+}] Summarizes average model behavior across the whole feature space
         \item[\textbf{--}] May hide heterogeneous effects and feature interactions
         \item[\textbf{--}] Lower fidelity for individual predictions
       \end{itemize}
@@ -100,7 +100,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
       \begin{itemize}
         \item[\textbf{+}] High-fidelity, instance-specific insight
         \item[\textbf{+}] Useful for debugging, accountability, and user trust
-        \item[\textbf{--}] Does not generalize to overall model behaviour
+        \item[\textbf{--}] Does not generalize to overall model behavior
         \item[\textbf{--}] Computationally costly at scale
       \end{itemize}
 \end{frame}
@@ -149,11 +149,11 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 \end{frame}
 
 
-\begin{frame}{ICE Curve: Local Feature Effects for ML Models}
+\begin{frame}{ICE Curve: Local Feature Effects}
 %ICE curves show how different feature values of an observation affect its model prediction \newline $\Rightarrow$ \textbf{local interpretation method}
 %From a local perspective, one might be interested in how changing feature values of an observation affect model prediction
 
-\textbf{Question:} How do changes of feature values affect model prediction for a \textbf{single observation}?
+\textbf{Question:} How do feature changes affect the prediction for \textbf{one observation}?
 
 %\smallskip
 
@@ -164,33 +164,33 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 %     \item Partition $\xv = (x_j, \xv_{-j})$ into $x_j$ (feature of interest) and $\xv_{-j}$ (remaining features)
 %     \item Replace observed value $x_j$ with {\color{red} grid values $\tilde x_j$} while keeping values $\xv_{-j}$ fixed
 % \end{itemize}
-\textbf{Idea:} Partition obs. $\xv = (x_j, \xv_{-j})$ into $x_j$ (feature of interest) and $\xv_{-j}$ (remaining features) 
+\textbf{Idea:} Split $\xv = (x_j, \xv_{-j})$ into $x_j$ (feature of interest) and $\xv_{-j}$ (remaining features) 
 \begin{itemize}
     \item Replace observed value $x_j$ with {\color{red} grid values $\tilde x_j$} while keeping values $\xv_{-j}$ fixed
-    \item Visualize function $\fh({\color{red}\tilde x_j}, \xv_{-j})$ for varying ${\color{red}\tilde x_j}$ (individual conditional expectation, ICE)%ICE_j^\xv(\tilde x_j) := 
+    \item Visualize function $\fh({\color{red}\tilde x_j}, \xv_{-j})$ for varying ${\color{red}\tilde x_j}$ (ICE)%ICE_j^\xv(\tilde x_j) := 
 \end{itemize}
 
 \pause
 
-\textbf{Example:} Prediction surface of a SVM model (left), select observation and visualize changes in prediction for different values of $x_2$ while keeping $x_1$ fixed $\Rightarrow$ \textbf{local interpretation}
+\textbf{Example:} SVM prediction surface (left), select observation and visualize changes in prediction for varying $x_2$ while keeping $x_1$ fixed $\Rightarrow$ \textbf{local interpretation}
 
 \vfill
 \centering
-\includegraphics[width=0.95\textwidth, page = 1]{figure/ice_motivation_bike}
+\includegraphics[width=\textwidth, page = 1]{figure/ice_motivation_bike}
 
 %$\Rightarrow$ Repeat for all observations and average the curves for global feature effect ($\leadsto$ PD plots)
 \end{frame}
 
 
 
-\begin{frame}{PD Plot - Global Feature Effects for ML Models}
+\begin{frame}{PD Plot - Global Feature Effects}
 
 \textbf{Question:} How do changes of feature values affect model prediction \textbf{on average}?
 
 %\textbf{Idea:} 
 
 \begin{itemize}
-    \item \textbf{PD function}: Integrate out effect of $X_{-j}$ to obtain marginal effect of feature $x_j$
+    \item \textbf{PD function}: Integrate out effect of $X_{-j}$ to obtain marginal effect of $x_j$
     
     \medskip
     
@@ -213,7 +213,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 
 \vfill
 \centering
-\includegraphics[width=0.95\textwidth, page = 2]{figure/ice_motivation_bike}
+\includegraphics[width=\textwidth, page = 2]{figure/ice_motivation_bike}
 
 %Aggregates to Global PD
 %point-wise average of ICE
@@ -224,7 +224,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 
 \begin{frame}{Feature Interactions}
 
-\textbf{Hooker (2004, 2007):} Functional ANOVA decomposition of a (prediction) function% into main and higher-order (interaction) effects
+\textbf{Hooker (2004, 2007):} Functional ANOVA decomposition of a function% into main and higher-order (interaction) effects
 
 \begin{center}
     $\textstyle
@@ -314,51 +314,51 @@ $
 
 
 
-\begin{frame}{VINE: Visual INteraction Effects \citebutton{Britton (2019)}{https://arxiv.org/abs/1904.00561}}
-\textbf{Question:} How to group similar ICE curves together? \\
-\textbf{Idea:} Cluster similar slopes of ICE curves to obtain clusters where the curves are less affected by interactions. \\
-\textbf{Approach:}
-\begin{enumerate}
-    \item For a feature of interest, find clusters where
- the ICE curves of that feature have similar slopes for example by using agglomerative clustering
-    \item For each found cluster, create a binary label containing the information of whether an observation belongs to the considered cluster or any other cluster and apply a tree
-    \item Identify the split feature and its split point
- and merge clusters that use the same feature and a
- similar split point
-\end{enumerate}
-\end{frame}
+% \begin{frame}{VINE: Visual INteraction Effects \citebutton{Britton (2019)}{https://arxiv.org/abs/1904.00561}}
+% \textbf{Question:} How to group similar ICE curves together? \\
+% \textbf{Idea:} Cluster similar slopes of ICE curves to obtain clusters where the curves are less affected by interactions. \\
+% \textbf{Approach:}
+% \begin{enumerate}
+%     \item For a feature of interest, find clusters where
+%  the ICE curves of that feature have similar slopes for example by using agglomerative clustering
+%     \item For each found cluster, create a binary label containing the information of whether an observation belongs to the considered cluster or any other cluster and apply a tree
+%     \item Identify the split feature and its split point
+%  and merge clusters that use the same feature and a
+%  similar split point
+% \end{enumerate}
+% \end{frame}
 
-\begin{frame}{VINE: Visual INteraction Effects \citebutton{Britton (2019)}{https://arxiv.org/abs/1904.00561}}
-\textbf{Pitfalls:}
-\begin{itemize}
-    \item Does not quantify or rank feature interactions
-    \item Unsupervised approach and needs to be provided with a number of clusters
-    \item VINE fits a separate tree stump for each cluster, as a result the derived decision rules are often not distinct and therefore difficult to interpret.
-\end{itemize}
+% \begin{frame}{VINE: Visual INteraction Effects \citebutton{Britton (2019)}{https://arxiv.org/abs/1904.00561}}
+% \textbf{Pitfalls:}
+% \begin{itemize}
+%     \item Does not quantify or rank feature interactions
+%     \item Unsupervised approach and needs to be provided with a number of clusters
+%     \item VINE fits a separate tree stump for each cluster, as a result the derived decision rules are often not distinct and therefore difficult to interpret.
+% \end{itemize}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=.7\linewidth]{figure/vine.png}
-  \caption{ICE and regional PD (dashed) plot of $x_2$ clustered by VINE for $k = 2$ (left) and $k = 5$ (right). The
- 5 clusters are reduced to 3 by post-hoc merging. Cluster
- numbers 0 and 3 still contain differing individual interaction effects, which are averaged and hence not represented
- well by the regional PD plot.}    
-\end{figure}
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=.7\linewidth]{figure/vine.png}
+%   \caption{ICE and regional PD (dashed) plot of $x_2$ clustered by VINE for $k = 2$ (left) and $k = 5$ (right). The
+%  5 clusters are reduced to 3 by post-hoc merging. Cluster
+%  numbers 0 and 3 still contain differing individual interaction effects, which are averaged and hence not represented
+%  well by the regional PD plot.}    
+% \end{figure}
 
-\end{frame}
+% \end{frame}
 
 
 \begin{frame}{REPID: Regional Effect Plots \citebutton{Herbinger et al. (2022)}{https://proceedings.mlr.press/v151/herbinger22a.html}}
 
-\textbf{Recall:} Different shapes of ICE curves indicate interactions (we want to ignore vertical shifts)\\
+\textbf{Recall:} Different shapes of ICE curves indicate interactions (ignore vertical shifts)\\
 $\Rightarrow$ Focus on shape differences of {\color{cice}\bfseries mean-centered ICE curves}.
     
 %\includegraphics[width = 0.8\textwidth, trim={0cm 0cm 0cm 0cm}, clip]{figure/interaction_separable_2}
 
-The mean-centered ICE curve for obs. $\xv$ evaluated at $m$ grid points $\tilde x_j^{(1)}, \dots, \tilde x_j^{(m)}$ is:
+Mean-centered ICE curve for obs. $\xv$ evaluated at $m$ grid points $\tilde x_j^{(1)}, \dots, \tilde x_j^{(m)}$ is:
 
 {\color{cice}
-\centerline{$\hat f^c(\tilde x_j, \xv_{-j}) = \hat{f}(\tilde x_j, \xv_{-j}) - \frac{1}{m} \sum\nolimits_{k=1}^m \hat{f}(\tilde x_j^{(k)}, \xv_{-j})$}}
+$$\hat f^c(\tilde x_j, \xv_{-j}) = \hat{f}(\tilde x_j, \xv_{-j}) - \frac{1}{m} \sum\nolimits_{k=1}^m \hat{f}(\tilde x_j^{(k)}, \xv_{-j})$$}
  %and $g \in \{1,...,G\}$
 
 \begin{columns}
@@ -375,57 +375,56 @@ The mean-centered ICE curve for obs. $\xv$ evaluated at $m$ grid points $\tilde 
 
 
 
-\begin{frame}{Regional Effect Plots - Synthetic Example}
-
+\begin{frame}{Regional Effects - Synthetic Example}
    
 %\textbf{How can we use ICE curves to find regions with representative PDPs?}
 %\vspace*{0.3cm}
 
-\begin{columns}[T, totalwidth = \linewidth]
-    \begin{column}{0.42\textwidth}
-
-
 \textbf{Example:}
 %$X_1, X_2 \sim \mathcal{U}(-1,1), X_3, X_5 \sim \mathcal{B}(n, 0.5), X_4 \sim \mathcal{B}(n, 0.7), X_6 \sim \mathcal{N}(1,5)$ (all iid)\\
 $X_1, X_2, X_6 \sim \mathcal{U}(-1,1)$, 
-$X_3, X_4, X_5 \sim \mathcal{B}(n, 0.5)$ (all iid)\\
+$X_3, X_4, X_5 \sim \mathcal{B}(n, 0.5)$ (all iid)
 
-%$\leadsto$ True relationship: $f(X) = 0.2 X_1 - 8 X_2 + \color{YellowGreen}{8 X_2  \mathbbm{1}_{(X_1 > 0)}} \color{black}+ \color{ForestGreen}{16 X_2  \mathbbm{1}_{(X_3 = 0)}} \color{black}+ \epsilon, \; \epsilon \sim \mathcal{N}(0,1)$\\
+\smallskip
+
+\only<1>{$\leadsto$ Ground truth:{
+    $f(X) = 0.2 X_1 \highlight{- 8 X_2 + {8 X_2  \mathbbm{1}_{(X_1 > 0)}}+ {16 X_2  \mathbbm{1}_{(X_3 = 0)}}} + \epsilon $}}
+    \only<2>{$\leadsto$ Ground truth:{
+    $f(X) = 0.2 X_1 - 8 X_2 + {8 X_2  \mathbbm{1}_{(X_1 > 0)}} + \highlightFG{16 X_2  \mathbbm{1}_{(X_3 = 0)}} \color{black}+ \epsilon $}}
+    \only<3>{$\leadsto$ Ground truth:{
+    $f(X) = 0.2 X_1 - 8 X_2 + \highlightYG{8 X_2  \mathbbm{1}_{(X_1 > 0)}} \color{black}+ \highlightFG{16 X_2  \mathbbm{1}_{(X_3 = 0)}} \color{black}+ \epsilon $}}
 
 $\leadsto$ Model: Random forest
 
-        \begin{itemize}
+\begin{columns}[T, totalwidth = \linewidth]
+    \begin{column}{0.43\textwidth}
+
+%$\leadsto$ True relationship: $f(X) = 0.2 X_1 - 8 X_2 + \color{YellowGreen}{8 X_2  \mathbbm{1}_{(X_1 > 0)}} \color{black}+ \color{ForestGreen}{16 X_2  \mathbbm{1}_{(X_3 = 0)}} \color{black}+ \epsilon, \; \epsilon \sim \mathcal{N}(0,1)$\\
+
+%\begin{itemize}
   %\setlength{\itemindent}{0em}
-\item \textbf{Problem:} 
+\textbf{Problem:} 
 \begin{itemize}
     \item \only<1>{PD curve of $\highlight{X_2}$ is misleading due to interactions $\leadsto$ ICE}
     \only<2->{PD curve of $X_2$ is misleading due to interactions $\leadsto$ ICE}
     \item ICE curves do not identify the interacting features
 \end{itemize}
 
-
-\item<2-> \textbf{Idea:} Find regions with similar ICE curves and aggregate them to regional effects
+\only<2->{\medskip\textbf{Idea:} Find regions with similar ICE curves and aggregate them to regional effects}
 % \item<2-> \textbf{Idea:} Find regions where variance of ICE curves is minimized by recursive partitioning the feature space w.r.t. all other features $-j$\\
 %Find regions with similar ICE curves and aggregate them to regional effects\\
 %\item 
 %$\leadsto$ REP more representative due to less interactions  
    %\item[$\leadsto$]\textbf{Idea} Recursively partition feature space w.r.t. $-j$ such that distance of ICE curves to REP is small}
-\item<3-> {\color{rep}\textbf{Regional effect}} (blue curves)   $\hat = $ Estimate PD curve in each region
+
+\only<3->{\medskip{\color{rep}\textbf{Regional effect}} (blue curves)   $\hat = $ Estimate PD curve in each region}
 
  % \centerline{$ \textstyle    \hat f_{j|\mathcal{N}_g}^{PD}(\tilde x_j) = \frac{1}{|\mathcal{N}_g|} \sum_{i \in \mathcal{N}_g} \hat f(\tilde x_j, \xv_{-j}^{(i)})$}
-\end{itemize}
-
-
-   
+  
     \end{column}
-    \begin{column}{0.55\textwidth}
-    \small
-    \only<1>{\centerline{
-    $f(X) = 0.2 X_1 \highlight{- 8 X_2 + {8 X_2  \mathbbm{1}_{(X_1 > 0)}}+ {16 X_2  \mathbbm{1}_{(X_3 = 0)}}} + \epsilon $}}
-    \only<2>{\centerline{
-    $f(X) = 0.2 X_1 - 8 X_2 + {8 X_2  \mathbbm{1}_{(X_1 > 0)}} + \highlightFG{16 X_2  \mathbbm{1}_{(X_3 = 0)}} \color{black}+ \epsilon $}}
-    \only<3>{\centerline{
-    $f(X) = 0.2 X_1 - 8 X_2 + \highlightYG{8 X_2  \mathbbm{1}_{(X_1 > 0)}} \color{black}+ \highlightFG{16 X_2  \mathbbm{1}_{(X_3 = 0)}} \color{black}+ \epsilon $}}
+    \begin{column}{0.57\textwidth}
+    \footnotesize
+
     %$, \; \epsilon \sim \mathcal{N}(0,1)$
 \only<1>{
     \centering
@@ -500,11 +499,11 @@ $\leadsto$ Model: Random forest
 
      \begin{columns}[T, totalwidth = \linewidth]
      %\footnotesize
-            \begin{column}{0.1\linewidth}
+            \begin{column}{0.12\linewidth}
             \centering
              $\hat{f}_2^{PD}(X_2)$ %, X_1 > 0 \land X_3 = 0\)\\
          \end{column}
-         \begin{column}{0.18\linewidth}
+         \begin{column}{0.16\linewidth}
          \centering
              $\approx 8X_2$ %, X_1 > 0 \land X_3 = 0\)\\
          \end{column}
@@ -599,14 +598,14 @@ $\leadsto$ Model: Random forest
 \end{frame}
 
 
-\begin{frame}{Regional Effect Plots - Details}
+\begin{frame}{Regional Effects - Details}
 
 \begin{columns}[T, totalwidth=\textwidth]
-    \begin{column}{0.6\textwidth}
+    \begin{column}{0.61\textwidth}
     \textbf{Question:} How to split the curves into regions?  
- Define risk as the L2 loss of mean-centered ICE curves:
+ Define risk as L2 loss of mean-centered ICE curves:
 $$\textstyle
-    \mathcal{R}\left(\mathcal{N}\right) =
+    \mathcal{R}_j\left(\mathcal{N}\right) =
     \sum\limits_{\xv \in \mathcal{N}} 
      \sum\limits_{k = 1}^m
      (\underbrace{{\color{cice}\hat f^{c}(\tilde x_j^{(k)}, \xv_{-j})} - \color{rep}\hat f_{j|\mathcal{N}}^{PD,c} (\tilde x_j^{(k)})}_\text{$\color{orange}{d_k}$})^2
@@ -627,25 +626,25 @@ region $\mathcal{N} \subseteq \Xspace$:
 \end{columns}
 %\medskip
 \begin{itemize}
-    \item[$\Rightarrow$] Measures interaction-related heterogeneity (variance) ICE curves in region $\mathcal{N}$
-    \item[$\Rightarrow$] Recursive partitioning(CART): Find best feature-split combination that minimizes
+    \item[$\Rightarrow$] Measures interaction-related heterogeneity (variance) of ICE curves in $\mathcal{N}$
+    \item[$\Rightarrow$] Recursive partitioning (CART): Find best feature-split combination that solves
     
-% \medskip
+\medskip
 
-\centerline{$\mathcal{R}\left(\mathcal{N}_{left}\right) + \mathcal{R}\left(\mathcal{N}_{right}\right)$}
+\centerline{$\arg \min_{z, t} \; \mathcal{R}_j\left(\mathcal{N}_{left}\right) + \mathcal{R}_j\left(\mathcal{N}_{right}\right)$}
 \end{itemize}
 
       \begin{columns}[c, totalwidth=\textwidth]
-        \begin{column}{0.4\textwidth}
+        \begin{column}{0.57\textwidth}
     \begin{itemize}
         \item $\mathcal{N}_{left} = \{\xv \in \mathcal{N}|x_z \leq t\}$
         \item $\mathcal{N}_{right} = \{\xv \in \mathcal{N}|x_z > t\}$
         \item Split point $t$ for feature $x_z, z \in -j$
     \end{itemize}
         \end{column}
-          \begin{column}{0.59\textwidth}
+          \begin{column}{0.43\textwidth}
           \centering
-          \textbf{Intuition:} Is another feature $x_z$ \\responsible for the heterogeneity?
+          \textbf{Intuition:} Is another feature $x_z$ \\responsible for the heterogeneity (measured by $\mathcal{R}_j$)?
         \end{column}
     \end{columns}
         %\item loss $\mathcal{L}$ for $i$-th ICE curve based on a grid of size $m$
@@ -656,30 +655,29 @@ region $\mathcal{N} \subseteq \Xspace$:
 
 
 \begin{frame}{Regional Effect Plots - Real Example}
-    \begin{columns}
+    \begin{columns}[T, totalwidth = \textwidth]
         % First column (Design matrix and target variable)
         \column{0.5\textwidth}
         \textbf{Dataset Overview}  % Title for the first column
         \vspace{0.5em}  % Adds a small space after the title
         \begin{itemize}
-            \item Hourly count of bike-rentals (2011, 2012)
-            \item Design-matrix $X$:
-            \begin{itemize}
-                \item Seasonal information:
-                \begin{itemize}
-                    \item year, month, day
-                    \item hour
-                    \item working day vs. non-working day
-                \end{itemize}
-                \item Weather information:
-                \begin{itemize}
-                    \item temperature
-                    \item humidity
-                    \item windspeed
-                \end{itemize}
-            \end{itemize}
+          \setlength\itemindent{-10pt}
+            \item Hourly bike rental count 2011-2012
+            % \item Design-matrix $X$:
+            % \begin{itemize}
+            %  \setlength\itemindent{-20pt}
+                \item Seasonal information:\\
+                \hspace{-10pt}$\bullet$ year, month, day\\
+                \hspace{-10pt}$\bullet$ hour\\
+                \hspace{-10pt}$\bullet$ working vs. non-working day
+                \item Weather information:\\
+                \hspace{-10pt}$\bullet$ temperature\\
+                \hspace{-10pt}$\bullet$ humidity\\
+                \hspace{-10pt}$\bullet$ windspeed
+            % \end{itemize}
             \item Target variable $Y$:
             \begin{itemize}
+             \setlength\itemindent{-20pt}
                 \item bike-rentals per hour
                 \item $Y_\mu = 189.5$, $Y_\sigma = 181.4$
             \end{itemize}
@@ -691,20 +689,32 @@ region $\mathcal{N} \subseteq \Xspace$:
         \textbf{Modeling and Analysis}  % Title for the first column
         \vspace{0.5em}  % Adds a small space after the title
         \begin{itemize}
+          \setlength\itemindent{-10pt}
             \item We trained a Neural Network
             \begin{itemize}
+             \setlength\itemindent{-20pt}
                 \item Any ML model could be used
-                \item Error: $\texttt{RMSE} \approx 45.35$ counts ($0.25Y_\sigma$)
+                \item Error: $\texttt{RMSE} \approx 45.35$
+                %counts ($0.25Y_\sigma$)
             \end{itemize}
             \vspace{0.5em} 
-            
-            \item Use global/regional effects to understand:
-            \begin{itemize}
-                \item which feature(s) are the most important
-                \item how each feature affects the output
-                \item which feature effects are heterogeneous 
-                \item try regional effects for better explanations
-            \end{itemize}
+            \item Use global/regional effects to:
+  \begin{itemize}
+    \setlength\itemindent{-20pt}
+    \item identify most important features
+    \item assess feature influence on output
+    \item detect heterogeneity in effects
+    \item obtain nuanced regional insights
+  \end{itemize}
+
+            % \item Use global/regional effects to understand:
+            % \begin{itemize}
+            %  \setlength\itemindent{-20pt}
+            %     \item which feature(s) are the most important
+            %     \item how each feature affects the output
+            %     \item which feature effects are heterogeneous 
+            %     \item try regional effects for better explanations
+            % \end{itemize}
         \end{itemize}
         }
     \end{columns}
@@ -718,9 +728,9 @@ region $\mathcal{N} \subseteq \Xspace$:
     \includegraphics[width=0.3\linewidth]{figure/01_bike_sharing_dataset_18_1.png}
     \includegraphics[width=0.3\linewidth]{figure/01_bike_sharing_dataset_18_2.png}\\
     \includegraphics[width=0.3\linewidth]{figure/01_bike_sharing_dataset_18_4.png}
-    \includegraphics[width=0.3\linewidth]{figure/01_bike_sharing_dataset_18_5.png}    
-    \caption{Global effect of features: month, hour, temperature, windspeed, humidity}
-    \label{fig:enter-label}
+    \includegraphics[width=0.3\linewidth]{figure/01_bike_sharing_dataset_18_5.png}\\
+    Global effect of features: month, hour, temperature, windspeed, humidity
+    %\label{fig:enter-label}
 \end{figure}
 \begin{itemize}
     \item<2> \textcolor{ForestGreen}{\texttt{hour}: Most important and highly heterogeneous feature}
@@ -730,7 +740,7 @@ region $\mathcal{N} \subseteq \Xspace$:
 % Now drawing the rectangle around the second image on the second slide
 \only<2>{
     \begin{tikzpicture}[overlay, remember picture]
-        \draw[ForestGreen, thick] (4.25, 5.7) rectangle (4.25 + 3.75, 5.7 + 3); % Adjust these coordinates
+        \draw[ForestGreen, thick] (4.25, 5.2) rectangle (4.25 + 3.75, 5.2 + 3); % Adjust these coordinates
     \end{tikzpicture}
 }
 \end{frame}
@@ -738,7 +748,7 @@ region $\mathcal{N} \subseteq \Xspace$:
 
 
 \begin{frame}{Regional Effect Plots - Real Example}
-    \centering
+\resizebox{\linewidth}{!}{%
     \begin{tikzpicture}[every node/.style={anchor=south, align=center}]
 
         \node[draw, fill=yellow!20, text width=4cm] at (-4.5, 1.3) {Regional effects of \texttt{hour}};
@@ -746,17 +756,17 @@ region $\mathcal{N} \subseteq \Xspace$:
         \node (root) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_18_1.png}};
 
         % Depth 1 (Appears on Slide 2)
-        \node[below left=-.2cm and .8cm of root] (child1) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_28_0.png}};
-        \node[below right=-.2cm and .8cm of root] (child2) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_28_1.png}};
+        \node[below left=.3cm and -0.5cm of root] (child1) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_28_0.png}};
+        \node[below right=.3cm and -0cm of root] (child2) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_28_1.png}};
         \draw (root) -- node[pos=0.15, left] {workingday=False} (child1);
         \draw (root) -- node[pos=0.15, right] {workingday=True} (child2);
 
 
         % Depth 2 (Appears on Slide 3)
-        \node[below left=0.3cm and -1cm of child1] (child11) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_29_0.png}};
-        \node[below right=0.3cm and -1cm of child1] (child21) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_29_1.png}};
-        \node[below left=0.3cm and -1cm of child2] (child12) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_29_2.png}};
-        \node[below right=.3cm and -1cm of child2] (child22) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_29_3.png}};
+        \node[below left=0.3cm and -1.8cm of child1] (child11) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_29_0.png}};
+        \node[below right=0.3cm and -1.8cm of child1] (child21) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_29_1.png}};
+        \node[below left=0.3cm and -1.8cm of child2] (child12) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_29_2.png}};
+        \node[below right=.3cm and -1.8cm of child2] (child22) {\includegraphics[width=0.25\textwidth]{figure/01_bike_sharing_dataset_29_3.png}};
         
         \draw (child1) -- node[midway, left] {temp=cold} (child11);
         \draw (child1) -- node[midway, right] {temp=hot} (child21);
@@ -764,6 +774,7 @@ region $\mathcal{N} \subseteq \Xspace$:
         \draw (child2) -- node[midway, right] {temp=hot} (child22);
 
     \end{tikzpicture}
+    }
 \end{frame}
 
 
