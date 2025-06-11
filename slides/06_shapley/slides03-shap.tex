@@ -26,43 +26,87 @@
 \lecturechapter{SHAP (SHapley Additive exPlanation) Values}
 \lecture{Interpretable Machine Learning}
 
-\begin{frame}{Shapley Values in ML - A short Recap}
+% \begin{frame}{Shapley Values in ML - A short Recap}
   
-  \textbf{Question:} How much does a feat. $j$ contribute to the prediction of a single obs. \\
-  \textbf{Idea:} Use Shapley values from cooperative game theory \\
-  \pause
-  \textbf{Procedure:} 
-  \begin{itemize}
-    \item Compare ``reduced prediction function'' of feature coalition $S$ with $\Scupj$ 
-    \item Iterate over possible coalitions to calculate marginal contribution of feature $j$ to sample $\xv$
-\end{itemize}
+%   \textbf{Question:} How much does a feat. $j$ contribute to the prediction of a single obs. \\
+%   \textbf{Idea:} Use Shapley values from cooperative game theory \\
+%   \pause
+%   \textbf{Procedure:} 
+%   \begin{itemize}
+%     \item Compare ``reduced prediction function'' of feature coalition $S$ with $\Scupj$ 
+%     \item Iterate over possible coalitions to calculate marginal contribution of feature $j$ to sample $\xv$
+% \end{itemize}
 
-$$\phi_j 
-%= \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stauj) - v(\Stau)) 
-= \frac{1}{p!} \sum_{\tau \in \Pi}  \underbrace{\fh_{\Stauj}(\xv_{\Stauj}) - \fh_{\Stau}(\xv_{\Stau})}_{\text{marginal contribution of feature $j$}} $$
+% $$\phi_j 
+% %= \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stauj) - v(\Stau)) 
+% = \frac{1}{p!} \sum_{\tau \in \Pi}  \underbrace{\fh_{\Stauj}(\xv_{\Stauj}) - \fh_{\Stau}(\xv_{\Stau})}_{\text{marginal contribution of feature $j$}} $$
+
+% \pause
+% \textbf{Remember:}
+
+% \begin{itemize}
+%     \item $\fh$ is the prediction function, $p$ denotes the number of features
+%     \item Non-existent feat. in a coalition are replaced by values of random feat. values 
+%     \item Recall $\Stau$ defines the coalition as the set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$% states from the feature
+    
+%   \centerline{
+%   \begin{tabular}{|c|c|c|c|c|c|c|}
+%     %\multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{|S|! \text{ permutations}}$}} &
+%     %\multicolumn{1}{c}{} &
+%     %\multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
+%     \hline
+%     $\tau^{(1)}$ & \ldots & $\tau^{(|S|)}$ & $\tau^{(|S| + 1)}$ & $\tau^{(|S| + 2)}$ & \ldots & $\tau^{(p)}$ \\
+%     \hline
+%     \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}} &
+%     \multicolumn{1}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{4em}}^{}$}} &
+%     \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}}\\
+%     \multicolumn{3}{c}{$S_j^\tau:$ Players before player $j$} & \multicolumn{1}{c}{player $j$} & \multicolumn{3}{c}{Players after player $j$} \\
+%   \end{tabular}}
+% \end{itemize}
+
+% \end{frame}
+
+
+\begin{frame}{Shapley Values in ML - A Short Recap}
+
+\textbf{Question:} How much does $x_j$ contribute to prediction of a specific obs. $\xv$?
+
+\textbf{Idea:} Use Shapley values to compute fair attributions.
 
 \pause
-\textbf{Remember:}
+\textbf{Key Principle:} Marginal contribution across all permutations of feature indices $\tau \in \Pi$:
 
+\[
+\phi_j(\xv) = \frac{1}{p!} \sum_{\tau \in \Pi} 
+\underbrace{\fh_{\Stauj}(\xv_{\Stauj}) - \fh_{\Stau}(\xv_{\Stau})}_{\text{marginal contribution of feature $j$}}
+\]
+
+%\pause
+\textbf{Procedure:}
 \begin{itemize}
-    \item $\fh$ is the prediction function, $p$ denotes the number of features
-    \item Non-existent feat. in a coalition are replaced by values of random feat. values 
-    \item Recall $\Stau$ defines the coalition as the set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$% states from the feature
-    
-  \centerline{
-  \begin{tabular}{|c|c|c|c|c|c|c|}
-    %\multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{|S|! \text{ permutations}}$}} &
-    %\multicolumn{1}{c}{} &
-    %\multicolumn{3}{c}{\enspace\raisebox{-3.3ex}[0pt][2.6ex]{$ \overbrace{\vphantom{-}\hspace{9em}}^{(|P| - |S| - 1)! \text{ permutations}}$}}\\
-    \hline
-    $\tau^{(1)}$ & \ldots & $\tau^{(|S|)}$ & $\tau^{(|S| + 1)}$ & $\tau^{(|S| + 2)}$ & \ldots & $\tau^{(p)}$ \\
-    \hline
-    \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}} &
-    \multicolumn{1}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{4em}}^{}$}} &
-    \multicolumn{3}{c}{\enspace\raisebox{1.3ex}[0pt][2.6ex]{$ \underbrace{\vphantom{-}\hspace{9em}}^{}$}}\\
-    \multicolumn{3}{c}{$S_j^\tau:$ Players before player $j$} & \multicolumn{1}{c}{player $j$} & \multicolumn{3}{c}{Players after player $j$} \\
-  \end{tabular}}
+  \item For each permutation $\tau$, determine coalition $\Stau$: features before $j$ in $\tau$
+  \item Compute the effect of adding $j$ to $\Stau$ via the difference above
+  \item Average over all $p!$ permutations
 \end{itemize}
+
+\pause
+\textbf{Notes:}
+\begin{itemize}
+  \item $\fh$: prediction function; $p$: number of features
+  \item Features not in the coalition are replaced via marginalization (e.g., random imputations of feature values)
+\end{itemize}
+
+\vspace{0.4em}
+\centerline{
+\begin{tabular}{|c|c|c|c|c|c|c|}
+  \hline
+  $\tau^{(1)}$ & $\cdots$ & $\tau^{(|S|)}$ & $\tau^{(|S|+1)}$ & $\tau^{(|S|+2)}$ & $\cdots$ & $\tau^{(p)}$ \\
+  \hline
+  \multicolumn{3}{c}{$\underbrace{\hspace{9em}}_{\Stau}$} & 
+  \multicolumn{1}{c}{$\underbrace{\hspace{4em}}_{j}$} & 
+  \multicolumn{3}{c}{$\underbrace{\hspace{9em}}_{\text{Remaining features}}$}
+\end{tabular}
+}
 
 \end{frame}
 
@@ -76,7 +120,7 @@ $$\phi_j
       \item Mean prediction is $\E(\fh) = \color{blue}{4515}$
   \end{itemize}
   \pause
-  \textbf{Exact Shapley calculation for humidity:} 
+  \textbf{Exact Shapley calculation for humidity (set definition):} 
   \begin{table}[T]
       \centering
       \begin{tabular}{c|c|c|c|c}

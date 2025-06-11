@@ -15,7 +15,7 @@
 
 \newcommand{\titlefigure}{figure/25-05-31_Hooker_2004_graph_fANOVA}
 \newcommand{\learninggoals}{
-\item One method for functional decomposition: Classical functional ANOVA (fANOVA).
+\item One method for functional decomposition: Classical functional ANOVA (fANOVA)
 \item Algorithm for calculating the components in a fANOVA
 \item Variance decomposition in fANOVA
 }
@@ -43,30 +43,6 @@
     
 \end{frame}
 
-% \begin{frame}{Frame Title}
-
-%     \textbf{Assumption}: Independent features \\
-%     Today, we look at one method to obtain a functional decomposition; Funcational ANOVA (fANOVA).
-    
-% \end{frame}
-
-% \begin{frame}{Standard fANOVA: Idea}
-
-%     Consider example from before:
-
-%     \begin{equation}
-%         \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2
-%     \end{equation}
-
-%     Goal: Interaction term \(g_{1,2}\) should only contain the pure interaction, in this case only \(|x_1|x_2\), all the rest are actually main effects. \\
-%     General idea: Try to move as much as possible into lower-order effects, and only keep the rest in the higher-order term. \\
-%     \(\Rightarrow\) First compute lower-order terms, then higher-order terms.
-%     \begin{itemize}
-%         \item Make sure higher-order terms don't contain these lower-order terms
-%     \end{itemize}
-    
-% \end{frame}
-
 \begin{frame}{Standard fANOVA: Idea}
 
     \begin{itemize}
@@ -85,6 +61,9 @@
         Here: PDP + more general PD-functions
         \pause
         \item \textbf{Idea for fANOVA:} PD-function $\fh_{S;PD} =$ sum of all components $g_{\tilde{S}}$ up to this order
+        $$
+        \fh_{S;PD}(\xv_S) \; = \; \sum_{V \subseteq S} g_{V}(\xv_V)
+        $$
         \pause
         \item \textbf{Remember:} \\ Idea of PDPs or general PD-functions: Average out all other features
         \item[$\Rightarrow$] Total formula for calculating the components \(g_S\) in the fANOVA algorithm:
@@ -286,7 +265,7 @@
         &= |x_1| x_2 - 0.5 |x_1| - 0.5 x_2 + 0.25
         \end{align*}
         \item[$\Rightarrow$] All components shifted to have mean 0
-        \item[$\Rightarrow$] Parts of interaction term attributed to main effects (correctly!)
+        \item[$\Rightarrow$] Parts of interaction term attributed to main effects (correctly, depends on distribution!)
         }
         
     \end{itemize}
