@@ -85,25 +85,25 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 \lecture{Interpretable Machine Learning}
 
 
-\begin{frame}{Recap: Global vs.\ Local Explanations}
+% \begin{frame}{Recap: Global vs.\ Local Explanations}
 
-      \textbf{Global} (e.g.\ Partial Dependence, SHAP feature importance)
-      \begin{itemize}
-        \item[\textbf{+}] Summarizes average model behavior across the whole feature space
-        \item[\textbf{--}] May hide heterogeneous effects and feature interactions
-        \item[\textbf{--}] Lower fidelity for individual predictions
-      \end{itemize}
+%       \textbf{Global} (e.g.\ Partial Dependence, SHAP feature importance)
+%       \begin{itemize}
+%         \item[\textbf{+}] Summarizes average model behavior across the whole feature space
+%         \item[\textbf{--}] May hide heterogeneous effects and feature interactions
+%         \item[\textbf{--}] Lower fidelity for individual predictions
+%       \end{itemize}
 
-\lz
+% \lz
 
-      \textbf{Local} (e.g.\ ICE curves, SHAP values)
-      \begin{itemize}
-        \item[\textbf{+}] High-fidelity, instance-specific insight
-        \item[\textbf{+}] Useful for debugging, accountability, and user trust
-        \item[\textbf{--}] Does not generalize to overall model behavior
-        \item[\textbf{--}] Computationally costly at scale
-      \end{itemize}
-\end{frame}
+%       \textbf{Local} (e.g.\ ICE curves, SHAP values)
+%       \begin{itemize}
+%         \item[\textbf{+}] High-fidelity, instance-specific insight
+%         \item[\textbf{+}] Useful for debugging, accountability, and user trust
+%         \item[\textbf{--}] Does not generalize to overall model behavior
+%         \item[\textbf{--}] Computationally costly at scale
+%       \end{itemize}
+% \end{frame}
 
 
 
@@ -654,93 +654,98 @@ region $\mathcal{N} \subseteq \Xspace$:
 \end{frame}
 
 
-\begin{frame}{Regional Effect Plots - Real Example}
-    \begin{columns}[T, totalwidth = \textwidth]
-        % First column (Design matrix and target variable)
-        \column{0.5\textwidth}
-        \textbf{Dataset Overview}  % Title for the first column
-        \vspace{0.5em}  % Adds a small space after the title
-        \begin{itemize}
-          \setlength\itemindent{-10pt}
-            \item Hourly bike rental count 2011-2012
-            % \item Design-matrix $X$:
-            % \begin{itemize}
-            %  \setlength\itemindent{-20pt}
-                \item Seasonal information:\\
-                \hspace{-10pt}$\bullet$ year, month, day\\
-                \hspace{-10pt}$\bullet$ hour\\
-                \hspace{-10pt}$\bullet$ working vs. non-working day
-                \item Weather information:\\
-                \hspace{-10pt}$\bullet$ temperature\\
-                \hspace{-10pt}$\bullet$ humidity\\
-                \hspace{-10pt}$\bullet$ windspeed
-            % \end{itemize}
-            \item Target variable $Y$:
-            \begin{itemize}
-             \setlength\itemindent{-20pt}
-                \item bike-rentals per hour
-                \item $Y_\mu = 189.5$, $Y_\sigma = 181.4$
-            \end{itemize}
-        \end{itemize}
+% \begin{frame}{Regional Effect Plots - Real Example}
+%     \begin{columns}[T, totalwidth = \textwidth]
+%         % First column (Design matrix and target variable)
+%         \column{0.5\textwidth}
+%         \textbf{Dataset Overview}  % Title for the first column
+%         \vspace{0.5em}  % Adds a small space after the title
+%         \begin{itemize}
+%           \setlength\itemindent{-10pt}
+%             \item Hourly bike rental count 2011-2012
+%             % \item Design-matrix $X$:
+%             % \begin{itemize}
+%             %  \setlength\itemindent{-20pt}
+%                 \item Seasonal information:\\
+%                 \hspace{-10pt}$\bullet$ year, month, day\\
+%                 \hspace{-10pt}$\bullet$ hour\\
+%                 \hspace{-10pt}$\bullet$ working vs. non-working day
+%                 \item Weather information:\\
+%                 \hspace{-10pt}$\bullet$ temperature\\
+%                 \hspace{-10pt}$\bullet$ humidity\\
+%                 \hspace{-10pt}$\bullet$ windspeed
+%             % \end{itemize}
+%             \item Target variable $Y$:
+%             \begin{itemize}
+%              \setlength\itemindent{-20pt}
+%                 \item bike-rentals per hour
+%                 \item $Y_\mu = 189.5$, $Y_\sigma = 181.4$
+%             \end{itemize}
+%         \end{itemize}
 
-        % Second column (ML model and explanation plots)
-        \column{0.5\textwidth}
-        \only<2>{
-        \textbf{Modeling and Analysis}  % Title for the first column
-        \vspace{0.5em}  % Adds a small space after the title
-        \begin{itemize}
-          \setlength\itemindent{-10pt}
-            \item We trained a Neural Network
-            \begin{itemize}
-             \setlength\itemindent{-20pt}
-                \item Any ML model could be used
-                \item Error: $\texttt{RMSE} \approx 45.35$
-                %counts ($0.25Y_\sigma$)
-            \end{itemize}
-            \vspace{0.5em} 
-            \item Use global/regional effects to:
-  \begin{itemize}
-    \setlength\itemindent{-20pt}
-    \item identify most important features
-    \item assess feature influence on output
-    \item detect heterogeneity in effects
-    \item obtain nuanced regional insights
-  \end{itemize}
+%         % Second column (ML model and explanation plots)
+%         \column{0.5\textwidth}
+%         \only<2>{
+%         \textbf{Modeling and Analysis}  % Title for the first column
+%         \vspace{0.5em}  % Adds a small space after the title
+%         \begin{itemize}
+%           \setlength\itemindent{-10pt}
+%             \item We trained a Neural Network
+%             \begin{itemize}
+%              \setlength\itemindent{-20pt}
+%                 \item Any ML model could be used
+%                 \item Error: $\texttt{RMSE} \approx 45.35$
+%                 %counts ($0.25Y_\sigma$)
+%             \end{itemize}
+%             \vspace{0.5em} 
+%             \item Use global/regional effects to:
+%   \begin{itemize}
+%     \setlength\itemindent{-20pt}
+%     \item identify most important features
+%     \item assess feature influence on output
+%     \item detect heterogeneity in effects
+%     \item obtain nuanced regional insights
+%   \end{itemize}
 
-            % \item Use global/regional effects to understand:
-            % \begin{itemize}
-            %  \setlength\itemindent{-20pt}
-            %     \item which feature(s) are the most important
-            %     \item how each feature affects the output
-            %     \item which feature effects are heterogeneous 
-            %     \item try regional effects for better explanations
-            % \end{itemize}
-        \end{itemize}
-        }
-    \end{columns}
-\end{frame}
+%             % \item Use global/regional effects to understand:
+%             % \begin{itemize}
+%             %  \setlength\itemindent{-20pt}
+%             %     \item which feature(s) are the most important
+%             %     \item how each feature affects the output
+%             %     \item which feature effects are heterogeneous 
+%             %     \item try regional effects for better explanations
+%             % \end{itemize}
+%         \end{itemize}
+%         }
+%     \end{columns}
+% \end{frame}
 
 
 \begin{frame}{Regional Effect Plots - Real Example}
 \begin{figure}
     \centering
-    \includegraphics[width=0.3\linewidth]{figure/01_bike_sharing_dataset_18_0.png}
-    \includegraphics[width=0.3\linewidth]{figure/01_bike_sharing_dataset_18_1.png}
-    \includegraphics[width=0.3\linewidth]{figure/01_bike_sharing_dataset_18_2.png}\\
-    \includegraphics[width=0.3\linewidth]{figure/01_bike_sharing_dataset_18_4.png}
-    \includegraphics[width=0.3\linewidth]{figure/01_bike_sharing_dataset_18_5.png}\\
-    Global effect of features: month, hour, temperature, windspeed, humidity
+    %\includegraphics[width=0.325\linewidth]{figure/01_bike_sharing_dataset_18_0.png}
+    \includegraphics[width=0.325\linewidth]{figure/01_bike_sharing_dataset_18_4.png}
+    \includegraphics[width=0.325\linewidth]{figure/01_bike_sharing_dataset_18_1.png}
+    \includegraphics[width=0.325\linewidth]{figure/01_bike_sharing_dataset_18_2.png}%\\
+    %\includegraphics[width=0.325\linewidth]{figure/01_bike_sharing_dataset_18_5.png}\\
+    %Global effect of features: month, hour, temperature, windspeed, humidity
     %\label{fig:enter-label}
 \end{figure}
 \begin{itemize}
-    \item<2> \textcolor{ForestGreen}{\texttt{hour}: Most important and highly heterogeneous feature}
-    \item<2> \texttt{temperature}: Second most important feature
-    \item<2> Other features have less impact
+\item Identify feature with highly heterogeneous local effects\\
+$\leadsto$ \textcolor{ForestGreen}{\texttt{hour}: Most important and highly heterogeneous feature (highest variance)}
+    %\item<1> \texttt{temperature}: Second most important feature (other features less important)
+    %\item<1> Other features have less impact
+\item Find regions in feature space where this heterogeneity is minimal
+\begin{itemize}
+    \item[$\leadsto$] Partition feature space using CART to minimize variance of mean-centered ICE curves within each region
+\end{itemize}
 \end{itemize}
 % Now drawing the rectangle around the second image on the second slide
-\only<2>{
+\only<1>{
     \begin{tikzpicture}[overlay, remember picture]
-        \draw[ForestGreen, thick] (4.25, 5.2) rectangle (4.25 + 3.75, 5.2 + 3); % Adjust these coordinates
+        \draw[ForestGreen, thick] (4.1, 3.3) rectangle (4.1 + 4, 3.3 + 3.2); % Adjust these coordinates
     \end{tikzpicture}
 }
 \end{frame}
@@ -788,24 +793,24 @@ region $\mathcal{N} \subseteq \Xspace$:
 
 
 
-\begin{frame}{Regional Effect Plots - \texttt{Effector}}
-\begin{figure}
-    \includegraphics[width=0.5\linewidth]{figure/effector_logo.png}
-    \label{fig:effector-logo}
-\end{figure}
-\begin{itemize}
-    \item A \texttt{Python} package for global and regional effects
-    \item Developed as part of the LMU-IML group
-    \item Work in progress
-    \begin{itemize}
-        \item Keeps updating with novel methods
-        \item Check future directions at the end of the presentation
-    \end{itemize}
-    \item \href{https://github.com/givasile/effector}{Github repo}
-    \item \href{https://xai-effector.github.io/}{Documentation}
+% \begin{frame}{Regional Effect Plots - \texttt{Effector}}
+% \begin{figure}
+%     \includegraphics[width=0.5\linewidth]{figure/effector_logo.png}
+%     \label{fig:effector-logo}
+% \end{figure}
+% \begin{itemize}
+%     \item A \texttt{Python} package for global and regional effects
+%     \item Developed as part of the LMU-IML group
+%     \item Work in progress
+%     \begin{itemize}
+%         \item Keeps updating with novel methods
+%         \item Check future directions at the end of the presentation
+%     \end{itemize}
+%     \item \href{https://github.com/givasile/effector}{Github repo}
+%     \item \href{https://xai-effector.github.io/}{Documentation}
 
-\end{itemize}
-\end{frame}
+% \end{itemize}
+% \end{frame}
 
 
 
