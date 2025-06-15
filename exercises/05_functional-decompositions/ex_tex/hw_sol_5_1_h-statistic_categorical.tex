@@ -1,46 +1,171 @@
 \loesung{
 
-\textit{TO DO}
+\begin{enumerate}[a)]
 
-\subsection*{Solution}
-\paragraph{Step 1.  Evaluate $f$ on the design.}
+\item
+
+First we evaluate $f$ on all points:
 \[
 \begin{array}{c|cc}
-          & x_2=0 & x_2=1 \\ \hline
+      & x_2=0 & x_2=1 \\ \hline
 x_1=0 & 2 & 5 \\
 x_1=1 & 4 & 9
 \end{array}
 \]
-Hence $\mu=\tfrac14(2+4+5+9)=5$.
-
-\paragraph{Step 2.  Marginal PDs.}
+Hence $\mu=\tfrac14(2+4+5+9)=5$. For the one-dimensional PD-functions, i.e. the PDPs, we get
 \[
 \begin{aligned}
-\hat f_{1}(0)&=\tfrac12(2+5)=3.5,  &
-\hat f_{1}(1)&=\tfrac12(4+9)=6.5, \\
-\hat f_{2}(0)&=\tfrac12(2+4)=3,    &
-\hat f_{2}(1)&=\tfrac12(5+9)=7 .
+\fh_{1, PD}(0) & = \tfrac12(2+5) = 3.5,  &
+\fh_{1, PD}(1) & = \tfrac12(4+9) = 6.5, &
+\quad \text{hence } \fh_{1, PD}(x_1) & = 3.5 + 3 x_1, \\
+\fh_{2, PD}(0) & = \tfrac12(2+4) = 3, &
+\fh_{2, PD}(1) & = \tfrac12(5+9) = 7 &
+\quad \text{hence } \fh_{2, PD}(x_2) & = 3 + 4 x_2.
 \end{aligned}
 \]
 
-\paragraph{Step 3.  Interaction surface.}
+\item
+
+The PD-functions have the means
+
+\begin{align*}
+& \E[\fh_{1, PD}(X_1)] = \tfrac{1}{2} (3.5 + 6.5) = 5 = \mu, \\
+& \E[\fh_{2, PD}(X_2)] = \tfrac{1}{2} (3.+ 7) = 5 = \mu,
+\end{align*}
+
+as expected.
+We use the second formula for the H-statistic here.
+The numerator is equal to:
+
 \[
-\Delta(x_1,x_2)=f(x_1,x_2)-\hat f_{1}(x_1)-\hat f_{2}(x_2)+\mu
-=\begin{array}{c|cc}
-          & 0 & 1 \\ \hline
-0 & 0.5 & -0.5 \\
-1 & -0.5 & 0.5
+\fh(x_1,x_2)-\fh_{1, PD}(x_1)-\fh_{2, PD}(x_2) + \mu
+ = \quad \begin{array}{c|cc}
+      & x_2=0 & x_2=1 \\ \hline
+x_1=0 & 0.5 & -0.5 \\
+x_1=1 & -0.5 & 0.5
 \end{array}
 \]
 
-\paragraph{Step 4.  Statistic.}
-\[
-\sum\Delta^2 =4\,(0.5)^2=1,
-\qquad
-\sum(f-\mu)^2 = 9+1+0+16 = 26,
-\quad\Longrightarrow\quad
-H_{1,2}= \sqrt{\tfrac{1}{26}}\approx 0.196.
-\]
-\hfill$\Box$
+Therefore we get for the H-statistic
+
+\begin{align*}
+H_{1,2}^2
+& =
+\frac{\displaystyle
+    \sum_{i,j = 1}^2 \bigl(
+    \hat f_{12,PD}(x_1^{(i)},x_2^{(j)})-
+    \hat f_{1,PD}(x_1^{(i)})-
+    \hat f_{2,PD}(x_2^{(j)})+\mu
+    \bigr)^2
+}{\displaystyle
+    \sum_{i,j = 1}^2 \bigl(
+    \hat f(x_1^{(i)},x_2^{(j)})-\mu
+    \bigr)^2
+} \\
+& = 
+\frac{ 4 \cdot 0.5^2 }{ (2 - 5)^2 + (4 - 5)^2 + (5 - 5)^2 + (9 - 5)^2 }
+= 
+\frac{ 1 }{ 26 },
+\end{align*}
+
+hence $H_{1,2} = \sqrt{ \tfrac{1}{26} } \approx 0.196$.
+
+\item
+
+We first consider two-way interactions for an arbitrary function $\fh$ with $p$ features.
+W.l.o.g., we consider the two features $x_1$ and $x_2$.
+
+We start with the third formula given, which uses the general variance.
+We denote the numerator as
+\begin{gather*}
+\tilde{g}_{1,2}(x_1, x_2) := \fh_{12,PD}(x_1, x_2) -
+    \fh_{1,PD}(x_1) -
+    \fh_{2,PD}(x_2), \text{ and }\\
+\tilde{g}^c_{1,2}(x_1, x_2) := \fh^c_{12,PD}(x_1, x_2) -
+    \fh^c_{1,PD}(x_1) -
+    \fh^c_{2,PD}(x_2)
+\end{gather*}
+for the centered version.
+
+We know that all PD-functions have the same expectation $\mu$ (which is subtracted to obtain the centered versions), which implies
+
+$$
+\E \left[ \tilde{g}_{1,2}(X_1, X_2) \right] = \mu - \mu - \mu = - \mu \text{ and }
+\E \left[ \tilde{g}^c_{1,2}(X_1, X_2) \right] = 0,
+$$
+
+the second equation following from the fact that all centered PD-functions have mean 0.
+
+Using this, we can then calculate that the numerator is equal to
+
+\begin{align*}
+& \; \var \Bigl[
+    \fh_{12,PD}(X_1, X_2)-
+    \fh_{1,PD}(X_1)-
+    \fh_{2,PD}(X_2)
+    \Bigr] \\
+= & \; \var \Bigl[ \tilde{g}_{1,2}(X_1, X_2) \Bigr] 
+= \E \Bigl[ \left( \tilde{g}_{1,2}(X_1, X_2) - \E \left[ \tilde{g}_{1,2}(X_1, X_2) \right] \right)^2 \Bigr]
+= \E \Bigl[ \left( \tilde{g}_{1,2}(X_1, X_2) + \mu \right)^2 \Bigr] \\
+= & \; \E \Bigl[ \left( \fh_{12,PD}(x_1, x_2) -
+    \fh_{1,PD}(x_1) -
+    \fh_{2,PD}(x_2) + \mu \right)^2 \Bigr] \\
+= & \; \E \Bigl[ \left( ( \fh_{12,PD}(X_1, X_2) - \mu)
+    - ( \fh_{1,PD}(X_1) - \mu)
+    - ( \fh_{2,PD}(X_2) - \mu) \right)^2 \Bigr] \\
+= & \; \E \Bigl[ \left( \fh^c_{12,PD}(x_1, x_2) -
+    \fh^c_{1,PD}(x_1) -
+    \fh^c_{2,PD}(x_2) \right)^2 \Bigr] \\
+= & \; \E \Bigl[ \left( \tilde{g}^c_{1,2}(X_1, X_2) \right)^2 \Bigr]
+\overset{\E \left[ \tilde{g}^c_{1,2}(X_1, X_2) \right] = 0}{=}
+\; \var \Bigl[ \left( \tilde{g}^c_{1,2}(X_1, X_2) \right)^2 \Bigr] \\
+= & \; \var \Bigl[ \fh^c_{12,PD}(x_1, x_2) -
+    \fh^c_{1,PD}(x_1) -
+    \fh^c_{2,PD}(x_2) \Bigr],
+\end{align*}
+
+in the middle also showing once again that
+
+$$
+\tilde{g}^c_{1,2}(x_1, x_2)
+= \fh^c_{12,PD}(x_1, x_2) - \fh^c_{1,PD}(x_1) - \fh^c_{2,PD}(x_2)
+= \tilde{g}_{1,2}(x_1, x_2) + \mu.
+$$
+
+For the denominator, we have a very similar, but easier, calculation:
+\begin{align*}
+\var \Bigl[
+    \fh_{12,PD}(X_1, X_2)
+    \Bigr] 
+= & \; \E \Bigl[ \left( \fh_{12,PD}(X_1, X_2) - \E \left[ \fh_{12,PD}(X_1, X_2) \right] \right)^2 \Bigr]
+= \E \Bigl[ \left( \fh^c_{12,PD}(x_1, x_2) \right)^2 \Bigr] \\
+= & \; \var \Bigl[ \fh^c_{12,PD}(x_1, x_2) \Bigr]
+\end{align*}
+These calculations show that the two versions of the formula, the one with the uncentered PD-functions and the one with the centered PD-functions, are equal.
+
+If we instead have an empirical distribution from an empirical dataset, or a finite probability distribution, we can replace the variance with the empirical variance and obtain the other two formulae given in the exercise.
+For example, for the uncentered version we have in this case
+
+$$
+\var \Bigl[ \fh_{12,PD}(x_1, x_2) - \fh_{1,PD}(x_1) - \fh_{2,PD}(x_2) \Bigr]
+= \sum_{i = 1}^n \bigl(
+    \fh_{12,PD}(x_1^{(i)},x_2^{(i)})-
+    \fh_{1,PD}(x_1^{(i)})-
+    \fh_{2,PD}(x_2^{(i)})
+    + \mu
+\bigr)^2
+$$
+
+Analogous for all the other terms.
+
+In the same way, one can prove that the centered and uncentered versions are equivalent for higher interaction orders.
+For example, for interaction order 3, we have
+
+\begin{align*}
+\end{align*}
+
+One can prove that this pattern of the positive and negative signs always occurs for higher interaction orders.
+
+\end{enumerate}
 
 }

@@ -2,6 +2,45 @@
 \medskip
 
 \begin{enumerate}
+    
+    \item 
+    What do the vanishing condition and the orthogonality condition of the classical fANOVA intuitively mean?
+    
+    \begin{itemize}
+    
+        \item[\textbf{Vanishing condition}:] All PD-functions of any components are 0, meaning that all components contain no lower-order interactions, but only the single contribution from the interaction they are representing.
+    
+        \item[\textbf{Orthogonality condition}:] All the components are uncorrelated, meaning that all effects are indeed cleanly separated between the components and that (at least stochastically) there are no mixed effects between components.
+    
+    \end{itemize}
+    
+    \item
+    What significant disadvantage does classical fANOVA have, and how does generalized fANOVA solve this?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        Does not work for dependent or correlated features, since it uses PD-functions, which suffer from extrapolation problem.
+        Result: Without independence, the vanishing condition, the orthogonality condition and the variance decomposition all do not hold anymore, so the single components do not capture the pure interaction anymore.
+        
+        The generalized fANOVA solves this, it fulfills ``relaxed vanishing conditions'' and ``hierarchical orthogonality conditions'', which enable some form of variance decomposition again.
+        So the generalized fANOVA offers a decomposition for any distribution.
+        If the features are independent, the generalized fANOVA becomes the classical fANOVA, so the classical fANOVA is a special case of the generalized fANOVA.
+    \end{itemize}
+    
+    \item
+    How about the decomposition provided by ALE, does it solve this problem?
+    \begin{itemize}
+        \item[$\Rightarrow$]
+        Yes, ALE also works for dependent features, and actually quite well so.
+        See also the exercises on ALE in the feature effects chapter.
+    \end{itemize}
+    
+    \item
+    Comparing generalized fANOVA to ALE, what are remaining differences and advantages / disadvantages between the two?
+    \begin{itemize}
+        \item ALE is faster to compute, generalized fANOVA can be very difficult or even infeasible to solve.
+        \item ALE is theoretically more complicated, the corresponding orthogonality properties it fulfills are more complicated.
+        \item ALE does not provide a variance decomposition.
+    \end{itemize}
 
     \item
     What are problems of computing and using functional decompositions in practice, and how can one deal with them?
@@ -9,23 +48,12 @@
     \begin{itemize}
     
         \item 
-        Many features / high dimensional function $\implies$ expensive to compute and complicated to understand $\leadsto$ Solution: Sparse decomposition, or only focus on specific interactions of interest, or force decomposition to be sparse by design in interpretable models like EBMs
+        Many features / high dimensional function $\implies$ expensive to compute and complicated to understand $\leadsto$ Solution: Sparse decomposition, or only focus on specific interactions of interest (e.g.: only interactions of one feature of interest, or only split of a specific feature that does not interact with others etc.), or force decomposition to be sparse by design in interpretable models like EBMs
         \item 
-        Only for tabular data, extracting tabular data from raw data, or in general machine learning models for processing raw data, is difficult to analyze
+        Only for tabular data, extracting tabular data from raw data, or in general machine learning models for processing raw data, are difficult to analyze
         \item 
         All methods have individual disadvantages, only for the case of independent features does standard fANOVA offer something like an ``all-round solution''.
         
-    \end{itemize}
-    
-    \item 
-    What do the vanishing condition and the orthogonality condition intuitively mean?
-    
-    \begin{itemize}
-    
-        \textbf{Vanishing condition}: All PD-functions of any components are 0, meaning that all components contain no lower-order interactions, but only the single contribution from the interaction they are representing.
-    
-        \textbf{Orthogonality condition}: All the components are uncorrelated, meaning that all effects are indeed cleanly separated between the components and that (at least stochastically) there are no mixed effects between components.
-    
     \end{itemize}
     
 \end{enumerate}
