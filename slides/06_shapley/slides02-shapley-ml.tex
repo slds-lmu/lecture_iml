@@ -86,7 +86,8 @@
     
     %$\leadsto$ $\E_{\xv}(\fh(\xv))$ cancels out due to the subtraction of value functions
         \item %\textbf{Example:} How features incrementally shift $\fh_S(\xv_S)$ as they join the coalition
-         \textbf{Example (3 features):} Illustration how features incrementally shift $\fh_S(\xv_S)$ from baseline $\fh_\emptyset$ to full prediction $\fh(\xv)$ -- each step reflects a marginal contribution
+         \textbf{Example (3 features):} Feature contributions for joining order $x_1 \rightarrow x_2 \rightarrow x_3$ toward total payout $v(P) = \fh(\xv) - \fh_\emptyset$, each step reflects a marginal contribution
+         %\textbf{Example (3 features):} How features incrementally shift $\fh_S(\xv_S)$ from baseline $\fh_\emptyset$ to full prediction $\fh(\xv)$ -- each step reflects a marginal contribution
     %\centerline{\includegraphics[width=0.5\textwidth, trim=20 0 0 100, clip]{figure_man/shapley_valuefct}}
     \resizebox{\linewidth}{!}{
 \begin{tikzpicture}[
@@ -96,7 +97,7 @@
 
 % --- main nodes --------------------------------------------------------------
 \node[dot, black, label={[black]below:$\fh_\emptyset$}]   (start) at (0,0)   {};
-\node[dot, blue, label={[blue]right:$\hat f_{\{1,2,3\}}(\mathbf x_{\{1,2,3\}})$}] (end) at (10,-1.2) {};
+\node[dot, blue, label={[blue]right:$\hat f(\mathbf x)$}] (end) at (10,-1.2) {};
 
 % --- x1 ----------------------------------------------------------------------
 \draw[arrow, shorten >=2pt] (start) -- (6.5,0) node[midway,above] {$x_1$ joins};
@@ -226,10 +227,11 @@ $\leadsto$ With $|P|!$ permutations and $n$ data points, the number of such esti
 
 \begin{frame}{Approximation Algorithm \citebutton{Strumbelj et al. (2014)}{https://doi.org/10.1007/s10115-013-0679-x}}
 %Estimation of $\phi_j$ for observation $\xv$ of model $\fh$ fitted on data $\D$ using sample size $M$:
-Estimate $\phi_j$ for feature $j$ and model $\fh$ trained on data $\D$ using $M$ random samples:
+Estimate Shapley value $\phi_j$ of observation $\xv$ for feature $j$:
 
 %\vspace{0.25cm}
   \begin{enumerate}[<+->]
+  \item[$\bullet$] \textbf{Input:} $\xv$ obs. of interest, $j$ feat. of interest, $\fh$ model, $\D$ data, $M$ iterations
       \item For $m = 1, \ldots, M$ \textbf{do}:
       \begin{enumerate}
         \item Sample random permutation $\tau = (\tau^{(1)}, \ldots, \tau^{(p)}) \in \Pi$ of feature indices% = (\tau^{(1)}, \ldots, \tau^{(p)})
@@ -237,7 +239,7 @@ Estimate $\phi_j$ for feature $j$ and model $\fh$ trained on data $\D$ using $M$
         %\item Let $\Sm := \Sm$ be the set of features before $j$ of order $\tau$ forming a coalition
         %\item Determine coalition $\Sm := \Stau$, i.e., the set of feat. before feat. $j$ in order $\tau$
         \item Let coalition $\Sm := \Stau$ be the set of features preceding $j$ in $\tau$
-        \item Sample random data point $\mathbf{z}^{(m)} \in \D$%\\
+        \item Sample random data point {\color{blue} $\mathbf{z}^{(m)} \in \D$}%\\
         %$\leadsto$ used to marginalize over
         %\item Order feature values in $\xv$ according to $\tau$: $\xv_{\tau} = (x_{\tau^{(1)}}, \ldots, x_{\tau^{(j)}}, \ldots, x_{\tau^{(p)}})$
         %\item Order feature values in $\mathbf{z}^{(m)}$ according to $\tau$: $\mathbf{z}_{\tau}^{(m)} = (z_{\tau^{(1)}}^{(m)}, \ldots, z_{\tau^{(j)}}^{(m)}, \ldots, z_{\tau^{(p)}}^{(m)})$
