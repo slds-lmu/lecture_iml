@@ -177,19 +177,18 @@
 
 
 
-\begin{frame}{Shapley Values in ML - A short Recap}
+\begin{frame}{Shapley Values in ML - Example}
   
-  \textbf{Example:} 
+  \textbf{Example (Bike sharing data):}
 
   \begin{itemize}
-  \item Random forest trained humidity (hum), temperature (temp), windspeed (ws)
-      \item Observation $\xv$ with prediction $\fh(\xv) = \color{orange}{2573}$
-      \item Mean prediction $\E(\fh) = \color{blue}{4515}$
+  \item Train random forest using humidity (hum), temperature (temp), windspeed (ws)
+      \item Consider observation of interest $\xv$ with prediction $\fh(\xv) = \color{orange}{2573}$
+      \item Mean prediction $\E_{\xv}[\fh(\xv)] = \color{blue}{4515}$
+      \item Compute exact Shapley value for $\xv$ for feature hum:
   \end{itemize}
   
-  
-  \textbf{Exact Shapley value for hum:} 
-      {\centering
+      \begin{center}
       \begin{tabular}{c|c|c|c|c}
    $S$    &  $\Scupj$  & $\fh_S$ &  $\fh_{\Scupj}$  & weight\\\hline
      $\varnothing$&    hum  & \color{blue}{4515} & 4635 & $2/6$\\
@@ -197,12 +196,11 @@
        ws &  ws, hum & 4359  & 4450 & $1/6$\\
        temp, ws & temp, ws, hum & 2623 & \color{orange}{2573} & $2/6$
       \end{tabular}
-      }
-
+      \end{center}
 $$\Rightarrow
-\phi_{hum} = \tfrac{2}{6} (4635-4515) + \tfrac{1}{6} (3060-3087) + \tfrac{1}{6} (4450-4359) + \tfrac{2}{6} (2573-2623) = 34
+\phi_{\text{hum}}(\xv) = \tfrac{2}{6} (4635-4515) + \tfrac{1}{6} (3060-3087) + \tfrac{1}{6} (4450-4359) + \tfrac{2}{6} (2573-2623) = 34
 $$
-$\Rightarrow$ Analogously $\phi_{\text{temp}} = -1654$, $\phi_{\text{ws}} = -322$
+$\Rightarrow$ Analogously $\phi_{\text{temp}}(\xv) = -1654$, $\phi_{\text{ws}}(\xv) = -322$
 % \begin{align*}
 %  v(P) &= \fh(\xv) - \E(\fh) = \phi_{\text{hum}} + \phi_{\text{temp}} + \phi_{\text{ws}} \\
 %  &= {\color{orange} 2573} - {\color{blue} 4515} = 34 - 1654 - 322 = -1942
@@ -246,35 +244,81 @@ $\Rightarrow$ Analogously $\phi_{\text{temp}} = -1654$, $\phi_{\text{ws}} = -322
 
 
 \begin{columns}[T, onlytextwidth]
-\begin{column}{0.53\textwidth}
+\begin{column}{0.51\textwidth}
 
-\textbf{Example (cont.):} Shapley values for other features $\phi_{\text{temp}} = -1654$, $\phi_{\text{ws}} = -322$
+%\textbf{Example (cont.):} Shapley values for other features $\phi_{\text{temp}} = -1654$, $\phi_{\text{ws}} = -322$
 
-\medskip
+%\medskip
 
-\textbf{Interpretation:} \texttt{hum} raises prediction by 34, \texttt{temp} and \texttt{ws} lower it by 1654 and 322, explaining the deviation from the mean
+% \textbf{Interpretation:} \texttt{hum} raises prediction by 34, \texttt{temp} and \texttt{ws} lower it by 1654 and 322, explaining the deviation from the mean
 
-\medskip
+% \medskip
+\textbf{Shapley value interpretation (for $\xv$):}
+\begin{itemize}
+  \item \texttt{hum} \(\;(+34)\) pushes prediction \emph{above} baseline (= average prediction).  
+  \item \texttt{temp} \(\;(-1654)\) and \texttt{ws} \(\;(-322)\) pull prediction \emph{below} baseline.
+  \item Together, they explain full deviation from average prediction.
+\end{itemize}
 
-\textbf{Recall:} Shapley values explain how features shift prediction from baseline $\E(\fh)$:
+%\medskip
+
+
+% \textbf{Recall:} Shapley values explain how features shift prediction from baseline $\E(\fh)$:
+% \footnotesize
+% \begin{align*}
+%  \fh(\xv) - \E_{\xv}[\fh(\xv)] &= \phi_{\text{hum}}(\xv) + \phi_{\text{temp}}(\xv)  + \phi_{\text{ws}}(\xv) \\
+%  {\color{orange} 2573} - {\color{blue} 4515} &= 34 - 1654 - 322 = -1942
+% \end{align*}
 
 \end{column}
-\begin{column}{0.47\textwidth}
+\begin{column}{0.49\textwidth}
 %\vspace{-1cm}
-\includegraphics[width=\linewidth]{figure/shapley2shap.pdf}
+\includegraphics[trim={10 17 5 5},clip, width=\linewidth]{figure/shapley2shap.pdf}
 \end{column}
 \end{columns}
-\begin{align*}
-v(P) = \fh(\xv) - \E(\fh) 
-&= \phi_{\text{hum}} + \phi_{\text{temp}} + \phi_{\text{ws}} \\
-&= {\color{orange} 2573} - {\color{blue} 4515} = 34 - 1654 - 322 = -1942
-\end{align*}
+\pause
+\textbf{Shapley-based additive decomposition} of prediction for $\xv$ gives insights on how features shift prediction from baseline $\E(\fh)$:
+
+\medskip
+
+\centerline{$
+\underbrace{{\color{orange} \fh(\xv)}}_{\text{actual prediction}}
+={\color{blue} \underbrace{\phi_0}_{\E_{\mathbf X}[\fh(\mathbf X)]}}
++\sum_{j\in\{\text{hum},\text{temp},\text{ws}\}}\phi_j(\xv)
+$}
+%\footnotesize
+\medskip
+\centerline{$
+\phantom{=} \; {\color{orange} 2573}
+= {\color{blue} 4515}
+\;+\;
+\bigl(34 -1654 - 322\bigr)
+\;=\;4515-1942
+$}
+\medskip
+
+\(\leadsto\) Like a LM evaluated at \(\xv\): global intercept \(\phi_0\) plus per-feature contributions \(\phi_j(\xv)\).
+
+\medskip
 %\vspace{0.4em}
-\textbf{SHAP:} Express prediction of $\xv$ as additive decomposition of Shapley values
-\[
-\fh(\xv) = \underbrace{\E(\fh)}_{\phi_0} + \sum_j \phi_j
-\]
-$\leadsto$ Analogous to linear models: intercept $\phi_0$ + per-feature contributions $\phi_j$
+% \textbf{SHAP:} Express prediction of $\xv$ as additive decomposition of Shapley values
+% \[
+% \fh(\xv) = \underbrace{\E(\fh)}_{\phi_0} + \sum_j \phi_j
+% \]
+% $\leadsto$ Analogous to linear models: intercept $\phi_0$ + per-feature contributions $\phi_j$
+
+% \textbf{SHAP takeaway:}  
+% \[
+% \fh(\xv)=\underbrace{\E_{\xv}[\fh(\xv)]}_{\phi_0}
+%       +\sum_{j=1}^{p}\phi_j(\xv)
+%       \quad\text{with each }\phi_j(\xv)\text{ the \emph{Shapley value} of feature }j.
+% \]
+
+%\(\leadsto\) Like a linear model evaluated at \(\xv\): global intercept \(\phi_0\) plus instance-specific feature contributions \(\phi_j(\xv)\).
+
+\textbf{SHAP Motivation:}
+Can we efficiently estimate this Shapley-based additive decomposition of $\fh(\xv)$ using a surrogate model (while preserving Shapley axioms)?
+
 %Additive explanation model: intercept $\phi_0$ plus per-feature effects $\phi_j$ (analogous to a linear model)
 %Reminds of linear models: $\phi_j$ as effect of feature $j$ and intercept $\phi_0$ 
 \end{frame}
@@ -413,7 +457,35 @@ $\leadsto$ Analogous to linear models: intercept $\phi_0$ + per-feature contribu
 % \end{frame}
 
 
-\begin{frame}{From Shapley Values to SHAP \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
+\begin{frame}{SHAP Framework \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
+
+\textbf{SHAP} defines a surrogate \(g(\zv')\) over binary vectors \(\zv' \in \{0,1\}^p\) (simplified features):
+
+\[
+g(\zv') = \phi_0 + \sum_{j=1}^p \phi_j z'_j
+\]
+
+\begin{itemize}
+
+  \item \textbf{Fixed:} \(\xv\) is the instance being explained (i.e., SHAP explains \(\fh(\xv)\))
+  \item \textbf{Varied:} \(\zv'\) encodes which features of \(\xv\) are "observed":
+    \begin{itemize}
+      \item \(z'_j = 1\): feature \(j\) is included $\Rightarrow$ use \(x_j\)
+      \item \(z'_j = 0\): feature \(j\) is withheld $\Rightarrow$ impute its value when evaluating \(\fh\)
+    \end{itemize}
+\item Each $\zv'$ represents a \textbf{feature coalition} used to approximate $\fh(\xv)$\\
+%Each \(\zv'\) represents a \textbf{coalition}, i.e., a subset of features considered "known" for the prediction at \(\xv\)
+  %\item Many different \(\zv'\) are used for the same \(\xv\), to simulate all possible feature subsets and compute marginal contributions.
+  $\leadsto$ Many \(\zv'\) are constructed from \(\xv\), each defining a subset of "known" features\\
+  $\leadsto$ Used to estimate marginal contributions and compute Shapley values
+  \item SHAP computes \(\phi_j\) such that \(g(\zv')\) satisfies Shapley axioms and recovers \(\fh(\xv)\)
+  %SHAP chooses the \(\phi_j\) such that \(g(\zv')\) approximates \(\fh(\xv)\) in a way that satisfies the Shapley axioms.
+\end{itemize}
+
+
+ \end{frame}
+
+\begin{frame}{SHAP Framework \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
 
 %\textbf{Goal:} Explain a prediction \(\fh(\xv)\) by decomposing it into additive feature contributions using a local surrogate model derived from Shapley values.
 
