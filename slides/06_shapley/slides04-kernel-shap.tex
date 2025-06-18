@@ -60,18 +60,19 @@
 \textbf{Definition:} A kernel-based, model-agnostic method to compute Shapley values via local surrogate models (e.g. linear model)\\
 \vspace{1cm}
 \begin{enumerate}
-    \item Sample coalitions 
+    \item Sample coalition vectors  \(\zv'\!\in\!\{0,1\}^p\)
     %\begin{onlyenv}<1>
    % $$z_{k}^{\prime} \in\{0,1\}^{M}, \quad k \in\{1, \ldots, K\}$$
     %\end{onlyenv}
     
-    \item Transfer coalitions into feature space \& get predictions by applying ML model
+    \item Map coalition vectors to original feature space and predict
+    %Transfer coalitions into feature space \& get predictions by applying ML model
     
  %   \begin{onlyenv}<2>
   %  $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
    % \end{onlyenv}
     
-    \item Compute weights through kernel
+    \item Compute kernel weights for surrogate model
  %   \begin{onlyenv}<3>
  %   $$\pi_{x}\left(z^{\prime}\right)=\frac{(M-1)}{\left(\begin{array}{c} M \\\left|z^{\prime}\right|\end{array}\right)\left|z^{\prime}\right|\left(M-\left|z^{\prime}\right|\right)}$$
  %   \end{onlyenv}
@@ -91,14 +92,51 @@
 
 \end{frame}
 
+
+
+% \begin{frame}{Kernel SHAP in 5 Steps}
+
+% \textbf{Goal:} Estimate Shapley values for a fixed instance \(\xv\) without model restrictions.
+
+% \medskip
+% \begin{enumerate}
+%   \item \textbf{Sample coalitions}  
+%         Draw \(K\) binary masks  
+%         \(\zv'^{(k)}\!\in\!\{0,1\}^p\) (\(k=1,\dots,K\)); each mask marks a subset of “known” features.
+
+%   \item \textbf{Create coalition inputs \& predict}  
+%         Build \(\tilde{\xv}^{(k)}\) by  
+%         \(\tilde{x}^{(k)}_j = x_j\) if \(z'^{(k)}_j=1\); otherwise impute.  
+%         Evaluate the model: \(y^{(k)} = \fh\!\bigl(\tilde{\xv}^{(k)}\bigr)\).
+
+%   \item \textbf{Assign kernel weights}  
+%         \[
+%           \pi_x(\zv') = \frac{p-1}{\binom{p}{|\zv'|}\,|\zv'|\,(p-|\zv'|)}
+%         \]
+
+%   \item \textbf{Fit weighted surrogate}  
+%         Weighted least squares for  
+%         \(g(\zv') = \phi_0 + \sum_{j=1}^p \phi_j z'_j\):
+%         \[
+%           \min_{\phi}\sum_{k=1}^K \bigl[y^{(k)} - g(\zv'^{(k)})\bigr]^2\,\pi_x(\zv'^{(k)})
+%         \]
+
+%   \item \textbf{Return Shapley estimates}  
+%         Coefficients \(\phi_j(\xv)\) (and \(\phi_0\)) are the Kernel-SHAP attributions.
+% \end{enumerate}
+
+% \end{frame}
+
+
 \begin{frame}{Kernel SHAP - In 5 Steps}
 
 
-\textbf{Step 1: Sample coalitions}
+\textbf{Step 1: Sample coalition vectors}
 \begin{itemize}
-    \item Sample K coalitions from the simplified feature space
+    \item Sample K coalitions from the simplified (binary) feature space
     $$\mathbf{z}^{\prime (k)} \in\{0,1\}^{p}, \quad k \in\{1, \ldots, K\}$$
-    \item For our simple example, we have in total $2^p = 2^3 = 8$ coalitions (without sampling)
+    \item Example (3 features) $\Rightarrow$ $2^p = 2^3 = 8$ coalitions (without sampling)
+    %For our simple example, we have in total $2^p = 2^3 = 8$ coalitions (without sampling)
 \end{itemize}
 
 \begin{table}[]
@@ -124,7 +162,7 @@
 \begin{frame}{Kernel SHAP - In 5 Steps}
 
 
-\textbf{Step 2: Transfer Coalitions into feature space \& get predictions by applying ML model}
+\textbf{Step 2: Map coalition vectors to original feature space and predict}
 \begin{itemize}
    % \item $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
    \item $\mathbf{z}^{\prime (k)}$ is 1 if features are are part of the $k$-th coalition, 0 if they are absent
@@ -184,7 +222,7 @@
 \begin{frame}{Kernel SHAP - In 5 Steps}
 
 
-\textbf{Step 2: Transfer Coalitions into feature space \& get predictions by applying ML model}
+\textbf{Step 2: Map coalition vectors to original feature space and predict}
 \begin{itemize}
    % \item $$\hat{f}: \hat{f}\left(h_{x}\left(z_{k}^{\prime}\right)\right)$$
     \item Define 
@@ -244,14 +282,26 @@ $h_x\left(\mathbf{z}^{\prime (k)}\right)=\mathbf{z}^{(k)} \text { where } h_x:\{
 \end{frame}
 
 \begin{frame}{Kernel shap - in 5 steps}
-\textbf{Step 3: Compute weights through Kernel \only<2>{\citebutton{see shapley\_kernel\_proof.pdf}{https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Supplemental.zip}}}\\\medskip
-\textbf{Intuition}: We learn most about individual features if we can study their effects in isolation or at maximal interaction:
-Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the largest weights\\NB: the figure is independent from the running example
+\textbf{Step 3: Compute kernel weights for surrogate model
+\only<2>{\citebutton{see shapley\_kernel\_proof.pdf}{https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Supplemental.zip}}}\\\medskip
+%\textbf{Intuition}: We learn most about individual features if we can study their effects in isolation or at maximal interaction:
+%Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the largest weights\\NB: the figure is independent from the running example
 
 \begin{onlyenv}<1>
+\textbf{Intuition:}  
+We learn most about a feature’s effect when:
+\begin{itemize}
+  \item it appears \textbf{in isolation} (small coalition), or
+  \item in \textbf{near-complete context} (large coalition).
+\end{itemize}
+\(\Rightarrow\) SHAP assigns highest weights to very small and very large coalitions.
+
+\medskip
+\textit{Note:} The figure below is illustrative and not tied to the running example.
+
 \begin{figure}
     \centering
-    \includegraphics[width=0.6\columnwidth]{figure_man/kernel-weights.pdf}
+    \includegraphics[width=0.5\columnwidth]{figure_man/kernel-weights.pdf}
     %\caption{Examplary dependence between kernel weights and coalition size for a data set p = 10 features}   
 \end{figure}
 \end{onlyenv}
@@ -319,8 +369,9 @@ Small coalitions (few 1’s) and large coalitions (i.e. many 1’s) get the larg
 
 
 \begin{frame}{Kernel shap - in 5 steps}
-\textbf{Step 3: Compute weights through Kernel}\\\medskip
-\textbf{Purpose}: to include this knowledge in the local surrogate model (linear regression), we calculate weights for each coalition which are the observations of the linear regression
+\textbf{Step 3: Compute kernel weights for surrogate model}\\\medskip
+%\textbf{Purpose}: to include this knowledge in the local surrogate model (linear regression), we calculate weights for each coalition which are the observations of the linear regression
+\textbf{Purpose:} Assign weights to coalition vectors when fitting the local surrogate (linear regression) to account for their "importance"
 \only<1>{    $$\pi_{x}\left(\mathbf{z}^{\prime}\right)=\frac{(p-1)}{\left(\begin{array}{c} p \\|\mathbf{z}^{\prime}|\end{array}\right)|\mathbf{z}^{\prime}|(p-|\mathbf{z}^{\prime}|)} \leadsto \pi_x\left(\mathbf{z}^{\prime} = (1,0,0)\right)=\frac{(3-1)}{\left(\begin{array}{c} 3 \\1\end{array}\right)1\left(3-1\right)} = \frac{1}{3}$$
 }
 
