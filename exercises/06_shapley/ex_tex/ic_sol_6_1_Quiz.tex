@@ -2,51 +2,32 @@
 \medskip
 
 \begin{enumerate}
-%    \item What is the prediction target in contrast to the prediction?
-%    \begin{itemize}
-%    	\item[$\Rightarrow$] The prediction target is the hole set of possible targets whereas the prediction is the concrete output after applying a prediction function.
-%    \end{itemize}
-%    \item What is the model's mechanism in contrast to the data generating process (DGP)?
-%    \begin{itemize}
-%    	\item[$\Rightarrow$]  The DGP is the true underlying process generating the data. The model is estimated by optimizing the prediction performance, i.e. the model's mechanism tries to be a copy of the DGP but this mostly is not possible.
-%    \end{itemize}
-	\item What is motivating idea behind Shapley values? 
+	\item What is the motivating idea behind Shapley values? 
 	\begin{itemize}
-		\item[$\Rightarrow$] fairly divide the total achievable payout $v(P)$ among the players according to a player’s individual contribution
+		\item[$\Rightarrow$] Fairly divide the total achievable payout $v(P)$ among the players in a cooperative setting according to each player’s individual contribution.
 	\end{itemize}
-	\item How is the Shapley idea realized / implemented in IML?
+	\item How is this idea realized / implemented in IML?
 	\begin{itemize}
-		\item[$\Rightarrow$] players = features, \\game = prediction for a single observation, \\Shapley value = individual payout per player (feature)
-		\item[$\Rightarrow$] Calculate marginal contribution for adding a feature to every possible coalition and average the resulting values
+		\item[$\Rightarrow$]
+        game = prediction through the model for a single observation, \\
+        players = features, \\
+        Shapley value = individual payout per player (feature), so individual contribution of a feature to the predicted value, \\
+        Value function / Payout function = PD function for this coalition evaluated at this observation
+		\item[$\Rightarrow$] Calculate marginal contribution of a feature by adding the feature to every possible coalition and correctly average the resulting values.
 	\end{itemize}
 	\item What is a practical problem of Shapley values and how is it solved?
 	\begin{itemize}
-		\item[$\Rightarrow$] Computation for high dimensional feature spaces (large power set $P$, many marginal predictions)
-		\item[$\Rightarrow$] Solution: sampling (The more coalitions are sampled, the exacter the computation will be but also more computationally expensive)
+		\item[$\Rightarrow$] Computation for high dimensional feature spaces: Even for moderately large feature sets $P$, the power set $2^P$ is very large, so many marginal predictions are necessary.
+		\item[$\Rightarrow$] Solution: Sampling. The more coalitions are sampled, the more exact, but also the more computationally expensive the computation will be.
 	\end{itemize}
-    \item Yes or No: Shapley values and SHAP values are different names for the same concept.
-    \begin{itemize}
-    	\item[$\Rightarrow$] Not directly as for calculating SHAP values a (more efficient) estimation procedure is used. The estimated SHAP and Shapley values can be different as Shapley values are often approximated by different procedures.
-    \end{itemize}
-    \item What are SHAP value functions $v$ in contrast to SHAP values $\phi$?
-    \begin{itemize}
-    	\item[$\Rightarrow$] SHAP value function: a function assigning a value to a coalition
-    	\item[$\Rightarrow$] SHAP values: Contribution of a feature to a prediction
-    \end{itemize}
-%    \item What is the difference between marginal and conditional SHAP?
-%    \begin{itemize}
-%    	\item[$\Rightarrow$] The features that are not part of the coalition or the feature of interest are sampled from the marginal or the conditional distribution, respectively.
-%    \end{itemize}
-%    \item What is the motivation of LIME?
-%    \begin{itemize}
-%    	\item[$\Rightarrow$] Interpret a model locally by fitting a simple model (independent of the complexity of the global ML model). $\rightarrow$ local surrogate model
-%    \end{itemize}
-%    \item Both SHAP and LIME can be seen as local linear approximations. Name differences between SHAP and LIME.
-%    \begin{itemize}
-%    	\item[$\Rightarrow$] 
-%    \end{itemize}
-%    \item Name hyperparameters for LIME. What do they steer?
-%    \begin{itemize}
-%    	\item[$\Rightarrow$] 
-%    \end{itemize}
+    \item Are Shapley values in ML concerned with the prediction or the prediction target? How do they relate to the model and how to the DGP?
+	\begin{itemize}
+		\item[$\Rightarrow$] Shapley values are concerned with the prediction $\yh = \fh(\xv)$, not the true target $y$.
+		\item[$\Rightarrow$] This means they quantify contributions and distribute them fairly w.r.t. the model, but they never look at the underlying true target, hence they are only concerned with explaining the model, but not the underlying DGP.
+	\end{itemize}
+    \item When not using any approximations, but computing the exact Shapley value, which definition is more useful in practice?
+	\begin{itemize}
+		\item[$\Rightarrow$] Order definition contains $|P|!$ many terms, whereas set definition contains only $2^P$ many terms, hence the set definition is faster to compute.
+        In the set definition, all terms in the order definition that are equal are already summed up and counted.
+	\end{itemize}
 \end{enumerate}
