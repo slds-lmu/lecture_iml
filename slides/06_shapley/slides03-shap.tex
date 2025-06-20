@@ -463,29 +463,61 @@ Can we efficiently estimate this Shapley-based additive decomposition of $\fh(\x
 % 
 % \end{frame}
 
-\begin{frame}{SHAP - Theoretical Framework \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
+\begin{frame}{SHAP Framework \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
 
 \textbf{SHAP} expresses the prediction of $\xv$ as a sum of contributions from each feature:
 
 \[
-g(\zv') = \phi_0 + \sum_{j=1}^p \phi_j z'_j
+g(\zv') = \phi_0 + \textstyle\sum_{j=1}^p \phi_j z'_j
 \]
 
 \begin{itemize}
-  \item $\zv' \in \{0,1\}^p$: simplified binary input referring to a feature coalition
-  \item \(z'_j = 1\): feature $j$ is "present" $\Rightarrow$ use $x_j$ in the model evaluation
-  \item \(z'_j = 0\): feature $j$ is "absent" $\Rightarrow$ marginalize $x_j$ (average over its possible values)
+  \item $\zv' \in \{0,1\}^p$: simplified binary input referring to a coalition (coalition vector)
+  \item \(z'_j = 1\): feature $j$ is "present" $\Rightarrow$ use $x_j$ in model evaluation
+  \item \(z'_j = 0\): feature $j$ is "absent"\\$\Rightarrow$ influence of $x_j$ is removed via marginalization over a reference distribution% (averaging predictions over its possible values, given the present features)%\\
+  %$\leadsto$ \textit{Note: In practice (e.g., KernelSHAP), marginalization is approximated via random imputations from background data.}
 \end{itemize}
 
-\vspace{0.5em}
-\textbf{Key idea:} Construct a surrogate model $g(\zv')$ such that it satisfies the Shapley value axioms and recovers $\fh(\xv)$:
-\[
-\fh(\xv) = g(\mathbf{1}) = \phi_0 + \sum_{j=1}^p \phi_j
-\]
+\pause\medskip
 
-\textit{Note: In practical implementations like KernelSHAP, marginalization is approximated using multiple background samples and random imputations.}
+\textbf{SHAP as a theoretical framework:} Fit a surrogate model \( g(\zv') \) satisfying Shapley axioms and recovering $\fh(\xv)$ when all features are "present":
+%Construct a surrogate model $g(\zv')$ such that it satisfies the Shapley value axioms and recovers $\fh(\xv)$ when all features are "present":
+\[
+\fh(\xv) = g(\mathbf{1}) = \phi_0 + \textstyle\sum_{j=1}^p \phi_j
+\]
+\textbf{Evaluation of $g(\zv')$:} Let \( S = \{ j : z'_j = 1 \} \) be the active coalition. Then:
+\begin{itemize}
+    \item $g(\zv') \approx \mathbb{E}[ \fh(\mathbf{X}) \mid \mathbf{X}_S = \mathbf{x}_S]\;\text{(conditional expectation)}$
+    \item $g(\zv') \approx \mathbb{E}_{\mathbf{X}_{-S}} [ \fh(\mathbf{x}_S, \mathbf{X}_{-S}) ] \;\;\text{(marginal expectation, i.e., PD function)}$
+    \item\textit{Note: Practical implementations (e.g., KernelSHAP) use the marginal expectation, approximated via random imputations from background data.}
+\end{itemize}
 
 \end{frame}
+
+
+% \begin{frame}{SHAP Framework \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
+
+% \textbf{SHAP} expresses the prediction of $\xv$ as a sum of contributions from each feature:
+
+% \[
+% g(\zv') = \phi_0 + \sum_{j=1}^p \phi_j z'_j
+% \]
+
+% \begin{itemize}
+%   \item $\zv' \in \{0,1\}^p$: simplified binary input referring to a coalition (coalition vector)
+%   \item \(z'_j = 1\): feature $j$ is "present" $\Rightarrow$ use $x_j$ in the model evaluation
+%   \item \(z'_j = 0\): feature $j$ is "absent" $\Rightarrow$ marginalize $x_j$ (average over its possible values)\\
+%   $\leadsto$ \textit{Note: In practice (e.g., KernelSHAP), marginalization is approximated via random imputations from background data.}
+% \end{itemize}
+
+% \vspace{0.5em}
+% \textbf{Key idea:} Construct a surrogate model $g(\zv')$ such that it satisfies the Shapley value axioms and recovers $\fh(\xv)$:
+% \[
+% \fh(\xv) = g(\mathbf{1}) = \phi_0 + \sum_{j=1}^p \phi_j
+% \]
+
+
+% \end{frame}
 
 
 % \begin{frame}{SHAP Framework \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
