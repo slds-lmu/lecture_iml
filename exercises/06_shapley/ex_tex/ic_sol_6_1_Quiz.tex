@@ -20,14 +20,22 @@
 		\item[$\Rightarrow$] Computation for high dimensional feature spaces: Even for moderately large feature sets $P$, the power set $2^P$ is very large, so many marginal predictions are necessary.
 		\item[$\Rightarrow$] Solution: Sampling. The more coalitions are sampled, the more exact, but also the more computationally expensive the computation will be.
 	\end{itemize}
-    \item Are Shapley values in ML concerned with the prediction or the prediction target? How do they relate to the model and how to the DGP?
-	\begin{itemize}
-		\item[$\Rightarrow$] Shapley values are concerned with the prediction $\yh = \fh(\xv)$, not the true target $y$.
-		\item[$\Rightarrow$] This means they quantify contributions and distribute them fairly w.r.t. the model, but they never look at the underlying true target, hence they are only concerned with explaining the model, but not the underlying DGP.
-	\end{itemize}
     \item When not using any approximations, but computing the exact Shapley value, which definition is more useful in practice?
 	\begin{itemize}
 		\item[$\Rightarrow$] Order definition contains $|P|!$ many terms, whereas set definition contains only $2^P$ many terms, hence the set definition is faster to compute.
         In the set definition, all terms in the order definition that are equal are already summed up and counted.
+	\end{itemize}
+    \item Are Shapley values in ML concerned with the prediction or the prediction target? How do they relate to the model and how to the DGP?
+	\begin{itemize}
+		\item[$\Rightarrow$] Shapley values are concerned with the prediction $\yh = \fh(\xv)$, not the true target $y$.
+		\item[$\Rightarrow$] This means they quantify contributions and distribute them fairly w.r.t. the model, but they never look at the underlying true target, hence they are only concerned with explaining the model, but not the underlying DGP.
+		\item[$\Rightarrow$] Also use PD-functions, which disregard dependencies, hence Shapley values do not reflect feature dependencies.
+	\end{itemize}
+    \item \textbf{Bonus:} To what kind of IML methods do Shapley values belong, or are very similar to? How are they different to other methods in this category?
+	\begin{itemize}
+		\item[$\Rightarrow$] Feature effect methods, because Shapley values are concerned with the model prediction, not the true target or the predictive performance.
+        Also, they try to estimate the contribution of each feature to a specific prediction, and sum up to the model prediction, similar to how feature effect methods also try to estimate the model output or, more specifically, the effect of a single feature on it.
+		\item[$\Rightarrow$] Other FE methods usually only estimate main effects, or split between main effects and interactions (for functional decompositions like ALE or fANOVA), whereas the Shapley values already sum up to the whole prediction, i.e. they distribute not only the main effects, but also the interactions among the players.
+        In other words, a Shapley value always contains main effects and a fair proportion of all interactions.
 	\end{itemize}
 \end{enumerate}
