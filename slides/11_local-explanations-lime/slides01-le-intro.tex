@@ -31,7 +31,7 @@
 
 % ------------------------------------------------------------------------------
 
-\begin{frame}[c]{Methodological Motivation}
+\begin{frame}[t]{Methodological Motivation}
 
 % Marius: We cannot write such stuff if we want to stay flexible how to combine chunks
 %Except for Shapley values and ICE curves, we focused so far mostly on global explanation methods that explain global model behavior (e.g. PDP, PFI, etc.). However, there are also many methods that explain the \textbf{local} behavior of a model.
@@ -39,73 +39,88 @@
 	\begin{itemize}
 	    \item Purpose of local explanations:
 	    \begin{itemize}
-	        \item Insight into the driving factors for a \textbf{particular decision}
-	        \item Understand the ML model's decisions in a \textbf{local neighborhood} of a given input\\ (e.g., feature vector)
+	        \item Insight into the driving factors for a \textbf{particular prediction/decision}
+	        \item Understand ML model decisions in a \textbf{local neighborhood} of a given input\\ (e.g., feature vector)
 	    \end{itemize}
 	    \medskip
 	    \pause
 		\item Local Methods can address questions such as: 
 		\begin{itemize}
 		    \item \textbf{Why} did the model decide to predict $\yh$ for input $\xv$?
-		    \item \textbf{How} does the model decide for observations that are similar to $\xv$?
-		    \item \textbf{What} would the ML model have decided if $\xv$ its values in $\Xspace$ were different?
+		    \item \textbf{How} does the model behave for observations similar to $\xv$?
+		    \item \textbf{What if} some features of $\xv$ had different values?
 		    \item  \textbf{Where} (in which regions in $\Xspace$) does the model fail?
 		\end{itemize}  
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[c]{Social Motivation}
+\begin{frame}[t]{Social Motivation}
 
 %All these questions can indeed be relevant for the ML modeler. However, unlike in global methods that require expert ML understanding or even domain knowledge, many local methods aim to provide explanations also for laypersons. 
 	\begin{itemize}
-		\item Explanations for laypersons must be tailored to the \textbf{explainee} (who receives the explanation)\\ %(i.e., the person receiving the explanation)
+		\item Explanations for laypersons should be tailored to the \textbf{explainee}\\ % (who receives the explanation)\\ %(i.e., the person receiving the explanation)
 		%\pause
-		$\leadsto$ \textbf{case specific}, \textbf{easy} for humans to understand, and \textbf{faithful} to the explained mechanism
+		$\leadsto$ \textbf{case specific}, \textbf{human-intelligible}, and \textbf{faithful} to the explained mechanism
 		\pause
 		\item If algorithms make decisions in \textbf{socially/safety critical domains}, end users have a justified interest in receiving explanations
 		\pause
 		\item Local explanations cannot only increase \textbf{user trust}, but also help to detect \textbf{critical local biases} in algorithmic decision making
 		\pause
-		\item European citizens have the legally binding \textbf{right to explanation} as given in the General Data Protection Regulation (GDPR)
+		\item European citizens have the legally binding \textbf{right to explanation} as given in the General Data Protection Regulation (GDPR) and the AI Act
 		\begin{itemize}
-		    \item[$\leadsto$] Instead of explaining the entire (complex) model (with potential market secrets), explanations in a case-by-case usage is more reasonable
+		    \item[$\leadsto$] Instead of explaining the entire (complex) model (with potential market secrets), explanations in a case-by-case usage are more reasonable
 		\end{itemize}
 
 	\end{itemize}
 \end{frame}
 
 
-\begin{frame}[c]{GDPR: The Right to Explanation}
+\begin{frame}[t]{GDPR \& AI Act: The Right to Explanation}
 
-    ``The data subject should have the right not to be subject to a decision, which may include a measure, evaluating personal aspects relating to him or her which is based solely on automated processing and which produces legal effects concerning him or her or similarly significantly affects him or her, such as automatic refusal of an online credit application or e-recruiting practices without any human intervention.
+``The data subject should have the right not to be subject to a decision
+    %, which may include a measure, evaluating personal aspects relating to him or her which is 
+    [...] based solely on automated processing [...],
+    %and which produces legal effects concerning him or her or similarly significantly affects him or her, 
+    such as automatic refusal of an online credit application or e-recruiting practices without any human intervention.
 
 $[\ldots]$
 
-In any case, such processing should be subject to suitable safeguards, which should include specific information to the data subject and the \textbf{right} to obtain human intervention, to express his or her point of view, \textbf{to obtain an explanation of the decision reached after such assessment and to challenge the decision}.
-'' \\[0.2cm] (\href{https://gdpr-text.com/read/recital-71/}{Recital 71, GDPR})
+In any case, such processing should be subject to suitable safeguards, which should include [...]
+%specific information to the data subject and 
+the \textbf{right to obtain} [...]
+%human intervention, to express his or her point of view, to obtain 
+\textbf{an explanation of the decision reached after such assessment and to challenge the decision}.''
+\hfill \citebutton{Recital 71, GDPR, 2016}{https://gdpr-text.com/read/recital-71}
+
+\medskip
+
+``Any affected person [...]
+%subject to a decision which is taken by the deployer on the basis of the output from a high-risk AI system listed in Annex III, with the exception of systems listed under point 2 thereof, and which produces legal effects or similarly significantly affects that person in a way that they consider to have an adverse impact on their health, safety or fundamental rights 
+shall have the right to obtain from the deployer clear and meaningful explanations of the role of the AI system in the decision-making procedure and the main elements of the decision taken.''
+\hfill \citebutton{Art. 86, AI Act, 2021}{https://www.artificial-intelligence-act.com/Artificial_Intelligence_Act_Article_86.html}
 \end{frame}
 
 
-\begin{frame}[c]{Example: Husky or Wolf?}
+\begin{frame}[t]{Example: Husky or Wolf?}
 	\begin{itemize}
 		\item We trained a model to predict if an image shows a wolf or a husky 
-		\item Below the predictions on six test images are given 
+		\item Below predictions on six test images are given 
 		\item Do you trust our predictor? 
 	\end{itemize}
 	
-	\begin{columns}[totalwidth=\textwidth]
+	\begin{columns}[T, onlytextwidth]
 	
-	\begin{column}{0.6\textwidth}
-	    
-    	\begin{center}
-    		\includegraphics[width=0.58\textwidth]{figure/lime-wolfhusky.png}\\
-    		\includegraphics[width=0.58\textwidth]{figure/lime-wolfhusky2.png}\\
+	\begin{column}{0.45\textwidth}
+	    \centering
+    	%\begin{center}
+    		\includegraphics[width=\textwidth]{figure/lime-wolfhusky.png}\\
+    		\includegraphics[width=\textwidth]{figure/lime-wolfhusky2.png}\\
     		{\textbf{Source:} [\href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{Sameer Singh 2018}]}
-    	\end{center}
+    	%\end{center}
 	    
 	\end{column}
 	
-	\begin{column}{0.4\textwidth}
+	\begin{column}{0.55\textwidth}
 	    
 	\begin{itemize}
 		\item Sometimes the ML model is wrong
@@ -119,29 +134,16 @@ In any case, such processing should be subject to suitable safeguards, which sho
 \end{frame}
 
 
-\begin{frame}[c]{Example: Husky or Wolf? Using LIME}
-
-	\begin{columns}[totalwidth=\textwidth]
-	
-	\begin{column}{0.7\textwidth}
-	    
+\begin{frame}[t]{Example: Husky or Wolf? Using LIME}
+	\begin{itemize}
+		\item Local explanations highlight the parts of an image which led to the prediction\\
+        $\leadsto$ our predictor is actually a snow detector 
+	\end{itemize}
+    
 	\begin{center}
 		\includegraphics[width=0.9\textwidth]{figure/lime-wolfhusky3.png}\\
 		{\textbf{Source:} [\href{http://www.facweb.iitkgp.ac.in/~niloy/COURSE/Spring2018/IntelligentSystem/PPT_2018/why_should_i_trust_ppt.pdf}{Sameer Singh 2018}]}
 	\end{center}
-	    
-	\end{column}
-	
-	\begin{column}{0.3\textwidth}
-	    
-	\begin{itemize}
-		\item Local explanations highlight the parts of an image which led to the prediction
-		\item[$\leadsto$] our predictor is actually a snow detector 
-	\end{itemize}
-	    
-	\end{column}
-	    
-	\end{columns}
 
 
 
@@ -181,7 +183,9 @@ In any case, such processing should be subject to suitable safeguards, which sho
 
 \end{frame}
 
-\begin{frame}[c]{Example: Stop or Right-of-Way?}
+
+
+\begin{frame}[t]{Example: Stop or Right-of-Way?}
 
 \begin{columns}[c, totalwidth=\textwidth]
 
@@ -212,7 +216,7 @@ In any case, such processing should be subject to suitable safeguards, which sho
 
 \end{frame}
 
-\begin{frame}[c]{Characteristics of Local Explanations}
+\begin{frame}[t]{Characteristics of Local Explanations}
 	\begin{itemize}[<+->]
 		\item \textbf{Explanation scope:} Specific prediction, local environment
 		\item \textbf{Model classes:} Model-agnostic by definition, model-specific for computational reasons\\
