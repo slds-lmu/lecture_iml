@@ -1,17 +1,59 @@
 \aufgabe{SHAP}{
 \label{ex:shap}
-	Now we apply Shapley as a local feature relevance quantification tool. Therefore we implement the marginal SHAP payoff function.
+	In this exercise, we want to apply Shapley values as a local feature relevance quantification tool to a machine learning model and also use the SHAP framework for this.
+    We will implement both the simple sampling-based approximation algorithm for vanilla Shapley values from the lecture,
+    % by implementing the marginal SHAP payoff function,
+    as well as the Kernel SHAP algorithm.
 
 \begin{enumerate}
-    \item Load the \href{https://github.com/slds-lmu/lecture_iml/blob/master/exercises/04_shapley/code/fifa.csv}{FIFA dataset} into a data table (e.g. using the pandas library in python) and predict the Man of the Match probability through a random forest. \\ \textit{Hint:} Note that many of the float variables in the data set contain missing values and hence, consider integer variables only. Transform the target variable 'Man of the Match' into a binary format suitable for a prediction task and select only explanatory variables of type integer (e.g. dtype int64). Don't forget to split the data into a training and test set before fitting the random forest! Use an instance from your test set to generate an exemplary prediction for the probability of a team having the 'Man of the Match' amongst them. \label{a}
-    \item Implement the marginal sampling based SHAP value function \texttt{m\_vfunc()}. Compute the marginal sampling based value functions $v(j)$ for the instance. 
-    \item We could use the value function implemented above in combination with our Shapley implementations from Exercise \ref{ex:shapley} to compute SHAP. A more efficient equivalent definition has been proposed, which is based on locally fitting a weighted linear model: KernelSHAP. Implement KernelSHAP and calculate the SHAP values for the instance. Do this by writing the following functions:
+
+    \item \label{a}
+    Load the FIFA dataset (containing all matches from the FIFA world cup 2018) from the \textit{fifa.csv} file on Moodle into a data table or data frame (e.g., using the pandas library in Python) and train a random forest to predict the target variable 'Man of the Match'. This means that the model predicts the probability of a team having the 'Man of the Match' amongst them.
+    
+    \textit{Hint:} Note that many of the float variables in the data set contain missing values, hence we will consider integer variables only.
+    Transform the target variable 'Man of the Match' into a binary format suitable for a prediction task and select only explanatory variables of type integer.
+    Don't forget to split the data into a training and test set before fitting the random forest!
+    Use an instance from your test set to generate an exemplary prediction for the 'Man of the Match' probability.
+    
+    \item
+    From the different possibilities to choose the value function $g(\zv')$ in the SHAP framework, here we use the marginal sampling-based SHAP value function $g(\zv') = \E_{\Xv_{-S}} [\fh( \xv_S, \Xv_{-S} )]$, so we use PD-functions.
+    Implement the function \texttt{marginal\_vfunc(S, observation, X, predict, nr\_samples)}, which approximates the PD-function value for a feature subset \texttt{S}, evaluated at the data point \texttt{observation}, via sampling background data from the data set \texttt{X}; in other words, implement a Monte-Carlo approximation of this PD-function evaluated at point \texttt{observation}.
+    \texttt{predict} is a function that returns the model predictions for a single data point or a set of data points.
+    
+    Test your implementation on different feature subsets for the instance from \ref{a}.
+    
+    % \item
+    % We could use this value function \texttt{marginal\_vfunc()} in combination with our Shapley value implementations
+    % from Exercise \ref{ex:shapley}
+    % from the last exercise sheet
+    % to compute SHAP.  % ??? Really? Or only plain shapley values? I don't know...
+    % A more efficient equivalent definition has been proposed, which is based on locally fitting a weighted linear model: Kernel SHAP.
+    \item 
+    By using this value function \texttt{marginal\_vfunc()} inside our Shapley value implementations
+    % from Exercise \ref{ex:shapley},
+    from the last exercise sheet,
+    we can approximate the Shapley values for our model.
+    This is almost the approximation algorithm for Shapley values discussed in the lecture.
+    % (Bonus question: What is the difference between the two algorithms?)
+
+    Calculate \texttt{shapley\_perm\_approx()} from the Shapley value implementations using \texttt{marginal\_vfunc()} and the random forest from \ref{a} on your test instance.
+
+    \item 
+    The SHAP framework, which is based on locally fitting a weighted linear model, can be used to calculate SHAP values.
+    Besides the vanilla framework, which basically uses the same algorithm as the one we implemented so far, other more efficient equivalent algorithms for calculating SHAP values have been proposed, among them Kernel SHAP.
+    Your task is to implement Kernel SHAP and calculate the SHAP values for your test instance.
+    Do this by writing the following functions:
+    
     \begin{itemize}
-    	\item \texttt{shap\_weights(mask)}: A function to return the weights for a given \texttt{mask} containing the sampled coalitions ((binary) coalition feature space). 
-    	\item \texttt{replace\_dataset(obs, X, nr\_samples)}: A function to create the dataset of \texttt{nr\_samples} samples generated during the SHAP calculations and mapping the binary feature space back to the original feature space. The positions in the mask indicate where we replace the original values with the ones of the given observation \texttt{obs}.
-    	\item \texttt{shap\_data(obs, X, nr\_samples, predict)}: A function summarizing \texttt{mask, pred, weight}.
-    	\item \texttt{kernel\_shap(obs, X, nr\_samples, predict)}: Implement the sampling based KernelSHAP function.
+    	\item \texttt{shap\_weights(mask)}: A function to return the weights for a given \texttt{mask} containing the sampled coalitions, so \texttt{mask} is either a single coalition vector or a matrix containing $K$ many coalition vectors.
+    	\item \texttt{replace\_dataset(obs, X, nr\_samples)}: A function to create the dataset of \texttt{nr\_samples} many samples generated in the first and second step of the Kernel SHAP calculations. This includes generating the coalitions, saving them in \texttt{mask}, and mapping the binary feature space back to the original feature space.
+        You can directly sample \texttt{nr\_samples} many data points as well as coalitions, so sampling a new random background sample for each coalition, you do not need to generate multiple background samples for every coalition or use the same background sample for different coalitions.
+        The positions in the mask indicate where to replace the random values with the ones of the given observation \texttt{obs}.
+    	\item \texttt{shap\_data(obs, X, nr\_samples, predict)}: A function summarizing \texttt{replace\_dataset()}, \texttt{predict()}, and \texttt{shap\_weights()}. As before, \texttt{predict} is a function that returns the model predictions for a single data point or a set of data points.
+    	\item \texttt{kernel\_shap(obs, X, nr\_samples, predict)}: A function implementing the complete sampling-based Kernel SHAP function.
     \end{itemize}
+    
 	\item Calculate \texttt{kernel\_shap(X\_test[1, ], X\_train, 1000, classifier\_RF)} using the random forest from \ref{a}.
+    
 \end{enumerate}
 }
