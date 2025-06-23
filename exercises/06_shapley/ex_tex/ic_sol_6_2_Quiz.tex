@@ -4,17 +4,47 @@
 \begin{enumerate}
     \item Yes or No: Shapley values and SHAP values are different names for the same concept.
     \begin{itemize}
-    	\item[$\Rightarrow$] Not directly as for calculating SHAP values a (more efficient) estimation procedure is used. The estimated SHAP and Shapley values can be different as Shapley values are often approximated by different procedures.
+    	\item[$\implies$] Theoretically yes: Because of the properties of the SHAP values, we know that when using the right value function (PD-fcts.), the exact SHAP values have to be equal to the exact Shapley values.
+        However, there are not directly the same, for several reasons:
+        \begin{itemize}
+            \item Shapley values are usually approximated in practice, and SHAP values have to be estimated (as coefficients of an LM).
+            Depending on the specific estimation or approximation procedure, the resulting Shapley or SHAP values will be different.
+            In practice, there are also very efficient methods for estimating SHAP values (e.g. TreeSHAP), but not for Shapley values.
+            \item Theoretically, Shapley values are a concept from game theory applicable to several different problems, not only ML.
+            On the other hand, the theoretical SHAP framework contains also contains many other methods like e.g. LIME (will still be introduced in the lecture), in the sense that these methods 
+            \item
+            Historically, the setting of using Shapley values in ML was not very popular and successful at the beginning, only after the introduction of SHAP these methods got really adopted in the IML field.
+            Also, only after the introduction of SHAP were Shapley values / SHAP values also applied to text and image data.
+        \end{itemize}
     \end{itemize}
     \item What are SHAP value functions $v$ in contrast to SHAP values $\phi$?
     \begin{itemize}
-    	\item[$\Rightarrow$] SHAP value function: a function assigning a value to a coalition
-    	\item[$\Rightarrow$] SHAP values: Contribution of a feature to a prediction
+    	\item[$\implies$] SHAP value function: a function assigning a value to a coalition
+    	\item[$\implies$] SHAP values: Contribution of a feature to a prediction
+        \item[$\implies$] Basically the same as for Shapley values themselves (also there: difference between Shapley values and value function)
     \end{itemize}
-%    \item What is the difference between marginal and conditional SHAP?
-%    \begin{itemize}
-%    	\item[$\Rightarrow$] The features that are not part of the coalition or the feature of interest are sampled from the marginal or the conditional distribution, respectively.
-%    \end{itemize}
+    \item What is the difference between marginal and conditional SHAP?
+    \begin{itemize}
+        \item[$\implies$] Also called interventional and observational SHAP \\ The value function used: It is either a marginal or a conditional expectation. This means that in practice, the features that are not part of the coalition (that are not the features of interest) are sampled from either the marginal or the conditional distribution, respectively.
+    \end{itemize}
+    \item Does the dependence structure in the DGP influence the SHAP result?
+    \begin{itemize}
+        \item[$\implies$] Yes, this is exactly the difference between marginal and conditional SHAP: marginal SHAP ignores this dependence structure (uses PD-functions), conditional SHAP respects the dependence structure (uses conditions expectations, i.e. M-plots)
+    \end{itemize}
+    % \item What is the difference between Kernel SHAP and Tree SHAP?
+    \item What structure do the weights in Kernel SHAP have, and why?
+    \begin{itemize}
+        \item[$\implies$] The empty and the full coalition are excluded (and therefore $\phi_0$ and $\phi_{p}$ are calculated directly). Then coalitions of sizes 1 and $(p-1)$ are assigned very high weights, and all other rather low weights, with the idea being that these coalitions (showing only the main effect or the full interactions effects of a feature) are the most informative, and therefore get the highest weights.
+    \end{itemize}
+    \item How can Shapley or SHAP values be used to estimate feature effects?
+    \begin{itemize}
+        \item[$\implies$] SHAP dependence plot: Plot all single SHAP values for a feature over the feature value $\implies$ Feature effect plot similar to PDP or ALE
+    \end{itemize}
+    \item What other kinds of global interpretability methods can Shapley or SHAP values provide?
+    \begin{itemize}
+        \item[$\implies$] Feature importance (by averaging absolute values of SHAP values)
+        \item[$\implies$] Summary plot showing distribution and magnitude of SHAP values over all features
+    \end{itemize}
 %    \item What is the motivation of LIME?
 %    \begin{itemize}
 %    	\item[$\Rightarrow$] Interpret a model locally by fitting a simple model (independent of the complexity of the global ML model). $\rightarrow$ local surrogate model
