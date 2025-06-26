@@ -9,7 +9,7 @@
 	\begin{algorithm}[h]
 		\caption{\texttt{payoff()}}
 		\begin{algorithmic}[1]
-			\Require \texttt{coalition}: Coalition vector
+			\Require \texttt{coalition}: Coalition vector (\texttt{set} or \texttt{list} or \dots)
 			\State \texttt{t} $\gets$ boolean if \texttt{'t'} is in \texttt{coalition}
 			\State \texttt{s} $\gets$ boolean if \texttt{'s'} is in \texttt{coalition}
 			\State \texttt{m} $\gets$ boolean if \texttt{'m'} is in \texttt{coalition}
@@ -28,14 +28,14 @@
 	\begin{algorithm}[h]
 		\caption{\texttt{all\_unique\_subsets()}}
 		\begin{algorithmic}[1]
-			\Require \texttt{population}: vector containing all available players
+			\Require \texttt{population}: Vector / list / set containing all available players
 			\If{population = $\emptyset$} \texttt{subsets} $\gets$ $\emptyset$
 			\ElsIf{population $\neq \emptyset$}
             \State \texttt{first\_member} $\gets$ pick any element from \texttt{population}
             \State \texttt{population\_wo\_member} $\gets$ \texttt{population} $\setminus$ \texttt{first\_member}
             \State \texttt{subsets\_wo\_member} $\gets$ \texttt{all\_unique\_subsets(population\_wo\_member)}
             \State \texttt{subsets\_w\_member} $\gets$ list of all sets in \texttt{subsets\_wo\_member} each with \texttt{first\_member} added to it
-            \State \texttt{subsets} $\gets$ $\texttt{subsets\_w\_member} \cup \texttt{subsets\_wo\_member}$
+            \State \texttt{subsets} $\gets$ \texttt{Union(subsets\_w\_member, subsets\_wo\_member)}
 			\EndIf
 			\State \textbf{return} \texttt{subsets}
 		\end{algorithmic}
@@ -47,20 +47,44 @@
 	\begin{algorithm}[h]
 		\caption{\texttt{shapley\_set()}}
 		\begin{algorithmic}[1]
-			\Require \texttt{population}: vector containing all available players
 			\Require \texttt{member}: individual player, or feature of interest
+			\Require \texttt{population}: vector containing all available players
 			\Require \texttt{v\_function}: Some value function
-			\State \texttt{remainder} $\gets$ everyone from the \texttt{population} but \texttt{member}; \texttt{population} $\setminus$ \texttt{first\_member}
+			\State \texttt{remainder} $\gets$ everyone from the \texttt{population} but \texttt{member} (or: \texttt{population} $\setminus$ \texttt{member})
 			\State \texttt{all\_sets\_wo\_member} $\gets$ \texttt{all\_unique\_subsets(remainder)}
 			\State \texttt{F} $\gets$ length of \texttt{population}
-			\State \texttt{val} $\gets$ 0
-			\For{\texttt{s} in \texttt{all\_sets\_wo\_member}}
-			\State \texttt{S} $\gets$ length of \texttt{s}
-			\State \texttt{diff} $\gets$ \texttt{v\_function(s $\cup$ member) - v\_function(s)}
-			\State \texttt{factor} $\gets$ \texttt{S! * (F - S - 1)! / F}!
-			\State \texttt{val} $\gets$ \texttt{val + factor * diff}
+			\State \texttt{result} $\gets$ 0
+			\For{\texttt{coalition} in \texttt{all\_sets\_wo\_member}}
+			\State \texttt{S} $\gets$ length of \texttt{coalition}
+			\State \texttt{diff} $\gets$ \texttt{v\_function(Union(coalition, member)) - v\_function(coalition)}
+			\State \texttt{factor} $\gets$ \texttt{S! * (F - S - 1)! / F!}
+			\State \texttt{result} $\gets$ \texttt{result + factor * diff}
 			\EndFor
-			\State \textbf{return} \texttt{val}
+			\State \textbf{return} \texttt{result}
+		\end{algorithmic}
+	\end{algorithm}
+
+    \item 
+    A function to generate all permutations can be implemented similar to the function \texttt{all\_unique\_subsets()}, also by first generating the first element and then calling the function on the set of remaining elements.
+    
+    Pseudocode of \texttt{shapley\_perm(member, population, v\_function)}:
+	
+	\begin{algorithm}[h]
+		\caption{\texttt{shapley\_perm()}}
+		\begin{algorithmic}[1]
+			\Require \texttt{member}: individual player, or feature of interest
+			\Require \texttt{population}: vector containing all available players
+			\Require \texttt{v\_function}: Some value function
+			\State \texttt{all\_perms} $\gets$ All permutations of \texttt{population}
+			\State \texttt{F} $\gets$ length of \texttt{population}
+			\State \texttt{result} $\gets$ 0
+			\For{\texttt{perm} in \texttt{all\_perms}}
+			\State \texttt{member\_ix} $\gets$ index of \texttt{member} in \texttt{perm}
+			\State \texttt{coalition} $\gets$ coalition of \texttt{perm} before \texttt{member\_ix}
+			\State \texttt{diff} $\gets$ \texttt{v\_function(Union(coalition, member)) - v\_function(coalition)}
+			\State \texttt{result} $\gets$ \texttt{result + diff}
+			\EndFor
+			\State \textbf{return} \texttt{result / F!}
 		\end{algorithmic}
 	\end{algorithm}
 
@@ -70,19 +94,18 @@
 	\begin{algorithm}[H]
 		\caption{\texttt{shapley\_perm\_approx()}}
 		\begin{algorithmic}[1]
-			\Require \texttt{population}: vector containing all available players
 			\Require \texttt{member}: individual player, or feature of interest
+			\Require \texttt{population}: vector containing all available players
 			\Require \texttt{v\_function}: value function
 			\Require \texttt{num\_iter}: number of iterations
-            \texttt{vals} $\gets$ Empty vector or list
+            \State \texttt{vals} $\gets$ Empty vector or list
 			\For{\texttt{i} in \texttt{num\_iter}} 
 			\State \texttt{perm} $\gets$ draw a random permutation of \texttt{population}
 			\State \texttt{member\_ix} $\gets$ index of \texttt{member} in \texttt{perm}
-			\State \texttt{s} $\gets$ coalition of \texttt{perm} until \texttt{member\_ix}
+			\State \texttt{coalition} $\gets$ coalition of \texttt{perm} before \texttt{member\_ix}
 			\State \texttt{vals[i]} $\gets$ \texttt{v\_function(s $\cup$ member) - v\_function(s)}
 			\EndFor
-			\State \texttt{val} $\gets$ average of \texttt{vals}
-			\State \textbf{return} \texttt{val}
+			\State \textbf{return} average of \texttt{vals}
 		\end{algorithmic}
 	\end{algorithm}
 	

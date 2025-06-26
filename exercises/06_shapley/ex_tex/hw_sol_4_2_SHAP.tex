@@ -7,29 +7,32 @@
 		\begin{algorithmic}[1]
 			\State \texttt{df} $\gets$ read in \textit{fifa.csv}
 			\State \texttt{df}['Man of the Match'] $\gets$ replace 'Yes' by TRUE (else FALSE)
-			\State \texttt{df} $\gets$ adapt \texttt{df} if needed for random forest model (e.g. removing NAs)
+			\State \texttt{df} $\gets$ adapt \texttt{df} if needed for random forest model (e.g. removing NAs, removing non-integer features)
 			\State \texttt{train, test} $\gets$ split \texttt{df} in train and test data
-			\State \texttt{rf} $\gets$ random forest fit using train
+			\State \texttt{classifier\_RF} $\gets$ random forest fit using \texttt{train}
 		\end{algorithmic}
 	\end{algorithm}
 
-	\item Pseudocode of \texttt{m\_vfunc()}
+    See calculation results in the implementations, as they again depend on the specific implementation, the seed and other parameters. 
+
+	\item Pseudocode of \texttt{marginal\_vfunc(S, observation, X, predict, nr\_samples)}
 	
 	\begin{algorithm}[H]
-		\caption{\texttt{m\_vfunc()}}
+		\caption{\texttt{marginal\_vfunc()}}
 		\begin{algorithmic}[1]
-			\Require \texttt{j}: feature index
-			\Require \texttt{obs}: observation
+			\Require \texttt{S}: feature index or indices, or feature names
+			\Require \texttt{observation}: observation where to evaluate the marginal expectation
 			\Require \texttt{X}: feature matrix
-			\Require \texttt{predict}: ML model
+			\Require \texttt{predict}: function returning the predictions of the RF model
 			\Require \texttt{nr\_samples}: number of samples
-			\State \texttt{remainder} $\gets$ all features in \texttt{X} but \texttt{j}
+			\State \texttt{remainder} $\gets$ all features in \texttt{X} but \texttt{S}
 			\State \texttt{X\_tmp} $\gets$ sample \texttt{nr\_samples} samples from \texttt{X} (with replacing)
-			\State \texttt{X\_tmp} $\gets$ replace features \texttt{J} with respective values from \texttt{obs}
-			\State \texttt{pred} $\gets$ use \texttt{model} for prediction with \texttt{X\_tmp}
-			\State \textbf{return} mean of \texttt{pred}
+			\State \texttt{X\_tmp} $\gets$ replace features \texttt{S} with respective values from \texttt{observation}
+			\State \textbf{return} mean of \texttt{predict(X\_tmp)}
 		\end{algorithmic}
 	\end{algorithm}
+
+    \item Specific results see in the implementations. We plug \texttt{marginal\_vfunc()} in as the value function when calling \texttt{shapley\_perm\_approx()} and need to take care that the other arguments of \texttt{marginal\_vfunc()} are handled correctly.
 
 	\item Pseudocode of \texttt{shap\_weights()}
 	
@@ -92,7 +95,10 @@
 		\end{algorithmic}
 	\end{algorithm}
 
-	\item \texttt{kernel\_shap(X\_test[1, ], X\_train, 1000, rf)}
+	\item
+    Here an example, see also in the implementations. Again, specific results and accuracy depend on the specific implementation.
+    
+    \texttt{kernel\_shap(X\_test[1, ], X\_train, 1000, rf)}
 	\begin{table}[H]
 		%\scriptsize
 		\centering
