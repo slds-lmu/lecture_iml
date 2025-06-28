@@ -193,12 +193,11 @@ shall have the right to obtain from the deployer clear and meaningful explanatio
 	\begin{itemize}
 	    \item Imagine: 
 	        \begin{itemize}
-	            \item You work at a car company that develops image classifiers for autonomous driving
-	            \item You show your model the following image (an adversarial example)
-	            \pause
-	            \item Classifier is $99\%$ sure it describes a right-of-way sign
+	            \item<1-> You work at a car company that develops image classifiers for autonomous driving
+	            \item<1-> You show your model the following image (an adversarial example)
+	            \item<2-> Classifier is $99\%$ sure it describes a right-of-way sign
 	        \end{itemize}  
-	    \item Would you entrust other peoples lives into the hands of this software?
+	    \item<2-> Would you entrust other people's lives into the hands of this software?
 	\end{itemize}
 	
 	 \end{column}
@@ -217,15 +216,29 @@ shall have the right to obtain from the deployer clear and meaningful explanatio
 \end{frame}
 
 \begin{frame}[t]{Characteristics of Local Explanations}
-	\begin{itemize}[<+->]
-		\item \textbf{Explanation scope:} Specific prediction, local environment
-		\item \textbf{Model classes:} Model-agnostic by definition, model-specific for computational reasons\\
-		$\leadsto$ very popular also for deep learning models
-		\item \textbf{Audience:} ML modelers and laypersons
-		\item \textbf{Data types:} Often agnostic, including tabular, image, text and audio data
-		\item \textbf{Methods:} Many, most prominent are counterfactual explanations, shapley values, local interpretable model-agnostic explanations (LIME), adversarial examples, single ICE curve%, anchors
+	\begin{itemize}
+		\item<1-> \textbf{Explanation scope:} Specific to one prediction, valid only in local environment
+		\item<2-> \textbf{Applicable model classes:} 
+                    \begin{itemize}
+                \item Model-agnostic (by design)
+                \item Model-specific variants (exploit internal structure for speed/accuracy)%variants for efficiency or more accurate estimation (by exploiting model structure)
+              \end{itemize}
+        %\\
+		%$\leadsto$ very popular also for deep learning models
+		\item<3-> \textbf{Audience:} ML engineers, laypersons, and domain experts
+		\item<4-> \textbf{Supported data types:} Broad applicability across modalities (tabular, image, text, audio), but method-specific adaptations often required
+        %\textbf{Data types:} Often agnostic, including tabular, image, text, and audio data
+		\item<5-> \textbf{Main method families}
+              \begin{itemize}
+                \item Single ICE curves
+                \item Shapley / SHAP values
+                \item LIME / Anchors
+                \item Counterfactual explanations
+                \item Adversarial examples
+              \end{itemize}
+        %\textbf{Methods:} Many, most prominent are counterfactual explanations, shapley values, local interpretable model-agnostic explanations (LIME), adversarial examples, single ICE curve%, anchors
 		%\footnote{For Shapley values and ICE curves see other lectures}
-		\item \textbf{Special:} Due to audience, strong interactions with social sciences and strong connections to cognitive science and neurosciences due to data types
+		% \item<6-> \textbf{Special:} Due to audience, strong interactions with social sciences and strong connections to cognitive science and neurosciences due to data types
 	\end{itemize}
 \end{frame}
 
@@ -261,7 +274,7 @@ shall have the right to obtain from the deployer clear and meaningful explanatio
 	\begin{itemize}
 		\item We illustrate local explanation methods on the German credit data 
 		\citebutton{see Kaggle}{https://www.kaggle.com/uciml/german-credit}
-		\item 522 complete observations, 9 features containing credit and customer information
+		\item 522 observations, 9 features containing credit and customer information
 		\item Binary target ``risk'' indicates if a customer has a `good' or `bad' credit risk
 		\item We merged categories with few observations 
 	\end{itemize}

@@ -36,47 +36,45 @@
 % Prerequisite: le-intro
 
 % ------------------------------------------------------------------------------
-
-\begin{frame}[c]{Example on Credit Dataset (Tabular)}
-	\begin{itemize}
-		\item Model: SVM with RBF kernel
-		\item $\xv$: first data point of the dataset with $\fh_{bad}(\xv) = 0.658$
-		\item $\zv$: training data $\leadsto$ weighted by the Gower proximity 
-		\item Surrogate model $\gh$: L$_1$-regularized linear model with 5 features 
-	\end{itemize}
-
-    \bigskip
-
-	\begin{table}[ht]
-		\centering
-		\scriptsize
-		\begin{tabular}{rlrlllrrl}
-			\hline
-			age & sex & job & housing & saving & checking & credit.amount & duration & purpose \\ 
-			\hline
-			 22 & female &   2 & own & little & moderate & 5951 &  48 & radio/TV \\ 
-			\hline
-		\end{tabular}
-	\end{table}
-
-\end{frame}
-
-\begin{frame}[c]{Example on Credit Dataset (cont'd)}
-
-
-\begin{center}
-	\includegraphics[width=0.45\textwidth]{figure/lime_credit.pdf}\\
-	{Effects of surrogate model, i.e. $\thetah^T \xv$}
-\end{center}
+\begin{frame}{LIME Example: Credit Scoring (Tabular Data)}
 
 \begin{itemize}
-	\item The local model prediction for $\xv$ is $\gh(\xv) = 0.64$ vs. $\fh(\xv) = 0.658$ 
-	\item $\gh$ has a local fidelity of $L(\pih, \gh, \neigh) = 4.82$ with $\neigh(\zv)$ as the Gower proximity and $L(\pih_{bad}(\zv), g(\zv))$ as the euclidean distance 
+  \item \textbf{Black-box model \( \fh_{bad} \):} SVM with RBF kernel (predicts prob. of bad credit risk)
+  \item \textbf{Instance to explain \( \xv \):} First row in the dataset, with \( \fh_{bad}(\xv) = 0.658 \)
+{\scriptsize
+\begin{tabular}{rlrlllrrll}
+  \hline
+  age & sex & job & housing & saving & checking & credit.amount & duration & purpose & ... \\
+  \hline
+  22 & female & 2 & own & little & moderate & 5951 & 48 & radio/TV & ... \\
+  \hline
+\end{tabular}
+}
+  \item \textbf{Surrogate model:} LASSO, restricted to 5 non-zero features (via regularization)
+  \item \textbf{Training data for surrogate:} Samples \( \zv \), weighted by Gower distance to \( \xv \)
 \end{itemize}
+\pause
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.5\textwidth}
+    \begin{itemize}
+      \item \textbf{Prediction:} \\
+      \( \gh(\xv) = 0.640 \) vs. \( \fh_{bad}(\xv) = 0.658 \)
+      \item[$\leadsto$] $\gh$ provides good local approximation of $\fh_{bad}$, but omits several features 
+      \item[$\leadsto$] Small mismatch reflects trade-off:\\
+      \textbf{interpretability vs. fidelity}
+    \end{itemize}
+  \end{column}
 
+  \begin{column}{0.5\textwidth}
+    \includegraphics[width=\linewidth]{figure/lime_credit.pdf}%\\
+    %{\scriptsize Local surrogate model: \( \gh(\xv) = \thetah^\top \xv \)}
+  \end{column}
+
+\end{columns}
+\textbf{Interpretation:} Prediction is mainly driven by loan duration, with small positive effect from sex and credit.amount, and negative contributions from housing and purpose.
 \end{frame}
-	
-\begin{frame}[c]{Example on Credit Dataset (cont'd)}
+
+\begin{frame}{Example on Credit Dataset (cont'd)}
 
 \begin{itemize}	
 	\item 2-dim ICE plots (aka. prediction surface plot) of credit amount and duration show how the surrogate model $g$ linearly approximates the previously nonlinear prediction surface of $\pih_{bad}$ 
@@ -101,6 +99,36 @@
 \end{center}
 
 \end{frame}
+
+
+\begin{frame}{Example on Credit Dataset (cont'd)}
+
+\begin{itemize}
+  \item 2D ICE plots (prediction surface plots) for \texttt{duration} and \texttt{credit.amount} 
+  \item Illustration how \( g \) linearly approximates the nonlinear decision surface of \( \fh_{bad} \)
+\end{itemize}
+
+\begin{columns}[totalwidth=\textwidth]
+  \begin{column}{0.47\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figure/lime_credit_ice1.pdf}
+  \end{column}
+  \begin{column}{0.46\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figure/lime_credit_ice2.pdf}
+  \end{column}
+\end{columns}
+
+\begin{itemize}
+    \item \textbf{Left:} 2D ICE plot of \( \fh_{bad} \) showing decision surface
+    \item \textbf{Right:} Linear approximation by surrogate \( g \). \\
+    $\leadsto$ White dot indicates input \( \xv \) to be explained\\
+    $\leadsto$ Histograms show marginal distribution of features in training data % training data \( \Xmat \).
+\end{itemize}
+
+\end{frame}
+
+
 
 %\begin{frame}[containsverbatim,allowframebreaks]{Bike Sharing Dataset}
 %\vspace{-.3cm}
@@ -165,7 +193,7 @@
 	
 	\end{frame}
 	
-\begin{frame}[c]{LIME for image data}
+\begin{frame}{LIME for image data}
 	\begin{columns}[totalwidth=\textwidth]
 		\begin{column}{0.67\textwidth}
 			LIME also works for image data:  
