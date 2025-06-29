@@ -42,13 +42,14 @@
   \item \textbf{Black-box model \( \fh_{bad} \):} SVM with RBF kernel (predicts prob. of bad credit risk)
   \item \textbf{Instance to explain \( \xv \):} First row in the dataset, with \( \fh_{bad}(\xv) = 0.658 \)
 {\scriptsize
-\begin{tabular}{rlrlllrrll}
+\begin{tabular}{r l r l r r r l l l}
   \hline
-  age & sex & job & housing & saving & checking & credit.amount & duration & purpose & ... \\
+  duration & sex & credit.amount & purpose & housing & age & saving & checking & ... \\
   \hline
-  22 & female & 2 & own & little & moderate & 5951 & 48 & radio/TV & ... \\
+  48 & female & 5951 & radio/TV & own & 22 & little & moderate & ... \\
   \hline
 \end{tabular}
+
 }
   \item \textbf{Surrogate model:} LASSO, restricted to 5 non-zero features (via regularization)
   \item \textbf{Training data for surrogate:} Samples \( \zv \), weighted by Gower distance to \( \xv \)
