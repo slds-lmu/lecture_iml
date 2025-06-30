@@ -1,4 +1,7 @@
 \loesung{	
+
+The code for this programming exercise can be found in the \texttt{hw\_shapley\_py\_sol.ipynb} or \texttt{hw\_shapley\_vanilla\_py\_sol.ipynb} files for Python and in the \texttt{hw\_shapley\_R\_sol.Rmd} or \texttt{hw\_shapley\_vanilla\_R\_sol.Rmd} files for R.
+
 \begin{enumerate}[a)]
 	\item $$\text{payoff}(S) = 10t+10m+10s+2j + 20(t\wedge m) + 20(t \wedge m \wedge s) - 30((t \vee m \vee s) \wedge j) $$
 	$$\text{payoff}(\lbrace\texttt{t,m}\rbrace) = 10 + 10 + 20 = 40$$
@@ -103,7 +106,7 @@
 			\State \texttt{perm} $\gets$ draw a random permutation of \texttt{population}
 			\State \texttt{member\_ix} $\gets$ index of \texttt{member} in \texttt{perm}
 			\State \texttt{coalition} $\gets$ coalition of \texttt{perm} before \texttt{member\_ix}
-			\State \texttt{vals[i]} $\gets$ \texttt{v\_function(s $\cup$ member) - v\_function(s)}
+			\State \texttt{vals[i]} $\gets$ \texttt{v\_function(Union(coalition, member)) - v\_function(coalition)}
 			\EndFor
 			\State \textbf{return} average of \texttt{vals}
 		\end{algorithmic}
@@ -119,19 +122,19 @@
 			\Require \texttt{j}: first feature index
 			\Require \texttt{k}: second feature index
 			\Require \texttt{population}: vector containing all available players
-			\Require \texttt{vfunc}: value function
-			\Require \texttt{shapley\_func}: Shapley function
+			\Require \texttt{v\_function}: value function
+			\Require \texttt{shapley\_func}: function for computing Shapley values
 			\State \texttt{remainder} $\gets$ everyone from the \texttt{population} but \texttt{j, k}
 			\State \texttt{all\_S} $\gets$ \texttt{all\_unique\_subsets(remainder)}
 			\For{\texttt{S} in \texttt{all\_S}}
-			\State \texttt{surplus\_j} $\gets$ difference of \texttt{vfunc} of \texttt{S} with \texttt{j} minus \texttt{vfunc} of \texttt{S}
-			\State \texttt{surplus\_k} $\gets$ difference of \texttt{vfunc} of \texttt{S} with \texttt{k} minus \texttt{vfunc} of \texttt{S}
+			\State \texttt{surplus\_j} $\gets$ \texttt{v\_function(Union(coalition, j)) - v\_function(coalition)}
+			\State \texttt{surplus\_k} $\gets$ \texttt{v\_function(Union(coalition, k)) - v\_function(coalition)}
 			\State save \texttt{surplus\_j} and \texttt{surplus\_k} in vectors \texttt{surpluss\_j} and \texttt{surpluss\_k}, respectively, for every iteration
 			\EndFor
 			\If{\texttt{surpluss\_j} equal \texttt{surpluss\_k}}
 			\State \textbf{print} \textit{equal surplus}
-			\State \texttt{val\_j} $\gets$ \texttt{shapley\_func(j, population, vfunc)}
-			\State \texttt{val\_k} $\gets$ \texttt{shapley\_func(k, population, vfunc)}
+			\State \texttt{val\_j} $\gets$ \texttt{shapley\_func(j, population, v\_function)}
+			\State \texttt{val\_k} $\gets$ \texttt{shapley\_func(k, population, v\_function)}
 			\State \textbf{return} \texttt{val\_j} == \texttt{val\_k}
 			\EndIf
 			\State \textbf{return} \texttt{TRUE}
@@ -145,18 +148,18 @@
 		\begin{algorithmic}[1]
 			\Require \texttt{j}: feature index
 			\Require \texttt{population}: vector containing all available players
-			\Require \texttt{vfunc}: value function
-			\Require \texttt{shapley\_func}: Shapley function
+			\Require \texttt{v\_function}: value function
+			\Require \texttt{shapley\_func}: function for computing Shapley values
 			\State \texttt{remainder} $\gets$ everyone from the \texttt{population} but \texttt{j}
 			\State \texttt{all\_S} $\gets$ \texttt{all\_unique\_subsets(remainder)}
 			\For{\texttt{S} in \texttt{all\_S}}
-			\State \texttt{surplus\_j} $\gets$ difference of \texttt{vfunc} of \texttt{S} with \texttt{j} minus \texttt{vfunc} of \texttt{S}
+			\State \texttt{surplus\_j} $\gets$ difference of \texttt{v\_function} of \texttt{S} with \texttt{j} minus \texttt{v\_function} of \texttt{S}
 			\State save \texttt{surplus\_j} in vector \texttt{surpluss\_j} for every iteration
 			\EndFor
-			\If{sum of $|$\texttt{surpluss\_j}$|$ \textgreater\, 0}
+			\If{sum of $|$\texttt{surpluss\_j}$|$ ==\, 0}
 			\State \textbf{print} \textit{has contribution}
-			\State \texttt{val\_j} $\gets$ \texttt{shapley\_func(j, population, vfunc)}
-			\State \textbf{return} \texttt{val\_j} \textgreater\, 0
+			\State \texttt{val\_j} $\gets$ \texttt{shapley\_func(j, population, v\_function)}
+			\State \textbf{return} \texttt{val\_j} ==\, 0
 			\EndIf
 			\State \textbf{return} \texttt{TRUE}
 		\end{algorithmic}
@@ -168,12 +171,12 @@
 		\caption{\texttt{additivity\_check()}}
 		\begin{algorithmic}[1]
 			\Require \texttt{population}: vector containing all available players
-			\Require \texttt{vfunc1}: value function 1
-			\Require \texttt{vfunc2}: value function 2
-			\Require \texttt{shapley\_func}: Shapley function
-			\State \texttt{combined} $\gets$ addition of \texttt{vfunc1} and \texttt{vfunc2}
-			\State \texttt{vals1} $\gets$ Shapley values for all features using \texttt{vfunc1}
-			\State \texttt{vals2} $\gets$ Shapley values for all features using \texttt{vfunc2}
+			\Require \texttt{v\_function1}: value function 1
+			\Require \texttt{v\_function2}: value function 2
+			\Require \texttt{shapley\_func}: function for computing Shapley values
+			\State \texttt{combined} $\gets$ addition of \texttt{v\_function1} and \texttt{v\_function2}
+			\State \texttt{vals1} $\gets$ Shapley values for all features using \texttt{v\_function1}
+			\State \texttt{vals2} $\gets$ Shapley values for all features using \texttt{v\_function2}
 			\State \texttt{vals\_comb} $\gets$ Shapley values for all features using \texttt{combined}
 			\State \texttt{vals\_additive} $\gets$ \texttt{vals1} + \texttt{vals2}
 			\State \textbf{return} \texttt{vals\_comb} == \texttt{vals\_additive}
@@ -186,10 +189,10 @@
 		\caption{\texttt{efficiency\_check()}}
 		\begin{algorithmic}[1]
 			\Require \texttt{population}: vector containing all available players
-			\Require \texttt{vfunc}: value function
-			\Require \texttt{shapley\_func}: Shapley function
-			\State \texttt{payoff\_total} $\gets$ \texttt{vfunc} of \texttt{population}
-			\State \texttt{shapley\_vals} $\gets$ Shapley values for all features using \texttt{vfunc}
+			\Require \texttt{v\_function}: value function
+			\Require \texttt{shapley\_func}: function for computing Shapley values
+			\State \texttt{payoff\_total} $\gets$ \texttt{v\_function} of \texttt{population}
+			\State \texttt{shapley\_vals} $\gets$ Shapley values for all features using \texttt{v\_function}
 			\State \texttt{total\_shapley\_vals} $\gets$ sum of \texttt{shapley\_vals}
 			\State \textbf{return} \texttt{payoff\_total} == \texttt{total\_shapley\_vals}
 		\end{algorithmic}

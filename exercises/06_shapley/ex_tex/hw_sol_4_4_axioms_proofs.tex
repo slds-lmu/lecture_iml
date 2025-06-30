@@ -1,428 +1,250 @@
 \loesung{
+\label{ex_sol:Shapley_axioms_proofs}
+
+\newtheorem{theorem}{Theorem}
+% \newtheorem{proof}{Proof}
+\newtheorem{proofsketch}{Proof (Step-by-Step)}
+
+
+
+\textbf{Setup.} 
+Let $P = \{1,\dots,p\}$ be the set of $p := |P|$ players, $v$ the value function and $\phi_j$ the Shapley value of player $j$.
+
+Recall the two equivalent definitions of Shapley values:
+\paragraph{Permutation-Based Definition of Shapley Values.}
+    Let $\mathrm{Pred}_\pi(j)$ be the set of players that appear before player $j$ in the permutation $\pi$.  
+    Then for any $j$, the Shapley value of player $j$ is
+    \[
+    \phi_j 
+    \;=\;
+    \frac{1}{p!}\;
+    \sum_{\pi \in \mathfrak{S}_P}
+    \Bigl( v\bigl( \mathrm{Pred}_\pi(j) \cup \{\,j\} \bigr)
+    \;-\;
+    v\bigl( \mathrm{Pred}_\pi(j) \bigr) \Bigr),
+    \]
+    where $\mathfrak{S}_P$ is the set of all $p!$ permutations of $P$.  
+    In words, we look at the ``marginal contribution'' of $j$ each time it arrives in a permutation (depending on whichever players arrived before it), and then average over all permutations.
+
+\paragraph{Set-Based Definition of Shapley Values.}
+    For any $j$, we consider all subsets $S$ of $P$ which do not contain $j$, then the Shapley value of player $j$ is
+    \[
+    \phi_j 
+    \;=\;
+    \sum_{S \subseteq P \setminus \{j\}}
+    \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!}
+    \,
+    \Bigl( v(S \cup \{j\}) - v(S) \Bigr).
+    \]
+    
+In essence, both definitions are almost the same, just that those terms from the first definition that yield the same subsets $S$ (although from different permutations), are summed up and counted in the second definition, so that the second definition has less terms in the sum.
+
+
 
 \begin{enumerate}
 
-    \item
-
-    \textbf{Proof of Axioms}
-      The Shapley values fulfills all the 4 axioms.
-      Symmetry, Dummy and Additivity are relatively easy to proof:
-      \textit{TO DO: The symmetry proof incomplete, needs to be corrected, also on the slides}
-    \begin{itemize}
-        % See also: https://math.stackexchange.com/questions/2747088/shapley-value-is-efficient
-      \item \textbf{Symmetry}: Let's assume coalition $\SsubPnojk$ and $v(\Scupj) = v(\Scupk)$.
-        \begin{itemize}
-            \item Then all marginal contributions are equal: $v(\Scupj) -  v(S) = v(\Scupk) -  v(S), \forall \SsubPnojk$
-            \item Consequently, $\phi_j = \phi_k$.
-        \end{itemize}
-      \item \textbf{Dummy}: Let's assume we have player $j$ such that for all $\SsubP$, we have $v(S) = v(\Scupj)$. Then, each marginal contribution of player $j$ is zero, and therefore $\phi_j = 0$.
-      \item \textbf{Additivity}:  Assume two games $v_1$ and $v_2$ and a third game which is the sum of both $v(S) = v_1(S) + v_2(S)$. The marginal contribution for all $\SsubPnoj$ for game $v$ can be expressed as $v(\Scupj) - v(S) = v_1(\Scupj) - v_1(S) + v_2(\Scupj) - v_2(S)$. Since the Shapley value is additive in the marginal contributions, we can split the sum into two sums so that $\phi_{j,v} = \phi_{j, v_1} + \phi_{j,v_2}$.
-    \end{itemize}
+    \item \label{ex_sol:Shapley_axioms_proofs_a} \textbf{Proof of the first 3 Axioms:}
+    The Dummy and Additivity properties are relatively easy to proof.
     
-    \item \textbf{Bonus:}
+    \begin{theorem}[Null Player (Dummy)]
+    Let $\{\phi_j\}_{j \in P}$ be the Shapley values induced by $v$.
+    For any player $j \in P$  it holds:
+    $$
+    \text{If } v(\Scupj) = v(S) \text{ for all } \SsubPnoj, \text{ then } \phi_j = 0.
+    $$
+    \end{theorem}
 
-    \textbf{Proof of Axioms}
+    \begin{proof}
+
+        Assume $p \geq 1$, $ j \in P$ and $v(\Scupj) = v(S)$ for all subsets $\SsubPnoj$. We need to prove that $\phi_j = 0$.
+        
+        This follows directly from either of the two definitions: The assumption states that the difference $v(\Scupj) - v(S)$ inside the sum is 0, for every $\SsubPnoj$, in other words for every summand.
+        Therefore, also the whole sum is 0, so $\phi_j = 0$.
+        
+    \end{proof}
+
+    \begin{theorem}[Additivity]
+    Let $v, v_1, v_2 : 2^P \to \R$ be value functions with $v = v_1 + v_2$, which means that for every subset $\SsubP$ we have $v(S) = v_1(S) + v_2(S)$.
+    Let $\{\phi_{j, v}\}_{j \in P}$ be the Shapley values induced by $v$ and $\{\phi_{j, v_1}\}_{j \in P}$ and $\{\phi_{j, v_2}\}_{j \in P}$ those for $v_1$ and $v_2$ respectively.
+    Then for any player $j \in P$ it holds:
+    $$
+    \phi_{j, v} = \phi_{j, v_1+v_2} = \phi_{j, v_1} + \phi_{j, v_2}.
+    $$
+    \end{theorem}
+
+    \begin{proof}
+
+        Assume $p \geq 1$, $ j \in P$ and that $v_1, v_2$ are two value functions. We need to prove that $\phi_{j, v_1+v_2} = \phi_{j, v_1} + \phi_{j, v_2}$.
+        
+        For the marginal contributions of player $j$ on any subset $\SsubP$ we have: $v(\Scupj) - v(S) = v_1(\Scupj) - v_1(S) + v_2(\Scupj) - v_2(S)$.
+        Plugging this into either of the two definitions yields the result:
+        \begin{align*}
+            &\phi_{j, v} \,=\, \phi_{j, v_1+v_2}
+            \,=\, \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{j\}) - v(S) \Bigr)  \\
+            &\,=\, \sum_{S \subseteq P \setminus \{j, k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v_1(\Scupj) - v_1(S) + v_2(\Scupj) - v_2(S) \Bigr) \\
+            &\,=\, \sum_{S \subseteq P \setminus \{j, k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v_1(\Scupj) - v_1(S) \Bigr) 
+            \,+\, \sum_{S \subseteq P \setminus \{j, k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v_2(\Scupj) - v_2(S) \Bigr) \\
+            &\,=\, \phi_{j, v_1} + \phi_{j, v_2}.
+        \end{align*}
+        
+    \end{proof}
+
+    The symmetry axiom requires a little more calculation.
+
+    \begin{theorem}[Symmetry]
+    Let $\{\phi_j\}_{j \in P}$ be the Shapley values induced by $v$.
+    For any two players $j,k \in P$  it holds:
+    $$
+    \text{If } v(\Scupj) = v(\Scupk) \text{ for all } \SsubPnojk, \text{ then } \phi_j = \phi_k.
+    $$
+    \end{theorem}
+
+    \begin{proof}
+
+        Assume $p \geq 2$ and $ j,k \in P$ and $v(\Scupj) = v(\Scupk)$ for all subsets $\SsubPnojk$. We need to prove that $\phi_j = \phi_k$.
+        
+        We will use the set-based definition of Shapley values, and will show the claim by straightforward calculation and rearranging the sum.
+        We first split the sum, which is over all sets $\SsubPnoj$, into two parts, depending on whether player $k$ is in $S$ or not:
+        \begin{align*}
+            \phi_j
+            & \,=\, \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{j\}) - v(S) \Bigr) \\
+            & \,=\, \sum_{S \subseteq P \setminus \{j, k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{j\}) - v(S) \Bigr) 
+            \,+\, \sum_{\substack{S \subseteq P \setminus \{j\}, \\ k \in S}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{j\}) - v(S) \Bigr).
+        \end{align*}
+        Now, in the first part of the sum we can directly use our assumption:
+        $$
+        \sum_{S \subseteq P \setminus \{j, k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{j\}) - v(S) \Bigr)
+        \,=\, \sum_{S \subseteq P \setminus \{j, k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{k\}) - v(S) \Bigr)
+        $$
+
+        For the second part, first note that both sums have the same number of summands, since there is a one-to-one correspondence (a bijection) between the subsets of $P \setminus \{j, k\}$ and those subsets of $P \setminus \{j\}$ that contain $k$, by either adding $k$ to a given subset $\SsubPnojk$ or not.
+        We can use this bijection to define an ``index transformation'' for the second sum: We replace the set $S$, which we know must contain $k$, with $S = \Tilde{S} \cup \{k\}$, in other words we define $\Tilde{S} := S \setminus \{k\}$.
+        We can then use our assumption on the set $\Tilde{S}$ as well.
+        This yields:
+        \begin{align*}
+            & \sum_{\substack{S \subseteq P \setminus \{j\}, \\ k \in S}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{j\}) - v(S) \Bigr)  \\
+            \,=\, & \sum_{\Tilde{S} \subseteq P \setminus \{j, k\}} \frac{(|\Tilde{S}| + 1)!\,\bigl(p - (|\Tilde{S}| + 1) - 1\bigr)!}{p!} \, \Bigl( v(\Tilde{S} \cup \{j, k\}) - v(\Tilde{S} \cup \{k\}) \Bigr) \\
+            \,=\, & \sum_{\Tilde{S} \subseteq P \setminus \{j, k\}} \frac{(|\Tilde{S}| + 1)!\,\bigl(p - |\Tilde{S}| - 2\bigr)!}{p!} \, \Bigl( v(\Tilde{S} \cup \{j, k\}) - v(\Tilde{S} \cup \{j\}) \Bigr) \\
+            \,=\, & \sum_{\substack{S \subseteq P \setminus \{k\}, \\ j \in S}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{k\}) - v(S) \Bigr).
+        \end{align*}
+        In the last step, we used this transformation backwards, so we add / remove $j$ instead of $k$ this time, in other words $S = \Tilde{S} \cup \{j\}$ and $\Tilde{S} := S \setminus \{j\}$. This is possible since $\Tilde{S}$ contains neither $j$ nor $k$.
+        
+        We now use the first step from the beginning backwards and arrive at the desired result:
+        \begin{align*}
+            \phi_j
+            & \,=\, \sum_{S \subseteq P \setminus \{j, k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{k\}) - v(S) \Bigr) 
+            \,+\, \sum_{\substack{S \subseteq P \setminus \{k\}, \\ j \in S}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{k\}) - v(S) \Bigr) \\
+            & \,=\, \sum_{S \subseteq P \setminus \{k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{k\}) - v(S) \Bigr) 
+            \,=\, \phi_k.
+        \end{align*}
+        
+    \end{proof}
+
     
-    Efficiency requires a bit more effort, see proof sketch:
-      \begin{itemize}
-      \item \textbf{Efficiency}: $v(P)$ exactly appears once per player ($=p$ times) for coalition $S = P \setminus \{j\}$ with the weight $\frac{|P - 1|!(|P| - |P - 1| - 1)!}{|P|!} = \frac{1}{p}$ each. The values for all other coalitions $v(S), \SsubP \{j,k\}$ appear with both minus and plus signs that cancel each other out.
-    \end{itemize}
-
-    \newtheorem{theorem}{Theorem}
-\newtheorem{proof_sketch}{Proof}
-\newtheorem{proofsketch}{Proof (Step-by-Step)}
-
-\section*{Set-based Shapley Values for Privilege Score Contributions}
-
-\textbf{Setup.} 
-$k \hat{=} |P|$. Let the Shapley value for $j \in P$ be
-\[
-\phi_j \;=\;
-\sum_{S \subseteq P \setminus \{j\}}
-\frac{|S|!\,\bigl(k - |S| -1\bigr)!}{k!}
-\;
-\bigl[v(S \cup \{j\}) - v(S)\bigr].
-\]
-
-\begin{theorem}[Efficiency]
-Let $\{\phi_j\}_{j \in P}$ be the Shapley values induced by $v$. Then
-\[
-\sum_{j=1}^k \phi_j
-\;=\;
-v(P).
-\]
-\end{theorem}
-
-\begin{proof_sketch}
-The Shapley value for player $j \in P$ is 
-\[
-\phi_j 
-\;=\;
-\sum_{S \subseteq P \setminus \{j\}}
-\frac{|S|!\,\bigl(k - |S| - 1\bigr)!}{k!}
-\;\Bigl[\,v\bigl(S \cup \{j\}\bigr) \;-\; v(S)\Bigr].
-\]
-Hence
-\[
-\sum_{j=1}^k \phi_j
-\;=\;
-\sum_{j=1}^k
-\sum_{S \subseteq P \setminus \{j\}}
-\frac{|S|!\,(k - |S| - 1)!}{k!}
-\;\bigl[v(S \cup \{j\}) \;-\; v(S)\bigr].
-\]
-Re-index over nonempty subsets $T \subseteq P$ by setting $T = S \cup \{j\}$. This shows each $v(T)$ with $T\neq \varnothing$ arises exactly $|T|$ times in the sum (once for each $j \in T$), but for subsets $T \neq P$, there is also a corresponding negative occurrence that cancels out the positive one. Concretely:
-\[
-\bigl[v(T) - v(T \setminus \{i\})\bigr]
-\quad \text{and} \quad
-\bigl[v(T \cup \{i'\}) - v(T)\bigr]
-\]
-yield $+\,v(T)$ and $-\,v(T)$, respectively, for some $i,i'\notin T$. 
-All intermediate $T \neq P$ vanish in pairs, leaving only the net term $v(P) - v(\varnothing)$. Because $v(\varnothing)=0$, the total sum equals $v(P)$. 
-\[
-\sum_{j=1}^k \phi_j \;=\; v(P).
-\]
-\end{proof_sketch}
-
-\begin{proofsketch}
-\noindent \textbf{Step 1: Split the sum into pieces.}
-\[
-\sum_{j=1}^k \phi_j 
-\;=\;
-\sum_{j=1}^k 
-\;\sum_{\,S \subseteq P\setminus\{j\}}
-\;\frac{|S|!\,\bigl(k - |S| -1\bigr)!}{k!}
-\;\Bigl[\,v\bigl(S \cup \{j\}\bigr) - v(S)\Bigr].
-\]
-Each pair $(j,S)$ contributes a difference $v(S \cup \{j\}) - v(S)$. Let $T = S \cup \{j\}$.
-
-\medskip
-\noindent
-\textbf{Step 2: Identify how $v(P)$ appears exactly once overall.}
-
-\begin{itemize}
-    \item Whenever $T = P$, we must have $j \in P$ and $S = P \setminus \{j\}$. There are exactly $k$ such pairs \((j,S)\) because $j$ can be any of the $k$ elements in $P$.
-    \item For each such pair, $\lvert S\rvert = k-1$, so the coefficient becomes
-    \[
-       \frac{(k-1)!\,(k - (k-1) - 1)!}{k!}
-       \;=\;
-       \frac{(k-1)!\,(0)!}{k!}
-       \;=\;
-       \frac{1}{k}.
-    \]
-    \item Hence each of the $k$ occurrences of $v(P)$ is multiplied by $\tfrac{1}{k}$, summing to $\bigl(\frac{1}{k}\times k\bigr)=1$. Thus \emph{overall}, $v(P)$ is counted once in total. 
-\end{itemize}
-
-\medskip
-\noindent
-\textbf{Step 3: Show that all $v(T)$ with $T \neq P$ cancel.}
-
-For each nonempty $T \subset P$:
-% \begin{itemize}
-%     \item \textit{Positive occurrence.} If $T = S \cup \{j\}$ for some $j \in T$, then $v(T)$ appears with a $+$ sign in the term $v(S \cup \{j\}) - v(S)$. 
-%     \item \textit{Negative occurrence.} If \(T \subset P\) is not the full set, there is at least one element \(j' \notin T\). Hence, we can form the larger set \(T \cup \{j'\}\). In the Shapley sum, this larger set contributes a term
-% \[
-% v\bigl(T \cup \{j'\}\bigr) \;-\; v(T),
-% \]
-% which includes precisely the \textit{negative occurrence} of \(v(T)\).  
-
-%     \item Check the multinomial coefficient: Consider a fixed nonempty $T$. Its size is $|T|$. In the inner sum, $T$ arises precisely once for the unique $j \in T$ and $S = T \setminus \{j\}$. The corresponding coefficient is
-% \[
-% \frac{|T\setminus\{j\}|!\,\bigl(k - |T\setminus\{j\}| -1\bigr)!}{k!}
-% \;=\;
-% \frac{(|T|-1)!\,\bigl(k - (|T|-1) -1\bigr)!}{k!}
-% \;=\;
-% \frac{(|T|-1)!\,(k - |T|)!}{k!}.
-% \]
-% Multiplying by $|T|$ (because there are $|T|$ ways to pick $j$ in $T$ as shown in Step 1) yields
-% \[
-% |T| \;\cdot\; \frac{(|T|-1)!\,(k - |T|)!}{k!}
-% \;=\;
-% \frac{|T|! \,(k - |T|)!}{k!}
-% \;=\;
-% 1.
-% \]
-% Thus each $v(T)$ with $T\neq \varnothing$ appears with a total net weight of $+1$ (when summing across all $j\in T$).
-%     \item Every nonempty \(T \neq P\) appears positively in some difference \(v(T) - v(\cdot)\) and also appears negatively in a difference \(v(\cdot) - v(T)\) as part of a larger set. These two occurrences nullify each other, ensuring that \(v(T)\) does not remain in the final sum.
-% \end{itemize}
-\begin{itemize}
-    \item \textbf{Positive occurrence.} 
-    If $T = S \cup \{j\}$ for some $j \in T$, then $v(T)$ appears \emph{positively} in the difference 
-    \[
-      v(S \cup \{j\}) \;-\; v(S).
-    \]
-
-    \item \textbf{Negative occurrence.} 
-    If \(T \subset P\) is not the full set, then there exists at least one element \(j' \notin T\). We can thus form the larger set \(T \cup \{j'\}\). In the Shapley sum, this larger set contributes
-    \[
-      v\bigl(T \cup \{j'\}\bigr) \;-\; v(T),
-    \]
-    which contains \(-\,v(T)\) as the \emph{negative} appearance of \(v(T)\).
-
-    \item \textbf{Multinomial coefficient.} 
-    Fix a nonempty $T$. Let $|T|$ denote its size. Inside the sum, $T$ appears once for each $j \in T$ with $S = T \setminus \{j\}$. The coefficient in front of $v(T)$ for such a pair $(j,S)$ is
-    \[
-      \frac{|T\setminus\{j\}|!\,\bigl(k - |T\setminus\{j\}| -1\bigr)!}{k!}
-      \;=\;
-      \frac{(|T|-1)!\,(k - |T|)!}{k!}.
-    \]
-    Since there are $|T|$ possible ways to choose $j\in T$, multiplying by $|T|$ yields
-    \[
-      |T| 
-      \;\cdot\; 
-      \frac{(|T|-1)!\,(k - |T|)!}{k!}
-      \;=\;
-      \frac{|T|!\,(k - |T|)!}{k!}
-      \;=\;
-      \frac{k!}{k!}
-      \;=\;
-      1.
-    \]
-    Where the identity $|T|!\,(k - |T|)! = k!$ holds because to permute $k$ distinct elements, 
-we can imagine first choosing which $|T|$ are in one group and ordering them 
-(in $|T|!$ ways), then ordering the remaining $k - |T|$ (in $(k - |T|)!$ ways). 
-Overall, this accounts for all $k!$ permutations. 
-    Therefore, each nonempty $T$ receives a total \emph{positive} weight of exactly $+1$ when summing over all $j \in T$.
-
-    \item \textbf{Cancellation.} 
-    Every nonempty \(T \neq P\) also appears \emph{negatively} as part of a larger set’s difference, ensuring one positive and one negative occurrence of $v(T)$. Consequently, these contributions cancel each other out, so \(v(T)\) does not remain in the final sum unless $T=P$.
-\end{itemize}
-\medskip
-\noindent
-\textbf{Step 4: Conclusion.}
-
-Since $v(\varnothing) = 0$ does not contribute and $v(P)$ remains once in total, we get
-\[
-\sum_{j=1}^k \phi_j 
-\;=\;
-\underbrace{v(P)}_{\text{one net positive}} 
-\;+\; 
-\underbrace{\sum_{T \neq P} \bigl[v(T)\ \text{terms cancel}\bigr]}_{0} 
-\;=\;
-v(P).
-\]
-\qedhere
-\end{proofsketch}
-
-% \begin{proofsketch}
-% \noindent \textbf{Step 1: Expand the total Shapley sum.}
-
-% \[
-% \sum_{j=1}^k \phi_j
-% \;=\;
-% \sum_{j=1}^k
-% \;\sum_{\,S \subseteq P \setminus \{j\}}
-% \frac{|S|!\,(k-|S|-1)!}{k!}
-% \;\Bigl[v\bigl(S \cup \{j\}\bigr) - v(S)\Bigr].
-% \]
-
-% \noindent \textbf{Step 2: Re-index to track each $v(T)$ term.}
-
-% Each nonempty subset \(T \subseteq P\) appears exactly \(\lvert T\rvert\) times positively in the expanded total Shapley sum from Step 1. More precisely, for each \(j \in T\), there is a unique set \(S = T \setminus \{j\}\) such that \(T = S \cup \{j\}\). Consequently, each \(v(T)\) appears exactly once in the difference \(v(S \cup \{j\}) - v(S)\) if and only if \(S = T \setminus \{j\}\).
-
-% \textbf{Example:} 
-% Let $P = \{1,2,3\}$ and focus on $T = \{1,3\}$.  
-% In the Shapley sum, we form terms $v(S \cup \{j\}) - v(S)$ for each $j \in P$ and each $S \subseteq P \setminus \{j\}$. 
-% We list all such $(j,S)$ pairs:
-
-% \begin{itemize}
-%   \item \textbf{Case $j=1$}, so $S \subseteq \{2,3\}$:
-%     \begin{itemize}
-%       \item $S = \varnothing$: $S \cup \{1\} = \{1\} \implies v(\{1\}) - v(\varnothing).$
-%       \item $S = \{2\}$: $S \cup \{1\} = \{1,2\} \implies v(\{1,2\}) - v(\{2\}).$
-%       \item \textbf{$S = \{3\}$:} $S \cup \{1\} = \{1,3\} \implies \textbf{v(\{1,3\}) - v(\{3\})}.$
-%       \item $S = \{2,3\}$: $S \cup \{1\} = \{1,2,3\} \implies v(\{1,2,3\}) - v(\{2,3\}).$
-%     \end{itemize}
-
-%   \item \textbf{Case $j=2$}, so $S \subseteq \{1,3\}$:
-%     \begin{itemize}
-%       \item $S = \varnothing$: $S \cup \{2\} = \{2\} \implies v(\{2\}) - v(\varnothing).$
-%       \item $S = \{1\}$: $S \cup \{2\} = \{1,2\} \implies v(\{1,2\}) - v(\{1\}).$
-%       \item $S = \{3\}$: $S \cup \{2\} = \{2,3\} \implies v(\{2,3\}) - v(\{3\}).$
-%       \item $S = \{1,3\}$: $S \cup \{2\} = \{1,2,3\} \implies v(\{1,2,3\}) - v(\{1,3\}).$
-%     \end{itemize}
-
-%   \item \textbf{Case $j=3$}, so $S \subseteq \{1,2\}$:
-%     \begin{itemize}
-%       \item $S = \varnothing$: $S \cup \{3\} = \{3\} \implies v(\{3\}) - v(\varnothing).$
-%       \item \textbf{$S = \{1\}$:} $S \cup \{3\} = \{1,3\} \implies \textbf{v(\{1,3\}) - v(\{1\})}.$
-%       \item $S = \{2\}$: $S \cup \{3\} = \{2,3\} \implies v(\{2,3\}) - v(\{2\}).$
-%       \item $S = \{1,2\}$: $S \cup \{3\} = \{1,2,3\} \implies v(\{1,2,3\}) - v(\{1,2\}).$
-%     \end{itemize}
-% \end{itemize}
-
-% \noindent
-% \textbf{Observation:} $T = \{1,3\}$ occurs \emph{only} in $|T| = 2$ cases, i.e. for the pairs
-% \[
-% (j,S) = (1,\{3\}) \quad \text{and} \quad (j,S) = (3,\{1\}),
-% \]
-% matching the principle: $T$ appears once for each $j\in T$, with $S = T \setminus\{j\}$.  
-% No other $(j,S)$ pair produces $T=\{1,3\}$, so $T$ cannot arise for $j=2$ or for different $S$.
-
-
-
-% \noindent \textbf{Step 3: Check the multinomial coefficient contribution.}
-
-% Consider a fixed nonempty $T$. Its size is $|T|$. In the inner sum, $T$ arises precisely once for the unique $j \in T$ and $S = T \setminus \{j\}$. The corresponding coefficient is
-% \[
-% \frac{|T\setminus\{j\}|!\,\bigl(k - |T\setminus\{j\}| -1\bigr)!}{k!}
-% \;=\;
-% \frac{(|T|-1)!\,\bigl(k - (|T|-1) -1\bigr)!}{k!}
-% \;=\;
-% \frac{(|T|-1)!\,(k - |T|)!}{k!}.
-% \]
-% Multiplying by $|T|$ (because there are $|T|$ ways to pick $j$ in $T$ as shown in Step 1) yields
-% \[
-% |T| \;\cdot\; \frac{(|T|-1)!\,(k - |T|)!}{k!}
-% \;=\;
-% \frac{|T|! \,(k - |T|)!}{k!}
-% \;=\;
-% 1.
-% \]
-% Thus each $v(T)$ with $T\neq \varnothing$ appears with a total net weight of $+1$ (when summing across all $j\in T$).
-
-% \noindent \textbf{Step 4: Telescoping.}
-
-% \begin{itemize}
-%     \item $v(\varnothing)$ never appears positively, because $\varnothing$ cannot be formed by adding some $j$.
-%     \item $v(P)$ never appears negatively, because $P$ cannot be “further extended.”
-%     \item All intermediate $v(T)$ terms with $T \neq \varnothing,P$ appear exactly once positively and once negatively, and hence cancel out except for $v(P) - v(\varnothing)$.
-% \end{itemize}
-
-% \noindent \textbf{Step 5: Conclude.}
-
-% Since $v(\varnothing) = 0$, the only remaining term is $v(P)$. Hence
-% \[
-% \sum_{j=1}^k \phi_j \;=\; v(P).
-% \]
-% \qedhere
-% \end{proofsketch}
-
-
-\section*{Order-Based Shapley Values for Privilege Score Contributions}
-
-\paragraph{Setup.}
-Let $P = \{1,\dots,k\}$ be the set of $k$ players.  
-We aim to allocate $v(P)$ among the $k$ players (arrows) in a principled way.
-
-\medskip
-
-\paragraph{Permutation-Based Definition of Shapley Values.}
-A \emph{permutation} of $P$ is any ordering $\pi = (\pi(1), \pi(2), \dots, \pi(k))$.  
-Let $\mathrm{Pred}_\pi(j)$ be the set of players that appear \emph{before} $j$ in the permutation $\pi$.  
-Then the \textbf{Shapley value} of player $j$ is
-\[
-\phi_j 
-\;=\;
-\frac{1}{k!}\;
-\sum_{\pi \in \mathfrak{S}_P}
-\Bigl[v\!\bigl(\mathrm{Pred}_\pi(j) \cup \{\,j\}\bigr)
-\;-\;
-v\!\bigl(\mathrm{Pred}_\pi(j)\bigr)\Bigr],
-\]
-where $\mathfrak{S}_P$ is the set of all $k!$ permutations of $P$.  
-In words, we look at the “marginal contribution” of $j$ each time it arrives in a permutation (given whichever players arrived before it), and then average over all permutations.
-
-\begin{theorem}[Efficiency]
-Let $\{\phi_j\}_{j \in P}$ be the order-based Shapley values induced by $v$. Then
-\[
-\sum_{j=1}^k \phi_j
-\;=\;
-v(P).
-\]
-\end{theorem}
-
-\begin{proofsketch}
-\noindent
-\textbf{Step 1: Sum the Shapley values over all players.}
-
-\[
-\sum_{j=1}^k \phi_j 
-\;=\;
-\sum_{j=1}^k
-\frac{1}{k!}
-\sum_{\pi \in \mathfrak{S}_P}
-\Bigl[v\bigl(\mathrm{Pred}_\pi(j)\cup\{j\}\bigr)
-- 
-v\bigl(\mathrm{Pred}_\pi(j)\bigr)\Bigr].
-\]
-Swap the sums:
-\[
-=
-\frac{1}{k!}
-\sum_{\pi \in \mathfrak{S}_P}
-\sum_{j=1}^k
-\Bigl[v\bigl(\mathrm{Pred}_\pi(j)\cup\{j\}\bigr)
-- 
-v\bigl(\mathrm{Pred}_\pi(j)\bigr)\Bigr].
-\]
-
-\medskip
-\noindent
-\textbf{Step 2: Telescoping within each permutation.}
-
-Fix a particular permutation $\pi$.  List its elements in order:
-\[
-\bigl(\pi(1), \pi(2), \dots, \pi(k)\bigr).
-\]
-Within this permutation, the inner sum
-\(\sum_{j=1}^k
-\bigl[v(\mathrm{Pred}_\pi(j)\cup\{j\}) - v(\mathrm{Pred}_\pi(j))\bigr]\)
-can be viewed as a chain of marginal contributions:
-\[
-v\bigl(\{\pi(1)\}\bigr) - v(\varnothing)
-\;+\;
-v\bigl(\{\pi(1), \pi(2)\}\bigr) - v\bigl(\{\pi(1)\}\bigr)
-\;+\;\dots\;+\;
-v\bigl(\{\pi(1),\ldots,\pi(k)\}\bigr) - v\bigl(\{\pi(1),\ldots,\pi(k-1)\}\bigr).
-\]
-All intermediate terms telescope, leaving exactly
-\[
-v\bigl(\{\pi(1),\ldots,\pi(k)\}\bigr)
-\;-\;
-v(\varnothing)
-\;=\;
-v(P)
-\;-\;
-0
-\;=\;
-v(P).
-\]
-
-\medskip
-\noindent
-\textbf{Step 3: Average over all permutations.}
-
-Since every permutation $\pi$ yields exactly $v(P)$ in the telescoped sum, we have
-\[
-\sum_{j=1}^k \phi_j
-\;=\;
-\frac{1}{k!}
-\sum_{\pi \in \mathfrak{S}_P} 
-v(P)
-\;=\;
-\frac{1}{k!} \times \bigl(k! \cdot v(P)\bigr)
-\;=\;
-v(P).
-\]
-Hence
-\[
-\sum_{j=1}^k \phi_j 
-\;=\;
-v(P).
-\]
-\end{proofsketch}
     
-    \item \textbf{Bonus:}
-
-    \textbf{Linearity Axiom Corollary}
-      \begin{itemize}
-      \item The Shapley values are also linear:
-      \item For a game with payout $v(S) = \alpha v_1(S) + v_2(S)$, the Shapley values are $\alpha \phi_{j,v_1} + \phi_{j,v_2}$.
-      \item The multiplication with $\alpha$ works since we can pull out $\alpha$ from the sum of marginal contributions, so that for $v(S) = \alpha v_1(S)$ the Shapley value is $\alpha \phi_{j,v_1}$.
-      \item We already know that Shapley values are additive which proofs the linearity.
-      \end{itemize}
+    \item \textbf{Bonus: Proof of the Efficiency Axiom}
     
+    Efficiency requires a little more effort than the others:
+
+    \begin{theorem}[Efficiency]
+    Let $\{\phi_j\}_{j \in P}$ be the Shapley values induced by $v$.
+    Then
+    $$
+    \sum_{j=1}^p \phi_j \;=\; v(P).
+    $$
+    \end{theorem}
+
+    The proof idea is as follows: Because we sum up the Shapley values over all players, the values $v(S)$ of each coalition not equal to $P$, so $S \subsetneq P$, appear with both minus and plus signs that exactly cancel each other out.
+    Apart from that, the term $v(P)$ occurs for every player, and one only needs to calculate that its weights sum up to 1.
+    
+    We will use the order-based definition of Shapley values here, since with it the proof is simpler.
+
+    \begin{proof}
+        
+        We first plug in the definition and swap the two sums:
+        \begin{gather*}
+            \sum_{j=1}^p \phi_j 
+            \;=\;
+            \sum_{j=1}^p \frac{1}{p!} \sum_{\pi \in \mathfrak{S}_P} \Bigl(
+                v\bigl( \mathrm{Pred}_\pi(j) \cup \{j\} \bigr)
+                - v\bigl( \mathrm{Pred}_\pi(j) \bigr)
+            \Bigr) \\
+            = \frac{1}{p!} \sum_{\pi \in \mathfrak{S}_P} \sum_{j=1}^p \Bigl(
+                v\bigl( \mathrm{Pred}_\pi(j) \cup \{j\} \bigr)
+                - v\bigl( \mathrm{Pred}_\pi(j) \bigr)
+            \Bigr).
+        \end{gather*}
+        Now the inner sum corresponds to a single permutation, and sums over all players in this permutation.
+        
+        Fix a particular permutation $\pi$. 
+        We consider the order of the players given by this permutation:~$\bigl(\pi(1), \pi(2), \dots, \pi(p)\bigr)$.
+        Each marginal contribution inside the inner sum corresponds to one step in this ordering.
+        We reorder the inner sum according to this ordering given by the permutation:
+        \begin{multline*}
+            \sum_{j=1}^p \Bigl( v\bigl( \mathrm{Pred}_\pi(j) \cup \{j\} \bigr)
+                - v\bigl( \mathrm{Pred}_\pi(j) \bigr) \Bigr)
+            = \sum_{i=1}^p \Bigl( v\bigl( \{ \pi(1), \dots \pi(i) \} \bigr)
+                - v\bigl( \{ \pi(1), \dots \pi(i-1) \} \bigr) \Bigr) \\
+            = \underbrace{v \bigl( \{ \pi(1) \} \bigr) - v(\varnothing)}_{i=1 \text{ or } j = \pi(1)}
+                \;+\; \underbrace{v \bigl( \{ \pi(1), \pi(2) \} \bigr) - v \bigl( \{ \pi(1) \} \bigr)}_{i=2 \text{ or } j = \pi(2)}
+                \;+\; \underbrace{v \bigl( \{ \pi(1), \pi(2), \pi(3) \} \bigr) - v \bigl( \{ \pi(1), \pi(2) \} \bigr)}_{i=3 \text{ or } j = \pi(3)} \\
+                \;+\; \dots 
+                \;+\; \underbrace{v \bigl( \{ \pi(1), \ldots, \pi(p) \} \bigr) - v \bigl( \{ \pi(1), \ldots, \pi(p - 1) \} \bigr)}_{i=p \text{ or } j = \pi(p)} 
+            = v \bigl( \pi(1), \ldots, \pi(p) \} \bigr) - v(\varnothing)
+            = v (P).
+        \end{multline*}
+
+        In other words, the inner sum is a telescope sum, where all the terms except the first and the last one cancel.
+        Plugging this into the outer sum yields the desired result:
+        \begin{gather*}
+            \sum_{j=1}^p \phi_j 
+            \;=\; \frac{1}{p!} \sum_{\pi \in \mathfrak{S}_P} \left( \sum_{j=1}^p \Bigl(
+                v\bigl( \mathrm{Pred}_\pi(j) \cup \{j\} \bigr)
+                - v\bigl( \mathrm{Pred}_\pi(j) \bigr)
+            \Bigr) \right) \\
+            \;=\; \frac{1}{p!} \sum_{\pi \in \mathfrak{S}_P} v(P)
+            \;=\; \frac{1}{p!} \cdot \bigl(p! \cdot v(P)\bigr)
+            \;=\; v(P) .
+        \end{gather*}
+        
+    \end{proof}
+
+    When using the set-based definition, one can show that the term $v(P)$ appears exactly once per player (hence $p$ times in total) for the coalition $S = P \setminus \{j\}$ with the weight $\frac{|P - 1|! \, \bigl(|P| - |P - 1| - 1\bigr)!}{|P|!} = \frac{1}{p}$ each, and then one just has to show that for all the other terms, their number of appearance together with their weights cause them to cancel out.
+    See also \href{https://math.stackexchange.com/questions/2747088/shapley-value-is-efficient}{here}.
+
+    
+    
+    \item \textbf{Bonus: Proof of Linearity}
+
+    This is as straightforward as the additivity:
+
+    \begin{theorem}[Linearity]
+    Let $\alpha, \beta \in \R$ and $v, v_1, v_2 : 2^P \to \R$ be value functions with $v = \alpha v_1 + \beta v_2$, which means that for every subset $\SsubP$ we have $v(S) = \alpha \cdot v_1(S) + \beta \cdot v_2(S)$.
+    Let $\{\phi_{j, v}\}_{j \in P}$ be the Shapley values induced by $v$ and $\{\phi_{j, v_1}\}_{j \in P}$ and $\{\phi_{j, v_2}\}_{j \in P}$ those for $v_1$ and $v_2$ respectively.
+    Then for any player $j \in P$ it holds:
+    $$
+    \phi_{j, v} = \phi_{j, \alpha v_1 + \beta v_2} = \alpha \phi_{j, v_1} + \beta \phi_{j, v_2}.
+    $$
+    \end{theorem}
+
+    \begin{proof}
+
+        Since additivity was already proven in part~\ref{ex_sol:Shapley_axioms_proofs_a}, we only have to prove homogeneity, that means that $\phi_{j, \alpha v_1} = \alpha \phi_{j, v_1}$ for any $\alpha \in \R$.
+
+        So let $p \geq 1$, $ j \in P$, $\alpha \in \R$ and $v_1$ be any value function.
+        Denote $v = \alpha v_1$.        
+        For the marginal contributions of player $j$ on any subset $\SsubP$ we have: $v(\Scupj) - v(S) = \alpha v_1(\Scupj) - \alpha v_1(S) = \alpha \Bigl( v_1(\Scupj) - v_1(S) \Bigr)$.
+        As for the additivity, plugging this into either of the two definitions yields the results:
+        \begin{align*}
+            \phi_{j, v}
+            & \,=\, \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{j\}) - v(S) \Bigr) 
+            \,=\, \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \alpha \Bigl( v_1(S \cup \{j\}) - v_1(S) \Bigr) \\
+            & \,=\, \alpha \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v_1(S \cup \{j\}) - v_1(S) \Bigr) 
+            \,=\, \alpha \phi_{j, v_1}.
+        \end{align*}
+        
+    \end{proof}
+
 \end{enumerate}
 
 }
