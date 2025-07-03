@@ -44,12 +44,16 @@ if __name__ == "__main__":
   from utils.dataset import Dataset
   
   dataset = Dataset("wheat_seeds", range(0, 7), [7], normalize=True, categorical=True)
+  print(dataset.get_input_labels())
+  print(dataset.get_output_label())
+  print(np.unique(dataset.y, return_counts=True))
     
   # Create a binary classification task
   y = dataset.y
   y[y == 0] = 1
+  print(np.unique(dataset.y, return_counts=True))
   
-  # Reserve first row of dataset for x_interest
+  # Reserve first row of dataset for x_interest, remove from dataset
   X = dataset.X
   x_interest = X[0,:].reshape(1, -1)
   X = np.delete(X, (0), axis = 0)
@@ -59,11 +63,13 @@ if __name__ == "__main__":
   model = ensemble.RandomForestClassifier(random_state=0)
   model.fit(X, y)
   
-  # Define x_interest, remove it from dataset 
-  model.predict(x_interest)
+  # Probe on x_interest
+  print(x_interest)
+  print(model.predict(x_interest))
   
-  # Compute counterfactual for first observation
+  # Compute counterfactual for x_interest
   cf = generate_whatif(x_interest = x_interest, model = model, dataset = X)
-  evaluate_counterfactual(counterfactual = cf, x_interest = x_interest, model = model)
+  print(cf)
+  print(evaluate_counterfactual(counterfactual = cf, x_interest = x_interest, model = model))
   
 

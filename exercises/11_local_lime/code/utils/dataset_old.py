@@ -1,8 +1,10 @@
 import os
 import pandas as pd
 import numpy as np
+import torch
 from sklearn.utils import shuffle
 from sklearn.preprocessing import MinMaxScaler
+from torch.utils.data import Dataset as PyDataset
 import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 
@@ -188,6 +190,26 @@ class Dataset:
     def get_output_label(self):
         return LABELS[self.dataset_name][self.output_id]
 
+
+class PyTorchDataset(PyDataset):
+    """
+    Since we have numpy data, it is required to convert
+    them into PyTorch tensors first.
+    """
+
+    def __init__(self, X, y=None):
+        self.X = torch.tensor(X, dtype=torch.float32)
+
+        self.y = torch.zeros((self.X.shape[0], 1), dtype=torch.float32)
+        if y is not None:
+            y = y.astype(np.float32)
+            self.y = torch.tensor(y, dtype=torch.float32)
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
 
 if __name__ == "__main__":
