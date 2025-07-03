@@ -1,11 +1,14 @@
-\aufgabe{LIME}{
+\aufgabe{LIME: Implementation}{
 
-In the following, you are guided to implement LIME to interpret a Support Vector Machine (SVM). We use \textbf{two} (numeric) features and explore LIME on a multiclass classification problem with only two (numeric) features. The associated files for this exercise are \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/06_lime_ce/code/lime.py}{\textit{lime.py}} or \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/06_lime_ce/code/lime.R}{\textit{lime.R}} depending on your preferred programming language. 
+In the following, you are guided to implement LIME to interpret a Support Vector Machine (SVM). We use \textbf{two} (numeric) features and explore LIME on a multiclass classification problem with only two (numerical) features.
+% The associated files for this exercise are \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/06_lime_ce/code/lime.py}{\textit{lime.py}} or \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/06_lime_ce/code/lime.R}{\textit{lime.R}} depending on your preferred programming language.
+The associated files for this exercise are \textit{lime.py} and \textit{datasets.py} for Python or \textit{lime.R} for R, depending on your preferred programming language, which you can find on Moodle.
 In these files, helper functions for plotting (\texttt{get\_grid()}, \texttt{plot\_grid()} and \texttt{plot\_points\_in\_grid()}) were already implemented.
 
 \begin{enumerate}[a)]
 
-\item Inspect Implemented Functions
+\item
+Inspect Implemented Functions
 
 First of all, make yourself familiar with the already implemented functions in the template files. 
 \begin{itemize}
@@ -20,24 +23,30 @@ Your first implementation task is to sample points, which are later used to trai
 \texttt{sample\_points()} by randomly sampling from a uniform distribution. Consider the lower and
 upper bounds from the input datapoints. 
 
-\textit{Hint:} In Python, you can use the method \texttt{dataset.get\_configspace().get\_hyperparameters\_dict()} 
-implemented in the file \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/06_lime_ce/code/utils/dataset.py}{\textit{utils/dataset.py}} to retrieve the lower and upper values. 
-For an example, have a look on the already implemented function  \texttt{get\_grid()}.
+\textit{Hint:}
+In Python, you can use the method \texttt{dataset.get\_configspace().get\_hyperparameters\_dict()} implemented in the file
+% \href{https://raw.githubusercontent.com/slds-lmu/lecture_iml/master/exercises/06_lime_ce/code/utils/dataset.py}{\textit{utils/dataset.py}}
+\textit{dataset.py}
+to retrieve the lower and upper values. 
+For an example, have a look at the already implemented function \texttt{get\_grid()}.
 
-\item Weight Points
+\item 
+Weight Points
 
 Given a selected point $\xv$ and the sampled points $Z$ from the previous task, we now want to weight the points. Use the following equation with $d$ as Euclidean distance to calculate the weight of a single point $\mathbf{z} \in Z$:
 
 \begin{equation}
-    \phi_{\xv}(\mathbf{z}) = exp(-d(\xv, \mathbf{z})^2/\sigma^2).
+    \phi_{\xv}(\mathbf{z}) = \exp \left( -\frac{ d(\xv, \mathbf{z})^2 }{\sigma^2} \right).
     \label{eq:dist}
 \end{equation}
 
 \noindent To make plotting easier later on, the weights should be normalized between zero and one. Finally, return the normalized weights in \texttt{weight\_points()}.
 
-\item Fit Local Surrogate Model
+\item
+Fit Local Surrogate Model
 
-Finally, fit a decision tree with training data and weights. Return the fitted tree in the function \texttt{fit\_explainer\_model()}. 
+Finally, fit a decision tree with training data and weights.
+Return the fitted tree in the function \texttt{fit\_explainer\_model()}. 
 What could be problematic?
 
 \end{enumerate}
