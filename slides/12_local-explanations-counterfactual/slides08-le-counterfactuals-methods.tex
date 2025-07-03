@@ -33,17 +33,27 @@
 	% ------------------------------------------------------------------------------
 
 
-\begin{frame}{Overview of Methods}
-	Currently, multiple methods exist to calculate counterfactuals. They mainly differ in: 
+\begin{frame}{Overview of Counterfactual Methods}
+Many methods exist to generate counterfactuals, they mainly differ in:
+    
 	\begin{itemize}[<+->]
-		\item \textbf{Targets:} Most methods focus on classification models, only few cover regression models\\
-		$\leadsto$ so far, all methods remain in the supervised learning paradigm
-		\item \textbf{Data:} Methods mainly focus on tabular data, few on visual/text data, none on audio data
-		\item \textbf{Feature space:} Some methods can only handle numerical features, few can process mixed (numerical and discrete) feature spaces
-		\item \textbf{Objectives:} Many methods focus on action guidance, plausibility and sparsity, few on other objectives like fairness or individual preferences
-		\item \textbf{Model access:} Methods either require access to complete model internals, access to gradients, or only to prediction functions $\Rightarrow$ Model-agnostic and model-specific methods exist
-		\item \textbf{Optimization tool:} Gradient-based algorithms (only for differentiable models), mixed-integer programming (only linear), or gradient-free algorithms e.g. Nelder-Mead, genetic algorithm
-		\item \textbf{Rashomon Effect:} Many methods return a single counterfactual per run, some multiple counterfactuals, others prioritize CEs or let the user choose
+		  \item \textbf{Target:} Most support classification; few extend to regression\\
+  $\leadsto$ Recent work extends CEs to other ML tasks (un-, semi-, self-supervised)
+ \item \textbf{Data type:} Focus is on tabular data; little work on text, vision, audio
+		\item \textbf{Feature space:}  Some handle only numerical features; few support mixed types
+        %Some methods can only handle numerical features, few can process mixed (numerical and discrete) feature spaces
+		\item \textbf{Objectives:} 
+        From core goals like sparsity and plausibility to emerging aims such as fairness, personalization, and robustness
+        %Many methods focus on action guidance, plausibility and sparsity, few on other objectives like fairness or individual preferences
+		\item \textbf{Model access:} 
+        Methods range from model-specific (requiring model internals or access to gradients) to model-agnostic (using only prediction functions)
+        %Methods either require access to complete model internals, access to gradients, or only to prediction functions \\
+        %$\leadsto$ Model-agnostic and model-specific methods exist
+		 \item \textbf{Optimization:} 
+         From gradient-based (differentiable models) and mixed-integer programming (linear models) to gradient-free methods (e.g., genetic algorithms)
+         %From gradient-based (for differentiable models) to gradient-free and heuristic methods (e.g., genetic algorithms, evolutionary strategies)
+        %Gradient-based algorithms (only for differentiable models), mixed-integer programming (only linear), or gradient-free algorithms e.g. Nelder-Mead, genetic algorithm
+		\item \textbf{Rashomon Effect:} Many methods return one CE, some diverse sets of CEs, others prioritize CEs, or let the user choose
 	\end{itemize}
 \end{frame}
 
@@ -53,17 +63,22 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 			\argmin_{\xv'} \max_{\lambda} \lambda \underbrace{(\fh(\xv') - y')^2}_{o_{target}(\fh(\xv'), y')} + \underbrace{\sum\nolimits_{j = 1}^p |x'_j - x_j|/MAD_j}_{o_{input}(\xv', \xv)}
 			%\label{eq:wachter}
 		\end{equation}
-	$MAD_j$ is the median absolute deviation of feature $j$. In each iteration, optimizers like Nelder-Mead solve the equation for $\xv'$ and then $\lambda$ is increased until a sufficiently close solution is found \\[0.2cm]
+\begin{itemize}
+  \item $MAD_j = \text{med}_{i \in \{1, \dots, n\}} \left( | x^{(i)}_j - \text{med}_{k\in \{1, \dots, n\}} (x^{(k)}_j) | \right)$: Median abs. deviation $x_j$
+  \item Optimization alternates: Nelder-Mead minimizes over $\xv'$, then $\lambda$ is increased iteratively until a sufficiently close solution is found
+\end{itemize}
+    % $MAD_j$ is the median absolute deviation of feature $j$. In each iteration, optimizers like Nelder-Mead solve the equation for $\xv'$ and then $\lambda$ is increased until a sufficiently close solution is found \\[0.2cm]
 	
 	%\pause
 	
 	This optimization problem has several shortcomings: 	
 	\begin{itemize}%[<+->]
-		\item We do not know how to choose $\lambda$ a priori 
-		\item Due to the maximization of $\lambda$, we focus primarily on the minimization of $o_{target}$\\
-		$\leadsto$ only if $\fh(\xv') = y'$, we focus on minimizing $o_{input}$ 
+		\item No principled way to set $\lambda$; it is increased manually during optimization %We do not know how to choose $\lambda$ a priori 
+		\item Emphasis on $o_{\text{target}}$ dominates early iterations\\%; $o_{input}$ is only minimized once prediction is met
+        %Due to the maximization of $\lambda$, we focus primarily on the minimization of $o_{target}$\\
+		$\leadsto$ Once $\fh(\xv') \approx y'$ is met, we focus on minimizing $o_{input}$ 
 		\item Definition of $o_{input}$ only covers numerical features 
-		\item Other objectives such as sparsity and plausibility of counterfactuals are neglected
+		\item Additional objectives such as sparsity and plausibility are not considered
 	\end{itemize}
 	
 
@@ -71,15 +86,18 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 	%\footnote[frame]{Wachter S, Mittelstadt B, Russel C (2017). Counterfactual Explanations Without Opening the Black Box: Automated Decisions and the GDPR. Harvard Journal of Law \& Technology, 31 (2), 2018. \url{http://dx.doi.org/10.2139/ssrn.3063289}}
 \end{frame}
 
-\begin{frame}{Multi-Objective Counterfactual Explanations \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
+\begin{frame}{Multi-Objective CE \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
 	\begin{itemize}
-		\item \textbf{Multi-Objective Counterfactual Explanations (MOC):} Instead of collapsing objectives into a single objective, we could optimize all four objectives simultaneously
+		\item \textbf{Multi-Objective Counterfactual Explanations (MOC):} Instead of collapsing objectives into a single objective, optimize all four objectives simultaneously
 	$$	\argmin_{\xv'} \left(o_{target}(\fh(\xv'), y'), o_{input}(\xv', \xv), o_{sparse}(\xv', \xv), o_{plausible}(\xv', \Xmat) \right). $$
 		
-		\item Note that weighting parameters like $\lambda$ are not necessary anymore
+		\item Avoids using/tuning of weights (e.g., \(\lambda\)); returns Pareto-optimal set
+        %Note: Weighting parameters like $\lambda$ not necessary anymore
 		%\item This approach is called Multi-Objective Counterfactual Explanations (MOC) and was developed by Dandl et al. in 2020. 
-		\item Uses an adjusted multi-objective genetic algorithm (NSGA-II) to produce a set of diverse counterfactuals for mixed discrete and continuous feature spaces
-		\item Instead of one, MOC returns multiple counterfactuals that represents different trade-offs between the objectives and are constructed to be diverse in feature space
+		\item Uses an adjusted multi-objective genetic algorithm (NSGA-II) for mixed features %ture types (numeric/categorical)
+        %Uses an adjusted multi-objective genetic algorithm (NSGA-II) to produce a set of diverse CEs for mixed discrete and continuous feature spaces
+		\item Outputs diverse CEs representing different trade-offs between objectives
+        %Instead of one, MOC returns multiple CEs that represent different trade-offs between the objectives and are constructed to be diverse in feature space
 	\end{itemize}
 
 	%\footnote[frame]{Dandl et al. (2020) Multi-Objective Counterfactual Explanations. In: Bäck T. et al. (eds) Parallel Problem Solving from Nature – PPSN XVI. PPSN 2020. Lecture Notes in Computer Science, vol 12269. Springer, Cham.}
@@ -88,19 +106,22 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 \begin{frame}{Example: Credit Data}
 	\begin{itemize}
 		\item Model: SVM with RBF kernel
-		\item $\xv$: First data point of credit data with $\P(y = good)  = 0.34$ of being a ``good" customer
-		\item Goal: Increase the probability to $[0.5, 1]$
-		\item MOC (with default parameters) found 69 CEs after 200 iterations that met the target
-		\item All counterfactuals proposed changes to credit duration and many of them to credit amount
+		\item $\xv$: First data point of credit data with $\P(y = good)  = 0.34$ %of being a ``good" customer
+		\item Goal: Increase the probability to desired outcome $[0.5, 1]$
+		\item MOC (with default parameters) returned 69 valid CEs after 200 iterations%found 69 CEs after 200 iterations that met the target
+		\item All CEs modified credit duration; many also adjusted credit amount
+        %proposed changes to credit duration and many of them to credit amount
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Example: Credit Data \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
 \begin{itemize}
-	\item<1-> We can visualize feature changes with a parallel plot and 2-dim surface plot
-		\item<1-> Parallel plot reveals that all counterfactuals had values equal to or smaller than the values of $\xv$
-		\item<2-> Surface plot illustrates why these feature changes are recommended 
-		\item<2-> Counterfactuals in the lower left corner seem to be in a less favorable region far from $\xv$, but they are in high density areas close to training samples (indicated by histograms)
+	\item<1-> Feature changes can be visualized using parallel and 2D surface plots
+    %We can visualize feature changes with a parallel plot and 2-dim surface plot
+		\item<1-> Parallel plot: All CEs had values equal to or smaller than the values of $\xv$
+		\item<2-> Surface plot: CEs in lower-left appear distant, but lie in high-density regions near training data (as shown by histograms)
+        %CE why these feature changes are recommended 
+		%\item<2-> Counterfactuals in the lower left corner seem to be in a less favorable region far from $\xv$, but they are in high density areas close to training samples (indicated by histograms)
 	\end{itemize}
 	\begin{columns}[totalwidth=\textwidth]\only<1->{
 	\begin{column}{0.5\textwidth}  
@@ -109,7 +130,11 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 		\includegraphics[width=0.75\textwidth]{figure/counterfactuals_credit_parallel}\\
 			%\end{center}
 		%\vspace{-0.2cm}
-			\scriptsize{\textbf{Parallel plot:} Grey lines show feature values of CEs $\xv'$, blue line are values of $\xv$. Features without proposed changes are omitted. Bold numbers refer to range of numeric features.} 
+			\scriptsize{
+            \textbf{Parallel plot:} Grey lines = CEs $\xv'$, blue line = $\xv$. Features without changes omitted. \\
+            Bold numbers denote numeric ranges.
+            %\textbf{Parallel plot:} Grey lines show feature values of CEs $\xv'$, blue line are values of $\xv$. Features without proposed changes are omitted. Bold numbers refer to range of numeric features.
+            } 
 			
 		\end{column}}
 		\visible<2->{
@@ -119,8 +144,12 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 			\includegraphics[width=\textwidth]{figure/counterfactuals_credit_heat}\\
 			%\end{center}
 		%\vspace{-0.2cm}
-			\scriptsize{\textbf{Surface plot:} White dot is $\xv$, black dots are CEs $\xv'$. \\
-			Histograms show marginal distribution of training data $\Xmat$.} 
+			\scriptsize{
+            \textbf{Surface plot:} 
+            White dot = $\xv$, black dots = CEs $\xv'$.
+            %White dot is $\xv$, black dots are CEs $\xv'$. \\
+			\textbf{Histograms:} Marginal distribution of training data $\Xmat$.
+            } 
 		\end{column}
 		}
 	\end{columns}
@@ -166,19 +195,19 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 \begin{frame}{Problems, Pitfalls, \& Limitations}
 \begin{itemize}[<+->]
     \item \textbf{Illusion of model understanding:} 
-    CEs explain ML decisions by pointing to few specific alternatives which reduces complexity, but is limited in explanatory power\\
+    CEs explain ML decisions by pointing to few specific alternatives, reducing complexity but offering limited explanatory power\\
     $\leadsto$ %psychologists showed that even though the perceived model-understanding of end-users increases, the objective model-understanding remained unchanged
     Psychologists have shown that although perceived model understanding of end-users increases, the objective model understanding remains unchanged
     
     %\item \textbf{Finding the right metric:} Similarity is the crucial concept for finding good CEs. However, our concept of similarity is context and domain dependent. E.g. while L1 can be a reasonable notion for tabular data, it is counterintuitive for image data. Sparsity is often desirable for end-users but not for data scientists searching for biases in the model.
     \item \textbf{Right metric:} Similarity measures are crucial to find good CEs (depends on context/domain)\\
     $\leadsto$ e.g., $L_1$ can be reasonable for tabular data but not for image data\\
-    $\leadsto$ sparsity can be desirable for end-users but not for data scientists searching for model bias
+    $\leadsto$ sparsity desirable for end-users but not for auditors searching for model bias
 
     %\item \textbf{Confusing Model and Real-World:} Explanations of the model do not easily transfer to the process in which a model is applied. This information should be conveyed to the end-user.
     \item \textbf{Confusing Model and Real-World:} Model explanations are not easily transferable to reality\\
-    $\leadsto$ End-users need to be aware that CE provide insights into a model not the real world %models are only approximations %This information should be conveyed to the end-user
-    \item \textbf{Disclosing too much information:} \\
+    $\leadsto$ End-users must know that CEs provide insights into a model, not real world %models are only approximations %This information should be conveyed to the end-user
+    \item \textbf{Disclosing too much information:} 
     CEs can reveal too much information about the model and help potential attackers
     \end{itemize}
 \end{frame}
@@ -186,9 +215,13 @@ Introduced counterfactual explanations in the context of ML predictions by solvi
 \begin{frame}{Problems, Pitfalls, \& Limitations}
 \begin{itemize}[<+->]
     \item \textbf{Rashomon effect:} One, few, all? Which CEs should be shown to the end-user?\\
-    $\leadsto$ No perfect solution, depends on end-users computational resources and knowledge
-    \item \textbf{Actionability vs. fairness:} Some authors suggest to focus only on the actionability of CEs\\
-    $\leadsto$ Counteract contestability, e.g., if ethnicity is not changed in a CE since it is not actionable, this could hide racial biases in the model
+    $\leadsto$ No universal answer; depends on user goals, cognitive load, and resources
+    %No perfect answer, depends on end-users, computational resources, and knowledge
+    % \item \textbf{Actionability vs. fairness:} Some authors suggest to focus only on the actionability of CEs\\
+    % $\leadsto$ Counteract contestability, e.g., if ethnicity is not changed in a CE since it is not actionable, this could hide racial biases in the model
+    \item \textbf{Actionability vs. fairness:} Focus on actionable changes hinder contestability\\
+$\leadsto$ E.g., if ethnicity is not changed in a CE since it is not actionable, this could hide racial biases in the model
+
     \item \textbf{Assumption of constant model:} To provide guidance for the future, CEs assume that their underlying model does not change in the future\\
     $\leadsto$ in reality this assumption is often violated and CEs are not reliable anymore 
     \item \textbf{Attacking CEs:} Researchers can create models with great performance, which generate arbitrary explanations specified by the ML developer\\
