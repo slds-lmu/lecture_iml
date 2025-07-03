@@ -1,7 +1,6 @@
 \aufgabe{Gower Distance}{
 
-Gower's distance is one of the most popular ways of measuring the similarity or
-dissimilarity between observations in the presence of mixed-type variables
+Gower's distance is one of the most popular ways of measuring the similarity or dissimilarity between observations in the presence of mixed-type variables:
 
 $ d_G(\xv^{(1)}, \xv^{(2)}) =  \frac{1}{p}\sum_{j = 1}^{p} \delta_G(x_j^{(1)}, x_j^{(2)}) $
 $\textnormal{ with } \delta_G(x_j^{(1)}, x_j^{(2)}) =
@@ -10,11 +9,13 @@ $\textnormal{ with } \delta_G(x_j^{(1)}, x_j^{(2)}) =
 \mathbb{I}_{x_j^{(1)} \neq x_j^{(2)}} & \text{if $x_j$ is categorical}
 \end{cases}.$
 
-Despite its popularity, the Gower's distance has a major drawback. In the following
-exercises, you should identify this problem and construct a solution.
+Here $\widehat{R}_j$ stands for the range of this feature (the ``diameter'' of the feature):
+$\widehat{R}_j := \max_i(x_j^{(i)}) - \min_i(x_j^{(i)}).$
+Despite its popularity, the Gower distance has a major drawback. In the following exercises, you should identify this problem and construct a solution.
 
 \begin{enumerate}[a)]
-\item Let us consider the following example that should illustrate the problem:
+\item
+Let us consider the following example that should illustrate the problem:
 We have a dataset with two features - sex and age.
 Sex has the values M = male and F = female, while age could have values between 15 and 90,
 but in this example we only consider 3 different values (15, 58, 90).
@@ -22,7 +23,7 @@ Overall, the following feature combinations are possible:
 (F, 15), (F, 58), (F, 90), (M, 15), (M, 58), (M, 90).
 Imagine that we have an observation $\xv^{(1)}$ =(Sex$^{(1)}$, Age$^{(1)}$) = (F, 15).
 For this observation we want to measure the distance to all other possible observations $\xv^{(2)}$.
-Derive the Gower's distance $d_G$ and feature-wise distance $\delta_G$ per row.
+Derive the Gower distance $d_G$ and feature-wise distance $\delta_G$ per row.
 
 \begin{table}[ht]
 \centering
@@ -49,7 +50,8 @@ Given the fully filled out table, which counterfactuals would you prefer?
 Do you see a tendency towards a group of counterfactuals with respect to the
 type of features? Describe why this is a problem.
 
-\item An enhancement of the Gower's distance is to use different weights $w_j$ for the
+\item
+An enhancement of the Gower distance is to use different weights $w_j$ for the
 different features $j \in \{1, ..., p\}$:
 $ d_G(\xv^{(1)}, \xv^{(2)}) =  \frac{1}{p}\sum_{j = 1}^{p} w_j \delta_G(x_j^{(1)}, x_j^{(2)})$.
 How would you choose $w_j$ in order to solve the above problem?
