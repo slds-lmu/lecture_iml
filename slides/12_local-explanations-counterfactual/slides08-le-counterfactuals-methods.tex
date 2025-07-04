@@ -57,39 +57,80 @@ Many methods exist to generate counterfactuals, they mainly differ in:
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{First Optimization Method \citebutton{Wachter et. al (2018)}{http://dx.doi.org/10.2139/ssrn.3063289}}
-Introduced counterfactual explanations in the context of ML predictions by solving
-		\begin{equation}
-			\argmin_{\xv'} \max_{\lambda} \lambda \underbrace{(\fh(\xv') - y')^2}_{o_{target}(\fh(\xv'), y')} + \underbrace{\sum\nolimits_{j = 1}^p |x'_j - x_j|/MAD_j}_{o_{input}(\xv', \xv)}
+\begin{frame}{First Optimization-based CE Method \citebutton{Wachter et. al (2018)}{http://dx.doi.org/10.2139/ssrn.3063289}}
+Introduced CEs in context of ML predictions by solving
+		$$
+			\argmin_{\xv'} \max_{\lambda} \lambda \underbrace{(\fh(\xv') - y')^2}_{o_{target}(\fh(\xv'), y')} + \underbrace{\sum\nolimits_{j = 1}^p \frac{|x'_j - x_j|}{MAD_j}}_{o_{proximity}(\xv', \xv)}
 			%\label{eq:wachter}
-		\end{equation}
+		$$
 \begin{itemize}
-  \item $MAD_j = \text{med}_{i \in \{1, \dots, n\}} \left( | x^{(i)}_j - \text{med}_{k\in \{1, \dots, n\}} (x^{(k)}_j) | \right)$: Median abs. deviation $x_j$
-  \item Optimization alternates: Nelder-Mead minimizes over $\xv'$, then $\lambda$ is increased iteratively until a sufficiently close solution is found
+\item $o_{target}$ ensures prediction flips to $y'$ (by increasing weight $\lambda$)
+\item $o_{proximity}$ penalizes deviations from $\xv$, rescaled by median absolute deviation: $MAD_j = \text{med}_{i \in \{1, \dots, n\}} ( | x^{(i)}_j - \text{med}_{k\in \{1, \dots, n\}} (x^{(k)}_j) | )$)
+%\(L_{1}\)-distance rescaled by \(MAD_{j}\) to encourage sparse, human-interpretable edits.
+  %\item $MAD_j = \text{med}_{i \in \{1, \dots, n\}} \left( | x^{(i)}_j - \text{med}_{k\in \{1, \dots, n\}} (x^{(k)}_j) | \right)$: Median abs. deviation $x_j$
+  %\item Optimization alternates: Nelder-Mead minimizes over $\xv'$, then $\lambda$ is increased iteratively until a sufficiently close solution is found
 \end{itemize}
+
+\lz
+\pause
+
+\textbf{Approach: Alternating optimization over \(\mathbf{x}'\) and \(\lambda\)}
+
+\begin{itemize}
+  \item Start with an initial \(\lambda\) (controls emphasis on $o_{target}$ vs. $o_{proximity}$)
+  \item Use a gradient-free optimizer (e.g., Nelder-Mead) to minimize over \(\mathbf{x}'\)
+  \item If prediction constraint not satisfied (\(\hat{f}(\mathbf{x}') \ne y'\)), increase \(\lambda\) and repeat
+  \\
+  $\leadsto$ \(\lambda\) serves as soft constraint, gradually enforcing prediction validity \(\hat{f}(\mathbf{x}') = y'\)
+  \item Iteratively shift focus: first achieve prediction validity, then minimize proximity%distance $o_{proximity}$
+  %\item \textbf{Intuition:} \(\lambda\) acts as a soft constraint enforcer
+\end{itemize}
+
+
     % $MAD_j$ is the median absolute deviation of feature $j$. In each iteration, optimizers like Nelder-Mead solve the equation for $\xv'$ and then $\lambda$ is increased until a sufficiently close solution is found \\[0.2cm]
 	
 	%\pause
 	
-	This optimization problem has several shortcomings: 	
-	\begin{itemize}%[<+->]
-		\item No principled way to set $\lambda$; it is increased manually during optimization %We do not know how to choose $\lambda$ a priori 
-		\item Emphasis on $o_{\text{target}}$ dominates early iterations\\%; $o_{input}$ is only minimized once prediction is met
-        %Due to the maximization of $\lambda$, we focus primarily on the minimization of $o_{target}$\\
-		$\leadsto$ Once $\fh(\xv') \approx y'$ is met, we focus on minimizing $o_{input}$ 
-		\item Definition of $o_{input}$ only covers numerical features 
-		\item Additional objectives such as sparsity and plausibility are not considered
-	\end{itemize}
+	% This optimization problem has several shortcomings: 	
+	% \begin{itemize}%[<+->]
+	% 	\item No principled way to set $\lambda$; it is increased manually during optimization %We do not know how to choose $\lambda$ a priori 
+	% 	\item Emphasis on $o_{\text{target}}$ dominates early iterations\\%; $o_{proximity}$ is only minimized once prediction is met
+ %        %Due to the maximization of $\lambda$, we focus primarily on the minimization of $o_{target}$\\
+	% 	$\leadsto$ Once $\fh(\xv') \approx y'$ is met, we focus on minimizing $o_{proximity}$ 
+	% 	\item Definition of $o_{proximity}$ only covers numerical features 
+	% 	\item Additional objectives such as sparsity and plausibility are not considered
+	% \end{itemize}
 	
 
 
 	%\footnote[frame]{Wachter S, Mittelstadt B, Russel C (2017). Counterfactual Explanations Without Opening the Black Box: Automated Decisions and the GDPR. Harvard Journal of Law \& Technology, 31 (2), 2018. \url{http://dx.doi.org/10.2139/ssrn.3063289}}
 \end{frame}
 
+
+
+%------------------------------------------------------------
+\begin{frame}{Limitations of Wachter's Approach}
+\vspace{0.2cm}
+
+\begin{itemize}
+  \item \textbf{Manual tuning:} No principled way to set \(\lambda\); requires iterative increase
+  \item \textbf{Asymmetric focus:} Early iterations dominated by minimizing target loss
+  \item \textbf{Limited feature support:} Proximity term defined only for numerical features
+  \item \textbf{No additional objectives:} Ignores sparsity, plausibility, fairness, diversity
+  \item \textbf{Single solution:} Returns one CE; no support for diverse or ranked CEs
+\end{itemize}
+
+% \vspace{0.3cm}
+% \textbf{Impact:} Simple and general, but lacks robustness for modern CE requirements
+\end{frame}
+
+
+
+
 \begin{frame}{Multi-Objective CE \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
 	\begin{itemize}
 		\item \textbf{Multi-Objective Counterfactual Explanations (MOC):} Instead of collapsing objectives into a single objective, optimize all four objectives simultaneously
-	$$	\argmin_{\xv'} \left(o_{target}(\fh(\xv'), y'), o_{input}(\xv', \xv), o_{sparse}(\xv', \xv), o_{plausible}(\xv', \Xmat) \right). $$
+	$$	\argmin_{\xv'} \left(o_{target}(\fh(\xv'), y'), o_{proximity}(\xv', \xv), o_{sparse}(\xv', \xv), o_{plausible}(\xv', \Xmat) \right). $$
 		
 		\item Avoids using/tuning of weights (e.g., \(\lambda\)); returns Pareto-optimal set
         %Note: Weighting parameters like $\lambda$ not necessary anymore

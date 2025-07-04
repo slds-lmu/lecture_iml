@@ -39,21 +39,23 @@
 		\item $y' \subset \R^g$: desired prediction ($y' =$ ``grant credit") or interval ($y' = [1000, \infty[$)
 	\end{itemize}
 	\lz\pause
-	A \textbf{valid} counterfactual $\xv'$ is a datapoint:
+	A \textbf{valid} counterfactual $\xv'$ satisfies two criteria:
 	\begin{enumerate}
-		\item whose prediction $\fh(\xv')$ is equal to the desired prediction $y'$
-		\item maximally close to the original datapoint $\xv$
+    \item \textbf{Prediction validity:} CE's prediction $\fh(\xv')$ is equal to the desired prediction $y'$ 
+\item \textbf{Proximity:} CE $\xv'$ is as close as possible to the original input $\xv$
+		% \item whose prediction $\fh(\xv')$ is equal to the desired prediction $y'$ (prediction validity)
+		% \item maximally close to the original datapoint $\xv$ (proximity)
 	\end{enumerate}
 	\lz\pause
 	Reformulate these two objectives as optimization problem: %(denoted by $o_1$ and $o_2$)
 	
-$$\argmin_{\xv'} \lambda_1 o_{target}(\fh(\xv'), y') + \lambda_2 o_{input}(\xv', \xv)$$
+$$\argmin_{\xv'} \lambda_1 o_{target}(\fh(\xv'), y') + \lambda_2 o_{proximity}(\xv', \xv)$$
 
 	\begin{itemize}
 		\item $\lambda_1$ and $\lambda_2$ balance the two objectives
           \item $o_{target}$: distance in target space %(e.g., cross-entropy, margin loss)
-          \item $o_{input}$: distance in feature space % (e.g., $\ell_1$, Mahalanobis, cost-aware)
-		%\item Choice of $o_{target}$ (distance on target space) and of $o_{input}$ (distance on feature space) is crucial
+          \item $o_{proximity}$: distance in feature space % (e.g., $\ell_1$, Mahalanobis, cost-aware)
+		%\item Choice of $o_{target}$ (distance on target space) and of $o_{proximity}$ (distance on feature space) is crucial
 	\end{itemize}
 \end{frame}
 
@@ -76,10 +78,10 @@ $$\argmin_{\xv'} \lambda_1 o_{target}(\fh(\xv'), y') + \lambda_2 o_{input}(\xv',
 
 \pause
 
-\textbf{Distance in input space $o_{input}$: Gower distance (mixed feature types)}
+\textbf{Distance in input space $o_{proximity}$: Gower distance (mixed feature types)}
 
 \[
-o_{input}(\xv', \xv) = \Gower(\xv', \xv) = \frac{1}{p} \sum_{j = 1}^{p} \delta_G(x'_j, x_j) \in [0, 1], \text{ where}
+o_{proximity}(\xv', \xv) = \Gower(\xv', \xv) = \frac{1}{p} \sum_{j = 1}^{p} \delta_G(x'_j, x_j) \in [0, 1], \text{ where}
 \]
 
 % \begin{equation*}
@@ -106,8 +108,8 @@ o_{input}(\xv', \xv) = \Gower(\xv', \xv) = \frac{1}{p} \sum_{j = 1}^{p} \delta_G
 % 		\item Classification:
 % 		L$_1$-distance for scores and 0-1 Loss for labels, e.g., $o_{target}(\fh(\xv'), y') = \ind_{\{ \fh(\xv') \neq y' \}}$
 % 		\pause
-% 		\item $o_{input}$ could be the Gower distance (suitable for mixed feature space):
-% 		$$o_{input}(\xv', \xv) = \Gower(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(x'_j, x_j)	\in [0, 1]$$
+% 		\item $o_{proximity}$ could be the Gower distance (suitable for mixed feature space):
+% 		$$o_{proximity}(\xv', \xv) = \Gower(\xv', \xv) = \frac{1}{p}\sum_{j = 1}^{p} \delta_G(x'_j, x_j)	\in [0, 1]$$
 % 		The value of $\delta_G$ depends on the feature type (numerical or categorical):
 % 		\begin{equation*}
 % 		\delta_G(x'_j, x_j) =
@@ -132,11 +134,11 @@ o_{input}(\xv', \xv) = \Gower(\xv', \xv) = \frac{1}{p} \sum_{j = 1}^{p} \delta_G
 	\textbf{Sparsity} Favor explanations that change few features
 	\begin{itemize}[<+->]
 		\item End-users often prefer short over long explanations%\\
-        \item Sparsity could be integrated into $o_{input}$ \\
+        \item Sparsity could be integrated into $o_{proximity}$ \\
         e.g., using L$_0$-norm (number of changed features) or L$_1$-norm (LASSO)
 		%$\leadsto$ %changes made to obtain
 		%counterfactuals should be \textbf{sparse} %(i.e., only few feature values should change)
-		%\item Objective $o_{input}$ can take the number of changed features into account (but does not have to)\\
+		%\item Objective $o_{proximity}$ can take the number of changed features into account (but does not have to)\\
 		%$\leadsto$ e.g., the L$_0$- and the L$_1$-norm (similar to LASSO) can do this
 %		\item There could be a trade-off between the number of features changed and the total amount of change made to obtain a certain prediction.
         \item Alternative: Include separate objective measuring sparsity, e.g., via L$_0$-norm
@@ -202,7 +204,7 @@ $$o_{plausibe}(\xv', \Xmat) = \Gower(\xv', \xv^{[1]}) = \frac{1}{p} \sum_{j = 1}
 
 \[
 \argmin_{\xv'} \lambda_1 o_{\text{target}}(\fh(\xv'), y') 
-+ \lambda_2 o_{\text{input}}(\xv', \xv)
++ \lambda_2 o_{\text{proximity}}(\xv', \xv)
 + \lambda_3 o_{\text{sparse}}(\xv', \xv) 
 + \lambda_4 o_{\text{plausible}}(\xv', \Xmat)
 \]
@@ -210,7 +212,7 @@ $$o_{plausibe}(\xv', \Xmat) = \Gower(\xv', \xv^{[1]}) = \frac{1}{p} \sum_{j = 1}
 
 % We can extend the previous optimization problem by adding $o_{sparse}$ (for sparsity) and $o_{plausibe}$ (for plausibility):
 
-% $$\argmin_{\xv'} \lambda_1 o_{target}(\fh(\xv'), y') + \lambda_2 o_{input}(\xv', \xv) + \lambda_3 o_{sparse}(\xv', \xv) + \lambda_4 o_{plausibe}(\xv', \Xmat)$$
+% $$\argmin_{\xv'} \lambda_1 o_{target}(\fh(\xv'), y') + \lambda_2 o_{proximity}(\xv', \xv) + \lambda_3 o_{sparse}(\xv', \xv) + \lambda_4 o_{plausibe}(\xv', \Xmat)$$
 
 \end{frame}
 
