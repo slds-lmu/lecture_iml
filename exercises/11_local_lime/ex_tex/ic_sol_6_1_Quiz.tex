@@ -2,18 +2,38 @@
 \begin{enumerate}
   \item Which of the following statement(s) about general local explanations is/are correct? 
           \begin{enumerate}
-            \item A single ICE curve is a local explanation method. \textcolor{blue}{Correct}
-            \item Robust local explanation methods should return similar explanations for 
-            similar observations. \textcolor{blue}{Correct}
-            \item In ordinary Gower's distance, all features receive different weights. \textcolor{blue}{Not correct, all receive a weight of 1. (or depending on range of each feature)}
+            \item
+            A single ICE curve is a local explanation method.
+            \textcolor{blue}{Correct, although it spans different artificial data points which may have very high distance from another (along a single dimension), but it fixes a single data point and varies only one feature, therefore it is considered a local method in the general (arbitrarily dimensional) setting.}
+            \item
+            Robust local explanation methods should return similar explanations for similar observations.
+            \textcolor{blue}{Correct, this is the form of robustness most often considered for local explanations, also called stability.
+            Other forms of robustness for local explanations include adversarial robustness, or robustness to the model class or changes in the model's hyperparameters.}
+            \item
+            In ordinary Gower distance, all features receive different weights.
+            \textcolor{blue}{Not correct, all receive a weight of 1, compared to the weighted Gower distance, see the homework.
+            The distances of single features are only normalized using the range of each feature.}
           \end{enumerate}
   \item Which of the following statement(s) about local surrogate models is/are correct?  
             \begin{enumerate}
-                \item Surrogate models produced by LIME should have the same prediction as the model to be explained for the whole training dataset. \textcolor{blue}{Not correct, they should be faithful in the neighborhood of the point of interest, the closer a point is to the point of interest, the closer the prediction of the local surrogate model should be to the original prediction.}
-                \item The choice of the sampling process and the definition of locality are important hyperparameters of LIME that have a large impact on the behavior of the method. \textcolor{blue}{Correct}
-                \item LIME does not require any adaptions to be applicable to deep learning models for image data. \textcolor{blue}{Not correct, adaption to distance function is necessary} 
-                \item LIME requires the surrogate model to use all available features - a selection of features is not allowed. \textcolor{blue}{Not correct, L0-regularized/LASSO model possible}
-                \item If the kernel width for the exponential kernel is set to infinity, all observations receive a proximity measure/weight of $1$ independent of their distance to $\xv$. \textcolor{blue}{Correct}
+                \item
+                Surrogate models produced by LIME should have the same prediction as the model to be explained for the entire training dataset.
+                \textcolor{blue}{Not correct, in two ways:
+                Definitely not correct for a single surrogate model (otherwise we would take the original model and not need any surrogate); it should be faithful in the neighborhood of the point of interest, the closer a point is to the point of interest, the closer the prediction of the local surrogate model should be to the original prediction.
+                Secondly, when training one surrogate model for each observation, this is still not true, in other words a surrogate model even does not need to yield the same prediction as the original model for the single observation of interest.
+                This is different to Shapley values or SHAP values, which must add up to the prediction at the single data point of interest.}
+                \item
+                The choice of the sampling process and the definition of locality are important hyperparameters of LIME that have a large impact on the behavior of the method. \textcolor{blue}{Correct, see e.g. the kernel width for the exponential kernel, and the extrapolation issues.}
+                \item
+                LIME does not require any adaptions to be applicable to deep learning models for image data.
+                \textcolor{blue}{Not correct, needs image segmentation using superpixels, since reliance on single pixels is too unstable, additionally adapting the distance function is necessary.
+                When interpreting deep learning models instead of other kinds of ML models, in principle no adjustment of LIME is necessary.} 
+                \item
+                LIME requires the surrogate model to use all available features - a selection of features is not allowed.
+                \textcolor{blue}{Not correct, L0-regularized/LASSO model possible, see several examples in the lecture.}
+                \item
+                If the kernel width for the exponential kernel is set to infinity, all observations receive a proximity measure/weight of $1$ independent of their distance to $\xv$.
+                \textcolor{blue}{Correct. On the opposite: If the kernel width $\sigma$ is set to 0, only $\xv$ receives a weight of infinity and all other points a weight of 0, i.e. the surrogate model becomes a constant predictor with the prediction at $\xv$ as a value.}
           \end{enumerate}
   
 \end{enumerate}
