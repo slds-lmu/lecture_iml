@@ -1,6 +1,9 @@
 import gower
 import numpy as np
 
+from sklearn import ensemble
+from utils.dataset import Dataset
+
 def generate_whatif(x_interest, model, dataset) : 
   
   """
@@ -40,8 +43,6 @@ def evaluate_counterfactual(counterfactual, x_interest, model) :
 
 
 if __name__ == "__main__":
-  from sklearn import ensemble
-  from utils.dataset import Dataset
   
   dataset = Dataset("wheat_seeds", range(0, 7), [7], normalize=True, categorical=True)
   print(dataset.get_input_labels())

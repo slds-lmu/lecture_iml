@@ -56,8 +56,9 @@ evaluate_counterfactual = function(counterfactual, x_interest, model) {
 
     ### iii.
     newpred <- predict(model, newcf)
+    
+    ### iv.
     if (newpred != pred) {
-      ### iv.
       feature_nams <- c(feature_nams, feature)
     }
   }
