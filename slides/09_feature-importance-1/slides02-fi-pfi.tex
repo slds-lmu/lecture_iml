@@ -217,8 +217,8 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
   \item Interpretation: Increase in error when feature's information is destroyed
   \item Results can be unreliable due to random permutations \\
   $\Rightarrow$ Solution: Average results over multiple repetitions
-  \item Permuting features despite correlation with other features can lead to unrealistic combinations of feature values (since $\P(x_j,x_{-j}) \neq \P(x_j) \P(x_{-j})$)\\
-  $\leadsto$ Extrapolation issue
+  \item Permuting features despite correlation/dependence with other features can lead to unrealistic combinations of feature values 
+  $\leadsto$ Extrapolation issue % (since $\P(x_j,x_{-j}) \neq \P(x_j) \P(x_{-j})$)\\
   \item PFI automatically includes importance of interaction effects with other features \\
   $\Rightarrow$ Permuting $x_j$ also destroys interactions with permuted feature\\
   $\Rightarrow$ PFI score contains importance of all interactions with permuted feature %Not only importance of permuted feature is contained but also importance of all interactions with that feature
@@ -258,16 +258,17 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
 \begin{itemize}
   \item $x_1 := \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated  
         ($\epsilon_1 \sim \mathcal{N}(0,1)$, $\epsilon_2 \sim \mathcal{N}(0, 0.01)$)
-  \item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$
-  \item All noise terms are independent
+  \item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$ and all noise terms $\epsilon_j$ are independent
+  \item Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
 \end{itemize}
 
-Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
-
+\pause
 \centerline{\includegraphics[width=\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}}
 
 Hexbin plot of $(x_1, x_2)$ before (left) and after (center) permuting $x_1$;  
 PFI scores (right).
+
+\pause
 
 \begin{itemize}
   \item[$\Rightarrow$] $x_1, x_2$ cancel in $\hat{f}$ since $0.3 x_1 - 0.3 x_2 \approx 0$ and $x_1 \approx x_2$ $\leadsto$ should be irrelevant
@@ -304,19 +305,35 @@ $\Rightarrow$ PFI does not fairly attribute the performance to the individual fe
 
 \end{frame}
 
-\begin{frame}{Comments on PFI - Test vs. Training data}
+\begin{frame}{Comments on PFI - Train vs. Test data}
 
-\textbf{Example:} $x_1, \dots, x_{20}, y$ are independently sampled from $\mathcal{U} (-10, 10)$. An \texttt{xgboost} model with default hyperparameters is fit on a small training set of $50$ observations. The model overfits heavily.\\
+\textbf{Example:} % $x_1, \dots, x_{20}, y$ are independently sampled from $\mathcal{U} (-10, 10)$. An \texttt{xgboost} model with default hyperparameters is fit on a small training set of $50$ observations. The model overfits heavily.\\
 
-\begin{figure}
-  \includegraphics[width=0.9\linewidth]{figure_man/pfi_test_vs_train.pdf}
-  \caption{While PFI on test data considers all features to be irrelevant, PFI on train data exposes the features on which the model overfitted.}
-\end{figure}
+\begin{itemize}
+  \item $x_1, \dots, x_{20}, y$ are independently sampled from $\mathcal{U} (-10, 10)$
+  \item Train set: $n = 50$ (intentionally small) and large test set
+  \item Model: \texttt{xgboost} with default settings (overfits strongly)
+\end{itemize}
 
+%\begin{figure}
+  \includegraphics[width=0.9\linewidth]{figure_man/pfi_test_vs_train.pdf}\\
+  %\caption{While PFI on test data considers all features to be irrelevant, PFI on train data exposes the features on which the model overfitted.}
+  %\caption{PFI on test data detects no relevant features. \\PFI on training data highlights features the model overfitted to.}
+\textbf{Observation:} 
+\begin{itemize}
+    \item PFI on train data highlights features that the model overfitted to.
+    \item PFI on test data detects no relevant features.
+\end{itemize} 
+%\end{figure}
 \pause
+\medskip
 
-Why? PFI can only be nonzero if the permutation breaks a dependence in the data. Spurious correlations help the model perform well on train data but are not present in the test data.\\
-$\Rightarrow$ If you are interested in which features help the model to generalize, apply PFI on test data.
+\textbf{Why?} $PFI \neq 0$ if permuting a feature breaks a dependency the model relies on. 
+Model overfits due to spurious feature-target dependencies in train that vanish on test.\\
+$\Rightarrow$ To identify features that help the model to generalize, compute PFI on test data.
+%\textbf{Why?} PFI can only be nonzero if the permutation breaks a dependence in the data. Spurious feature-target dependencies overfit train data but vanish on test data.%help the model perform well on train data but are not present in the test data.
+%\\
+%$\Rightarrow$ If you are interested in which features help the model to generalize, apply PFI on test data.
   
 \end{frame}
 
@@ -329,11 +346,11 @@ Can we get insight into whether the ...
     \begin{itemize}
       \item $PFI_j \neq 0$ $\Rightarrow$ model relies on $x_j$
       %(contraposition does not hold, see training vs. test data example)
-      \item As the training vs. test data example demonstrates, the converse does not hold
+      \item As the train vs. test data example shows, the converse does not hold
     \end{itemize}
     \item<2-> feature $x_j$ contains prediction-relevant information?
     \begin{itemize}
-      \item $PFI_j \neq 0$  $\Rightarrow$ $x_{j}$ is dependent of $y$ or it's covariates $x_{-j}$ or both (due to extrapolation) 
+      \item $PFI_j \neq 0$ $\Rightarrow$ $x_{j}$ is dependent on $y$, $x_{-j}$, or both (due to extrapolation) 
       \item $x_{j}$ is not exploited by model (regardless of whether it is useful for $y$ or not) $\Rightarrow$ $PFI_j = 0$  %irrespective of whether the feature is useful or not
     \end{itemize}
     \item<3-> model requires access to $x_j$ to achieve it's prediction performance?    
