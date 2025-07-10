@@ -37,17 +37,18 @@
 \begin{frame}{Testing Importance (PIMP) \citebutton{Altmann et al. (2010)}{https://doi.org/10.1093/bioinformatics/btq134}}
 
 \begin{itemize}[<+->]
-  \item PIMP was originally introduced for random forest's built-in permutation feature importance
+  \item PIMP was originally introduced for random forest's built-in PFI scores
   %\item It fixes the problem that the importance measure prefers features with many categories.
   \item PIMP investigates whether the PFI score \textbf{significantly} differs from 0\\
-  $\Rightarrow$ Useful because PFI can be non-zero due to randomness/stochasticity
-  \item PIMP tests the $H_0$-hypothesis: Feature is independent of the target $y$ (unimportant)
+  $\Rightarrow$ Addresses random fluctuations that cause non-zero PFI scores
+  %Useful because PFI can be non-zero due to randomness/stochasticity
+  \item PIMP tests the $H_0$-hypothesis: Feature is independent of target $y$ (unimportant)
   %It computes the distribution of importances under the $H_0$-hypothesis that the feature is independent of the target $y$
-  \item Sampling under $H_0$: Permute target $y$, retrain model, compute PFI scores (repeat)\\
+  \item Sampling under $H_0$: Permute target $y$, retrain model, compute PFI scores, repeat\\
   $\Rightarrow$ Permuting $y$ breaks relationship to all features\\
   $\Rightarrow$ By computing PFI scores again, we obtain distribution of PFI scores under $H_0$
   \item %We now rescale the importance to a 
-  Compute p-value - the tail probability under $H_0$ - and use it as a new importance measure
+  Compute p-value (tail probability under $H_0$) and use this as new importance measure
 \end{itemize}
 
 %\footnote[frame]{\fullcite{altmann2010permutation}}
