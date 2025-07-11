@@ -41,26 +41,36 @@
 %TODO: Conditioning on everything is not a good idea: CFI=0 for highly correlated variables? Other examples? Relative Importance (Gunnar)?
 
 % CFI IDEA
-\begin{frame}{Conditional Feature Importance Idea}
+\begin{frame}{CFI Motivation}
 
 \begin{itemize}[<+->]
-    \item \textbf{Permutation Feature Importance Idea:} Replace the feat. of interest $x_j$ with an indep. sample from the marginal dist. $\P(x_j)$, e.g. by randomly perm. obs. in $x_j$
+    \item \textbf{PFI Idea:} Replace feature of interest $X_j$ with an independend sample from its marginal distibution $\P(X_j)$, e.g., by randomly permuting its values %$X_j$
     \item \textbf{Problem:} Under dependent features, permutation leads to extrapolation
-    \item \textbf{Conditional Feature Importance Idea:} Resample $x_j$ from the cond. dist. $\P(x_j|x_{-j})$, s.t. the joint dist. is preserved, i.e., $\P(x_j|x_{-j}) \P(x_{-j}) = \P(x_j, x_{-j})$
+    \item \textbf{Conditional Feature Importance Idea:} Sample $X_j$ from the cond. dist. $\P(x_j|x_{-j})$, s.t. the joint dist. is preserved, i.e., $\P(x_j|x_{-j}) \P(x_{-j}) = \P(x_j, x_{-j})$
 \end{itemize}
 %\\
 %\lz
 %\\
 %\lz
+
+\medskip
+
 \visible<4>{
-\textbf{Example:} Conditional permutation scheme \citebutton{Molnar et. al (2020)}{https://arxiv.org/abs/2006.04628}
+\textbf{Example:} Conditional permutation scheme 
+
+\textbf{Black dots:} $X_2 \sim \mathcal{U}(0,1)$ and 
+$X_1 \sim \mathcal{N}(0,1)$ (if $X_2 < 0.5$) or $\mathcal{N}(4,4)$ (if $ X_2 \geq 0.5$)
+
+\medskip
+
 \begin{columns}[T, totalwidth = \textwidth]
 \begin{column}{0.47\textwidth}
+
 \includegraphics[width=\linewidth]{figure_man/conditional_sampling.pdf}
+\centerline{\citebutton{Molnar et. al (2020)}{https://arxiv.org/abs/2006.04628}}
 \end{column}
 \begin{column}{0.52\textwidth}
-\begin{itemize}
-    \item $X_2 \sim U(0,1)$ and $X_1 \sim N(0, 1)$ if $X_2<0.5$, else $X_1 \sim N(4,4)$ (black dots)
+%\begin{itemize}
 % $X_2 \sim U(0,1)$ and 
 % \begin{align*}
 % X_1 \sim \begin{cases}
@@ -68,15 +78,21 @@
 % N(4, 4), \text{else}
 % \end{cases}
 %\end{align*}
-    \item \textbf{Left:} For $X_2<0.5$, permuting $X_1$ (crosses) preserves marginal (but not joint) distribution \\
+    %\item 
+    \textbf{Left:} For $X_2<0.5$, permuting $X_1$ (crosses) preserves marginal (but not joint) distribution \\
     $\leadsto$ Bottom: Marginal density of $X_1$
-    \item \textbf{Right:} Permuting $X_1$ within subgroups $X_2<0.5$ \& $X_2\geq 0.5$ reduces extrapolation\\
-    $\leadsto$ Bottom: Density of $X_1$ conditional on groups
+    
+    \medskip 
+    
+    %\item 
+    \textbf{Right:} Permuting $X_1$ within subgroups $X_2<0.5$ \& $X_2\geq 0.5$ reduces extrapolation\\
+    $\leadsto$ Bottom: $X_1$-density conditional on groups
     %\item \textbf{Bottom left:} Marginal density of $X_1$
     %\item \textbf{Bottom right:} Densities of $X_1$ conditional on the groups
-\end{itemize}
+%\end{itemize}
 \end{column}
 \end{columns}
+%$X_2 \sim U(0,1)$ and $X_1 \sim N(0, 1)$ if $X_2<0.5$, else $X_1 \sim N(4,4)$ (black dots)
 }
 \end{frame}
 
@@ -84,25 +100,46 @@
 %TODO: Changed in PFI slides? Also change here!
 % RECAP EXTRAPOLATION
 \begin{frame}{Recall: Extrapolation in PFI}
- 
- \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
- Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
 
-%\begin{figure}
-% \hfill
-%   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
-%   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
-%   \includegraphics[width=0.39\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
-\centerline{\includegraphics[width=0.9\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}}
-Hexbin plot of $x_1, x_2$ before permuting $x_1$ (left), after permuting $x_1$ (center), and PFI scores (right)
-\lz
-% \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
-%\end{figure}
-% 
-$\Rightarrow$ $x_1$ and $x_2$ should be irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
-$\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$ and $x_2$ are considered relevant
-%$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+ \textbf{Recall:} 
+ Let $y = x_3 + \epsilon_y$, with $\epsilon_y \sim \mathcal{N}(0, 0.1)$.
 
+\begin{itemize}
+  \item $x_1 := \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated  
+        ($\epsilon_1 \sim \mathcal{N}(0,1)$, $\epsilon_2 \sim \mathcal{N}(0, 0.01)$)
+  \item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$ and all noise terms $\epsilon_j$ are independent
+  \item Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
+\end{itemize}
+
+ % \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+ % Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
+
+% %\begin{figure}
+% % \hfill
+% %   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
+% %   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
+% %   \includegraphics[width=0.39\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
+% \centerline{\includegraphics[width=0.9\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}}
+% Hexbin plot of $x_1, x_2$ before permuting $x_1$ (left), after permuting $x_1$ (center), and PFI scores (right)
+% \lz
+% % \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
+% %\end{figure}
+% % 
+% $\Rightarrow$ $x_1$ and $x_2$ should be irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
+% $\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$ and $x_2$ are considered relevant
+% %$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
+
+\centerline{\includegraphics[width=\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}}
+
+Hexbin plot of $(x_1, x_2)$ before (left) and after (center) permuting $x_1$;  
+PFI scores (right).
+
+\begin{itemize}
+  \item[$\Rightarrow$] $x_1, x_2$ cancel in $\hat{f}$ and should be irrelevant
+  \item[$\Rightarrow$] But PFI evaluates model on unrealistic inputs (caused by permutation)\\
+  $\leadsto$ $PFI > 0$ for $x_1, x_2$ due to extrapolation\\
+  $\leadsto$ $x_1, x_2$ are misleadingly considered relevant
+\end{itemize}
  \end{frame}
 
 
@@ -128,14 +165,14 @@ $\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadst
 
 
 % CFI DEFINITION
-\begin{frame}{Conditional Feature Importance \citebutton{Strobl et al. (2008)}{https://doi.org/10.1186/1471-2105-9-307} \citebutton{Hooker et al. (2021)}{https://arxiv.org/abs/1905.03151}}
+\begin{frame}{CFI \citebutton{Strobl et al. (2008)}{https://doi.org/10.1186/1471-2105-9-307} \citebutton{Hooker et al. (2021)}{https://arxiv.org/abs/1905.03151}}
 \normalsize
 
-Conditional feature importance (CFI) for features $x_S$ using test data $\D$:
+CFI for $X_S$ using test data $\D$:
 \begin{itemize}
   \item Measure the error \color{blue}\textbf{with unperturbed features}\color{black}.
   \item Measure the error \color{red}\textbf{with perturbed feature values} \color{black} $\pert{x}{S}{-S}$, where $\pert{x}{S}{-S}_S \sim \P(x_S|x_{-S})$
-  \item Repeat permuting the feature (e.g., $m$ times) and average the difference of both errors: 
+  \item Repeat permuting $X_S$ (e.g., $m$ times) and average difference of both errors: 
 $$\widehat{CFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{-S}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
 \end{itemize}
 
@@ -154,7 +191,8 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 \lz\pause
 \textbf{Entanglement with data:}
 \begin{itemize}
-  \item If feature $x_S$ does not contribute unique information about $y$, i.e., $x_S \indep y | x_{-S}$ $\Rightarrow$ CFI $= 0$
+  \item If feature $x_S$ does not contribute unique information about $y$, i.e., $x_S \indep y | x_{-S}$\\
+  $\Rightarrow$ CFI $= 0$
   \item Why? Under the conditional independence $\P(\pert{x}{S}{-S}, y) = \P(x,y)$\\
   $\leadsto$ no prediction-relevant information is destroyed by permutation of $x_S$ conditional on $x_{-S}$
 \end{itemize}
@@ -198,23 +236,36 @@ Can we gain insight into whether ...
 
 %TODO: Better example? 
 % RECAP EXTRAPOLATION
-\begin{frame}{Comparison: PFI and CFI}
- 
- \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
- Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.%\\
+\begin{frame}{Extrapolation: Compare PFI and CFI }
+
+\textbf{Recall:} Let $y = x_3 + \epsilon_y$, with $\epsilon_y \sim \mathcal{N}(0, 0.1)$.
+
+\begin{itemize}
+  \item $x_1 := \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated  
+        ($\epsilon_1 \sim \mathcal{N}(0,1)$, $\epsilon_2 \sim \mathcal{N}(0, 0.01)$)
+  \item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$ and all noise terms $\epsilon_j$ are independent
+  \item Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
+\end{itemize} 
+ % \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
+ % Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.%\\
  %
 \begin{figure}
-\hfill
-  \includegraphics[width=0.25\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
-  \includegraphics[width=0.6\linewidth]{figure_man/cfi_pfi.pdf} \hfill
+%\hfill
+  \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
+  \includegraphics[width=0.7\linewidth]{figure_man/cfi_pfi.pdf} %\hfill
   \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left). PFI and CFI (right).}
 \end{figure}
 % 
 %$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
 %$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant \\
-$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
-$\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$, $x_2$ are considered relevant (PFI $> 0$) \\
-$\Rightarrow$ Since $x_1$ can be reconstructed from $x_2$ and vice versa, CFI considers $x_1$ and $x_2$ to be irrelevant
+\begin{itemize}
+    \item $x_1$ and $x_2$ cancel in $\fh(\xv)$ and should be irrelevant for the prediction
+    \item PFI evaluates model on unrealistic obs. $\leadsto$ $x_1$, $x_2$ appear relevant (PFI $> 0$) 
+    \item CFI evaluates model on realistic obs. (due to conditional sampling)\\
+$\leadsto$ $x_1$, $x_2$ appear relevant (CFI $= 0$)
+\end{itemize}
+% $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
+%$\Rightarrow$ Since $x_1$ can be reconstructed from $x_2$ and vice versa, CFI considers $x_1$ and $x_2$ to be irrelevant
 
  \end{frame}
 

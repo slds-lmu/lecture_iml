@@ -48,20 +48,26 @@
 
 % \end{frame}
 
-\begin{frame}{Leave One Covariate Out (LOCO) \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173} \citebutton{Tibshirani (2018)}{http://www.stat.cmu.edu/~ryantibs/talks/loco-2018.pdf}}
+\begin{frame}{LOCO \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173} \citebutton{Tibshirani (2018)}{http://www.stat.cmu.edu/~ryantibs/talks/loco-2018.pdf}}
 % citation of the original LOCO paper
 %
-\textbf{LOCO idea:} Remove the feature from the dataset, refit the model on the reduced dataset, and measure the loss in performance compared to the model fitted on the complete dataset. %Remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.
+\textbf{LOCO idea:} Remove the feature from data, refit model on reduced data, and measure the loss in performance compared to model fitted on complete data. %Remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.
 
-\pause\lz
+\pause\medskip
 
-\textbf{Definition:} Given training and test datasets $\Dtrain, \Dtest \subseteq \D$, some $\ind$ and a model $\fh = \ind(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
+%\textbf{Definition:} Given train and test data $\Dtrain, \Dtest \subseteq \D$, for learner $\ind$ and model $\fh = \ind(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
+\textbf{Definition:} Given train and test data $\Dtrain, \Dtest \subseteq \D$, a learner $\ind$, and model $\fh := \ind(\Dtrain)$, the LOCO importance for feature $j \in \pset$ is computed by:
+
+\medskip
+
   \begin{enumerate}
-    \item learn model on dataset ${\Dtrain}_{,-j}$ where feature $x_j$ was removed, i.e. $\fh_{-j} = \ind({\Dtrain}_{,-j})$\pause
-    \item compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |y^{(i)} - \fh_{-j}(x_{-j}^{(i)}) \right | - \left |y^{(i)} - \fh(x^{(i)}) \right | $ with $i \in \Dtest$\pause
-    \item yield the importance score $\text{LOCO}_j = \text{med} \left ( \Delta_j  \right )$
+    \item Learn model on ${\Dtrain}_{,-j}$ where feature $x_j$ was removed, i.e. $\fh_{-j} = \ind({\Dtrain}_{,-j})$\pause
+    \item Compute the difference in local $L_1$ loss for each element in $\Dtest$, i.e. $\Delta_j^{(i)} = \left  |y^{(i)} - \fh_{-j}(x_{-j}^{(i)}) \right | - \left |y^{(i)} - \fh(x^{(i)}) \right | $ with $i \in \Dtest$\pause
+    \item Compute importance score by $\text{LOCO}_j = \text{med} \left ( \Delta_j  \right )$
   \end{enumerate}
-\lz\pause
+
+\medskip\pause
+
 The method can be generalized to other loss functions and aggregations. If we use mean instead of median we can rewrite LOCO as
 %
 $$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
@@ -72,12 +78,19 @@ $$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
 %
 \begin{figure}
   \centering
-  \includegraphics[width=0.65\textwidth]{figure_man/bike_sharing_loco.pdf}
-\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing data (training set) to optimize MSE. Then LOCO was computed for all features on the test data. The temperature is the most important feature. Without access to \texttt{temp}, the MSE increases by approx. $140,000$.}
+  \includegraphics[width=\textwidth]{figure_man/bike_sharing_loco.pdf}
+%\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing data (training set) to optimize MSE. Then LOCO was computed for all features on the test data. The temperature is the most important feature. Without access to \texttt{temp}, the MSE increases by approx. $140,000$.}
 \end{figure}
 %
  %\textbf{Interpretation:} $\text{LOCO}_j$ quantifies how important variable $x_j$ is to the generalization performance of the learner on $\Dtrain$.\\
 %
+\begin{itemize}
+  \item Trained random forest (default hyperparameters) on 70\% of bike sharing data
+  \item Performance measure: mean squared error (MSE)
+  \item Computed LOCO on test set for all features, measuring increase in MSE
+  \item \texttt{temp} was most important: removing it increased MSE by approx. $140.000$
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}{Interpretation of LOCO}
@@ -88,7 +101,7 @@ Can we get insight into whether the ...
 \begin{enumerate}
     \item feature $x_j$ is causal for the prediction $\yh$?
     \begin{itemize}
-      \item In general, no also because we refit the model (counterexample on the next slide)
+      \item In general, no also because we refit the model (counterexample next slide)
     \end{itemize}
     \item feature $x_j$ contains prediction-relevant information?
     \begin{itemize}
@@ -103,8 +116,7 @@ Can we get insight into whether the ...
 
 \begin{frame}{Interpretation of LOCO}
 
-\begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.7\textwidth}
+
 
 % x1 = rnorm(n, mean=0, sd = 5)
 % x2 = rnorm(n, mean=0, sd = 0.1) + x1
@@ -113,24 +125,26 @@ Can we get insight into whether the ...
 
 \textbf{Example:} Sample $1000$ observations with
 \begin{itemize}
-    \item $x_1, x_3 \sim N(0, 5)$
-    \item $x_2 = x_1 + \epsilon_2$ with $\epsilon_2 \sim N(0, 0.1)$
+    \item $x_1, x_3 \sim N(0, 5)$,  $x_2 = x_1 + \epsilon_2$ with $\epsilon_2 \sim N(0, 0.1)$
     \item $y = x_2 + x_3 + \epsilon$ with $\epsilon \sim N(0, 2)$
+    \item Trained LM: $\fh(x) = -0.02 - 1.02 x_1 + 2.05 x_2 + 0.98 x_3$
 \end{itemize}
-
-$\Rightarrow$ Fitting a LM yields
-$\fh(x) = -0.02 - 1.02 x_1 + 2.05 x_2 + 0.98 x_3$
 
 %Sample $1000$ observations with $x_1, x_3 \sim N(0, 5), x_2 = x_1 + \epsilon_2$ with $\epsilon_2 \sim N(0, 0.1)$ and $y = x_2 + x_3 + \epsilon$ with $\epsilon \sim N(0, 2)$.
 
-\lz\pause
-Top: Correlation matrix
+\pause
 
-Bottom: LOCO importance of LM fitted on 70\% of the data computed on 30\% remaining observations
+\begin{columns}[c, totalwidth=\textwidth]
+\begin{column}{0.42\textwidth}
+\includegraphics[width=\linewidth]{figure_man/simulation_loco_corr.pdf}\\
+\centerline{Correlation matrix}
 
 \end{column}
-\begin{column}{0.3\textwidth}
-
+\begin{column}{0.58\textwidth}
+\centering
+\includegraphics[width=0.9\linewidth]{figure_man/simulation_loco}\\
+LOCO importance from LM trained on 70\% of data, evaluated on remaining 30\%
+%LOCO importance of LM fitted on 70\% of the data computed on 30\% remaining observations
 %\begin{figure}
 %\centering
 %\hfill
@@ -144,9 +158,9 @@ Bottom: LOCO importance of LM fitted on 70\% of the data computed on 30\% remain
 %		\draw[->, black] (x2) -- (y);
 %	\end{tikzpicture} 
 %\hfill
-\includegraphics[width=\linewidth]{figure_man/simulation_loco_corr.pdf} 
-\hfill
-\includegraphics[width=\linewidth]{figure_man/simulation_loco}
+% \includegraphics[width=\linewidth]{figure_man/simulation_loco_corr.pdf} 
+% \hfill
+% \includegraphics[width=\linewidth]{figure_man/simulation_loco}
 %\hfill
 %\end{figure}
 
@@ -176,9 +190,14 @@ $\Rightarrow$ We can get insight into (3): $x_2$ and $x_1$ highly correlated wit
 %
   Cons:
   \begin{itemize}
-    \item Does not provide insight into a specific model, but rather a learner on a specific dataset
-    \item Model training is a random process, so estimates can be noisy (which is problematic for inference about model and data)
-    \item Requires re-fitting the learner for each feature $\rightarrow$ computationally intensive compared to PFI
+    \item Provides insight into a learner on specific data, not a specific model\\
+    $+$for algorithm-level insight\\
+    $-$ for model-specific insights
+    %Does not provide insight into a specific model, but rather a learner on a specific dataset
+    \item Model training is a random process and LOCO estimates can be noisy\\
+    $\leadsto$ Limits inference about on model and data
+    \item Requires re-fitting the learner for each feature\\
+    $\leadsto$ Computationally intensive compared to PFI
   \end{itemize}
 \end{frame}
 
