@@ -44,9 +44,10 @@
 \begin{frame}{CFI Motivation}
 
 \begin{itemize}[<+->]
-    \item \textbf{PFI Idea:} Replace feature of interest $X_j$ with an independend sample from its marginal distibution $\P(X_j)$, e.g., by randomly permuting its values %$X_j$
-    \item \textbf{Problem:} Under dependent features, permutation leads to extrapolation
-    \item \textbf{Conditional Feature Importance Idea:} Sample $X_j$ from the cond. dist. $\P(x_j|x_{-j})$, s.t. the joint dist. is preserved, i.e., $\P(x_j|x_{-j}) \P(x_{-j}) = \P(x_j, x_{-j})$
+    \item \textbf{PFI Idea:} Replace feature(s) $X_S$ with perturbed $\tilde X_S$ to preserve marginal distibution $\P(X_S)$ so that $\tilde X_S \indep Y$ (independent), e.g., by random permutations
+    \item \textbf{Problem:} Breaks not only association between $X_S$ and $Y$ (what we want) but also between $X_S$ and $X_{-S}$ $\Rightarrow$ $\P(X_S, X_{-S}) \neq \P(\tilde X_S, X_{-S})$ (extrapolation)
+    \item \textbf{CFI Idea:} Replace feature(s) $X_S$ with perturbed $\tilde X_S$ to preserve joint distibution so that $\P(X_S, X_{-S}) = \P(\tilde X_S, X_{-S})$ (no extrapolation) while still $\tilde X_S \indep Y$
+    %Sample $X_S$ from conditional dist. $\P(X_S|X_{-S})$ to preserve joint dist., i.e., $\P(X_S|X_{-S}) \P(X_{-S}) = \P(X_S, X_{-S})$
 \end{itemize}
 %\\
 %\lz
@@ -168,15 +169,69 @@ PFI scores (right).
 \begin{frame}{CFI \citebutton{Strobl et al. (2008)}{https://doi.org/10.1186/1471-2105-9-307} \citebutton{Hooker et al. (2021)}{https://arxiv.org/abs/1905.03151}}
 \normalsize
 
+%  {\color{blue}\textbf{with feat. values $x_S$}} and {\color{red}\textbf{with permuted feat. values $\pert{x}{}{}_S$}} 
 CFI for $X_S$ using test data $\D$:
 \begin{itemize}
-  \item Measure the error \color{blue}\textbf{with unperturbed features}\color{black}.
-  \item Measure the error \color{red}\textbf{with perturbed feature values} \color{black} $\pert{x}{S}{-S}$, where $\pert{x}{S}{-S}_S \sim \P(x_S|x_{-S})$
-  \item Repeat permuting $X_S$ (e.g., $m$ times) and average difference of both errors: 
+  \item Measure the error \color{blue}\textbf{with unperturbed features $x_S$}\color{black}.
+  \item Measure the error \textbf{\color{red}with perturbed feature values $\pert{x}{}{}_S \sim \P(X_S|X_{-S})$} 
+  %\color{black} $\pert{x}{S}{-S}$, where $\pert{x}{S}{-S}_S \sim \P(x_S|x_{-S})$
+  \item Repeat perturbing $X_S$ (e.g., $m$ times) and average difference of both errors: 
 $$\widehat{CFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{-S}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
 \end{itemize}
 
-Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled conditional on the remaining features $x_{-S}$.
+Here, $\pert{\D}{S}{-S}$ denotes data, where $x_S$ values are conditionally resampled given $x_{-S}$.
+
+\medskip
+\textbf{Illustrative example:} Conditional permutation when $X_{-S}$ is categorical:
+
+\begin{columns}[T, onlytextwidth]
+\scriptsize
+    \begin{column}{0.5\textwidth}
+    \centering
+    \textbf{Original Data}
+    
+    \rowcolors{2}{white}{gray!10}
+    \begin{tabular}{ccc}
+\toprule
+ID & $X_{-S}$ & $X_S$ \\
+\midrule
+1 & \cellcolor{blue!10}A & \cellcolor{blue!10}3.1 \\
+2 & \cellcolor{blue!10}A & \cellcolor{blue!10}2.7 \\
+3 & \cellcolor{blue!10}A & \cellcolor{blue!10}3.4 \\
+\midrule
+4 & \cellcolor{red!10}B & \cellcolor{red!10}6.0 \\
+5 & \cellcolor{red!10}B & \cellcolor{red!10}5.4 \\
+6 & \cellcolor{red!10}B & \cellcolor{red!10}6.2 \\
+\bottomrule
+\end{tabular}
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+    \centering
+    \textbf{Permuted Conditionally on $X_{-S}$}
+
+    \rowcolors{2}{white}{gray!10}
+    \begin{tabular}{ccc}
+\toprule
+ID & $X_{-S}$ & $X_S$ \\
+\midrule
+1 & \cellcolor{blue!10}A & \cellcolor{blue!10}2.7 \\
+2 & \cellcolor{blue!10}A & \cellcolor{blue!10}3.1 \\
+3 & \cellcolor{blue!10}A & \cellcolor{blue!10}3.4 \\
+\midrule
+4 & \cellcolor{red!10}B & \cellcolor{red!10}6.2 \\
+5 & \cellcolor{red!10}B & \cellcolor{red!10}6.0 \\
+6 & \cellcolor{red!10}B & \cellcolor{red!10}5.4 \\
+\bottomrule
+\end{tabular}
+    \end{column}
+\end{columns}
+
+
+\medskip
+{
+Here, $X_S$ is permuted \textit{within} each group of $X_{-S}$ to preserve $\mathbb{P}(X_S, X_{-S})$.
+}
 
 %\footnote[frame]{\fullcite{Strobl2008}}
 
@@ -193,7 +248,10 @@ Here, $\pert{\D}{S}{-S}$ denotes the dataset where features $x_S$ where sampled 
 \begin{itemize}
   \item If feature $x_S$ does not contribute unique information about $y$, i.e., $x_S \indep y | x_{-S}$\\
   $\Rightarrow$ CFI $= 0$
-  \item Why? Under the conditional independence $\P(\pert{x}{S}{-S}, y) = \P(x,y)$\\
+  \item Why? Under the conditional independence 
+  $\P(\pert{X}{}{}_S, X_{-S}, Y) = \P(X_S, X_{-S}, Y)$
+  %$\P(\pert{x}{S}{-S}, y) = \P(x,y)$
+  \\
   $\leadsto$ no prediction-relevant information is destroyed by permutation of $x_S$ conditional on $x_{-S}$
 \end{itemize}
 \lz\pause

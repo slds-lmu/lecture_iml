@@ -57,38 +57,129 @@
 
 % \end{frame}
 
-\begin{frame}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
 
 
-% TODO: explain this idea better in one separate slide, e.g. we have a fixed model we want to analyze and a data set. Our aim is to understand the importance of features. We would like to remove a feature and measure its "added value" w.r.t. performance compared to not removing it. But we cannot remove it as the model is fixed and was already trained with that feature -> permuting is the next best thing we can do to "destroy" the information of the feature -> another possibility could be to add some noise to the feature to perturb it but this would change the marginal distribution
+\begin{frame}{Motivation for PFI}
 
-\textbf{Idea:} "Destroy" feat. of interest $x_j$ by perturbing it s.t. it becomes uninformative, e.g., randomly permute obs. in $x_j$ (marginal distribution $\P(x_j)$ stays the same).  %Therefore, resample the variable from its marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.
 
-PFI for features $x_S$ using test data $\D$:
 \begin{itemize}
-  \item Measure the error {\color{blue}\textbf{without permuting feat.}} and {\color{red}\textbf{with permuted feat. values}} $\pert{x}{}{}_S$
-  \item Repeat permuting the feat. (e.g., $m$ times) and avg. the difference of both errors: 
-\begin{align*}
-&\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske (\fh, {\color{blue}\D}),\\&\text{ where }
-\riske(\fh, \D) = \frac{1}{n} \sum\nolimits_{(x, y) \in \D}  L(\fh(x), y)
-\end{align*}
+  \item<1-> \textbf{Goal:} Assess how important feature(s) $X_S$ are for predictive performance of a \textbf{fixed trained model} $\fh$ on a given dataset $\D$
+  \item<1-> \textbf{Idea:} Estimate change in model performance when $X_S$ is "made uninformative"
+  \item<2-> \textbf{Question:} Can we make $X_S$ uninformative by removing it from the model?\\
+  $\leadsto$ No, $\fh$ was trained with $X_S$ and retraining without $X_S$ gives a  different model
+  %$\fh$ is already trained using $X_S$, i.e., we cannot remove $X_S$ without retraining
+  %\item \textbf{Solution:} \textbf{Perturb $X_S$} by replacing $x_S$ with a \textbf{random permutation} $\tilde{x}_S$\\
+%$\leadsto$ Breaks dependence with $y$, preserves marginal $\mathbb{P}(X_S)$
+  \item<3-> 
+\textbf{Solution:} Simulate feature removal by replacing $X_S$ with a perturbed version $\tilde{X}_S$ that is independent of $(X_{-S}, Y)$ but preserves $\mathbb{P}(X_S)$\\
+  $\leadsto$ Compare {\color{blue}baseline predictions $\fh(X)$} with {\color{red}perturbed predictions $\fh(\tilde{X}_S, X_{-S})$}
+  
+  
+%\textbf{Solution:} "Destroy" information of $X_S$ by replacing it with a perturbed $\Tilde{X}_{S}$ (i.i.d. copy of $X_S$ independent of $(X_{-S},Y)$)
+%Estimate the added predictive value of feature(s) $X_S$ for a given trained model $\fh$, test data $\D$, test data $\D$ where $X_S$ was replaced by $\Tilde{X}_{S}$ by:
+%and compare {\color{red}reduced model where $X_S$ is made uninformative $\fh(\Tilde{X}_{S}, X_{-S})$} vs. {\color{blue}full model $\fh(X)$}:
+
+\[
+\text{PFI}_S :=
+ {\color{red}\underbrace{\mathbb{E}\Big[L\big(\fh(\tilde{X}_S, X_{-S}), Y\big)\Big]}_{\text{risk after "destroying" }X_S}}
+ -
+ {\color{blue}\underbrace{\mathbb{E}\Big[L\big(\fh(X), Y\big)\Big]}_{\text{baseline risk}}},
+\]
+%where $(X,Y)\sim\mathcal{P}$ and
+%$\tilde{X}_S$ is an i.i.d. copy of $X_S$ independent of $(X_{-S},Y)$\\
+%$\rightarrow$ breaks associations between $X_S$ and $Y$ while preserving the marginal $\mathbb{P}(X_S)$
+  \item<3-> \textbf{How to perturb $X_S$?}
+  \begin{itemize}
+    \item Add random noise: distorts $\mathbb{P}(X_S)$ (not used)
+    \item Permutation: preserves marginal $\mathbb{P}(X_S)$, breaks dependence with $Y$ (used)
+  \end{itemize}
+
 \end{itemize}
-\pause
-The data $\D$ where $x_S$ is replaced with $\pert{x}{S}{}$ is denoted as $\pert{\D}{S}{}$.\\
-Example of permuting feature $x_S$ with $S = \{1\}$ and $m=6$:
-
-% TODO: update to new notation
-\begin{center}
-\includegraphics[width=0.75\textwidth]{figure_man/permuted-fv.pdf}
-\end{center}
-
-\vspace*{0.2cm}
-{\scriptsize{Note: 
-The $S$ in $x_S$ refers to a \textbf{S}ubset of features for which we are interested in their effect on the prediction.\\
-Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\par}
 
 \end{frame}
 
+
+% \begin{frame}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+
+% \textbf{Idea:} "Destroy" information of $X_S$ in $\fh$ by replacing it with perturbed $\Tilde{X}_{S}$
+% %Estimate the added predictive value of feature(s) $X_S$ for a given trained model $\fh$, test data $\D$, test data $\D$ where $X_S$ was replaced by $\Tilde{X}_{S}$ by:
+% and compare {\color{red}reduced model where $X_S$ is made uninformative $\fh(\Tilde{X}_{S}, X_{-S})$} vs. {\color{blue}full model $\fh(X)$}:
+
+% \[
+% \text{PFI}_S :=
+%  {\color{red}\underbrace{\mathbb{E}\Big[L\big(\fh(\tilde{X}_S, X_{-S}), Y\big)\Big]}_{\text{risk after "destroying" }X_S}}
+%  -
+%  {\color{blue}\underbrace{\mathbb{E}\Big[L\big(\fh(X), Y\big)\Big]}_{\text{baseline risk}}},
+% \]
+
+% where $(X,Y)\sim\mathcal{P}$ and
+% $\tilde{X}_S$ is an i.i.d. copy of $X_S$ independent of $(X_{-S},Y)$\\
+% $\rightarrow$ breaks associations between $X_S$ and $Y$ while preserving the marginal $\mathbb{P}(X_S)$
+% \end{frame}
+
+\begin{frame}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+\textbf{Sample estimator (using independent test set $\D=\{(\xv^{(i)},y^{(i)})\}_{i=1}^{n}$)}
+
+\begin{itemize}
+  \item Measure the error {\color{blue}\textbf{with feat. values $x_S$}} and {\color{red}\textbf{with permuted feat. values $\pert{x}{}{}_S$}} 
+  \item Repeat permutation (e.g., $m$ times) and average difference of both errors: 
+
+$$
+\widehat{PFI}_S = \tfrac{1}{m}  \textstyle\sum\nolimits_{k = 1}^{m} \big[ \riske (\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske (\fh, {\color{blue}\D}) \big]
+%, \quad \riske(\fh, \D) = \frac{1}{n} \sum\limits_{(x, y) \in \D}  L(\fh(x), y)
+$$
+
+\begin{itemize}
+  \item $\D^{(k)}_{\,S}$: dataset where column(s) $x_S$ are \textbf{permuted} once (in repetition\ $k$)  
+  \item $\riske(\fh, \D) = \frac{1}{n} \sum\nolimits_{(x, y) \in \D}  L(\fh(x), y)$: Measures performance of $\fh$ using $\D$
+  \item Average over $m$ permutations to reduce Monte-Carlo variance
+\end{itemize}
+\end{itemize}
+
+\medskip
+
+\textbf{Example} of permuting feature $x_S$ with $S = \{1\}$ and $m=6$ permutations:
+
+\centering 
+\includegraphics[width=0.9\textwidth]{figure_man/permuted-fv.pdf}\\
+{\scriptsize
+Note: $S$ refers to a subset of features, here $|S|=1$ to measure impact of permuting $x_S$ on performance
+%$S$ refers to a subset of features (here: $|S|=1$). We assess the impact of permuting $x_S$ on model performance.
+}
+\end{frame}
+
+
+% \begin{frame}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+
+
+% % TODO: explain this idea better in one separate slide, e.g. we have a fixed model we want to analyze and a data set. Our aim is to understand the importance of features. We would like to remove a feature and measure its "added value" w.r.t. performance compared to not removing it. But we cannot remove it as the model is fixed and was already trained with that feature -> permuting is the next best thing we can do to "destroy" the information of the feature -> another possibility could be to add some noise to the feature to perturb it but this would change the marginal distribution
+
+% \textbf{Idea:} "Destroy" feat. of interest $x_j$ by perturbing it s.t. it becomes uninformative, e.g., randomly permute obs. in $x_j$ (marginal distribution $\P(x_j)$ stays the same).  %Therefore, resample the variable from its marginal distribution $\P(x_j)$, e.g. by randomly permuting observations in $x_j$.
+
+% PFI for features $x_S$ using test data $\D$:
+% \begin{itemize}
+%   \item Measure the error {\color{blue}\textbf{without permuting feat.}} and {\color{red}\textbf{with permuted feat. values}} $\pert{x}{}{}_S$
+%   \item Repeat permuting the feat. (e.g., $m$ times) and avg. the difference of both errors: 
+% \begin{align*}
+% &\widehat{PFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske (\fh, {\color{blue}\D}),\\&\text{ where }
+% \riske(\fh, \D) = \frac{1}{n} \sum\nolimits_{(x, y) \in \D}  L(\fh(x), y)
+% \end{align*}
+% \end{itemize}
+% \pause
+% The data $\D$ where $x_S$ is replaced with $\pert{x}{S}{}$ is denoted as $\pert{\D}{S}{}$.\\
+% Example of permuting feature $x_S$ with $S = \{1\}$ and $m=6$:
+
+% % TODO: update to new notation
+% %\begin{center}
+% \centerline{}
+% %\end{center}
+
+% %\vspace*{0.2cm}
+% {\scriptsize{Note: 
+% The $S$ in $x_S$ refers to a \textbf{S}ubset of features for which we are interested in their effect on the prediction.\\
+% Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\par}
+
+% \end{frame}
 
 
 % \begin{columns, totalwidth=\textwidth}
@@ -143,31 +234,31 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
 
 \begin{frame}{Permutation Feature Importance}
 
-  \only<1-4>{$\hspace{80pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}%
-  \only<5-6>{$\hspace{80pt}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})$}%
+  \only<1-4>{$\hspace{30pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}%
+  \only<5-6>{$\hspace{30pt}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})$}%
 % $\scriptstyle\riske(\fh, \D) =$ \scalebox{0.7}{$\frac{1}{n} \sum\nolimits_{(x, y) \in \D}$} $\scriptstyle L(\fh(x), y)$}
 %   \only<5-6>{$\hspace{36pt}{\color{white}\riske(\fh, {\color{red}\pert{\D}{S}{}_{(k)}}) - \riske(\fh, {\color{blue}\D})}$}
   
-  \begin{center}
-  \only<1>{\includegraphics[page=2, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
-  \only<2>{\includegraphics[page=3, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
-  \only<3>{\includegraphics[page=4, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
-  \only<4>{\includegraphics[page=5, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
-  \only<5>{\includegraphics[page=6, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
-  \only<6>{\includegraphics[page=7, trim=0pt 5pt 0 66pt, clip, width=0.7\textwidth]{figure_man/pfi_demo2}}%
-  \end{center}
-  
+{\centering
+  \only<1>{\includegraphics[page=2, trim=0pt 5pt 0 66pt, clip, width=0.9\textwidth]{figure_man/pfi_demo2}}%
+  \only<2>{\includegraphics[page=3, trim=0pt 5pt 0 66pt, clip, width=0.9\textwidth]{figure_man/pfi_demo2}}%
+  \only<3>{\includegraphics[page=4, trim=0pt 5pt 0 66pt, clip, width=0.9\textwidth]{figure_man/pfi_demo2}}%
+  \only<4>{\includegraphics[page=5, trim=0pt 5pt 0 66pt, clip, width=0.9\textwidth]{figure_man/pfi_demo2}}%
+  \only<5>{\includegraphics[page=6, trim=0pt 5pt 0 66pt, clip, width=0.9\textwidth]{figure_man/pfi_demo2}}%
+  \only<6>{\includegraphics[page=7, trim=0pt 5pt 0 66pt, clip, width=0.9\textwidth]{figure_man/pfi_demo2}}%
+}
+
   \begin{itemize}
     \only<1-2>{\item[1.]\textbf{Perturbation:} Sample feature values from the distribution of $x_S$ ($P(X_S)$). \newline 
     $\Rightarrow$ Randomly permute feature $x_S$ \\
-    $\Rightarrow$ Replace original feature with permuted feature $\pert{x}{}{}_S$ and create data $\pert{\D}{S}{}$ containing $\pert{x}{}{}_S$}%
+    $\Rightarrow$ Replace $x_S$ with permuted feature $\pert{x}{}{}_S$ and create data $\pert{\D}{S}{}$ containing $\pert{x}{}{}_S$}%
     \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\pert{\D}{S}{}$}%
     \only<3->{\item[3.] \textbf{Aggregation:}}%
       \begin{itemize}
         \item<3-> Compute the loss for each observation in both data sets%
         \item<4-> Take the difference of both losses $\Delta L$ for each observation%
         \item<5-> Average this change in loss across all observations%
-        \only<5>{\\ Note: This is equivalent to computing $\riske$ on both data sets and taking the difference}%
+        \only<5>{\\ Note: Same as computing $\riske$ on both data sets and taking difference}%
         \item<6-> Repeat perturbation and average over multiple repetitions%
       \end{itemize}
     % \only<3-4>{\item[3.] \textbf{Aggregation:}
@@ -198,16 +289,16 @@ Here: We calculate the feature importance for one feature at a time $|S| = 1$.}\
 \begin{frame}{Example: Bike Sharing Dataset}
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{figure_man/bike-sharing02.png}
+\includegraphics[width=\textwidth]{figure_man/bike-sharing02.png}
 \end{center}
 
 \textbf{Interpretation:}
 
 \begin{itemize}
- \item Year (\code{yr}) and Temperature (temp) are most important features
+ \item \code{yr} and \code{temp} are most important features using mean absolute error (MAE)
  %Features such as weekday also contribute to the performance.
- \item Destroying information about \code{yr} by permuting it increases mean absolute error of model by 816
- \item $5 \%$ and $95 \%$ quantile of repetitions due multiple permutations are shown as error bars
+ \item Destroying information about \code{yr} by permuting it increases MAE of model by 816
+ \item Error bars show 5\% and 95\% quantiles over multiple permutations
 \end{itemize}
 \end{frame}
 

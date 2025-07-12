@@ -8,7 +8,7 @@
   \begin{itemize} 
       \item Actionability: no changes of sex, decrease in age or enormous jumps
       in salary (1, 2, 7, 8, 9)
-      \item Plausibility: no decrease in salary or savings. (7, 9, 6)
+      \item Plausibility: no decrease in salary or savings. (6) % Also (7, 9) ????
       \item Sparsity: not many feature changes (7, 9)
   \end{itemize}
   User preferences:
@@ -17,9 +17,9 @@
       \item Get credit now, no increase in age (4, 5, 8)
       \item How realistic is increase in salary or building up savings?
   \end{itemize}
-  Additional problem: Model vs. Real-World / Model drift: Increase in age may be problematic.
+  Additional problem: Model vs. Real-World / Model drift: An increase in age may be problematic.
   
-  $\leadsto$ If we considered all aspects, we may only present (6) to the customer.  Otherwise (3) may also be an option, showing what the customer can achieve if nothing else changes.
+  $\leadsto$ If we consider all aspects, we may only present (6) to the customer. Otherwise (3) may also be an option, showing what the customer can achieve if nothing else changes.
   
   \item Which of these counterfactuals would you rather hide from the customer?
 
@@ -30,10 +30,11 @@
   \item Which of these counterfactuals would you like to share with the data scientist responsible for the model?
 
   \begin{itemize}
-      \item The ones indicating that individuals/subpopulations are discriminated against (changing sex, 1, 2, 9, changing age where it actually has a significant effect, 3, 4, 5).
+      \item The ones indicating that individuals/subpopulations are discriminated against (changing sex, 1, 2, 9, changing age where it actually has a significant effect, 3, 4, 5 $\leadsto$ age discrimination?). \\
+      (1) shows an obvious example of bias, (9) maybe as well, because (9) gets a higher credit for almost the same salary and savings, or at least not so large.
       \item The ones that are implausible: a decrease in salary or savings (7, 9, 6), although this may be a problem of the method for finding CF explanations, not of the model itself.
       \item Getting the credit for (2) might not be due to changes in sex but due to reducing the credit amount. Similar for (9).
-            A sanity check, if sex really needs to switch, is therefore a good idea (homeworksheet 6/exercise 1).
+            A sanity check, if the sex really needs to change, is therefore a good idea (like in exercise sheet 11, exercise 2, using the \texttt{evaluate\_cfexp()} function).
   \end{itemize}
   
 \end{enumerate}
