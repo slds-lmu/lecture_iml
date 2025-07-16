@@ -315,15 +315,18 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
 \begin{itemize}
 %\item ICE curves show how different feature values of an observation affect its prediction \newline $\Rightarrow$ \textbf{local interpretation method}
 \item Plotting ICE curves involves generating grid values $\xv_S^*$; visualized on x-axis
-\item Common choices for grid values are
+\item \textbf{Three common strategies} for grid definition:
 \begin{itemize}
-\item equidistant grid values within feature range
-\item randomly sampled values of observed feature values
-\item quantile values of observed feature values
+\item Equidistant grid values within feature range
+\item Random samples from observed feature values
+\item Quantiles of observed feature values
 \end{itemize}
-\item Except equidistant grid, the other two options preserve (approximately) the marginal distribution of feature of interest
+\item \textbf{Marginal realism:} Random and quantile grids better reflect the marginal distribution of $x_S$
+        $\Rightarrow$ reduce unrealistic values along $x_S$
+%Except equidistant grid, the other two options preserve (approximately) the marginal distribution of feature of interest
 %$\Rightarrow$ Avoids unrealistic feature values for distributions with outliers %or dependencies
-\item<2> Correlations/interactions $\leadsto$ unrealistic values in all three methods
+\item<2> \textbf{However:} For \textbf{correlated features}, extrapolation remains:
+%Correlations/interactions $\leadsto$ unrealistic values in all three methods
 %(to be addressed with ALE plots later)%Preferable for skewed distributions (with outliers) to avoid using unrealistic feature values.
 % \begin{itemize}
 % \item equidistant grid values:
@@ -341,48 +344,57 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
 \end{frame}
 
 % bike sharing example + defaults
-% \begin{frame}{ICE curves example and practical considerations}
+\begin{frame}{Practical considerations}
 
-% \begin{columns}[T]
-% \begin{column}{0.55\textwidth}
-% \small
-% \begin{itemize}
-%   \item \textbf{Grid points}  
-%         \begin{itemize}
-%             \item Too few $\Rightarrow$ misses sharp changes%
-%             \item Too many $\Rightarrow$ time intensive%
-%         \end{itemize}
-%   \item \textbf{ICE curves}  
-%         \begin{itemize}
-%             \item Too few $\Rightarrow$ heterogeneity is hidden%
-%             \item Too many $\Rightarrow$ plot cluttered, time intensive%
-%         \end{itemize}
-%   \item Default values for popular libraries: 
-% \end{itemize}
+\begin{itemize}
+  \item \textbf{Grid resolution} (instances $\times$ grid over feature of interest)
+        \begin{itemize}
+            \item Too coarse $\Rightarrow$ may miss sharp nonlinearities or discontinuities
+            %may miss sharp changes%
+            \item Too fine $\Rightarrow$ high runtime (without gaining much)
+            %time intensive%
+            \item Fix: cap at $\approx 50 - 100$ grid points; vectorize predictions by feeding the model a single data frame containing all grid-modified instances
+        \end{itemize}
+  \item \textbf{ICE curves} (number of instances/curves visualized)
+        \begin{itemize}
+            \item Too few $\Rightarrow$ hides variability across instances, misses subgroup differences
+            %heterogeneity is hidden%
+            \item Too many $\Rightarrow$ visual overload (many overlapping curves), time intensive%
+            \item Fix: Stratified or cluster-based subsample (e.g., 100); facet by subgroup
+        \end{itemize}
+\end{itemize}
 
-% \vspace{1em}
-% \centering
-% \begin{tabular}{lccc}
-% \textbf{Library} & \textbf{Language} & \textbf{Grid points} & \textbf{ICE curves}\\\hline
-% scikit--learn & Py & 100 & 1\,000\\
-% PDPbox        & Py & 10  & num. rows\\
-% iml           & R  & 20  & num. rows\\
-% pdp           & R  & 51  & num. rows\\
-% \end{tabular}
-% \end{column}
+\begin{columns}[T, onlytextwidth]
+\begin{column}{0.5\textwidth}
+\small
 
-% % -------- RIGHT COLUMN: FIGURE --------
-% \begin{column}{0.45\textwidth}
-% \centering
-% \includegraphics[width=\textwidth]{figure/pdp_bike.pdf}
+Default values for popular libraries: 
 
-% \vspace{0.7em}
-% \scriptsize
-% The \textbf{black curves} are the ICE curves and he \textbf{yellow line} is the "average ICE curve". It is called a Partial dependence plot and will be discussed in the next slide set.
-% \end{column}
-% \end{columns}
+\medskip
 
-% \end{frame}
+%\centering
+\begin{tabular}{lcc}
+\textbf{Library} & \textbf{Grid} & \textbf{ICE curves}\\\hline
+sklearn (Py) & 100 & 1\,000 (random) \\
+PDPbox  (Py) & 10  & num. rows\\
+iml (R)      & 20  & num. rows\\
+pdp (R)      & 51  & num. rows\\
+\end{tabular}
+
+\end{column}
+
+% -------- RIGHT COLUMN: FIGURE --------
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figure/pdp_bike.pdf}
+
+\end{column}
+\end{columns}
+
+\centerline{\small
+ICE curves (\textbf{black lines}) and their point-wise average across the grid (\textbf{yellow line})%, known as "partial dependence plot"
+}
+\end{frame}
 
 \endlecture
 \end{document}

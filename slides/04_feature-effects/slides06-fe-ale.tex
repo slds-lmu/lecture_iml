@@ -595,7 +595,7 @@ For a point $x \in \mathcal{X}_S$, define:
 
 \begin{itemize}
 \tightlist
-  \item $[z_{k-1, S}, z_{k,S}]$: $k$-th interval of feature $x_S$
+  \item $[z_{k-1, S}, z_{k,S}]$: $k$-th interval of feature $x_S$ with interval bounds $z_{k-1, S}$ and $z_{k,S}$ 
   \item $k_S(x)$: index of the interval in which $x$ lies
   \item $n_S(k)$: number of observations in interval $k$
   \item $\xv_{-S}^{(i)}$: all other features held fixed for $i$-th observation
@@ -603,43 +603,36 @@ For a point $x \in \mathcal{X}_S$, define:
 
 \pause
 \medskip
+% \textbf{Centering:}  
+% Ensure identifiability by subtracting the average uncentered ALE:
+% \[
+% \hat{f}_{S, \text{ALE}}(x) =
+% \hat{\tilde{f}}_{S, \text{ALE}}(x)
+% - \frac{1}{n} \sum_{i = 1}^n \hat{\tilde{f}}_{S, \text{ALE}}(x_S^{(i)})
+% \]
 \textbf{Centering:}  
-Ensure identifiability by subtracting the average uncentered ALE:
+Ensure identifiability by subtracting mean uncentered ALE (constant $c$):
 \[
-\hat{f}_{S, \text{ALE}}(x) =
-\hat{\tilde{f}}_{S, \text{ALE}}(x)
-- \frac{1}{n} \sum_{i = 1}^n \hat{\tilde{f}}_{S, \text{ALE}}(x_S^{(i)})
+\hat f_{S,\text{ALE}}(x)=
+\hat{\tilde f}_{S,\text{ALE}}(x)\;-\;c,
+\qquad
+c=\tfrac{1}{n}\textstyle\sum_{i=1}^{n}\hat{\tilde f}_{S,\text{ALE}}\bigl(x_S^{(i)}\bigr).
 \]
 
+%\vspace{0.4em}
+\textbf{Efficient centering (used in implementations):}
+Use weighted trapezoidal averaging of interval-wise boundary values (avoids redundant re-evaluation at all $n$ points):
+\[
+c =
+\textstyle\sum_{k = 1}^{K} 
+\tfrac{1
+}{2} \cdot \left( 
+\hat{\tilde{f}}_{S, \text{ALE}}(z_{k-1,S}) +
+\hat{\tilde{f}}_{S, \text{ALE}}(z_{k,S}) \right) \cdot \tfrac{n_S(k)}{n} 
+\]
+
+\textbf{Plotting ALE:} Visualize the pairs $\left( z_{k,S}, \hat{f}_{S, \text{ALE}}(z_{k,S}) \right)$ for all interval boundaries $z_{k,S}$.
 \end{frame}
-
-% Plotting ALE
-% \begin{frame}{Plotting the ALE Curve}
-
-% \begin{enumerate}
-%   \item \textbf{Midpoints}  
-%         For each interval $[z_{k-1,S},z_{k,S}]$ compute  
-%         $m_k = \dfrac{z_{k-1,S}+z_{k,S}}{2}$.
-%   \item \textbf{Uncentered ALE at midpoints}  
-%         $\displaystyle \hat{\tilde{f}}_{S,\text{ALE}}(m_k)$
-%         (definition as on previous slide).
-%   \item \textbf{Centering}  
-%         $\displaystyle \hat{f}_{S,\text{ALE}}(m_k)
-%         \;=\; \hat{\tilde{f}}_{S,\text{ALE}}(m_k)
-%         \;-\;\frac{1}{n}\sum_{i=1}^{n}
-%               \hat{\tilde{f}}_{S,\text{ALE}}\!\bigl(x_S^{(i)}\bigr)$.
-%   \item \textbf{Plot} the pairs $(m_k,\,\hat{f}_{S,\text{ALE}}(m_k))$ and connect successive points
-%         with straight lines.
-% \end{enumerate}
-
-% \medskip
-% \textbf{Plot smoothness}: \\
-% The model is evaluated at interval end-points $\Rightarrow$ total number of evaluations ($2n$) is independent of the number of intervals ($K$).
-% \\
-% $\leadsto$ One can pick a larger $K$ to produce a smoother curve, provided each
-% interval still contains enough data to be representative.
-% \end{frame}
-
 
 %------------------------------------------------------------
 
@@ -722,9 +715,16 @@ Ensure identifiability by subtracting the average uncentered ALE:
 
 \begin{frame}{Bike Sharing Dataset: First Order ALE}
 
-Shape of PD plot (top) often looks similar to (centered) first order ALE plot (bottom) but on different $y$-axis scale.
-In case of correlated features, ALE might be better due to PD's extrapolation issue.
-
+% Shape of PD plot (top) often looks similar to (centered) first order ALE plot (bottom) but on different $y$-axis scale.
+% In case of correlated features, ALE might be better due to PD's extrapolation issue.
+\begin{itemize}
+  \item \textbf{Visual comparison:} PD plot (top) vs. First-order ALE plot (bottom)
+  \item \textbf{Shape:} Both plots show similar trends, but differ in $y$-axis scale due to centering
+  \item \textbf{Interpretation:} ALE accounts for feature dependencies and avoids extrapolation into unsupported regions
+  %\item \textbf{Implication:} 
+  \\$\leadsto$ PD reflects model behavior in entire feature space ("true to the model")\\
+  $\leadsto$ ALE focuses on effects in data-supported regions ("true to the data")
+\end{itemize}
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figure/ale1d}
