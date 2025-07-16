@@ -1,12 +1,18 @@
-\aufgabe{Conditional sampling based feature importance techniques}{
+% \aufgabe{Conditional sampling based feature importance techniques}{
+\bonusaufgabe{Conditional sampling based feature importance techniques}{
 
-	Conditional Feature Importance has been suggested as an alternative to Permutation Feature Importance.
-	%Conditional Feature Importance and conditional SAGE value functions have been suggested as an alternative to Permutation Feature Importance. %In contrast to PFI, the conditional sampling based techniques preserve the covariate joint distribution.
+	Conditional Feature Importance has been suggested as an alternative to Permutation Feature Importance, and it is one out of several conditional sampling based feature importance technique.
+	%Conditional Feature Importance and conditional SAGE value functions have been suggested as an alternative to Permutation Feature Importance.
+    In contrast to PFI, these conditional sampling-based techniques preserve the joint distribution of all covariates.
+
+    In this exercise, we will again use the dataset and the model from Exercise \ref{ex:pfi}.
+    We further assume throughout this exercise that the data is distributed according to a multivariate Gaussian distribution.
+    This means that the conditional distributions can be derived analytically from the mean vector and the covariance matrix, see \href{https://en.wikipedia.org/wiki/Multivariate_normal_distribution\#Conditional_distributions}{here}.
 \begin{enumerate}
     \item Implement a linear Gaussian conditional sampler. %For conditional SAGE values the sampler must be able to learn Gaussian conditionals with multivariate conditioning set and multivariate target, whereas f
-    For conditional feature importance the sampler must be able to learn Gaussian conditionals with multivariate conditioning set and univariate target.\\ \textit{Advice:} For multivariate Gaussian data, the conditional distributions can be derived analytically from mean vector and covariance matrix, see \href{https://en.wikipedia.org/wiki/Multivariate_normal_distribution\#Conditional_distributions}{here}.
+    For conditional feature importance, the sampler must be able to learn conditional multivariate Gaussian distributions with at least multivariate conditioning feature set and univariate target.
     \begin{enumerate}
-        \item Given the decomposition of the covariance matrix as 
+        \item Given a decomposition of the multivariate covariance matrix as 
         \begin{equation}
             \boldsymbol\Sigma
                 =
@@ -16,7 +22,7 @@
             \end{bmatrix}
             \text{ with sizes }\begin{bmatrix} q \times q & q \times (N-q) \\ (N-q) \times q & (N-q) \times (N-q) \end{bmatrix},
         \end{equation}
-        the distribution of $X_1$ conditional on $X_2=a$ is the multivariate normal $\mathcal{N}(\bar{\boldsymbol{\mu}}, \overline{\boldsymbol{\Sigma}})$
+        then the distribution of the first $q$ features, $X_1$, conditional on the last $N-q$ features, $X_2=a$, is the multivariate normal distribution $\mathcal{N}(\bar{\boldsymbol{\mu}}, \overline{\boldsymbol{\Sigma}})$ with
         \begin{equation}
             \bar{\boldsymbol\mu}
             =
@@ -28,11 +34,16 @@
         \begin{equation}
             \overline{\boldsymbol\Sigma} = \boldsymbol\Sigma_{11} - \boldsymbol\Sigma_{12} \boldsymbol\Sigma_{22}^{-1} \boldsymbol\Sigma_{21}.
         \end{equation}
-        As the target here is univariate $q=1$ holds. Learn a function that returns the conditional mean and covariance structure given specific values for the conditioning set.
-        \item Then write a function that takes the conditional mean and covariate structure and allows to sample from the respective (multivariate) Gaussian.
+        In our case, we assume that $X_1$ is univariate, in other words $q=1$ holds.
+        % As the target here is univariate $q=1$ holds.
+        % Learn a function that returns the conditional mean and covariance structure given specific values for the conditioning set.
+        Write a function that, given specific values for the features conditioned on, computes this conditional mean and covariance structure $\mathcal{N}(\bar{\boldsymbol{\mu}}, \overline{\boldsymbol{\Sigma}})$, by first fitting a multivariate normal distribution to a given dataset (point cloud), and then using the specific values given for calculating the conditional distribution.
+        \item Then write a function that takes the conditional mean and covariance structure and allows to sample from the respective (multivariate) Gaussian.
     \end{enumerate}
-    \item Using your sampler, write a function that computes CFI. You may assume that the data is multivariate Gaussian.
-    \item Apply CFI to the dataset and model from Exercise \ref{ex:pfi}. Interpret the result: which insights into model and data are possible? Compare the result with PFI.
+    \item Using your sampler, write a function that computes CFI.
+    % You may assume that the data is multivariate Gaussian.
+    You can reuse the functions you have written in Exercise~\ref{ex:pfi}.
+    \item Apply CFI to the dataset and model from Exercise~\ref{ex:pfi}. Interpret the results: What insights into model and data are possible? Compare the results with those from PFI.
     %\item Write a function that computes conditional SAGE value functions $v_{\fh}(S)$.
     %\item Apply the conditional SAGE value function with respect to an empty coalition and with respect to all remaining variables to the dataset and model from Exercise \ref{ex:pfi}. Interpret the result (insights into model and data) and compare it to CFI and PFI.
 \end{enumerate}
