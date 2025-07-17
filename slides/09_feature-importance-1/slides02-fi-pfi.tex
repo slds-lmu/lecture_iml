@@ -71,7 +71,7 @@
   %\item \textbf{Solution:} \textbf{Perturb $X_S$} by replacing $x_S$ with a \textbf{random permutation} $\tilde{x}_S$\\
 %$\leadsto$ Breaks dependence with $y$, preserves marginal $\mathbb{P}(X_S)$
   \item<3-> 
-\textbf{Solution:} Simulate feature removal by replacing $X_S$ with a perturbed version $\tilde{X}_S$ that is independent of $(X_{-S}, Y)$ but preserves $\mathbb{P}(X_S)$\\
+\textbf{Solution:} Simulate feature removal by replacing $X_S$ with a perturbed version $\tilde{X}_S$ that is independent of $(X_{-S}, Y)$ but preserves distribution $\mathbb{P}(X_S)$\\
   $\leadsto$ Compare {\color{blue}baseline predictions $\fh(X)$} with {\color{red}perturbed predictions $\fh(\tilde{X}_S, X_{-S})$}
   
   
@@ -143,7 +143,7 @@ $$
 \centering 
 \includegraphics[width=0.9\textwidth]{figure_man/permuted-fv.pdf}\\
 {\scriptsize
-Note: $S$ refers to a subset of features, here $|S|=1$ to measure impact of permuting $x_S$ on performance
+Note: $S$ refers to a subset of features, here $|S|=1$ to measure impact of permuting $x_1$ on performance
 %$S$ refers to a subset of features (here: $|S|=1$). We assess the impact of permuting $x_S$ on model performance.
 }
 \end{frame}
@@ -362,7 +362,7 @@ PFI scores (right).
 \pause
 
 \begin{itemize}
-  \item[$\Rightarrow$] $x_1, x_2$ cancel in $\hat{f}$ since $0.3 x_1 - 0.3 x_2 \approx 0$ and $x_1 \approx x_2$ $\leadsto$ should be irrelevant
+  \item[$\Rightarrow$] $x_1, x_2$ cancel in $\hat{f}$ since $x_1 \approx x_2$, hence $0.3 x_1 - 0.3 x_2 \approx 0$ $\leadsto$ should be irrelevant
   \item[$\Rightarrow$] Permuting $x_1$ breaks joint structure $\leadsto$ unrealistic inputs
   \item[$\Rightarrow$] $PFI > 0$ due to extrapolation (PFI evaluates model on unrealistic inputs)\\ $\leadsto$ $x_1, x_2$ are misleadingly considered relevant
 \end{itemize}
