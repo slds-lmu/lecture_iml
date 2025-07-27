@@ -1,8 +1,11 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
 \input{../../style/common.tex}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -11,23 +14,28 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/feature-effect}
-\newcommand{\learninggoals}{
+\titlemeta{
+Feature Effects
+}{
+Individual Conditional Expectation (ICE) Plot % we have an isolated word here, not sure how to fix 
+}{
+figure/feature-effect
+}{
+
 %\item Intro to feature effects
 \item ICE curves as local effect method
 \item How to sample grid points for ICE curves
 %\item Understand how to interpret ICE curves and PD plots
+
 }
 
-\lecturechapter{Individual Conditional Expectation (ICE) Plot}
-\lecture{Interpretable Machine Learning}
 
 
 \begin{frame}{Motivation}
 %ICE curves show how different feature values of an observation affect its model prediction \newline $\Rightarrow$ \textbf{local interpretation method}
 %From a local perspective, one might be interested in how changing feature values of an observation affect model prediction
 
-\textbf{Question:} How does varying a single feature of an obs. affect its predicted outcome?
+\textbf{Question:} How does varying a single feature of an observation affect its predicted outcome?
 
 \smallskip
 
@@ -47,7 +55,7 @@
 
 
 
-\begin{frame}[c]{Individual Conditional Expectation (ICE) \citebutton{Goldstein et. al (2013)}{https://doi.org/10.1080/10618600.2014.907095}}
+\begin{frame}[c]{Individual Conditional Expectation (ICE) \furtherreading{Goldstein_2013}}
 
 %Consider an index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
 %\lz
@@ -168,7 +176,7 @@ Formal definition of ICE curves:
 \end{itemize}
 %h observation with these sampled grid values.
 %$\Rightarrow$ New artificial data points for $i$-th obs.
-$\Rightarrow$ Creates new artificial points for $i$-th observation (here: $\xv_S^* = x_1^* \in \{1, 2, 3\}$ scalar)
+$\Rightarrow$ Creates new artificial points for $i$-th obs. (here: $\xv_S^* = x_1^* \in \{1, 2, 3\}$ scalar)
 
 \end{frame}
 
@@ -273,7 +281,7 @@ $$\fhice{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2,
 
 \textbf{3. Step - Repeat for other observations:}
 
-ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid values associated to $i$-th obs.
+ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid values associated to the $i$-th observation.
 \end{frame}
 
 % \begin{frame}{ICE Curves - Illustration}
@@ -314,7 +322,7 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
 \begin{frame}{Comments on Grid values}
 \begin{itemize}
 %\item ICE curves show how different feature values of an observation affect its prediction \newline $\Rightarrow$ \textbf{local interpretation method}
-\item Plotting ICE curves involves generating grid values $\xv_S^*$; visualized on x-axis
+\item Plotting ICE curves involves generating grid values $\xv_S^*$; shown on x-axis
 \item \textbf{Three common strategies} for grid definition:
 \begin{itemize}
 \item Equidistant grid values within feature range
@@ -346,8 +354,9 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
 % bike sharing example + defaults
 \begin{frame}{Practical considerations}
 
-\begin{itemize}
-  \item \textbf{Grid resolution} (instances $\times$ grid over feature of interest)
+% \begin{itemize} % removes in order to fix hanging words
+  % \item 
+  \textbf{Grid resolution} (instances $\times$ grid over feature of interest)
         \begin{itemize}
             \item Too coarse $\Rightarrow$ may miss sharp nonlinearities or discontinuities
             %may miss sharp changes%
@@ -355,14 +364,15 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
             %time intensive%
             \item Fix: cap at $\approx 50 - 100$ grid points; vectorize predictions by feeding the model a single data frame containing all grid-modified instances
         \end{itemize}
-  \item \textbf{ICE curves} (number of instances/curves visualized)
+  % \item 
+  \textbf{ICE curves} (number of instances/curves visualized)
         \begin{itemize}
-            \item Too few $\Rightarrow$ hides variability across instances, misses subgroup differences
+            \item Too few $\Rightarrow$ hides instance variability, misses subgroup differences
             %heterogeneity is hidden%
             \item Too many $\Rightarrow$ visual overload (many overlapping curves), time intensive%
             \item Fix: Stratified or cluster-based subsample (e.g., 100); facet by subgroup
         \end{itemize}
-\end{itemize}
+% \end{itemize}
 
 \begin{columns}[T, onlytextwidth]
 \begin{column}{0.5\textwidth}

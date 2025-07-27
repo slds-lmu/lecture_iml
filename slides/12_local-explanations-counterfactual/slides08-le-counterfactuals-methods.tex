@@ -1,6 +1,8 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -22,13 +24,17 @@
 	
 	% Defines macros and environments
 	
-	\newcommand{\titlefigure}{figure/counterfactuals_heat.png}
-    \newcommand{\learninggoals}{
-    	\item See two strategies to generate CEs
-    	\item Know problems and limitations of CEs}
-	
-	\lecturechapter{Methods \& Discussion of CEs}
-	\lecture{Interpretable Machine Learning}
+\titlemeta{
+Counterfactual Explanations (CEs)
+}{
+Methods \& Discussion
+}{
+figure/counterfactuals_heat.png
+}{
+\item See two strategies to generate CEs
+\item Know problems and limitations of CEs
+}
+
 	
 	% ------------------------------------------------------------------------------
 
@@ -40,13 +46,13 @@ Many methods exist to generate counterfactuals, they mainly differ in:
 		  \item \textbf{Target:} Most support classification; few extend to regression\\
   $\leadsto$ Recent work extends CEs to other ML tasks (un-, semi-, self-supervised)
  \item \textbf{Data type:} Focus is on tabular data; little work on text, vision, audio
-		\item \textbf{Feature space:}  Some handle only numerical features; few support mixed types
+		\item \textbf{Feature space:} Some handle only numerical features; few support mixed data types
         %Some methods can only handle numerical features, few can process mixed (numerical and discrete) feature spaces
 		\item \textbf{Objectives:} 
         From core goals like sparsity and plausibility to emerging aims such as fairness, personalization, and robustness
         %Many methods focus on action guidance, plausibility and sparsity, few on other objectives like fairness or individual preferences
 		\item \textbf{Model access:} 
-        Methods range from model-specific (requiring model internals or access to gradients) to model-agnostic (using only prediction functions)
+        Methods range from model-specific (requiring access to model internals/gradients) to model-agnostic (using only prediction funcs)
         %Methods either require access to complete model internals, access to gradients, or only to prediction functions \\
         %$\leadsto$ Model-agnostic and model-specific methods exist
 		 \item \textbf{Optimization:} 
@@ -57,7 +63,7 @@ Many methods exist to generate counterfactuals, they mainly differ in:
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{First Optimization-based CE Method \citebutton{Wachter et. al (2018)}{http://dx.doi.org/10.2139/ssrn.3063289}}
+\begin{frame}{First Optimization-based CE Method \furtherreading{Wachter_2018}}
 Introduced CEs in context of ML predictions by solving
 		$$
 			\argmin_{\xv'} \max_{\lambda} \lambda \underbrace{(\fh(\xv') - y')^2}_{o_{target}(\fh(\xv'), y')} + \underbrace{\sum\nolimits_{j = 1}^p \frac{|x'_j - x_j|}{MAD_j}}_{o_{proximity}(\xv', \xv)}
@@ -65,7 +71,7 @@ Introduced CEs in context of ML predictions by solving
 		$$
 \begin{itemize}
 \item $o_{target}$ ensures prediction flips to $y'$ (by increasing weight $\lambda$)
-\item $o_{proximity}$ penalizes deviations from $\xv$, rescaled by median absolute deviation: $MAD_j = \text{med}_{i \in \{1, \dots, n\}} ( | x^{(i)}_j - \text{med}_{k\in \{1, \dots, n\}} (x^{(k)}_j) | )$)
+\item $o_{proximity}$ penalizes deviations from $\xv$, rescaled by median abs. deviation: $MAD_j = \text{med}_{i \in \{1, \dots, n\}} ( | x^{(i)}_j - \text{med}_{k\in \{1, \dots, n\}} (x^{(k)}_j) | )$)
 %\(L_{1}\)-distance rescaled by \(MAD_{j}\) to encourage sparse, human-interpretable edits.
   %\item $MAD_j = \text{med}_{i \in \{1, \dots, n\}} \left( | x^{(i)}_j - \text{med}_{k\in \{1, \dots, n\}} (x^{(k)}_j) | \right)$: Median abs. deviation $x_j$
   %\item Optimization alternates: Nelder-Mead minimizes over $\xv'$, then $\lambda$ is increased iteratively until a sufficiently close solution is found
@@ -82,7 +88,7 @@ Introduced CEs in context of ML predictions by solving
   \item If prediction constraint not satisfied (\(\hat{f}(\mathbf{x}') \ne y'\)), increase \(\lambda\) and repeat
   \\
   $\leadsto$ \(\lambda\) serves as soft constraint, gradually enforcing prediction validity \(\hat{f}(\mathbf{x}') = y'\)
-  \item Iteratively shift focus: first achieve prediction validity, then minimize proximity%distance $o_{proximity}$
+  \item Iteratively shift focus: 1. achieve prediction validity, 2. minimize proximity%distance $o_{proximity}$
   %\item \textbf{Intuition:} \(\lambda\) acts as a soft constraint enforcer
 \end{itemize}
 
@@ -115,7 +121,7 @@ Introduced CEs in context of ML predictions by solving
 \begin{itemize}
   \item \textbf{Manual tuning:} No principled way to set \(\lambda\); requires iterative increase
   \item \textbf{Asymmetric focus:} Early iterations dominated by minimizing target loss
-  \item \textbf{Limited feature support:} Proximity term defined only for numerical features
+  \item \textbf{Limited feature support:} Proximity term defined only for numerical feats
   \item \textbf{No additional objectives:} Ignores sparsity, plausibility, fairness, diversity
   \item \textbf{Single solution:} Returns one CE; no support for diverse or ranked CEs
 \end{itemize}
@@ -127,15 +133,15 @@ Introduced CEs in context of ML predictions by solving
 
 
 
-\begin{frame}{Multi-Objective CE \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
+\begin{frame}{Multi-Objective CE \furtherreading{Dandl_2020}}
 	\begin{itemize}
-		\item \textbf{Multi-Objective Counterfactual Explanations (MOC):} Instead of collapsing objectives into a single objective, optimize all four objectives simultaneously
+		\item \textbf{Multi-Objective Counterfactual Explanations (MOC):} Instead of collapsing objectives into a single obj., optimize all 4 obj. simultaneously
 	$$	\argmin_{\xv'} \left(o_{target}(\fh(\xv'), y'), o_{proximity}(\xv', \xv), o_{sparse}(\xv', \xv), o_{plausible}(\xv', \Xmat) \right). $$
 		
 		\item Avoids using/tuning of weights (e.g., \(\lambda\)); returns Pareto-optimal set
         %Note: Weighting parameters like $\lambda$ not necessary anymore
 		%\item This approach is called Multi-Objective Counterfactual Explanations (MOC) and was developed by Dandl et al. in 2020. 
-		\item Uses an adjusted multi-objective genetic algorithm (NSGA-II) for mixed features %ture types (numeric/categorical)
+		\item Uses an adjusted multi-objective genetic algo. (NSGA-II) for mixed feats %ture types (numeric/categorical)
         %Uses an adjusted multi-objective genetic algorithm (NSGA-II) to produce a set of diverse CEs for mixed discrete and continuous feature spaces
 		\item Outputs diverse CEs representing different trade-offs between objectives
         %Instead of one, MOC returns multiple CEs that represent different trade-offs between the objectives and are constructed to be diverse in feature space
@@ -155,7 +161,7 @@ Introduced CEs in context of ML predictions by solving
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Example: Credit Data \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
+\begin{frame}{Example: Credit Data \furtherreading{Dandl_2020}}
 \begin{itemize}
 	\item<1-> Feature changes can be visualized using parallel and 2D surface plots
     %We can visualize feature changes with a parallel plot and 2-dim surface plot
@@ -247,7 +253,7 @@ Introduced CEs in context of ML predictions by solving
 
     %\item \textbf{Confusing Model and Real-World:} Explanations of the model do not easily transfer to the process in which a model is applied. This information should be conveyed to the end-user.
     \item \textbf{Confusing Model and Real-World:} Model explanations are not easily transferable to reality\\
-    $\leadsto$ End-users must know that CEs provide insights into a model, not real world %models are only approximations %This information should be conveyed to the end-user
+    $\leadsto$ End-users must know that CEs explain the model, not the real world %models are only approximations %This information should be conveyed to the end-user
     \item \textbf{Disclosing too much information:} 
     CEs can reveal too much information about the model and help potential attackers
     \end{itemize}
@@ -260,11 +266,11 @@ Introduced CEs in context of ML predictions by solving
     %No perfect answer, depends on end-users, computational resources, and knowledge
     % \item \textbf{Actionability vs. fairness:} Some authors suggest to focus only on the actionability of CEs\\
     % $\leadsto$ Counteract contestability, e.g., if ethnicity is not changed in a CE since it is not actionable, this could hide racial biases in the model
-    \item \textbf{Actionability vs. fairness:} Focus on actionable changes hinder contestability\\
+    \item \textbf{Actionability vs. fairness:} Focusing on actionable changes may \\hinder contestability\\
 $\leadsto$ E.g., if ethnicity is not changed in a CE since it is not actionable, this could hide racial biases in the model
 
     \item \textbf{Assumption of constant model:} To provide guidance for the future, CEs assume that their underlying model does not change in the future\\
-    $\leadsto$ in reality this assumption is often violated and CEs are not reliable anymore 
+    $\leadsto$ in reality this assumption is often violated making CEs unreliable 
     \item \textbf{Attacking CEs:} Researchers can create models with great performance, which generate arbitrary explanations specified by the ML developer\\
     $\leadsto$ how faithful are CEs to the models underlying mechanism?
 \end{itemize}

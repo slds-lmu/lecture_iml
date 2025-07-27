@@ -1,6 +1,8 @@
 \documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table, usenames,dvipsnames]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -22,13 +24,18 @@
 
 % Defines macros and environments
 
- \newcommand{\titlefigure}{figure/counterfactuals_obj}
-\newcommand{\learninggoals}{
-\item Understand the motivation behind CEs
-\item See the mathematical foundation of CEs}
+ \titlemeta{
+PLACEHOLDER
+}{
+Counterfactual Explanations
+}{
+figure/counterfactuals_obj
+}{
 
-\lecturechapter{Counterfactual Explanations}
-\lecture{Interpretable Machine Learning}
+\item Understand the motivation behind CEs
+\item See the mathematical foundation of CEs
+}
+
 
 % ------------------------------------------------------------------------------
 
@@ -88,7 +95,7 @@
 %Interestingly, counterfactuals have a long-standing tradition in philosophy and, in fact the IML discussion of CEs is based on the work of Lewis (1973).
 Counterfactuals have a long-standing tradition in analytic philosophy\\
 $\leadsto$ %and, in fact the IML discussion of CEs is based on the work of Lewis (1973).
-Accoding to \citebutton{Lewis (1973)}{https://doi.org/10.2307/2273738}, a \textbf{counterfactual conditional} is a statement of the form:
+Accoding to \furtherreading{Lewis_1973}, a \textbf{counterfactual conditional} is a statement of the form:
 
 \begin{center}
 ``If $S$ was the case, $Q$ would have been the case."
@@ -155,7 +162,7 @@ $$\argmin_{\xv'} \lambda_1 o_p(\fh(\xv'), y') + \lambda_2 o_f(\xv', \xv)$$
 \end{frame}
 
 
-\begin{frame}{Mathematical Perspective \citebutton{Dandl et al. (2020)}{https://arxiv.org/abs/2004.11165}}
+\begin{frame}{Mathematical Perspective \furtherreading{Dandl_2020}}
 	
 	\begin{itemize}
 		\item Regression: $o_p$ could be the L$_1$-distance $o_p(\fh(\xv'), y') = |\fh(\xv')-y'|$
@@ -218,7 +225,7 @@ $$\argmin_{\xv'} \lambda_1 o_p(\fh(\xv'), y') + \lambda_2 o_f(\xv', \xv)$$
 	\end{column}
 	\begin{column}{0.6\textwidth}
 
-\textbf{Example from \citebutton{Verma et al. (2020)}{https://arxiv.org/abs/2010.10596}} 
+\textbf{Example from \furtherreading{Verma_2020}} 
 \begin{itemize}
     \item Two possible paths for \textcolor{blue}{$\xv$},			originally classified to $\pmb{\circleddash}$
     \item Two valid CEs in class $\pmb\oplus$: {\color{Red} CF1} and {\color{Green} CF2}
@@ -294,7 +301,7 @@ $\leadsto$ Transfer of model explanations to explain real-world is generally not
 	%properties 
 	might have changed\\
 	$\leadsto$ not only age, also other causally dependent features e.g. job status might have changed \\%after 5 years% since they are causally dependent on age like income or the job status
-	$\leadsto$ \citebutton{Karimi et al. (2020)}{https://arxiv.org/abs/2002.06278} avoid this by considering causal dependencies between features
+	$\leadsto$ \furtherreading{Karimi_2020} avoid this by considering causal dependencies between features
 	\item Also, the bank's algorithm might change and previous CEs are not applicable anymore
 	%\item Even worse, the user might have typos in the application and in fact no changes are necessary to obtain the loan.
 %		\item Actionability: We could further strengthen above's plausibility criterion by requiring counterfactuals that do not change immutable features (e.g., race, city of birth, sex). Therefore, we could  search for counterfactuals only among a defined feasible set of counterfactuals $\mathcal{A}$.

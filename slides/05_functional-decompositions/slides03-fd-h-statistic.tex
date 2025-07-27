@@ -1,6 +1,8 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -11,19 +13,24 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/h-statistic}
-\newcommand{\learninggoals}{
+\titlemeta{
+Functional Decompositions
+}{
+Friedman's H-Statistic
+}{
+figure/h-statistic
+}{
+
 \item Friedman's H-statistic with two purposes:
 \item Measure general $k$-way interactions between arbitrary features
 \item Measure a single feature's overall interaction strength
+
 }
 
-\lecturechapter{Friedman's H-Statistic}
-\lecture{Interpretable Machine Learning}
 
 
 
-\begin{frame}{Idea \citebutton{Friedman and Popescu (2008)}{https://doi.org/10.1214/07-AOAS148}}
+\begin{frame}{Idea \furtherreading{Popescu_2008}}
 
     \textbf{2-way interaction:}
     \begin{itemize}[<+->]
@@ -50,7 +57,7 @@
             = \fh^c_{j, PD}(x_j) + \fh^c_{k, PD}(x_k)
         \end{align*}
         \item This means: There are interactions \\
-        $\Leftrightarrow$ Every possible decomposition must contain some non-zero term $g_{\{j,k\}}(x_j, x_k)$
+        $\Leftrightarrow$ Every possible decomp. must contain some non 0 term $g_{\{j,k\}}(x_j, x_k)$
         \item Again: remember GAMs
     \end{itemize}
     
@@ -65,7 +72,7 @@
 
 
 
-\begin{frame}{Idea \citebutton{Friedman and Popescu (2008)}{https://doi.org/10.1214/07-AOAS148}}
+\begin{frame}{Idea \furtherreading{Popescu_2008}}
 
 \textbf{3-way interaction:}
 \begin{itemize}[<+->]
@@ -94,11 +101,11 @@
 
 
 
-\begin{frame}{Idea \citebutton{Friedman and Popescu (2008)}{https://doi.org/10.1214/07-AOAS148}}
+\begin{frame}{Idea \furtherreading{Popescu_2008}}
 
 \textbf{$k$-way interaction:}
 \begin{itemize}
-    \item \textbf{Analogous} for general $k$-way interactions between features $S = \{ i_1, i_2, \dots, i_k \}$: No $k$-way interaction, if
+    \item \textbf{Analogous} for $k$-way interactions between feat $S = \{ i_1, i_2, \dots, i_k \}$: No $k$-way interaction, if
     \begin{align*}
         &\fh_{S, PD}( x_{i_1}, x_{i_2}, \dots, x_{i_k} )
         = \sum_{V \subsetneqq S} g_{V}(\xv_V)
@@ -157,7 +164,7 @@
     $H^2_{jk}$ measures strength of this interaction quantitatively \\
     % The smaller the values of $H^2_{jk}$, the weaker the interaction between $x_j$ and $x_k$.
     $H^2_{jk}$ small (close to 0) for weak interaction, close to 1 for strong interaction
-    \item \textbf{Note:} Again, definition also usable without any probabilities or data distribution
+    \item \textbf{Note:} Again, definition also usable without probabilities or data distrib.
 \end{itemize}
 
 % \textbf{Note}: The numerator is $0$ if the two features $x_j$ and $x_k$ do not interact, i.e., $\fh_{jk, PD}(x_j, x_k) - \fh_{j, PD}(x_j) - \fh_{k, PD}(x_k) = 0$.
@@ -233,7 +240,7 @@
 \begin{frame}{Overall Interaction Strength}
 
 \begin{itemize}
-    \item Measure overall strength of interactions between feature $j$ and all other features
+    \item Measure overall strength of interactions between feat $j$ and all other feats
     \item[$\Rightarrow$] \textbf{H-statistic} analogous to 2-way interaction:
     \begin{align*}
         H^2_{j}

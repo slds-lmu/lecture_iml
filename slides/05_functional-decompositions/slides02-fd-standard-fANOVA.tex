@@ -1,10 +1,15 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
 \newcommand{\open}{}
 \newcommand{\close}{}
+
+\newcommand{\predvar}{Var\left[\hat{f}(\xv)\right]}
+
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -13,15 +18,20 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/25-05-31_Hooker_2004_graph_fANOVA}
-\newcommand{\learninggoals}{
+\titlemeta{
+Functional Decompositions
+}{
+Functional ANOVA
+}{
+figure/25-05-31_Hooker_2004_graph_fANOVA
+}{
+
 \item One method for functional decomposition: Classical functional ANOVA (fANOVA)
 \item Algorithm for calculating the components in a fANOVA
 \item Variance decomposition in fANOVA
+
 }
 
-\lecturechapter{Functional ANOVA}
-\lecture{Interpretable Machine Learning}
 
 \begin{frame}{Introduction and History of fANOVA}
 
@@ -57,7 +67,7 @@
         % \item \textbf{Question:} How to compute lower-order terms? \\
         % \(\leadsto\) First step: Use feature effect methods for main effects, here: PDP
         \pause
-        \item \textbf{Second idea:} In first step, compute main effects using feature effect methods \\
+        \item \textbf{Second idea:} In 1st step, compute main effects using feat effect methods \\
         Here: PDP + more general PD-functions
         \pause
         \item \textbf{Idea for fANOVA:} PD-function $\fh_{S;PD} =$ sum of all components $g_{\tilde{S}}$ up to this order
@@ -88,7 +98,7 @@
 \end{frame}
 
 \begin{frame}{Formal Definition and Computation
-\citebutton{Hooker (2004)}{https://dl.acm.org/doi/10.1145/1014052.1014122}
+\furtherreading{Hooker_2004}
 }
 
 % Components are recursively defined using marginals (here $-S = \{1, \ldots, p \} \setminus S$ denotes the set of all indizes not contained in \(S\)):
@@ -114,7 +124,7 @@
 \end{frame}
 
 \begin{frame}{Formal Definition and Computation
-\citebutton{Hooker (2004)}{https://dl.acm.org/doi/10.1145/1014052.1014122}
+\furtherreading{Hooker_2004}
 }
 
 % Components are recursively defined using marginals (here $-S = \{1, \ldots, p \} \setminus S$ denotes the set of all indizes not contained in \(S\)):
@@ -305,7 +315,7 @@ Estimation of a single PD-function: \textbf{Sampling}
 }
 
 \begin{itemize}[<+->]
-\item Decomposition of $\fh(\xv)$ allows for ``functional analysis of variance'' (fANOVA)
+\item Decomp. of $\fh(\xv)$ allows for ``functional analysis of variance'' (fANOVA)
 %$$ \var\left[\hat{f}(\xv)\right] = \var\left[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \right]$$
 % \begin{align*}
 % \var\left[\hat{f}(\xv)\right] &= \var\left[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + g_{\open 2 \close}(x_2) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) \right. \\

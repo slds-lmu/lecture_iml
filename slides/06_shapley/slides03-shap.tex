@@ -1,8 +1,14 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 \newcommand{\btVFill}{\vskip0pt plus 1filll}
 \newcommand\hmmax{0}
 \newcommand\bmmax{0}
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-interpretable}
+
+\usetikzlibrary{tikzmark, shapes,arrows,automata,positioning,calc,chains,trees,  shadows, decorations.pathreplacing}
+
 \usepackage{siunitx}
 % Defines macros and environments
 \input{../../style/common.tex}
@@ -15,8 +21,14 @@
 \begin{document}
 
 % TODO
-\newcommand{\titlefigure}{figure_man/exSHAP.png}
-\newcommand{\learninggoals}{
+\titlemeta{
+Shapley
+}{
+SHAP (SHapley Additive exPlanation)
+}{
+figure_man/exSHAP.png
+}{
+
   \item Recall order- and set-based definitions of Shapley values in ML
   \item Interpret predictions via additive Shapley decomposition
   \item Understand SHAP as surrogate-based model
@@ -28,10 +40,9 @@
 % \item Understand the concept of Kernel SHAP
 % \item Ability to interpret SHAP plots
 % \item Global SHAP methods
-% }
+% 
+}
 
-\lecturechapter{SHAP (SHapley Additive exPlanation) Values}
-\lecture{Interpretable Machine Learning}
 
 % \begin{frame}{Shapley Values in ML - A short Recap}
   
@@ -92,7 +103,7 @@
 %\textbf{Procedure:}
 \begin{itemize}
   \item For each permutation $\tau$, determine coalition $\Stau$: features before $j$ in $\tau$
-  \item In \(\fh_S\), features not in \(S\) are marginalized (e.g., replaced by random imputations)
+  \item In \(\fh_S\), features not in \(S\) are marginalized (e.g., randomly imputed)
   %$\leadsto$ In practice, features not in \(S\) are 
   \item Compute marginal contribution of adding $j$ to $\Stau$ via the difference above
   \item Average over all $p!$ permutations (in practice, over $M << p!$)
@@ -262,7 +273,7 @@ $\Rightarrow$ Analogously $\phi_{\text{temp}}(\xv) = -1654$, $\phi_{\text{ws}}(\
 % \medskip
 \textbf{Shapley value interpretation (for $\xv$):}
 \begin{itemize}
-  \item \texttt{hum} \(\;(+34)\) pushes prediction \emph{above} baseline (= average prediction).  
+  \item \texttt{hum}\(\;(+34)\) pushes pred. \emph{above} baseline (= average prediction).  
   \item \texttt{temp} \(\;(-1654)\) and \texttt{ws} \(\;(-322)\) pull prediction \emph{below} baseline.
   \item Together, they explain full deviation from average prediction.
 \end{itemize}
@@ -304,7 +315,7 @@ $}
 $}
 \medskip
 
-\(\leadsto\) Like a LM evaluated at \(\xv\): global intercept \(\phi_0\) plus per-feature contributions \(\phi_j(\xv)\).
+\(\leadsto\) Like a LM evaluated at \(\xv\): global intercept \(\phi_0\) plus per-feature contribs \(\phi_j(\xv)\).
 
 \medskip
 %\vspace{0.4em}
@@ -324,7 +335,7 @@ $}
 %\(\leadsto\) Like a linear model evaluated at \(\xv\): global intercept \(\phi_0\) plus instance-specific feature contributions \(\phi_j(\xv)\).
 
 \textbf{SHAP Motivation:}
-Can we efficiently estimate this Shapley-based additive decomposition of $\fh(\xv)$ using a surrogate model (while preserving Shapley axioms)?
+Can we efficiently estimate this Shapley-based additive decomp. of $\fh(\xv)$ via a surrogate model (while preserving Shapley axioms)?
 
 %Additive explanation model: intercept $\phi_0$ plus per-feature effects $\phi_j$ (analogous to a linear model)
 %Reminds of linear models: $\phi_j$ as effect of feature $j$ and intercept $\phi_0$ 
@@ -359,7 +370,7 @@ Can we efficiently estimate this Shapley-based additive decomposition of $\fh(\x
 % % \end{frame}
 % 
 % 
-% \begin{frame}{SHAP Definition \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
+% \begin{frame}{SHAP Definition \furtherreading{Lundberg_2017}}
 % \textbf{Aim}: 
 % %Find an additive combination that explains the prediction of an observation $\xv$ by computing the contribution of each feature to the prediction using a (more efficient) estimation procedure. \\\medskip
 % Explain a prediction $\fh(\xv)$ by decomposing it into additive contributions from individual features using a surrogate model and efficient Shapley estimation.
@@ -463,18 +474,18 @@ Can we efficiently estimate this Shapley-based additive decomposition of $\fh(\x
 % 
 % \end{frame}
 
-\begin{frame}{SHAP Framework \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
+\begin{frame}{SHAP Framework \furtherreading{Lundberg_2017}}
 
-\textbf{SHAP} expresses the prediction of $\xv$ as a sum of contributions from each feature:
+\textbf{SHAP} expresses the prediction of $\xv$ as a sum of contribs from each feature:
 
 \[
 g(\zv') = \phi_0 + \textstyle\sum_{j=1}^p \phi_j z'_j
 \]
 
 \begin{itemize}
-  \item $\zv' \in \{0,1\}^p$: simplified binary input referring to a coalition (coalition vector)
+  \item $\zv' \in \{0,1\}^p$: simplified binary input referring to a coalition (coal. vector)
   \item \(z'_j = 1\): feature $j$ is "present" $\Rightarrow$ use $x_j$ in model evaluation
-  \item \(z'_j = 0\): feature $j$ is "absent"\\$\Rightarrow$ influence of $x_j$ is removed via marginalization over a reference distribution% (averaging predictions over its possible values, given the present features)%\\
+  \item \(z'_j = 0\): feature $j$ is "absent"\\$\Rightarrow$ influence of $x_j$ is removed via marginalization over a reference distrib.% (averaging predictions over its possible values, given the present features)%\\
   %$\leadsto$ \textit{Note: In practice (e.g., KernelSHAP), marginalization is approximated via random imputations from background data.}
 \end{itemize}
 
@@ -495,7 +506,7 @@ g(\zv') = \phi_0 + \textstyle\sum_{j=1}^p \phi_j z'_j
 \end{frame}
 
 
-% \begin{frame}{SHAP Framework \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
+% \begin{frame}{SHAP Framework \furtherreading{Lundberg_2017}}
 
 % \textbf{SHAP} expresses the prediction of $\xv$ as a sum of contributions from each feature:
 
@@ -520,7 +531,7 @@ g(\zv') = \phi_0 + \textstyle\sum_{j=1}^p \phi_j z'_j
 % \end{frame}
 
 
-% \begin{frame}{SHAP Framework \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
+% \begin{frame}{SHAP Framework \furtherreading{Lundberg_2017}}
 
 % \textbf{SHAP} defines a surrogate \(g(\zv')\) over binary vectors \(\zv' \in \{0,1\}^p\) (simplified features):
 
@@ -549,14 +560,14 @@ g(\zv') = \phi_0 + \textstyle\sum_{j=1}^p \phi_j z'_j
 
 %  \end{frame}
 
-\begin{frame}{SHAP Framework \citebutton{Lundberg et al. 2017}{https://doi.org/10.48550/arXiv.1705.07874}}
+\begin{frame}{SHAP Framework \furtherreading{Lundberg_2017}}
 
 %\textbf{Goal:} Explain a prediction \(\fh(\xv)\) by decomposing it into additive feature contributions using a local surrogate model derived from Shapley values.
 
 \medskip
 
 \textbf{SHAP}  
-defines an additive surrogate \(g(\zv')\) over a binary simplified input \(\zv' \in \{0,1\}^p\):
+defines an additive surrogate \(g(\zv')\) over a binary input \(\zv' \in \{0,1\}^p\):
 % \only<1>{
 % \[
 % g(\zv') = \phi_0 + \sum_{j=1}^p \phi_j z'_j
@@ -670,8 +681,8 @@ $$
 $$
 
 \begin{onlyenv}<1>
-\textbf{Intuition:} If the coalition includes all features ($\mathbf{z}^{\prime} = (z^{\prime}_1, \dots, z^{\prime}_p)^\top = (1, \dots, 1)^\top $), the attributions $\phi_j$ and the baseline $\phi_0$ sum up to the original model output $\fh(\xv)$\\\medskip
-Local accuracy corresponds to the \textbf{axiom of efficiency} in Shapley game theory
+\textbf{Intuition:} If coalition includes all features ($\mathbf{z}^{\prime} = (z^{\prime}_1, \dots, z^{\prime}_p)^\top = (1, \dots, 1)^\top $), the attributions $\phi_j$ and the baseline $\phi_0$ sum up to the original model output $\fh(\xv)$\\\medskip
+Local accuracy corresponds to \textbf{axiom of efficiency} in Shapley game theory
 
 \end{onlyenv}
 
@@ -683,7 +694,7 @@ $$
 \end{onlyenv}
 
 \begin{onlyenv}<2>
-\textbf{Intuition:}  A "missing" feature (whose value is imputed) gets an attribution of zero
+\textbf{Intuition:}  A "missing" feature (whose value is imputed) gets zero attribution 
 \end{onlyenv}
 
 \begin{onlyenv}<3->
@@ -698,7 +709,7 @@ $$
 $$
 
 \textbf{Intution:} If a model changes so that the marginal contribution of a feature value increases or stays the same, the Shapley value also increases or stays the same\\\medskip
-From \textbf{consistency} the Shapley \textbf{axioms of additivity, dummy and symmetry} follow
+\textbf{Consistency} implies Shapley’s axioms of \textbf{additivity, dummy, symmetry}.
 \end{onlyenv}
 
 

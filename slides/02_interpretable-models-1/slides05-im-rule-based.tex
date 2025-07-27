@@ -1,6 +1,6 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -18,18 +18,21 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/tree_surface2.png}
-\newcommand{\learninggoals}{
+\titlemeta{
+Interpretable Models 1
+}{
+Rule-based Models
+}{
+figure/tree_surface2.png
+}{
 % \item Model-based boosting with simple base learners
 % \item Feature effect and importance in model-based boosting}
 \item Decision trees
 \item RuleFit
-\item Decision rules}
+\item Decision rules
+}
 
-\lecturechapter{Rule-based Models}
-\lecture{Interpretable Machine Learning}
-
-\begin{frame}{Decision Trees \citebutton{Breiman et al. (1984)}{https://doi.org/10.1201/9781315139470}}
+\begin{frame}{Decision Trees \furtherreading{Breiman_et_al_1984}}
 
 %\textbf{Problem}: Can we model non-linear effects and interactions automatically (without manual specification as in GLMs or GAMs)?\\
 %Relationship between features and target are non-linear or interactions are present\\
@@ -57,7 +60,7 @@ $$
     %\item Finding best split point (CART): Greedy search for the point that minimizes the variance of $y$ (regression) or the Gini index (classification)
     \item Applicable to regression and classification
     \item Models interactions and non-linear effects
-    \item Handles mixed feature spaces \& missing values
+    \item Handles mixed feat, spaces \& missing values
 \end{itemize}
 
 \end{column}
@@ -124,8 +127,8 @@ $$
     \item \textbf{Feature importance} (quantifies how often and how usefully $x_j$ is used): 
     \begin{itemize}
         \item For each split on feature $x_j$, record the decrease in the split criterion 
-        \item Aggregate this over the tree: sum or average over all splits involving $x_j$
-        \item Split criterion: variance (regression), Gini index / entropy (classification)
+        \item Aggregate this over the tree: sum or avg. over all splits involving $x_j$
+        \item Split criterion: variance (regression), Gini index / entropy (classif.)
     \end{itemize}
     %\item[] $\leadsto$ Quantifies how often and how usefully $x_j$ is used
 \end{itemize}
@@ -181,7 +184,7 @@ $$
     \begin{itemize}
   \item Each $\Delta\text{Var}$ is assigned to the splitting feature
   % Variance reductions $\Delta\text{Var}$ from splits are attributed to the splitting feature.
-  \item Feature importance = sum of all $\Delta\text{Var}$ for that feature:
+  \item Feature importance = sum of all $\Delta\text{Var}$ for that feat.:
   \begin{itemize}
     \item[$x_j$:]  $0.18$
     \item[$x_k$:]  $0.07 + 0.10 = 0.17$
@@ -228,7 +231,7 @@ $$
     \item Fit decision tree with tree depth of 3 on bike data
     \item E.g., mean prediction for the first 105 days since 2011 is 1798\\
     $\leadsto$ Applies to $\hat = 15\%$ of the data (leftmost branch)
-    \item \code{days\_since\_2011}: highest feature importance (explains most of variance)
+    \item \code{days\_since\_2011}: highest feat. importance (explains most of variance)
 \end{itemize}
 \begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.37\textwidth}
@@ -455,16 +458,16 @@ days\_since\_2011 & 79.53 \\
 
 \begin{frame}{Unbiased Recursive Partitioning}  
 \vspace{-0.2cm}
-\citebutton{Hothorn et al. (2006)}{https://doi.org/10.1198/106186006X133933}
-\citebutton{Zeileis et al. (2008)}{https://doi.org/10.1198/106186008X319331}
-\citebutton{Strobl et al. (2007)}{https://doi.org/10.1186/1471-2105-8-25}
+\furtherreading{Hothorn_et_al_2006}
+\furtherreading{Zeileis_et_al_2008}
+\furtherreading{Strobl_et_al_2007}
 
 \vspace{0.2cm}
 \textbf{Problems} with CART (Classification and Regression Trees): 
 
 \begin{enumerate}
     \item Selection bias towards high-cardinal/continuous features 
-    \item Splits on any improvement, regardless of significance $\leadsto$ prone to overfitting
+    \item Splits on any improvement, regardless of significance \\$\leadsto$ prone to overfitting
 \end{enumerate}
 \smallskip
 \pause
@@ -478,7 +481,7 @@ days\_since\_2011 & 79.53 \\
 \begin{columns}[T, totalwidth = \textwidth]
     \begin{column}{0.5\textwidth}
     \textbf{Example (selection bias)}: \\
-         Simulate data ($n = 200$) with $Y \sim N(0,1)$ and 3 features of different cardinality independent from $Y$ (repeat 500 times):
+         Simulate data ($n=200$), $Y \sim N(0,1)$ and 3 features of different cardinality indep. from $Y$ (repeat 500 times):
 \begin{itemize}
     \item $X_1 \sim Binom(n, \frac{1}{2})$
     \item $X_2 \sim M(n, (\frac{1}{4}, \frac{1}{4}, \frac{1}{4}, \frac{1}{4}))$
@@ -534,8 +537,8 @@ days\_since\_2011 & 79.53 \\
 %\vspace{-0.1cm}
 Differences to CART:
 \begin{itemize}
-    \item Two-step approach (1. find most significant split feature, 2. find best split point)
-    \item Parametric model (e.g. LM instead of constant) can be fitted in leave nodes % OLS regression, GLMs, and survival regression    
+    \item Two-step approach (finds 1. most significant split feat., 2. best split point)
+    \item Parametric model (e.g. LM instead of constant) can be fitted in leaf nodes % OLS regression, GLMs, and survival regression    
     \item Significance of split (p-value) given in each node
     \item \texttt{ctree} and \texttt{mob} differ in hypothesis test used for selecting the split feature (independence test vs. fluctuation test) and how to find the best split point
 \end{itemize}
@@ -543,7 +546,7 @@ Differences to CART:
 \medskip
 
 \begin{columns}[c, totalwidth = \textwidth]
-     \begin{column}{0.83\textwidth}
+     \begin{column}{0.85\textwidth}
 \only<2>{
 \textbf{Example} (\texttt{ctree}): Bike data (constant model in final nodes)
 \centerline{\includegraphics[width =\textwidth]{figure/bike_ctree.pdf}}
@@ -556,11 +559,11 @@ Differences to CART:
 % \centerline{Train error (MSE): 758,844.0 (\texttt{ctree}), 742,244.4 (\texttt{mob})}
 % }
      \end{column}
-     \begin{column}{0.18\textwidth}
+     \begin{column}{0.15\textwidth}
      \only<2-3>{\scriptsize
-     Train error (MSE): \\
-     758,844.0 (\texttt{ctree})\\
-     742,244.4 (\texttt{mob})
+     Train MSE: \\
+     758,844 (\texttt{ctree})\\
+     742,244 (\texttt{mob})
      }
 % \only<3>{
 % Comparison MSE: \\
@@ -610,7 +613,7 @@ Differences to CART:
 
 \begin{columns}[c, totalwidth=\textwidth]
     \begin{column}{0.6\textwidth}
-        \textbf{Decision Rules} \citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
+        \textbf{Decision Rules} \furtherreading{Holte_1993}
         \begin{itemize}
             \item Flat list of simple ``if -- then'' statements\\
             $\leadsto$ very intuitive and easy-to-interpret
@@ -639,7 +642,7 @@ Differences to CART:
 \bigskip
 
 \begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.6\textwidth}
+    \begin{column}{0.65\textwidth}
         \only<2->{
         % \textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
         % \begin{itemize}
@@ -647,7 +650,7 @@ Differences to CART:
         %     \item Uses (many) decision trees to extract important decision rules $r_1, r_2, r_3, r_4$ which are used as features in a (regularized) LM
         %     \item Allows for feature interactions and non-linearities
         % \end{itemize}
-        \textbf{RuleFit} \citebutton{Friedman \& Popescu 2008}{https://arxiv.org/abs/0811.1679}
+        \textbf{RuleFit} \furtherreading{Friedman_Popescu_2008}
 \begin{itemize}
   \item Extract binary rules \(r_m(\mathbf{x}) \in \{0,1\}\) from many shallow trees (one per root-to-leaf path)
   \item Fit an $L_1$-regularized LM
@@ -678,11 +681,11 @@ $\hat f(\mathbf x)=\beta_0+\textstyle\sum_m\beta_m r_m(\mathbf x)+\sum_j\gamma_j
 
         % ...}
     \end{column}
-    \begin{column}{0.4\textwidth}
+    \begin{column}{0.35\textwidth}
     \vspace{\dimexpr-2\parsep-2\parskip\relax}
         \begin{center}
             \only<2->{\includegraphics[width = 0.6\textwidth]{figure/RuleFit.png}\\
-            \citebutton{Molnar 2022}{https://christophm.github.io/interpretable-ml-book/}\\
+            \furtherreading{Molnar_2022}\\
             \smallskip }
             % \only<4->{\includegraphics[width = 0.7\textwidth]{figure/knn.png} 
             % \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}}

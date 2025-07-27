@@ -1,8 +1,12 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
 \input{../../style/common.tex}
+
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -11,16 +15,21 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/pdp_bike}
-\newcommand{\learninggoals}{
+\titlemeta{
+Feature Effects
+}{
+Partial Dependence (PD) plot
+}{
+figure/pdp_bike
+}{
+
 \item PD plots and relation to ICE plots
 \item Interpretation of PDP
+
 }
 
-\lecturechapter{Partial Dependence (PD) plot}
-\lecture{Interpretable Machine Learning}
 
-\begin{frame}{Partial Dependence (PD) \citebutton{Friedman (2001)}{https://www.jstor.org/stable/2699986}}
+\begin{frame}{Partial Dependence (PD) \furtherreading{Friedman_2001}}
 
 \begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.55\textwidth}
@@ -115,7 +124,7 @@ f_{1, PD}(\xv_1) = \E_{\xv_2} \left( \fh(\xv_1, \xv_2) \right) &= \int_{-\infty}
 \end{aligned}
 $$
 
-$\Rightarrow$ PD plot visualizes the function $f_{1, PD}(\xv_1) = \hat\theta_1 \xv_1 + const$ ($\hat =$ feature effect of $\xv_1$).
+$\Rightarrow$ PD plot visualizes function $f_{1, PD}(\xv_1) = \hat\theta_1 \xv_1 + const$ ($\hat =$ feature effect of $\xv_1$).
 
 }
 
@@ -135,13 +144,13 @@ If feature varies:\\
 \end{itemize}
 
 \begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.55\textwidth}
+\begin{column}{0.5\textwidth}
 \begin{center}
 \includegraphics[width=\textwidth]{figure/pdp_bike}
 \end{center}
 \end{column}
 \pause
-\begin{column}{0.45\textwidth}
+\begin{column}{0.5\textwidth}
 Insights from bike sharing data:
 \begin{itemize}
 %  \item Averaging ICE curves yields PD plot (yellow curve)

@@ -1,6 +1,6 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -11,14 +11,19 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/pdp_bike}
-\newcommand{\learninggoals}{
+\titlemeta{
+Feature Effects
+}{
+PDP - Comments and Extensions
+}{
+figure/pdp_bike
+}{
+
 \item Extrapolation and Interactions in PDPs
 \item Centered ICE and PDP
+
 }
 
-\lecturechapter{PDP - Comments and Extensions}
-\lecture{Interpretable Machine Learning}
 
 \begin{frame}{Comments on Extrapolation}
 
@@ -37,7 +42,7 @@
 \end{column}
 \end{columns}
 
-Extrapolation occurs in regions with few observations or if features are correlated
+Extrapolation occurs in regions with few obs. or if features are correlated
 \begin{itemize}
 \item \textbf{Example:} Features $x_1$ and $x_2$ are strongly correlated
 \item \textbf{Black points:} Observed points of the original data
@@ -106,10 +111,10 @@ $\Rightarrow$ Especially problematic for overfitted or interaction-heavy models
 % \(\Rightarrow\) Different shapes of ICE curves suggest interaction (but do not tell with which  feature)
 
 % \end{itemize}
-PD plots average ICE curves \(\Rightarrow\) May \textbf{obscure heterogeneous effects} (interactions)
+PD plots average ICE curves \\$\leadsto$ May \textbf{obscure heterogeneous effects} (interactions)
     \begin{itemize}
       \item \textbf{Example:} Feature $x_1$ = treatment dosage; $x_2$ = gender \\
-      \(\Rightarrow\)  Males (increasing) and females (decreasing) respond differently to dosage\\
+      \(\Rightarrow\)  Males ($\nearrow$) and females ($\searrow$) respond differently to dosage\\
       \(\Rightarrow\)  PD curve (yellow) hides this divergence
       \item Plotting ICE and PD together helps detect interaction
       \item Diverse ICE shapes suggest interaction  (but not with which feature)
@@ -155,11 +160,11 @@ PD plots average ICE curves \(\Rightarrow\) May \textbf{obscure heterogeneous ef
 
 \begin{itemize}
  \item Humidity and temperature interact at high values (see shape difference)\\
- $\leadsto$ Shape of ICE curves changes across different (higher) values of other feature% %(esp. for high values)%at different horizontal and vertical slices varies 
+ $\leadsto$ ICE curve shape changes across different (higher) values of other feat.% %(esp. for high values)%at different horizontal and vertical slices varies 
   \begin{itemize}
     \item ICE (temp): At high humidity, temp effect flattens (pink line)
     %or reverses
-    \item ICE (hum): At high temperature, humidity effect falls steeper (blue/pink)
+    \item ICE (hum): At high temp., humidity effect falls steeper (blue/pink)
   \end{itemize}
 
  \item Most rentals occur at \textit{high temperature} and \textit{low to medium humidity}
@@ -173,7 +178,7 @@ PD plots average ICE curves \(\Rightarrow\) May \textbf{obscure heterogeneous ef
 
 \end{frame}
 
-\begin{frame}{Centered ICE Plot (c-ICE) \citebutton{Goldstein et al. (2015)}{https://doi.org/10.1080/10618600.2014.907095}}
+\begin{frame}{Centered ICE Plot (c-ICE) \furtherreading{Goldstein_2015}}
 
 \textbf{Issue:} Varying-intercept (stacked) ICE curves obscure shape heterogeneity
 %Difficult to identify heterogeneous ICE curves if curves have different intercepts (are stacked)
@@ -186,7 +191,7 @@ $$\begin{aligned}
 \end{aligned}$$
 \vspace{-0.2cm}
 \begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.45\textwidth}
+\begin{column}{0.5\textwidth}
 %\centering
 % $$\begin{aligned}
 % \fh_{S, cICE}^{(i)}(\xv_S)
@@ -205,7 +210,7 @@ $$\begin{aligned}
 %(yellow curve: analog to PDP the average of c-ICE curves): \\
 %On average, the number of bike rentals at $\sim 97$ \% humidity decreased by 1000 bikes compared to a humidity of 0 \%
 \end{column}
-\begin{column}{0.55\textwidth}
+\begin{column}{0.5\textwidth}
 \begin{center}
 %\vspace{-0.3cm}
 \includegraphics[width=\textwidth]{figure/cICE}
@@ -223,14 +228,14 @@ $$\begin{aligned}
 Categorical features: c-ICE plots can be interpreted as in LMs due to reference value
 
 \begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.44\textwidth}
+\begin{column}{0.4\textwidth}
 
 \begin{center}
 \includegraphics[width=\textwidth]{figure/cICEcat}
 \end{center}
 
 \end{column}
-\begin{column}{0.55\textwidth}
+\begin{column}{0.6\textwidth}
 
 \textbf{Interpretation}: \\
 \begin{itemize}

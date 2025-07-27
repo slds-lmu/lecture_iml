@@ -1,4 +1,4 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 % \definecolor{gold}{RGB}{218,165,32}       % classic goldenrod/gold
 % \definecolor{darkyellow}{RGB}{204,153,0}  % darker golden tone
 % Define colors in LaTeX preamble using xcolor
@@ -16,9 +16,19 @@
 }
 
 \usepackage{pifont}
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
+
+\newcommand{\Sm}{S_m}%{Pre(\tau,j)} % S(\tau,j)
+\newcommand{\Smj}{\Sm \cup \{j\}}
+\newcommand{\minusSmj}{- \{\Sm \cup \{j\} \} }
+\newcommand{\Stau}{S_{j}^\tau}%{Pre(\tau,j)} % S(\tau,j)
+\newcommand{\Stauj}{\Stau \cup \{j\}}
+\newcommand{\minusStauj}{- \{\Stau \cup \{j\} \} }
+
 
 %\newcommand{\Sm}{S_{j}^\tau}%{Pre(\tau,j)} % S(\tau,j)
 
@@ -29,8 +39,14 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/Shapley_1.png}
-\newcommand{\learninggoals}{%
+\titlemeta{
+Shapley
+}{
+Shapley Values
+}{
+figure/Shapley_1.png
+}{
+%
 \item Learn cooperative games and value functions
 
 \item Define the marginal contribution of a player
@@ -38,10 +54,9 @@
 \item Study Shapley value as a fair payout solution
 
 \item Compare order and set definitions
+
 }
 
-\lecturechapter{Shapley Values}
-\lecture{Interpretable Machine Learning}
 
 % License of titlefigure: free pixabay license
 % https://pixabay.com/de/vectors/ergebnis-geld-gesch%C3%A4ft-gehalt-5567652/
@@ -66,7 +81,7 @@
 % \end{frame}
 
 
-% \begin{frame}{Cooperative Games in Game Theory \citebutton{Shapley (1951)}{https://www.rand.org/pubs/research_memoranda/RM0670.html}}
+% \begin{frame}{Cooperative Games in Game Theory \furtherreading{Shapley_1951}}
 % \begin{itemize}[<+->]
 % %\itemsep1em
 %   \item Game theory: Study of strategic games between players, where \enquote{game} refers to interactions between \enquote{players} involving quantifiable gains and losses
@@ -83,7 +98,7 @@
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{Cooperative Games in Game Theory \citebutton{Shapley (1951)}{https://www.rand.org/pubs/research_memoranda/RM0670.html}}
+\begin{frame}{Cooperative Games in Game Theory \furtherreading{Shapley_1951}}
 \begin{itemize}%[<+->]
   \item \textbf{Game theory:} Studies strategic interactions among "players" (who act to maximize their utility), where outcomes depend on collective behavior
   \item \textbf{Cooperative games:} Any subset $S \subseteq P = \{1, \ldots, p\}$ can form a coalition to cooperate in a game, each achieving a payout $v(S)$
@@ -104,8 +119,8 @@
 
     \medskip
     \pause
-  \item \textbf{Challenge:} Players vary in their contributions \& how they influence each other
-  \item \textbf{Goal:} Fairly distribute $v(P)$ among players by accounting for player interactions\\
+  \item \textbf{Challenge:} Players vary in their contrib. \& how they influence each other
+  \item \textbf{Goal:} Distribute $v(P)$ among players by considering player interactions\\
   $\leadsto$ Assign each player $j \in P$ a fair share $\phi_j$ (\textbf{Shapley value}) 
 \end{itemize}
 \end{frame}
@@ -156,12 +171,12 @@
 \end{columns}
 \only<3>{
 \begin{itemize}
-  \item \textbf{No interactions:} Each player contributes the same fixed value to each coalition\\
+  \item \textbf{No interactions:} Each player contrib.s same fixed value to each coalition\\
   $\leadsto$ Player \colorcircle{playerred}{white}{1} always adds 1000, \colorcircle{playeryellow}{white}{2} adds 2000, and \colorcircle{playerblue}{white}{3} adds 3000\\
   $\leadsto$ Marginal contributions are constant across all coalitions \( S \)
   %Constant marginal gains of each player to every coalition $S$
   \item \textbf{Conclusion:} Fair payout $=$ average marginal contribution across all $S$\\
-  $\leadsto$ Total value $v(P) = 6000$ splits proportionally by individual contributions:
+  $\leadsto$ Total value $v(P) = 6000$ splits proportionally by individual contribs:
 
 \centerline{$
   \colorcircle{playerred}{white}{1} = \tfrac{1}{6}, \quad
@@ -174,7 +189,7 @@ $}
 }
 \includegraphics<4>[page=2, width = \textwidth]{figure/Shapley.pdf}%
 
-\visible<1>{\centering \textbf{Question:} What are the individual marginal contributions and what is a fair payout?}% if contributions are $\tfrac{1}{2}$ (blue), $\tfrac{1}{3}$ (yellow), $\tfrac{1}{6}$ (red)?}
+\visible<1>{\centering \textbf{Question:} What are individual marginal contributions and what's a fair payout?}% if contributions are $\tfrac{1}{2}$ (blue), $\tfrac{1}{3}$ (yellow), $\tfrac{1}{6}$ (red)?}
 
 \visible<4>{\centering $\Rightarrow$ Fair payouts are trivial without interactions}
 %\end{center}
@@ -268,17 +283,17 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 \end{columns}
 \pause
 \begin{itemize}
-  \item \textbf{With interactions:} Players contribute different amounts depending on coalition\\
+  \item \textbf{With interactions:} Players contribute differently depending on coalition\\
   %$\leadsto$ \colorcircle{playerblue}{white}{3} adds 3000 alone, but 0 when \colorcircle{playeryellow}{white}{2} is present\\
-  $\leadsto$ Marginal contributions vary across coalitions \( S \) (e.g., due to overlap, synergy)
+  $\leadsto$ Marginal contribs vary across coalitions \( S \) (e.g. overlap, synergy)
   
-  \item Averaging over subsets does not recover total payout $v(P)$ $\leadsto$ unfair payout distr. \\
-  $\leadsto$ average contrib. \colorcircle{playerred}{white}{1} = 1750,
-  \colorcircle{playeryellow}{white}{2} = 1750, 
+  \item Averaging over subsets does not recover total payout $v(P)$ \\$\leadsto$ unfair payout distribution \\
+  $\leadsto$ avg. contrib. \colorcircle{playerred}{white}{1} = 1750
+  \colorcircle{playeryellow}{white}{2} = 1750 
   \colorcircle{playerblue}{white}{3} = 2250
-  do not sum to $v(P) = 6000$
+  don't sum to $v(P) = 6000$
 
-  \item Value a player adds depends on joining order, not just who else is in the coalition\\
+  \item Value a player adds depends on joining order, not just who's in coalition\\
   $\leadsto$ Shapley values fairly average over all possible joining orders
 \end{itemize}
 
@@ -318,14 +333,22 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 \begin{itemize}
   \item \textbf{Order sensitivity:} A player's marginal contribution depends on when they join $S$
   %\textbf{Overlapping skills:} Different join orders lead to different marginal contributions
-  \item \textbf{Shapley value:} Averages each player’s contribution over all possible join orders
+  \item \textbf{Shapley value:} Averages each player’s contribution over all possible\\ join orders
   %\textbf{Fairness:} Shapley values consider every possible way the team could have formed and average each player's contribution across all possible join orders
   %\item This results in fair credit assignment by accounting for
-  \begin{itemize}
-    \item[$\leadsto$] Resolves redundancy (e.g., \colorcircle{playerblue}{white}{3}’s contribution/skill overlaps with \colorcircle{playeryellow}{white}{2}’s)
-    \item[$\leadsto$] Accounts for order sensitivity (e.g., \colorcircle{playerred}{white}{1} brings more value if added last)
-    \item[$\leadsto$] Ensures fairness (no player is advantaged or penalized by order of joining)% of evaluation.
-  \end{itemize}
+
+  % OLD
+  % \begin{itemize}
+  %   \item[$\leadsto$] Resolves redundancy (e.g., \colorcircle{playerblue}{white}{3}’s contribution/skill overlaps with \colorcircle{playeryellow}{white}{2}’s)
+  %   \item[$\leadsto$] Accounts for order sensitivity (e.g., \colorcircle{playerred}{white}{1} brings more value if added last)
+  %   \item[$\leadsto$] Ensures fairness (no player is advantaged or penalized by order of joining)% of evaluation.
+  % \end{itemize}
+
+  % NEW (removes itemize)
+    \\$\leadsto$ Resolves redundancy (e.g., \colorcircle{playerblue}{white}{3}’s contribution/skill overlaps with \colorcircle{playeryellow}{white}{2}’s)
+    \\$\leadsto$ Accounts for order sensitivity (e.g., \colorcircle{playerred}{white}{1} brings more value if added last)
+    \\$\leadsto$ Ensures fairness (order of joining gives no advantage/disadvantage)
+  
 \end{itemize}
 
 % \begin{itemize}
@@ -343,15 +366,15 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 
 \begin{frame}{Shapley Values - Illustration}
 \begin{itemize}
-    \item Generate all possible joining orders of players (all permutations of full set $P$)
-    \item For each order: track player $j$-th marginal contribution when $j$ joins a coalition
-    \item<2-> Shapley value of $j$: Average this marginal contribution over all joining orders
+    \item Generate all possible joining orders (all permutations of full set $P$)
+    \item For each order: track player $j$-th marginal contrib when $j$ joins a coalition
+    \item<2-> Shapley value of $j$: Average this marginal contrib over all joining orders
     % and coalitions where $j$ joined
 %\only<1>{\item Here, player $2$ enters the coalition after player $1$, resulting in a value change of $v(\{1,2\}) - v(\{1\}) = 24-12 = 12$ with a overall coalition value of $v(\{1,2,3\}) = 36$}
-\only<1>{\item[] \phantom{\textbf{Example:} Compute payout difference after player $1$ enters coalition $\leadsto$ average}}%
-\only<2>{\item \textbf{Example:} Compute payout difference after player $1$ enters coalition $\leadsto$ average}%
-\only<3>{\item \textbf{Example:} Compute payout difference after player $2$ enters coalition $\leadsto$ average}%
-\only<4>{\item \textbf{Example:} Compute payout difference after player $3$ enters coalition $\leadsto$ average}%
+\only<1>{\item[] \phantom{\textbf{Example:} Compute payout diff. after player $1$ enters coalition $\leadsto$ average}}%
+\only<2>{\item \textbf{Example:} Compute payout diff. after player $1$ enters coalition $\leadsto$ average}%
+\only<3>{\item \textbf{Example:} Compute payout diff. after player $2$ enters coalition $\leadsto$ average}%
+\only<4>{\item \textbf{Example:} Compute payout diff. after player $3$ enters coalition $\leadsto$ average}%
 \end{itemize}
 
 \begin{center}
@@ -447,7 +470,7 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stau \cup \{j\}) - v(\Stau))$$
   
 \begin{itemize}[<+->]
-  \item $\Pi$: Set of all permutations (joining orders) of the players -- there are \(|P|!\) in total
+  \item $\Pi$: Set of all permutations (joining orders) of the players -- \(|P|!\) in total
   %\item Recall the order definition: 
   \item $\Stau$: Set of players before \(j\) joins, for each ordering \(\tau = (\tau^{(1)}, \dots, \tau^{(p)})\)\\
   %Set of players before player $j$ in order $\tau = (\tau^{(1)}, \dots, \tau^{(p)})$  where $\tau^{(i)}$ is $i$-th element \\ % j, \dots, 
@@ -472,7 +495,7 @@ $$\phi_j = \frac{1}{|P|!} \sum_{\tau \in \Pi} (v(\Stau \cup \{j\}) - v(\Stau))$$
   %\item<3-> \textbf{Note:} Subsets may appear in multiple orderings $\Rightarrow$ duplicated elements in sum\\
   %$\leadsto$ For \(j = 3\), joining order \((1,2,3)\) and \((2,1,3)\) yields subset \({\color{red} \Stau= \{1,2\}}\) %and are included separately in the sum
 \item<3-> Order definition allows to approximate Shapley values by sampling permutations \\
-\(\leadsto\) Sample a fixed number \( M \ll |P|! \) of random permutations and average:
+\(\leadsto\) Sample a fixed \( M \ll |P|! \) random permutations and average:
 
 \[
 \phi_j \approx \frac{1}{M} \sum_{\tau \in \Pi_M} \left(v(\Stau \cup \{j\}) - v(\Stau)\right)
@@ -494,15 +517,15 @@ where \( \Pi_M \subset \Pi \) is the random sample of \( M \) player orderings
 \begin{frame}{From Order Definition to Set Definition}
 
 \begin{itemize}
-\item<1-> \textbf{Note:} The same subset \(\Stau\) can occur in multiple permutations (joining orders)\\
+\item<1-> \textbf{Note:} The same subset \(\Stau\) can occur in multiple permutations\\
 \(\leadsto\) Its marginal contribution is included multiple times in the sum in $\phi_j$
 
-\item<1-> \textbf{Example (for set of players \(P = \{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}\}\), player of interest \(j = \colorcircle{playerblue}{white}{3}\)):}
+\item<1-> \textbf{Example $\Pi$ (for players \(P = \{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}\}\), player of interest \(j = \colorcircle{playerblue}{white}{3}\)):}
 
 \smallskip
 
 %\(\Pi = \{({\color{red}1,2},3), (1,3,2), ({\color{red}2,1},3), (2,3,1), (3,1,2), (3,2,1)\}\)
-\(\Pi = \{
+\(\{
   \underline{\color{black}(\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3})},\ 
   (\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3},\colorcircle{playeryellow}{white}{2}),\ 
  \underline{\color{black}(\colorcircle{playeryellow}{white}{2},\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3})},\ 
@@ -513,7 +536,7 @@ where \( \Pi_M \subset \Pi \) is the random sample of \( M \) player orderings
 
 \smallskip
 
-\(\leadsto\) In both \(\underline{\color{black}(\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3})}\) and \( \underline{\color{black}(\colorcircle{playeryellow}{white}{2},\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3})}\), player \colorcircle{playerblue}{white}{3} joins after coalition \({\color{black} \Stau = \{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\}}\)
+\(\leadsto\) In \(\underline{\color{black}(\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3})}\) and \( \underline{\color{black}(\colorcircle{playeryellow}{white}{2},\colorcircle{playerred}{white}{1},\colorcircle{playerblue}{white}{3})}\), player \colorcircle{playerblue}{white}{3} joins after coal. \({\color{black} \Stau = \{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\}}\)
 
 \(\Rightarrow\) Marginal contribution \(v(\{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2},\colorcircle{playerblue}{white}{3}\}) - v(\{\colorcircle{playerred}{white}{1},\colorcircle{playeryellow}{white}{2}\})\) occurs twice in $\phi_j$
 % \item<1->  \textbf{Note:} Subsets may appear in multiple orderings $\Rightarrow$ duplicated elements in sum\\
@@ -557,7 +580,7 @@ where \( \Pi_M \subset \Pi \) is the random sample of \( M \) player orderings
 \includegraphics<3>[page=7, width = 0.8\textwidth]{figure/Shapley.pdf}%
 \end{center}
     \begin{itemize}
-      \item \textbf{Order view:} Each of the \( |P|! \) permutations contributes one term with weight \( \tfrac{1}{|P|!} \)
+      \item \textbf{Order view:} Each of the \( |P|! \) permuts contributes 1 term with weight \( \tfrac{1}{|P|!} \)
       \item Same subset \( S \subseteq P \setminus \{j\} \) can appear before \( j \) in multiple orders\\
       $\leadsto$ e.g., S = \{\colorcircle{playerblue}{playerblue}{3}, \colorcircle{playerred}{playerred}{1}\} = \{\colorcircle{playerred}{playerred}{1}, \colorcircle{playerblue}{playerblue}{3}\}
       \item \textbf{Set view:} Group by unique subsets \( S \), not permutations

@@ -1,6 +1,8 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table, usenames,dvipsnames]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -22,14 +24,19 @@
 
 % Defines macros and environments
 
- \newcommand{\titlefigure}{figure/counterfactuals_obj}
-\newcommand{\learninggoals}{
+\titlemeta{
+Counterfactual Explanations (CEs)
+}{
+Motivation
+}{
+figure/counterfactuals_obj
+}{
+
 \item Understand the motivation behind CEs
 \item Know why and how CEs are used
-\item Recognize the philosophical foundations of counterfactual reasoning}
+\item Recognize the philosophical foundations of counterfactual reasoning
+}
 
-\lecturechapter{Counterfactual Explanations (CEs): Motivation}
-\lecture{Interpretable Machine Learning}
 
 % ------------------------------------------------------------------------------
 
@@ -49,11 +56,11 @@
 
 
 \begin{frame}{Motivating Example: Credit Risk \& CE}
-	Counterfactual Explanations provide answers in the form of "What-If"-scenarios.
+    CEs provide answers in the form of "What-If"-scenarios.
 	
     \includegraphics[width=\linewidth, page=2]{figure/counterfactuals_credit.pdf}
 
-	``If the applicant had higher skills and the credit amount had been reduced to \$8.000,\\ the loan would have been granted."  \\[0.2cm]
+    ``If the applicant had higher skills and the credit amount had been reduced to \$8.000, the loan would have been granted."  \\[0.2cm]
 
 \end{frame}
 
@@ -83,7 +90,7 @@
     \begin{itemize}
         \item Individuals aiming to alter model predictions 
         \item ML engineers exploring model behavior under adversarial conditions\\
-        $\leadsto$ how small text changes in email flip  prediction from "spam" to "no spam"
+        $\leadsto$ how small text changes in an email flip the prediction from "spam" to "no spam"
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -97,14 +104,14 @@
 		\itemsep1.2em
 		\item \textbf{Guidance for future actions:}\\ \textit{Ok, I will apply again next year for the higher amount.}
 		\item \textbf{Provide reasons:}\\ \textit{Interesting, I did not know that age plays a role in loan applications.}
-		\item \textbf{Provide grounds to contest the decision:}\\ \textit{How dare you, I do not want to be discriminated for my age in an application.}
+		\item \textbf{Provide grounds to contest the decision:}\\ \textit{How dare you, I won’t accept age-based discrimination in my application.}
 		\item \textbf{Detect model biases:}\\ \textit{There is a bug, an increase in amount should not increase approval rates.}
 	\end{itemize}
 \end{frame}
 
 
 %------------------------------------------------------------
-\begin{frame}{Philosophical Foundations \citebutton{Lewis (1973)}{https://doi.org/10.2307/2273738}}
+\begin{frame}{Philosophical Foundations \furtherreading{Lewis_1973}}
 
 Counterfactuals have a long tradition in analytic philosophy\\
 $\leadsto$ A \textbf{counterfactual conditional} takes the form:
@@ -127,14 +134,14 @@ $\leadsto$ A \textbf{counterfactual conditional} takes the form:
   \begin{itemize}%[<+->]
     \item<1-> CEs have largely been studied to explain causal dependence
     \item<1-> \textbf{Causal dependence}: $Q$ depends on $S$   $\Leftrightarrow$ without $S$, no $Q$\\
-    $\leadsto$ Good CEs point to critical causal factors that drove the algorithmic decision\\
+    $\leadsto$ Good CEs reveal critical causal factors that drove algorithmic decision\\
     $\leadsto$ \textbf{CE objective}: find $\mathbf{x}' \!\approx\! \mathbf{x}$ with $f(\mathbf{x}')=y'$ to expose causal features
     \item<2-> Relaxing closeness may add causally irrelevant edits to the explanation\\
 $\leadsto$ e.g., suggest to lower loan \emph{and} increase age (but only loan matters)
 
-\item<3-> CEs are contrastive: Explain a decision by comparing it to a different outcome\\
-$\leadsto$ If age were 30 instead of 60, loan would have been \$9k instead of rejected\\%\$40k\\
-$\leadsto$ Answers contrastive question: ``Why Q' instead of Q?'' (preferred by humans)
+\item<3-> CEs are contrastive: Explain a decision by comparing it to a different case\\
+$\leadsto$ If age were 30 (not 60), loan would have been \$9k (not rejected)\\%\$40k\\
+$\leadsto$ Answers contrastive question: \\``Why Q' instead of Q?'' (preferred by humans)
 
     % \item \textbf{Alternative view}: Pearl (2009) models causality via graphs, then derives counterfactuals from the graph
   \end{itemize}
@@ -158,7 +165,7 @@ $\leadsto$ Answers contrastive question: ``Why Q' instead of Q?'' (preferred by 
 % %Interestingly, counterfactuals have a long-standing tradition in philosophy and, in fact the IML discussion of CEs is based on the work of Lewis (1973).
 % Counterfactuals have a long-standing tradition in analytic philosophy\\
 % $\leadsto$ %and, in fact the IML discussion of CEs is based on the work of Lewis (1973).
-% Accoding to \citebutton{Lewis (1973)}{https://doi.org/10.2307/2273738}, a \textbf{counterfactual conditional} is a statement of  form:
+% Accoding to \furtherreading{Lewis_1973}, a \textbf{counterfactual conditional} is a statement of  form:
 
 % \begin{center}
 % ``If $S$ was the case, $Q$ would have been the case."

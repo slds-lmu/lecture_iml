@@ -1,8 +1,11 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
 \input{../../style/common.tex}
+
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -11,15 +14,20 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/ale_plot.pdf}
-\newcommand{\learninggoals}{
+\titlemeta{
+Feature Effects 
+}{
+Accumulated Local Effect (ALE): Intro
+}{
+figure/ale_plot.pdf
+}{
+
 \item PD plots and its extrapolation issue
 \item M plots and its omitted-variable bias
 \item Understand ALE plots
+
 }
 
-\lecturechapter{Accumulated Local Effect (ALE): Introduction }
-\lecture{Interpretable Machine Learning}
 %
 % \frame{
 % \frametitle{Motivation}
@@ -102,12 +110,12 @@ $x_1 = x + \epsilon_1$,
 $x_2 = x + \epsilon_2$ and $\epsilon_1, \epsilon_2 \sim N(0, 0.05)$.}
 
 \begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.65\textwidth}
+\begin{column}{0.6\textwidth}
 \centering
 \only<1>{\includegraphics[width=\textwidth]{figure/ale_vs_pdp_surf}}
 \only<2>{\includegraphics[width=\textwidth]{figure/ale_vs_pdp_nn}}
 \end{column}
-\begin{column}{0.35\textwidth}
+\begin{column}{0.4\textwidth}
 %What went wrong here?
 
 \begin{itemize}
@@ -180,7 +188,7 @@ where index set $N(x_1) = \{i: x_1^{(i)} \in [x_1 - \epsilon, x_1 + \epsilon]\}$
 
 \begin{itemize}
     \item M plots average predictions over conditional distribution (e.g., $\P(\xv_2|x_1)$)\\
-    $\Rightarrow$ Averaging predictions close to data distribution avoid extrapolation issues
+    $\Rightarrow$ Averaging predictions close to data distrib. avoids extrapolation issues
     \item \textbf{But:} M plots suffer from omitted-variable bias (OVB)
 \begin{itemize}
 \item Because of the conditioning M plots contain effects of other dependent features

@@ -1,6 +1,6 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -22,8 +22,13 @@
 \setlength{\leftmarginii}{1em}
 \begin{document}
 
-\newcommand{\titlefigure}{figure/l1_hat}
-\newcommand{\learninggoals}{
+\titlemeta{
+Interpretable Models 1
+}{
+Extensions of Linear Regression Models
+}{
+figure/l1_hat
+}{
 \item Inclusion of high-order and interaction effects
 \item Regularization via LASSO
 %\item Examples of popular interpretable models
@@ -31,8 +36,6 @@
 %\item Focus on how to interpret them, not on math details
 }
 
-\lecturechapter{Extensions of Linear Regression Models}
-\lecture{Interpretable Machine Learning}
 
 \begin{frame}{Interaction and High-order Effects}
 
@@ -41,7 +44,7 @@ $$\text{LM Equation: } y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \the
 Equation above can be extended (polynomial regression) by including
 
 \begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.65\linewidth}
+\begin{column}{0.7\linewidth}
     \begin{itemize}
         \item \textbf{high-order effects} which have their own weights\\
         $\leadsto$ e.g., quadratic effect: $\theta_{x_j^2} \cdot x_j^2$
@@ -49,7 +52,7 @@ Equation above can be extended (polynomial regression) by including
         $\leadsto$ e.g., 2-way interaction: $\theta_{x_i, x_j} \cdot x_i \cdot x_j$
     \end{itemize}
 \end{column}
-\begin{column}{0.34\linewidth}
+\begin{column}{0.3\linewidth}
     \vspace{-0.2cm}
     \centering
     \begin{scriptsize}
@@ -72,13 +75,14 @@ Equation above can be extended (polynomial regression) by including
 \end{columns}
 
 \pause
+\medskip
 Implications of including high-order and interaction effects: 
 \begin{itemize}
     \item Both make the model more flexible but also less interpretable\\
     $\leadsto$ More weights to interpret
-    \item Both need to be specified manually (inconvenient and sometimes infeasible)\\
+    \item Both need to be specified manually (inconvenient, sometimes infeasible)\\
     $\leadsto$ Other ML models often learn them automatically
-    \item Marginal effect of a feature cannot be interpreted by single weights anymore\\
+    \item Marginal effect of a feat. cannot be interpreted by single weights anymore\\
 $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equation
 \end{itemize}
 
@@ -114,7 +118,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 % \end{frame}
 
 \begin{frame}{Example: Interaction Effect}
-\textbf{Example}: Interaction between \code{temp} and \code{season} will affect marginal effect of \code{temp}% with (right) and without (left) interaction.
+\textbf{Ex.}: Interaction between \code{temp} and \code{season} will affect marginal effect of \code{temp}% with (right) and without (left) interaction.
 \begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.65\linewidth}
 \includegraphics[width = \textwidth]{figure/lm_main_vs_interaction_effects.pdf}
@@ -153,7 +157,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \pause
 \begin{columns}[T, totalwidth=\textwidth]
 \begin{column}{0.65\linewidth}
-\textbf{Interpretation}: If \code{temp} increases by 1 $^{\circ}$C, bike rentals
+\textbf{Interpretation}: If \code{temp} increases by 1 $^{\circ}$C, \\bike rentals
 \begin{itemize}[<+->]
     \item increase by 160.5 in \code{WINTER} (reference)
     \item increase by 109.8 (= 160.5 - 50.7) in \code{SPRING}
@@ -175,9 +179,9 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 
 
 \begin{frame}{Example: Quadratic Effect}
-\textbf{Example}: Adding quadratic effect for \code{temp} \only<2>{(left) and interaction with \code{season} (right)}
+\textbf{Ex.}: Adding quadratic effect for \code{temp} \only<2>{(left) and interaction with \code{season} (right)}
 \begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.68\textwidth}
+\begin{column}{0.7\textwidth}
 \includegraphics[width=0.5\textwidth, trim=0cm 0.1cm 10.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}\invisible<1>{\includegraphics[width=0.5\textwidth, trim=10cm 0.1cm 0.4cm 0cm, clip]{figure/poly_main_vs_interaction_effects.pdf}}
 %\includegraphics[width = \textwidth]{figure/poly_main_vs_interaction_effects.pdf}
 %\begin{columns}[totalwidth=\textwidth]
@@ -188,17 +192,17 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \begin{itemize}
     \only<1>{\item \code{temp} depends on two weights: $ 280.2 \cdot x_{temp} -  5.6 \cdot x_{temp}^2$}
     \item<2> \code{temp} depends on multiple weights due to \code{season}:\\
-    $\leadsto$ \code{WINTER}: ${\color{winter}39.1} \cdot x_{temp} + {\color{winter}8.6} \cdot x_{temp}^2$ \\
-    $\leadsto$ \code{SPRING}: 
+    $\leadsto$ \code{WINTER}: \\${\color{winter}39.1} \cdot x_{temp} + {\color{winter}8.6} \cdot x_{temp}^2$ \\
+    $\leadsto$ \code{SPRING}:\\ 
     $({\color{winter}39.1} {\color{spring}+407.4}) \cdot x_{temp} + ({\color{winter}8.6} {\color{spring} - 18.7}) \cdot x_{temp}^2$ \\
-    $\leadsto$ \code{SUMMER}: $({\color{winter}39.1}  {\color{summer}+801.1}) \cdot x_{temp} + ({\color{winter}8.6} {\color{summer} - 27.2}) \cdot x_{temp}^2$  \\
-    $\leadsto$ \code{FALL}: $({\color{winter}39.1}  {\color{fall}+217.4}) \cdot x_{temp} + ({\color{winter}8.6} {\color{fall} - 11.3}) \cdot x_{temp}^2$ 
+    $\leadsto$ \code{SUMMER}:\\ $({\color{winter}39.1}  {\color{summer}+801.1}) \cdot x_{temp} + ({\color{winter}8.6} {\color{summer} - 27.2}) \cdot x_{temp}^2$  \\
+    $\leadsto$ \code{FALL}: \\$({\color{winter}39.1}  {\color{fall}+217.4}) \cdot x_{temp} + ({\color{winter}8.6} {\color{fall} - 11.3}) \cdot x_{temp}^2$ 
     % \item<2>[$\leadsto$] High-order and interaction effects make the model more flexible but also less interpretable (more weights)
     % \item<2>[$\leadsto$] High-order and interaction effects need to be specified manually (inconvenient) - ML models do this automatically
 \end{itemize}
 
 \end{column}
-\begin{column}{0.32\textwidth}
+\begin{column}{0.3\textwidth}
 %\hfill
 \begin{scriptsize}
 % \begin{table}[ht]
@@ -265,7 +269,7 @@ $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equat
 \end{frame}
 
 
-\begin{frame}{Regularization via LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
+\begin{frame}{Regularization via LASSO \furtherreading{Tibshirani_1996}}
 % \begin{itemize}
 %     \item LASSO adds an $L_1$-norm penalization term ($\lambda||\theta||_1$) to the least squares optimization problem%\\
 %     % $\leadsto$ Shrinks some feature weights to zero (feature selection)\\
@@ -299,7 +303,7 @@ $$
 \end{frame}
 
 
-\begin{frame}{Regularization via LASSO \citebutton{Tibshirani (1996)}{https://doi.org/10.1111/j.2517-6161.1996.tb02080.x}}
+\begin{frame}{Regularization via LASSO \furtherreading{Tibshirani_1996}}
 \textbf{Example} (interpretation of weights analogous to LM):
 
 \begin{itemize}
@@ -315,7 +319,7 @@ $$
     %only weights of single categories are set to zero (due to dummy encoding) not the whole feature\\
     $\leadsto$ No feature selection of whole categorical features (only w.r.t. category levels)\\
     %May be problematic for categorical features as only weights of single categories are set to zero (due to dummy encoding) instead of the whole categorical feature\\ %, polynomials and interactions
-    $\leadsto$ Solution: group LASSO \citebutton{Yuan and Lin (2006)}{https://doi.org/10.1111/j.1467-9868.2005.00532.x}
+    $\leadsto$ Solution: group LASSO \furtherreading{Yuan_Lin_2006}
 \end{itemize}
 \smallskip
 \centering

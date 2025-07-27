@@ -1,6 +1,12 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table,dvipsnames]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\usepackage[dvipsnames]{xcolor}
+
+
 \usepackage{lmodern} 
 \newcommand{\bmmax}{0}
 \newcommand{\hmmax}{0}
@@ -73,17 +79,20 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
 \date{}
 
+
+
 \begin{document}
 
-\newcommand{\titlefigure}{figure/ale_plot.pdf}
-\newcommand{\learninggoals}{
+\titlemeta{
+Regional Effects
+}{
+REPID
+}{
+figure/ale_plot.pdf
+}{
 \item Difference between feature effects and feature interactions
 \item REPID
 }
-
-\lecturechapter{Regional Effects}
-\lecture{Interpretable Machine Learning}
-
 
 % \begin{frame}{Recap: Global vs.\ Local Explanations}
 
@@ -112,7 +121,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
     %How to produce plots in which feature effects are less confounded by interactions? \\
     %\textbf{Goal:} Identify groups of instances where ICE curves are homogeneous.\\
 %\textbf{Regional Effect Plots (REPs):} Group similar ICE curves so that interactions within each group are minimized.
-    \textbf{Solution:} Group homogeneous ICE curves in such a way that reduces the presence of individual interaction effects within a group $\leadsto$ Regional effect plots (REPs).
+    \textbf{Solution:} Group homogeneous ICE curves in such a way that reduces the presence of individual interaction effects within a group \\$\leadsto$ Regional effect plots (REPs).
   \noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
   \begin{columns}
       \column{0.33\textwidth}
@@ -140,6 +149,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
           \includegraphics[width=.9\linewidth]{figure/01_bike_sharing_dataset_28_1.png}
       \end{figure}     
   \end{columns}
+  % \vspace{-1.5em}
       \begin{itemize}
       \item Splitting by the "workingday" revealed 2 different patterns that we're clashed together in the initial plot
       \item $\cup_i (\texttt{regional\_explanation}_i) = \texttt{global\_explanation} $
@@ -153,7 +163,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 %ICE curves show how different feature values of an observation affect its model prediction \newline $\Rightarrow$ \textbf{local interpretation method}
 %From a local perspective, one might be interested in how changing feature values of an observation affect model prediction
 
-\textbf{Question:} How do feature changes affect the prediction for \textbf{one observation}?
+\textbf{Question:} How do feature changes affect the prediction for \textbf{one obs.}?
 
 %\smallskip
 
@@ -164,15 +174,15 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 %     \item Partition $\xv = (x_j, \xv_{-j})$ into $x_j$ (feature of interest) and $\xv_{-j}$ (remaining features)
 %     \item Replace observed value $x_j$ with {\color{red} grid values $\tilde x_j$} while keeping values $\xv_{-j}$ fixed
 % \end{itemize}
-\textbf{Idea:} Split $\xv = (x_j, \xv_{-j})$ into $x_j$ (feature of interest) and $\xv_{-j}$ (remaining features) 
+\textbf{Idea:} Split $\xv = (x_j, \xv_{-j})$ into $x_j$ (feat of interest) and $\xv_{-j}$ (remaining feats) 
 \begin{itemize}
-    \item Replace observed value $x_j$ with {\color{red} grid values $\tilde x_j$} while keeping values $\xv_{-j}$ fixed
+    \item Replace observed values $x_j$ with {\color{red} grid values $\tilde x_j$} while keeping $\xv_{-j}$ fixed
     \item Visualize function $\fh({\color{red}\tilde x_j}, \xv_{-j})$ for varying ${\color{red}\tilde x_j}$ (ICE)%ICE_j^\xv(\tilde x_j) := 
 \end{itemize}
 
 \pause
 
-\textbf{Example:} SVM prediction surface (left), select observation and visualize changes in prediction for varying $x_2$ while keeping $x_1$ fixed $\Rightarrow$ \textbf{local interpretation}
+\textbf{Example:} SVM prediction surface (left), select obs. and visualize changes in prediction for varying $x_2$ while keeping $x_1$ fixed $\Rightarrow$ \textbf{local interpretation}
 
 \vfill
 \centering
@@ -185,7 +195,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 
 \begin{frame}{PD Plot - Global Feature Effects}
 
-\textbf{Question:} How do changes of feature values affect model prediction \textbf{on average}?
+\textbf{Question:} How do changes of feat values affect model prediction \textbf{on avg.}?
 
 %\textbf{Idea:} 
 
@@ -201,7 +211,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 
     \smallskip
     
-    \item \textbf{Estimate (MC integration):} Average ICE curves at grid points $\tilde x_j$
+    \item \textbf{Estimate (MC integration):} Avgerage ICE curves at grid points $\tilde x_j$
     
     \medskip
     
@@ -224,7 +234,7 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 
 \begin{frame}{Feature Interactions}
 
-\textbf{Hooker (2004, 2007):} Functional ANOVA decomposition of a function% into main and higher-order (interaction) effects
+\textbf{Hooker (2004, 2007):} Functional ANOVA decomp. of a function% into main and higher-order (interaction) effects
 
 \begin{center}
     $\textstyle
@@ -248,8 +258,10 @@ $
 \begin{itemize}
 %is a sum of two functions, each independent of $x_j$, $x_k$:
 % $f_{-j}$ and $f_{-k}$ that do not depend on $x_j$ and $x_k$, respectively:
-    \item[$\Rightarrow$] If $x_j$ and $\xv_{-j}$ do not interact, we can decompose $f(\xv) = g_{j}(x_{j}) + g_{-j}(\xv_{-j})$
-    \item[$\Rightarrow$] If $x_j$ and $x_k$ do not interact, we can decompose $f(\xv) = g_{-j}(\xv_{-j}) + g_{-k}(\xv_{-k})$
+    \item[$\Rightarrow$] 
+    If $x_j$ and $\xv_{-j}$ don't interact, we can decomp. $f(\xv) = g_{j}(x_{j}) + g_{-j}(\xv_{-j})$\\
+    \item[$\Rightarrow$] 
+    If $x_j$ and $x_k$ don't interact, decomposition: $f(\xv) = g_{-j}(\xv_{-j}) + g_{-k}(\xv_{-k})$
     %\item<3>[$\Rightarrow$] $\highlight{f(\xv) - g_{j}(x_{j}) - g_{-j}(\xv_{-j})} = 0$ %if there are no interactions between feature $j$ and any other feature $-j$
 \end{itemize}
 
@@ -314,7 +326,7 @@ $
 
 
 
-% \begin{frame}{VINE: Visual INteraction Effects \citebutton{Britton (2019)}{https://arxiv.org/abs/1904.00561}}
+% \begin{frame}{VINE: Visual INteraction Effects \furtherreading{Britton_2019}}
 % \textbf{Question:} How to group similar ICE curves together? \\
 % \textbf{Idea:} Cluster similar slopes of ICE curves to obtain clusters where the curves are less affected by interactions. \\
 % \textbf{Approach:}
@@ -328,7 +340,7 @@ $
 % \end{enumerate}
 % \end{frame}
 
-% \begin{frame}{VINE: Visual INteraction Effects \citebutton{Britton (2019)}{https://arxiv.org/abs/1904.00561}}
+% \begin{frame}{VINE: Visual INteraction Effects \furtherreading{Britton_2019}}
 % \textbf{Pitfalls:}
 % \begin{itemize}
 %     \item Does not quantify or rank feature interactions
@@ -348,9 +360,9 @@ $
 % \end{frame}
 
 
-\begin{frame}{REPID: Regional Effect Plots \citebutton{Herbinger et al. (2022)}{https://proceedings.mlr.press/v151/herbinger22a.html}}
+\begin{frame}{REPID: Regional Effect Plots \furtherreading{Herbinger_2022}}
 
-\textbf{Recall:} Different shapes of ICE curves indicate interactions (ignore vertical shifts)\\
+\textbf{Recall:} Different shapes of ICE curves $\Rightarrow$ interactions (ignore vertical shifts)\\
 $\Rightarrow$ Focus on shape differences of {\color{cice}\bfseries mean-centered ICE curves}.
     
 %\includegraphics[width = 0.8\textwidth, trim={0cm 0cm 0cm 0cm}, clip]{figure/interaction_separable_2}
@@ -397,7 +409,7 @@ $X_3, X_4, X_5 \sim \mathcal{B}(n, 0.5)$ (all iid)
 $\leadsto$ Model: Random forest
 
 \begin{columns}[T, totalwidth = \linewidth]
-    \begin{column}{0.43\textwidth}
+    \begin{column}{0.46\textwidth}
 
 %$\leadsto$ True relationship: $f(X) = 0.2 X_1 - 8 X_2 + \color{YellowGreen}{8 X_2  \mathbbm{1}_{(X_1 > 0)}} \color{black}+ \color{ForestGreen}{16 X_2  \mathbbm{1}_{(X_3 = 0)}} \color{black}+ \epsilon, \; \epsilon \sim \mathcal{N}(0,1)$\\
 
@@ -422,7 +434,7 @@ $\leadsto$ Model: Random forest
  % \centerline{$ \textstyle    \hat f_{j|\mathcal{N}_g}^{PD}(\tilde x_j) = \frac{1}{|\mathcal{N}_g|} \sum_{i \in \mathcal{N}_g} \hat f(\tilde x_j, \xv_{-j}^{(i)})$}
   
     \end{column}
-    \begin{column}{0.57\textwidth}
+    \begin{column}{0.54\textwidth}
     \footnotesize
 
     %$, \; \epsilon \sim \mathcal{N}(0,1)$
@@ -521,7 +533,7 @@ $\leadsto$ Model: Random forest
          \end{column}
      \end{columns}
      \medskip
-     $\Rightarrow$ Additive decomposition of global feature effect
+     $\Rightarrow$ Additive decomposition of global feat effect
      %$f_2(X_2) \approx \sum_{i: \textit{terminal node indices}} g_i(X_2) \mathbbm{1}_{(X \in \mathcal{N}_i)}$
 }
 
@@ -601,9 +613,9 @@ $\leadsto$ Model: Random forest
 \begin{frame}{Regional Effects - Details}
 
 \begin{columns}[T, totalwidth=\textwidth]
-    \begin{column}{0.61\textwidth}
-    \textbf{Question:} How to split the curves into regions?  
- Define risk as L2 loss of mean-centered ICE curves:
+    \begin{column}{0.62\textwidth}
+    \textbf{Question:} How to split curves into regions?  
+ Define risk as L2 loss of mean-centered\\ ICE curves:
 $$\textstyle
     \mathcal{R}_j\left(\mathcal{N}\right) =
     \sum\limits_{\xv \in \mathcal{N}} 
@@ -611,7 +623,7 @@ $$\textstyle
      (\underbrace{{\color{cice}\hat f^{c}(\tilde x_j^{(k)}, \xv_{-j})} - \color{rep}\hat f_{j|\mathcal{N}}^{PD,c} (\tilde x_j^{(k)})}_\text{$\color{orange}{d_k}$})^2
     %\mathcal{L}\left(\xv_j, i\right)
     $$
-with the average feature effect in %region with associated index set 
+with the avg. feature effect in %region with associated index set 
 region $\mathcal{N} \subseteq \Xspace$:
 
 \medskip
@@ -625,14 +637,17 @@ region $\mathcal{N} \subseteq \Xspace$:
     \end{column}
 \end{columns}
 %\medskip
-\begin{itemize}
-    \item[$\Rightarrow$] Measures interaction-related heterogeneity (variance) of ICE curves in $\mathcal{N}$
-    \item[$\Rightarrow$] Recursive partitioning (CART): Find best feature-split combination that solves
+% \begin{itemize}
+
+    % \item[$\Rightarrow$] 
+    $\leadsto$ Measures interaction-related heterogeneity (variance) of ICE curves in $\mathcal{N}$\\
+    % \item[$\Rightarrow$]
+    $\leadsto$ Recursive partitioning (CART): Find best feat-split combo that solves
     
 \medskip
 
 \centerline{$\arg \min_{z, t} \; \mathcal{R}_j\left(\mathcal{N}_{left}\right) + \mathcal{R}_j\left(\mathcal{N}_{right}\right)$}
-\end{itemize}
+% \end{itemize}
 
       \begin{columns}[c, totalwidth=\textwidth]
         \begin{column}{0.57\textwidth}
@@ -734,7 +749,7 @@ region $\mathcal{N} \subseteq \Xspace$:
 \end{figure}
 \begin{itemize}
 \item Identify feature with highly heterogeneous local effects\\
-$\leadsto$ \textcolor{ForestGreen}{\texttt{hour}: Most important and highly heterogeneous feature (highest variance)}
+$\leadsto$ \textcolor{ForestGreen}{\texttt{hour}: Most important; highly heterogeneous feat (highest variance)}
     %\item<1> \texttt{temperature}: Second most important feature (other features less important)
     %\item<1> Other features have less impact
 \item Find regions in feature space where this heterogeneity is minimal

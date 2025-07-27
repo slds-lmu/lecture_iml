@@ -1,6 +1,8 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -14,10 +16,18 @@
 %\bibliography{feature-importance}
 %\usepackage{Sweave}
 \begin{document}
-	\newcommand{\titlefigure}{figure_man/feature-importance.png}
-    \newcommand{\learninggoals}{
-    	\item Understand how PFI is computed
-    	\item Understanding strengths and weaknesses}
+
+\titlemeta{
+Feature Importance
+}{
+Permutation Feature Importance (PFI)
+}{
+figure_man/feature-importance.png
+}{
+\item Understand how PFI is computed
+\item Understanding strengths and weaknesses
+}
+    	
 	% Set style/preamble.Rnw as parent.
 	
 	% Load all R packages and set up knitr
@@ -28,12 +38,10 @@
 	
 	% Defines macros and environments
 
-	\lecturechapter{Permutation Feature Importance (PFI)}
-	\lecture{Interpretable Machine Learning}
 	
 	% ------------------------------------------------------------------------------
 
-% \begin{frame}{Permutation Feature Importance Idea \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+% \begin{frame}{Permutation Feature Importance Idea \furtherreading{Breiman_2001}}
 
 % In general, feature importance methods share two components
 % \lz
@@ -64,14 +72,14 @@
 
 \begin{itemize}
   \item<1-> \textbf{Goal:} Assess how important feature(s) $X_S$ are for predictive performance of a \textbf{fixed trained model} $\fh$ on a given dataset $\D$
-  \item<1-> \textbf{Idea:} Estimate change in model performance when $X_S$ is "made uninformative"
-  \item<2-> \textbf{Question:} Can we make $X_S$ uninformative by removing it from the model?\\
-  $\leadsto$ No, $\fh$ was trained with $X_S$ and retraining without $X_S$ gives a  different model
+  \item<1-> \textbf{Idea:} Estimate performance change when $X_S$ is "made uninformative"
+  \item<2-> \textbf{Question:} Can we make $X_S$ uninformative by removing it from  model?\\
+  $\leadsto$ No, $\fh$ was trained with $X_S$; retraining without $X_S$ gives a  different model
   %$\fh$ is already trained using $X_S$, i.e., we cannot remove $X_S$ without retraining
   %\item \textbf{Solution:} \textbf{Perturb $X_S$} by replacing $x_S$ with a \textbf{random permutation} $\tilde{x}_S$\\
 %$\leadsto$ Breaks dependence with $y$, preserves marginal $\mathbb{P}(X_S)$
   \item<3-> 
-\textbf{Solution:} Simulate feature removal by replacing $X_S$ with a perturbed version $\tilde{X}_S$ that is independent of $(X_{-S}, Y)$ but preserves distribution $\mathbb{P}(X_S)$\\
+\textbf{Solution:} Simulate feature removal by replacing $X_S$ with a perturbed version $\tilde{X}_S$ that is independent of $(X_{-S}, Y)$ but preserves distrib. $\mathbb{P}(X_S)$\\
   $\leadsto$ Compare {\color{blue}baseline predictions $\fh(X)$} with {\color{red}perturbed predictions $\fh(\tilde{X}_S, X_{-S})$}
   
   
@@ -99,7 +107,7 @@
 \end{frame}
 
 
-% \begin{frame}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+% \begin{frame}{Permutation Feature Importance (PFI) \furtherreading{Breiman_2001}}
 
 % \textbf{Idea:} "Destroy" information of $X_S$ in $\fh$ by replacing it with perturbed $\Tilde{X}_{S}$
 % %Estimate the added predictive value of feature(s) $X_S$ for a given trained model $\fh$, test data $\D$, test data $\D$ where $X_S$ was replaced by $\Tilde{X}_{S}$ by:
@@ -117,11 +125,11 @@
 % $\rightarrow$ breaks associations between $X_S$ and $Y$ while preserving the marginal $\mathbb{P}(X_S)$
 % \end{frame}
 
-\begin{frame}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+\begin{frame}{Permutation Feature Importance (PFI) \furtherreading{Breiman_2001}}
 \textbf{Sample estimator (using independent test set $\D=\{(\xv^{(i)},y^{(i)})\}_{i=1}^{n}$)}
 
 \begin{itemize}
-  \item Measure the error {\color{blue}\textbf{with feat. values $x_S$}} and {\color{red}\textbf{with permuted feat. values $\pert{x}{}{}_S$}} 
+  \item Measure error {\color{blue}\textbf{with feat. values $x_S$}} and {\color{red}\textbf{with permuted feat. values $\pert{x}{}{}_S$}} 
   \item Repeat permutation (e.g., $m$ times) and average difference of both errors: 
 
 $$
@@ -130,7 +138,7 @@ $$
 $$
 
 \begin{itemize}
-  \item $\D^{(k)}_{\,S}$: dataset where column(s) $x_S$ are \textbf{permuted} once (in repetition\ $k$)  
+  \item $\D^{(k)}_{\,S}$: dataset with column(s) $x_S$ are \textbf{permuted} once (in repetition\ $k$)  
   \item $\riske(\fh, \D) = \frac{1}{n} \sum\nolimits_{(x, y) \in \D}  L(\fh(x), y)$: Measures performance of $\fh$ using $\D$
   \item Average over $m$ permutations to reduce Monte-Carlo variance
 \end{itemize}
@@ -149,7 +157,7 @@ Note: $S$ refers to a subset of features, here $|S|=1$ to measure impact of perm
 \end{frame}
 
 
-% \begin{frame}{Permutation Feature Importance (PFI) \citebutton{Breiman (2001)}{https://doi.org/10.1023/A:1010933404324}}
+% \begin{frame}{Permutation Feature Importance (PFI) \furtherreading{Breiman_2001}}
 
 
 % % TODO: explain this idea better in one separate slide, e.g. we have a fixed model we want to analyze and a data set. Our aim is to understand the importance of features. We would like to remove a feature and measure its "added value" w.r.t. performance compared to not removing it. But we cannot remove it as the model is fixed and was already trained with that feature -> permuting is the next best thing we can do to "destroy" the information of the feature -> another possibility could be to add some noise to the feature to perturb it but this would change the marginal distribution
@@ -251,14 +259,14 @@ Note: $S$ refers to a subset of features, here $|S|=1$ to measure impact of perm
   \begin{itemize}
     \only<1-2>{\item[1.]\textbf{Perturbation:} Sample feature values from the distribution of $x_S$ ($P(X_S)$). \newline 
     $\Rightarrow$ Randomly permute feature $x_S$ \\
-    $\Rightarrow$ Replace $x_S$ with permuted feature $\pert{x}{}{}_S$ and create data $\pert{\D}{S}{}$ containing $\pert{x}{}{}_S$}%
+    $\Rightarrow$ Replace $x_S$ with permuted feat. $\pert{x}{}{}_S$ and create data $\pert{\D}{S}{}$ containing $\pert{x}{}{}_S$}%
     \only<2>{\item[2.] \textbf{Prediction:} Make predictions for both data, i.e., $\D$ and $\pert{\D}{S}{}$}%
     \only<3->{\item[3.] \textbf{Aggregation:}}%
       \begin{itemize}
         \item<3-> Compute the loss for each observation in both data sets%
         \item<4-> Take the difference of both losses $\Delta L$ for each observation%
         \item<5-> Average this change in loss across all observations%
-        \only<5>{\\ Note: Same as computing $\riske$ on both data sets and taking difference}%
+        \only<5>{\\ Note: Same as computing $\riske$ on both data sets and \\taking difference}%
         \item<6-> Repeat perturbation and average over multiple repetitions%
       \end{itemize}
     % \only<3-4>{\item[3.] \textbf{Aggregation:}
@@ -295,9 +303,9 @@ Note: $S$ refers to a subset of features, here $|S|=1$ to measure impact of perm
 \textbf{Interpretation:}
 
 \begin{itemize}
- \item \code{yr} and \code{temp} are most important features using mean absolute error (MAE)
+ \item \code{yr} and \code{temp} are most important feats using mean absolute error (MAE)
  %Features such as weekday also contribute to the performance.
- \item Destroying information about \code{yr} by permuting it increases MAE of model by 816
+ \item Destroying info. about \code{yr} by permuting it increases MAE of model by 816
  \item Error bars show 5\% and 95\% quantiles over multiple permutations
 \end{itemize}
 \end{frame}
@@ -309,7 +317,7 @@ Note: $S$ refers to a subset of features, here $|S|=1$ to measure impact of perm
   \item Results can be unreliable due to random permutations \\
   $\Rightarrow$ Solution: Average results over multiple repetitions
   \item Permuting features despite correlation/dependence with other features can lead to unrealistic combinations of feature values 
-  $\leadsto$ Extrapolation issue % (since $\P(x_j,x_{-j}) \neq \P(x_j) \P(x_{-j})$)\\
+  \\$\leadsto$ Extrapolation issue % (since $\P(x_j,x_{-j}) \neq \P(x_j) \P(x_{-j})$)\\
   \item PFI automatically includes importance of interaction effects with other features \\
   $\Rightarrow$ Permuting $x_j$ also destroys interactions with permuted feature\\
   $\Rightarrow$ PFI score contains importance of all interactions with permuted feature %Not only importance of permuted feature is contained but also importance of all interactions with that feature
@@ -347,9 +355,9 @@ Note: $S$ refers to a subset of features, here $|S|=1$ to measure impact of perm
 \textbf{Example:} Let $y = x_3 + \epsilon_y$, with $\epsilon_y \sim \mathcal{N}(0, 0.1)$.
 
 \begin{itemize}
-  \item $x_1 := \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated  
+  \item $x_1 := \epsilon_1$, $x_2 := x_1 + \epsilon_2$; highly correlated  
         ($\epsilon_1 \sim \mathcal{N}(0,1)$, $\epsilon_2 \sim \mathcal{N}(0, 0.01)$)
-  \item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$ and all noise terms $\epsilon_j$ are independent
+  \item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$; all noise terms $\epsilon_j$ are indep.
   \item Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
 \end{itemize}
 
@@ -357,12 +365,12 @@ Note: $S$ refers to a subset of features, here $|S|=1$ to measure impact of perm
 \centerline{\includegraphics[width=\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}}
 
 Hexbin plot of $(x_1, x_2)$ before (left) and after (center) permuting $x_1$;  
-PFI scores (right).
+\\PFI scores (right).
 
 \pause
 
 \begin{itemize}
-  \item[$\Rightarrow$] $x_1, x_2$ cancel in $\hat{f}$ since $x_1 \approx x_2$, hence $0.3 x_1 - 0.3 x_2 \approx 0$ $\leadsto$ should be irrelevant
+  \item[$\Rightarrow$] $x_1, x_2$ cancel in $\hat{f}$ since $x_1 \approx x_2$, hence $0.3 x_1 - 0.3 x_2 \approx 0$ \\$\leadsto$ should be irrelevant
   \item[$\Rightarrow$] Permuting $x_1$ breaks joint structure $\leadsto$ unrealistic inputs
   \item[$\Rightarrow$] $PFI > 0$ due to extrapolation (PFI evaluates model on unrealistic inputs)\\ $\leadsto$ $x_1, x_2$ are misleadingly considered relevant
 \end{itemize}
@@ -421,7 +429,7 @@ $\Rightarrow$ PFI does not fairly attribute the performance to the individual fe
 
 \textbf{Why?} $PFI \neq 0$ if permuting a feature breaks a dependency the model relies on. 
 Model overfits due to spurious feature-target dependencies in train that vanish on test.\\
-$\Rightarrow$ To identify features that help the model to generalize, compute PFI on test data.
+$\Rightarrow$ To find features that help the model to generalize, compute PFI on test data.
 %\textbf{Why?} PFI can only be nonzero if the permutation breaks a dependence in the data. Spurious feature-target dependencies overfit train data but vanish on test data.%help the model perform well on train data but are not present in the test data.
 %\\
 %$\Rightarrow$ If you are interested in which features help the model to generalize, apply PFI on test data.
@@ -442,17 +450,17 @@ Can we get insight into whether the ...
     \item<2-> feature $x_j$ contains prediction-relevant information?
     \begin{itemize}
       \item $PFI_j \neq 0$ $\Rightarrow$ $x_{j}$ is dependent on $y$, $x_{-j}$, or both (due to extrapolation) 
-      \item $x_{j}$ is not exploited by model (regardless of whether it is useful for $y$ or not) $\Rightarrow$ $PFI_j = 0$  %irrespective of whether the feature is useful or not
+      \item $x_{j}$ is not exploited by model (regardless of its usefulness for $y$) \\$\Rightarrow$ $PFI_j = 0$  %irrespective of whether the feature is useful or not
     \end{itemize}
-    \item<3-> model requires access to $x_j$ to achieve it's prediction performance?    
+    \item<3-> model requires access to $x_j$ to achieve its prediction performance?    
     \begin{itemize}
-      \item As the extrapolation example demonstrates, such insight is not possible
+      \item As shown by the extrapolation example, such insight is not possible
 \end{itemize}
 \end{enumerate}
 \end{frame}
 
 
-% \begin{frame}{Testing Importance (PIMP) \citebutton{Altmann et al. (2010)}{https://doi.org/10.1093/bioinformatics/btq134}}
+% \begin{frame}{Testing Importance (PIMP) \furtherreading{Altmann_2010}}
 
 % \begin{itemize}[<+->]
 %   \item PIMP was originally introduced for random forest's built-in permutation feature importance
@@ -517,7 +525,7 @@ Can we get insight into whether the ...
 % \end{itemize}
 % \end{frame}
 
-% \begin{frame}{Digression: Multiple testing problem \citebutton{Romano et al. (2010)}{https://doi.org/10.1057/978-1-349-95121-5_2914-1}}
+% \begin{frame}{Digression: Multiple testing problem \furtherreading{Romano_2010}}
 % \begin{itemize}[<+->]
 %   \item When should we reject the $H_0$-hypothesis for a feature? 
 %   \item The larger the number of features, the more tests need to be performed by PIMP\\

@@ -1,8 +1,11 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
 \input{../../style/common.tex}
+
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -11,15 +14,20 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure_man/me_movement}
-\newcommand{\learninggoals}{
+\titlemeta{
+Feature Effects
+}{
+Marginal Effects
+}{
+figure_man/me_movement
+}{
+
 \item Why parameter-based interpretations are not always possible for parametric models
 \item How marginal effects can be used in such cases
 \item Drawbacks of marginal effects
-\item Model-agnostic applicability}
+\item Model-agnostic applicability
+}
 
-\lecturechapter{Marginal Effects}
-\lecture{Interpretable Machine Learning}
 
 
 % Interpretation of Simple Models
@@ -102,34 +110,34 @@ y = \theta_0 + \theta_{1} x_1^2 + \theta_{2} x_2^2 + \theta_{1,2} x_1 x_2 + \eps
 % ---------------------------------------------------------------- %
 %  Slide – Marginal Effects: Local flavours & a global summary
 % ---------------------------------------------------------------- %
-\begin{frame}{Marginal Effects (ME)  \citebutton{Bartus, 2005}{https://doi.org/10.1177/1536867X0500500303} \citebutton{Scholbeck, 2024}{https://link.springer.com/article/10.1007/s10618-023-00993-x}}
+\begin{frame}{Marginal Effects (ME)  \furtherreading{Bartus_2005} \furtherreading{Scholbeck_2024}}
 
 \begin{itemize}\setlength\itemsep{0.45em}
 
 % --- core definition ------------------------------------------------ %
 \item %\textbf{What is a Marginal Effect?}  
       %Change in the model’s prediction when \emph{one or several} features are nudged.
-MEs measure changes in predictions due to changes in \emph{one/several} features.
+MEs measures prediction changes due to varying \emph{one/several} features.
  
 % --- two numerical definitions ------------------------------------- %
 \item \textbf{How to compute it?}  
       \begin{enumerate}%[--]
-        \item \textbf{Derivative Marginal Effects (dMEs)}: \emph{numeric derivative} (slope of tangent) \\
+        \item \textbf{Derivative MEs (dMEs)}: \emph{numeric deriv.} (slope of tangent) \\
               \(\;\leadsto\) needs differentiability, fails for step-wise models.
-        \item \textbf{Forward Marginal Effects (fMEs)}: \emph{forward difference} \(\hat f(\boldsymbol x+\boldsymbol h)-\hat f(\boldsymbol x)\)  \\
+        \item \textbf{Forward MEs (fMEs)}: \emph{forward difference} \(\hat f(\boldsymbol x+\boldsymbol h)-\hat f(\boldsymbol x)\)  \\
         
               \(\;\leadsto\) works for \emph{any} model, any feature type.
       \end{enumerate}
 
 % --- short caution on dME ------------------------------------------ %
-\item \textbf{Caveat}: dMEs can mislead whenever the prediction surface is non-smooth (e.g., decision trees); fMEs remain well-defined (due to finite differences).
+\item \textbf{Caveat}: dMEs can mislead when the prediction surface is non-smooth (e.g., decision trees); fMEs remain well-defined (due to finite differences).
 
 \pause
 % --- three local instantiations ------------------------------------ %
 \item \textbf{Local instantiations (one number per data point)}  
 \begin{itemize}
   \item \textbf{ME} (at observed point $\boldsymbol{x}^{(i)}$):  
-        Individual, observation-specific "what-if" effect.
+        Individual, obs.-specific "what-if" effect.
 
   \item \textbf{MEM} (at mean $\bar{\boldsymbol{x}}$):  
         Effect at artificial profile ("average obs.").
@@ -238,13 +246,15 @@ Expectation of the (d/f)MEs; captures the \emph{global overall} effect.
 \begin{columns}[T,onlytextwidth]
 % ----- LEFT COLUMN ----------------------------------------------
 \begin{column}{0.67\textwidth}
-\begin{itemize}%\setlength\itemsep{0.5em}
-  \item \textbf{dME (tangent, green)}
+% \begin{itemize}%\setlength\itemsep{0.5em}
+  % \item 
+  \textbf{dME (tangent, green)}
         \begin{itemize}
             \item slope of the tangent at \(x\);
             \item delivers a \emph{rate} of change \(\tfrac{\partial\widehat f}{\partial x}\).
         \end{itemize}
-  \item \textbf{fME (secant, orange)}
+  % \item 
+  \textbf{fME (secant, orange)}
         \begin{itemize}
             \item vertical gap between two model evaluations;
             \item always \emph{exact} change in predicted outcome.
@@ -252,16 +262,22 @@ Expectation of the (d/f)MEs; captures the \emph{global overall} effect.
             %We can quantify how much fME secant deviates from the true curve -- a quick "non-linearity measure"’ for each fME (purple band, bottom figure)
         \end{itemize}
 
-  \item \textbf{When the two differ}
+  % \item 
+  \textbf{When the two differ}
         \begin{itemize}
             \item Curvature makes the tangent overshoot or undershoot  
                   \(\Rightarrow\) dME may be badly biased.
             \item fME is robust to kinks, plateaus, trees, $\dots$
         \end{itemize}
     %\item<2-> Both lead to information loss about prediction function along the finite difference
-    \item<2-> Use fME for any non-linear or non-smooth model
-    \item<2-> Use dME for lin. functions or analytic convenience
+    % \item
+\only<2->{\textbf{Recommendations}}
+\begin{itemize}
+    \item<2-> Use fME for any non-linear / non-smooth model
+    \item<2-> Use dME for lin. func.-s or analytic convenience
 \end{itemize}
+
+% \end{itemize}
 
 \end{column}
 
@@ -282,7 +298,7 @@ Expectation of the (d/f)MEs; captures the \emph{global overall} effect.
 
 
 % Marginal Effects for Continuous Features
-\begin{frame}{Marginal Effects for Continuous Features}
+\begin{frame}{ME for Continuous Features}
 \begin{itemize}
 \item \textbf{Derivative Marginal Effect (dME)}:
 \[
@@ -321,7 +337,7 @@ Expectation of the (d/f)MEs; captures the \emph{global overall} effect.
 \item \textbf{Note:} fME is not scale-invariant -- halving the step size does not halve the effect.
 
 
-\item \textbf{Additive Recovery:} dME and fME isolate terms involving the target feature.
+\item \textbf{Additive Recovery:} dME and fME isolate terms involving the target feat.
 \begin{itemize}
 \item \textbf{Example:} For $\widehat{f}(\xv) = a x_1 + b x_2$: 
 $\text{dME}_1(\xv) = a$, \quad $\text{fME}_1(\xv, h_1) = a h_1$
@@ -354,14 +370,14 @@ $\text{dME}_1(\xv) = a$, \quad $\text{fME}_1(\xv, h_1) = a h_1$
 % \end{frame}
 
 % Marginal Effects for Categorical Features
-\begin{frame}{Marginal Effects for Categorical Features}
+\begin{frame}{ME for Categorical Features}
 \begin{itemize}
 \item \textbf{Traditional Approach}:
 \begin{itemize}
   \item Choose a baseline category for the categorical feature \(x_j\) \\
   $\leadsto$ Either the observed value \(x_j\) or a fixed reference \(x_j^\text{ref}\)
   \item Replace \(x_j\) with an alternative category \(x_j^\text{new}\)
-  \item Compute the change in prediction, keeping all other features \(\xv_{-j}\) fixed
+  \item Compute the change in prediction, keeping all other feat. \(\xv_{-j}\) fixed
 \end{itemize}
 % \begin{itemize}
 % \item Estimate the change in prediction when a categorical feature switches from an original $x_j$ or a reference category $x_j^\text{ref}$ to another category $x_j^\text{new}$.
@@ -387,7 +403,7 @@ $\text{dME}_1(\xv) = a$, \quad $\text{fME}_1(\xv, h_1) = a h_1$
 
 \item \textbf{Advantages}:
 \begin{itemize}
-\item Mirrors continuous feature fME: measures discrete change in prediction.
+\item Mirrors continuous feature fME: measures discrete change in pred.
 \item Any level can act as baseline - no fixed reference needed.
 %Avoids ambiguity from arbitrary reference-category baselines.
 \end{itemize}
@@ -451,7 +467,7 @@ $$\text{AME}_S = \frac{1}{n} \sum_{i=1}^n \big[\fh(\bm x_S^{(i)} + \bm h_S, \bm 
 
 \vspace{0.2em}
 \textbf{Takeaway:} AMEs can be useful summaries for smooth, monotonic models.  
-For black-boxes, use \textbf{local fMEs} and support them with a non-linearity measure.
+For black-boxes, use \textbf{local fMEs} and support them with non-linearity measure.
 
 \end{frame}
 
@@ -583,14 +599,14 @@ For black-boxes, use \textbf{local fMEs} and support them with a non-linearity m
 
 % ----------------------------------------------------------------
 \item \textbf{Multivariate changes}  
-      Simultaneously perturb multiple \emph{continuous/categorical} features.
-       Still yields a scalar (unlike PD/ICE, which require multivariate plots).
+      Simultaneously perturb multiple \emph{continuous/categ.} feat.
+       Still yields a scalar (unlike PD/ICE, which require multivar. plots).
       %No dimensionality issues from visualizations (PD/ICE).
 
 % ----------------------------------------------------------------
 \item \textbf{Model-faithful, assumption-light}  
       Measured at the \emph{actual data point}.
-      Captures interactions, no independence or surrogate-model assumptions (LIME).
+      Captures interactions, no indep. or surrogate-model assumptions (LIME).
 
 % ----------------------------------------------------------------
 \item \textbf{Non-Linearity Measure:}  
@@ -603,8 +619,9 @@ $\leadsto$ Local reliability measure, something PD/ICE plots cannot quantify.
 \end{itemize}
 
 \vspace{0.3em}
+\textbf{Conclusion:} 
 \begin{center}
-\textbf{Conclusion: Plots let you \emph{see} the landscape;\quad  
+\textbf{Plots let you \emph{see} the landscape;\quad  
 ME give numbers you can \emph{use}.}
 \end{center}
 
@@ -638,8 +655,8 @@ A clinical model predicts heart attack risk from patient features, e.g., $x_1:$ 
 \textbf{Route B – Forward Marginal Effect}: $\mathrm{fME}
   = \widehat f(\xv + \mathbf{h}) - \widehat f(\xv)$
 \begin{itemize}
-  \item \textbf{1-D case:} \(\mathbf{h} = (10, 0, 0, \dots) \;\Rightarrow\;\) risk increases by \textbf{+3 percentage points}
-  \item \textbf{2-D case:} \(\mathbf{h} = (10, 15, 0, \dots) \;\Rightarrow\;\) risk increases by \textbf{+4.1 percentage points}
+  \item \textbf{1-D case:} \(\mathbf{h} = (10, 0, 0, \dots) \;\Rightarrow\;\) risk increases by \textbf{+3 \% points}
+  \item \textbf{2-D case:} \(\mathbf{h} = (10, 15, 0, \dots) \;\Rightarrow\;\) risk increases by \textbf{+4.1 \% points}
   \item One scalar answer per query, extensible to higher dimensions.
 \end{itemize}
 
@@ -728,8 +745,8 @@ A clinical model predicts heart attack risk from patient features, e.g., $x_1:$ 
 \begin{itemize}
 \item \textbf{Individual Conditional Expectation (ICE)}:
 \begin{itemize}
-\item Visualizes predictions for an observation across a range of feature values.
-\item fME corresponds to vertical differences between points on an ICE curve.
+\item Visualizes predictions for an obs. across a range of feature values.
+\item fME corresponds to vertical diff. between points on an ICE curve.
 \end{itemize}
 \item \textbf{Partial Dependence (PD)}:
 \begin{itemize}

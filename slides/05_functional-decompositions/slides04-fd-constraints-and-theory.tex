@@ -1,6 +1,8 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
 \newcommand{\open}{}
@@ -13,16 +15,21 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/25-05-31_Hooker_2004_graph_fANOVA}
-\newcommand{\learninggoals}{
+\titlemeta{
+Functional Decompositions
+}{
+Theory of Standard fANOVA
+}{
+figure/25-05-31_Hooker_2004_graph_fANOVA
+}{
+
 \item Properties of classical fANOVA, reason for its popularity
 \item Equivalent definition of classical fANOVA
 % \item Understanding why fANOVA theoretically works and what constraints it satisfies
 \item Understand the role constraints play for any functional decomposition
+
 }
 
-\lecturechapter{Theory of Standard fANOVA}
-\lecture{Interpretable Machine Learning}
 
 \begin{frame}{Example: fANOVA Algorithm}
     \begin{itemize}
@@ -48,7 +55,7 @@
     
 \end{frame}
 
-\begin{frame}{Constraints for standard fANOVA Algorithm}
+\begin{frame}{Constraints for standard fANOVA Algo.}
 
     % One can prove that our definition of the components fulfills the following conditions, called \textit{vanishing condition}:
     \begin{theorem}
@@ -82,7 +89,7 @@
         % $\leadsto$ Makes sure that component $g_S(\xv_S)$ does not contain effects of $x_j, \forall j \in S$
         % For $|S| = 1$ this is equivalent to mean-centering the component $g_S(\xv_S)$. For $|S| > 1$
         \pause
-        \item All components are orthogonal, i.e., mutually independent and uncorrelated:
+        \item All components are orthogonal, i.e., mutually indep. and uncorrelated:
         $$
         \forall V \neq S: \quad \mathbb{E}_{\Xv} \bigl[ g_{V}(\xv_V) g_{S}(\xv_S) \bigr] = 0
         $$
@@ -161,7 +168,7 @@
         \item Opposite is true as well: \\
         Features independent $\implies$ Any functional decomposition fulfilling the vanishing conditions must be the standard fANOVA decomposition.
         \item In other words: Vanishing conditions are equivalent characterization
-        \item In general: Functional decompositions can be defined by sets of constraints \\
+        \item In general: Functional decomp. can be defined by sets of constraints \\
         \item Many other methods to compute decompositions exist, each with their set of constraints
     
     \end{itemize}

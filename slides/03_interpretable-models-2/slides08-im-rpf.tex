@@ -1,6 +1,12 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+% OLD
+%\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+% new
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+% OLD
+%\usepackage{../../style/lmu-lecture}
+% new
+\input{../../style/preamble}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -11,20 +17,37 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/2023_paper_skizze_Planted_Tree.jpg}
-\newcommand{\learninggoals}{
+% OLD
+%\newcommand{\titlefigure}{figure/2023_paper_skizze_Planted_Tree.jpg}
+%\newcommand{\learninggoals}{
+%\item Motivation for RPFs
+%\item Understand node types and restricting interactions in decision trees
+%\item Understand planted trees: non-binary decision trees and inner leaves
+%}
+%
+%\lecturechapter{Random Planted Forests}
+%\lecture{Interpretable Machine Learning}
+% new
+\titlemeta{
+Interpretable Models 2
+}{
+Random Planted Forests
+}{
+figure/2023_paper_skizze_Planted_Tree.jpg
+}{
 \item Motivation for RPFs
 \item Understand node types and restricting interactions in decision trees
 \item Understand planted trees: non-binary decision trees and inner leaves
 }
 
-\lecturechapter{Random Planted Forests}
-\lecture{Interpretable Machine Learning}
 
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}{Random Planted Forests (RPF) \citebutton{Hiabu et al. 2023}{https://arxiv.org/abs/2012.14563}}
+\begin{frame}{Random Planted Forests (RPF) % OLD
+%\citebutton{Hiabu et al. 2023}{https://arxiv.org/abs/2012.14563}
+% new
+\furtherreading{Hiabu_et_al_2023}}
 
 \textbf{Goal:} Create a powerful tree ensemble, but still interpretable
 
@@ -150,7 +173,7 @@ $\Rightarrow$ Degree of interaction in each node is \(|t|\).
     \begin{itemize}
         \item Always keep track of interaction type in each node
         
-        \item For each new split, make sure max. degree of interactions is not exceeded $\Rightarrow$ When max. number of features reached, no new features are allowed
+        \item For each new split, make sure max. degree of interactions is not exceeded $\Rightarrow$ When max. number of feat reached, no new feat are allowed
     \end{itemize}
 
     \textbf{Problem: } For small interaction order, single trees quickly limited
@@ -162,7 +185,7 @@ $\Rightarrow$ Degree of interaction in each node is \(|t|\).
 
     \textbf{Idea:} Allow inner nodes to split again
 
-    Define \textit{Planted Trees}: Decision trees in which each inner nodes can be \textit{leaves}:
+    Define \textit{Planted Trees}: Decision trees where each inner nodes can be \textit{leaves}:
     \begin{itemize}
         \item Add prediction to final output
         \item Can be split again $\Rightarrow$ several splits possible

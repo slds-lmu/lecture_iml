@@ -1,6 +1,8 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -25,13 +27,18 @@
 
 % Defines macros and environments
 
-\newcommand{\titlefigure}{figure/lime_credit_ice2.pdf}
-\newcommand{\learninggoals}{
-    \item See real-world data examples
-    \item See application to image and text data}
+\titlemeta{
+PLACEHOLDER
+}{
+LIME Examples
+}{
+figure/lime_credit_ice2.pdf
+}{
 
-\lecturechapter{LIME Examples}
-\lecture{Interpretable Machine Learning}
+    \item See real-world data examples
+    \item See application to image and text data
+}
+
 
 % Prerequisite: le-intro
 
@@ -118,7 +125,7 @@
 %while the year 2011 has a large negative effect as well as the springtime.
 %\end{frame}
 
-\begin{frame}{LIME for Text Data \citebutton{Shen, Ian, (2019)}{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}}
+\begin{frame}{LIME for Text Data \furtherreading{Ian_2019}}
     LIME can also be applied to text data: 
 	\begin{itemize}
 		\item Raw text representations: 
@@ -144,7 +151,7 @@
 	\end{itemize}
 \end{frame}
 	
-\begin{frame}{LIME for Text Data (cont'd) \citebutton{Shen, Ian, (2019)}{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}}	 
+\begin{frame}{LIME for Text Data (cont'd) \furtherreading{Ian_2019}}	 
 	\begin{itemize}
 		\item Random forest classifier labeling movie reviews from IMDB 
 		\begin{itemize}
@@ -170,7 +177,7 @@
 		\begin{column}{0.67\textwidth}
 			LIME also works for image data:  
 			\begin{itemize}
-				\item \textbf{Idea}: Each obs. is represented by a binary vector indicating the presence or absence of superpixels \citebutton{Achanta et al. 2012}{https://ieeexplore.ieee.org/document/6205760}
+				\item \textbf{Idea}: Each obs. is represented by a binary vector indicating the presence or absence of superpixels \furtherreading{Achanta_2012}
 				\item Superpixels are interconnected pixels with similar colors (absence of a single pixel might not have a (strong) effect on the prediction)
 				\item \textbf{Warning}: Size of superpixels needs to be determined before the segmentation takes place
 				\item \textbf{Sampling}: Randomly switching some of the super pixels ``off", i.e., by coloring some superpixels uniformly
@@ -185,7 +192,7 @@
 	\end{columns}
     
 \end{frame}
-\begin{frame}{LIME for image data (cont'd) \citebutton{Ribeiro. 2016}{https://github.com/marcotcr/lime}}
+\begin{frame}{LIME for image data (cont'd) \furtherreading{Ribeiro_2016}}
 	\begin{itemize}
 		\item Explaining prediction of pre-trained inception neural network classifier
 		\item \textbf{Sampling}: Graying out all superpixels besides 10 superpixels

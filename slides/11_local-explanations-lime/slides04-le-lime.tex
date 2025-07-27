@@ -1,6 +1,9 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-interpretable}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -26,13 +29,17 @@
 
 % Defines macros and environments
 
-\newcommand{\titlefigure}{figure/lime5}
-\newcommand{\learninggoals}{
-	\item Understand motivation for LIME
-	\item Develop a mathematical intuition}
+\titlemeta{
+Local Explanations: Lime
+}{
+Local Interpretable Model-agnostic Explanations (LIME)
+}{
+figure/lime5
+}{
+\item Understand motivation for LIME
+\item Develop a mathematical intuition
+}
 
-\lecturechapter{Local Interpretable Model-agnostic Explanations (LIME)}
-\lecture{Interpretable Machine Learning}
 
 % Prerequisite: le-intro
 
@@ -56,9 +63,9 @@
 \begin{frame}[t]{LIME}
   \begin{itemize}%[<+->]
     %\item \textbf{Key idea:} Approximate any black‑box model $\fh$ around a single input $\xv$ with an \emph{interpretable} surrogate $\gh$
-    \item \textbf{Locality assumption:} $\fh$ behaves similarly simple in small neighborhood of $\xv$\\
+    \item \textbf{Locality assumption:} \\$\fh$ behaves similarly simple in small neighborhood of $\xv$\\
     $\leadsto$ Approximate $\fh$ near $\xv$ using an interpretable surrogate model $\gh$
-    \item \textbf{Interpretation strategy:} Use $\gh$'s simple internal structure to explain $\fh(\xv)$ locally\\
+    \item \textbf{Interpretation strategy:}\\ Use $\gh$'s simple internal structure to explain $\fh(\xv)$ locally\\
     $\leadsto$ \textbf{Common surrogates:} Sparse linear models, shallow decision trees
     %\item \textbf{Algorithm:} Perturb $\xv$, obtain $\fh(\tilde{\xv})$, weight by proximity, fit $\gh$ to weighted data, interpret $\gh$’s parameters
     %\item \textbf{Typical uses:} Debug single predictions, detect spurious features, provide actionable recourse
@@ -101,20 +108,20 @@
 
 \begin{frame}{Model Complexity}
     
-    We can measure the complexity of $\gh \in \Gspace$ using a complexity measure $J: \mathcal{G} \to \R_{0}$ \lz % $J(\gh)$ \lz
+    We can measure complexity of $\gh \in \Gspace$ using a complexity measure $J: \mathcal{G} \to \R_{0}$ \lz % $J(\gh)$ \lz
 
  	\textbf{Example: (Sparse) Linear Models}\\
  	\begin{itemize}
  	    \item Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = s(\thetav^\top \xv)\right\}$ be the class of linear models
- 	    \item $s(\cdot)$ is identity (linear model) or logistic sigmoid function  (logistic regression)
- 	    \item[$\leadsto$] $J(g) = \sum_{j = 1}^p \ind_{\{ \theta_j \neq 0 \}}$: Count number of non-zero coefficients (via L$_0$-norm of $\thetav$)
+ 	    \item $s(\cdot)$ is identity (linear model) or logistic sigmoid function  (log. reg.)
+ 	    \item[$\leadsto$] $J(g) = \sum_{j = 1}^p \ind_{\{ \theta_j \neq 0 \}}$: Count number of non-zero coeffs (via L$_0$-norm of $\thetav$)
  	\end{itemize}
  	\lz\pause
  	
  	\textbf{Example: Decision Trees}\\
  	\begin{itemize}
  	    \item Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees
-        \item $Q_m$ are disjoint axis parallel regions (leaves) and $c_m \in \R$ constant predictions
+        \item $Q_m$ are disjoint axis parallel regions (leaves); $c_m \in \R$ constant predictions
         %\\ 	     i.e., the class of additive models (e.g., constant $c_m$)  over the leaf-rectangles $Q_m$
  	    \item[$\leadsto$] $J(g) = M$: Count number of terminal/leaf nodes
  	\end{itemize}
@@ -153,7 +160,7 @@
 
     \pause
 
-    \item \textbf{Optimization principle:} The closer \( \zv \) is to \( \xv \), the more \( \gh(\zv) \) should match \( \fh(\zv) \)
+    \item \textbf{Optimization principle:} Closer \( \zv \) is to \( \xv \), the more \( \gh(\zv) \) should match \( \fh(\zv) \)
 
     \pause
 
@@ -168,7 +175,7 @@
         \medskip
         
         \begin{itemize}
-            \item \( d \) is a distance metric (e.g., Euclidean or Gower for mixed types)
+            \item \( d \): distance metric (e.g., Euclidean or Gower for mixed types)
             \item \( \sigma \) is the kernel width that controls locality
         \end{itemize}
         
@@ -203,19 +210,19 @@
 		$$ \argmin_{\gh \in \Gspace} L(\fh, \gh, \neigh) + J(\gh)$$
 		\item \textbf{In practice} LIME uses a two-stage approach:
 		\begin{enumerate}
-                \item User specifies complexity $J(\gh)$ beforehand (e.g., LASSO with \( k \) features)
+                \item User sets complexity $J(\gh)$ beforehand (e.g., LASSO with \( k \) features)
 		    \item Optimize $L(\fh, \gh, \neigh)$ (model fidelity) for fixed complexity
 		\end{enumerate}
 		\item \textbf{Goal:} Build a \textbf{model-agnostic} explainer
 		\begin{itemize}
-    		\item[$\leadsto$] Optimize $L(\fh, \gh, \neigh)$ without making any assumptions on the form of $\fh$ 
+    		\item[$\leadsto$] Optimize $L(\fh, \gh, \neigh)$ without making assumptions on the form of $\fh$ 
     		\item[$\leadsto$] Surrogate \( \gh \) approximates \( \fh \) locally through sampling and fitting
             %learn $\gh$ only approximately  
 		\end{itemize}
 		\end{itemize}
 \end{frame} 
 
-\begin{frame}{LIME Algorithm: Outline \citebutton{Ribeiro. 2016}{https://github.com/marcotcr/lime}}
+\begin{frame}{LIME Algorithm: Outline \furtherreading{Ribeiro_2016}}
 		
 		\textbf{Input}:
 		\begin{itemize}
@@ -232,7 +239,7 @@
     		\item Independently sample new points $\zv \in \Zspace$ 
     		\item Retrieve predictions $\fh(\zv)$ for obtained points $\zv$ 
     		\item Weight $\zv \in \Zspace$ by their proximity $\neigh(\zv)$ to quantify closeness to \( \xv \)
-    		\item Train interpretable surrogate model $\gh$ on data points $\zv \in \Zspace$ using weights $\neigh(\zv)$\\ $\leadsto$ Predictions $\fh(\zv)$ are used as target of this model
+    		\item Train interpretable surrogate model $\gh$ on data $\zv \in \Zspace$ using weights $\neigh(\zv)$\\ $\leadsto$ Predictions $\fh(\zv)$ are used as target of this model
     		\item Return \( \gh \) as the local explanation for \( \fh(\xv) \)
             %the interpretable model $\gh$ as the explainer
 		\end{enumerate}
@@ -256,7 +263,7 @@
 \end{frame} 
 
 
-\begin{frame}{LIME Algorithm: Example (Step 1+2: Sampling)}
+\begin{frame}{LIME Algo.: Example (Step 1+2: Sampling)}
 		
 		Strategies for sampling: 
 		\begin{itemize} 
@@ -284,7 +291,7 @@
 \end{columns}
 \end{frame}
 		
-\begin{frame}{LIME Algorithm: Example (Step 3: Proximity)}
+\begin{frame}{LIME Algo.: Example (Step 3: Proximity)}
 
 	In this example, we use the exponential kernel defined on the Euclidean distance $d$
 		 $$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2).$$ 
@@ -303,7 +310,7 @@
 		
 \end{frame}
 		
-\begin{frame}{LIME Algorithm: Example (Step 4: Surrogate)}
+\begin{frame}{LIME Algo.: Example (Step 4: Surrogate)}
 		In this example, we fit a \textbf{logistic regression} model\\
         $\leadsto$ $L(\fh(\zv), \gh(\zv))$ is the Bernoulli loss
 		\begin{center}

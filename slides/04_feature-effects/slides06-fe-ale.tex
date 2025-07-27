@@ -1,8 +1,11 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
 \input{../../style/common.tex}
+
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -11,14 +14,19 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/ale_plot.pdf}
-\newcommand{\learninggoals}{
+\titlemeta{
+Feature Effects
+}{
+Accumulated Local Effect (ALE) plot
+}{
+figure/ale_plot.pdf
+}{
+
 \item Understand ALE plots
 \item Difference between ALE and PD plots
+
 }
 
-\lecturechapter{Accumulated Local Effect (ALE) plot}
-\lecture{Interpretable Machine Learning}
 %
 % \frame{
 % \frametitle{Motivation}
@@ -229,7 +237,7 @@
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{Accumulated Local Effects (ALE) \citebutton{Apley, Zhu (2020)}{https://arxiv.org/abs/1612.08468}}
+\begin{frame}{Accumulated Local Effects (ALE) \furtherreading{Apley_Zhu_2020}}
 %\begin{columns}[T, totalwidth=\textwidth]
 %\begin{column}{0.65\textwidth}
 %ALE plots use the idea of integrating partial derivatives. They do not suffer from the extrapolation issue of PD plots and the OVB issue of M plots when features are dependent.
@@ -241,7 +249,7 @@
 %\end{column}
 %\end{columns}
 
-ALE plots estimate the marginal effect of a feature by accumulating its local effects (integrating partial derivatives), evaluated in regions supported by the data. 
+ALE plots estimate marginal effect of a feature by accumulating its local effects (integrating partial derivatives), evaluated in regions supported by the data. 
 
 % \medskip
 % \textbf{Key advantages:}
@@ -257,9 +265,9 @@ ALE plots estimate the marginal effect of a feature by accumulating its local ef
 \begin{enumerate}[<+->]
 \item \textbf{Estimate local effects} $\frac{\partial \fh(x_S, \xv_{-S})}{\partial x_S}$ (via finite differences) \label{ref1}\\ %evaluated at certain points $(x_S = z_S, \xv_{-S})$
 $\Rightarrow$ Removes unwanted main effects of other features $\xv_{-S}$ (unlike M plots)
-\item \textbf{Average local effects} over conditional distribution $\P(\xv_{-S}|x_S)$ similar to M plots\\ %across all values of $\xv_{-S}$, i.e.,
+\item \textbf{Average local effects} over conditional distr. $\P(\xv_{-S}|x_S)$ similar to M plots\\ %across all values of $\xv_{-S}$, i.e.,
 $\Rightarrow$ Avoids extrapolation (unlike PD plots)\label{ref2}
-\item \textbf{Accumulate:} Integrate averaged local effects up to a specific value $x \in \mathcal{X}_S$\\ %all values of $z_S$   from $z_0 := \min(x_S)$ u
+\item \textbf{Accumulate:} Integrate averaged local effects up to a specific  $x \in \mathcal{X}_S$\\ %all values of $z_S$   from $z_0 := \min(x_S)$ u
 $\Rightarrow$ Reconstructs main effect of $x_S$ \label{ref3}\\
 %$\Rightarrow$ Avoids OVB issue as other unwanted main effects were removed in \eqref{ref1}
 \end{enumerate}
@@ -439,7 +447,7 @@ $\Rightarrow$ Use finite differences within intervals instead.
 \item<1-> For each observation in $k$-th interval, i.e., $\{i: x_S^{(i)} \in \; [z_{k-1, S}, z_{k, S}]\}$:
   \begin{itemize}
     \item Replace $x_S^{(i)}$ with \textcolor{blue}{upper/lower interval bounds}, keeping $\xv_{-S}^{(i)}$ fixed
-    \item Compute observation-wise finite difference of $i$-th obs. in $k$-th interval \\
+    \item Compute obs.-wise finite difference of $i$-th obs. in $k$-th interval \\
     %Compute \textbf{prediction difference} (local effect) for $i$-th dobservation \\
     $\leadsto$ $\fh(z_{k, S}, \xi_{-S}) - \fh(z_{k-1, S}, \xi_{-S})$  \; (approximates local effect)  %\\
     %$\leadsto$ Approximates local effect of $x_S$ for $i$-th data point
@@ -447,7 +455,7 @@ $\Rightarrow$ Use finite differences within intervals instead.
 \item<2-> Average these finite differences over all observations in each interval \\
 $\leadsto$ Approximates \textbf{inner integral} \textcolor{red}{\( \E_{\xv_{-S} \mid x_S = z_S} \left[ \partial \hat{f}/\partial z_S \right] \)}
 \item<2-> Accumulate these averages from \( z_0 \) to the point of interest \( x \in \mathcal{X}_S \) \\
-$\leadsto$ Approximates \textbf{outer integral} over \( z_S \in [z_{0}, x] \) $\Rightarrow$ uncentered ALE function
+$\leadsto$ Approximates \textbf{outer integral} over \( z_S \in [z_{0}, x] \) \\$\Rightarrow$ uncentered ALE function
 
 %\item Accumulate and center differences over all data points $\Rightarrow$ ALE curve
 \end{itemize}
@@ -595,7 +603,7 @@ For a point $x \in \mathcal{X}_S$, define:
 
 \begin{itemize}
 \tightlist
-  \item $[z_{k-1, S}, z_{k,S}]$: $k$-th interval of feature $x_S$ with interval bounds $z_{k-1, S}$ and $z_{k,S}$ 
+  \item $[z_{k-1, S}, z_{k,S}]$: $k$-th interval of feat. $x_S$ with interval bounds $z_{k-1, S}$ and $z_{k,S}$ 
   \item $k_S(x)$: index of the interval in which $x$ lies
   \item $n_S(k)$: number of observations in interval $k$
   \item $\xv_{-S}^{(i)}$: all other features held fixed for $i$-th observation
@@ -611,7 +619,7 @@ For a point $x \in \mathcal{X}_S$, define:
 % - \frac{1}{n} \sum_{i = 1}^n \hat{\tilde{f}}_{S, \text{ALE}}(x_S^{(i)})
 % \]
 \textbf{Centering:}  
-Ensure identifiability by subtracting mean uncentered ALE (constant $c$):
+Ensure identifiability by subtracting mean uncentered ALE ($c$):
 \[
 \hat f_{S,\text{ALE}}(x)=
 \hat{\tilde f}_{S,\text{ALE}}(x)\;-\;c,
@@ -631,7 +639,7 @@ c =
 \hat{\tilde{f}}_{S, \text{ALE}}(z_{k,S}) \right) \cdot \tfrac{n_S(k)}{n} 
 \]
 
-\textbf{Plotting ALE:} Visualize the pairs $\left( z_{k,S}, \hat{f}_{S, \text{ALE}}(z_{k,S}) \right)$ for all interval boundaries $z_{k,S}$.
+\textbf{Plotting:} Visualize pairs $\left( z_{k,S}, \hat{f}_{S, \text{ALE}}(z_{k,S}) \right)$ for all interval boundaries $z_{k,S}$.
 \end{frame}
 
 %------------------------------------------------------------
@@ -719,7 +727,7 @@ c =
 % In case of correlated features, ALE might be better due to PD's extrapolation issue.
 \begin{itemize}
   \item \textbf{Visual comparison:} PD plot (top) vs. First-order ALE plot (bottom)
-  \item \textbf{Shape:} Both plots show similar trends, but differ in $y$-axis scale due to centering
+  \item \textbf{Shape:} Similar trends in both plots; $y$-axis scale differs due to centering
   \item \textbf{Interpretation:} ALE accounts for feature dependencies and avoids extrapolation into unsupported regions
   %\item \textbf{Implication:} 
   \\$\leadsto$ PD reflects model behavior in entire feature space ("true to the model")\\
@@ -816,7 +824,7 @@ $}
     \lz
     \begin{itemize}
     \item<1-> Recall: PD directly averages predictions over marginal distribution of $\xv_{-S}$
-    \item<1-> ALE is faster: Needs $O(2 \cdot n)$ model calls vs. $O(n \cdot g)$ for PD with $g$ grid points
+    \item<1-> ALE is faster: $O(2 \cdot n)$ model calls vs. $O(n \cdot g)$ for PD with $g$ grid points
     \only<1>{
     \item Difference 1: ALE averages 
     \begin{itemize}
@@ -832,13 +840,13 @@ $}
         \end{itemize}
     }
     \only<2>{
-    \item Difference 2: ALE \textcolor{blue}{integrates these partial derivatives over $z_S \in [z_0, x] \subseteq \mathcal{X}_S$ }\\
-    $\leadsto$ isolates effect of \( x_S \) and removes main effect of other dependent features
+    \item Difference 2: ALE \textcolor{blue}{integrates these partial deriv. over $z_S \in [z_0, x] \subseteq \mathcal{X}_S$ }\\
+    $\leadsto$ isolates effect of \( x_S \) and removes main effect of other dependent feat.
     }
     \only<3>{
-    \item Difference 2: ALE integrates these partial derivatives over $z_S \in [z_0, x] \subseteq \mathcal{X}_S$\\
+    \item Difference 2: ALE integrates these partial deriv. over $z_S \in [z_0, x] \subseteq \mathcal{X}_S$\\
     %integrates partial derivatives of feature $S$ over $z_S$\\
-    $\leadsto$ isolates effect of \( x_S \) and removes main effect of other dependent features
+    $\leadsto$ isolates effect of \( x_S \) and removes main effect of other dependent feat.
     }
     %\item Difference 2: ALE has an additional \textcolor{blue}{integral over $z_S$}. Instead of directly averaging the predictions, the ALE method calculates the prediction differences conditional on features S and integrates the derivative over features $S$ to estimate the effect. The derivative (or interval difference) isolates the effect of the feature of interest and blocks the effect of correlated features.
     %}

@@ -1,6 +1,10 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table,dvipsnames]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\usepackage[dvipsnames]{xcolor}
 
 % %  New colors
 \definecolor{ggRed}{HTML}{F8766D}
@@ -72,18 +76,18 @@ rectangle split part fill={gray!20, gray!20, cice!20, orange!20},minimum width=0
 \date{}
 
 
-
 \begin{document}
 
-\newcommand{\titlefigure}{figure/sim1_dt_split1.png}
-\newcommand{\learninggoals}{
+\titlemeta{
+Regional Effects
+}{
+Interaction importance
+}{
+figure/sim1_dt_split1.png
+}{
 \item Interaction quantification
 \item REPID interaction importance
 }
-
-\lecturechapter{Regional Effects}
-\lecture{Interpretable Machine Learning}
-
 
 
 \begin{frame}{Interaction quantification}
@@ -92,8 +96,8 @@ It's helpful to know not just how another feature changes the marginal effect of
 \textbf{Approaches:}
 \begin{itemize}
     \item \textbf{H-Statistics:} Variance of the deviation between the joint PDP and the sum of marginal PDPs (larger variance $\Rightarrow$ stronger interaction).
-    \item \textbf{Greenwell’s Interaction Index:} Difference between the variance of the PDP and the mean variance of centered ICE curves for the same feature pair.
-    \item \textbf{SHAP interaction index (\citebutton{Herbinger et al. (2022)}{https://proceedings.mlr.press/v151/herbinger22a.html}, \citebutton{Lundberg et al. 2018}{https://doi.org/10.48550/arXiv.1802.03888}):} Proportion of all two-way interactions with $x_i$  to which the $j$-th feature contributes.
+    \item \textbf{Greenwell’s Interaction Index:} Difference between variance of the PDP and the mean variance of centered ICE curves for the same feature pair.
+    \item \textbf{SHAP interaction index (\furtherreading{Herbinger_2022}, \furtherreading{Lundberg_2018}):} Proportion of all two-way interactions with $x_i$  to which the $j$-th feature contributes.
 \end{itemize}
 
 \pause
@@ -109,14 +113,15 @@ It's helpful to know not just how another feature changes the marginal effect of
 
 \begin{frame}{REPID Interaction Importance}
 
-\begin{columns}[T, totalwidth=\textwidth]
-    \begin{column}{0.60\textwidth}
 
 \textbf{On parent node level (for {\color{mygreen}$\mathcal{N}_{parent}$}):}
 %Relative interaction importance for each parent node :
 $$
    intImp({\color{mygreen}{\mathcal{N}_{parent}}}) = \frac{\mathcal{R}({\color{mygreen}\mathcal{N}_{parent}}) - (\mathcal{R}({\color{amber}\mathcal{N}_{left}}) + \mathcal{R}({\color{red}\mathcal{N}_{right}}))}{\mathcal{R}({\color{blue}\mathcal{N}})} 
 $$
+\begin{columns}[T, totalwidth=\textwidth]
+    \begin{column}{0.55\textwidth}
+
 \textbf{Interpretation:}
 Reduction of ICE curve variance after one split of $\mathcal{N}_{parent}$ into $\mathcal{N}_{left}$ and $\mathcal{N}_{right}$ 
 relative to the ICE curve variance in the root node $\mathcal{N}$.
@@ -155,7 +160,7 @@ relative to the ICE curve variance in the root node $\mathcal{N}$.
 \end{center}
     \end{column}
 \pause
-    \begin{column}{0.4\textwidth}
+    \begin{column}{0.45\textwidth}
   %\centering\includegraphics[width = 0.6\textwidth]{figure/tree_expl.png}
  \centering
 \includegraphics[width = 0.95\textwidth]{figure/sim1_fake.png}
@@ -170,7 +175,7 @@ Split reduces 83.5\% of variance.
 \begin{frame}{REPID Interaction Importance}
     
 \begin{columns}[T, totalwidth=\textwidth]%, totalwidth=\textwidth]
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.53\textwidth}
 
 \textbf{On feature level (for $x_j$):} 
 %Relative interaction importance for feature $x_j$:
@@ -249,7 +254,7 @@ Overall reduction of ICE curve variance due to splits by $X_j$ (in \%).
     \end{center}
     \end{column}
 \pause
-    \begin{column}{0.52\textwidth}
+    \begin{column}{0.54\textwidth}
 
 
     \centering
@@ -320,7 +325,7 @@ Overall reduction of ICE curve variance due to splits by $X_j$ (in \%).
     \item Draw 1000 i.i.d. samples from $X_1, \ldots , X_4 \sim \mathcal{U}(-1,1)$
     \item True underlying function: $f(\xv) = \sum\nolimits_{j=1}^4 \xv_j + \xv_1 \xv_2 + \xv_2 \xv_3 + \xv_1 \xv_3 + \xv_1 \xv_2 \xv_3 + \epsilon$ % , \epsilon \sim \mathbbm{N}(0, 0.01 \sigma(\mu(\xv))^2)
     \item Fit a correctly specified linear model (interactions with $\xv_4$ are excluded)
-    \item 30 repetitions, measure interaction strength between $\xv_2$ and all other 3 features
+    \item 30 reps, measure interaction strength between $\xv_2$ and all other 3 features
 \end{itemize}
 
 \textbf{Which methods are sensitive to changes in main effect sizes or feature correlations?}
@@ -385,7 +390,7 @@ Overall reduction of ICE curve variance due to splits by $X_j$ (in \%).
 \begin{frame}{Limitations of REPID}
 
 \begin{columns}[T, totalwidth = \textwidth]
-    \begin{column}{0.48\textwidth}
+    \begin{column}{0.6\textwidth}
 
 %\pause
 % \textbf{Limitations}:
@@ -478,12 +483,12 @@ Overall reduction of ICE curve variance due to splits by $X_j$ (in \%).
 \begin{frame}{Conclusion}
 
 \begin{columns}[T, totalwidth = \textwidth]
-    \begin{column}{0.53\textwidth}
+    \begin{column}{0.58\textwidth}
 
  \textbf{Summary of Contributions (REPID)}:
  \begin{itemize}
     \item Regional effects in interpretable regions
-    \item Additive decomposition of feature effect 
+    \item Additive decomp. of feature effect 
     %\item Prove meaningfulness of objective - only feature interactions between $\xv_j$ and $\xv_{-j}$ minimized %(measures only feature interactions)
     \item Quantify feature interactions 
     \item Outperforms SOTA interaction indices
@@ -493,7 +498,7 @@ Overall reduction of ICE curve variance due to splits by $X_j$ (in \%).
  \textbf{Summary of Contributions (GADGET)}:
  \begin{itemize}
  \item Unique regions for multiple features
- \item Additive decomposition of prediction function%\\
+ \item Additive decomp. of prediction function%\\
  \item Extension to ALE and Shapley Dependence
 % $\Rightarrow$ TODO: Investigate usefulness as ``approximation'' when terminal regions contain interactions
  \item Test to identify significant interactions
@@ -541,6 +546,7 @@ Overall reduction of ICE curve variance due to splits by $X_j$ (in \%).
 
 \end{columns}
 
+\medskip
 \textbf{Further Directions}: 
 
 Pruning, GADGET as a predictor, comparing regions across models, efficient implementation, more efficient testing and splitting approach, $\dots$

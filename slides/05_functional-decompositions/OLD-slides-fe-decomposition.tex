@@ -1,6 +1,8 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
 \newcommand{\open}{}
@@ -13,22 +15,27 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/open_blackbox}
-\newcommand{\learninggoals}{
+\titlemeta{
+PLACEHOLDER
+}{
+Additive Decomposition
+}{
+figure/open_blackbox
+}{
+
 \item What are additive decomposition of prediction functions?
 \item Why are they useful?
-\item How do we obtain them?}
+\item How do we obtain them?
+}
 
-\lecturechapter{Additive Decomposition}
-\lecture{Interpretable Machine Learning}
 
 \begin{frame}{Functional Decomposition
 %\\
-%\citebutton{Sobol (1993)}{http://www.andreasaltelli.eu/file/repository/sobol1993.pdf}
-% \citebutton{Sobol (2003)}{https://doi.org/10.1016/S0951-8320(02)00229-6}
-%\citebutton{Li et al. (2001)}{https://doi.org/10.1021/jp010450t}
-\citebutton{Li and Rabitz (2011)}{https://doi.org/10.1007/s10910-011-9898-0}
-\citebutton{Chastaing et al. (2012)}{https://doi.org/10.1214/12-EJS749}
+%\furtherreading{Sobol_1993}
+% \furtherreading{Sobol_2003}
+%\furtherreading{Li_2001}
+\furtherreading{Rabitz_2011}
+\furtherreading{Chastaing_2012}
 }
 
 %\textbf{High-Dimensional Model Representation (HDMR):} 
@@ -84,7 +91,7 @@ $ Var[\fh(\xv)] =  \textstyle\sum_{S \subseteq \{1,\ldots,p\}}  Var\left[ g_{S}(
 
 \pause 
 
-\textbf{N.B.:} For dependent inputs, \citebutton{Hooker (2007)}{http://www.tandfonline.com/doi/abs/10.1198/106186007X237892} showed the existence of a unique solution for the components under a ``relaxed vanishing condition'' which leads to a ``hierarchical orthogonality''
+\textbf{N.B.:} For dependent inputs, \furtherreading{Hooker_2007} showed the existence of a unique solution for the components under a ``relaxed vanishing condition'' which leads to a ``hierarchical orthogonality''
 $$\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \subset S$$
 $\leadsto$ Only components are orthogonal where features involved in $g_{V}(\xv_V)$ also appear in $g_{S}(\xv_S)$
 %Only components where all features involved in one component $g_{V}(\xv_V)$ also appear in the other component $g_{S}(\xv_S)$ are orthogonal
@@ -150,16 +157,16 @@ $\leadsto$ Only components are orthogonal where features involved in $g_{V}(\xv_
 % Different ways to compute the components exist, e.g.: % (with slightly different constraints / properties)
 % 		\begin{itemize}
 % 			\item %Recursive expectations (via partial dependence functions) \\
-% 			Functional ANOVA decomposition for \textbf{independent features} \citebutton{Hooker (2004)}{http://portal.acm.org/citation.cfm?doid=1014052.1014122} \\
+% 			Functional ANOVA decomposition for \textbf{independent features} \furtherreading{Hooker_2004} \\
 % 			$\leadsto$ By recursive expectations of partial dependence functions\\
 % 			$\leadsto$ Satisfies all desirable properties
 % 			% Often defined only for uniform distribution of x but Owen says it also applies to any distribution e.g. in 10.1137/130936233
-% 			\item Generalized functional ANOVA decomposition for \textbf{dependent features} \citebutton{Hooker (2007)}{http://www.tandfonline.com/doi/abs/10.1198/106186007X237892} \\
+% 			\item Generalized functional ANOVA decomposition for \textbf{dependent features} \furtherreading{Hooker_2007} \\
 % 			$\leadsto$ By minimizing squared error and relaxing the orthogonality property
 % 			% https://epubs.siam.org/doi/abs/10.1137/16M1097717
 % 			% Hierarchical orthogonality where $\mathbb{E}_{X} (g_{V}(\xv_V) g_{S}(\xv_S)) = 0, \forall V \subset S$ 
-% 			% Variance decomposition only with covariance component \citebutton{Chastaing et al. (2012)}{https://doi.org/10.1214/12-EJS749}
-% 			\item Accumulated local effect (ALE) decomposition (via finite differences) \citebutton{Zhu and Apley (2020)}{https://doi.org/10.1111/rssb.12377}
+% 			% Variance decomposition only with covariance component \furtherreading{Chastaing_2012}
+% 			\item Accumulated local effect (ALE) decomposition (via finite differences) \furtherreading{Apley_2020}
 % 		\end{itemize}
 % %\item N.B.: Without further constraints, components are not unique
 

@@ -1,9 +1,10 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 \usepackage{makecell}
 % Defines macros and environments
 \input{../../style/common.tex}
+
 \newcommand\tab[1][1cm]{\hspace*{#1}}
 
 \definecolor{imllightblue}{RGB}{184, 198, 210}
@@ -21,19 +22,23 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/model_agnostic}
-\newcommand{\learninggoals}{
+\titlemeta{
+Intro to IML
+}{
+Dimensions of Interpretability
+}
+{
+figure/model_agnostic
+}{
 %\item What is interpretable machine learning (IML) and Explainable Artificial Intelligence (XAI)?
 %: feature attribution vs. data attribution vs. counterfactual explanations
 \item Difference between intrinsic, model-specific, and model-agnostic interpretability
 \item Different types of explanations
 \item Local, global, and regional explanations
-\item Model/learner explanation (without/with refits)
+\item Model/learner explanation (with(out) refits)
 \item Levels of interpretability 
 }
 
-\lecturechapter{Dimensions of Interpretability}
-\lecture{Interpretable Machine Learning}
 %
 % \begin{frame}{Interpretable ML}
 % \begin{itemize}
@@ -154,7 +159,7 @@
 	\end{center}
 	
 	\only<1>{\begin{columns}[totalwidth=\textwidth]
-		\begin{column}{0.77\textwidth}
+		\begin{column}{0.79\textwidth}
 	   \textbf{Intrinsically Interpretable Models:}
 		\medskip
 		
@@ -163,7 +168,7 @@
 			\item Simple model structure (e.g., weighted sum or tree)
 			\item Examples: GLMs, decision trees
             \item Pro: Additional IML methods not necessarily required
-			\item Con: Limited model complexity can reduce performance; \\can still be hard to interpret with many features /interactions
+			\item Con: \\Limited model complexity can reduce performance, \\can still be hard to interpret (many features/interactions)
 			% \item Examples: linear model, decision tree, decision rule, GLMs
 			% \item Interpretable because of simple model structure, \\
 			% e.g., weighted combination of feature values or tree structure
@@ -171,7 +176,7 @@
 		\end{itemize}
 
 	\end{column}
-	\begin{column}{0.23\textwidth}
+	\begin{column}{0.21\textwidth}
 	
 	\resizebox{2.75cm}{3cm}{%	
    \begin{tikzpicture}[scale=0.7, transform shape]
@@ -211,7 +216,7 @@
 			\begin{itemize}
 		    %\itemsep1em
 		        \item Designed for specific model types (e.g., NNs)
-		        \item Examples: Gini importance of tree-based models,\\
+		        \item Examples: \\Gini importance of tree-based models,\\
                 Layer-wise relevance propagation (LRP)
                 \item Pro: Exploit model structure
                 \item Con: Restricted to specific model class
@@ -365,8 +370,8 @@
 
 	\only<4>{
     \begin{columns}[T, totalwidth=\textwidth]
-        \begin{column}{0.5\textwidth}
-            \textbf{Feature Interaction:} 
+        \begin{column}{0.51\textwidth}
+            \textbf{Feature Interaction:}\\ 
             How combinations of features jointly affect predictions.
             %Does the influence of a feature on model predictions \textbf{depend on other features}?
 	    \begin{itemize}
@@ -374,13 +379,13 @@
 	    	\item Pendant in linear models: \\Coefficients of interaction terms $\theta_{jk}$
 	    \end{itemize}
         \end{column}
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.49\textwidth}
             \includegraphics[width = \textwidth, trim={0cm 0cm 12cm 0cm}, clip]{figure/interaction_separable_2}
         \end{column}
     \end{columns}
 	}
     
-	\only<5-6>{\textbf{Data Attribution:} Identify which training instances most influenced a prediction.
+	\only<5-6>{\textbf{Data Attribution:} Identify training instances that most influenced a prediction.
     \medskip
     
     \textbf{Example:} A model should distinguish muffins and dogs.
@@ -397,7 +402,7 @@
 }
 	
 	\only<6>{
-	Approach: Measure how perturbations to training instances affect prediction or loss.
+	\textbf{Approach}: Measure how perturbations to training data affect prediction/loss.
 
     %Look at training data and find data points caused the model prediction.
 	\begin{columns}[c, totalwidth=\textwidth]
@@ -526,9 +531,9 @@
 
 \begin{frame}{Local, Global, and Regional Explanations}
 \begin{columns}[T, totalwidth=\textwidth]
-    \begin{column}{0.67\textwidth}
+    \begin{column}{0.75\textwidth}
     \only<1->{
-    \textbf{Local} -- Explain model behavior for \textbf{single instances}:
+    \textbf{Local:} Explain model behavior for \textbf{single instances}:
     \begin{itemize}
         \item Provide nuanced instance-specific insights
         \item Crucial for complex models where features typically affect instances differently (due to interactions)
@@ -536,9 +541,9 @@
     \end{itemize}
 }
    \only<2->{
-        \textbf{Global} -- Explain model behavior for \textbf{entire input space}:
+        \textbf{Global:} Explain model behavior for \textbf{entire input space}:
     \begin{itemize}
-        \item Provide high-level insights into model behavior, often by aggregating local explanations
+        \item Provide high-level insights into model behavior, \\often by aggregating local explanations
         %Explain average model behavior, across all data points
         \item Easier to communicate but loss of detail \& over-simplification (hides differences)
         \item Examples: PD plots, ALE plots, PFI
@@ -553,7 +558,7 @@
 }
     \end{column}
 
-    \begin{column}{0.33\textwidth}
+    \begin{column}{0.25\textwidth}
     \centering
     %\includegraphics[width=0.98\textwidth]{figure/lime5}
     % \only<1>{\scriptsize \centerline{Local (red) vs. Global (blue)}}
@@ -598,7 +603,7 @@
 % -------------------------------------------------
 % Local – Global – Regional explanations (Bike-sharing)
 % -------------------------------------------------
-\begin{frame}{Local, Global, and Regional Explanations}
+\begin{frame}{Local, Global, Regional Explanations}
   \begin{columns}[T,totalwidth=\textwidth]
 
     % ---------- SHORT EXPLANATION ----------
@@ -641,7 +646,7 @@
     %          \item Region 2 – non-working days: late-morning leisure peak.
     %     \end{itemize}
     \item<2->[]
-    $\leadsto$ Preserves detail without overload (challenge: find regions automatically)
+    $\leadsto$ Preserves detail without overload\\$\leadsto$ Challenge: find regions automatically
     %—yet learning meaningful data-driven regions is non-trivial.
     %Capture detail without information overload (challenge: finding good regions)
 %\textbf{Take-away}: %interaction between \texttt{hr} and \texttt{workingday} is crucial;
@@ -734,16 +739,16 @@
 \begin{frame}{Fixed Model vs. Refits}
 \begin{itemize}
     %\item Global interpretation methods use model and data as input and produce explanations\\
-     \item Input of global interpretation methods: model $+$ data, output: explanations\\
+     \item Global interpretation methods: Input: model $+$ data, output: explanations\\
     $\leadsto$ Explanations can be viewed as statistical estimators
     \item[] \centerline{\includegraphics[width=0.9\textwidth]{figure/fixed_model_vs_refits.jpg}}
     \item Situation in ML: Deployed model is trained on all available data\\
     $\leadsto$ No unseen test data left to, e.g., reliably estimate performance\\
     $\leadsto$ IML method could use same data model was trained on \\
-    $\leadsto$ But: Some IML methods rely on measuring loss requiring unseen test data
+    $\leadsto$ But: Some IML methods require measuring loss on unseen test data
     % (or some artificially created data?)
-    \item Alternative: Explain the inducer that created the model (instead of a fixed model)\\
-    $\leadsto$ Idea: Use resample strategies (e.g., 4-fold CV) as in performance estimation\\
+    \item Alternative: Explain the inducer that created the model (not a fixed model)\\
+    $\leadsto$ Idea: Use resample strategies (e.g. CV) as in performance estimation\\
     $\leadsto$ Requires refitting
 \end{itemize}
 \end{frame}
@@ -883,8 +888,8 @@
          && \textbf{Research Question} && \textbf{Objects of analysis} \\ &&&\\[-2ex]
          
          1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}How to explain a given model fitted on a data set? && \cellcolor{imldarkblue}\color{white} (deployed) model \centerline{$\theta \mapsto \hat{f}(\theta)$} \leavevmode\\ 
-        \only<2->{&&&\\[-1.5ex] 2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}How does an optimizer choose a model based on a data set? && \cellcolor{imlmedblue}\color{white} Model selection process (e.g., decisions made by AutoML systems or HPO process) \leavevmode\\ }
-        \only<3>{&&&\\[-1.5ex] 3\textsuperscript{rd} level view && \cellcolor{imllightblue}\color{white}How do data properties relate to performance of a learner and its hyperparameters? && \cellcolor{imllightblue}\color{white} properties of ML algorithms in general (benchmark) \leavevmode\\}
+        \only<2->{&&&\\[-1.5ex] 2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}How does an optimizer choose a model based on a data set? && \cellcolor{imlmedblue}\color{white} Model selection process (e.g., decisions made by AutoML systems or HPO) \leavevmode\\ }
+        \only<3>{&&&\\[-1.5ex] 3\textsuperscript{rd} level view && \cellcolor{imllightblue}\color{white}How do data properties relate to performance of a learner and its hyperparameters? && \cellcolor{imllightblue}\color{white} Properties of ML algorithms in general (benchmark) \leavevmode\\}
     \end{tabular}
     
 \only<1>{\vspace{0.3cm}}

@@ -1,6 +1,8 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -21,28 +23,33 @@
 % IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
 
 % Defines macros and environments
- \newcommand{\titlefigure}{figure/AEloanApplication.png} 
-\newcommand{\learninggoals}{
-\item Compare adversarial examples to counterfactual explanations
-\item See an example where both coincident}
 
-\lecturechapter{\Large{Adversarial Examples and Counterfactual Explanations}}
-\lecture{Interpretable Machine Learning}
+\titlemeta{
+Local explanations
+}{
+Adversarial Examples and Counterfactual Explanations
+}{
+figure/AEloanApplication.png
+}{
+\item Compare adversarial examples to counterfactual explanations
+\item See an example where both coincident
+}
+
 
 % ------------------------------------------------------------------------------
 
-\begin{vbframe}{ADE and Counterfactual Explanations}
+\begin{frame}{ADE and Counterfactual Explanations}
 It seems as if ADEs and counterfactual explanations (CEs) are defined similarly. Both ADEs and CEs describe inputs close to a given input $\xv$ that gets a different assignment. What are their differences?
 \begin{itemize}
     \item Counterfactuals do not have to be misclassified.
 %    \item Counterfactuals should be maximally close to $\xv$.
     \item Different notions of distance $\|\cdot\|$ are applied, e.g., $p_{2,\infty}$-norm for ADEs or $p_{0,1}$-norm for CEs.
-    \item Informal difference I: ADEs are mostly considered for high-dimensional data, while CEs are mostly considered in the context of low-dimensional data.
+    \item Informal difference I: ADEs are mostly considered for high-dimensional data, while CEs are mostly considered in the context of low-dim. data.
     \item Informal difference II: ADEs hide changes while CEs highlight them.
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Shared Example \citebutton{Ballet (2019)}{https://arxiv.org/pdf/1911.03274.pdf}}
+\begin{frame}{Shared Example \furtherreading{Ballet_2019}}
 \begin{itemize}
 \item \textbf``If you had two more pets, your loan application would have been granted" is an example of both ADEs and CEs.
 \end{itemize}
@@ -53,7 +60,7 @@ It seems as if ADEs and counterfactual explanations (CEs) are defined similarly.
   {Decision boundary of a classifier deciding loan applications. ADE via ``number of pets''}
   \label{fig:mnist}
 \end{figure} 
-\end{vbframe}
+\end{frame}
 
 \endlecture
 \end{document}

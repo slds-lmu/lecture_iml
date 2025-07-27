@@ -1,7 +1,7 @@
 %TODO: Chapter needs to be improved a lot
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
 \input{../../style/common.tex}
 
@@ -26,13 +26,17 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/interaction_separable}
-\newcommand{\learninggoals}{
+\titlemeta{
+Intro to IML
+}{
+Feature Interactions
+}{
+figure/interaction_separable
+}
+{
 \item Feature interactions
-\item Difference to feature dependencies}
-
-\lecturechapter{Feature Interactions}
-\lecture{Interpretable Machine Learning}
+\item Difference to feature dependencies
+}
 
 
 \begin{frame}{Feature Interactions}
@@ -44,9 +48,9 @@ $\leadsto$ Feature dependencies may lead to feature interactions in a model
 \pause
 %\item Although correlation concerns the data and interactions the model, they are often connected as correlations in the training data are identified by the learning algorithm.
 \item No. of potential interactions increases exponentially with no. of features \\
-$\leadsto$ Difficult to identify interactions, especially when features are dependent
+$\leadsto$ Difficult to identify interactions, especially when features are dep.
 \pause
-\item Interactions: A feature's effect on the prediction depends on other features\\
+\item Interactions: Feature's effect on the prediction depends on other features\\
 $\leadsto$ Example:
 $\fh(\xv) = x_1 x_2$ $\Rightarrow$ Effect of $x_1$ on $\fh$ depends on $x_2$ and vice versa 
 
@@ -123,14 +127,14 @@ No interactions: $x_2$ and $x_3$\phantom{,}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Feature Interactions \citebutton{Friedman and Popescu (2008)}{https://doi.org/10.1214/07-AOAS148}}
+\begin{frame}{Feature Interactions \furtherreading{Friedman_Popescu_2018}}
 
 %A function $f(\xv)$ is said to exhibit an interaction between two of its variables $x_j$ and $x_k$ if the difference in the value of $f(\xv)$ as a result of changing the value of $x_j$ depends on the value of $x_k$. For numeric variables, this can be expressed as
 \textbf{Definition:} A function $f(\xv)$ contains an interaction between $x_j$ and $x_k$ if a difference in $f(\xv)$-values due to changes in $x_j$ will also depend on $x_k$, i.e.: %, for numeric features:
 $$
 \mathbb{E} \left[ \frac{\partial^2 f(\xv)}{\partial x_j \partial x_k} \right]^2 > 0
 $$
-$\Rightarrow$ If $x_j$ and $x_k$ do not interact, $f(\xv)$ is sum of 2 functions, each independent of $x_j$, $x_k$:
+$\Rightarrow$ If $x_j$ and $x_k$ don't interact, $f(\xv)$ is sum of 2 functions, each indep. of $x_j$, $x_k$:
 % $f_{-j}$ and $f_{-k}$ that do not depend on $x_j$ and $x_k$, respectively:
 
 \medskip
