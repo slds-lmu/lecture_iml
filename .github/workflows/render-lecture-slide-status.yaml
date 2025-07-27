@@ -58,21 +58,14 @@ jobs:
       - name: Checkout this lecture repo
         uses: actions/checkout@v4
         with:
-          # Clone lecture repo in a temporary directory first
-          path: temp-lecture
+          # Clone lecture repo in subdirectory of the same name
+          path: ${{ steps.repo-basename.outputs.value }}
+          # translates to e.g.: path: "lecture_i2ml"
           # No need for git history
           # 0 indicates all history for all branches and tags, 1 is shallow (and default)
           fetch-depth: 1
           # Don't show progress bar, very verbose for large repos
           show-progress: false
-
-      # Move the lecture files to the expected location
-      - name: Setup directory structure
-        run: |
-          # Move lecture content to the expected location
-          mv temp-lecture ${{ steps.repo-basename.outputs.value }}
-          # Create include_lectures file to specify which lecture to process
-          echo '${{ steps.repo-basename.outputs.value }}' > include_lectures
 
       # Standard R/pandoc/latex setup steps
       - uses: r-lib/actions/setup-pandoc@v2
@@ -120,8 +113,12 @@ jobs:
 
       # Run the main thing: compiles slides, checks against slides-pdf/*, renders Rmd -> html site with results
       # Resulting output is in ./_site
+      # Before we add the lecture dir (e.g. "lecture_sl") to the include_lectures file to
+      # ensure that we do not accidentally skip this lecture, as this file is usually used
+      # to specify lecture for which `make site` should do something
       - name: Check slides and build HTML overview
         run: |
+          echo $(basename $PWD) > include_lectures
           make site
 
       # Deploy using this rather than JamesIves/github-pages-deploy-action, as this supports pushing
