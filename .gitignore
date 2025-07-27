@@ -1,25 +1,99 @@
-.DS_Store
-.texpadtmp/
-.RData
-.Rhistory
-*.fdb_latexmk
+#----------------------------------------------------#
+# ----- Global gitignore file for all lectures ----- #
+# This file is included in slds-lmu/lecture_service  #
+#----------------------------------------------------#
+
+
+#--------------------------------------------#
+#  Things that need to exist but not in git  #
+#--------------------------------------------#
+
+nospeakermargin.tex
+speakermargin.tex
+
+# latex-math subcomponents we don't need here
+latex-math/latex-math.pdf
+latex-math/latex-math.Rmd
+latex-math/.github
+
+#--------------------------------------------#
+#  Intermediate output (slides, exercises)   #
+#--------------------------------------------#
+
+# The only slide PDF output in this repo should be in slides-pdf
+# include both slides-xyz (i2ml) and slideXY- / tXY- (iml) formats
+slides/*/*slides*.pdf
+slides/*/slides*.pdf
+slides/*/t*.pdf
+
+# Similar things apply to exercises and exercises-pdf
+exercises/*/*.pdf
+exercises/*/*.tex
+exercises/*/*.log
+exercises/*/figure/unnamed-*.pdf
+exercises/*/figure/unnamed-chunk*
+exercises/*/*_files/
+exercises/*/.ipynb_checkpoints/
+
+external/*pdf
+
+#-----------------------------------------------------------------------------#
+#  TeX intermediate stuff everybody loves to hate and hates to commit to git  #
+#-----------------------------------------------------------------------------#
+
 *.aux
-*.zip
+*.fdb_latexmk
 *.fls
 *.log
 *.nav
+*.dvi
 *.out
 *.snm
 *.toc
-*.pdf
-!**/figure_man/*.pdf
-!**/figure/*.pdf
-!slides-pdf/*.pdf
-!exercises-pdf/*.pdf
-!style/**/*.pdf
-*.gz
-*.ps
-*.tex.tex
+*.vrb
+*.synctex.gz
+*.synctex(busy)
+**.pax # pdfannotextractor / pax
+*.pax
+**.bbl
+**.bbl-SAVE-ERROR
+**.blg
+**.bcf
+**.bcf-SAVE-ERROR
+**.run.xml
+
+#----------------------------------------------------------#
+#  Editor-specific stuff that should generally be ignored  #
+#----------------------------------------------------------#
+
+.vscode/
+
+# vim swap files
+# http://stratus3d.com/blog/2018/06/03/stop-excluding-editor-temp-files-in-gitignore/
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+
+# used for atom editor
+.latexcfg
+# Xournal files
+*.xoj
+# Files created by code demo
+code-demos/code_demo_genclass.R
+code-demos/code_demo_knn.R
+code-demos/code_demo_limo.R
+.idea/*
+*.pkl
+
+# RStudio / R in general
+*.Rproj
+*.Rhistory
 .Rproj.user
-*.Rproj
-*.Rproj
+.RData
+.Rdata
+
+#-----------------------------------#
+#  OS-specific temp/preview files   #
+#-----------------------------------#
+*.DS_Store

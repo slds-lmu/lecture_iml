@@ -1,3 +1,4 @@
+\PassOptionsToPackage{usenames,dvipsnames}{xcolor}
 \documentclass[a4paper]{article}
 
 
@@ -7,6 +8,7 @@
 \usepackage{amsmath, amssymb, xfrac, amsthm}
 \usepackage{dsfont}
 %\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{xcolor}
 \usepackage{amsfonts}
 \usepackage{graphicx}
 \usepackage{caption}
@@ -19,9 +21,20 @@
 \usepackage{hyperref}
 \usepackage{cancel}
 \usepackage{bm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 
-\input{../../style/common_ueb}
+\input{../../style/common}
+
+% Include latex-math here once such that it does not need to be included in each exercise
+% which may fail as it needs to be included as part of the preamble
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/ml-ensembles.tex}
+\input{../../latex-math/ml-trees.tex}
+\input{../../latex-math/ml-svm.tex}
+\input{../../latex-math/ml-gp.tex}
 
 \tcbset{enhanced}
 
@@ -86,35 +99,74 @@
 \oddsidemargin-0.8cm
 \pagestyle{empty}
 
-\newcommand{\kopf}[1]{
+\newcommand{\kopf}[2]{
 \hrule
 \vspace{.15cm}
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
-	{\sf\bf Advanced Machine Learning \hfill Exercise sheet #1\\ \hfill SoSe 2022}
+	{\sf\bf Introduction to Machine Learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/i2ml/} \hfill #2}
 \end{minipage}
 \vspace{.05cm}
 \hrule
 \vspace{1cm}}
 
-\newcommand{\kopfic}[1]{
+\newcommand{\kopfic}[2]{
 \hrule
 \vspace{.15cm}
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
-	{\sf\bf Advanced Machine Learning \hfill Live Session #1\\ \hfill SoSe 2022}
+	{\sf\bf Introduction to Machine Learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/i2ml/} \hfill #2}
 \end{minipage}
 \vspace{.05cm}
 \hrule
 \vspace{1cm}}
 
-\newcommand{\kopfsl}[1]{
+\newcommand{\kopficsl}[2]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Supervised Learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/i2ml/} \hfill #2}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfaml}[2]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Advanced Machine Learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/i2ml/} \hfill #2}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+
+\newcommand{\kopfdive}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Supervised Learning \hfill Deep Dive\\
+	 \url{https://slds-lmu.github.io/i2ml/} \hfill #1}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfsl}[2]{
 \hrule
 \vspace{.15cm}
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
 	{\sf\bf Supervised Learning \hfill Exercise sheet #1\\
-	 \url{https://slds-lmu.github.io/i2ml/} \hfill SoSe 2022}
+	 \url{https://slds-lmu.github.io/i2ml/} \hfill #2}
 \end{minipage}
 \vspace{.05cm}
 \hrule
@@ -129,10 +181,10 @@
 	{\vspace{0.5cm}}
 
 \newcounter{loes}
-\newenvironment{loesung}
-	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+\newenvironment{loesung}[1]
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}: #1}\\\noindent}
 	{\bigskip}
-	
+
 \newenvironment{bonusaufgabe}
 	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}*\footnote{This
 	is a bonus exercise.}:}\\ \noindent}
@@ -143,5 +195,6 @@
 	{\bigskip}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \end{document}
