@@ -132,7 +132,7 @@ figure/lime5
      \end{columns}
 \end{frame}
 
-\begin{frame}{LIME Pitfall: Locality \furtherreading{Kopper_2019}}
+\begin{frame}{LIME Pitfall: Locality \furtherreading{KOPPER2019}}
 %     \begin{itemize} 
 %          \item \textbf{Solution I}: Kernel width strongly interacts with locality:
 %          \begin{itemize}
@@ -162,13 +162,13 @@ figure/lime5
   \item  \textbf{Solution I:} Use Gower similarity directly as weights: \( \pi(\zv) = 1 - d_{\text{Gower}}(\xv, \zv) \)\\
   $\leadsto$ No kernel width required, but far points still receive (too high) weight\\
   $\leadsto$ Explanation may reflect more global than local structure\\
-  $\leadsto$ Used in practical LIME implementations \furtherreading{lime_pac}
+  $\leadsto$ Used in practical LIME implementations \furtherreading{LIMEPAC}
   \pause
-  \item \textbf{Solution II:} s-LIME adaptively selects \(\sigma\) to balance fidelity and stability \furtherreading{Gaudel_2022}
+  \item \textbf{Solution II:} s-LIME adaptively selects \(\sigma\) to balance fidelity and stability \furtherreading{GAUDEL2022}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Pitfall: Local vs. Global Features \furtherreading{Laugel_2018}}
+\begin{frame}{Pitfall: Local vs. Global Features \furtherreading{LAUGEL2018}}
 
 \begin{itemize}%[<+->]
 	\item<1-> \textbf{Pitfall:} Sampling from entire input space may hide influence of locally relevant feat in favor of globally relevant ones, even for narrow kernels.
@@ -200,7 +200,7 @@ figure/lime5
 
 
 
-\begin{frame}{Pitfall: Local vs. Global Features \furtherreading{Laugel_2018}}
+\begin{frame}{Pitfall: Local vs. Global Features \furtherreading{LAUGEL2018}}
 %\begin{columns}[T, totalwidth=\textwidth]
 %	\begin{column}{0.6\textwidth}
 	%\vspace{-.5cm}
@@ -220,13 +220,13 @@ figure/lime5
 		\begin{center}
 		\includegraphics[width=\linewidth]{figure/laugel_method}
 		\scriptsize{\textbf{Example:} $\xv$ (red point), closest point from other class (black cross)}
-	    %{Local surrogate (LS) method by \furtherreading{Laugel_2018}}
+	    %{Local surrogate (LS) method by \furtherreading{LAUGEL2018}}
 		\end{center}
 		%Sample new instances $\zv$ around the decision boundary closest from point $\xv$ for higher local accuracy
 		% \pause
 		% \item Red dot (right figure): Closest point from other class
 
-		% \item Red line: Local surrogate (LS) method \furtherreading{Laugel_2018}\\
+		% \item Red line: Local surrogate (LS) method \furtherreading{LAUGEL2018}\\
 		% $\leadsto$ better approximates the local direction of the decision boundary 
     \item LIME: What does the model do around this point?
     \item LS: How does the model change when crossing boundary near this point?
@@ -234,7 +234,7 @@ figure/lime5
 
 % 	\begin{center}
 % 		\includegraphics[width=1\textwidth]{figure/laugel_method}
-% 	    {Local surrogate (LS) method by \furtherreading{Laugel_2018}}
+% 	    {Local surrogate (LS) method by \furtherreading{LAUGEL2018}}
 % 		\vspace{-0.3cm}
 % 		\end{center}
 % \end{column}
@@ -261,7 +261,7 @@ figure/lime5
 		    \item \textbf{Black/grey crosses:} training data
             \item \textbf{Green dot:} Obs. to be explained; \textbf{Red dot:} nearest  opposite-class point
 		    \item \textbf{Grey curve:} RF's decision boundary; \textbf{Dotted lines:} LIME dec. bound.
-             \item \textbf{Red line:} Local surrogate (LS) method \furtherreading{Laugel_2018}
+             \item \textbf{Red line:} Local surrogate (LS) method \furtherreading{LAUGEL2018}
 	\end{itemize}
 
     
@@ -280,7 +280,7 @@ figure/lime5
   
   \textbf{Feature 1} is local;
   class flips only near boundary when moving up/down
-  %\item Image Source: \furtherreading{Laugel_2018}
+  %\item Image Source: \furtherreading{LAUGEL2018}
   %\item 
 \medskip
 
@@ -334,7 +334,7 @@ figure/lime5
 
 \end{frame}
 
-\begin{frame}{Pitfall: Hiding biases \furtherreading{Slack_2020}}
+\begin{frame}{Pitfall: Hiding biases \furtherreading{SLACK2020}}
 
 \begin{itemize}
 	% \item \textbf{Problem}: Developer could manipulate their model to hide biases 
@@ -359,7 +359,7 @@ figure/lime5
 %		\begin{column}{0.5\textwidth}
 	    \centering
 	    \includegraphics[width=0.85\textwidth]{figure/attack_biased_unbiased.jpg}\\
-	    Image Source: \furtherreading{Sikonja_2021}
+	    Image Source: \furtherreading{SIKONJA2021}
 %	    \end{column}
 %\pause
 	%     \begin{column}{0.5\textwidth}
@@ -381,7 +381,7 @@ figure/lime5
 
 
 
-\begin{frame}{Pitfall: Hiding biases \furtherreading{Slack_2020}}
+\begin{frame}{Pitfall: Hiding biases \furtherreading{SLACK2020}}
 
 \textbf{Key insight:} LIME can be fooled if explanations rely on model behavior outside the true data manifold.
 
@@ -409,7 +409,7 @@ figure/lime5
 
 
 
-\begin{frame}{Pitfall: Robustness \furtherreading{Jaakkola_2018}}
+\begin{frame}{Pitfall: Robustness \furtherreading{JAAKKOLA2018}}
 \begin{itemize}
 	\item \textbf{Problem}: Instability of LIME explanations 
 	\item \textbf{Observation}: Explanations of two very close points could vary greatly 
@@ -443,7 +443,7 @@ figure/lime5
 \end{columns}
 \end{frame}
 
-\begin{frame}{Pitfall: Definition of Superpixels \furtherreading{Achanta_2012}}
+\begin{frame}{Pitfall: Definition of Superpixels \furtherreading{ACHANTA2012}}
 
 \begin{columns}[totalwidth=\textwidth]
     
