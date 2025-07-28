@@ -139,7 +139,7 @@ $$
   \item Select split point \( s_k \) that minimizes \( \text{RSS}_\text{split}(s_k) \)
   \item \textbf{Compute cost:} \( O(n^2) \) per feat. (recompute mean \& RSS at each split)
 \end{itemize}
-  % --- TikZ figure: explicit computation for naïve split selection ---
+  % --- TikZ figure: explicit computation for naive split selection ---
   \centering
 \begin{tikzpicture}[x=1.2cm,y=0.9cm]
   \foreach \x/\val/\i in {0/1.2/1, 1/2.0/2, 2/1.5/3, 3/3.2/4, 4/2.8/5, 5/4.1/6} {
@@ -245,8 +245,8 @@ $$
 % $$
 % % --- TikZ figure: prefix-sum trick (spacing optimised, no overlaps) ---------------
 % \begin{tikzpicture}[>=latex,
-%                     x=1.75cm,   % ⟵ wider columns
-%                     y=0.8cm,   % ⟵ more vertical room
+%                     x=1.75cm,   % <-- wider columns
+%                     y=0.8cm,   % <-- more vertical room
 %                     font=\tiny]
 
 %   % ------------------------------------------------------------------
@@ -256,7 +256,7 @@ $$
 %   }
 
 %   % ------------------------------------------------------------------
-%   % (2) prefix sums S_k  = Σ y^{(i)}  ---- wider boxes
+%   % (2) prefix sums S_k  = sum y^{(i)}  ---- wider boxes
 %   \foreach \x/\val/\i in {0/1.2/1, 1/3.2/2, 2/4.7/3, 3/7.9/4, 4/10.7/5, 5/14.8/6}{
 %     \node[draw, minimum width=1.4cm, minimum height=0.52cm,
 %           fill=green!12, align=center] (S\i) at (\x,-1.1) {$S_{\i}=\,\val$};
@@ -264,7 +264,7 @@ $$
 %   \node[anchor=east] at (-0.4,-1.1) {Prefix $S_k$};
 
 %   % ------------------------------------------------------------------
-%   % (3) prefix sums SS_k = Σ y^{(i)}²
+%   % (3) prefix sums SS_k = sum y^{(i)}^2
 %   \foreach \x/\val/\i in {0/1.44/1, 1/5.44/2, 2/7.69/3, 3/17.93/4,
 %                           4/25.77/5, 5/42.58/6}{
 %     \node[draw, minimum width=1.4cm, minimum height=0.52cm,
@@ -386,7 +386,7 @@ $$
 % \end{frame}
 
 % ------------------------------------------------------------
-% --- Slide : Prefix-Sum Trick – Worked Example  -------------
+% --- Slide : Prefix-Sum Trick - Worked Example  -------------
 % ------------------------------------------------------------
 \begin{frame}{Efficient Split Selection - Example}
 \centering
@@ -467,7 +467,7 @@ $$
     \item \textbf{GAMs} - feature-wise interpretability via separate shape functions $f_j(x_j)$\\
     $\leadsto$ Potentially include pairwise interactions manually
     \item \textbf{Gradient Boosting} - incrementally fits residuals to improve predictive performance while retaining additivity
-    \item \textbf{Shallow Bagged Trees} - low-depth trees (2–4 leaves) reduce variance and create interpretable shape functions
+    \item \textbf{Shallow Bagged Trees} - low-depth trees (2-4 leaves) reduce variance and create interpretable shape functions
 \end{itemize}
 
 % \textbf{Idea of EBM}: \textbf{GAMs} trained with \textbf{gradient boosting} over \textbf{shallow bagged trees}\\
@@ -530,13 +530,13 @@ $$
 
 \end{frame}
 
-\begin{frame}{Univariate EBM – First Feature Update}
+\begin{frame}{Univariate EBM - First Feature Update}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step1.png}
 \end{figure}
 \begin{itemize}
-    \item Fit shallow bagged tree $T_1^{[1]}$ (2–4 leaves) to training data $\left\{\left(x_1, \tilde{r}^{[0]}\right)^{(i)}\right\}_{i=1}^n$\\
+    \item Fit shallow bagged tree $T_1^{[1]}$ (2-4 leaves) to training data $\left\{\left(x_1, \tilde{r}^{[0]}\right)^{(i)}\right\}_{i=1}^n$\\
     $\leadsto$ Use only feature $x_1$ as input and $\tilde{r}^{[0]}$ as target
     \item Update first shape function with learning rate $\eta$:
     $$
@@ -555,7 +555,7 @@ $$
 \end{frame}
 
 
-\begin{frame}{Univariate EBM – Cycle Through Features}
+\begin{frame}{Univariate EBM - Cycle Through Features}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step2.png}
@@ -572,7 +572,7 @@ $$
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Univariate EBM – Iterate Boosting Process}
+\begin{frame}{Univariate EBM - Iterate Boosting Process}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step3.png}
@@ -885,7 +885,7 @@ $$
 
 % For every feature pair $(x_i,x_j)$:
 %       \begin{itemize}
-%           \item Discretise each axis into $b\le 256$ ordered bins (uniform‐width or quantile).
+%           \item Discretise each axis into $b\le 256$ ordered bins (uniform-width or quantile).
 %           \item Evaluate all $b^{2}$ axis-aligned splits $(c_i,c_j)$ at the bin boundaries.
 %       \end{itemize}
 
@@ -1614,7 +1614,7 @@ $\Delta\text{RSS}(c_i,c_j)$.
 
 % \end{frame}
 
-% \begin{frame}{GA2M – Prediction with Pairwise Interactions}
+% \begin{frame}{GA2M - Prediction with Pairwise Interactions}
 % \begin{itemize}
 %     \item Output: $M$ predictors for each of the $K$ selected pairwise interactions $f_{ij}(x_i, x_j)$
 %     \item Each $f_{ij}$ is visualized as a 2D heatmap over feature pairs
@@ -1678,15 +1678,15 @@ $\Delta\text{RSS}(c_i,c_j)$.
 % \furtherreading{Lou_2013}} &
 % \textbf{Model-based Boosting \phantom{XXXX} 
 % % OLD
-%\citebutton{Bühlmann, 2003}{https://doi.org/10.1198/016214503000125}
+%\citebutton{Buhlmann, 2003}{https://doi.org/10.1198/016214503000125}
 % new
-% \furtherreading{Bühlmann_2003} % OLD
-%\citebutton{Bühlmann, 2008}{https://arxiv.org/abs/0804.2752}
+% \furtherreading{Buhlmann_2003} % OLD
+%\citebutton{Buhlmann, 2008}{https://arxiv.org/abs/0804.2752}
 % new
-% \furtherreading{Bühlmann_2008}} \\
+% \furtherreading{Buhlmann_2008}} \\
 % \midrule
 % \emph{Base learner} &
-% Bagged trees (2–4 leaves), one feature at a time; piece-wise constant shape functions &
+% Bagged trees (2-4 leaves), one feature at a time; piece-wise constant shape functions &
 % Custom learner per component (linear, spline, tree) \\
 % \addlinespace[2pt]\pause
 % \emph{Iteration policy} &
@@ -1694,7 +1694,7 @@ $\Delta\text{RSS}(c_i,c_j)$.
 % Greedy: update \emph{single} component that most reduces risk \\
 % \addlinespace[2pt]\pause
 % \emph{Regularisation} &
-% $\eta\!\approx\!0.01$;\; high $M$ (5–10k) + early stopping via internal CV on OOB samples;\; bagging lowers variance &
+% $\eta\!\approx\!0.01$;\; high $M$ (5-10k) + early stopping via internal CV on OOB samples;\; bagging lowers variance &
 % Shrinkage $\nu\!\in\!(0,1]$;\; early stopping;\; intrinsic variable selection \\
 % \addlinespace[2pt]\pause
 % \emph{Interactions} &
