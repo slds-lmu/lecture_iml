@@ -19,6 +19,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-interpretable.tex}
 % Defines macros and environments
  
 \newcommand{\Sm}{S_m}%{Pre(\tau,j)} % S(\tau,j)
@@ -303,30 +304,30 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 \begin{columns}[T, totalwidth=\linewidth]
 \begin{column}{0.4\textwidth}
 %\begin{center}
-\includegraphics[page=3, width = \textwidth, trim=0px 50px 420px 50px, clip]{figure/Shapley.pdf}
+  \includegraphics[page=3, width = \textwidth, trim=0px 50px 420px 50px, clip]{figure/Shapley.pdf}
 %\end{center}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \textbf{Ordering 1:} \colorcircle{playerblue}{white}{3} $\rightarrow$ \colorcircle{playeryellow}{white}{2} $\rightarrow$ \colorcircle{playerred}{white}{1}
-\begin{itemize}
-  \item[\colorcircle{playerblue}{white}{3}] joins alone: 3 \ding{73}
-  \item[\colorcircle{playeryellow}{white}{2}] joins: total = 3 \ding{73}, marginal = 0
-  \item[\colorcircle{playerred}{white}{1}] joins: total = 6 \ding{73}, marginal = +3
-\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+  \textbf{Ordering 1:} \colorcircle{playerblue}{white}{3} $\rightarrow$ \colorcircle{playeryellow}{white}{2} $\rightarrow$ \colorcircle{playerred}{white}{1}
+  \begin{itemize}
+    \item[\colorcircle{playerblue}{white}{3}] joins alone: 3 \ding{73}
+    \item[\colorcircle{playeryellow}{white}{2}] joins: total = 3 \ding{73}, marginal = 0
+    \item[\colorcircle{playerred}{white}{1}] joins: total = 6 \ding{73}, marginal = +3
+  \end{itemize}
 
-\vspace{0.25em}
+  \vspace{0.25em}
 
-\textbf{But what if \colorcircle{playerred}{white}{1} joins before \colorcircle{playeryellow}{white}{2}?}
+  \textbf{But what if \colorcircle{playerred}{white}{1} joins before \colorcircle{playeryellow}{white}{2}?}
 
-\vspace{0.25em}
+  \vspace{0.25em}
 
-\textbf{Ordering 2:} \colorcircle{playerblue}{white}{3} $\rightarrow$ \colorcircle{playerred}{white}{1} $\rightarrow$ \colorcircle{playeryellow}{white}{2}
-\begin{itemize}
-  \item[\colorcircle{playerblue}{white}{3}] joins alone: 3 \ding{73}
-  \item[\colorcircle{playerred}{white}{1}] joins: total = 4 \ding{73}, marginal = +1
-  \item[\colorcircle{playeryellow}{white}{2}] joins: total = 6 \ding{73}, marginal = +2
-\end{itemize}
-    \end{column}
+  \textbf{Ordering 2:} \colorcircle{playerblue}{white}{3} $\rightarrow$ \colorcircle{playerred}{white}{1} $\rightarrow$ \colorcircle{playeryellow}{white}{2}
+  \begin{itemize}
+    \item[\colorcircle{playerblue}{white}{3}] joins alone: 3 \ding{73}
+    \item[\colorcircle{playerred}{white}{1}] joins: total = 4 \ding{73}, marginal = +1
+    \item[\colorcircle{playeryellow}{white}{2}] joins: total = 6 \ding{73}, marginal = +2
+  \end{itemize}
+  \end{column}
 \end{columns}
 \pause
 \begin{itemize}
@@ -344,12 +345,10 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
   % \end{itemize}
 
   % NEW (removes itemize)
-    \\$\leadsto$ Resolves redundancy (e.g., \colorcircle{playerblue}{white}{3}’s contribution/skill overlaps with \colorcircle{playeryellow}{white}{2}’s)
+    $\leadsto$ Resolves redundancy (e.g., \colorcircle{playerblue}{white}{3}’s contribution/skill overlaps with \colorcircle{playeryellow}{white}{2}’s)
     \\$\leadsto$ Accounts for order sensitivity (e.g., \colorcircle{playerred}{white}{1} brings more value if added last)
     \\$\leadsto$ Ensures fairness (order of joining gives no advantage/disadvantage)
-  
 \end{itemize}
-
 % \begin{itemize}
 %   \item \textbf{Order sensitivity:} A player's marginal contribution depends on when they join $S$
 %   \item \textbf{Shapley value:} Averages each player’s contribution over all possible join orders
@@ -359,9 +358,6 @@ $\Rightarrow$ Unclear how to fairly distribute payouts when players interact
 %   \end{itemize}
 % \end{itemize}
 \end{frame}
-
-
-
 
 \begin{frame}{Shapley Values - Illustration}
 \begin{itemize}
