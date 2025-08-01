@@ -1,8 +1,9 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
-\input{../../style/common.tex}
+ \input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/basic-math.tex}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -11,46 +12,46 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/logreg-2vars-surface}%{figure/logistic_marginal_temp.pdf}
-\newcommand{\learninggoals}{
+\titlemeta{
+Interpretable Models 1
+}{
+Generalized Linear Models (GLMs)
+}{
+figure/logreg-2vars-surface
+}{
 \item Definition of GLMs
 \item Logistic regression as example
 \item Interpretation in logistic regression
 }
 
-\lecturechapter{Generalized Linear Models}
-\lecture{Interpretable Machine Learning}
-
-
 %------------------------------------------------------------------
 %------------------------------------------------------------------
-\begin{frame}{Generalized Linear Model (GLM) \citebutton{Nelder and Wedderburn 1972}{https://doi.org/10.2307/2344614}}
+\begin{frame}{GLM \furtherreading{NELDERWEDDERBURN1972}}
 \vspace{-0.2cm}
-\textbf{Problem}: Target variable given feat. not always normally dist. $\leadsto$ LM not suitable
+\textbf{Problem}: Target variable given feat not always normally distributed \\$\leadsto$ LM not suitable
+
 \begin{itemize}
-    \item Target is binary (e.g., disease classification)\\
+    \item Target is binary (e.g., disease classif.)\\
     $\leadsto$ Bernoulli / Binomial distribution
 \end{itemize}
-\vspace{-0.5cm}
-\begin{columns}[totalwidth=\textwidth]
-    \begin{column}{0.45\textwidth}
-        \begin{itemize}
-            \item Target is count variable \\(e.g., number of sold products)\\
-            $\leadsto$ Poisson distribution
-            \item Time until an event occurs\\ (e.g., time until death)\\
-            $\leadsto$ Gamma distribution
-        \end{itemize}
-    \end{column}
-    \begin{column}{0.55\textwidth}
-    \vspace{-0.4cm}
-        \begin{center}
-            \includegraphics[width = 0.9\textwidth]{figure/density_intervals.pdf}
-        \end{center}
-    \end{column}
-\end{columns}
+\begin{splitVCC}[0.5]{
+% \vspace{-0.5cm}
+
+\begin{itemize}
+    \item Target is count variable \\(e.g., number of sold products)\\
+    $\leadsto$ Poisson distribution
+    \item Time until an event occurs\\ (e.g., time until death)\\
+    $\leadsto$ Gamma distribution
+\end{itemize}
+}{
+\begin{center}
+    \includegraphics[width = \textwidth]{figure/density_intervals.pdf}
+\end{center}
+}
+\end{splitVCC}
 \medskip
 \pause
-\textbf{Solution}: GLMs - extend LMs by allowing other distributions from exponential family
+\textbf{Solution}: GLMs - extend LMs by allowing other distrib.-s from exp. family
 %$$g(\E (y \mid \xv)) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p$$
 % \begin{align*}
 % &g(\E (y \mid \xv)) = 
@@ -61,8 +62,8 @@
 $$g(\E (y \mid \xv)) = \xv^\top \thetav \; \Leftrightarrow \; \E (y \mid \xv) = g^{-1}(\xv^\top \thetav)$$
 \vspace*{-0.5cm}
     \begin{itemize}
-        \item Link function $g$ links linear predictor $\xv^\top \thetav$ to expectation of distribution of $y \mid \xv$\\ %$\E$ of specified distribution of
-        $\leadsto$ LM is special case: Gaussian distribution for $y \mid \xv$ with $g$ as identity function 
+        \item Link function $g$ links linear predictor $\xv^\top \thetav$ to expectation of distrib. of $y \mid \xv$\\ %$\E$ of specified distribution of
+        $\leadsto$ LM is special case: Gaussian distrib. for $y \mid \xv$ with $g$ as identity func. 
         \item Link function $g$ and distribution need to be specified 
         \item High-order and interaction effects can be manually added as in LMs
         \item Note: Interpretation of weights depend on link function and distribution
@@ -184,20 +185,20 @@ $$
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}[c]{GLM - Logistic Regression - Interpretation}
+\begin{frame}[c]{GLM - Log. Regression - Interpretation}
 
     \begin{itemize}
-        \item \textbf{Recall:} Odds is ratio of two probabilities, odds ratio compares ratio of two odds 
+        \item \textbf{Recall:} Odds is ratio of two probabilities, odds ratio is ratio of two odds 
         \item Weights $\theta_j$ are interpreted linear as in LM (but w.r.t. log-odds) \\
         $\leadsto$ difficult to comprehend
         %relate to log-odds %$\leadsto$ Effects are linear as in LM (but w.r.t. log-odds)
         $$log\text{-}odds = \log \left(\frac{\pi(\xv)}{1 - \pi(\xv)}\right) = \log \left(\frac{P(y=1)}{P(y=0)}\right) = \theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p  $$
-        \textbf{Interpretation:} \\ Changing $x_j$ by one unit, changes log-odds of class 1 compared to class 0 by $\theta_j$%\\
+        \textbf{Interpretation:} Changing $x_j$ by one unit, changes log-odds of class 1 compared to class 0 by $\theta_j$%\\
         %$\leadsto$ Effects are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
         \pause
-        \item Odds for class 1 vs. class 0: %Odds can be caulculated by:
+        \item Odds for cls 1 vs. cls 0: %Odds can be caulculated by:
         $odds = \displaystyle\frac{\pi(\xv)}{1 - \pi(\xv)}= \exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p)$
-        \item Instead of interpreting changes w.r.t. log-odds,  $odds\text{ }ratio$ is more common
+        \item Instead of interpreting changes w.r.t. log-odds, it is more common to use $odds\text{ }ratio$ 
         $$ = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j (x_j+1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp{(\theta_j)} $$
         \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\theta_j)$
         %\pause
@@ -211,10 +212,10 @@ $$
 \begin{itemize}
     \item Create a binary target variable for bike rental data:
     \begin{itemize}
-        \item Class 1: ``high number of bike rentals'' $>70\%$ quantile (i.e., \code{cnt} $> 5531$)
-        \item Class 0: ``low to medium number of bike rentals'' (i.e., \code{cnt} $\leq$ 5531)
+        \item Class 1: ``high number of rentals'' $>70\%$ quantile (i.e., \code{cnt} $> 5531$)
+        \item Class 0: ``low to medium number of rentals'' (i.e., \code{cnt} $\leq$ 5531)
     \end{itemize}
-    \item Fit a logistic regression model (GLM with Bernoulli distribution and logit link)
+    \item Fit a logistic regression model (GLM with Bernoulli distri. and logit link)
 \end{itemize}
 
 \begin{columns}[T, totalwidth = \textwidth]

@@ -1,9 +1,10 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
-\input{../../style/common.tex}
-
+ 
 
 
 \title{Interpretable Machine Learning}
@@ -14,10 +15,19 @@
 %\bibliography{feature-importance}
 %\usepackage{Sweave}
 \begin{document}
-	\newcommand{\titlefigure}{figure_man/pimp}
-    \newcommand{\learninggoals}{
-    	\item Understand PIMP and its motivation
-            \item Address multiple testing in feature importance}
+
+\titlemeta{
+Feature Importance
+}{
+Permutation IMPortance (PIMP)
+}{
+figure_man/pimp
+}{
+\item Understand PIMP and its motivation
+\item Address multiple testing in feature importance
+}
+
+
 	% Set style/preamble.Rnw as parent.
 	
 	% Load all R packages and set up knitr
@@ -28,13 +38,11 @@
 	
 	% Defines macros and environments
 
-	\lecturechapter{Permutation IMPortance (PIMP)}
-	\lecture{Interpretable Machine Learning}
 	
 	% ------------------------------------------------------------------------------
 
 
-\begin{frame}{Testing Importance (PIMP) \citebutton{Altmann et al. (2010)}{https://doi.org/10.1093/bioinformatics/btq134}}
+\begin{frame}{Testing Importance (PIMP) \furtherreading{ALTMANN2010}}
 
 \begin{itemize}[<+->]
   \item PIMP was originally introduced for random forest's built-in PFI scores
@@ -44,15 +52,15 @@
   %Addresses random fluctuations that cause non-zero PFI scores
   %Useful because PFI can be non-zero due to randomness/stochasticity
   %It computes the distribution of importances under the $H_0$-hypothesis that the feature is independent of the target $y$
- \item Null hypothesis $H_0$: Feature $X_j$ is conditionally independent of $y$ (unimportant)
-  \item Approximate null distribution of PFI scores under $H_0$ by repeated permutations:\\
-  Permute $y$ $\rightarrow$ retrain model $\rightarrow$ recompute $\widehat{\text{PFI}}_j$ scores for all $j$ $\rightarrow$ repeat $B$ times\\
+ \item Null hypothesis $H_0$: Feature $X_j$ is conditionally indep. of $y$ (unimportant)
+  \item Approximate null distrib. of PFI scores under $H_0$ by repeated permuts:\\
+  Permute $y$ $\rightarrow$ retrain $\rightarrow$ recompute $\widehat{\text{PFI}}_j$ scores for all $j$ $\rightarrow$ repeat $B$ times\\
   $\Rightarrow$ Permuting $y$ breaks relationship to all features (PFI scores reflect noise only)%\\
   %$\Rightarrow$ By computing PFI scores again, we obtain distribution of PFI scores under $H_0$
   \item %We now rescale the importance to a 
   Assess the significance of PFI scores via tail probability under $H_0$\\
   %Compute p-value via tail probability under $H_0$ over all $B$ repetitions
-    $\Rightarrow$ Use this as a new feature importance score, adjusting for random chance
+    $\Rightarrow$ Use this as a new feat. importance score, adjusting for random chance
   %and use this as new importance measure
 \end{itemize}
 
@@ -76,9 +84,9 @@
 		\begin{itemize}
         		\item Compute $\widehat{\text{PFI}}_j^{\text{obs}}$ for the model without permutation of $y$ (under $H_1$)
 			\item Fit probability distribution to all PFI scores $\{\widehat{\text{PFI}}_j^{(b)}\}_{b=1}^{B}$ (under $H_0$)\\
-            e.g., by assuming Gaussian/lognormal/gamma distribution (parametric)%\\
+            e.g., by assuming Gaussian/lognormal/gamma distrib (parametric)%\\
             %$\leadsto$ non-parametric by computing empirical tail probability
-			\item Compute p-value: Probability that null importance exceeds observed: 
+			\item Compute p-value: Prob. that null importance exceeds observed: 
             \begin{itemize}
                 \item parametric by taking tail probability of assumed distribution $$\mathbb{P}(\widehat{\text{PFI}}_j^{(m)} \geq \widehat{\text{PFI}}_j^{\text{obs}})$$
                 \item non-parametric by computing empirical tail probability: 
@@ -97,9 +105,9 @@
  Let $y = x_3 + \epsilon_y$, with $\epsilon_y \sim \mathcal{N}(0, 0.1)$.
 
 \begin{itemize}
-  \item $x_1 := \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated  
+  \item $x_1 := \epsilon_1$, $x_2 := x_1 + \epsilon_2$; highly correlated  
         ($\epsilon_1 \sim \mathcal{N}(0,1)$, $\epsilon_2 \sim \mathcal{N}(0, 0.01)$)
-  \item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$ and all noise terms $\epsilon_j$ are independent
+  \item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$; all noise terms $\epsilon_j$ are indep.
   \item Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
 \end{itemize}
 
@@ -115,16 +123,16 @@
 %\end{figure}
 
 \begin{itemize}
-    \item Histograms: $H_0$ distribution of PFI scores after permuting $y$ (1000 repetitions)
+    \item Histograms: $H_0$ distrib. of PFI scores after permuting $y$ (1000 repetitions)
     \item Red: Observed PFI score (under $H_1$) $\leadsto$ compare against $H_0$ distribution
-    \item Recall: PFI for $x_1$, $x_2$, $x_3$ is nonzero suggesting they are important (red lines)
+    \item Recall: PFI for $x_1$, $x_2$, $x_3$ is non-0 suggesting they are important (red lines)
     \item PIMP considers $x_1$, $x_2$ not significantly relevant (p-value > 0.05) 
 
     %since they are not predictive of $y$
 \end{itemize}
 \end{frame}
 
-% \begin{frame}{Digression: Multiple testing problem \citebutton{Romano et al. (2010)}{https://doi.org/10.1057/978-1-349-95121-5_2914-1}}
+% \begin{frame}{Digression: Multiple testing problem \furtherreading{ROMANO2010}}
 % \begin{itemize}[<+->]
 %   \item When should we reject the $H_0$-hypothesis for a feature? 
 %   \item The larger the number of features, the more tests need to be performed by PIMP\\
@@ -138,11 +146,11 @@
 %   %{\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
 % \end{frame}
 
-\begin{frame}{Digression: Multiple Testing \citebutton{Romano et al. (2010)}{https://doi.org/10.1057/978-1-349-95121-5_2914-1}}
+\begin{frame}{Digression: Multiple Testing \furtherreading{ROMANO2010}}
 
 \begin{itemize}%[<+->]
   \item When should we reject $H_0$ for a given feature?
-  \item PIMP conducts one hypothesis test per feature $\Rightarrow$ \textbf{multiple testing problem}
+  \item PIMP conducts one hypothesis test per feature \\$\Rightarrow$ \textbf{multiple testing problem}
   \item With many tests, rejections of true $H_0$ just by chance (type-I errors) accumulate
   \item To account for this, control a suitable error rate, e.g., the \textbf{family-wise error rate}\\
   FWE: probability of making at least one type-I error across all tests

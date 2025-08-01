@@ -1,9 +1,10 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
-\input{../../style/common.tex}
-
+ 
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
@@ -20,14 +21,18 @@
 % IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
 
 % Defines macros and environments
- \newcommand{\titlefigure}{figure/lime.png}
-\newcommand{\learninggoals}{
+ \titlemeta{
+Local Explanations
+}{
+Introduction
+}{
+figure/lime.png
+}{
 \item Understand motivation for local explanations 
 \item Develop an intuition for possible use-cases
-\item Know characteristics of local explanation methods}
+\item Know characteristics of local explanation methods
+}
 
-\lecturechapter{Introduction to Local Explanations}
-\lecture{Interpretable Machine Learning}
 
 % ------------------------------------------------------------------------------
 
@@ -40,7 +45,7 @@
 	    \item Purpose of local explanations:
 	    \begin{itemize}
 	        \item Insight into the driving factors for a \textbf{particular prediction/decision}
-	        \item Understand ML model decisions in a \textbf{local neighborhood} of a given input\\ (e.g., feature vector)
+	        \item Understand ML model decisions in a \textbf{local neighborhood} of a given input (e.g., feature vector)
 	    \end{itemize}
 	    \medskip
 	    \pause
@@ -60,7 +65,7 @@
 	\begin{itemize}
 		\item Explanations for laypersons should be tailored to the \textbf{explainee}\\ % (who receives the explanation)\\ %(i.e., the person receiving the explanation)
 		%\pause
-		$\leadsto$ \textbf{case specific}, \textbf{human-intelligible}, and \textbf{faithful} to the explained mechanism
+		$\leadsto$ \textbf{case specific}, \textbf{human-intelligible}, \textbf{faithful} to explained mechanism
 		\pause
 		\item If algorithms make decisions in \textbf{socially/safety critical domains}, end users have a justified interest in receiving explanations
 		\pause
@@ -90,14 +95,14 @@ In any case, such processing should be subject to suitable safeguards, which sho
 the \textbf{right to obtain} [...]
 %human intervention, to express his or her point of view, to obtain 
 \textbf{an explanation of the decision reached after such assessment and to challenge the decision}.''
-\hfill \citebutton{Recital 71, GDPR, 2016}{https://gdpr-text.com/read/recital-71}
+\hfill \furtherreading{GDPR2016}
 
 \medskip
 
 ``Any affected person [...]
 %subject to a decision which is taken by the deployer on the basis of the output from a high-risk AI system listed in Annex III, with the exception of systems listed under point 2 thereof, and which produces legal effects or similarly significantly affects that person in a way that they consider to have an adverse impact on their health, safety or fundamental rights 
 shall have the right to obtain from the deployer clear and meaningful explanations of the role of the AI system in the decision-making procedure and the main elements of the decision taken.''
-\hfill \citebutton{Art. 86, AI Act, 2021}{https://www.artificial-intelligence-act.com/Artificial_Intelligence_Act_Article_86.html}
+\hfill \furtherreading{ACT2021}
 \end{frame}
 
 
@@ -136,7 +141,7 @@ shall have the right to obtain from the deployer clear and meaningful explanatio
 
 \begin{frame}[t]{Example: Husky or Wolf? Using LIME}
 	\begin{itemize}
-		\item Local explanations highlight the parts of an image which led to the prediction\\
+		\item Local explanations highlight parts of image which led to the prediction\\
         $\leadsto$ our predictor is actually a snow detector 
 	\end{itemize}
     
@@ -189,7 +194,7 @@ shall have the right to obtain from the deployer clear and meaningful explanatio
 
 \begin{columns}[c, totalwidth=\textwidth]
 
-	\begin{column}{0.55\textwidth}
+	\begin{column}{0.58\textwidth}
 	\begin{itemize}
 	    \item Imagine: 
 	        \begin{itemize}
@@ -273,7 +278,7 @@ shall have the right to obtain from the deployer clear and meaningful explanatio
 
 	\begin{itemize}
 		\item We illustrate local explanation methods on the German credit data 
-		\citebutton{see Kaggle}{https://www.kaggle.com/uciml/german-credit}
+		\furtherreading{KAGGLE}
 		\item 522 observations, 9 features containing credit and customer information
 		\item Binary target ``risk'' indicates if a customer has a `good' or `bad' credit risk
 		\item We merged categories with few observations 

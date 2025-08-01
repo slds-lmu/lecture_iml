@@ -1,9 +1,16 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+% OLD
+%\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+% new
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+% OLD
+%\usepackage{../../style/lmu-lecture}
+% new
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
-\input{../../style/common.tex}
-
+ 
 \tikzset{main node/.style={rectangle,draw,minimum size=1cm,inner sep=4pt},}
 \usetikzlibrary{decorations.pathreplacing,calc,positioning}
 
@@ -21,16 +28,32 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/ebm.jpg}
-\newcommand{\learninggoals}{
- \item Understand link between GAM and EBM
+% OLD
+%\newcommand{\titlefigure}{figure/ebm.jpg}
+%\newcommand{\learninggoals}{
+% \item Understand link between GAM and EBM
+%  \item Learn univariate EBMs\\
+%  $\hat{=}$ GAM + boosting + shallow bagged trees
+%  \item Extend to GA2M: GAMs with selected pairwise interactions
+%  \item Detect interactions efficiently using FAST algorithm}
+%
+%\lecturechapter{Explainable Boosting Machines (EBM)}
+%\lecture{Interpretable Machine Learning}
+% new
+\titlemeta{
+Interpretable Models 2
+}{
+Explainable Boosting Machines (EBM)
+}{
+figure/ebm.jpg
+}{
+  \item Understand link between GAM and EBM
   \item Learn univariate EBMs\\
   $\hat{=}$ GAM + boosting + shallow bagged trees
   \item Extend to GA2M: GAMs with selected pairwise interactions
-  \item Detect interactions efficiently using FAST algorithm}
+  \item Detect interactions efficiently using FAST algorithm
+}
 
-\lecturechapter{Explainable Boosting Machines (EBM)}
-\lecture{Interpretable Machine Learning}
 
 %------------------------------------------------------------------
 %------------------------------------------------------------------
@@ -79,7 +102,7 @@ $$
 \end{frame}
 
 % --- Slide 2: Naive Split Computation ---
-\begin{frame}{Naive Split Selection: Explicit Computation}
+\begin{frame}{Naive Split Selection: Explicit Comput.}
   % \begin{itemize}
   %   \item Sort data by feature $X$, examine $n-1$ potential split points
   %   \item For each split at split point $s_i$:
@@ -114,9 +137,9 @@ $$
     % \]
   \end{itemize}
   \item Select split point \( s_k \) that minimizes \( \text{RSS}_\text{split}(s_k) \)
-  \item \textbf{Computational cost:} \( O(n^2) \) per feature (recompute mean \& RSS at each split)
+  \item \textbf{Compute cost:} \( O(n^2) \) per feat. (recompute mean \& RSS at each split)
 \end{itemize}
-  % --- TikZ figure: explicit computation for naïve split selection ---
+  % --- TikZ figure: explicit computation for naive split selection ---
   \centering
 \begin{tikzpicture}[x=1.2cm,y=0.9cm]
   \foreach \x/\val/\i in {0/1.2/1, 1/2.0/2, 2/1.5/3, 3/3.2/4, 4/2.8/5, 5/4.1/6} {
@@ -203,11 +226,11 @@ $$
       = \frac{S_L^2}{N_L} + \frac{S_R^2}{N_R} - \frac{S_n^2}{n}
     \]
 
-    \emph{All squared-target terms \( SS_L \), \( SS_R \) cancel. Only first-order sums are needed.}
+    \emph{All squared-target terms \( SS_L \), \( SS_R \) cancel. Only first-order sums needed.}
 
   \item<2-> \textbf{Search:} Choose best split \(s_k^\star = \arg\max_{s_k} \Delta\text{RSS}(s_k)\)
 
-  \item<2-> \textbf{Complexity per feature:}\; \(O(n\log n)\) (sorting) + \(O(n)\) (cumulative sums \& scan)
+  \item<2-> \textbf{Complexity per feature:}\\\; \(O(n\log n)\) (sorting) + \(O(n)\) (cumulative sums and scan)
 \end{itemize}
  HB\end{frame}
 
@@ -222,8 +245,8 @@ $$
 % $$
 % % --- TikZ figure: prefix-sum trick (spacing optimised, no overlaps) ---------------
 % \begin{tikzpicture}[>=latex,
-%                     x=1.75cm,   % ⟵ wider columns
-%                     y=0.8cm,   % ⟵ more vertical room
+%                     x=1.75cm,   % <-- wider columns
+%                     y=0.8cm,   % <-- more vertical room
 %                     font=\tiny]
 
 %   % ------------------------------------------------------------------
@@ -233,7 +256,7 @@ $$
 %   }
 
 %   % ------------------------------------------------------------------
-%   % (2) prefix sums S_k  = Σ y^{(i)}  ---- wider boxes
+%   % (2) prefix sums S_k  = sum y^{(i)}  ---- wider boxes
 %   \foreach \x/\val/\i in {0/1.2/1, 1/3.2/2, 2/4.7/3, 3/7.9/4, 4/10.7/5, 5/14.8/6}{
 %     \node[draw, minimum width=1.4cm, minimum height=0.52cm,
 %           fill=green!12, align=center] (S\i) at (\x,-1.1) {$S_{\i}=\,\val$};
@@ -241,7 +264,7 @@ $$
 %   \node[anchor=east] at (-0.4,-1.1) {Prefix $S_k$};
 
 %   % ------------------------------------------------------------------
-%   % (3) prefix sums SS_k = Σ y^{(i)}²
+%   % (3) prefix sums SS_k = sum y^{(i)}^2
 %   \foreach \x/\val/\i in {0/1.44/1, 1/5.44/2, 2/7.69/3, 3/17.93/4,
 %                           4/25.77/5, 5/42.58/6}{
 %     \node[draw, minimum width=1.4cm, minimum height=0.52cm,
@@ -363,7 +386,7 @@ $$
 % \end{frame}
 
 % ------------------------------------------------------------
-% --- Slide : Prefix-Sum Trick – Worked Example  -------------
+% --- Slide : Prefix-Sum Trick - Worked Example  -------------
 % ------------------------------------------------------------
 \begin{frame}{Efficient Split Selection - Example}
 \centering
@@ -439,12 +462,12 @@ $$
 
 \medskip
 
-\textbf{Idea of EBM:} \textbf{GAMs} trained with \textbf{gradient boosting} over \textbf{shallow bagged trees}
+\textbf{EBM idea:} \textbf{GAMs} train with \textbf{gradient boosting} over \textbf{shallow bagged trees}
 \begin{itemize}
-    \item \textbf{GAMs} - provide feature-wise interpretability via separate shape functions $f_j(x_j)$\\
+    \item \textbf{GAMs} - feature-wise interpretability via separate shape functions $f_j(x_j)$\\
     $\leadsto$ Potentially include pairwise interactions manually
     \item \textbf{Gradient Boosting} - incrementally fits residuals to improve predictive performance while retaining additivity
-    \item \textbf{Shallow Bagged Trees} - low-depth trees (2–4 leaves) reduce variance and create interpretable shape functions
+    \item \textbf{Shallow Bagged Trees} - low-depth trees (2-4 leaves) reduce variance and create interpretable shape functions
 \end{itemize}
 
 % \textbf{Idea of EBM}: \textbf{GAMs} trained with \textbf{gradient boosting} over \textbf{shallow bagged trees}\\
@@ -461,15 +484,21 @@ $$
 
 \begin{frame}{EBM - Two-Stage Model Construction}
 \begin{enumerate}
-    \item \textbf{Stage 1: Fit Main Effects (Univariate Terms) \citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}}
+    \item \textbf{Stage 1: Fit Main Effects (Univariate Terms) % OLD
+%\citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}
+% new
+\furtherreading{LOU2012}}
     \begin{itemize}
         \item Train EBM using only feature-wise shape functions $f_j(x_j)$
         \item Freeze the univariate model after convergence
     \end{itemize}
     
-    \item \textbf{Stage 2: Add Selected Pairwise Interactions \citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}}
+    \item \textbf{Stage 2: Add Selected Pairwise Interactions % OLD
+%\citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
+% new
+\furtherreading{LOU2013}}
     \begin{itemize}
-        \item Apply \textbf{FAST} to rank all $O(p^2)$ feature pairs by potential reduction in RSS
+        \item Apply \textbf{FAST} to rank all $O(p^2)$ feat pairs by potential reduction in RSS
         \item Select top $K$ pairwise interactions and store them in $\mathcal{K}$
         \item Use boosting to fit pairwise interaction terms $f_{ij}(x_i, x_j)$ on residuals
         \item Final model: $\hat{f}(\xv) = \sum_{j=1}^p f_j(x_j) + \sum_{(i,j)\in\mathcal{K}} f_{ij}(x_i, x_j)$
@@ -501,13 +530,13 @@ $$
 
 \end{frame}
 
-\begin{frame}{Univariate EBM – First Feature Update}
+\begin{frame}{Univariate EBM - First Feature Update}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step1.png}
 \end{figure}
 \begin{itemize}
-    \item Fit shallow bagged tree $T_1^{[1]}$ (2–4 leaves) to training data $\left\{\left(x_1, \tilde{r}^{[0]}\right)^{(i)}\right\}_{i=1}^n$\\
+    \item Fit shallow bagged tree $T_1^{[1]}$ (2-4 leaves) to training data $\left\{\left(x_1, \tilde{r}^{[0]}\right)^{(i)}\right\}_{i=1}^n$\\
     $\leadsto$ Use only feature $x_1$ as input and $\tilde{r}^{[0]}$ as target
     \item Update first shape function with learning rate $\eta$:
     $$
@@ -526,7 +555,7 @@ $$
 \end{frame}
 
 
-\begin{frame}{Univariate EBM – Cycle Through Features}
+\begin{frame}{Univariate EBM - Cycle Through Features}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step2.png}
@@ -543,7 +572,7 @@ $$
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Univariate EBM – Iterate Boosting Process}
+\begin{frame}{Univariate EBM - Iterate Boosting Process}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figure/EBM_Step3.png}
@@ -672,7 +701,10 @@ $$
 %         \item High intelligibility
 %     \end{itemize}
 %     \item Not as accurate as unrestricted full complexity model
-%     \item In the next step: \citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
+%     \item In the next step: % OLD
+%\citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
+% new
+% \furtherreading{LOU2013}
 %     \begin{itemize}
 %         \item Add pairwise feature interaction terms to the model
 %         \item Replace the 2-4 regions of small tree
@@ -718,13 +750,16 @@ $$
     \item \textbf{Motivation}: Univariate EBM does not model interactions
     \item \textbf{Challenge}: $O(p^2)$ potential pairwise interactions
     $\leadsto$ often infeasible %to include all pairs directly
-    \item \textbf{Solution - FAST algorithm} \citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}:
+    \item \textbf{Solution - FAST algorithm} % OLD
+%\citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
+% new
+\furtherreading{LOU2013}:
     \begin{itemize}
         \item Efficiently estimates importance of all feature pairs
         \item Ranks pairs by reduction in residual sum of squares (RSS)
         \item Avoids fitting EBM with each pairwise interaction
     \end{itemize}
-    \item \textbf{Result}: Add only top-ranked interactions $f_{ij}$ via a second-stage boosting step\\
+    \item \textbf{Result}: \\Add only top-ranked interactions $f_{ij}$ via asecond-stage boosting step\\
     $\leadsto$ Performed after the univariate EBM has been trained
     \item \textbf{Interpretability preserved}: Each $f_{ij}(x_i, x_j)$ visualized as a 2D heatmap
 \end{itemize}
@@ -850,7 +885,7 @@ $$
 
 % For every feature pair $(x_i,x_j)$:
 %       \begin{itemize}
-%           \item Discretise each axis into $b\le 256$ ordered bins (uniform‐width or quantile).
+%           \item Discretise each axis into $b\le 256$ ordered bins (uniform-width or quantile).
 %           \item Evaluate all $b^{2}$ axis-aligned splits $(c_i,c_j)$ at the bin boundaries.
 %       \end{itemize}
 
@@ -1500,7 +1535,7 @@ $\Delta\text{RSS}(c_i,c_j)$.
 %\end{figure}
 
 \begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.33\textwidth}
+    \begin{column}{0.3\textwidth}
         % \vspace{-1.2cm}
         % \hspace{-0.6cm}
         %\includegraphics[width=\linewidth]{figure/GA2M_Step0.png}
@@ -1542,7 +1577,7 @@ $\Delta\text{RSS}(c_i,c_j)$.
 \end{center}
     \end{column}
     
-    \begin{column}{0.67\textwidth}
+    \begin{column}{0.7\textwidth}
        % \vspace{-0.6cm}
         \begin{itemize}
             \item \textbf{Goal:} Fit each selected interaction $f_{ij}(x_i, x_j)$ on residuals from main effects
@@ -1553,7 +1588,7 @@ $\Delta\text{RSS}(c_i,c_j)$.
                 \item Plus one refinement cut to increase flexibility while keeping interpretability
             \end{itemize}
             \item Reuse region-wise sums from FAST lookup tables
-            \item Greedy search for cut configuration minimizing RSS
+            \item Greedy search for cut config minimizing RSS
         \end{itemize}
     \end{column}
 \end{columns}
@@ -1579,7 +1614,7 @@ $\Delta\text{RSS}(c_i,c_j)$.
 
 % \end{frame}
 
-% \begin{frame}{GA2M – Prediction with Pairwise Interactions}
+% \begin{frame}{GA2M - Prediction with Pairwise Interactions}
 % \begin{itemize}
 %     \item Output: $M$ predictors for each of the $K$ selected pairwise interactions $f_{ij}(x_i, x_j)$
 %     \item Each $f_{ij}$ is visualized as a 2D heatmap over feature pairs
@@ -1614,7 +1649,7 @@ $\Delta\text{RSS}(c_i,c_j)$.
 \begin{frame}{EBM - Final Model Structure}
 
 \begin{itemize}
-    \item \textbf{Main effects:} One shape function $f_j(x_j)$ per feature (visualized as 1D plots)
+    \item \textbf{Main effects:} One shape function $f_j(x_j)$ per feature \\(visualized as 1D plots)
     \item \textbf{Pairwise interactions:} Selected functions $f_{ij}(x_i, x_j)$ added for top $K$ pairs (visualized as 2D heatmaps)
     \item \textbf{Prediction:} Additive sum of all univariate and selected bivariate contributions
 \end{itemize}
@@ -1634,12 +1669,24 @@ $\Delta\text{RSS}(c_i,c_j)$.
 % \begin{tabular}{@{}p{2.5cm}p{4.5cm}p{4.5cm}@{}}
 % \toprule
 % \textbf{Aspect} &
-% \textbf{EBM \phantom{XXXXXXXXX} \citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf} \citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}} &
+% \textbf{EBM \phantom{XXXXXXXXX} % OLD
+%\citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}
+% new
+% \furtherreading{LOU2012} % OLD
+%\citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
+% new
+% \furtherreading{LOU2013}} &
 % \textbf{Model-based Boosting \phantom{XXXX} 
-% \citebutton{Bühlmann, 2003}{https://doi.org/10.1198/016214503000125} \citebutton{Bühlmann, 2008}{https://arxiv.org/abs/0804.2752}} \\
+% % OLD
+%\citebutton{Buhlmann, 2003}{https://doi.org/10.1198/016214503000125}
+% new
+% \furtherreading{Buhlmann_2003} % OLD
+%\citebutton{Buhlmann, 2008}{https://arxiv.org/abs/0804.2752}
+% new
+% \furtherreading{Buhlmann_2008}} \\
 % \midrule
 % \emph{Base learner} &
-% Bagged trees (2–4 leaves), one feature at a time; piece-wise constant shape functions &
+% Bagged trees (2-4 leaves), one feature at a time; piece-wise constant shape functions &
 % Custom learner per component (linear, spline, tree) \\
 % \addlinespace[2pt]\pause
 % \emph{Iteration policy} &
@@ -1647,7 +1694,7 @@ $\Delta\text{RSS}(c_i,c_j)$.
 % Greedy: update \emph{single} component that most reduces risk \\
 % \addlinespace[2pt]\pause
 % \emph{Regularisation} &
-% $\eta\!\approx\!0.01$;\; high $M$ (5–10k) + early stopping via internal CV on OOB samples;\; bagging lowers variance &
+% $\eta\!\approx\!0.01$;\; high $M$ (5-10k) + early stopping via internal CV on OOB samples;\; bagging lowers variance &
 % Shrinkage $\nu\!\in\!(0,1]$;\; early stopping;\; intrinsic variable selection \\
 % \addlinespace[2pt]\pause
 % \emph{Interactions} &
@@ -1669,16 +1716,22 @@ $\Delta\text{RSS}(c_i,c_j)$.
         \begin{itemize}
           \item \textbf{EBM}: bagged 2--4-leaf trees, \emph{one feature} per tree  
                 $\Rightarrow$ step-function shape $f_j$  % ASCII arrow macro
-                \citebutton{Lou et al.\ 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}
+                % OLD
+%\citebutton{Lou et al.\ 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}
+% new
+\furtherreading{LOU2012}
           \item \textbf{MB-boost}: user chooses component-wise learner  
                 (linear term, P-spline, tree, random effect, \dots)  
-                \citebutton{B\"uhlmann \& Hothorn 2007}{https://doi.org/10.1214/07-STS242}
+                % OLD
+%\citebutton{B\"uhlmann \& Hothorn 2007}{https://doi.org/10.1214/07-STS242}
+% new
+\furtherreading{BÜHLMANNHOTHORN2007}
         \end{itemize}
 \pause
   %-- ITERATION POLICY -------------------------------------------------
   \item \textbf{Iteration policy}
         \begin{itemize}
-          \item \textbf{EBM}: round-robin ($\forall j$) each boosting pass; tiny
+          \item \textbf{EBM}: round-robin ($\forall j$) each boosting pass; \\tiny
                 learning rate $\eta \approx 0.01$.
           \item \textbf{MB-boost}: greedy; update the \emph{single} component that yields the largest loss reduction.
         \end{itemize}
@@ -1704,7 +1757,10 @@ $\Delta\text{RSS}(c_i,c_j)$.
   \item \textbf{Interactions}
         \begin{itemize}
           \item \textbf{EBM}: FAST ranks and selects top-$K$ interaction pairs, fitted as bivariate trees $\Rightarrow$ GA2M  
-                \citebutton{Lou et~al.\ 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
+                % OLD
+%\citebutton{Lou et~al.\ 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
+% new
+\furtherreading{LOU2013}
           \item \textbf{MB-boost}: interactions are modelled only when the
                 user supplies dedicated interaction base learners;
                 no automatic pairwise search
@@ -1726,7 +1782,7 @@ $\Delta\text{RSS}(c_i,c_j)$.
   \item \textbf{Take-away}  
   \begin{itemize}
       \item \emph{EBM} provides fast, interpretable, and interaction-sparse models
-      \item \emph{MB-boost} offers flexible statistical modelling with built-in variable selection %and formal inference
+      \item \emph{MB-boost} offers flexible stat modeling with built-in variable selection %and formal inference
   \end{itemize}
 \end{itemize}
 \end{frame}

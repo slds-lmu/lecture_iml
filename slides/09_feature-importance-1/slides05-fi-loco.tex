@@ -1,9 +1,10 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
-\input{../../style/common.tex}
-
+ 
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
@@ -13,10 +14,18 @@
 
 %\usepackage{Sweave}
 \begin{document}
-	\newcommand{\titlefigure}{figure_man/feature-importance.png}
-    \newcommand{\learninggoals}{
-    	\item Definition of LOCO
-    	\item Interpretation of LOCO}
+
+
+\titlemeta{
+Feature Importance
+}{
+Leave One Covariate Out (LOCO)
+}{
+figure_man/feature-importance.png
+}{
+\item Definition of LOCO
+\item Interpretation of LOCO
+}
 	% Set style/preamble. Rnw as parent.
 	
 	% Load all R packages and set up knitr
@@ -27,9 +36,7 @@
 	
 	% Defines macros and environments
 
-	\lecturechapter{Leave One Covariate Out (LOCO)}
-	\lecture{Interpretable Machine Learning}
-	
+
 	% ------------------------------------------------------------------------------
 
 %TODO: Remove gray figure background (e.g. theme_bw())
@@ -48,7 +55,7 @@
 
 % \end{frame}
 
-\begin{frame}{LOCO \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173} \citebutton{Tibshirani (2018)}{http://www.stat.cmu.edu/~ryantibs/talks/loco-2018.pdf}}
+\begin{frame}{LOCO \furtherreading{LEI2018} \furtherreading{TIBSHIRANI2018}}
 % citation of the original LOCO paper
 %
 \textbf{LOCO idea:} Remove the feature from data, refit model on reduced data, and measure the loss in performance compared to model fitted on complete data. %Remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.
@@ -56,7 +63,7 @@
 \pause\medskip
 
 %\textbf{Definition:} Given train and test data $\Dtrain, \Dtest \subseteq \D$, for learner $\ind$ and model $\fh = \ind(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
-\textbf{Definition:} Given train and test data $\Dtrain, \Dtest \subseteq \D$, a learner $\ind$, and model $\fh := \ind(\Dtrain)$, the LOCO importance for feature $j \in \pset$ is computed by:
+\textbf{Definition:} Given train and test data $\Dtrain, \Dtest \subseteq \D$, a learner $\ind$, and model $\fh := \ind(\Dtrain)$, the LOCO importance for feat $j \in \pset$ is computed by:
 
 \medskip
 
@@ -85,10 +92,10 @@ $$ \text{LOCO}_j = \riske(\fh_{-j}) - \riske(\fh).$$
  %\textbf{Interpretation:} $\text{LOCO}_j$ quantifies how important variable $x_j$ is to the generalization performance of the learner on $\Dtrain$.\\
 %
 \begin{itemize}
-  \item Trained random forest (default hyperparameters) on 70\% of bike sharing data
+  \item Trained random forest (default hyperparams) on 70\% of bike sharing data
   \item Performance measure: mean squared error (MSE)
   \item Computed LOCO on test set for all features, measuring increase in MSE
-  \item \texttt{temp} was most important: removing it increased MSE by approx. $140.000$
+  \item \texttt{temp} was most important: removal increased MSE by approx. $140.000$
 \end{itemize}
 
 \end{frame}
@@ -101,7 +108,7 @@ Can we get insight into whether the ...
 \begin{enumerate}
     \item feature $x_j$ is causal for the prediction $\yh$?
     \begin{itemize}
-      \item In general, no also because we refit the model (counterexample next slide)
+      \item In general, no, also because we refit the model (counterexample on the next slide)
     \end{itemize}
     \item feature $x_j$ contains prediction-relevant information?
     \begin{itemize}
@@ -172,10 +179,10 @@ LOCO importance from LM trained on 70\% of data, evaluated on remaining 30\%
 
 \lz\pause
 
-$\Rightarrow$ We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coefficient of $x_2$ is $2.05$)\\\pause
+$\Rightarrow$ We cannot infer (1) from LOCO (e.g. $\text{LOCO}_2 \approx 0$ but coef. of $x_2$ is $2.05$)\\\pause
 $\Rightarrow$ We also can't infer (2), e.g., $Cor(x_2, y) = 0.68$ but $\text{LOCO}_2 \approx 0$\\\pause
-$\Rightarrow$ We can get insight into (3): $x_2$ and $x_1$ highly correlated with $\text{LOCO}_1 = \text{LOCO}_2  \approx 0$ \\
-\phantom{$\Rightarrow$} $\leadsto$ $x_2$ and $x_1$ take each others place if one of them is left out (not the case for $x_3$)
+$\Rightarrow$ We can get insight into (3): $x_2$, $x_1$ highly corr. with $\text{LOCO}_1 = \text{LOCO}_2  \approx 0$ \\
+\phantom{$\Rightarrow$} $\leadsto$ $x_2$ and $x_1$ take each others place if one of them is left out (unlike $x_3$)
 %As $x_2$ and $x_1$ are highly correlated, they can take each others place, which is not the case for $x_3$.
 \end{frame}
 
@@ -185,7 +192,7 @@ $\Rightarrow$ We can get insight into (3): $x_2$ and $x_1$ highly correlated wit
   \begin{itemize}
     \item Requires (only?) one refitting step per feature for evaluation
     \item Easy to implement
-    \item Testing framework available in \citebutton{Lei et al. (2018)}{https://arxiv.org/abs/1604.04173}
+    \item Testing framework available in \furtherreading{LEI2018}
   \end{itemize}
 %
   Cons:
@@ -195,7 +202,7 @@ $\Rightarrow$ We can get insight into (3): $x_2$ and $x_1$ highly correlated wit
     $-$ for model-specific insights
     %Does not provide insight into a specific model, but rather a learner on a specific dataset
     \item Model training is a random process and LOCO estimates can be noisy\\
-    $\leadsto$ Limits inference about on model and data, or multiple refittings necessary?
+    $\leadsto$ Limits inference on model and data, or multiple refittings necessary?
     \item Requires re-fitting the learner for each feature\\
     $\leadsto$ Computationally intensive compared to PFI
   \end{itemize}

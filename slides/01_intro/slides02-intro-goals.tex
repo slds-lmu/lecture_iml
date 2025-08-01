@@ -1,9 +1,11 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/basic-math.tex}
+
 % Defines macros and environments
-\input{../../style/common.tex}
-
+ 
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
@@ -11,16 +13,19 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/iml_level_1}
-\newcommand{\learninggoals}{
+\titlemeta{
+Intro to IML 
+}{
+Interpretation Goals
+}{
+figure/iml_level_1
+}{
 \item[] \hspace {-2.5em}  Understand Interpretation Goals: 
 \item Global insights (discovery)
 \item Improve model (debug and audit)
 \item Understand and control individual predictions
-\item Justification and fairness}
-
-\lecturechapter{Interpretation Goals}
-\lecture{Interpretable Machine Learning}
+\item Justification and fairness
+}
 
 % \begin{frame}{Why Interpretability?}
 % % 		\begin{itemize}
@@ -235,7 +240,7 @@
 	% \end{column}
  %    \end{columns}
 
-\footnote[frame]{A related presentation can be found in \citebutton{Adadi and Berrada 2018}{https://doi.org/10.1109/ACCESS.2018.2870052}.}
+A related presentation can be found in \furtherreading{ADADIBERRADA2018}.
 
 \end{frame}
 
@@ -265,7 +270,7 @@
 $\leadsto$ Gain insights about data, model, and underlying data-generating process \\
 \medskip
 \textbf{Example:} Bike Sharing Dataset (predict number of bike rentals per day) \\
-\textit{Exemplary question:} Which feature influences model performance and how much?
+\textit{Exemplary question:} \\Which feature influences model performance and how much?
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figure/bike-sharing02.png}
 \end{center}
@@ -309,10 +314,11 @@ $\leadsto$ Gain insights about data, model, and underlying data-generating proce
 \begin{frame}{Improve, debug and audit models}
 $\leadsto$ Insights help to identify flaws (in data or model), which can be corrected \\
 \medskip
-\textbf{Example:} Neural Net Tank \citebutton{gwern.net}{https://www.gwern.net/Tanks} \\
+\textbf{Example:} Neural Net Tank (gwern.net)\sourceref{https://www.gwern.net/Tanks} \\
 	\centering
-	\begin{columns}[T, totalwidth = \textwidth]
-	\begin{column}{0.44\textwidth}
+    % splitVCC / splitVTT worked badly here
+    \begin{columns}[T, totalwidth = \textwidth]
+	\begin{column}{0.4\textwidth}
 	\centering
 	% pictures from pixabay
 	\only<1>{\includegraphics[width=\textwidth]{figure/tank.jpg}}
@@ -333,8 +339,9 @@ $\leadsto$ Insights help to identify flaws (in data or model), which can be corr
             \includegraphics[width=0.48\textwidth]{figure/tank_green.jpg}
 	        \includegraphics[width=0.48\textwidth]{figure/landscape.jpg}
 	        \includegraphics[width=0.48\textwidth]{figure/landscape_green.jpg}}
-	\end{column}
-	\begin{column}{0.56\textwidth}
+    \end{column}
+    
+    \begin{column}{0.6\textwidth}
     \hspace{0.1cm} Cautionary tale (never actually happened):
 	\begin{itemize}
 	    \item Train a neural network to detect tanks
@@ -356,13 +363,14 @@ $\leadsto$ Insights help to identify flaws (in data or model), which can be corr
 $\leadsto$ Insights help to identify flaws (in data or model), which can be corrected \\[2ex]
 	\centering
     Comment on tank example: 
+    % we have one hanging word here, I didn't try to fix it since this is a quote
     \begin{quote}
         ''We made exactly the same mistake in one of my projects on insect recognition. We photographed 54 classes of insects. Specimens had been collected, identified, and placed in vials. Vials were placed in boxes sorted by class. I hired student workers to photograph the specimens.\\[0.5ex]
         Naturally they \textbf{did this one box at a time; hence, one class at a time.} Photos were taken in alcohol. \textbf{Bubbles would form in the alcohol. Different bubbles on different days.} The learned classifier was surprisingly good. But a \textbf{saliency map revealed that it was reading the bubble patterns} and ignoring the specimens.\\[0.5ex]
         I was so embarrassed that I had made the oldest mistake in the book (even if it was apocryphal). Unbelievable.
         Lesson: always randomize even if you don’t know what you are controlling for!''
     \end{quote}
-    \citebutton{Thomas G. Dietterich}{https://x.com/tdietterich/status/1154839042623594496}
+    (Thomas G. Dietterich) \sourceref{https://x.com/tdietterich/status/1154839042623594496}
  \end{frame}
 
 \begin{frame}{Debug and Audit}
@@ -393,8 +401,8 @@ $\leadsto$ Insights help to identify flaws (in data or model), which can be corr
 
 % \end{frame}
 
-\begin{frame}{Understand \& control individual predictions}
-    $\leadsto$ Explaining individual decisions can prevent unwanted actions based on the model \\
+\begin{frame}{Understand \& control individual pred.-s}
+    $\leadsto$ Explaining individual decisions can prevent unwanted model-based actions  \\
     \medskip
     \textbf{Example:} Credit Risk Application\\
     $\textbf{x}$: customer and credit information; $y$: grant or reject credit
@@ -411,7 +419,7 @@ $\leadsto$ Insights help to identify flaws (in data or model), which can be corr
 	%Counterfactual Explanations provide answers in the form of "What-If"-scenarios.
 	\only<2>{\begin{center}\includegraphics[width=0.6\linewidth, page=2]{figure/counterfactuals_credit.pdf} \end{center}
 
-	``If the person was more skilled and the credit amount had been reduced to \$8.000,\\ the credit would have been granted."} 
+	``If the person was more skilled and the credit amount had been reduced to \$8.000, the credit would have been granted."} 
 \end{frame}
 
 %%%
@@ -422,21 +430,21 @@ $\leadsto$ Insights help to identify flaws (in data or model), which can be corr
     \textbf{Example:} COMPAS
     \smallskip
     \begin{itemize}
-        \item COMPAS: Correctional Offender Management Profiling for Alternative Sanctions
-    \item Commercial tool used in courts to assess a defendant’s risk of re-offending
+        \item COMPAS: Correctional Offender Management Profiling for\\ Alternative Sanctions
+    \item Commercial tool used in courts to assess a defendant’s risk\\ of re-offending
 
     \item Predicts \textbf{recidivism risk}:
     \begin{itemize}
         \item Likelihood of an individual with a past offense is arrested again
         \item Features: race, gender, age, number of prior prison sentences, ...
-        \item Output: COMPAS score from 1 (low risk) to 10 (high risk) risk of recidivism
+        \item Output: COMPAS score from 1 (low) to 10 (high) risk of recidivism
     \end{itemize}
     \item Based on a questionnaire completed by the defendant
     \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Justification and fairness: COMPAS~\citebutton{Larson et al. 2016}{https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm}}
+\begin{frame}{Justification and fairness: COMPAS~\furtherreading{LARSON2016}}
     $\leadsto$ Investigate if and why biased, unexpected or discriminatory predictions were made \\
     \medskip
     Descriptive data analysis of the target (COMPAS score) by a feature encoding race: 
@@ -457,37 +465,34 @@ $\leadsto$ Insights help to identify flaws (in data or model), which can be corr
 	
 	$\leadsto$ Strong indication that the model is discriminating against African American
 	
-	$\leadsto$ Use IML to investigate if and how much the model uses the defendant's race
+	$\leadsto$ Use IML to assess if and how much the model uses the defendant's race
 \end{frame}
 
-\begin{frame}{Justification and fairness: COMPAS \citebutton{Alvarez-Melis and Jaakkola 2018}{https://arxiv.org/pdf/1806.08049.pdf}}
+\begin{frame}{Justification and fairness: COMPAS \furtherreading{ALVAREZMELISJAAKKOLA2018}}
 
     $\leadsto$ Investigate if and why biased, unexpected or discriminatory predictions were made 
 
 \medskip
 
-    IML: Analyze how strongly a feature influences an individual prediction (e.g., LIME):
+    IML: Analyze how strongly a feature influences an individual pred. (e.g., LIME):
 
     \medskip
     \centering
-    
-       \begin{columns}[T, totalwidth=\textwidth]
-        \begin{column}{0.5\textwidth}
-            
+    \begin{splitVCC}[0.45]{
     \includegraphics[trim=695 50 5 0, width=0.95\textwidth, clip]{figure/COMPAS_shap_lime_example.png}
-        \end{column}
-        \begin{column}{0.5\textwidth}
-        \begin{itemize}
-            \item Pick a defendant
-            \item LIME quantifies a feature's impact on the defendant's COMPAS score
-            \item \texttt{African\_American} has a large positive weight on COMPAS score
-            \item Occurs for many individuals, see
-            \citebutton{XAI Stories}{https://pbiecek.github.io/xai_stories/story-compas.html\#model-specific}
-            $\leadsto$ Suggests racial bias
-        \end{itemize}
-        
-        \end{column}
-    \end{columns}
+    
+    }
+    {
+    \begin{itemize}
+        \item Pick a defendant
+        \item LIME quantifies a feature's impact on the defendant's COMPAS score
+        \item \texttt{African\_American} has a large positive weight on COMPAS score
+        \item Occurs for many individuals, see
+        "XAI Stories" \sourceref{https://pbiecek.github.io/xai_stories/story-compas.html\#model-specific}\\
+        $\leadsto$ Suggests racial bias
+    \end{itemize}
+    }
+    \end{splitVCC}
 \end{frame}
 
 

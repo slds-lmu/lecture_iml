@@ -1,8 +1,17 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+% OLD
+%\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+% new
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+% OLD
+%\usepackage{../../style/lmu-lecture}
+% new
+\input{../../style/preamble}
 % Defines macros and environments
-\input{../../style/common.tex}
+ \input{../../latex-math/basic-ml} 
+\input{../../latex-math/basic-math}
+\input{../../latex-math/ml-ensembles}
+
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -11,36 +20,55 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/gam_effects.pdf}
-\newcommand{\learninggoals}{
-\item Generalized additive model
+% OLD
+%\newcommand{\titlefigure}{figure/gam_effects.pdf}
+%\newcommand{\learninggoals}{
+%\item Generalized additive model
+%% \item Decision trees
+%% \item Other interpretable models}
+%\item Model-based boosting with simple base learners
+%\item Feature effect and importance in model-based boosting}
+%
+%\lecturechapter{GAM \& Boosting}
+%\lecture{Interpretable Machine Learning}
+% new
+\titlemeta{
+Interpretable Models 2
+}{
+GAM \& Boosting
+}{
+figure/gam_effects.pdf
+}{
+\item Generalized additive model (GAM)
 % \item Decision trees
 % \item Other interpretable models}
 \item Model-based boosting with simple base learners
-\item Feature effect and importance in model-based boosting}
+\item Feature effect and importance in model-based boosting
+}
 
-\lecturechapter{GAM \& Boosting}
-\lecture{Interpretable Machine Learning}
 
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}{Generalized Additive Model (GAM) \citebutton{Hastie and Tibshirani (1986)}{https://www.jstor.org/stable/2245459}}
+\begin{frame}{Generalized Additive Model (GAM) % OLD
+%\citebutton{Hastie and Tibshirani (1986)}{https://www.jstor.org/stable/2245459}
+% new
+\furtherreading{TIBSHIRANI1986}}
 
 \textbf{Problem}: LM not great if features act on outcome non-linearly % $\leadsto$ standard 
 
 \begin{columns}[totalwidth=\textwidth]
-    \begin{column}{0.55\textwidth}
+    \begin{column}{0.57\textwidth}
     
         \only<2->{
         \textbf{Workaround in LMs / GLMs}: 
         \begin{itemize}
-            \item Feature transformations (e.g., exp or log)
+            \item Feature transformations (e.g., exp, log)
             \item Including high-order effects
             \item Categorization of features (i.e., intervals/ buckets of feature values)
         \end{itemize}}
     \end{column}
-    \begin{column}{0.45\textwidth}
+    \begin{column}{0.43\textwidth}
         \begin{center}
             \includegraphics[width = .95\textwidth]{figure/intro_lm_bike.pdf}
             %\includegraphics[width = \textwidth]{figure/lm_bad_fit2.pdf}
@@ -58,7 +86,7 @@
             $$g(\E (y \mid \xv)) = \theta_0 + f_1(x_1) + f_2(x_2) + \ldots + f_p(x_p)$$
     
         \item Preserves additive structure and allows to model non-linear effects
-        \item Splines have a smoothness parameter to control flexibility (prevent overfitting)\\
+        \item Splines have smoothness param. to control flexibility (prevent overfitting)\\
         $\leadsto$ Needs to be chosen, e.g., via cross-validation
     \end{itemize}}   
 
@@ -99,7 +127,7 @@ s(temp) & 5.8 & 0.00 \\
 \textbf{Interpretation}
 \begin{itemize}
     %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
-    \item Interpretation is performed visually and relative to average prediction
+    \item Interpretation is done visually and relative to average prediction
     %, also see PDPs
     \item Edf: effective degrees of freedom\\
     $\leadsto$ represents degree of smoothness/complexity
@@ -116,13 +144,19 @@ s(temp) & 5.8 & 0.00 \\
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}{Model-based Boosting \citebutton{Bühlmann, Yu 2003}{https://doi.org/10.1198/016214503000125} \citebutton{Bühlmann, Hothorn 2008}{https://arxiv.org/abs/0804.2752}}
+\begin{frame}{Model-based Boosting % OLD
+%\citebutton{Bühlmann, Yu 2003}{https://doi.org/10.1198/016214503000125}
+% new
+\furtherreading{BÜHLMANNYU2003} % OLD
+%\citebutton{Bühlmann, Hothorn 2008}{https://arxiv.org/abs/0804.2752}
+% new
+\furtherreading{BÜHLMANNHOTHORN2008}}
 
 \begin{itemize}%[<+->]
 %\setlength\itemsep{2em}
 \item Boosting iteratively combines weak base learners to create powerful ensemble 
 \item
-Idea: Use simple BLs (e.g univariate, with splines) to ensure interpretability
+Idea: Use simple BLs (e.g. univar., with splines) to ensure interpretability
 %$\leadsto$ e.g., linear BL with single features in each iteration
 %Boosting with gradient descent using interpretable base learners (e.g., use base learners with single features in each iteration $\leadsto$ coordinate gradient descent)
 %The resulting ensemble is also interpretable.
@@ -168,7 +202,7 @@ $$
 \begin{itemize}
 \item<1-> Here: Interpretation of weights as in LM
 \item<1-> After many iterations, it converges to same solution as LM %least square estimate of
-\item<2-> Early stopping allows feature selection \& may prevent overfitting (regularization)
+\item<2-> Early stopping allows feature selection \& may also prevent\\ overfitting (regularization)
 %\item Specifying loss and link function according to exponential family leads a (regularized) GLM
 \end{itemize}
 \begin{columns}[T, totalwidth=\textwidth]
@@ -271,7 +305,7 @@ $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
 \medskip
 \textbf{Feature importance:} aggregated change in risk in each iteration per feature
 \begin{itemize}
-    \item E.g. iteration 1: \code{days\_since\_2011} with risk reduction (MSE) of 140,782.94
+    \item E.g. iter. 1: \code{days\_since\_2011} with risk reduction (MSE) of 140,782.94
     \item For every iteration the change in risk can be attributed to a feature
 \end{itemize}
 \medskip
@@ -311,8 +345,11 @@ Difference in OOB risk: 259,326.0\\
 \begin{frame}{Non-linear Example: Interpretation}
 
 \begin{itemize}
-    \item Fit model on bike data with different BL types (1000 iter.) \citebutton{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}
-    \item BLs: linear and centered splines for numeric features, categorical for season
+    \item Fit model on bike data with different BL types (1000 iter.) % OLD
+%\citebutton{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}
+% new
+\furtherreading{SCHALKETAL2018}
+    \item BLs: linear and centered splines for numeric feat., categorical for season
     %and categorical base learner for season
 \end{itemize}
 \begin{columns}[T, totalwidth = \textwidth]
@@ -407,7 +444,10 @@ $\leadsto$ Combination of partial effects of linear BL and centered spline BL
 
 % \end{frame}
 
-% \begin{frame}{Decision Trees \citebutton{Breiman et al. (1984)}{https://doi.org/10.1201/9781315139470}}
+% \begin{frame}{Decision Trees % OLD
+%\citebutton{Breiman et al. (1984)}{https://doi.org/10.1201/9781315139470}
+% new
+% \furtherreading{BREIMANETAL1984}}
 
 % %\textbf{Problem}: Can we model non-linear effects and interactions automatically (without manual specification as in GLMs or GAMs)?\\
 % %Relationship between features and target are non-linear or interactions are present\\
@@ -555,20 +595,29 @@ $\leadsto$ Combination of partial effects of linear BL and centered spline BL
 
 % \begin{columns}[totalwidth=\textwidth]
 %     \begin{column}{0.7\textwidth}
-%         \textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
+%         \textbf{RuleFit} % OLD
+%\citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
+% new
+% \furtherreading{FRIEDMANPOPESCU2008}
 %         \begin{itemize}
 %             \item Combination of linear models and decision trees 
 %             \item Allows for feature interactions and non-linearities
 %         \end{itemize}
 
-%         \only<2->{\textbf{Decision Rules} \citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
+%         \only<2->{\textbf{Decision Rules} % OLD
+%\citebutton{Holte 1993}{https://doi.org/10.1023/A:1022631118932}
+% new
+% \furtherreading{HOLTE1993}
 %         \begin{itemize}
 %             \item Simple ``if -- then'' statements - very intuitive and easy-to-interpret
 %             \item Most methods work only for classification and categorical feat.
 %         \end{itemize}}
 
 %         \only<3->{\textbf{Naive Bayes}
-%         \citebutton{Zhang 2004}{https://www.aaai.org/Papers/FLAIRS/2004/Flairs04-097.pdf}
+%         % OLD
+%\citebutton{Zhang 2004}{https://www.aaai.org/Papers/FLAIRS/2004/Flairs04-097.pdf}
+% new
+% \furtherreading{ZHANG2004}
 %         %$$P (C_k \mid x ) = \frac{1}{Z} P(C_k) \prod_{i=1}^{n} P(x_i \mid C_k) $$
 %         \begin{itemize}
 %             \item Uses Bayes' theorem to assign class prob. to observations
@@ -578,7 +627,10 @@ $\leadsto$ Combination of partial effects of linear BL and centered spline BL
 %         \end{itemize}}
 
 %         \only<4->{\textbf{k-Nearest Neighbor}
-%         \citebutton{Cover 1967}{https://doi.org/10.1109/TIT.1967.1053964}
+%         % OLD
+%\citebutton{Cover 1967}{https://doi.org/10.1109/TIT.1967.1053964}
+% new
+% \furtherreading{COVER1967}
 %         \begin{itemize}
 %             \item (Closely related to case-based reasoning)
 %             \item Average of the outcome of neighbors -- local explanation
@@ -592,10 +644,16 @@ $\leadsto$ Combination of partial effects of linear BL and centered spline BL
 %             \includegraphics[width = 0.6\textwidth]{figure/RuleFit.png} \\
 %             \smallskip
 %             \only<2->{\includegraphics[width = 0.8\textwidth]{figure/decision_rules.png} \\
-%             \citebutton{Molnar 2022}{https://christophm.github.io/interpretable-ml-book/}\\
+%             % OLD
+%\citebutton{Molnar 2022}{https://christophm.github.io/interpretable-ml-book/}
+% new
+% \furtherreading{MOLNAR2022}\\
 %             \smallskip}
 %             \only<4->{\includegraphics[width = 0.7\textwidth]{figure/knn.png} 
-%             \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}}
+%             % OLD
+%\citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}
+% new
+% \furtherreading{JOS2018}}
 %         \end{center}
 %     \end{column}
 % \end{columns}

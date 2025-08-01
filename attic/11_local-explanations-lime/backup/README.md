@@ -1,0 +1,1 @@
+The files here compile when placed in a chunk directory (and not subdirectory). For some of the files, the title may not compile since auto migration of the title meta did not succeed.

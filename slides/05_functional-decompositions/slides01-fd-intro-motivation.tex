@@ -1,9 +1,10 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
-\input{../../style/common.tex}
-\newcommand{\open}{}
+ \newcommand{\open}{}
 \newcommand{\close}{}
 
 \title{Interpretable Machine Learning}
@@ -20,16 +21,19 @@
 %- conditions + theory
 %- other methods (gen fANOVA, ALE)
 
-\newcommand{\titlefigure}{figure/25-05-31_Hooker_2004_graph_fANOVA}
-\newcommand{\learninggoals}{
+\titlemeta{
+Functional Decompositions
+}{
+Introduction
+}{
+figure/25-05-31_Hooker_2004_graph_fANOVA
+}{
 \item Basic idea of additive functional decompositions
 \item Motivation and usefulness of functional decompositions
 \item Difficulty of obtaining or even defining a functional decomposition
 \item Several examples
 }
 
-\lecturechapter{Introduction to Functional Decomposition}
-\lecture{Interpretable Machine Learning}
 
 
 \begin{frame}{Preliminaries}
@@ -99,7 +103,7 @@
         %     g_{1,2}(x_1, x_2) = |x_1|x_2 & \text{ Part depending on both features (interaction)}  \\
         % \end{matrix}
         \end{equation}
-        \item[$\leadsto$] single terms with immediate interpretation, full understanding of the model
+        \item[$\leadsto$] Single terms with immediate interpretation, full model understanding 
 
         \pause
         \item[$\leftrightarrow$] Not possible with effects of single features (e.g. PDPs) or GAM surrogate model (miss interaction part)
@@ -201,8 +205,8 @@
 \end{frame}
 
 \begin{frame}{General Form of Functional Decomposition
-\citebutton{Li and Rabitz (2011)}{https://doi.org/10.1007/s10910-011-9898-0}
-\citebutton{Chastaing et al. (2012)}{https://doi.org/10.1214/12-EJS749}
+\furtherreading{RABITZ2011}
+\furtherreading{CHASTAING2012}
 }
 
 \begin{definition}
@@ -224,7 +228,7 @@ $\leadsto$ one component for every possible combination $S$ of indices, allowed 
 
 \textbf{Problems:}
 \begin{itemize}
-    \item How to find / compute such a decomposition for arbitrary black-box models $\fh$?
+    \item How to find / compute such a decomposition for any black-box models $\fh$?
     \item \dots such that the decomposition is useful / has nice properties (w.r.t. the model / w.r.t. the data)?
 \end{itemize}
 
@@ -232,11 +236,11 @@ $\leadsto$ one component for every possible combination $S$ of indices, allowed 
 
 \begin{frame}{General Form of Functional Decomposition
 %\\
-%\citebutton{Sobol (1993)}{http://www.andreasaltelli.eu/file/repository/sobol1993.pdf}
-% \citebutton{Sobol (2003)}{https://doi.org/10.1016/S0951-8320(02)00229-6}
-%\citebutton{Li et al. (2001)}{https://doi.org/10.1021/jp010450t}
-\citebutton{Li and Rabitz (2011)}{https://doi.org/10.1007/s10910-011-9898-0}
-\citebutton{Chastaing et al. (2012)}{https://doi.org/10.1214/12-EJS749}
+%\furtherreading{SOBOL1993}
+% \furtherreading{SOBOL2003}
+%\furtherreading{LI2001}
+\furtherreading{RABITZ2011}
+\furtherreading{CHASTAING2012}
 }
 
 %\textbf{High-Dimensional Model Representation (HDMR):} 
@@ -289,7 +293,7 @@ Sort terms according to degree of interaction:
     $$
     \item Same for LMs: Decomposition explicitly modeled
     \pause
-    \item Easy decomposition also for decision trees and tree ensembles (see below)
+    \item Easy decomp. also for decision trees and tree ensembles (see below)
     \pause
     \item \textbf{Problem 1:} Calculating decomposition extremely difficult, often infeasible
     \begin{itemize}
@@ -358,7 +362,7 @@ Sort terms according to degree of interaction:
 \begin{frame}{Example: Decision Trees}
 
 \only<1,2>{
-Define \textit{interaction type $t$} of a node: subset of features involved in constructing this node.
+Define \textit{interaction type $t$} of a node: subset of features used to build this node.
 
 \textbf{Example:}
 
@@ -436,7 +440,8 @@ $\leadsto$ reading from decision tree not enough, ``bad decomposition''
 % Above example: Decomposition no main effect, but model certainly contains main effect of e.g. $x_2$.\\
 
 \pause
-\textbf{Note:} \citebutton{Yang (2024)}{https://arxiv.org/abs/2410.19098} propose a (quite complicated) solution for this case
+\medskip
+\textbf{Note:} \furtherreading{YANG2024} propose a (quite complicated) solution for this case
 % \(\Rightarrow\) Too complicated? Rather explain this in constraint-chapter or in other methods-chapter?
 
 \end{frame}

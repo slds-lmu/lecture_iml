@@ -1,8 +1,19 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
-\input{../../style/common.tex}
+ 
+\newcommand{\Sm}{S_m}%{Pre(\tau,j)} % S(\tau,j)
+\newcommand{\Smj}{\Sm \cup \{j\}}
+\newcommand{\minusSmj}{- \{\Sm \cup \{j\} \} }
+\newcommand{\Stau}{S_{j}^\tau}%{Pre(\tau,j)} % S(\tau,j)
+\newcommand{\Stauj}{\Stau \cup \{j\}}
+\newcommand{\minusStauj}{- \{\Stau \cup \{j\} \} }
+
+\newcommand{\xjp}{\xv_{+j}^{(m)}}
+\newcommand{\xjm}{\xv_{-j}^{(m)}}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -14,13 +25,19 @@
 
 %\usepackage{Sweave}
 \begin{document}
-	\newcommand{\titlefigure}{figure_man/feature-importance.png}
-    \newcommand{\learninggoals}{
-    	\item How SAGE fairly distributes importance
-    	\item Definition of SAGE value function
-    	\item Difference SAGE value function and SAGE values
-    	\item Marginal and Conditional SAGE
-    	}
+
+\titlemeta{
+Feature Importance
+}{
+Shapley Additive Global Importance (SAGE)
+}{
+figure_man/feature-importance.png
+}{
+\item How SAGE fairly distributes importance
+\item Definition of SAGE value function
+\item Difference SAGE value function and SAGE values
+\item Marginal and Conditional SAGE
+}
 	% Set style/preamble.Rnw as parent.
 	
 	% Load all R packages and set up knitr
@@ -30,9 +47,6 @@
 	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
 	
 	% Defines macros and environments
-
-	\lecturechapter{Shapley Additive Global Importance (SAGE)}
-	\lecture{Interpretable Machine Learning}
 	
 	% ------------------------------------------------------------------------------
 
@@ -62,7 +76,7 @@ Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jo
 
 
 
-\begin{frame}{SAGE Idea \citebutton{Covert et al. (2020)}{https://proceedings.neurips.cc/paper/2020/file/c7bf0b7c1a86d5eb3be2c722cf2cf746-Paper.pdf}
+\begin{frame}{SAGE Idea \furtherreading{COVERT2020}
 }
 
 \textbf{SAGE:} %Leverage game-theoretic 
@@ -83,8 +97,8 @@ Use Shapley values to compute a fair attribution of importance (via model perfor
 
 \textbf{Note:} 
 \begin{itemize}
-    \item Similar idea (called SFIMP) was proposed in \citebutton{Casalicchio et al. (2018)}{https://arxiv.org/abs/1804.06620}
-    \item Definition based on model refits was proposed in context of feature selection in \citebutton{Cohen et al. (2007)}{https://doi.org/10.1162/neco.2007.19.7.1939}
+    \item Similar idea (called SFIMP) was proposed in \furtherreading{CASALICCHIO2018}
+    \item Definition based on model refits was proposed in context of feature selection in \furtherreading{COHEN2007}
 \end{itemize}
 
 %$\Rightarrow$ Global feature importance technique\\
@@ -104,7 +118,7 @@ Use Shapley values to compute a fair attribution of importance (via model perfor
 \begin{frame}{SAGE - Value function}
   
  \textbf{Removal Idea:} %To deprive the model of the non-coalition features $-S$, 
- To deprive information of the non-coalition features $-S$ from the model, marginalize the prediction function over the features $-S$ to be ``dropped''.
+ To deprive information of the non-coalition features $-S$ from the model, marginalize the prediction function over feats $-S$ to be ``dropped''.
 
 $$\fh_S(x_S) = \E[\fh(x) | X_S = x_S]$$
 
@@ -131,7 +145,7 @@ $\leadsto$ Quantifies the added value of feature $j$ when it is added to coaliti
 
 \end{frame}
 
-\begin{frame}{SAGE - marginal and conditional sampling}
+\begin{frame}{SAGE - marginal and cond. sampling}
 
 When computing the marginalized prediction $\fh_S(x_S)$, the ``dropped'' features can be sampled from \\
 \begin{itemize}
@@ -167,7 +181,7 @@ When computing the marginalized prediction $\fh_S(x_S)$, the ``dropped'' feature
 \end{frame}
 
 
-\begin{frame}{SAGE - marginal and conditional sampling}
+\begin{frame}{SAGE - marginal and cond. sampling}
 
 \textbf{Example:}
 %$x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). Assume fitting LM yields $\fh \approx 0.95 x_3 + 0.05 x_2$. 
@@ -196,7 +210,7 @@ When computing the marginalized prediction $\fh_S(x_S)$, the ``dropped'' feature
 \end{frame}
 
 
-\begin{frame}{SAGE value functions versus SAGE values}
+\begin{frame}{SAGE value functions vs. SAGE values}
 
 \textbf{SAGE value function $v(S)$}: measure contribution of a specific feature set over the empty coalition
 
@@ -204,7 +218,7 @@ When computing the marginalized prediction $\fh_S(x_S)$, the ``dropped'' feature
 
 \textbf{SAGE values $\phi_j$}: fair attribution of importance
 \begin{itemize}
-    \item can be computed by averaging the contribution of $x_j$ over all feature orderings
+    \item can be computed by averaging the contribution of $x_j$ over all feat orderings
     %\item for feature permutation $\pi$ and the corresponding feature ordering $(x_{\pi(1)}, \dots, x_{phi(d)})$, for feature $x_j$ the coalition $S(j; \pi)$ is defined as the set of features preceding $x_j$, i.e. $S(j; \pi) := \{i : \pi(i) < \pi(j)\}$
     %\item the contribution of $j$ in an ordering $\pi$ is given as $v(j \cup S(j; \pi)) - v(S(j; \pi))$
     \item for feature permutation $\tau$, the contribution of $j$ in the set $\Stau$ is given as $v(\Stauj) - v(\Stau)$\\
@@ -268,7 +282,7 @@ Can we gain insight into whether the ...
     \item<1> feature $x_j$ is causal for the prediction?    \begin{itemize}
       \item for all coalitions $S$, $v(j \cup S) - v(S)$ can only be nonzero if $x_j \rightarrow \fh(x)$ (as for PFI)\\
       $\leadsto$ $\phi_j$ is only nonzero if $x_j$ is causal for the prediction
-      \item $v(j \cup S) - v(S)$ may be zero due to independence $x_j \indep y | x_S$ (as for PFI)\\
+      \item $v(j \cup S) - v(S)$ may be zero due to indep. $x_j \indep y | x_S$ (as for PFI)\\
       $\leadsto$ $\phi_j$ may be zero although the feature is causal for the prediction
     \end{itemize}
     \item<2> feature $x_j$ contains prediction-relevant information about $y$?
@@ -278,7 +292,7 @@ Can we gain insight into whether the ...
       \item value functions may be zero despite $x_j$ containing prediction-relevant information due to underfitting (as for PFI)\\
       $\leadsto$ $\phi_j$ may be zero although prediction-relevant information contained
     \end{itemize}
-    \item<3> model requires access to $x_j$ to achieve it's prediction performance?    
+    \item<3> model requires access to $x_j$ to achieve its prediction performance?    
     \begin{itemize}
       \item like PFI, in general marginal value functions do not allow insight into unique contribution $\leadsto$ no insight from $\phi_j$
     \end{itemize}
@@ -293,25 +307,25 @@ Can we gain insight into whether the ...
 \begin{enumerate}
     \item<1> feature $\xj$ is causal for the prediction?
     \begin{itemize}
-      \item value functions may be nonzero although feature is not directly used by $\fh$\\
+      \item value funcs may be nonzero although feature is not directly used by $\fh$\\
       $\leadsto$ nonzero $\phi_j$ does not imply $\xj \rightarrow \hat{y}$
       \item value functions may be zero although feature may be used by the model, e.g. if feature is independent with $y$ and all other features \\ $\leadsto$ zero $\phi_j$ does not imply $\xj \not \rightarrow \hat{y}$
     \end{itemize}
     \item<2> feature $\xj$ contains prediction-relevant information about $y$?
     \begin{itemize}
-      \item e.g. for cross-entropy optimal $\fh$, $v(j)$ measures mutual information $I(y;x_j)$
+      \item e.g. for cross-entropy optimal $\fh$, $v(j)$ measures mutual info. $I(y;x_j)$
       $\leadsto$ prediction-relevance implies nonzero $\phi_j$
       \item $x_j \indep y$ does not imply $x_j \indep y | x_S$ and consequently does not imply $v(j \cup S) - v(S) = 0$
       $\leadsto$ $\phi_j$ may be nonzero although $\xj \indep y$
     %   \item $x_j \indep y$ in general does not imply $x_j \indep y | x_S$ and consequently does not imply that $v(j \cup S) - v(S) = 0$\\
     %   $\leadsto$ $\phi_j$ may be nonzero although $\xj \indep y$
     \end{itemize}
-    \item<3> model requires access to $x_j$ to achieve it's prediction performance?  
+    \item<3> model requires access to $x_j$ to achieve its prediction performance?  
     \begin{itemize}
-        \item e.g. for cross-entropy optimal $\fh$, the surplus contribution $v(j \cup -j) - v(-j)$ captures the conditional mutual information $I(y;x_j|x_{-j})$\\
+        \item e.g. for cross-entropy optimal $\fh$, surplus contrib. $v(j \cup -j) - v(-j)$ captures the conditional mutual information $I(y;x_j|x_{-j})$\\
         $\leadsto$ $\phi_j$ is nonzero for features with unique contribution
         \item $x_j \indep y | x_{-j}$ does not imply $x_j \indep y | x_S$ (cond. w.r.t. to arbitrary coalitions $S$)\\
-        $\leadsto$ $\phi_j$ may be nonzero although the features has no unique contribution
+        $\leadsto$ $\phi_j$ may be nonzero although feature has no unique contrib.
     \end{itemize}
 \end{enumerate}
 
@@ -330,13 +344,13 @@ The Shapley axioms can be translated into properties of SAGE. The interpretation
   \begin{tabular}{l | l }
   Shapley property $\implies$ & conditional SAGE property \\
   \hline
-  efficiency & $\sum_{i=1}^p \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\
-  symmetry & $x_j = x_i \implies \phi_i = \phi_j$ \\
-  linearity & $\phi_j$ expecation of per-instance\\
-  & conditional SHAP applied to model loss\\
+  efficiency & $\sum_{i=1}^p \phi_j(v) = \risk(\fh_\emptyset) - \risk(\fh)$\\ % \hline
+  symmetry & $x_j = x_i \implies \phi_i = \phi_j$ \\ 
+  linearity & $\phi_j$ expectation of per-instance\\
+  & conditional SHAP applied to model loss\\ %\hline
   monotonicity & given models $f, f'$, if  $\forall S:$\\
   &$v_f(S \cup j) - v_f(S) \geq v_{f'}(S \cup j) - v_{f'}(S)$ \\
-  &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\
+  &then $\phi_j(v_f) \geq \phi_j(v_{f'})$\\ %\hline
   dummy & if $\forall S: \fh(x) \indep x_j | x_S \Rightarrow \phi_j = 0$
   \end{tabular}
 \end{table}

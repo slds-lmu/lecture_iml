@@ -1,9 +1,12 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-interpretable}
+
 % Defines macros and environments
-\input{../../style/common.tex}
-
+ 
 \newcommand{\gh}{\hat{g}}
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -22,13 +25,18 @@
 	
 	% Defines macros and environments
 	
-	\newcommand{\titlefigure}{figure/lime5}
-    \newcommand{\learninggoals}{
+	\titlemeta{
+Local Explanations: LIME
+}{
+Pitfalls
+}{
+figure/lime5
+}{
+
     	\item Learn why LIME should be used with caution
-    	\item Possible pitfalls of LIME}
-	
-	\lecturechapter{LIME Pitfalls}
-	\lecture{Interpretable Machine Learning}
+    	\item Possible pitfalls of LIME
+}
+
 	
 	% Prerequisite: le-into, le-lime
 	
@@ -43,8 +51,8 @@
   	\item Pitfalls arise at multiple levels, which will be discussed in detail:
     \begin{itemize}
   \item \textbf{Sampling} -- ignores feature dependencies, risks extrapolation
-  \item \textbf{Locality definition} -- kernel width and distance metrics affect sensitivity
-  \item \textbf{Local vs. global features} -- global signals may overshadow local ones
+  \item \textbf{Locality definition} -- kernel width and dist. metrics affect sensitivity
+  \item \textbf{Local vs. global feats} -- global signals may overshadow local ones
   \item \textbf{Faithfulness} -- trade-off between sparsity and local accuracy
   \item \textbf{Hiding biases} -- explanations can be manipulated to appear fair
   \item \textbf{Robustness} -- explanations vary for similar points
@@ -66,7 +74,7 @@
 \begin{frame}{Pitfall: Sampling}
 	\begin{itemize}
 	\itemsep1em
-	  \item \textbf{Pitfall}: Common sampling strategies for $\zv \in \Zspace$ ignore feature dependencies
+	  \item \textbf{Pitfall}: Common sampling strategies for $\zv \in \Zspace$ ignore feat dependencies
       % \item \textbf{Implication}:  Unlikely data points might be used to learn local explanation models
         \item \textbf{Implication:} Surrogate model may be trained on unrealistic points\\
   $\leadsto$ Undermines the fidelity and validity of the explanation
@@ -100,12 +108,12 @@
     %  	\end{center}
      \end{itemize}
      \pause
-     \textbf{Example:} For 2 obs. (green points), fit local surrogate models (lines) using only \( x_1 \)
+     \textbf{Example:} For 2 obs. (green points), fit local surr. models (lines) using only \( x_1 \)
      \begin{columns}[T, totalwidth=\textwidth]
         \begin{column}{0.72\textwidth}
         \includegraphics[width=\textwidth, trim = 25px 0px 15px 40px, clip]{figure/lime_locality}
          \end{column}
-         \begin{column}{0.28\textwidth}
+         \begin{column}{0.31\textwidth}
          % \begin{itemize}
          %     \item Surrogate models for 2 obs. (green points) for same model with one feature $x_1$
          %     \item Each line refers to a linear surrogate model with different kernel width
@@ -124,7 +132,7 @@
      \end{columns}
 \end{frame}
 
-\begin{frame}{LIME Pitfall: Locality \citebutton{Kopper et al. 2019}{https://slds-lmu.github.io/iml_methods_limitations/}}
+\begin{frame}{LIME Pitfall: Locality \furtherreading{KOPPER2019}}
 %     \begin{itemize} 
 %          \item \textbf{Solution I}: Kernel width strongly interacts with locality:
 %          \begin{itemize}
@@ -148,25 +156,25 @@
   \item \textbf{Implication of edge cases:}
   \begin{itemize}
     \item \emph{Large} $\sigma$ $\rightarrow$ overemphasize distant points, hurting locality
-    \item \emph{Small} $\sigma$ $\rightarrow$ risk of too few points, leading to unstable or noisy explanations
+    \item \emph{Small} $\sigma$ $\rightarrow$ too few points may lead to unstable or noisy explanations
   \end{itemize}
   \pause
   \item  \textbf{Solution I:} Use Gower similarity directly as weights: \( \pi(\zv) = 1 - d_{\text{Gower}}(\xv, \zv) \)\\
-  $\leadsto$ No kernel width required, but distant points still receive (too high) weight\\
+  $\leadsto$ No kernel width required, but far points still receive (too high) weight\\
   $\leadsto$ Explanation may reflect more global than local structure\\
-  $\leadsto$ Used in practical LIME implementations \citebutton{lime package}{https://goodekat.github.io/LIME-research-journals/journals/02-understanding_lime/02-understanding_lime.html}
+  $\leadsto$ Used in practical LIME implementations \furtherreading{LIMEPAC}
   \pause
-  \item \textbf{Solution II:} s-LIME adaptively selects \(\sigma\) to balance fidelity and stability \citebutton{Gaudel et al. 2022}{https://arxiv.org/abs/2208.01510}
+  \item \textbf{Solution II:} s-LIME adaptively selects \(\sigma\) to balance fidelity and stability \furtherreading{GAUDEL2022}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Pitfall: Local vs. Global Features \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
+\begin{frame}{Pitfall: Local vs. Global Features \furtherreading{LAUGEL2018}}
 
 \begin{itemize}%[<+->]
-	\item<1-> \textbf{Pitfall:} Sampling from entire input space may hide influence of locally relevant features in favor of globally relevant ones, even for narrow kernels.
+	\item<1-> \textbf{Pitfall:} Sampling from entire input space may hide influence of locally relevant feat in favor of globally relevant ones, even for narrow kernels.
  \item<1-> \textbf{Feature types:}
   \begin{itemize}
-    \item \emph{Global features} influence predictions broadly across whole imput space $\Xspace$
+    \item \emph{Global features} influence predictions broadly across whole input space $\Xspace$
     \item \emph{Local features} affect predictions only in small subregions of $\Xspace$
   \end{itemize}
   
@@ -192,40 +200,41 @@
 
 
 
-\begin{frame}{Pitfall: Local vs. Global Features \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
+\begin{frame}{Pitfall: Local vs. Global Features \furtherreading{LAUGEL2018}}
 %\begin{columns}[T, totalwidth=\textwidth]
 %	\begin{column}{0.6\textwidth}
 	%\vspace{-.5cm}
 		\begin{itemize}
-             \item \textbf{Problem:} Sampling around obs. to be explained $\xv$ may miss decision boundary
+             \item \textbf{Problem:} Sampling around observation to be explained $\xv$ may miss decision boundary
 		\item \textbf{Solution (LS: Local Surrogate Method):}
-  \begin{itemize}
+  \begin{enumerate}
+
     %\item Red point: Obs. $\xv$ to be explained
-    \item Step 1: Find closest point to $\xv$ (red dot) from opposite class (black cross)
-    \item Step 2: Sample around that point to better capture boundary
-    \item Step 3: Train local surrogate using those samples\\
+    \item Find closest point to $\xv$ (red dot) from opposite class (black cross)
+    \item Sample around that point to better capture boundary
+    \item Train local surrogate using those samples\\
 		$\leadsto$ better approximates the local direction of the decision boundary 
-    \end{itemize}
+    \end{enumerate}
   %       \textbf{Solution}: 
 		% Find closest point to $\xv$ from other class and sample new points $\zv$ around it for higher local accuracy
 		\begin{center}
 		\includegraphics[width=\linewidth]{figure/laugel_method}
 		\scriptsize{\textbf{Example:} $\xv$ (red point), closest point from other class (black cross)}
-	    %{Local surrogate (LS) method by \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
+	    %{Local surrogate (LS) method by \furtherreading{LAUGEL2018}}
 		\end{center}
 		%Sample new instances $\zv$ around the decision boundary closest from point $\xv$ for higher local accuracy
 		% \pause
 		% \item Red dot (right figure): Closest point from other class
 
-		% \item Red line: Local surrogate (LS) method \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}\\
+		% \item Red line: Local surrogate (LS) method \furtherreading{LAUGEL2018}\\
 		% $\leadsto$ better approximates the local direction of the decision boundary 
     \item LIME: What does the model do around this point?
-    \item LS: How does the model change when crossing the boundary near this point?
+    \item LS: How does the model change when crossing boundary near this point?
 	\end{itemize}
 
 % 	\begin{center}
 % 		\includegraphics[width=1\textwidth]{figure/laugel_method}
-% 	    {Local surrogate (LS) method by \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}}
+% 	    {Local surrogate (LS) method by \furtherreading{LAUGEL2018}}
 % 		\vspace{-0.3cm}
 % 		\end{center}
 % \end{column}
@@ -245,14 +254,14 @@
 %\footnote[frame]{Laugel et al. (2018). Defining Locality for Surrogates in Post-hoc Interpretability. \url{https://arxiv.org/pdf/1806.07498.pdf}.}
 \end{frame}
 
-\begin{frame}{Pitfall: Local vs. Global Features -- Example}
+\begin{frame}{Pitfall: Local vs. Global Feats -- Example}
 \begin{itemize}
 		\item Random forest (RF) classification on half-moons dataset
 		    \item \textbf{Background color:} Classification of RF (prediction surface)
 		    \item \textbf{Black/grey crosses:} training data
-            \item \textbf{Green dot:} Obs. to be explained; \textbf{Red dot:} nearest point from opposite class
-		    \item \textbf{Grey curve:} RF's decision boundary; \textbf{Dotted lines:} LIME decision boundaries
-             \item \textbf{Red line:} Local surrogate (LS) method \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}
+            \item \textbf{Green dot:} Obs. to be explained; \textbf{Red dot:} nearest  opposite-class point
+		    \item \textbf{Grey curve:} RF's decision boundary; \textbf{Dotted lines:} LIME dec. bound.
+             \item \textbf{Red line:} Local surrogate (LS) method \furtherreading{LAUGEL2018}
 	\end{itemize}
 
     
@@ -271,11 +280,11 @@
   
   \textbf{Feature 1} is local;
   class flips only near boundary when moving up/down
-  %\item Image Source: \citebutton{Laugel et al. 2018}{https://arxiv.org/pdf/1806.07498.pdf}
+  %\item Image Source: \furtherreading{LAUGEL2018}
   %\item 
 \medskip
 
-\textbf{Observation:} LIME decision boundaries (blue/green) fail to match the steep local boundary captured by LS (red)
+\textbf{Observation:} LIME decision boundaries (blue/green) fail to match the steep local bound. captured by LS (red)
 %\end{itemize}
 
     % \begin{itemize}
@@ -325,7 +334,7 @@
 
 \end{frame}
 
-\begin{frame}{Pitfall: Hiding biases \citebutton{Slack et al. 2020}{https://arxiv.org/abs/1911.02508}}
+\begin{frame}{Pitfall: Hiding biases \furtherreading{SLACK2020}}
 
 \begin{itemize}
 	% \item \textbf{Problem}: Developer could manipulate their model to hide biases 
@@ -340,8 +349,8 @@
 	    %\item for in-distribution points, use the original (biased) model
         \item Use \textbf{biased model} for in-distribution inputs (i.e., true predictions)
 	    %\item for out-of-distribution points produced for local explanation, use an unbiased model
-        \item Use \textbf{unbiased model} for OOD samples to produce LIME explanations
-        \item[$\leadsto$] LIME explanations rely on unbiased model $\Rightarrow$ hides bias in original model 
+        \item Use \textbf{unbiased model} for OOD samples to get LIME explanations
+        \item[$\leadsto$] LIME explanations rely on unbiased model \\$\Rightarrow$ hides bias in original model 
 	    % \item[$\leadsto$] LIME samples out-of-distribution points and uses the unbiased model for local explanation\\
 	    % \item[$\leadsto$] this hides the bias of the true model
 	    \end{enumerate}
@@ -350,7 +359,7 @@
 %		\begin{column}{0.5\textwidth}
 	    \centering
 	    \includegraphics[width=0.85\textwidth]{figure/attack_biased_unbiased.jpg}\\
-	    Image Source: \citebutton{Vres, Sikonja (2021)}{https://arxiv.org/abs/2101.11702}
+	    Image Source: \furtherreading{SIKONJA2021}
 %	    \end{column}
 %\pause
 	%     \begin{column}{0.5\textwidth}
@@ -372,7 +381,7 @@
 
 
 
-\begin{frame}{Pitfall: Hiding biases \citebutton{Slack et al. 2020}{https://arxiv.org/abs/1911.02508}}
+\begin{frame}{Pitfall: Hiding biases \furtherreading{SLACK2020}}
 
 \textbf{Key insight:} LIME can be fooled if explanations rely on model behavior outside the true data manifold.
 
@@ -380,10 +389,10 @@
    
 \textbf{Example:} Credit approval
   \begin{itemize}
-    \item Biased model uses features correlated with gender (parental leave duration)\\
+    \item Biased model uses feats correlated with gender (parental leave duration)\\
     $\leadsto$ used to make biased/unfair predictions
     \item Unbiased model uses only features unrelated to gender for fairness\\%omits these correlations
-    $\leadsto$ used to produce explanations based on unbiased predictions to hide bias
+    $\leadsto$ used to produce explanations based on unbiased predictions in order to hide bias
     \item LIME’s extrapolated samples trigger the unbiased model\\
     $\Rightarrow$ explanation appears fair, but original predictions are biased
   \end{itemize}
@@ -400,7 +409,7 @@
 
 
 
-\begin{frame}{Pitfall: Robustness \citebutton{Alvarez-Melis, D., \& Jaakkola, T. 2018}{https://arxiv.org/abs/1806.08049}}
+\begin{frame}{Pitfall: Robustness \furtherreading{JAAKKOLA2018}}
 \begin{itemize}
 	\item \textbf{Problem}: Instability of LIME explanations 
 	\item \textbf{Observation}: Explanations of two very close points could vary greatly 
@@ -434,11 +443,11 @@
 \end{columns}
 \end{frame}
 
-\begin{frame}{Pitfall: Definition of Superpixels \citebutton{Achanta et al. 2012}{https://ieeexplore.ieee.org/document/6205760}}
+\begin{frame}{Pitfall: Definition of Superpixels \furtherreading{ACHANTA2012}}
 
 \begin{columns}[totalwidth=\textwidth]
     
-    \begin{column}{0.6\textwidth}
+    \begin{column}{0.64\textwidth}
         
         \begin{itemize}
         	\item \textbf{Problem}: LIME relies on superpixels (but their definition differ) for image data

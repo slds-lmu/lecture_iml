@@ -1,9 +1,8 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
-\input{../../style/common.tex}
-
+ 
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
@@ -11,15 +10,17 @@
 
 \begin{document} 
 
-\newcommand{\titlefigure}{figure/whitebox}
-\newcommand{\learninggoals}{
+\titlemeta{
+Interpretable Models 1
+}{
+Inherently Interpretable Models - Motivation
+}{
+figure/whitebox
+}{
 %\item What characteristics does an interpretable model have?
 \item Why should we use interpretable models?
 \item Advantages and disadvantages of interpretable models
 }
-
-\lecturechapter{Inherently Interpretable Models - Motivation}
-\lecture{Interpretable Machine Learning}
 
 
 \begin{frame}{Motivation}
@@ -65,14 +66,14 @@
 
 \begin{frame}{Advantages}
 \begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.75\textwidth}
+\begin{column}{0.8\textwidth}
     \begin{itemize}[<+->]
     \itemsep1em
         \item Interpretable models are transparent by design, making many model-agnostic explanation methods unnecessary\\
         %For inherently interpretable models some additional model-agnostic interpretation methods not required \\
         $\leadsto$ Eliminates an extra source of estimation error
         \item They often have few hyperparameters and are structurally simple (e.g., linear, additive, sparse, monotonic)\\
-$\leadsto$ Easy to train, fast to tune, and straightforward to explain
+        $\leadsto$ Easy to train, fast to tune, straightforward to explain
         % \item Interpretable models often simple \\
         % $\leadsto$ training time is fairly small
         % \item Some interpretable models estimate monotonic effects \\
@@ -84,7 +85,7 @@ $\leadsto$ Easy to train, fast to tune, and straightforward to explain
         %$\leadsto$ Simple models are easier to deploy in practice or implement from scratch
     \end{itemize}
 \end{column}
-\begin{column}{0.25\textwidth}
+\begin{column}{0.2\textwidth}
     \begin{center}
         \begin{tikzpicture}[scale=0.6, transform shape]
         \usetikzlibrary{arrows}
@@ -123,7 +124,7 @@ $\leadsto$ Easy to train, fast to tune, and straightforward to explain
 
 \begin{frame}{Disadvantages \& Limitations}
 \begin{columns}[totalwidth=\textwidth]
-\begin{column}{0.75\textwidth}
+\begin{column}{0.8\textwidth}
     \begin{itemize}%[<+->]
     \itemsep1em
         \item<1-> Often require assumptions about data / model structure \\%Often certain assumptions about data / model structure required\\
@@ -138,7 +139,7 @@ $\leadsto$ Easy to train, fast to tune, and straightforward to explain
     \end{itemize}
     \end{itemize}
 \end{column}
-\begin{column}{0.25\textwidth}
+\begin{column}{0.2\textwidth}
     \begin{center}
         \includegraphics[width = \textwidth]{figure/lm_bad_fit.pdf} 
     \end{center}
@@ -150,7 +151,7 @@ $\leadsto$ Easy to train, fast to tune, and straightforward to explain
 \itemsep1em
         \item<3-> 
         %No automatic modeling of complex relationships due to limited model flexibility
-        Often do not automatically model complex relationships due to limited flexibility
+        Often do not automatically model complex relationships due to limited flexibility % didn't find a way to fig the hanging word
         \\
         e.g., high-order main or interaction effects need to be specified manually in an LM
 
@@ -170,16 +171,17 @@ $\leadsto$ Complementary model-agnostic methods (e.g., counterfactuals) remain v
 
     \begin{itemize}
     %\itemsep1em
-        \item<1-> Some researchers advocate for inherently interpretable models instead of explaining black boxes after training \citebutton{Rudin 2019}{https://www.nature.com/articles/s42256-019-0048-x}
+        \item<1-> Some researchers advocate for inherently interpretable models instead of explaining black boxes after training \furtherreading{RUDIN2019}
         \begin{itemize}
-        \item Built-in interpretation $\Rightarrow$ fewer risks from misleading post-hoc explanations
+        \item Built-in interpretation\\
+        $\leadsto$ fewer risks from misleading post-hoc explanations
         
             %\item \ldots instead of explaining uninterpretable models post-hoc
             % \item Can sometimes work out by spending enough time and energy on data pre-processing or manual feature engineering
-            \item  Good performance possible with effort on preprocessing / feat. engineering
-    \item But interpretability depends on meaning of created features\\
-    $\leadsto$ E.g., PCA keeps models linear, but yields hard-to-interpret components
-            %, or data cleaning
+        \item  Good performance possible with effort on preprocessing and/or feature engineering
+        \item But interpretability depends on meaning of created features\\
+        $\leadsto$ E.g., PCA keeps models linear, but yields hard-to-interpret components
+                %, or data cleaning
         \end{itemize}
         %\pause
         %\footnote[frame]{Rudin, C. Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. Nat Mach Intell 1, 206–215 (2019).}
@@ -188,9 +190,9 @@ $\leadsto$ Complementary model-agnostic methods (e.g., counterfactuals) remain v
        % \item<2->[$\leadsto$] Drawback: Hard to achieve for data for which end-to-end learning is crucial\\ 
        % $\leadsto$ e.g., hard to extract good features for image / text data\\ 
        % $\leadsto$ information loss can lead to bad performance
-      \item<2-> Limitation: Less suited for complex data where end-to-end learning is crucial
+      \item<2-> Limitation: Less suited for complex data complex data requiring end-to-end learning
 \begin{itemize}
-    \item Applies to image, text, or sensor data where features must be learned %from raw input
+    \item Applies to image, text, or sensor data where features must be learned from raw input
     \item Manual extraction of interpretable features is difficult \\$\Rightarrow$ Information loss and lower performance
 \end{itemize}
        %(e.g., for image / text data extraction of good features is hard $\leadsto$ information loss = bad performance)

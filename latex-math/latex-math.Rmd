@@ -1,0 +1,144 @@
+---
+title: "`latex-math` Macros"
+subtitle: "compiled: `r Sys.Date()`"
+geometry: "left=1cm, right=1cm"
+output:
+  pdf_document:
+    keep_tex: TRUE
+    latex_engine: "pdflatex"
+    includes:
+      in_header:
+        - preamble.tex
+        - combined.tex
+        # - basic-math.tex
+        # - basic-ml.tex
+        # - ml-ensembles.tex
+        # - ml-eval.tex
+        # - ml-feature-sel.tex
+        # - ml-gp.tex
+        # - ml-hpo.tex
+        # - ml-infotheory.tex
+        # - ml-interpretable.tex
+        # - ml-mbo.tex
+        # - ml-multitarget.tex
+        # - ml-nn.tex
+        # - ml-online.tex
+        # - ml-regu.tex
+        # - ml-survival.tex
+        # - ml-svm.tex
+        # - ml-trees.tex
+editor_options:
+  chunk_output_type: console
+---
+
+<!-- Run this file with rmarkdown::render() to recreate the tables.  -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+library(xtable)
+library(stringr)
+```
+
+```{r collect-files}
+# Find all .tex files starting with `basic-` or `ml-`
+# !! If new file prefixes are added, they must be added to the regex pattern
+texfiles <- list.files(pattern = "(ml|basic)-.*\\.tex")
+# texfiles <- setdiff(texfiles, "latex-math.tex") # avoid itself
+
+# Check which files are included in the YAML header (read-only)
+included_tex <- rmarkdown::metadata$output$pdf_document$includes$in_header
+included_tex <- setdiff(included_tex, "preamble.tex") # ignore preamble
+
+# check for missing files
+# missing_tex <- setdiff(texfiles, included_tex) 
+# if (length(missing_tex) > 0) {
+#   stop(sprintf("The following files are missing from the header includes in latex-math.Rmd:\n%s", paste(missing_tex, collapse = "\n")))
+# }
+```
+
+
+Latex macros like `\frac{#1}{#2}` with arguments are displayed as $\frac{\#1}{\#2}$.
+
+Note that macro declarations may only span a single line to be displayed correctly in the below tables.
+
+
+```{r get-macros}
+# escape the "#"-sign for latex macros with arguments
+sanitize_command <- function(command) {
+  paste0(
+    "$",
+    stringr::str_replace_all(
+      command,
+      pattern = "#([1-9])",
+      replacement = "{\\\\#\\1}"
+    ),
+    "$"
+  )
+}
+
+get_command <- function(line) {
+  # see https://www.regular-expressions.info/recurse.html#balanced
+
+  # avoid double appearance for ifdefined-renewcommand-else-newcommand
+  if (grepl("\\\\else", line)) {
+    return(NULL)
+  }
+
+  command <- regmatches(
+    line,
+    gregexpr("\\{(?>[^{}]|(?R))*\\}", line, perl = TRUE)
+  )[[1]]
+
+  if (length(command) < 2) {
+    return(NULL)
+  }
+  if (length(command) > 2) command <- command[1:2]
+
+  command[3] <- stringr::str_match(
+    line,
+    pattern = "\\}\\s*%\\s*(.*)$"
+  )[-1]
+
+  names(command) <- c("Macro", "Notation", "Comment")
+
+  command[1] <- substr(command[1], 2, nchar(command[1]) - 1)
+
+  if (grepl("IGNORE_NOTATION", command[3])) {
+    command[2] <- ""
+    command[3] <- stringr::str_remove(command[3], "IGNORE_NOTATION")
+  }
+
+  command[1] <- paste0("\\verb!", command[1], "!")
+  command[2] <- sanitize_command(command[2])
+  command[3] <- xtable::sanitize(command[3])
+
+  command
+}
+
+# Extract macros from latex files
+macros <- texfiles |>
+  lapply(readLines) |>
+  setNames(texfiles) |> # named list (names = filenames)
+  lapply(\(x) {
+    res <- lapply(x, get_command) # parse individual line, extract macros
+    res[!sapply(res, is.null)] # drop NULL elements from list
+    do.call(rbind, res) # bind to df for later disply
+  })
+```
+
+```{r print-macros, results='asis'}
+cat("\\tableofcontents \\label{toc} \\newpage")
+
+for (i in seq_along(macros)) {
+  cat("\\section{", stringr::str_remove(names(macros)[i], ".tex"), "} ")
+  null <- print(xtable(macros[[i]]),
+    sanitize.text.function = I,
+    include.rownames = FALSE,
+    floating = FALSE,
+    tabular.environment = "longtable",
+    comment = FALSE
+  )
+  cat("\\hyperlink{toc}{Back to contents}")
+  cat("\\newpage")
+}
+```

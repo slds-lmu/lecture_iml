@@ -1,8 +1,8 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
-\input{../../style/common.tex}
+\input{../../latex-math/basic-ml.tex}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -22,15 +22,17 @@
 \setlength{\leftmarginii}{1em}
 \begin{document}
 
-\newcommand{\titlefigure}{figure/lm_example}
-\newcommand{\learninggoals}{
+\titlemeta{
+Interpretable Models 1 
+}{
+Linear Regression Model
+}{
+figure/lm_example
+}{
 \item LM basics and assumptions
 \item Interpretation of main effects in LM
 \item What are significant features?
 }
-
-\lecturechapter{Linear Regression Model}
-\lecture{Interpretable Machine Learning}
 
 
 
@@ -68,7 +70,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
    
    \vspace*{0.2cm} 
    \pause
-    \textbf{Properties and assumptions} \citebutton{Faraway (2002), Ch. 7}{https://cran.r-project.org/doc/contrib/Faraway-PRA.pdf} \citebutton{Checking assumptions in R \& Python}{https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b}
+    \textbf{Properties and assumptions} \furtherreading{FARAWAY2002} % \furtherreading{CheckingAssumptions}
     \begin{itemize}[<+->]
     \item \textbf{Linear} relationship between features and target
     %Predictions are \textbf{linear} combination of features $\leadsto$ 
@@ -111,7 +113,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
     \end{itemize}
 %
 \begin{columns}[T, totalwidth = \textwidth]
-\begin{column}{0.62\textwidth}
+\begin{column}{0.67\textwidth}
     \begin{itemize}
         \item<3-> %Categorical: One-hot-encoding of $L-1$ new features for $L$ categories (dummy encoding) \\
         \textbf{Categorical feature $x_j$ with $L$ categories}: 
@@ -129,7 +131,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
         %\item Note: In case of higher order or interaction effects, weights cannot be interpreted in isolation
     \end{itemize}
 \end{column}
-\begin{column}{0.38\textwidth}
+\begin{column}{0.33\textwidth}
 %\begin{center}
         \includegraphics[trim={0 5 0 5},clip, width = \textwidth]{figure/reg_lm_plot_interpreted.pdf}\\
         % Bild aus I2ML: supervised-regression
@@ -149,14 +151,14 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 
     \textbf{Feature importance}:
     \begin{columns}[T, totalwidth=\textwidth]
-    \begin{column}{0.6\textwidth}
+    \begin{column}{0.61\textwidth}
     \begin{itemize}
         \item Absolute \textbf{t-statistic} value: $\hat\theta_j$ scaled with standard error ($SE(\hat\theta_j)$ $\hat =$ reliability of estimate) 
     $$|t_{\hat\theta_j}| = \left| \frac{\hat\theta_j}{SE(\hat\theta_j)} \right|$$
         \item High $t$-values $\Rightarrow$ important (significant) feat.
     \end{itemize}
     \end{column}
-    \begin{column}{0.4\textwidth}
+    \begin{column}{0.39\textwidth}
     %\vspace{-0.2cm}
     %\begin{center}
         \includegraphics[width=\textwidth]{figure/t_stat.pdf} 
@@ -166,7 +168,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
     \vspace{0.3cm}
     \only<2->{
     \begin{columns}[T, totalwidth=\textwidth]
-    \begin{column}{0.6\textwidth}
+    \begin{column}{0.65\textwidth}
     \begin{itemize}
         \item \textbf{p-value}: 
         probability of obtaining a more extreme test statistic assuming $H_0$ is correct (here: $\theta_j =0$, i.e., feat. $j$ not significant)
@@ -176,7 +178,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
         %\item The smaller the p-value, the less likely it is to obtain a more extreme test statistic
     \end{itemize}
     \end{column}
-    \begin{column}{0.4\textwidth}
+    \begin{column}{0.35\textwidth}
     %\vspace{-0.3cm}
     %\begin{center}
         \includegraphics[width=\textwidth]{figure/p-value.pdf}
@@ -186,9 +188,9 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 \end{frame}
 
 
-\begin{frame}{Example: Linear Regression - Main Effects}
+\begin{frame}{Example: Lin. Regression - Main Effects}
 
-\textbf{Bike data}: predict no. of rented bikes using 4 numeric, 1 categorical feat. (season)
+\textbf{Bike data}: predict no. of rented bikes using 4 numeric, 1 cat. feat. (season)
 
 \medskip 
 
@@ -268,7 +270,7 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 \begin{itemize}[<+->]
     \item \textbf{Intercept}:
     If all feature values are 0 (and season is \code{WINTER} $\hat =$ reference cat.), the expected number of bike rentals is $\hat\theta_0 = 3229.3$
-    \item \textbf{Categorical}: Rentals in \code{SPRING} are by $\hat\theta_1 = 862$ higher than in \code{WINTER}, c.p.
+    \item \textbf{Categ.}: Rentals in \code{SPRING} are by $\hat\theta_1 = 862$ higher than in \code{WINTER}, c.p.
     \item \textbf{Numerical}: Rentals increase by $\hat\theta_4 = 120.5$ if \code{temp} increases by 1 $^{\circ}$C, c.p.
     %If the temperature increases by 1 order Celsius, the number of bike rentals increases by 120.5 c.p.
 

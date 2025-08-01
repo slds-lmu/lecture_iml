@@ -1,12 +1,20 @@
 %TODO: Chapter needs to be improved a lot
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
 % Defines macros and environments
-\input{../../style/common.tex}
+ 
+\input{../../latex-math/basic-math.tex} % for \P
+\input{../../latex-math/basic-ml.tex}
 
+
+\usepackage{xcolor}
 \usepackage[export]{adjustbox}
 \usepackage[most]{tcolorbox}
+
+\newcommand{\Xv}{\mathbf{X}} % vector X (random variable, bold)
+\newcommand{\Yv}{\mathbf{Y}} % vector Y (random variable, bold)
+
 
 \newtcolorbox{BlueBox}[2][]{%
    enhanced,
@@ -22,7 +30,10 @@
 \definecolor{spring}{RGB} {121,174,65}
 \definecolor{summer}{RGB} {25,188,195}
 \definecolor{fall}{RGB} {166,128,185}
-
+% previously this was in `common.tex`
+\definecolor{ggred}{rgb}{0.973, 0.463, 0.427}
+\definecolor{ggblue}{rgb}{0, 0.749, 0.769}
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
@@ -30,16 +41,20 @@
 
 \begin{document}
 
-\newcommand{\titlefigure}{figure/dependence_2}
-\newcommand{\learninggoals}{
+\titlemeta{
+Intro to IML
+}{
+Correlation and Dependencies
+}{
+figure/dependence_2
+}
+{
 \item Pearson correlation
 \item Coefficient of determination $R^2$
 \item Mutual information
 \item Correlation vs. dependence
 }
 
-\lecturechapter{Correlation and Dependencies}
-\lecture{Interpretable Machine Learning}
 %
 % \begin{frame}{Interpretable ML}
 % \begin{itemize}
@@ -132,10 +147,10 @@
 \bigskip
 
 \begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.6\linewidth}
+\begin{column}{0.55\linewidth}
 \includegraphics[width = \textwidth]{figure/pearson_cor}
 \end{column}
-\begin{column}{0.4\linewidth}
+\begin{column}{0.45\linewidth}
 
 Geometric interpretation of $\rho$:
 \begin{itemize}
@@ -152,9 +167,9 @@ Geometric interpretation of $\rho$:
 \pause
 \begin{itemize}
     \item $\rho > 0$ if {\color{ggblue}positive areas} dominate {\color{ggred}negative areas} 
-    $\leadsto$ $X_1, X_2$ positive correlated
+    \\$\leadsto$ $X_1, X_2$ positive correlated
     \item $\rho < 0$ if {\color{ggred}negative areas} dominate {\color{ggblue}positive areas} 
-    $\leadsto$ $X_1, X_2$ negative correlated
+    \\$\leadsto$ $X_1, X_2$ negative correlated
     \item $\rho = 0$ if area of rectangles cancels out
     $\leadsto$ $X_1, X_2$ linearly uncorrelated
 \end{itemize}
@@ -168,12 +183,12 @@ Geometric interpretation of $\rho$:
 Another method to evaluate \textbf{linear dependency} between features is $R^2$
 
 \begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.52\linewidth}
+\begin{column}{0.48\linewidth}
 \only<1>{\includegraphics[width = \textwidth]{figure/r_squared_Fahrenheit}}
 \only<2>{\includegraphics[width = \textwidth]{figure/r_squared_compare}}
 \only<3>{\includegraphics[width = \textwidth]{figure/r_squared}}
 \end{column}
-\begin{column}{0.48\linewidth}
+\begin{column}{0.52\linewidth}
 
 \medskip
 
@@ -303,18 +318,18 @@ $\Rightarrow \rho(X_1, X_2) = R$
 \item Definition: $X_j$, $X_k$ independent $\Leftrightarrow$ joint distribution is product of marginals:%\\ \vspace{5pt}
 $$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$$
 %\vspace{5pt}
-\item Equivalent definition (knowledge of $X_k$ says nothing about $X_j$ and vice versa): 
+\item Equivalent definition (knowing $X_k$ gives no info about $X_j$ and vice versa): 
 %\vspace{5pt}
 $$\P(X_j|X_k) = \P(X_j) \text{ and } \P(X_k|X_j) = \P(X_k) \text{ (follows from cond. probability)}$$ 
 %\vspace{5pt}
 %$$\P(X_j|X_k) = \P(X_j) \hfill \text{(knowing $X_k$ does not tell us anything about $X_j$ and vice versa)}$$
 %\medskip
-\item Measuring complex dependencies is difficult but different measures exist, e.g., \\
+\item Measuring complex dependencies is difficult but different measures exist\\ Examples \\
 $\leadsto$ Spearman correlation (measures monotonic dependencies via ranks) \\
 $\leadsto$ Information-theoretical measures like mutual information \\
-$\leadsto$ Kernel-based measures like Hilbert-Schmidt Independence Criterion (HSIC)
+$\leadsto$ Kernel-based measures like Hilbert-Schmidt Independence Criterion (HSIC) % didn't find a way to fix hanging word
 % nice further reading https://jejjohnson.github.io/research_journal/appendix/similarity/hsic/
-\item \textbf{N.B.:} $X_j$, $X_k$ independent $\Rightarrow$ $\rho(X_j, X_k) = 0$ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  indep. \\
+\item \textbf{N.B.:} $X_j$, $X_k$ indep. $\Rightarrow$ $\rho(X_j, X_k) = 0$ \textbf{but} $\rho(X_j, X_k) = 0$ $\nRightarrow$ $X_j$, $X_k$  indep. \\
 Equivalency holds if distribution is jointly normal
 \end{itemize}
 \end{frame}
@@ -322,7 +337,7 @@ Equivalency holds if distribution is jointly normal
 
 \begin{frame}{Mutual Information}
     \begin{itemize}
-        \item MI describes expected amount of information shared by two random variables:% or how different the joint distribution is from pure independence
+        \item MI describes expected amount of information shared by two RVs:% or how different the joint distribution is from pure independence
         $$MI(X_1, X_2 ) =  \mathbb{E}_{p(x_1, x_2)} \left[ log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \right] $$
         % \item $MI(X_1 ; X_2 )$ is the Kullback-Leibler distance between joint distribution $p(x_1, x_2)$ and the product of their marginal distribution $p(x_1) p(x_2)$:
         % \begin{align*}
@@ -330,10 +345,10 @@ Equivalency holds if distribution is jointly normal
         %     &= D_{KL} \left( p(x_1, x_2) \, || \, p(x_1) p(x_2) \right) \\
         %     &= \mathbb{E}_{p(x_1, x_2)} \left[ log\left(\frac{p(x_1, x_2)}{p(x_1) p(x_2)} \right) \right]
         % \end{align*}
-        \item MI measures amount of "dependence" between features by looking how different the joint distribution is from pure independence $p(x_1, x_2) = p(x_1) p(x_2)$\\
+        \item MI measures amount of "dependence" between features by looking how different the joint distribution is from pure indep. $p(x_1, x_2) = p(x_1) p(x_2)$\\
         $\leadsto$ $MI(X_1, X_2) = \mathbb{E}_{p(x_1, x_2)} \left[ log\left(\frac{p(x_1, x_2)}{p(x_1, x_2)} \right) \right] = \mathbb{E}_{p(x_1, x_2)} \left[ log(1) \right] = 0$\\
         $\leadsto$  $MI(X_j, X_k) = 0$ if and only if the features are independent
-        \item Unlike (Pearson) correlation, MI can also be computed for categorical features %\\
+        \item Unlike (Pearson) correlation, MI is also defined for categorical features %\\
         %$\leadsto$ Discrete RV: joint and marginal distribution obtained from confusion matrix\\
         %$\leadsto$ Continuous RV: Density estimation required, e.g., create bins via histogram
         %\item  $MI(X_j, X_k) = 0$ if and only if $X_j$, $X_k$ independent
@@ -525,7 +540,7 @@ Conditional distributions do not match their marginal distributions
 \begin{frame}{Correlation vs. Dependence}
 
 %Scatterplot with multivariate distribution (contour lines) and marginal density\\ 
-Illustration of bivariate normal distribution with different correlations
+Illustration of bivariate normal distribution with different correlations\\
 $X_1$, $X_2 \sim N(0,1)$ 
 
 \only<1>{\begin{center}
@@ -561,7 +576,7 @@ $X_1$, $X_2 \sim N(0,1)$
 \end{center}
 
 
-Examples with Pearson's correlation $\rho \approx 0$ but non-linear dependencies (MI $\neq 0$):\\
+Examples with Pearson's corr. $\rho \approx 0$ but non-linear dependencies (MI $\neq 0$):\\
 \medskip
 \centering
 \includegraphics[width = 0.95\textwidth]{figure/dependence_3}}

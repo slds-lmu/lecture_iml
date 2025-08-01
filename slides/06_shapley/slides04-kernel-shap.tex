@@ -1,11 +1,17 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 \newcommand{\btVFill}{\vskip0pt plus 1filll}
 \newcommand\hmmax{0}
 \newcommand\bmmax{0}
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-interpretable}
+
 \usepackage{siunitx}
 % Defines macros and environments
-\input{../../style/common.tex}
+ 
+
+\usetikzlibrary{tikzmark, shapes,arrows,automata,positioning,calc,chains,trees,  shadows, decorations.pathreplacing}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -15,21 +21,23 @@
 \begin{document}
 
 % TODO
-\newcommand{\titlefigure}{figure_man/exSHAP.png}
 % \newcommand{\learninggoals}{
 % \item Get an intuition of additive feature attributions
 % \item Understand the concept of Kernel SHAP
 % \item Ability to interpret SHAP plots
 % \item Global SHAP methods
 % }
-\newcommand{\learninggoals}{
+\titlemeta{
+Shapley
+}{
+Kernel SHAP
+}{
+figure_man/exSHAP.png
+}{
 \item Understand KernelSHAP as weighted least-squares regression over coalitions
 \item Grasp how background samples impute "absent" features
 \item Observational vs. interventional SHAP
 }
-
-\lecturechapter{SHAP (SHapley Additive exPlanation) Values}
-\lecture{Interpretable Machine Learning}
 
 %\begin{frame}{Example}
 
@@ -141,9 +149,9 @@
     \item Sample K coalitions from the simplified (binary) feature space
     $$\mathbf{z}^{\prime (k)} \in\{0,1\}^{p}, \quad k \in\{1, \ldots, K\}$$
     \item \( \mathbf{z}^{\prime (k)} \in \{0,1\}^p \) indicates which features are present in  \( k \)-th coalition
-  \item To evaluate the model on each coalition, we must map \( \mathbf{z}^{\prime (k)} \) to original space %a full feature vector in the 
+  \item To evaluate the model on each coal., we must map \( \mathbf{z}^{\prime (k)} \) to original space %a full feature vector in the 
   
-    \item Example ($\xv = (51.6, 5.1, 17.0)$) $\Rightarrow$ $2^p = 2^3 = 8$ coalitions (without sampling)
+    \item Example ($\xv = (51.6, 5.1, 17.0)$) $\Rightarrow$ $2^p = 2^3 = 8$ coals (without sampling)
     %For our simple example, we have in total $2^p = 2^3 = 8$ coalitions (without sampling)
 \end{itemize}
 
@@ -188,12 +196,12 @@
 
 
 
-\begin{frame}{Kernel SHAP – In 5 Steps}
+\begin{frame}{Kernel SHAP - In 5 Steps}
 
 \textbf{Step 2: Map coalition vectors to original feature space and predict}
 
 \begin{itemize}
-  \item Define mapping \( h_{\xv, \xv'} : \{0,1\}^p \rightarrow \mathbb{R}^p \), where:
+  \item Define mapping \( h_{\xv, \xv'} : \{0,1\}^p \rightarrow \mathbb{R}^p \):
   $
   \left(h_{\xv, \xv'}(\mathbf{z}^{\prime})\right)_j =
   \begin{cases}
@@ -245,13 +253,13 @@
 \end{frame}
 
 
-\begin{frame}{Kernel SHAP – In 5 Steps}
+\begin{frame}{Kernel SHAP - In 5 Steps}
 
 \textbf{Step 2: Map coalition vectors to original feature space and predict}
 
 \medskip
 
-\textbf{Fix coalition vector} \(\mathbf{z}'=(1,0,0)\); draw multiple \textcolor{orange}{background samples $\xv'^{(1)}, \dots, \xv'^{(B)}$}\\
+\textbf{Fix} \(\mathbf{z}'=(1,0,0)\); draw multiple \textcolor{orange}{background samples $\xv'^{(1)}, \dots, \xv'^{(B)}$}\\
 \(\;\Rightarrow\) keep \textbf{hum}, replace \textbf{temp} and \textbf{ws} by draws from the background data.
 
 \begin{table}\centering\small
@@ -472,7 +480,7 @@ We learn most about a feature’s effect when (recall multinomial coefficient in
 
 \textbf{Note:} Weights differ from multinomial coefficient in the Shapley value set-definiton but are constructed to yield the same Shapley values via weighted linear regression.
 %While this expression does not directly match the multinomial coefficient of Shapley value set definition, it is derived to produce the same weighted average over marginal contributions when using these weights in a weighted linear regression. 
-\citebutton{see shapley\_kernel\_proof.pdf}{https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Supplemental.zip}
+\furtherreading{SHAP2017}
 \end{onlyenv}
 
 
@@ -516,7 +524,7 @@ $$\pi_{x}\left(\mathbf{z}^{\prime}\right)=\frac{(p-1)}{\left(\begin{array}{c} p 
     \item For $p>3$ features, the finite weights are all 0.33 as every shown coalition has the same size ($|S|=1$ and $|-S|=2$ and vice versa for $p=3$).
     \item In general (when $p>3$), weights vary with coalition size.
     \item Empty and full coalitions receive weight $\infty$ (division-by-zero term)\\
-    $\leadsto$ These coalition vectors are not used as observations for the linear regression\\
+    $\leadsto$ These coalition vectors are not used as obs. for the linear regression\\
     $\leadsto$ Instead constraints are used to ensure \emph{local accuracy} and \emph{missingness}
 \end{itemize}
 % $\leadsto$ all the finite weights being equal to the same value (0.33) is the result of coalition size being equal to 3. In general the weight distribution is not uniform. 
@@ -662,7 +670,7 @@ $$\pi_{x}\left(\mathbf{z}^{\prime}\right)=\frac{(p-1)}{\left(\begin{array}{c} p 
 
 \textbf{Step 4: Fit a weighted linear model}\\\medskip
 
-\textbf{Goal} Estimate Shapley values \( \phi_j \) as coefficients of a local, weighted linear surrogate.
+\textbf{Goal}\\ Estimate Shapley values \( \phi_j \) as coefficents of a local, weighted linear surrogate.
 \[
 \textstyle g(\mathbf{z}') \;=\; \phi_0 \;+\; \sum_{j=1}^{p} \phi_j z'_j
 \]
@@ -720,7 +728,7 @@ g(\mathbf{z}')
 \end{tabular}
 \end{table}
 
-The inputs and outputs are used to learn the weighted linear regression model.
+The inputs and outputs are used to learn the weighted lin. regression model.
 }
 
 \end{frame}

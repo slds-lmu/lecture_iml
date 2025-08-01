@@ -1,8 +1,12 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
 % Defines macros and environments
-\input{../../style/common.tex}
+ 
+% not sure how was \thetab supposed to be defined, treat this as a temporary placeholder
+\newcommand{\thetab}{\theta}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -21,14 +25,18 @@
 % IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
 
 % Defines macros and environments
- \newcommand{\titlefigure}{figure/AEturtle.jpg} 
-\newcommand{\learninggoals}{
+
+\titlemeta{
+Local Explanations
+}{
+Adversarial Examples
+}{
+figure/AEturtle.jpg
+}{
 \item Understand the definition of ADEs 
 \item Understand first methods that generate ADEs
-\item Discuss potential causes of ADEs and standard defenses against them}
-
-\lecturechapter{\Large{Local Explanations: Adversarial Examples}}
-\lecture{Interpretable Machine Learning}
+\item Discuss potential causes of ADEs and standard defenses against them
+}
 
 % ------------------------------------------------------------------------------
 
@@ -47,7 +55,7 @@
     \end{itemize}
 \end{frame}
 
-\begin{vbframe}[c]{Adversarial Examples}
+\begin{frame}[c]{Adversarial Examples}
 %The inputs by which evasion attacks can be conducted are called \textbf{Adversarial Examples (ADEs)}
 \begin{itemize}
     \item \textbf{Informal Definition}: An ADE is an input to a model that is deliberately designed to "fool" the model into misclassifying it
@@ -56,9 +64,9 @@
     \item ADEs created from a real data observation $\xv$ can be indistinguishable from $\xv$ by a human observer 
     \item Since the model misclassifies this input, it does not seem to have a real understanding of the underlying concepts of the provided inputs
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Examples: Model-Attacks \citebutton{Gong \& Poellabauer 2018}{https://arxiv.org/pdf/1803.09156.pdf}}
+\begin{frame}[c]{Examples: Model-Attacks \furtherreading{POELLABAUER2018}}
 
 \begin{columns}[totalwidth=\textwidth]
 
@@ -84,9 +92,9 @@
 
 \end{columns}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{Examples: Image Data \citebutton{Eykholt et al. (2018)}{https://arxiv.org/pdf/1807.07769.pdf}  \citebutton{Athalye et al. (2018)}{https://arxiv.org/pdf/1707.07397.pdf}}
+\begin{frame}[c]{Examples: Image Data \furtherreading{EYKHOLT2018}  \furtherreading{ATHALYE2018}}
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.46\linewidth]{figure/AEstop.png}\quad \includegraphics[width=0.45\linewidth]{figure/AEturtle.jpg}
@@ -108,10 +116,9 @@
 
 \begin{itemize}
     \item 3D-print of a turtle
-    \item Misclassified as a rifle (from every angle)
+    \item Misclassified as a rifle\\(from every angle)
     \item Video: 
-    \citebutton{MITCSAIL
-    (2017)}{https://www.youtube.com/watch?v=piYnd_wYlT8}
+    \furtherreading{MITCSAIL2017}
 \end{itemize}
 
 \end{column}
@@ -119,9 +126,9 @@
 \end{columns}
 
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Example: Tabular Data \citebutton{Ballet (2019)}{https://arxiv.org/pdf/1911.03274.pdf}}
+\begin{frame}[c]{Example: Tabular Data \furtherreading{BALLET2019}}
 What is imperceptibility on tabular data?
 \begin{itemize}
     \item Idea: experts focus on the most important features in their judgment
@@ -135,9 +142,9 @@ What is imperceptibility on tabular data?
   \label{fig:mnist}
 \end{figure} 
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{ADE and Interpretability}
+\begin{frame}[c]{ADE and Interpretability}
 
 \begin{enumerate}
     \item ADEs show where models fail $\leadsto$ improved model understanding
@@ -147,9 +154,9 @@ What is imperceptibility on tabular data?
     \item Explanations can be used to construct ADEs (e.g., see numer of pets on previous slide)
 \end{enumerate}
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{Formal Definition}
+\begin{frame}[c]{Formal Definition}
 \begin{block}{Adversarial Input}
 Let $\epsilon>0$, $f:\Xspace \rightarrow \Yspace$ be an ML model and $\xv \in \Xspace$ be a real data point that is correctly classified: $f(\xv)=y_{\xv,true}$. \\\medskip
  We call $\mathbf{a}_{\xv}$ an \textbf{adversarial input} to $\xv$ if:
@@ -158,12 +165,12 @@ Let $\epsilon>0$, $f:\Xspace \rightarrow \Yspace$ be an ML model and $\xv \in \X
 \end{equation*}
 \end{block}
 \begin{itemize}
-    \item $\mathbf{a}_{\xv}$ an is a data point close to a real, correctly classified input that is misclassified
+    \item $\mathbf{a}_{\xv}$ is a nearby point to a real, correctly classified input that is misclassified
     \item $\mathbf{a}_{\xv}$ is called \textbf{targeted} if the class it is assigned to is determined\\
     $f(\mathbf{a}_{\xv})=y'$ with $y'$ being a desired prediction
     \item Can be generalized to regression problems
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
 
 % \begin{vbframe}{ADE and Counterfactual Explanations}
@@ -179,11 +186,11 @@ Let $\epsilon>0$, $f:\Xspace \rightarrow \Yspace$ be an ML model and $\xv \in \X
 % \end{vbframe}
 
 
-\begin{frame}{Why Do ADE Exist?}
+\begin{frame}[c]{Why Do ADE Exist?}
 Non-exhaustive list of hypotheses: \\[0.5cm]
     
 \only<1>{
-    \textbf{1. Low-probability spaces hypotheses:} ADEs live in low-probability yet dense spaces in the data manifold that are not well represented in the training samples \citebutton{Szegedy et al. (2013)}{https://arxiv.org/abs/1312.6199}
+    \textbf{1. Low-probability spaces hypotheses:} ADEs live in low-probability yet dense spaces in the data manifold that are not well represented in the training samples \furtherreading{SZEGEDY2013}
         
     \begin{figure}
         \centering
@@ -195,7 +202,7 @@ Non-exhaustive list of hypotheses: \\[0.5cm]
 \only<2>{
     \textbf{2. Linearity hypotheses (most popular):}\\ Adversarial examples are omnipresent in the data manifold\\
     $\leadsto$ occur, because commonly used models often show linear behavior\\
-    $\leadsto$ small changes of $\epsilon$ in every feature cause a change of $\epsilon\|\thetab\|_1$ in prediction \citebutton{Goodfellow et al. (2014)}{https://arxiv.org/abs/1412.6572}
+    $\leadsto$ small changes of $\epsilon$ in every feature cause a change of $\epsilon\|\thetab\|_1$ in prediction \furtherreading{GOODFELLOW2014}
 
     \vspace{.5cm}
     
@@ -210,24 +217,24 @@ Non-exhaustive list of hypotheses: \\[0.5cm]
     
 \only<3>{
     \textbf{3. The boundary tilting hypothesis:} Linearity is neither necessary nor sufficient to explain ADEs\\
-    $\leadsto$ ADEs mostly result from overfitting the sampled manifold \citebutton{Tanay and Griffin (2016)}{https://arxiv.org/abs/1608.07690}
+    $\leadsto$ ADEs mostly result from overfitting the sampled manifold \furtherreading{GRIFFIN2016}
     
     \begin{figure}
         \centering
         \includegraphics[width = .35\textwidth]{figure/tilting_ae.png}
-        \caption{Linear binary classification example. Due to overfitting the decision boundary (red) is close to the manifold of the training data. Techniques like regularization could help to make the decision boundary more robust (green). \citebutton{Kim et al. (2019)}{https://arxiv.org/abs/1903.11626}
+        \caption{Linear binary classification example. Due to overfitting the decision boundary (red) is close to the manifold of the training data. Techniques like regularization could help to make the decision boundary more robust (green). \furtherreading{KIM2019}
 }
     \end{figure}
 }
     
 \only<4>{
-    \textbf{4. Human-centric hypotheses:} ML models make use of predictive but non-robust features -- meaning they are highly correlated with the prediction target, but not used by humans \citebutton{Ilyas et al. (2019)}{https://papers.nips.cc/paper/2019/hash/e2c420d928d4bf8ce0ff2ec19b371514-Abstract.html}
+    \textbf{4. Human-centric hypotheses:} ML models make use of predictive but non-robust features -- meaning they are highly correlated with the prediction target, but not used by humans \furtherreading{ILYAS2019}
 }
     
 \end{frame}
 
 
-\begin{vbframe}[c]{Ways to Generate ADE}
+\begin{frame}[c]{Ways to Generate ADE}
 Different ways for constructing ADEs:
 There exist various ways in the literature to generate ADEs for a given model in feasible time
 \begin{itemize}
@@ -236,18 +243,18 @@ There exist various ways in the literature to generate ADEs for a given model in
         \label{eq:optimization}
         \underset{\xv'\in \Xspace}{\text{argmin}}\; \underbrace{\| \xv-\xv' \|_{\Xspace}}_{\text{minmize}} - \lambda\;   \underbrace{ \|f(\xv')-y'\|_{\Yspace}}_{\text{maximize}}
     \end{equation*}
-    \item Use \textbf{sensitivity analysis} to identify features that influence the target class
-    \item Train a generative adversarial network (GAN) \citebutton{Goodfellow et al. (2014)}{https://papers.nips.cc/paper/2014/file/5ca3e9b122f61f8f06494c97b1afccf3-Paper.pdf}
+    \item Use \textbf{sensitivity analysis} to identify feats that influence the target class
+    \item Train a generative adversarial network (GAN) \furtherreading{GOODFELLOW2014}
 \end{itemize}
-Moreover, depending on the attacker's model access, we can distinguish between
+Moreover, based on the attacker's model access, we can distinguish between
 \begin{itemize}
-    \item \textbf{Full-access attacks}: the attacker has full access to the internals of the model
+    \item \textbf{Full-access attacks}: attacker has full access to internals of the model
     \item \textbf{Black-box attacks}: the attacker can only query the model on some inputs and receives the model's outputs
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}{Fast-Gradient-Sign-Method (FGSM)
-\citebutton{Goodfellow et al. (2015)}{https://arxiv.org/pdf/1412.6572.pdf}}
+\begin{frame}[c]{Fast-Gradient-Sign-Method (FGSM)
+\furtherreading{GOODFELLOW2015}}
 % Since we have seen optimization methods for CEs, we focus on a method using sensitivity analysis, namely FGSM.
 % Source of (modified) figure: https://docs.google.com/presentation/d/1l-ng618qrisSorutii9I30qL8VhZGYD9aRBuwvvBbSY/edit?usp=sharing
 \begin{itemize}
@@ -264,24 +271,24 @@ Moreover, depending on the attacker's model access, we can distinguish between
   \label{fig:mnist}
 \end{figure} 
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{Notes on FGSM \citebutton{Goodfellow et al. (2015)}{https://arxiv.org/pdf/1412.6572.pdf} \citebutton{Lyu et al. 2015}{https://arxiv.org/abs/1511.06385}}
+\begin{frame}[c]{Notes on FGSM \furtherreading{GOODFELLOW2015} \furtherreading{LYU2015}}
 \begin{itemize}
-    \item FGSM works particularly well for linear(-like) models in high-dimensional spaces,\\ e.g., LSTMs, logistic regressions or CNNs with ReLU activations
+    \item FGSM works particularly well for linear(-like) models in high-dim. spaces,\\ e.g., LSTMs, logistic regressions or CNNs with ReLU activations
     \item Not every $\mathbf{a}_{\xv}$ generated by FGSM is an ADE, especially if $\epsilon$ is too small
     \item FGSM attacks can be also generated without model access by approximating the gradient,\\ e.g. with finite difference methods
     \item The notion of similarity in FGSM is based on $\|\cdot\|_{\infty}$ $\leadsto$ there are generalizations of FGSM to other norms
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
 
-\begin{vbframe}[c]{Black-Box Attacks with Surrogates \citebutton{Papernot et al. (2016)}{https://arxiv.org/abs/1605.07277}}
+\begin{frame}[c]{Black-Box Attacks with Surrogates \furtherreading{PAPERNOT2016}}
 
 \begin{itemize}
     \item So far, we assumed full access to the predictive model
     \item Black-box attacks only assume query-access
-    \item Large risk of attacks since often one can query predictive models many times
+    \item High attack risk since often one can query predictive models many times
 \end{itemize}
 
 \medskip
@@ -299,9 +306,9 @@ Moreover, depending on the attacker's model access, we can distinguish between
 
 
 
-\end{vbframe}
+\end{frame}
 
-\begin{vbframe}[c]{Defenses Against ADE}
+\begin{frame}[c]{Defenses Against ADE}
 There are several ways to protect your network against such attacks -- we distinguish between two broad types of defenses, differing in the position in which they act
 \begin{itemize}
     \item \textbf{Guards} act on the inputs a model receives
@@ -315,7 +322,7 @@ There are several ways to protect your network against such attacks -- we distin
         \item \textbf{Architectural defenses}: e.g., removing low predictive features from the model
     \end{itemize}
 \end{itemize}
-\end{vbframe}
+\end{frame}
 
 %\begin{vbframe}{Regularization Against ADEs}
 %The use of regularization techniques against ADEs is motivated by most hypotheses that explain ADEs. As an example we look at a technique based on the FGSM and the linearity hypotheses.
@@ -331,18 +338,18 @@ There are several ways to protect your network against such attacks -- we distin
 %\end{itemize}
 %\end{vbframe}
 
-\begin{vbframe}[c]{Summary}
+\begin{frame}[c]{Summary}
 \begin{itemize}
-    \item ADEs are not explanations themselves but are conceptually connected to them
+    \item ADEs are not explanations themselves, but conceptually related to them
     \item ADEs can be generated in diverse settings $\leadsto$ crucial modeling decisions are the distance measure, the local environment, and the target level (model or process)
     \item There are various hypotheses on the existence of ADEs which also motivate different defense strategies
 \end{itemize}
 \begin{center}
     \includegraphics[width = .6\textwidth]{figure/AEpanda_simple.png}
     
-    {\citebutton{Goodfellow et al. (2017)}{https://openai.com/blog/adversarial-example-research/}}
+    {\furtherreading{GOODFELLOW2017}}
 \end{center}
-\end{vbframe}
+\end{frame}
 
 %\begin{vbframe}{Outlook}
 %\begin{itemize}

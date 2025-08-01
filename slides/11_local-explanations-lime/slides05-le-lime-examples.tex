@@ -1,10 +1,11 @@
-\documentclass[11pt,compress,t,notes=noshow, aspectratio=169, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage{../../style/lmu-lecture}
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-interpretable}
 % Defines macros and environments
-\input{../../style/common.tex}
-
-\newcommand{\pih}{\fh}
+ 
 \newcommand{\gh}{\hat{g}}
 
 \title{Interpretable Machine Learning}
@@ -25,21 +26,25 @@
 
 % Defines macros and environments
 
-\newcommand{\titlefigure}{figure/lime_credit_ice2.pdf}
-\newcommand{\learninggoals}{
-    \item See real-world data examples
-    \item See application to image and text data}
+\titlemeta{
+Local Explanations: Lime
+}{
+Examples
+}{
+figure/lime_credit_ice2.pdf
+}{
+\item See real-world data examples
+\item See application to image and text data
+}
 
-\lecturechapter{LIME Examples}
-\lecture{Interpretable Machine Learning}
 
 % Prerequisite: le-intro
 
 % ------------------------------------------------------------------------------
-\begin{frame}{LIME Example: Credit Scoring (Tabular Data)}
+\begin{frame}{Example: Credit Scoring (Tabular Data)}
 
 \begin{itemize}
-  \item \textbf{Black-box model \( \fh_{bad} \):} SVM with RBF kernel (predicts prob. of bad credit risk)
+  \item \textbf{Black-box model \( \fh_{bad} \):} SVM with RBF kernel (predicts probability of bad credit risk)
   \item \textbf{Instance to explain \( \xv \):} First row in the dataset, with \( \fh_{bad}(\xv) = 0.658 \)
 {\scriptsize
 \begin{tabular}{r l r l r r r l l l}
@@ -51,8 +56,8 @@
 \end{tabular}
 
 }
-  \item \textbf{Surrogate model:} LASSO, restricted to 5 non-zero features (via regularization)
-  \item \textbf{Training data for surrogate:} Samples \( \zv \), weighted by Gower distance to \( \xv \)
+  \item \textbf{Surrogate model:} LASSO, restricted to 5 non-0 feats (via regularization)
+  \item \textbf{Training data for surrogate:} Samples \( \zv \), weighted by Gower dist. to \( \xv \)
 \end{itemize}
 \pause
 \begin{columns}[T,onlytextwidth]
@@ -60,7 +65,7 @@
     \begin{itemize}
       \item \textbf{Prediction:} \\
       \( \gh(\xv) = 0.640 \) vs. \( \fh_{bad}(\xv) = 0.658 \)
-      \item[$\leadsto$] $\gh$ provides good local approximation of $\fh_{bad}$, but omits several features 
+      \item[$\leadsto$] $\gh$ provides good local approx. of $\fh_{bad}$, but omits several features 
       \item[$\leadsto$] Small mismatch reflects trade-off:\\
       \textbf{interpretability vs. fidelity}
     \end{itemize}
@@ -78,8 +83,8 @@
 \begin{frame}{Example on Credit Dataset (cont'd)}
 
 \begin{itemize}
-  \item 2D ICE plots (prediction surface plots) for \texttt{duration} and \texttt{credit.amount} 
-  \item Illustration how \( \gh \) linearly approximates the nonlinear decision surface of \( \fh_{bad} \)
+  \item 2D ICE plots (pred. surface plots) for \texttt{duration} and \texttt{credit.amount} 
+  \item Illustration how \( \gh \) linearly approximates nonlinear decision surface of \( \fh_{bad} \)
 \end{itemize}
 
 \begin{columns}[totalwidth=\textwidth]
@@ -120,7 +125,7 @@
 %while the year 2011 has a large negative effect as well as the springtime.
 %\end{frame}
 
-\begin{frame}{LIME for Text Data \citebutton{Shen, Ian, (2019)}{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}}
+\begin{frame}{LIME for Text Data \furtherreading{IAN2019}}
     LIME can also be applied to text data: 
 	\begin{itemize}
 		\item Raw text representations: 
@@ -146,7 +151,7 @@
 	\end{itemize}
 \end{frame}
 	
-\begin{frame}{LIME for Text Data (cont'd) \citebutton{Shen, Ian, (2019)}{https://medium.com/just-another-data-scientist/explain-sentiment-prediction-with-lime-f90ae83da2da}}	 
+\begin{frame}{LIME for Text Data (cont'd) \furtherreading{IAN2019}}	 
 	\begin{itemize}
 		\item Random forest classifier labeling movie reviews from IMDB 
 		\begin{itemize}
@@ -172,7 +177,7 @@
 		\begin{column}{0.67\textwidth}
 			LIME also works for image data:  
 			\begin{itemize}
-				\item \textbf{Idea}: Each obs. is represented by a binary vector indicating the presence or absence of superpixels \citebutton{Achanta et al. 2012}{https://ieeexplore.ieee.org/document/6205760}
+				\item \textbf{Idea}: Each obs. is represented by a binary vector indicating the presence or absence of superpixels \furtherreading{ACHANTA2012}
 				\item Superpixels are interconnected pixels with similar colors (absence of a single pixel might not have a (strong) effect on the prediction)
 				\item \textbf{Warning}: Size of superpixels needs to be determined before the segmentation takes place
 				\item \textbf{Sampling}: Randomly switching some of the super pixels ``off", i.e., by coloring some superpixels uniformly
@@ -187,7 +192,7 @@
 	\end{columns}
     
 \end{frame}
-\begin{frame}{LIME for image data (cont'd) \citebutton{Ribeiro. 2016}{https://github.com/marcotcr/lime}}
+\begin{frame}{LIME for image data (cont'd) \furtherreading{RIBEIRO2016}}
 	\begin{itemize}
 		\item Explaining prediction of pre-trained inception neural network classifier
 		\item \textbf{Sampling}: Graying out all superpixels besides 10 superpixels
