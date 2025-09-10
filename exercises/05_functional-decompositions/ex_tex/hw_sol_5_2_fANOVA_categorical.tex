@@ -1,66 +1,117 @@
 \loesung{
-
-\textit{Following all TO DO}
-
-% \subsection*{Solution}
-
-\paragraph{Step 1. Compute the mean term.}
+\begin{enumerate}[a)]
+\item
+\textbf{Step 1. Compute the constant term.}
 \[
-f_\emptyset
-=\frac{1}{27}\sum_{x_1,x_2,x_3\in\{0,\frac12,1\}}
-   \bigl(4x_1 + 2x_2x_3\bigr)
-= \underbrace{\frac{1}{3}\cdot4\cdot\frac{1}{2}}_{=\E[4X_1]} \;+\;
-  \underbrace{\Bigl(\frac{1}{3}\Bigr)^{2}\!2}_{=\E[2X_2X_3]}
-=1 + \tfrac{2}{9} = \tfrac{11}{9}.
+g_\emptyset
+= \E [ \fh(X_1, X_2, X_3) ]
+= \E [4 X_1 + 2 X_2 X_3 - 4]
+= 4 \ \E [X_1] + 2 \ \E [X_2] \ \E [X_3] - 4
+= - 4 ,
+\]
+because the variables are all independent and centered (i.e., $\E [X_i] = 0$ for all $i$.).
+
+Alternatively, using all data points:
+\begin{align*}
+    g_\emptyset
+    = \ & \frac{1}{27} \sum_{x_1,x_2,x_3 \in \{-1,0,1\}}
+       \bigl( 4x_1 + 2x_2x_3 - 4 \bigr)
+    = \frac{1}{27} \Bigl( \underbrace{9 \cdot 4 \cdot (-1 + 0 + 1)}_{\text{All possible values of }x_1} \\
+      & + \underbrace{3 \cdot 2 \cdot \bigl( -1 \cdot (-1) + (-1) \cdot 0 + (-1) \cdot 1 + 0 \cdot (-1) + 0 \cdot 0 + 0 \cdot 1 + 1 \cdot (-1) + 1 \cdot 0 + 1 \cdot 1 \bigr) - 27 \cdot 4}_{\text{All possible combinations of values for }x_2 \text{ and } x_3} \Bigr) \\
+    = \ & \frac{1}{27} \Bigl( 0 + 0 - 27 \cdot 4 \Bigr) = -4,
+\end{align*}
+because each value of $x_1$ occurs 9 times and each combination of values of $x_2$ and $x_3$ occurs 3 times.
+
+Analogously, for all the PD-functions (which are marginal expectations), we can use the fact that the variables are independent and centered.
+
+\textbf{Step 2. First‐order terms.}
+\[
+g_1(x_1)
+= \E[ \fh(x_1, X_2, X_3) ] - g_\emptyset
+= \E[ 4 x_1 + 2 X_2 X_3 - 4 ] - g_\emptyset
+= 4 x_1 + 2 \ \underbrace{\E[ X_2 ]}_{=0} \ \underbrace{\E[ X_3 ]}_{=0} - 4 - (-4)
+=4x_1.
+\]
+\[
+g_2(x_2)
+= \E[ \fh(X_1, x_2, X_3) ] - g_\emptyset
+= \E[ 4 X_1 + 2 x_2 X_3 - 4 ] - g_\emptyset
+= 4 \underbrace{\E[ X_1 ]}_{=0} + 2 x_2 \underbrace{\E[ X_3 ]}_{=0} - 4 - (-4)
+= 0.
+\]
+Because $\fh$ is symmetric in $x_2$ and $x_3$, we get analogously
+\[
+g_3(x_3)=0.
 \]
 
-\paragraph{Step 2. First‐order terms.}
+\textbf{Step 3. Second‐order terms.}
 \[
-f_1(x_1)
-=\E[f\mid X_1=x_1] - f_\emptyset
-= \bigl(4x_1 + \E[2X_2X_3]\bigr) - \tfrac{11}{9}
-=4x_1 + \tfrac{2}{9} - \tfrac{11}{9}
-=4x_1 - 1.
+g_{1,2}(x_1, x_2)
+= \E[ \fh(x_1, x_2, X_3) ] - g_1(x_1) - g_2(x_2) - g_\emptyset
+= \E[ 4 x_1 + 2 x_2 X_3 - 4 ] - 4 x_1 + 4
+= 4 x_1 + 2 x_2 \underbrace{\E[ X_3 ]}_{=0} - 4 - 4 x_1 +4
+= 0.
 \]
-By symmetry and since $f$ depends only on $x_2x_3$, one finds
+Again using that $\fh$ is symmetric in $x_2$ and $x_3$, we receive exactly the same result for $S=\{1,3\}$, so $g_{13}(x_1, x_3) = 0$.
+
+For $\{2,3\}$, we get:
 \[
-f_2(x_2)=0,\qquad f_3(x_3)=0.
+g_{2,3}(x_2,x_3)
+= \E[ \fh(X_1, x_2, x_3) ] - g_2(x_2) - g_3(x_3) - g_\emptyset
+= \E[ 4 X_1 + 2 x_2 x_3 - 4 ] + 4
+= 4 \underbrace{\E[ X_1 ]}_{=0} + 2 x_2 x_3 - 4 +4
+= 2 x_2 x_3.
 \]
 
-\paragraph{Step 3. Second‐order terms.}
-For $\{2,3\}$,
+\textbf{Step 4. Third‐order term.}
 \[
-f_{23}(x_2,x_3)
-=\E[f\mid X_2=x_2,X_3=x_3]
-- f_\emptyset - f_2(x_2)-f_3(x_3)
-= 4\,\E[X_1] +2x_2x_3 - \tfrac{11}{9}
-= \tfrac{4}{2} +2x_2x_3 - \tfrac{11}{9}
-=2x_2x_3 - \tfrac{1}{9}.
-\]
-All other pairs $\{1,2\}$ and $\{1,3\}$ vanish because once you subtract
-$f_\emptyset$ and $f_1$, the remaining dependence is zero.
-
-\paragraph{Step 4. Third‐order term.}
-\[
-f_{123}(x_1,x_2,x_3)
-= f(x_1,x_2,x_3)
-- \sum_{A\subsetneq\{1,2,3\}} f_A(x_A)
-= 4x_1+2x_2x_3
-- \bigl(\tfrac{11}{9} + (4x_1-1) + (2x_2x_3-\tfrac{1}{9})\bigr)
+g_{1,2,3}(x_1,x_2,x_3)
+= \fh(x_1,x_2,x_3)
+- \sum_{V\subsetneq\{1,2,3\}} g_V(x_V)
+= \underbrace{4 x_1 + 2x_2x_3 - 4}_{=\fh(x_1,x_2,x_3)}
+- \Bigl( \underbrace{- 4}_{=g_\emptyset} + \underbrace{4x_1}_{=g_1(x_1)} + \underbrace{2x_2x_3}_{=g_{2,3}(x_2,x_3)} \Bigr)
 =0.
 \]
-
-\paragraph{Step 5. Orthogonality check.}
-Define the empirical inner product 
-\(\langle u,v\rangle = \tfrac1{27}\sum_{x}u(x)\,v(x)\).  Then
+So, all in all, we only have three nonzero components in the fANOVA, which are exactly equal to the terms in the given equation that we would expect:
 \[
-\langle f_1, f_{23}\rangle
-=\tfrac1{27}\sum_{x_1,x_2,x_3}(4x_1-1)\,(2x_2x_3-\tfrac{1}{9})
-= \bigl(\tfrac1{3}\sum(4x_1-1)\bigr)
-  \bigl(\tfrac1{3^2}\sum(2x_2x_3-\tfrac19)\bigr)
-=0\cdot0=0,
+    g_\emptyset = -4, \quad
+    g_1 = 4 x_1, \quad
+    g_{2,3} = 2 x_2 x_3.
 \]
-and similarly each distinct pair of nonzero components is orthogonal.
-\hfill\(\Box\)
+
+\item 
+\textbf{Orthogonality check.}
+As indicated by the hint, we only need to consider pairs of two nonzero components, since otherwise the terms are trivially orthogonal.
+This is because for any $U, V$ with one component being 0, w.l.o.g. $g_U(\Xv_U) = 0$, we have:
+\[
+\E_\Xv \left[ g_U(\Xv_U) \, g_V(\Xv_V) \right]
+= \E_\Xv \left[ 0 \cdot \, g_V(\Xv_V) \right]
+= \E_\Xv \left[ 0 \right] = 0.
+\]
+For the remaining components, we have three possibilities we need to check:
+\begin{align*}
+    & \text{For } (V,U) = (\emptyset, \{1\}): 
+    \, \E_\Xv \left[ g_\emptyset \, g_1(X_1) \right]
+    = \E_\Xv \left[ -4 \cdot 4 X_1 \right]
+    = -16 \E [X_1] = 0, \\
+    & \text{For } (V,U) = (\emptyset, \{2,3\}): 
+    \, \E_\Xv \left[ g_\emptyset \, g_{2,3}(\Xv_{2,3}) \right]
+    = \E_\Xv \left[ -4 \cdot 2 X_2 X_3 \right]
+    = -8 \ \E [X_2] \ \E [X_3] = 0, \\
+    & \text{For } (V,U) = (\{1\}, \{2,3\}): 
+    \, \E_\Xv \left[ g_1(X_1) \, g_{2,3}(\Xv_{2,3}) \right]
+    = \E_\Xv \left[ 4 X_1 \cdot 2 X_2 X_3 \right]
+    = 8 \ \E [X_1] \ \E [X_2] \ \E [X_3] = 0,
+\end{align*}
+again using independence and centering. This shows the desired orthogonality.
+
+\end{enumerate}
+One can also see in this exercise, that
+\begin{itemize}
+    \item the symmetry of $\fh$ in $x_2$ and $x_3$ translates to the fANOVA components.
+    In general, the whole fANOVA decomposition inherits the same symmetries as the original function.
+    \item after computing the expected value $g_\emptyset$ in the first step, one could center the whole function $\fh^c (x_1,x_2,x_3) = \fh(x_1,x_2,x_3) - g_\emptyset$ and then use this centered function $\fh^c$ throughout.
+    In this case, we would not need to subtract $g_\emptyset$ in each step anymore.
+\end{itemize}
 
 }
