@@ -3,19 +3,19 @@
 
 $exercisesPath = "c:\Users\hayk_\OneDrive\Desktop\lecture_iml\exercises"
 
-# Define the mapping from numbered folders to topic names
+# Define the mapping from numbered folders to topic names with their numbers
 $folderMappings = @{
-    "01_introduction" = "intro"
-    "02_interpretable_models_1" = "im"
-    "03_interpretable_models_2" = "im2" 
-    "04_feature_effects" = "fe"
-    "05_functional-decompositions" = "func_decomp"
-    "06_shapley" = "shapley"
-    "08_regional_effects" = "regional"
-    "09_feature_importance_1" = "fi"
-    "10_feature_importance_2" = "fi2"
-    "11_local_lime" = "lime"
-    "12_local_counterfactual" = "counterfactual"
+    "01_introduction" = @{ topic = "intro"; numbers = @("1", "01") }
+    "02_interpretable_models_1" = @{ topic = "im"; numbers = @("2", "02") }
+    "03_interpretable_models_2" = @{ topic = "im2"; numbers = @("3", "03") } 
+    "04_feature_effects" = @{ topic = "fe"; numbers = @("3", "4", "03", "04") }
+    "05_functional-decompositions" = @{ topic = "func_decomp"; numbers = @("5", "05") }
+    "06_shapley" = @{ topic = "shapley"; numbers = @("4", "6", "04", "06") }
+    "08_regional_effects" = @{ topic = "regional"; numbers = @("8", "08") }
+    "09_feature_importance_1" = @{ topic = "fi"; numbers = @("5", "9", "05", "09") }
+    "10_feature_importance_2" = @{ topic = "fi2"; numbers = @("10") }
+    "11_local_lime" = @{ topic = "lime"; numbers = @("6", "11") }
+    "12_local_counterfactual" = @{ topic = "counterfactual"; numbers = @("12") }
 }
 
 # Function to rename files in a directory
