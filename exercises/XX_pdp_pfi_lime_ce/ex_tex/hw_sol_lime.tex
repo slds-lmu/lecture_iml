@@ -1,0 +1,16 @@
+\textbf{Solution.}
+\textbf{Gaussian sampling scale.}
+\begin{enumerate}
+  \item \emph{Panel identification:} Higher $\sigma$ means a larger sampling variance so points spread further from the instance. The mapping is: (a) $\sigma=0.01$, (b) $\sigma=0.10$, (c) $\sigma=0.05$, (d) $\sigma=0.20$.
+  \item \emph{Configuration preference:} Considering both variance and class coverage: 
+  
+  (a) $\sigma=0.01$ is too narrow (all the datapoint belong to the same class, resulting in no boundary information);
+  
+  (c) $\sigma=0.05$ adds partial boundary context (data spread between 2 classes), acts locally and we can fit a logistic regression model here (good choice)
+  
+  (b) $\sigma=0.10$ acts in a larger neighborhood, all 3 classes are covered (logistic regression not applicable out of the box; one-vs-all approach necessary)
+  therefore it might be suitable but also more unreliable and more difficult to interpret.
+  
+  (d) $\sigma=0.20$ over-expands (some data points even lie outside feasible feature rage), mixing unrelated global patterns and lowering fidelity (is rather a global than a local model).
+\end{enumerate}
+

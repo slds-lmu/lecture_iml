@@ -1,0 +1,142 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- Packages ----------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{mathtools}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, urlcolor=blue!50!black, citecolor=blue!50!black}
+
+% ---------- List Formatting ----------
+\setlist[enumerate,1]{label=\textbf{\arabic*.}, leftmargin=1.1em}
+\setlist[enumerate,2]{label=\alph*), leftmargin=1.5em}
+
+% Optional solution toggle
+\newif\ifshowsolutions
+\showsolutionstrue % comment to hide solutions
+
+\newenvironment{solution}{\par\medskip\noindent\textbf{Solution. }\begingroup}{\endgroup\medskip}
+
+\title{Local Interpretable Model-agnostic Explanations (LIME)}
+\date{}
+
+\begin{document}
+\maketitle
+% \vspace{-1em}\hrulefill\\[0.8em]
+
+\section*{Exercises}
+\begin{enumerate}
+  \item Briefly describe the procedure LIME uses to produce local feature importance scores for one prediction.
+
+  \item Instead of the original perturbation approach, consider drawing each feature as
+  \[
+     z_j \sim \mathcal{N}(x_j, \sigma^2), \quad j = 1,\dots,p,
+  \]
+  for a chosen standard deviation $\sigma$.
+  For illustration, we have a 3-class classifier with two numeric features (forming a 2D decision surface). In each panel below, the white dot is the target instance $x$ and black dots are sampled $z$ for different $\sigma$ values among $\{0.01, 0.05, 0.10, 0.20\}$. Answer the following:
+  \begin{enumerate}
+    \item Identify which panel corresponds to each $\sigma$ value.
+    \item Which of the four $\sigma$ configurations would you prefer? Briefly explain your choice by stating the disadvantages or advantages of each configuration.
+  \end{enumerate}
+  \begin{figure}[h!]
+    \centering
+    % Composite image with four parameter settings
+    \includegraphics[width=0.9\textwidth]{fig-man/lime_4_params.png}
+  % \caption{Sampled perturbations $z$ for four Gaussian noise scales $\sigma \in \{0.01, 0.05, 0.10, 0.20\}$ around instance $x$ (white).}
+  \label{fig:lime_gaussian_sampling}
+  \end{figure}
+
+  \item You are working with a black-box model that predicts the probability of a breast tumor being malignant (1) or benign (0) using two features:
+  \begin{itemize}
+    \item \textbf{Compactness} ($x_1$): ratio of tumor perimeter to area (higher = less circular); typically in $[0,1]$ with many values in $[0.05,0.40]$.
+    \item \textbf{Texture} ($x_2$): variation in gray-level intensity (higher = more irregular); typically in $[10,100]$ .
+  \end{itemize}
+  For a given patient, the model predicts
+  \[
+     \hat{p}(x^{(0)}) = 0.8.
+  \]
+  LIME samples points around $x^{(0)}$, queries the black-box model, and fits a local linear surrogate
+  \[
+     \hat f_{\text{LIME}}(x) = \beta_0 + \beta_1 x_1 + \beta_2 x_2,
+  \]
+  weighting nearby samples via a kernel of width $\sigma$. The coefficients $\beta_1, \beta_2$ approximate local sensitivities.
+  Two runs with different kernel widths (Table~\ref{tab:lime_kernel_runs}):
+  
+  \medskip
+  \begin{table}[h!]
+    \centering
+    \caption{LIME local linear surrogate coefficients for two kernel widths. Local fit quality measured by $R^2$.}
+    \label{tab:lime_kernel_runs}
+    \begin{tabular}{lcccc}
+    Run & Kernel Width $\sigma$ & $\beta_1$ (compactness) & $\beta_2$ (texture) & Local $R^2$ \\
+    \hline
+    A & 0.05 & 2.8 & 0.4 & 0.93 \\
+    B & 0.30 & 1.2 & 1.1 & 0.62 \\
+    \hline
+    \end{tabular}
+  \end{table}
+
+  \medskip
+  For this specific patient we observe
+  \[
+    x_1 = 0.30 \quad (\text{Compactness}), \qquad x_2 = 72 \quad (\text{Texture}).
+  \]
+
+  Answer the following:
+  \begin{enumerate}[label=(\alph*), leftmargin=1.2em]
+      \item \textbf{Interpreting coefficients.}
+      \begin{enumerate}[label=(i), leftmargin=1.2em]
+          \item In run A, which feature has the stronger influence locally, and what does its sign mean? \textit{Hint:} take into account the feature scales.
+          \item What does $\beta_1 = 2.8$ imply about compactness near this patient?
+      \end{enumerate}
+
+    \item \textbf{Addressing scale differences.} Name and contrast at least two preprocessing strategies to address unequal feature scales when interpreting linear surrogates.
+    \item \textbf{Comparing kernel widths.}
+    \begin{enumerate}[label=(i), leftmargin=1.2em]
+      \item What happens when $\sigma$ increases from 0.05 to 0.30?
+      \item How does this affect locality of the explanation?
+      \item Why does the local $R^2$ decrease?
+    \end{enumerate}
+    \item The clinician prefers stable, trend-oriented insights over very sharp local details. Which run (A or B) would you choose, and why?
+    \item Briefly state the trade-off between local fidelity and broader interpretability in LIME.
+  \end{enumerate}
+\end{enumerate}
+
+\ifshowsolutions
+\newpage
+\section*{Solutions}
+\begin{enumerate}
+  \item \textbf{Core LIME procedure.} Given a target instance $x$, LIME (i) generates perturbed samples around $x$; (ii) obtains the black-box model predictions for each sample; (iii) weights samples by a proximity kernel $K(x,z)$ so points nearer to $x$ matter more; (iv) fits a simple, interpretable surrogate model (often sparse linear) on the weighted data; (v) interprets the surrogate's parameters (e.g., linear coefficients) as local feature importance scores. Key idea: approximate the decision boundary \emph{locally} with a simpler model whose parameters are easy to explain.
+
+  \item \textbf{Gaussian sampling scale.}
+    \begin{enumerate}
+      \item \emph{Panel identification:} Higher $\sigma$ means a larger sampling variance so points spread further from the instance. The mapping is: (a) $\sigma=0.01$, (b) $\sigma=0.10$, (c) $\sigma=0.05$, (d) $\sigma=0.20$.
+      \item \emph{Configuration preference:} Considering both variance and class coverage: $\sigma=0.01$ is too narrow (all the datapoint belong to the same class, resulting in no boundary information); $\sigma=0.05$ adds partial boundary context (data spread between 2 classes) but may miss other class regions; $\sigma=0.20$ over-expands, mixing unrelated global patterns and lowering fidelity. $\sigma=0.10$ provides complete class coverage with moderate spread, with enough variation to estimate stable local coefficients without washing out locality, thus is the recommended choice here.
+    \end{enumerate}
+
+  \item \textbf{Medical example (local surrogate).}
+    \begin{enumerate}[label=(\alph*)]
+      \item \textbf{Interpreting coefficients.}
+        \begin{enumerate}[label=(i)]
+          \item Raw coefficient magnitudes in run A suggest compactness ($\beta_1=2.8$) is larger than texture ($\beta_2=0.4$). However, after considering observed scales ($x_1=0.30$ in $[0,1]$ vs $x_2=72$ in $[10,100]$) the \emph{contribution} can be gauged by $\beta_j x_j$: $\beta_1 x_1 = 2.8\times0.30 = 0.84$ vs $\beta_2 x_2 = 0.4\times72 = 28.8$. Texture actually causes the stronger effect on the predicted probability locally. The positive signs mean increasing each feature raises $\hat p$ (higher compactness or higher texture increases malignancy probability in the local linear approximation).
+          \item $\beta_1=2.8$ implies that (locally) a one-unit increase in compactness increases the predicted probability by roughly 2.8 units (c. p.).
+        \end{enumerate}
+      \item \textbf{Addressing scale differences.} Common strategies: (i) Standard scaling: subtract mean, divide by standard deviation. Coefficients then represent change per SD, making magnitudes comparable and robust to moderate scale disparities. (ii) Min-Max scaling: map each feature to $[0,1]$, preserving relative ordering, but sensitive to outliers. For linear surrogate interpretability, standard scaling usually yields more meaningful comparison of coefficients.
+      \item \textbf{Comparing kernel widths.}
+        \begin{enumerate}[label=(i)]
+          \item Increasing $\sigma$ from 0.05 to 0.30 includes points farther away from the target instance, broadening the neighborhood.
+          \item Locality declines: the surrogate starts averaging over a wider region that may include different local patterns or mild nonlinearities.
+          \item Local $R^2$ decreases because a single linear model fits a more heterogeneous (potentially nonlinear) patch of the true decision surface; added variance and curvature reduce linear fidelity.
+        \end{enumerate}
+      \item \textbf{Choosing run for clinician.} Run B (larger $\sigma$) produces more tempered coefficients (1.2, 1.1) with lower variance, making it better for stable, trend-oriented insights even though fidelity (R$^2$) is lower. Run A is sharper but might fluctuate more if re-sampled.
+      \item \textbf{Local fidelity vs broader interpretability.} Smaller $\sigma$: high fidelity, captures precise local sensitivities but may be unstable / less generalizable. Larger $\sigma$: smoother, more general pattern at the cost of precision - trades localized accuracy for interpretive stability.
+    \end{enumerate}
+\end{enumerate}
+\fi
+\end{document}
