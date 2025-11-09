@@ -1,0 +1,16 @@
+\textbf{Solution.}
+\begin{enumerate}
+	\item \textbf{Comparing feature importance rankings.}
+	\begin{enumerate}
+		\item For linear regression, the two most important features are $x_1$ and $x_4$. $x_1$ appears dominant because the true DGP includes a strong linear coefficient (3) that the linear model can capture almost perfectly.
+		\item Features that gain importance when moving from linear regression to gradient boosting: $x_3$ (quadratic term) and $x_4$ (sinusoidal). These features become more important because gradient boosting can capture their nonlinear relationships, whereas linear regression cannot.
+		\item Negligible features in both models: $x_5$ and $x_6$ remain near zero because they are pure noise features with no relationship to the target. $x_2$ also stays low in both models due to redundancy with $x_1$, though it may show a small non-zero importance in the linear model. Note that test set PFI (as used here) is more reliable than train set PFI for identifying truly important features, especially when models overfit.
+	\end{enumerate}
+
+	\item \textbf{Understanding model-specific differences.}
+	\begin{enumerate}
+		\item Both $x_4$ and $x_3$ are underestimated in the linear model because it cannot capture nonlinear relationships: $x_4$'s sinusoidal pattern $\sin(2 x_4)$ and $x_3$'s quadratic relationship ($x_3^2$) are approximated only as straight lines. Permutation therefore causes less damage than if the model had learned the full curved relationships. Under gradient boosting, both features gain importance because the model can approximate these nonlinearities via piecewise constant splits, making permutation more damaging.
+		\item $x_2$ shows a small non-zero importance in the linear model because the correlation with $x_1$ is imperfect (added noise term $\varepsilon_2$); permuting $x_2$ slightly disrupts the joint pattern, yielding a modest rise in error. However, the importance remains small because most of the signal is captured by $x_1$.
+	\end{enumerate}
+\end{enumerate}
+

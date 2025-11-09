@@ -1,0 +1,58 @@
+\textbf{Solution.}
+
+\begin{itemize}
+   \item \emph{Actionability and practical feasibility}: This includes both whether the feature can be changed (e.g., immutable characteristics like sex cannot be changed) and whether the change is realistic given time constraints and effort required (e.g., waiting 5 years may be technically possible but not practically feasible for someone needing immediate recourse).
+   \item \emph{Sparsity}: Fewer changes are generally preferred.
+   \item \emph{Model logic}: Does it reveal a model flaw? (e.g., reducing savings alone should not improve approval chances).
+\end{itemize}
+
+\textbf{Show vs. hide counterfactuals (customer focus).}
+\begin{itemize}
+   \item \textbf{Show (3)}: m, 50, 1300, 500, credit\_amount = 2600 $\rightarrow$ yes.
+   
+   \textbf{Features changed:} \texttt{credit\_amount} (5000 $\rightarrow$ 2600). All other features unchanged.
+   \begin{itemize}
+      \item \emph{Actionability and practical feasibility}: Highly actionable and feasible—customer can immediately request a lower loan amount. This is both technically possible and practically realistic as an immediate action.
+      \item \emph{Sparsity}: Excellent—only 1 feature changed (credit\_amount).
+      \item \emph{Model logic}: Makes perfect financial sense—lower loan amount reduces risk, aligning with sound credit logic.
+   \end{itemize}
+   
+   \item \textbf{Show (5)}: m, 50, salary = 1400, savings = 250, credit\_amount = 5000 $\rightarrow$ yes.
+   
+   \textbf{Features changed:} \texttt{salary} (1300 $\rightarrow$ 1400), \texttt{savings} (500 $\rightarrow$ 250). All other features unchanged.
+   \begin{itemize}
+      \item \emph{Actionability and practical feasibility}: Actionable and feasible—customer can work to increase salary (e.g., seek additional employment, negotiate raise). Increasing salary by 100 is achievable over time, though requires effort. This is both technically possible and practically realistic.
+      \item \emph{Sparsity}: Good—2 features changed (salary, savings).
+      \item \emph{Model logic}: Reasonable trade-off—salary increase may legitimately offset savings decrease in the model's assessment, as regular income is often weighted more heavily than liquid reserves for creditworthiness. The net effect (higher income) is positive.
+      \item \textbf{Additional note}: Counterfactual (5) might also be \textbf{reviewed by the data science team} to ensure the model's weighting (salary increase offsetting savings decrease) is intentional and reasonable.
+   \end{itemize}
+   
+   \item \textbf{Show with caution (6)}: m, 51, salary = 1390, savings = 700, credit\_amount = 5000 $\rightarrow$ yes.
+   
+   \textbf{Features changed:} \texttt{age} (50 $\rightarrow$ 51), \texttt{salary} (1300 $\rightarrow$ 1390), \texttt{savings} (500 $\rightarrow$ 700). All other features unchanged.
+   \begin{itemize}
+      \item \emph{Actionability and practical feasibility}: Partially actionable and feasible with caveat—salary and savings are actionable, but age is time-dependent (must wait 1 year). Waiting 1 year is reasonably feasible, but the model may be updated by then, invalidating the counterfactual. This introduces uncertainty about practical feasibility.
+      \item \emph{Sparsity}: Moderate—3 features changed (age, salary, savings).
+      \item \emph{Model logic}: Makes financial sense—increased age, salary, and savings all align with reduced risk, but time-dependent nature introduces uncertainty.
+   \end{itemize}
+   
+   \item \textbf{Hide (2)}: sex flipped (f, 50, 1300, 500, 5000 $\rightarrow$ yes).
+   
+   \textbf{Features changed:} \texttt{sex} (m $\rightarrow$ f). All other features unchanged.
+   \begin{itemize}
+      \item \emph{Actionability and practical feasibility}: Not actionable—sex is an immutable characteristic that cannot be changed. Changing sex is impossible, making this counterfactual neither actionable nor practically feasible.
+      \item \emph{Sparsity}: Good—only 1 feature changed (sex).
+      \item \emph{Model logic}: May indicate gender bias—if sex alone flips the prediction, this suggests potential discrimination or proxy leakage. \textbf{Report to data science team} to investigate whether the model exhibits gender bias or if sex is acting as a proxy for other variables.
+   \end{itemize}
+   
+   \item \textbf{Hide (4)}: Only savings changed (m, 50, 1300, savings = 250, 5000 $\rightarrow$ yes).
+   
+   \textbf{Features changed:} \texttt{savings} (500 $\rightarrow$ 250). All other features unchanged.
+   \begin{itemize}
+      \item \emph{Actionability and practical feasibility}: Technically actionable and feasible—customer could reduce savings, and this is possible to do. However, this is counterproductive advice that goes against sound financial logic, making it inappropriate to present as recourse.
+      \item \emph{Sparsity}: Excellent—only 1 feature changed (savings).
+      \item \emph{Model logic}: \emph{Critical model flaw}—reducing savings alone should not lead to credit approval. This violates monotonicity (less financial strength should not improve approval chances) and indicates a potential bug in the model. \textbf{Report to data science team} as a critical issue requiring investigation and fix.
+   \end{itemize}
+   
+\end{itemize}
+

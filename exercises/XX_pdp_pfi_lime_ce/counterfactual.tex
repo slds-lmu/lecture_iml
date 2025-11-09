@@ -1,0 +1,91 @@
+
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath, amssymb, booktabs, geometry}
+\geometry{margin=2.5cm}
+\setlength{\parskip}{0.7em}
+\setlength{\parindent}{0pt}
+
+\title{Counterfactual Explanations: Credit Scoring Use Case}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Exercise: Counterfactual Explanations in Credit Scoring}
+
+A binary classifier predicts whether a person receives a loan (\texttt{credit = yes/no}) based on
+\texttt{sex, age, salary, savings, credit\_amount}.  
+On the first row, you are given one customer's record (denied credit) and several generated counterfactuals.
+
+\begin{center}
+\begin{tabular}{lllllll}
+\toprule
+ID & sex & age & salary & savings & credit\_amount & credit \\
+\midrule
+1 & m & 50 & 1300 & 500 & 5000 & no \\
+2 & f & 50 & 1300 & 500 & 5000 & yes \\
+3 & f & 45 & 1300 & 500 & 500 & yes \\
+4 & m & 50 & 1300 & 500 & 2600 & yes \\
+5 & m & 52 & 1400 & 500 & 5000 & yes \\
+6 & m & 50 & 1400 & 250 & 5000 & yes \\
+7 & m & 49 & 1390 & 700 & 5000 & yes \\
+8 & m & 51 & 1800 & 500 & 5100 & yes \\
+9 & f & 50 & 1301 & 570 & 5019 & yes \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Tasks}
+\begin{enumerate}
+\item Which counterfactuals would you show to the \textbf{customer}?  
+   Explain using:  
+   \emph{Actionability} (can the customer change it?),  
+   \emph{Plausibility} (is it realistic?), and  
+   \emph{Sparsity} (fewest features changed).
+
+\item Which counterfactuals would you \textbf{hide} from the customer and why?
+
+\item Which counterfactuals would you report to the \textbf{data science team} as potential bias indicators?
+
+\item (Rashomon effect) Several different well-performing models produce different counterfactuals for this same denied applicant.
+\begin{enumerate}
+   \item In one sentence, what does this tell you about trusting a single counterfactual?
+   \item If two changes (lower credit amount, higher salary) appear in most models, how would you present them to the customer so the advice is simple and robust?
+\end{enumerate}
+
+\end{enumerate}
+
+\newpage
+
+\section*{Solutions}
+\begin{enumerate}
+   \item \textbf{Counterfactuals to show (customer focus).} We prefer explanations that change \emph{actionable, financially meaningful} variables with minimal edits:
+   \begin{itemize}
+      \item \textbf{(4)} m, 50, 1300, 500, credit\_amount = 2600 $\rightarrow$ yes. \emph{Only one feature changed} (requested amount). Highly sparse, clearly actionable: apply with a lower loan request.
+      \item \textbf{(7)} m, 49, salary = 1390, savings = 700, credit\_amount = 5000 $\rightarrow$ yes. Improves both liquid reserves and income (both attainable over time). Two changes, still relatively sparse; all modifications plausible and aligned with reduced risk.
+   \end{itemize}
+   We \emph{exclude} (6) even though accepted because it \textbf{lowers savings} (250 from 500), which is counter-intuitive recourse.
+
+   \item \textbf{Counterfactuals to hide (non-actionable / unethical / implausible).}
+   \begin{itemize}
+      \item \textbf{(2), (9)} (sex flipped) and \textbf{(3)} (sex + large credit reduction): involve a sensitive, immutable characteristic (sex). Should never be presented as recourse.
+      \item Minor age shifts (50 $\rightarrow$ 49 or 52) as decisive (rows 5,7) are \emph{not actionable}; age is time-dependent and slow, not an intervention.
+      \item \textbf{(6)} reduces savings while approving credit: implausible direction; discouraging financial stability.
+      \item \textbf{(8)} raises credit amount (5100) while granting approval; requesting more money to become eligible is contradictory.
+   \end{itemize}
+
+   \item \textbf{Counterfactuals for data science team (bias / modeling diagnostics).}
+   \begin{itemize}
+      \item \textbf{Sex changes (2,3,9)}: may indicate \emph{gender bias} or proxy leakage if sex alone flips prediction.
+      \item \textbf{Age variants (5,7)}: sensitivity to small age increments suggests potential over-fitting to age or data imbalance.
+      \item \textbf{(6)} decreasing savings: model may not enforce monotonic relationship between financial strength and approval.
+      \item \textbf{(8)} higher requested amount flipping to yes: contradicts typical risk logic; investigate feature interactions or data artifact.
+   \end{itemize}
+
+   \item \textbf{Rashomon effect.}
+      \begin{enumerate}
+         \item Different well-performing models yielding distinct counterfactuals shows that \emph{a single counterfactual is not uniquely trustworthy}; explanations depend on modeling assumptions.
+         \item If most models agree on: (i) lower credit amount and (ii) higher salary, present a \emph{robust recourse summary}: ``Reduce requested amount (e.g., 2600 instead of 5000) \textbf{or} increase income (target \~1400+) to improve approval likelihood.'' Emphasize these as stable levers across models, avoiding model-specific quirks.
+      \end{enumerate}
+\end{enumerate}
+\end{document}
