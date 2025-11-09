@@ -1,19 +1,16 @@
 \aufgabe{PFI: Comparing Linear Regression and Gradient Boosting}{
-We compare PFI on synthetic data with six features on linear regression vs. gradient boosting.
-Both models are fit on the same data (train-test split: 65\% vs. 35\%) with performance below.
 
-\begin{minipage}{0.55\textwidth}
+\begin{minipage}{0.58\textwidth}
+	We compare PFI on synthetic data with six features on linear regression vs. gradient boosting.
+	Both models are fit on the same data (train-test split: 65\% vs. 35\%) with performance metrics shown in the table.
+	
+	\vspace{0.5em}
+
 	\textbf{Data generating process:}
-$$ y = 3x_1 +  1.5\,x_3^2 + 2\sin(2\,x_4) + \varepsilon, \varepsilon \sim \mathcal{N}(0,0.7^2)$$
-	\[
-	\begin{aligned}
-		x_1,x_3,x_4,x_5,x_6 &\sim \mathcal{N}(0,1),	\\
-		x_2 = x_1 + \varepsilon_2, \varepsilon_2 &\sim \mathcal{N}(0,0.25^2)
-	\end{aligned}
-	\]
+
 \end{minipage}
 \hfill
-\begin{minipage}{0.44\textwidth}
+\begin{minipage}{0.4\textwidth}
 	\begin{tabular}{lcc}
 		\toprule
 		Model & Train MSE & Test MSE \\
@@ -25,8 +22,20 @@ $$ y = 3x_1 +  1.5\,x_3^2 + 2\sin(2\,x_4) + \varepsilon, \varepsilon \sim \mathc
 \end{minipage}
 
 \begin{minipage}{0.44\textwidth}
-	Feature roles: 
-	\begin{itemize}[nosep]
+$y = 3x_1 +  1.5\,x_3^2 + 2\sin(2\,x_4) + \varepsilon, \varepsilon \sim \mathcal{N}(0,0.7^2)$
+	\[
+	\begin{aligned}
+		x_1,x_3,x_4,x_5,x_6 &\sim \mathcal{N}(0,1),	\\
+		x_2 = x_1 + \varepsilon_2, \varepsilon_2 &\sim \mathcal{N}(0,0.25^2)
+	\end{aligned}
+	\]
+
+	\textbf{Feature roles:}
+	\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\setlength{\parskip}{0pt}
+		\setlength{\parsep}{0pt}
+		\setlength{\topsep}{0pt}
 		\item $x_1$ has a strong linear effect
 		\item $x_2$ is correlated (redundant)
 		\item $x_3$ and $x_4$ have a nonlinear effect

@@ -1,24 +1,28 @@
 \aufgabe{ICE curves and Partial Dependence}{
-Consider the model
+Consider a model $\hat f(x_1,x_2)$ where $x_1 \sim \mathrm{Unif}(-1,1)$ and $x_2$ is a Bernoulli distributed feature with $\Pr(x_2=1) = 0.5$ (and $\Pr(x_2=0) = 0.5$).
+The model is given by the following function with an interaction term between $x_1$ and $x_2$:
 \[
-\hat f(x_1,x_2) = 3 \; - 8 x_1 + 16 x_1\, \ind{x_2=\text{``b''}},
+\hat f(x_1,x_2) = 3 - 8x_1 + 16x_1x_2.
 \]
-with $x_1 \sim \mathrm{Unif}(-1,1)$, $x_2 \in \{\text{``a''},\text{``b''}\}$, and $\Pr(x_2=\text{``b''}) = 0.5$.
 
 \begin{enumerate}
   \item \textbf{ICE curves for $x_1$.}
   \begin{enumerate}
-    \item Express the ICE curve for $x_1$ when $x_2=\text{``a''}$ over $t\in[-1,1]$.
-    \item Express the ICE curve for $x_1$ when $x_2=\text{``b''}$ over $t\in[-1,1]$.
-    \item Inspect the different shapes of ICE curves and explain what you can conclude.
+    \item Write down the resulting functions for $x_2 = 0$ and $x_2 = 1$.
+    \item Sketch both functions for $x_1 \in [-1,1]$ by inspecting their intercept and slope.
   \end{enumerate}
 
   \item \textbf{Partial dependence of $x_1$.}
   \begin{enumerate}
     \item Derive the univariate partial dependence function $\mathrm{PD}_{x_1}(t)=\E_{X_2}[\hat f(t,X_2)]$.
-    \item In a single sketch, overlay the two ICE curves from item 1 with $\mathrm{PD}_{x_1}(t)$ for $t\in[-1,1]$.
-    \item Interpretation: Relate the shape of $\mathrm{PD}_{x_1}(t)$ to the individual ICE curves. What can you conclude?
+    
+    \textit{Hint:} Use the fact that $\E_{X_2}[\hat f(t,X_2)] = \Pr(x_2=0) \cdot \hat f(t,0) + \Pr(x_2=1) \cdot \hat f(t,1)$.
+    \item Sketch the partial dependence function and overlay it with the two ICE curves from item 1.
+    \item What do you observe? How does the partial dependence relate to the individual ICE curves?
   \end{enumerate}
 \end{enumerate}
+
+\medskip
+\noindent\textbf{Note:} For a linear model, the feature effects can be read directly from the coefficients (slopes) in the model formula. Therefore, ICE curves and partial dependence plots are usually not necessary for linear models. We have used a linear model in this exercise for didactical reasons to illustrate the concepts of ICE and PDP in a simple, interpretable setting. For black box models where we do not have access to the model formula (e.g., random forests, neural networks, gradient boosting), ICE and PDP provide meaningful insights into feature effects that cannot be obtained directly from the model structure.
 }
 
