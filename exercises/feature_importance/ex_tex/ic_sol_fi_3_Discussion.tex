@@ -1,0 +1,36 @@
+\loesung{
+
+\textbf{Discuss with your neighbor. Which of the aforementioned methods is superior? PFI or the extrapolation-free
+alternatives?}
+
+\begin{enumerate}
+    \item \textbf{Which method is most suitable for situations where we aim to understand the model's mechanism? If any?}
+    
+    Prefer CFI (and report PFI alongside). CFI conditionally resamples $X_S$ from $P(X_S | X_{-S})$, which preserves the joint feature distribution, keeps inputs realistic, and measures the extra predictive information in $X_S$ beyond what the other features already provide. PFI, by contrast, breaks all links by shuffling $X_S$; its score therefore includes interactions with $X_{-S}$ but can be inflated by unrealistic pairs when features are correlated. Read them together: if PFI $\approx$ CFI $> 0$, the feature adds unique signal; if PFI $\gg$ CFI with correlated features, suspect extrapolation or reliance on interactions/proxies; if both $\approx 0$, the feature is likely redundant. Always compute importance on a held-out test set - PFI on train often reflects overfitting.
+
+    \item \textbf{Which method is most suitable for situations where we want to understand the data generating mechanism?}
+    
+    \begin{enumerate}
+        \item \textbf{In order to find features that are informative of the prediction target?}
+        
+        TODO. Perhaps should be CFI (on test set) but I'm not super sure. The reasoning is similar to the point above.
+
+        \item \textbf{In order to select the smallest possible set of features, which would enable the same prediction performance?}
+
+        LOCO is best for finding the smallest feature set with the same accuracy because it answers exactly that question at the learner level: drop $x_j$, \textbf{retrain} the learner, and see whether performance changes; if a feature is redundant (e.g., perfectly substituted by others), the retrained model will recover performance, whereas irreplaceable features cause a performance drop, and therefore answer the "can the learner do just as well without it?" question directly.
+
+        \textbf{Alternative consideration:} 
+        For computational efficiency in high-dimensional settings, CFI might be preferred as it doesn't require retraining models. However, LOCO provides the most direct answer to the feature selection question.
+
+        \item \textbf{In order to find variables that are causal for the prediction target?}
+                
+        All discussed methods have a fundamental limitation: they measure \textit{associational} rather than \textit{causal} relationships. Correlation $\neq$ Causation, high feature importance doesn't imply causal influence, and important features might be correlated with true causal variables without being causal themselves. 
+        
+        Feature importance methods can provide \textit{hints} about potential causal relationships by identifying strong associations, but they cannot establish causation and should be combined with proper causal inference techniques and domain expertise.
+        
+        \textbf{Example:} 
+        High CFI for "ice cream sales" when predicting "drowning incidents" doesn't mean ice cream causes drowning - both are caused by hot weather (confounding variable).
+    \end{enumerate}
+\end{enumerate}
+
+}
