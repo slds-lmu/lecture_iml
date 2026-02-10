@@ -1,5 +1,78 @@
 \loesung{
 
+The relationship between Friedman's H-statistic and Sobol indices can be understood through their shared foundation in functional decomposition. Both measures quantify interaction strength but from different perspectives.
 
+\textbf{Foundation: Functional ANOVA Decomposition}
+
+Both measures rely on the functional ANOVA decomposition:
+\[
+\fh(\xv) = g_\emptyset + \sum_{i} g_i(x_i) + \sum_{i<j} g_{i,j}(x_i, x_j) + \sum_{i<j<k} g_{i,j,k}(x_i, x_j, x_k) + \ldots
+\]
+
+\textbf{Two-Way Interactions}
+
+For a two-way interaction between features $j$ and $k$:
+
+\textbf{Sobol Index:} The Sobol index $S_{j,k}$ measures the fraction of total variance explained by the pure interaction component:
+\[
+S_{j,k} = \frac{\var[g_{j,k}(X_j, X_k)]}{\var[\fh(\Xv)]}
+\]
+Equivalently, we can write: $\var[g_{j,k}(X_j, X_k)] = S_{j,k} \cdot \var[\fh(\Xv)]$, which will be used in the relationship below.
+
+\textbf{H-statistic:} The H-statistic measures interaction strength through partial dependence functions:
+\[
+H_{j,k}^2 = \frac{\var[\fh_{j,k,PD}^c(X_j, X_k) - \fh_{j,PD}^c(X_j) - \fh_{k,PD}^c(X_k)]}{\var[\fh_{j,k,PD}^c(X_j, X_k)]}
+\]
+
+\textbf{Key Relationship:} Under the standard fANOVA assumptions (independent features), the numerator of $H_{j,k}^2$ equals $\var[g_{j,k}(X_j, X_k)]$, i.e., the interaction residual in the H-statistic corresponds exactly to the pure interaction component in fANOVA.
+
+\textbf{Deriving the Clean Relationship:}
+
+\textbf{Step 1 - Decomposition of PD functions:} Under feature independence, the standard fANOVA algorithm gives us:
+\begin{align*}
+\fh_{j,k,PD}^c(X_j, X_k) &= g_{j,k}(X_j, X_k) + g_j(X_j) + g_k(X_k) \\
+\fh_{j,PD}^c(X_j) &= g_j(X_j) \\
+\fh_{k,PD}^c(X_k) &= g_k(X_k)
+\end{align*}
+
+\textbf{Step 2 - Interaction residual simplifies:} The numerator of $H_{j,k}^2$ becomes:
+\begin{align*}
+&\var[\fh_{j,k,PD}^c(X_j, X_k) - \fh_{j,PD}^c(X_j) - \fh_{k,PD}^c(X_k)] \\
+&= \var[g_{j,k}(X_j, X_k) + g_j(X_j) + g_k(X_k) - g_j(X_j) - g_k(X_k)] \\
+&= \var[g_{j,k}(X_j, X_k)]
+\end{align*}
+Note that this is exactly the same numerator as in the Sobol index definition.
+
+\textbf{Step 3 - Denominator via orthogonality:} Under independence, the fANOVA components are orthogonal (uncorrelated), so for the denominator:
+\begin{align*}
+\var[\fh_{j,k,PD}^c(X_j, X_k)] &= \var[g_{j,k}(X_j, X_k) + g_j(X_j) + g_k(X_k)] \\
+&= \var[g_{j,k}(X_j, X_k)] + \var[g_j(X_j)] + \var[g_k(X_k)]
+\end{align*}
+
+\textbf{Step 4 - Final H-statistic formula:} Combining the results:
+\begin{align*}
+H_{j,k}^2 &= \frac{\var[g_{j,k}(X_j, X_k)]}{\var[g_{j,k}(X_j, X_k)] + \var[g_j(X_j)] + \var[g_k(X_k)]}
+\end{align*}
+
+\textbf{Step 5 - Converting to Sobol indices:} Using $\var[g_V(\Xv_V)] = S_V \cdot \var[\fh(\Xv)]$:
+\begin{align*}
+H_{j,k}^2 &= \frac{S_{j,k} \cdot \var[\fh(\Xv)]}{S_{j,k} \cdot \var[\fh(\Xv)] + S_j \cdot \var[\fh(\Xv)] + S_k \cdot \var[\fh(\Xv)]} \\
+&= \frac{S_{j,k} \cdot \var[\fh(\Xv)]}{\var[\fh(\Xv)] \cdot (S_{j,k} + S_j + S_k)} \\
+&= \frac{S_{j,k}}{S_j + S_k + S_{j,k}}
+\end{align*}
+
+\textbf{Three-Way Interactions}
+
+Similarly, we can derive that for a three-way interaction:
+\[
+H_{i,j,k}^2 = \frac{S_{i,j,k}}{S_i + S_j + S_k + S_{i,j} + S_{i,k} + S_{j,k} + S_{i,j,k}}
+\]
+
+\textbf{General Case}
+
+For a general $k$-way interaction among features in set $S \subseteq \{1, 2, \ldots, p\}$, the general relationship is:
+\[
+H_S^2 = \frac{S_S}{\sum_{V \subseteq S} S_V}
+\]
 
 }
