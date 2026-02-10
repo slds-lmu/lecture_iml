@@ -1,0 +1,114 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath, amssymb, graphicx, booktabs, geometry}
+\usepackage{float} % for precise figure placement with [H]
+\usepackage{bbm} % for improved indicator symbol \mathbbm{1}
+\newcommand{\ind}[1]{\mathbbm{1}\{#1\}} % indicator macro
+\geometry{margin=2.5cm}
+\setlength{\parskip}{0.7em}
+\setlength{\parindent}{0pt}
+
+\title{Permutation Feature Importance (PFI)}
+\date{}
+
+\begin{document}
+\maketitle
+
+% \section*{Exercise}
+We study PFI on synthetic data with six features and two model classes (linear regression vs. gradient boosting).
+
+\textbf{Data generating process (for reference):}
+\[
+\begin{aligned}
+x_1 &\sim \mathcal{N}(0,1), \quad x_2 = x_1 + \varepsilon_2, \ \varepsilon_2 \sim \mathcal{N}(0,0.25^2), \\
+x_3,x_4,x_5,x_6 &\sim \mathcal{N}(0,1), \\
+y &= 3x_1 + 2\sin(2\,x_4) + 1.5\,x_3^2 + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0,0.7^2).
+\end{aligned}
+\]
+Feature roles: $x_1$ has a strong linear effect; $x_2$ is correlated (redundant); $x_3$ shows a quadratic (smooth) nonlinearity; $x_4$ exhibits a smooth sinusoidal pattern; $x_5$ and $x_6$ are noise.
+
+\begin{enumerate}
+	\item \textbf{PFI algorithm description.} In your own words, describe how permutation feature importance for a single feature is computed.
+
+	\item \textbf{Linear regression PFIs.} A linear model is fit (train split 65\%, test 35\%). Baseline MSEs (DGP):
+	\begin{center}
+		\begin{tabular}{lcc}
+			\toprule
+		Model & Train MSE & Test MSE \\
+		\midrule
+		Linear Regression & 6.22 & 7.13 \\
+		\bottomrule
+		\end{tabular}
+	\end{center}
+The figure below shows the permutation feature importances (PFI).
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{fig/pfi_linear_train.png}\\[-0.4em]
+	\caption{Permutation feature importances (Linear Regression) on the training set.}
+	\label{fig:pfi_linear_train}
+	\end{figure}
+	\begin{enumerate}
+		\item Identify the two most important features.
+		\item Give one reason $x_1$ appears dominant.
+		\item Explain briefly why the importance of $x_4$ may be underestimated.
+		\item Why can $x_2$ show a small non-zero importance despite redundancy?
+	\end{enumerate}
+
+	\item \textbf{Gradient boosting PFIs.} A gradient boosting regressor is fit (captures quadratic and sinusoidal components that the linear model cannot). Baseline MSEs:
+	\begin{center}
+	\begin{tabular}{lcc}
+			\toprule
+	Model & Train MSE & Test MSE \\
+	\midrule
+	Gradient Boosting & 0.00070 & 1.46 \\
+	\bottomrule
+	\end{tabular}
+	\end{center}
+The figure below shows PFIs computed on the training set.
+
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{fig/pfi_gbr_train.png}\\[-0.4em]
+	\caption{Permutation feature importances (Gradient Boosting) on the training set.}
+	\label{fig:pfi_gbr_train}
+	\end{figure}
+
+	\begin{enumerate}
+		\item Which features gained importance compared to the linear model?
+		\item Why do $x_4$ and $x_3$ become important under boosting?
+		\item Which features remain negligible and why?
+	\end{enumerate}
+
+\item \textbf{Train vs. test PFIs} The figure below compares train vs test PFIs for the noise features $x_5$ and $x_6$. Explain the observed difference. \textit{Hint:} take a look into the predictive performance.
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.65\textwidth]{fig/pfi_noise_x5x6.png}\\[-0.4em]
+		% \caption{PFI comparison train vs test for noise features $x_5$ and $x_6$.}
+		\label{fig:pfi_noise_x5x6}
+	\end{figure}
+\end{enumerate}
+
+\newpage
+\section*{Solutions}
+\begin{enumerate}
+	\item \textbf{PFI algorithm description.} For one feature: (i) compute the baseline error (e.g. MSE) on the chosen dataset; (ii) permute that feature's column, keeping all others fixed; (iii) recompute the error; (iv) the importance is the increase in error (permuted\,--\,base); (v) repeat permutations multiple times and average, reporting variability (std/SE). Larger average increase indicates stronger dependence of the model on that feature.
+
+	\item \textbf{Linear regression PFIs.}
+	\begin{enumerate}
+		\item The higher the PFI value, the more important the feature. In this case, the two most important features are $x_1$ and $x_4$.
+		\item $x_1$ appears dominant because the true DGP includes a strong linear coefficient (3) that the linear model can capture almost perfectly.
+		\item $x_4$'s importance is underestimated: the linear model cannot capture the sinusoidal pattern $\sin(2 x_4)$, only fitting a simple straight line; permutation therefore causes less damage than if the model had learned the full curved relationship.
+		\item $x_2$ shows a small non-zero importance although redundant because the correlation with $x_1$ is imperfect (added noise term); permuting $x_2$ slightly disrupts the joint pattern, yielding a modest rise in error.
+		
+	\end{enumerate}
+
+	\item \textbf{Gradient boosting PFIs.}
+	\begin{enumerate}
+		\item Features that gain importance relative to the linear model: $x_3$ (quadratic term) and $x_4$ (sinusoidal). 
+		\item $x_3$ and $x_4$ become important because boosting (trees) can approximate smooth nonlinearities via piecewise constant splits, capturing curvature ($x_3^2$) and oscillations ($\sin(2 x_4)$) that a linear model misses.
+		\item Negligible features: $x_5$ and $x_6$ (pure noise) remain near zero; $x_2$ stays low due to redundancy with $x_1$ (boosting still allocates most linear signal to $x_1$).
+	\end{enumerate}
+
+	\item \textbf{Train vs. test PFIs} The extreme Train/Test MSE gap (0.00070 vs 1.46) shows severe overfitting: the model has essentially memorized training patterns, including spurious correlations in pure noise features $x_5$ and $x_6$. Hence, their train PFIs are small but positive (model relies slightly on memorized noise), while test PFIs collapse toward zero and $x_5$ can become \emph{negative} (permuting removes harmful variance, improving generalization). 
+\end{enumerate}
+
+\end{document}
