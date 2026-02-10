@@ -1,0 +1,63 @@
+\loesung{
+
+\begin{enumerate}
+    \item \textbf{Can we factorize the joint distribution $\P(x)$ as $\P(x_S)\P(x_{-S})$? How can we factorize the joint distribution so that the distribution is preserved? Formally prove your answer.}
+    
+    In general, \textbf{no}, we cannot factorize the joint distribution as $\P(x) = \P(x_S)\P(x_{-S})$ without losing information about the distribution.
+    
+    \textbf{Formal proof:}
+    
+    By the definition of conditional probability:
+    \[
+    \P(x) = \P(x_S, x_{-S}) = \P(x_S | x_{-S}) \cdot \P(x_{-S}) = \P(x_{-S} | x_S) \cdot \P(x_S)
+    \]
+    
+    The factorization $\P(x) = \P(x_S)\P(x_{-S})$ would only be valid if:
+    \[
+    \P(x_S | x_{-S}) = \P(x_S) \quad \text{for all } x_{-S}
+    \]
+    or equivalently:
+    \[
+    \P(x_{-S} | x_S) = \P(x_{-S}) \quad \text{for all } x_S
+    \]
+    
+    This is the definition of independence: $x_S \indep x_{-S}$. When features are dependent, this factorization does not preserve the joint distribution.
+    
+    \textbf{Correct factorization (chain rule) that preserves the distribution:}
+    \[
+    \P(x) = \P(x_S | x_{-S}) \cdot \P(x_{-S}) \quad \text{or} \quad \P(x) = \P(x_{-S} | x_S) \cdot \P(x_S)
+    \]
+
+    \item \textbf{Let $x_S \indep x_{-S}$. Does the factorization now preserve the joint distribution? Formally prove your answer.}
+    
+    \textbf{Yes}, when $x_S \indep x_{-S}$, the factorization $\P(x) = \P(x_S)\P(x_{-S})$ exactly preserves the joint distribution.
+    
+    \textbf{Formal proof:}
+    
+    If $x_S \indep x_{-S}$, then by definition:
+    \[
+    \P(x_S | x_{-S}) = \P(x_S) \quad \text{for all } x_{-S}
+    \]
+    and
+    \[
+    \P(x_{-S} | x_S) = \P(x_{-S}) \quad \text{for all } x_S
+    \]
+    
+    Therefore:
+    \begin{align*}
+    \P(x) &= \P(x_S, x_{-S}) \\
+    &= \P(x_S | x_{-S}) \cdot \P(x_{-S}) \\
+    &= \P(x_S) \cdot \P(x_{-S}) \quad \text{(by independence)}
+    \end{align*}
+
+
+    \newpage
+    \item \textbf{Illustrate the two factorizations in a schematic drawing. \textit{Hint:} You can draw a 2D scatterplot with two dependent variables. Given a fixed value for the conditioned variable, draw the range of values that conditional and marginal sampling consider.}
+    
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=\textwidth]{figure/factorization_illustration.pdf}
+    \end{figure}
+\end{enumerate}
+
+}

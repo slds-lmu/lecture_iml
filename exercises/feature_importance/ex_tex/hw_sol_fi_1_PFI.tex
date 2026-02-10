@@ -31,7 +31,7 @@
 			\caption{\texttt{pfi\_fname()}}
 			\begin{algorithmic}[1]
 				\Require \texttt{fname}: feature of interest name
-				\Require \texttt{predict}: prediciton function
+				\Require \texttt{predict}: prediction function
 				\Require \texttt{score}: performance metric
 				\Require \texttt{X\_test}: data for the evaluation
 				\Require \texttt{y\_test}: respective labels
@@ -48,7 +48,7 @@
 			\caption{\texttt{fi\_naive()}}
 			\begin{algorithmic}[1]
 				\Require \texttt{perf\_pert}: function that returns performance for some perturbation.
-				\Require \texttt{predict}: prediciton function
+				\Require \texttt{predict}: prediction function
 				\Require \texttt{score}: performance metric
 				\Require \texttt{X\_test}: data for the evaluation
 				\Require \texttt{y\_test}: respective labels
@@ -69,13 +69,13 @@
 				\Require \texttt{n}: number of repetitions
 				\Require \texttt{method}: feature importance method.
 				\Require \texttt{args}: all further arguments that are required for the method
-				\Require \texttt{return\_raw}: Whether only the aggregation (mean, stdd) or also the raw results are returned
+				\Require \texttt{return\_raw}: Whether only the aggregation (mean, std) or also the raw results are returned
 				\For{\texttt{i} in \texttt{n}}
 				\State \texttt{tmp} $\gets$ \texttt{method(args)}
 				\State \texttt{results} $\gets$ extend by \texttt{tmp}
 				\EndFor
 				\State \texttt{mean\_fi} $\gets$ mean of \texttt{results}
-				\State \texttt{std\_fi} $\gets$ stdd of \texttt{results}
+				\State \texttt{std\_fi} $\gets$ std of \texttt{results}
 				\If{\texttt{return\_raw} equals \texttt{True}} \textbf{return} \texttt{mean\_fi, std\_fi, raw\_results}
 				\ElsIf{\texttt{return\_raw} equals \texttt{False}} \textbf{return} \texttt{mean\_fi, std\_fi}
 				\EndIf
@@ -127,7 +127,7 @@
 		\begin{center}
 			\includegraphics[width = .7\textwidth]{"figure/pairplot_comparison.png"}
 		\end{center}
-		We can see that the strong correlation of $x_2$ with $x_1$ (top row) is broken after permutation (bottom row). All other pairwise (in)dependencies are unchanged. Note: We only assess pairwise, unconditional dependencies. Without assumptions about the data, we cannot know whether further conditional depencies with the remaining covariates were broken.
+		We can see that the strong correlation of $x_2$ with $x_1$ (top row) is broken after permutation (bottom row). All other pairwise (in)dependencies are unchanged. Note: We only assess pairwise, unconditional dependencies. Without assumptions about the data, we cannot know whether further conditional dependencies with the remaining covariates were broken.
 		
 	\end{enumerate}
 }

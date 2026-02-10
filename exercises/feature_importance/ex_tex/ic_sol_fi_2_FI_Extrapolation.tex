@@ -1,0 +1,33 @@
+\loesung{
+
+\begin{enumerate}
+    \item \textbf{Over which distributions does PFI evaluate the model? Under which assumptions is the model evaluated outside the domain?}
+    
+    PFI evaluates the model over the marginal distribution. 
+    This causes an extrapolation issue when features are dependent. The marginal sampling creates feature combinations $(x_S, x_{-S})$ that may be unrealistic. The model is then evaluated on these unrealistic data points that lie outside the original data domain.
+
+    \item \textbf{Over which distributions does CFI evaluate the model? Does the method extrapolate?}
+    
+    CFI evaluates the model over the original joint distribution by using conditional sampling. Thanks to this, CFI does not create unrealistic feature combinations.
+    
+    \item \textbf{What distributions does LOCO consider? Do extrapolation or data outside the domain occur here?}
+
+    LOCO compares performance of the model on full data versus data with one feature removed. Because it evaluates the model on the same data distribution (just with/without one feature), it does not create unrealistic feature combinations.
+
+    \item \textbf{For both PFI and CFI, evaluate whether/when the perturbed variables are dependent/independent of the target variable.}
+    
+    \textbf{PFI:} The perturbed feature values are created by shuffling, so they're independent of the target (and of the other features) by design.
+
+    \textbf{CFI:} The perturbed feature values are sampled from the conditional distribution $\P(X_S | X_{-S})$. If $X_S$ is dependent on $Y$ even after conditioning on $X_{-S}$, then the perturbed values will still be dependent on $Y$. Similarly, if $X_S$ is independent of $Y$ given $X_{-S}$, then the perturbed values will be independent of $Y$.
+
+    \item \textbf{What does that mean for the interpretation of PFI and CFI?}
+
+    ToDo
+
+    \item \textbf{Can a feature be relevant for CFI but not relevant for PFI?}
+    
+    ToDo. We could talk about the case where the opposite happens (for example $x_1$ is temperature in Celsius, $x_2$ is temperature in Fahrenheit), but for this case, I feel like theoretically we could construct a case where CFI is relevant but PFI is not, but I can't think of a concrete example.
+
+\end{enumerate}
+
+}
