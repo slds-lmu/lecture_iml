@@ -11,7 +11,7 @@ y = round(5*x1 + -2*x2 + rnorm(length(x1)), 2)
 d = data.frame(y, x1, x2)
 
 # calculate histogram and take mean for each interval
-pdf(file = "exercises/01_introduction/figure/hist_x1_x2.pdf", 
+pdf(file = "exercises/introduction/figure/hist_x1_x2.pdf",
     width = 6, height = 4)
 par(mfrow = c(1,2))
 h1 = hist(x1, freq = FALSE, include.lowest = TRUE, breaks = 3)
@@ -52,4 +52,4 @@ ggplot(d, aes(x = x1, y = x2)) +
   geom_point() +
   theme_bw()
 
-ggsave("exercises/01_introduction/figure/add_Points_x1_x2_sol.pdf", width = 3, height = 2)
+ggsave("exercises/introduction/figure/add_Points_x1_x2_sol.pdf", width = 3, height = 2)

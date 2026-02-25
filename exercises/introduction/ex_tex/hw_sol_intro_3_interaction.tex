@@ -47,6 +47,8 @@ In this case (when one variable is constant with probability 1), it does not mak
 
 $\Rightarrow$ In this example, there is an interaction between $x_1$ and $x_2$.
 
+\textbf{Intuition:} The term $-x_1 |x_2|$ means that the effect of $x_1$ on $f$ changes depending on $|x_2|$: when $|x_2|$ is large, the contribution of $x_1$ to $f$ is modified more strongly. This is exactly what an interaction captures -- the effect of one feature depends on the value of another.
+
 }
 
 \dlz
@@ -63,7 +65,7 @@ Case 1: $x_1 > 0$
 	\left( \frac{\partial^2 g(\xv)}{\partial x_1 \partial x_2} \right)^2 
 	& =  \left( \frac{\partial^2}{\partial x_1 \partial x_2} \, \left(0.01e^{x_1^2} + \sin(x_2) \sqrt{x_1} - 1.5 x_2^3 \right)\right)^2 
 	=  \left( \frac{\partial }{\partial x_2}\, \left( 0.01e^{x_1^2} \cdot 2 x_1 + \sin(x_2) \frac{1}{2 \sqrt{x_1}}  \right) \right)^2 \\ 
-	& =  \left( \frac{\cos(x_2)}{2 \sqrt{x_1}} \right) ^2  = \frac{\cos^2(x_2)}{2 x_1} \geq 0 ,    
+	& =  \left( \frac{\cos(x_2)}{2 \sqrt{x_1}} \right) ^2  = \frac{\cos^2(x_2)}{4 x_1} \geq 0 ,    
 \end{align*}
 
 because we assumed \(x_1 > 0\) in this case.
@@ -96,7 +98,7 @@ Choose \(X_1 \indep X_2\) (this means that $X_1$ and $X_2$ are independent), $X_
 Then we get from the independence that \( \P (X_1 > 0) = 1 \), and therefore
 $$
 \E_\Xv \left[ \left( \frac{\partial^2 g(\Xv)}{\partial x_i \partial x_j} \right)^2 \right]
-= \E_\Xv \left[ \frac{\cos^2(X_2)}{2 X_1} \right] > 0,
+= \E_\Xv \left[ \frac{\cos^2(X_2)}{4 X_1} \right] > 0,
 $$
 because the function inside is greater than 0 on the half-space \(\{ x_1 > 0 \}\), on which the distribution is concentrated.
 So there are interactions in this case.
@@ -116,6 +118,8 @@ Therefore, no interactions are present for this distribution.
 
 In a nutshell, the function \(g\) exhibits interactions only on the half-space \( \left\{ (x_1,x_2) \middle| x_1 > 0 \right\} \) of \(\R^2\).
 Therefore, there are interactions present if and only if the data distribution is at least partially contained in this half-space, so there is at least some data inside this half-space.
+
+To build intuition: For $x_1 > 0$, the $\sin(x_2)\sqrt{x_1}$ term creates a ``wavy'' surface where the effect of $x_2$ on $g$ varies with $x_1$ (and vice versa) -- this is the interaction. For $x_1 < 0$, the function simplifies to $0.01 e^{x_1^2} - 1.5 x_2^3$, which is fully separable in $x_1$ and $x_2$ (no interactions).
 
 \item
 For both distributions in part \ref{Ex_sol:interaction_depending_on_distribution_a}), the function $f$ from exercise \ref{ex_sol:Interaction_calculation} would exhibit interactions, since its second partial derivative squared is 1 whenever $x_2 \neq 0$, so we would take the expected value of 1, which is 1.
