@@ -17,4 +17,4 @@ xtable(t(data.frame(x1-mean(x1),x2-mean(x2))), )
 ggplot(d, aes(x1,x2)) + 
   theme_bw()
 
-ggsave('exercises/01_introduction/figure/add_Points_x1_x2.pdf',width=3,height=2)
+ggsave('exercises/introduction/figure/add_Points_x1_x2.pdf',width=3,height=2)
