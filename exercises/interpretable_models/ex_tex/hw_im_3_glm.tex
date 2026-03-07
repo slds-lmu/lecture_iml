@@ -82,8 +82,14 @@ The following table shows the joint and marginal absolute frequencies of $y$ and
 
 	Interpret the $\beta$-estimates for the intercept and the different seasons in terms of the odds and the odds ratio. 
 
+    \bigskip
+    \noindent\rule{\textwidth}{0.4pt}
+    \smallskip
+
+    \textit{The following parts d) and e) build on a different model specification using numerical features instead of season.}
+
     \item\label{ex:logreg_GLM_more_features}
-    Next, we fit another (somewhat ``orthogonal'') GLM model which considers the other four features except season.
+    Next, we fit a complementary GLM model which considers the other four features except season, i.e., a model that is somewhat ``orthogonal'' to the first one in the sense that it uses a disjoint set of features.
     For this model, we want to look at a different way of interpretation, which was already briefly discussed in the lecture.
     
     The model with four predictors then has the form:
@@ -119,9 +125,11 @@ The following table shows the joint and marginal absolute frequencies of $y$ and
     We want to calculate the effect of the first feature, \texttt{temperature}, on the probability of a day seeing a high number of bike rentals. 
     This time, we will not look at the odds but at the probability directly, using the first derivative of the model.
     
+    To visualize how temperature alone affects the predicted probability, we fix all other features at their mean values. This simplifies the linear predictor to a function of temperature only.
+
     \begin{enumerate}[(i)]
-    
-        \item\textbf{Offset.}  
+
+        \item\textbf{Offset.}
         First, hold \(x_2,x_3,x_4\) at their means and compute the offset for \(x_1\), defined by
         \(\displaystyle \delta = \beta_2\bar{x}_2+\beta_3\bar{x}_3+\beta_4\bar{x}_4\).
 

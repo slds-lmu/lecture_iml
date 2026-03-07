@@ -41,4 +41,5 @@ p2 = ggplot(df, aes(temp, dprob_dT)) +
     ) +
     theme_minimal(base_size = 12)
 
-grid.arrange(p1, p2, nrow = 2)
+g <- grid.arrange(p1, p2, nrow = 2)
+ggsave("../figure/logistic_reg_bike_plot_marginal_effect.pdf", g, width = 6, height = 6)
