@@ -4,7 +4,7 @@ order_levels <- function(data, feature.name) {
   #'  
   #'  @param data (data.frame): data which contains feature which 
   #'  should be ordered but also other features used for ordering.
-  #'  @param feature.name (character(1)): name of categorical feature which shoul 
+  #'  @param feature.name (character(1)): name of categorical feature which should
   #'  be ordered
   #'      
   #'  Returns: the vector of ordered class labels
@@ -53,8 +53,8 @@ get_diff_numeric <- function(feature.k, feature.j) {
   # set up data.frame which we will fill later
   dists <- expand.grid(unique(feature.j), unique(feature.j))
   colnames(dists) <- c("class1", "class2")
-  # get decentiles
-  quants <- quantile(feature.k, probs = seq(0, 1, length.out = 10), na.rm = TRUE, names = FALSE)
+  # get deciles
+  quants <- quantile(feature.k, probs = seq(0, 1, length.out = 11), na.rm = TRUE, names = FALSE)
   # derive empirical distribution function for each category
   ecdfs <- data.frame(lapply(unique(feature.j), function(lev) {
     x.ecdf <- ecdf(feature.k[feature.j == lev])(quants)
@@ -64,7 +64,7 @@ get_diff_numeric <- function(feature.k, feature.j) {
   # get pairwise absolute distances of empirical distribution function 
   # between the different categories
   ecdf.dists.all <- abs(ecdfs[, dists$class1] - ecdfs[, dists$class2])
-  # get maximum distance over decentiles for each pair of categories
+  # get maximum distance over deciles for each pair of categories
   dists$dist <- apply(ecdf.dists.all, 2, max)
   return(dists)
 }

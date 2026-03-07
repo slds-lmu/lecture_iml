@@ -25,12 +25,12 @@ def get_bounds(X, s, n_intervals=100):
     return None
 
 
-def calculate_ale(model, X, s, n_intervals=100, centered=False):
+def calculate_ale(model, X, s, n_intervals=100, centered=True):
     """
     Compute the accumulated local effect of a numeric continuous feature.
-    
+
     Parameters:
-        model: Classifier which has a predict method.
+        model: Trained model which has a predict method.
         X (np.array with shape (num_instances, num_features)): Input data.
         s (int): Index of the feature x_s.
         n_intervals (int): How many intervals should be used.
@@ -44,13 +44,13 @@ def calculate_ale(model, X, s, n_intervals=100, centered=False):
     return None, None
 
 
-def prepare_ale(model, X, s, n_intervals=100, centered=False):
+def prepare_ale(model, X, s, n_intervals=100, centered=True):
     """
     Uses `calculate_ale` to prepare x and y data, which can be used
     by matplotlib directly.
-    
+
     Parameters:
-        model: Classifier which has a predict method.
+        model: Trained model which has a predict method.
         X (np.array with shape (num_instances, num_features)): Input data.
         s (int): Index of the feature x_s.
         n_intervals (int): How many intervals should be used.

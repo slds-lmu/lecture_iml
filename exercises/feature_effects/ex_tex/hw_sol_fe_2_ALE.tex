@@ -15,6 +15,8 @@
 \end{algorithmic}
 \end{algorithm}
 
+These boundaries define the intervals over which we estimate local effects.
+
 % \lstinputlisting{"rsrc/get_bounds().R"}
 
 \item Pseudocode of \texttt{calculate\_ale()}
@@ -22,7 +24,7 @@
 \begin{algorithm}[ht]
 \caption{\texttt{calculate\_ale()}}
 \begin{algorithmic}[1]
-\Require \texttt{model} : Classifier 
+\Require \texttt{model} : trained model
 \Require \texttt{X}: input data 
 \Require \texttt{s}: index of feature for calculating ALE
 \Require \texttt{n\_intervals}: number of intervals 
@@ -30,7 +32,7 @@
 \State \texttt{bounds} $\gets$ \texttt{get\_bounds}(\texttt{X}, \texttt{s}, \texttt{n\_intervals})
 \State \texttt{lowerbound} $\gets$ lower interval bounds
 \State \texttt{upperbound} $\gets$ upper interval bounds
-\State \texttt{result} $\gets$ \{\}
+\State \texttt{results} $\gets$ \{\}
 \For{\texttt{i1} in \texttt{lowerbound} \& \texttt{i2} in \texttt{upperbound}}
 \State \texttt{idx} $\gets$ ids of datapoints of \texttt{X} $\in$ (\texttt{i1}, \texttt{i2}] \Comment{for first interval [\texttt{i1}, \texttt{i2}]}
 \If{idx = $\emptyset$} diff $\gets$ 0
@@ -39,11 +41,11 @@
 \State \texttt{X\_max} $\gets$ $\texttt{X[idx,]}$ with feature values of $s$ replaced by $i2$
 \State \texttt{y\_min} $\gets$ \texttt{model} predictions of \texttt{X\_min}
 \State \texttt{y\_max} $\gets$ \texttt{model} predictions of \texttt{X\_max}
-\State \texttt{diff} $\gets$ \texttt{y\_max} - \texttt{y\_min} 
+\State \texttt{diff} $\gets$ \texttt{y\_max} - \texttt{y\_min}
 \EndIf
 \State \texttt{results} $\gets$ \{\texttt{results}, mean of \texttt{diff}\}
 \EndFor
-\State \texttt{uncentered\_ale} $\gets$ cumulative sum of \texttt{result}
+\State \texttt{uncentered\_ale} $\gets$ cumulative sum of \texttt{results}
 \If{\texttt{centered}} \texttt{centered\_ale} $\gets$ \texttt{uncentered\_ale} - (mean of \texttt{uncentered\_ale}) 
 \EndIf
 \State \textbf{return}  \texttt{bounds} and either \texttt{uncentered\_ale} or \texttt{centered\_ale}
@@ -52,17 +54,19 @@
 
 %\lstinputlisting{"rsrc/calculate_ale().R"}
 
+The cumulative sum reconstructs the main effect by integrating the local effects. Centering ensures the ALE has mean zero, so it represents deviations from the average prediction.
+
 \item Pseudocode of  \texttt{prepare\_ale()}
 
 \begin{algorithm}[ht]
 \caption{\texttt{prepare\_ale()}}
 \begin{algorithmic}[1]
-\Require \texttt{model} : Classifier 
+\Require \texttt{model} : trained model
 \Require \texttt{X}: input data 
 \Require \texttt{s}: index of feature for calculating ALE
 \Require \texttt{n\_intervals}: number of intervals 
 \Require \texttt{centered}: whether to return centered or uncentered ALE
-\State \texttt{bounds, y} $\gets$ \texttt{calculate\_ale}(\texttt{X}, \texttt{s}, \texttt{n\_intervals}, \texttt{centered})
+\State \texttt{bounds, y} $\gets$ \texttt{calculate\_ale}(\texttt{model}, \texttt{X}, \texttt{s}, \texttt{n\_intervals}, \texttt{centered})
 \State \texttt{lowerbound} $\gets$ lower interval bounds
 \State \texttt{upperbound} $\gets$ upper interval bounds
 \State \texttt{x} $\gets$ center of each interval (middle of \texttt{lowerbound} and \texttt{upperbound})
@@ -71,6 +75,8 @@
 \end{algorithm}
 
 %\lstinputlisting{"rsrc/prepare_ale().R"}
+
+Plotting ALE values at interval centers gives us the feature effect curve, which shows how the feature influences predictions relative to the average.
 
 %\item Example:
 %\lstinputlisting{"rsrc/example_ale.R"}

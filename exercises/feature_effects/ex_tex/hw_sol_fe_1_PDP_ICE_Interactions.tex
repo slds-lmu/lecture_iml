@@ -2,24 +2,24 @@
 \begin{enumerate} [a)]
   \item Derivation of PD function for $S = \{1\}$ (with $C = \{2\}$) given
   \begin{equation*}
-   \fh(\xv) = \fh(x_1, x_2) = \hat\beta_1 x_1 + \hat\beta_2 x_2 + \hat\beta_3 x_1 x_2 + \hat\beta_0
+   \fh(\xv) = \fh(x_1, x_2) = \hat\theta_1 x_1 + \hat\theta_2 x_2 + \hat\theta_3 x_1 x_2 + \hat\theta_0
   \label{eq:linmod}
   \end{equation*}
   
   $$
   \begin{aligned}
-  f_{1, PD}(x_1) = \E_{x_2} \left( \fh(x_1, x_2) \right) &= \int_{-\infty}^{\infty} \left( \hat\beta_1 x_1 + \hat\beta_2 x_2 + \hat\beta_3 x_1 x_2 + \hat\beta_0 \right) \, d\P(x_2) \\
-  &= \hat\beta_1 x_1 + \int_{-\infty}^{\infty} \hat\beta_2 x_2 + \hat\beta_3 x_1 x_2 \, d\P(x_2) + \hat\beta_0 \\
-    &= \hat\beta_1 x_1 + \int_{-\infty}^{\infty} (\hat\beta_2 + \hat\beta_3 x_1) x_2 \, d\P(x_2) + \hat\beta_0 \\
-    &= \hat\beta_1 x_1 + (\hat\beta_2 + \hat\beta_3 x_1) \cdot \int_{-\infty}^{\infty} x_2 \, d\P(x_2) + \hat\beta_0 \\
-        &= \hat\beta_1 x_1 + (\hat\beta_2 + \hat\beta_3 x_1) \cdot \E_{x_2} (x_2) + \hat\beta_0 
+  f_{1, PD}(x_1) = \E_{x_2} \left( \fh(x_1, x_2) \right) &= \int_{-\infty}^{\infty} \left( \hat\theta_1 x_1 + \hat\theta_2 x_2 + \hat\theta_3 x_1 x_2 + \hat\theta_0 \right) \, d\P(x_2) \\
+  &= \hat\theta_1 x_1 + \int_{-\infty}^{\infty} \hat\theta_2 x_2 + \hat\theta_3 x_1 x_2 \, d\P(x_2) + \hat\theta_0 \\
+    &= \hat\theta_1 x_1 + \int_{-\infty}^{\infty} (\hat\theta_2 + \hat\theta_3 x_1) x_2 \, d\P(x_2) + \hat\theta_0 \\
+    &= \hat\theta_1 x_1 + (\hat\theta_2 + \hat\theta_3 x_1) \cdot \int_{-\infty}^{\infty} x_2 \, d\P(x_2) + \hat\theta_0 \\
+        &= \hat\theta_1 x_1 + (\hat\theta_2 + \hat\theta_3 x_1) \cdot \E_{x_2} (x_2) + \hat\theta_0 
   \end{aligned}
   $$
 
-  \item PD function for $\hat\beta_0 = 0$, $\hat\beta_1 = -8$, $\hat\beta_2 = 0.2$, $\hat\beta_3 = 16$, $X_1 \sim Unif(-1, 1)$ and  $X_2 \sim B(1, 0.5)$. 
+  \item PD function for $\hat\theta_0 = 0$, $\hat\theta_1 = -8$, $\hat\theta_2 = 0.2$, $\hat\theta_3 = 16$, $X_1 \sim Unif(-1, 1)$ and  $X_2 \sim B(1, 0.5)$. 
   $$
   \begin{aligned}
-  f_{1, PD}(x_1) = \hat\beta_1 x_1 + (\hat\beta_2 + \hat\beta_3 x_1) \cdot \E_{x_2} (x_2) + \hat\beta_0 
+  f_{1, PD}(x_1) = \hat\theta_1 x_1 + (\hat\theta_2 + \hat\theta_3 x_1) \cdot \E_{x_2} (x_2) + \hat\theta_0 
         &= -8 x_1 + (0.2 + 16 x_1) \cdot \E_{x_2} (x_2) + 0 \\
         &= -8 x_1 + (0.2 + 16 x_1) \cdot 0.5 \\
         &= -8 x_1 + 0.1 + 8 x_1 \\
@@ -28,7 +28,7 @@
   $$
   
   \item ICE functions for group $X_2 = 1$ and for group $X_2 = 0$: 
-    $$f_1(x_1) = \begin{cases}
+    $$\fh_1^{(i)}(x_1) = \begin{cases}
       - 8 x_1 + (0.2 + 16 x_1) \cdot 1 = 8 x_1 + 0.2 & x_2 = 1 \\
       - 8 x_1 + (0.2 + 16 x_1) \cdot 0 = - 8 x_1 & x_2 = 0
     \end{cases}$$
