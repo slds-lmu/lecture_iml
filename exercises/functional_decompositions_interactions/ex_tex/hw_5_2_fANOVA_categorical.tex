@@ -1,27 +1,37 @@
 \aufgabe{Functional ANOVA for categorical features}{ \label{ex:fANOVA_categorical}
 
-In this exercise, your task is to calculate the standard fANOVA decomposition (as introduced in the lecture) for an example with categorical features.
+In this exercise, your task is to calculate the standard fANOVA decomposition (as introduced in the lecture) for an example with discrete numerical features that we treat as categorical.
 
 This means that when calculating a PD-function $f_{S,PD}(\xv_S)$ as well as the corresponding fANOVA component $g_S(\xv_S)$, whenever these depend on categorical features contained in $S$, we calculate the value of the PD-function and the components at every category instead of at grid values.
 When integrating over features in the process of computing PD-functions, if some of these features are categorical, we can calculate the average over the data points in the same fashion as for numerical features.
 
-In case of a categorical target that cannot be transformed onto a numerical scale, the average or expected prediction (for computing expected values or marginal expectations) is equal to the mode, i.e. to the category with the highest probability or with the highest number of samples resp.
+\textit{Remark:} In case of a categorical target that cannot be transformed onto a numerical scale, the average or expected prediction (for computing expected values or marginal expectations) is equal to the mode, i.e. to the category with the highest probability or with the highest number of samples resp.
+Note that this remark does not apply to the present exercise, where the target is numerical.
 
-In this exercise, we are given three random variables as features, all of which can take at most 3 different categories as values:
-$$
+In this exercise, we are given three random variables as features, all of which take exactly 3 different values:
+\[
 X_j \in\{-1, 0, 1\},\quad \text{for } j=1,2,3.
-$$
+\]
+Note that the features are discrete numerical (not truly categorical), but since they take finitely many values, we can compute the fANOVA exactly by summing over all values.
+
 We further assume that the features are independent and all uniformly distributed. We then consider the prediction function
 \[
 \fh(x_1,x_2,x_3) = 4x_1 + 2\,x_2x_3 - 4
 \]
+
+Recall the recursive fANOVA algorithm: the components are computed as
+\[
+g_S(\xv_S) = f_{S,PD}(\xv_S) - \sum_{V \subsetneq S} g_V(\xv_V),
+\]
+where $\xv_S = (x_j)_{j \in S}$ denotes the subvector of features indexed by the set $S$.
+
 \begin{enumerate}[a)]
-  \item Compute all fANOVA components using the algorithm from the lecture:
+  \item Compute all fANOVA components using the algorithm above:
         \[
             g_\emptyset, \quad
             g_1, g_2, g_3, \quad
-            g_{12}, g_{13}, g_{23}, \quad
-            g_{123}.
+            g_{1,2}, g_{1,3}, g_{2,3}, \quad
+            g_{1,2,3}.
         \]
   \item Verify the pairwise orthogonality of all the components, i.e., check that
         $$
@@ -31,6 +41,9 @@ We further assume that the features are independent and all uniformly distribute
         whenever $U \neq V$.
 
         \textit{Hint:} Most of the fANOVA components are 0 in this example, which means that you only need to check the orthogonality condition for the remaining nonzero components.
+
+  \item Now consider the same prediction function $\fh(x_1,x_2,x_3) = 4x_1 + 2\,x_2x_3 - 4$, but assume the features are uniformly distributed on $\{0, \tfrac12, 1\}$ instead of $\{-1,0,1\}$.
+        Does the fANOVA decomposition change? If so, compute the new components $g_\emptyset$, $g_1$, $g_2$, $g_3$, and $g_{2,3}$.
 \end{enumerate}
 
 }
