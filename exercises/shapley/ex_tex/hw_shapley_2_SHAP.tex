@@ -5,9 +5,9 @@
     % by implementing the marginal SHAP payoff function,
     as well as the Kernel SHAP algorithm.
 
-\begin{enumerate}
+\begin{enumerate}[a)]
 
-    \item \label{a}
+    \item \label{ex:shap_a}
     Load the FIFA dataset (containing all matches from the FIFA world cup 2018) from the \textit{fifa.csv} file on Moodle into a data table or data frame (e.g., using the pandas library in Python) and train a random forest to predict the target variable 'Man of the Match'. This means that the model predicts the probability of a team having the 'Man of the Match' amongst them.
     
     \textit{Hint:} Note that many of the float variables in the data set contain missing values, hence you may consider to use integer variables only.
@@ -20,7 +20,7 @@
     Implement the function \texttt{marginal\_vfunc(S, observation, X, predict, nr\_samples)}, which approximates the PD-function value for a feature subset \texttt{S}, evaluated at the data point \texttt{observation}, via sampling background data from the data set \texttt{X}; in other words, implement a Monte-Carlo approximation of this PD-function evaluated at point \texttt{observation}.
     \texttt{predict} is a function that returns the model predictions for a single data point or a set of data points.
     
-    Test your implementation on different feature subsets for the instance from \ref{a}.
+    Test your implementation on different feature subsets for the instance from \ref{ex:shap_a}.
     
     % \item
     % We could use this value function \texttt{marginal\_vfunc()} in combination with our Shapley value implementations
@@ -36,7 +36,7 @@
     This is almost the approximation algorithm for Shapley values discussed in the lecture.
     % (Bonus question: What is the difference between the two algorithms?)
 
-    Calculate \texttt{shapley\_perm\_approx()} from the Shapley value implementations using \texttt{marginal\_vfunc()} and the random forest from \ref{a} on your test instance.
+    Calculate \texttt{shapley\_perm\_approx()} from the Shapley value implementations using \texttt{marginal\_vfunc()} and the random forest from \ref{ex:shap_a} on your test instance.
 
     \item 
     The SHAP framework, which is based on locally fitting a weighted linear model, can be used to calculate SHAP values.
@@ -46,8 +46,8 @@
     
     \begin{itemize}
     	\item \texttt{shap\_weights(mask)}: A function to return the weights for a given \texttt{mask} containing the sampled coalitions, so \texttt{mask} is either a single coalition vector or a matrix containing $K$ many coalition vectors.
-    	\item \texttt{replace\_dataset(obs, X, nr\_samples)}: A function to create the dataset of \texttt{nr\_samples} many samples generated in the first and second step of the Kernel SHAP calculations. This includes generating the coalitions, saving them in \texttt{mask}, and mapping the binary feature space back to the original feature space.
-        You can directly sample \texttt{nr\_samples} many data points as well as coalitions, so sampling a new random background sample for each coalition, you do not need to generate multiple background samples for every coalition or use the same background sample for different coalitions.
+    	\item \texttt{replace\_dataset(obs, X, nr\_samples)}: A function to create the augmented dataset of \texttt{nr\_samples} many samples by (1) sampling coalitions (saved in \texttt{mask}) and (2) mapping them to the original feature space using background data from \texttt{X}.
+        You can directly sample \texttt{nr\_samples} many data points as well as coalitions, so sampling a new random background sample for each coalition, you do not need to generate multiple background samples for every coalition or use the same background sample for different coalitions. Note that this is a simplified version; the standard algorithm averages over multiple background samples per coalition.
         The positions in the mask indicate where to replace the random values with the ones of the given observation \texttt{obs}.
     	\item \texttt{shap\_data(obs, X, nr\_samples, predict)}: A function summarizing \texttt{replace\_dataset()}, \texttt{predict()}, and \texttt{shap\_weights()}. As before, \texttt{predict} is a function that returns the model predictions for a single data point or a set of data points.
     	\item \texttt{kernel\_shap(obs, X, nr\_samples, predict)}: A function implementing the complete sampling-based Kernel SHAP function.

@@ -18,7 +18,7 @@ The code for this programming exercise can be found in the \texttt{hw\_shapley\_
 			\State \texttt{m} $\gets$ boolean if \texttt{'m'} is in \texttt{coalition}
 			\State \texttt{j} $\gets$ boolean if \texttt{'j'} is in \texttt{coalition}
 			\State \texttt{l} $\gets$ boolean if \texttt{'l'} is in \texttt{coalition}
-			\State \textbf{return} 10 * \texttt{t} + 10 * \texttt{m} + 2 * \texttt{j} + 20 * (\texttt{t} and \texttt{m}) + 20 * (\texttt{t} and \texttt{m} and \texttt{s}) - 30 * ((\texttt{t} or \texttt{m} or \texttt{s}) and \texttt{j})
+			\State \textbf{return} 10 * \texttt{t} + 10 * \texttt{m} + 10 * \texttt{s} + 2 * \texttt{j} + 20 * (\texttt{t} and \texttt{m}) + 20 * (\texttt{t} and \texttt{m} and \texttt{s}) - 30 * ((\texttt{t} or \texttt{m} or \texttt{s}) and \texttt{j})
 		\end{algorithmic}
 	\end{algorithm}
     
@@ -102,7 +102,7 @@ The code for this programming exercise can be found in the \texttt{hw\_shapley\_
 			\Require \texttt{v\_function}: value function
 			\Require \texttt{num\_iter}: number of iterations
             \State \texttt{vals} $\gets$ Empty vector or list
-			\For{\texttt{i} in \texttt{num\_iter}} 
+			\For{\texttt{i} = 1 to \texttt{num\_iter}}
 			\State \texttt{perm} $\gets$ draw a random permutation of \texttt{population}
 			\State \texttt{member\_ix} $\gets$ index of \texttt{member} in \texttt{perm}
 			\State \texttt{coalition} $\gets$ coalition of \texttt{perm} before \texttt{member\_ix}
@@ -131,16 +131,17 @@ The code for this programming exercise can be found in the \texttt{hw\_shapley\_
 			\State \texttt{surplus\_k} $\gets$ \texttt{v\_function(Union(coalition, k)) - v\_function(coalition)}
 			\State save \texttt{surplus\_j} and \texttt{surplus\_k} in vectors \texttt{surpluss\_j} and \texttt{surpluss\_k}, respectively, for every iteration
 			\EndFor
-			\If{\texttt{surpluss\_j} equal \texttt{surpluss\_k}}
+			\If{\texttt{surplus\_all\_j} equal \texttt{surplus\_all\_k}}
 			\State \textbf{print} \textit{equal surplus}
 			\State \texttt{val\_j} $\gets$ \texttt{shapley\_func(j, population, v\_function)}
 			\State \texttt{val\_k} $\gets$ \texttt{shapley\_func(k, population, v\_function)}
 			\State \textbf{return} \texttt{val\_j} == \texttt{val\_k}
 			\EndIf
+			\State \textbf{print} \textit{unequal surplus, axiom trivially satisfied}
 			\State \textbf{return} \texttt{TRUE}
 		\end{algorithmic}
 	\end{algorithm}
-	
+
 	\item Pseudocode of \texttt{dummy\_check()}:
 	
 	\begin{algorithm}[H]
@@ -154,10 +155,10 @@ The code for this programming exercise can be found in the \texttt{hw\_shapley\_
 			\State \texttt{all\_S} $\gets$ \texttt{all\_unique\_subsets(remainder)}
 			\For{\texttt{S} in \texttt{all\_S}}
 			\State \texttt{surplus\_j} $\gets$ difference of \texttt{v\_function} of \texttt{S} with \texttt{j} minus \texttt{v\_function} of \texttt{S}
-			\State save \texttt{surplus\_j} in vector \texttt{surpluss\_j} for every iteration
+			\State save \texttt{surplus\_j} in vector \texttt{surplus\_all\_j} for every iteration
 			\EndFor
-			\If{sum of $|$\texttt{surpluss\_j}$|$ ==\, 0}
-			\State \textbf{print} \textit{has contribution}
+			\If{sum of $|$\texttt{surplus\_all\_j}$|$ ==\, 0}
+			\State \textbf{print} \textit{is dummy player}
 			\State \texttt{val\_j} $\gets$ \texttt{shapley\_func(j, population, v\_function)}
 			\State \textbf{return} \texttt{val\_j} ==\, 0
 			\EndIf

@@ -152,7 +152,7 @@ shapley_test <- function(population, shapley_fct, v_function=payoff) {
   sum_ <- sum(shapley_values)
   print(sum_)
   print(v_function(population))
-  print(sum_ == v_function(population))
+  print(isTRUE(all.equal(sum_, v_function(population), tolerance = 1e-8)))
 }
 ```
 
@@ -354,7 +354,7 @@ payoff_func_1 <- function(coalition) {
   l <- 'l' %in% coalition
   
   ### Definition of the overall performance.
-  10*t + 10*m + 2*j
+  10*t + 10*m + 10*s + 2*j
 }
 
 ### Define the second payoff function accordingly (which hence consists of the  

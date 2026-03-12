@@ -5,7 +5,7 @@ In this exercise, we implement the original Shapley value for a cooperative game
 
 $$\text{payoff}(S) = 10t+10m+10s+2j + 20(t\wedge m) + 20(t \wedge m \wedge s) - 30((t \vee m \vee s) \wedge j) $$
 
-where $t, m, s, j, l$ indicate whether Timnit, Margret, Samy, Jeff, and Larry are in the set $S$. The function \texttt{payoff(coalition)} is supposed to implement this functionality, where a set is a list/set of the respective characters (\texttt{'t', 's', 'm', 'j', 'l'}).
+where $t, m, s, j, l$ indicate whether Timnit, Margret, Samy, Jeff, and Larry are in the set $S$ (as Boolean variables, i.e.\ 1 if the player is in $S$, 0 otherwise), and $\wedge$ denotes logical AND, $\vee$ denotes logical OR. Let $v := \text{payoff}$ denote the value function of this game. The function \texttt{payoff(coalition)} is supposed to implement this functionality, where a set is a list/set of the respective characters (\texttt{'t', 'm', 's', 'j', 'l'}).
 
 \begin{enumerate}
 
@@ -23,7 +23,7 @@ where $t, m, s, j, l$ indicate whether Timnit, Margret, Samy, Jeff, and Larry ar
     	\item Finally, implement \texttt{shapley\_set(member, population, v\_function)} calculating the Shapley value for an arbitrary value function using the set definition.
         
     \end{itemize}
-    Test your functions with the examples from \ref{ex:shapley_a} or with other examples from this game, i.p. corner cases like the empty set or the full set of all players.
+    Test your functions with the examples from \ref{ex:shapley_a} or with other examples from this game, in particular corner cases like the empty set or the full set of all players.
     
     \item \label{ex:shapley_c}
     Analogously, implement the exact Shapley value algorithm using the order definition (or permutation definition) \texttt{shapley\_perm(member, population, v\_function)}.
@@ -46,13 +46,14 @@ where $t, m, s, j, l$ indicate whether Timnit, Margret, Samy, Jeff, and Larry ar
     \begin{enumerate}
     
         \item \textit{Efficiency:} Player contributions add up to the total payout of the game:
-            $$\sum\nolimits_{j=1}^p\phi_j = v(P).$$
+            $$\sum\nolimits_{i=1}^p\phi_i = v(P),$$
+            where $p = |P|$ is the number of players.
             
-        \item \textit{Symmetry:} Assess whether two features with the same contributions have the same Shapley value. I.e., for any two players $\{j,k\}$, if for any $S \subseteq P\, \backslash\, \{j,k\}$ we have:
+        \item \textit{Symmetry:} Assess whether two features with the same contributions have the same Shapley value. I.e., for any two players $\{j,k\}$, if for any $S \subseteq P\, \setminus \, \{j,k\}$ we have:
             $$v(S \cup \{j\}) - v(S) = v(S \cup \{k\}) -  v(S),$$
         then the Shapley values of $j$ and $k$ should be identical.
         
-        \item \textit{Dummy:} Given a player $j$ which makes no contribution for all subsets $S \subseteq P \, \backslash\, \{j\}$ (that is $v(S) = v(S \cup \{j\})$), the Shapley value of this player must be zero.
+        \item \textit{Dummy:} Given a player $j$ which makes no contribution for all subsets $S \subseteq P \setminus \{j\}$ (that is $v(S) = v(S \cup \{j\})$), the Shapley value of this player must be zero.
         
         \item \textit{Additivity:} If $v$ is the sum of two games $v_1$ and $v_2$ (i.e. $v(S) = v_1(S) + v_2(S)$ for any $S$), then the payout is the sum of payouts: $\phi_{j,v} = \phi_{j,v_1} + \phi_{j, v_2}$.
         

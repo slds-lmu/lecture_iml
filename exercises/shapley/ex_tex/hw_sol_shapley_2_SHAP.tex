@@ -34,7 +34,7 @@ The code for this programming exercise can be found in the \texttt{hw\_shapley\_
 		\end{algorithmic}
 	\end{algorithm}
 
-    \item Specific results see in the implementations. We plug \texttt{marginal\_vfunc()} in as the value function when calling \texttt{shapley\_perm\_approx()} and need to take care that the other arguments of \texttt{marginal\_vfunc()} are handled correctly.
+    \item For specific results, see the implementations. We plug \texttt{marginal\_vfunc()} in as the value function when calling \texttt{shapley\_perm\_approx()} and need to take care that the other arguments of \texttt{marginal\_vfunc()} are handled correctly.
 
 	\item Pseudocode of \texttt{shap\_weights()}
 	
@@ -43,10 +43,10 @@ The code for this programming exercise can be found in the \texttt{hw\_shapley\_
 		\begin{algorithmic}[1]
 			\Require \texttt{mask}: (binary) coalition feature space
 			\State \texttt{p} $\gets$ number of features in \texttt{mask}
-			\State \texttt{zs} $\gets$ coalition size 
-			\State \texttt{nominator} $\gets$ \texttt{p} - 1
+			\State \texttt{zs} $\gets$ coalition sizes (row sums of \texttt{mask})
+			\State \texttt{numerator} $\gets$ \texttt{p} - 1
 			\State \texttt{denominator} $\gets$ (binomial coefficient of \texttt{p} over \texttt{zs}) $*$ \texttt{zs} $*$ (\texttt{p} - \texttt{zs})
-			\State \textbf{return} \texttt{nominator} / \texttt{denominator}
+			\State \textbf{return} \texttt{numerator} / \texttt{denominator}
 		\end{algorithmic}
 	\end{algorithm}
 
@@ -61,8 +61,8 @@ The code for this programming exercise can be found in the \texttt{hw\_shapley\_
 			\Require \texttt{X}: feature matrix
 			\Require \texttt{nr\_samples}: number of samples
 			\State \texttt{X\_new} $\gets$ sample \texttt{nr\_samples} samples from \texttt{X} (with replacing)
-			\State \texttt{obs\_rep} $\gets$ matrix with \texttt{nr\_samples} columns containing \texttt{obs} in each column
-			\State \texttt{mask} $\gets$ matrix with randomly drawn entries from a binomial distribution ($\mathcal{B}(0, 0.5)$)
+			\State \texttt{obs\_rep} $\gets$ matrix with \texttt{nr\_samples} rows containing \texttt{obs} in each row
+			\State \texttt{mask} $\gets$ \texttt{nr\_samples} $\times$ \texttt{p} matrix with entries drawn from $\text{Bernoulli}(0.5)$
 			\State \texttt{X\_new} $\gets$ replace entries where mask equals 1 with entry from \texttt{obs}
 			\State \textbf{return} \texttt{X\_new}, \texttt{mask}
 		\end{algorithmic}
@@ -95,14 +95,18 @@ The code for this programming exercise can be found in the \texttt{hw\_shapley\_
 			\Require \texttt{predict}: prediction model
 			\State \texttt{mask, pred, weight} $\gets$ \texttt{shap\_data(obs, X, nr\_samples, predict)}
 			\State \texttt{lm} $\gets$ weighted linear regression model using \texttt{mask, pred} and \texttt{weight}
-			\State \textbf{return} coefficients of \texttt{lm}
+			\State \textbf{return} coefficients and intercept of \texttt{lm}
 		\end{algorithmic}
 	\end{algorithm}
 
+    \textit{Note:} This simplified implementation uses unconstrained weighted least squares. The original KernelSHAP algorithm enforces the efficiency constraint $\phi_0 = \E[\fh(\Xv)]$ and $\sum_j \phi_j = \fh(\xv) - \phi_0$ via infinite weights on the empty and full coalitions. Our sampling-based version may not exactly satisfy this property.
+
 	\item
     Here an example, see also in the implementations. Again, specific results and accuracy depend on the specific implementation.
-    
-    \texttt{kernel\_shap(X\_test[1, ], X\_train, 1000, rf)}
+
+    \texttt{kernel\_shap(X\_test[1, ], X\_train, 1000, classifier\_RF)}
+
+    The resulting coefficients are the SHAP values for the respective features. A positive SHAP value means that the feature pushes the prediction for this observation towards the positive class (Man of the Match = Yes), while a negative value pushes it towards the negative class. The intercept represents the base value (average prediction). The magnitudes indicate the relative importance of each feature for this particular prediction.
 	\begin{table}[H]
 		%\scriptsize
 		\centering
@@ -110,23 +114,23 @@ The code for this programming exercise can be found in the \texttt{hw\_shapley\_
 			\hline 
 			(Intercept) &Goal.Scored & Ball.Possession..  & Attempts \\
 
-			1.65457557 & -3.28284372& -1.35771246 &-0.64907257  \\
+			0.52535421 & 0.06126913 & -0.04780005 & -0.09366948  \\
 			\hline
 			On.Target& Off.Target & Blocked &  Corners  \\
 
-			-0.53569517& 0.06829845 & 0.55281192 & -2.18349575  \\
+			-0.01463136 & -0.04102268 & -0.02460521 & -0.04113441  \\
 			\hline
 			Offsides & Free.Kicks & Saves & Pass.Accuracy..  \\
 
-			-0.74949804  & -0.51869972 & 2.86721030 & -0.75230186   \\
+			0.04542043 & -0.03651103 & -0.05663537 & -0.01282451   \\
 			\hline
 			Passes & Distance.Covered..Kms. & Fouls.Committed & Yellow.Card   \\
 
-			-0.42714693 & -0.84923274  & -0.96198507 & 0.70772339  \\
+			0.01454292 & -0.02847718 & -0.02017669 & 0.08108944  \\
 			\hline
 			Yellow...Red & Red & Goals.in.PSO &   \\
 
-			0.18069980 & -0.12571821  &  0.08003492 & \\
+			-0.00132795 & -0.05331953 & 0.00916541 & \\
 			\hline
 		\end{tabular} 
 	\end{table}	
