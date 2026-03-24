@@ -11,7 +11,6 @@
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
-\date{}
 
 \begin{document}
 
@@ -26,7 +25,7 @@
 % \lecture{Interpretable Machine Learning}
 
 \titlemeta{
-Intro to IML 
+Intro to IML
 }{
 Introduction, Motivation, and History
 }{
@@ -38,7 +37,7 @@ figure/performance_vs_interpretability
 }
 
 
-\begin{frame}{Why Interpretability?}
+\begin{framev}[align=top]{Why Interpretability?}
 % 		\begin{itemize}
 % 			\item Machine learning (ML) has a huge potential to aid the decision-making process in various applications.
 % 			\pause
@@ -54,116 +53,83 @@ figure/performance_vs_interpretability
 % 			\smallskip
 % 			\item Interpretable machine learning (IML) aims to bridge the gap between interpretability and predictive performance.
 % 		\end{itemize}
-%\bigskip
-
 % new
-\begin{splitVCC}[0.8]{
-\begin{itemize}
-    \item ML: huge potential to aid decision-making process due to its predictive performance
-    %\pause
-    %\smallskip
-    \item ML models are black boxes, e.g., XGBoost, RBF SVM or DNNs \\ 
-    $\leadsto$ too complex to be understood by humans
-    \item Some applications are "learn to understand"
-    %\pause 
-\end{itemize}
-}
-{
-    \centering
-    \includegraphics[width=0.9\textwidth]{figure/nn_model.png}
-    \includegraphics[width=0.9\textwidth]{figure/nn_landscape.png}
-}
-\end{splitVCC}
-% ToDo we have a slight empty space here, not sure if this is a problem (I had to move the second slide staff out of the `splitVCC` to avoid figure moving 
-\begin{itemize}
-    \item<2-> When deploying ML models, lack of explanations 
-    \begin{enumerate}
-        \item hurts trust
-        \item creates barriers
-    \end{enumerate}
-    %\only<4->{\item[$\leadsto$] Hard to adapt in critical areas when decisions affect human life}
-    \item<2->[\,$\leadsto$] Many disciplines with required trust rely on traditional models,\\ e.g., linear models, with less predictive performance 
+%\splitVTT[0.7]{
+\begin{itemizeM}
+\item ML aids decision-making in applications through strong predictive performance
+%\pause
+%\smallskip
+\item ML models are black boxes, e.g., XGBoost, RBF SVM, or DNNs\\
+$\leadsto$ too complex to be understood by humans
+\item Some applications are ``learn to understand'', not ``learn to predict''
+%\pause
+\item<2-> When deploying ML models, lack of explanations
+\begin{enumerate}
+\item reduces trust
+\item creates barriers to adoption
+\end{enumerate}
+%\only<4->{\item[$\leadsto$] Hard to adapt in critical areas when decisions affect human life}
+\item<2->[$\leadsto$] Many disciplines with required trust rely on traditional models,\\
+e.g., linear models, despite lower predictive performance
+\end{itemizeM}
+\only<2->{\imageC[0.65]{figure/performance_vs_interpretability.pdf}}
+%}{
+%\spacer[0.25]
+%\centering
+%\image[0.72]{figure/nn_model.png}\\
+%\image{figure/nn_landscape.png}
+%}
+\end{framev}
 
-\end{itemize}
 
-\centering\includegraphics<2->[width=0.52\textwidth] {figure/performance_vs_interpretability.pdf} % with 0.56 = 0.8 (previously inside column) * 0.7 (relateive to column width. I Also reduced it a bit later
-\end{frame}
-
-    
-\begin{frame}{Interpretability in High-stakes Decisions}
-
-Examples of critical areas where decisions based on ML models can affect human life 
-\bigskip
-
-\begin{splitVCC}[0.55]{
-\begin{itemize}
+\begin{framev}[align=top]{Interpretability in High-stakes Decisions}
+Examples of critical areas where ML-based decisions can affect human life\\
+\spacer[0.25]
+\splitVTT[0.57]{
+\begin{itemizeM}
 \item Credit scoring and insurance applications
-    % \citebutton{Society of Actuaries}{https://www.soa.org/resources/research-reports/2021/interpretable-machine-learning}
-    \furtherreading{SOCIETYOFACTUARIES2021}
-    \begin{itemize}
-        \item Reasons for not granting a loan
-        \item Fraud detection in insurance claims
-    \end{itemize}
-\end{itemize}
-}
-{\centering
-    \includegraphics<1->[page=1, width=.95\textwidth, trim = 0 250 0 0, clip]{figure/counterfactual.pdf}
-}
-\end{splitVCC}
-    
-
-\bigskip
-
-\begin{splitVCC}[0.55]{
-\begin{itemize}
-    \item<2-> Medical applications
-    \begin{itemize}
-        \item Identification of diseases
-        %\item Chance of recovering
-        \item Recommendations of treatments
-    \end{itemize}
-    \item<2-> \ldots
-\end{itemize}
+% \citebutton{Society of Actuaries}{https://www.soa.org/resources/research-reports/2021/interpretable-machine-learning}
+\furtherreading{SOCIETYOFACTUARIES2021}
+\begin{itemizeS}
+\item Reasons for not granting a loan
+\item Fraud detection in insurance claims
+\end{itemizeS}
+\item<2-> Medical applications
+\begin{itemizeS}
+\item Identification of diseases
+%\item Chance of recovering
+\item Recommendations of treatments
+\end{itemizeS}
+\item<2-> \ldots
+\end{itemizeM}
 }
 {
-    \centering
-    \only<2->{\includegraphics[width=\textwidth]{figure/medicine.png}
-    % old
-    % \citebutton{Miliard (2020)}{https://www.healthcareitnews.com/news/new-ai-diagnostic-tool-knows-when-defer-human-mit-researchers-say}}
-    % new
-    \furtherreading{MILIARD2020}
-    }
+\spacer[0.25]
+\centering
+\includegraphics<1->[page=1,width=\textwidth,trim=0 250 0 0,clip]{figure/counterfactual.pdf}
+\only<2->{\imageC[1][MILIARD2020]{figure/medicine.png}}
 }
-\end{splitVCC}
-\end{frame}
+\end{framev}
 
 
-\begin{frame}{Need for interpretability}
-    Need for interpretability becoming increasingly important from a legal perspective
-    
-    \begin{itemize}
-    \item General Data Protection Regulation (GDPR) requires for some applications that models have to be explainable 
-    % old
-    % \citebutton{Goodman \& Flaxman (2017)}{https://doi.org/10.1609/aimag.v38i3.2741}
-    % new
-    \furtherreading{GOODMANFLAXMAN2017}
-    \\
-    $\leadsto$ \textit{EU Regulations on Algorithmic Decision-Making and a ``Right to Explanation''} 
-    
-    \item \textit{Ethics guidelines for trustworthy AI}
-    % old
-    % \citebutton{European Commission (2019)}{https://doi.org/10.2759/346720}
-    % new
-    \furtherreading{EUROPEANCOMMISSION2019}
-
-
-    \end{itemize}
-    \medskip
-    
-    \centering\includegraphics[width=0.8\textwidth]{figure/rightstoexplain.jpg}
-    % source https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm
-\end{frame}
-
+\begin{framev}[align=top]{Need for interpretability}
+Need for interpretability becoming increasingly important from a legal perspective
+\begin{itemizeM}
+\item General Data Protection Regulation (GDPR) requires for some applications that models have to be explainable
+% old
+% \citebutton{Goodman \& Flaxman (2017)}{https://doi.org/10.1609/aimag.v38i3.2741}
+% new
+\furtherreading{GOODMANFLAXMAN2017}\\
+\item[$\leadsto$] \textit{EU Regulations on Algorithmic Decision-Making and a ``Right to Explanation''}
+\item \textit{Ethics guidelines for trustworthy AI}
+% old
+% \citebutton{European Commission (2019)}{https://doi.org/10.2759/346720}
+% new
+\furtherreading{EUROPEANCOMMISSION2019}
+\end{itemizeM}
+\imageC[0.76]{figure/rightstoexplain.jpg}
+% source https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm
+\end{framev}
 
 
 % \begin{frame}{Performance vs. Interpretability}
@@ -173,42 +139,35 @@ Examples of critical areas where decisions based on ML models can affect human l
 % \end{frame}
 
 
-	%-----------------------------------------------------------------------------------------------------------------------------
-
-\begin{frame}{Brief History of Interpretability}
-
-\begin{splitVCC}[0.75]
-{
-\begin{itemize}
-        \item 18th and 19th century: \\Lin. regression models (Gauss, Legendre, Quetelet)
-        % \medskip
-        \item 1940s:\\ Emergence of sensitivity analysis (SA)
-        \medskip
-        \item Middle of 20th century:\\ Rule-based ML, incl. decision rules and  trees
-        \medskip
-        \item 2001:\\ Built-in feature imp. measure of random forests
-        \medskip
-        \item >2010: \\Explainable AI (XAI) for deep learning
-        \medskip
-        \item >2015: \\IML as an independent field of research
-    \end{itemize}
+\begin{framev}[align=top]{Brief History of Interpretability}
+\splitVTT[0.65]{
+\begin{itemizeM}
+\item 18th/19th century:\\Linear models (Gauss, Legendre, Quetelet)
+\item Mid-20th century:\\Emergence of sensitivity analysis
+\item Mid- to late 20th century:\\Rule-based ML, incl. decision rules and trees
+\item Early 2000s:\\Interpretation tools for ensembles:
+\begin{itemizeS}
+\item variable importance for random forests
+\item partial dependence for gradient boosting
+\end{itemizeS}
+\item Early 2010s:\\Explainability methods for deep learning
+\item Late 2010s:\\IML / XAI as a distinct research area
+\end{itemizeM}
+}{
+\spacer[0.25]
+\centering
+\image[0.7]{figure/Carl_Friedrich_Gauss_1828.jpg}\\
+% old
+% \centering \citebutton{Carl Friedrich Gauss}{https://commons.wikimedia.org/w/index.php?curid=2404149}
+% \centering \citebutton{Wikipedia}{https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss}
+% new
+\furtherreading{GAUSS1828}
+\furtherreading{WIKIPEDIAGAUSS}\\
+\spacer[0.25]
+\image{figure/Random_Forest.png}
+% https://docs.google.com/presentation/d/15HjwMHdTtZ9N0cniUPsiztRSRg1UDY3Y5M8tXsaqt2I/edit?usp=sharing
 }
-{
-    \includegraphics[width=0.8\textwidth]{figure/Carl_Friedrich_Gauss_1828.jpg}
-    % old
-    % \centering \citebutton{Carl Friedrich Gauss}{https://commons.wikimedia.org/w/index.php?curid=2404149}
-    % \centering \citebutton{Wikipedia}{https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss}
-    
-    % new
-    \centering \furtherreading{GAUSS1828}
-    \centering \furtherreading{WIKIPEDIAGAUSS}
-    \bigskip\\
-    \includegraphics[width=0.9\textwidth]{figure/Random_Forest.png}
-
-    % https://docs.google.com/presentation/d/15HjwMHdTtZ9N0cniUPsiztRSRg1UDY3Y5M8tXsaqt2I/edit?usp=sharing
-}
-\end{splitVCC}
-\end{frame}
+\end{framev}
 
 \endlecture
 \end{document}

@@ -6,8 +6,8 @@
 
 \usepackage{makecell}
 % Defines macros and environments
- 
-\newcommand\tab[1][1cm]{\hspace*{#1}}
+
+\newcommand{\tab}[1][1cm]{\hspace*{#1}}
 
 \definecolor{imllightblue}{RGB}{184, 198, 210}
 \definecolor{imlmedblue}{RGB}{90, 122, 151}
@@ -20,7 +20,6 @@
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
-\date{}
 
 \begin{document}
 
@@ -28,8 +27,7 @@
 Intro to IML
 }{
 Dimensions of Interpretability
-}
-{
+}{
 figure/model_agnostic
 }{
 %\item What is interpretable machine learning (IML) and Explainable Artificial Intelligence (XAI)?
@@ -38,7 +36,7 @@ figure/model_agnostic
 \item Different types of explanations
 \item Local, global, and regional explanations
 \item Model/learner explanation (with(out) refits)
-\item Levels of interpretability 
+\item Levels of interpretability
 }
 
 %
@@ -104,25 +102,25 @@ figure/model_agnostic
 % %		\includegraphics[width=0.8\textwidth]{figure/overview}
 % %	\end{center}
 % 	\begin{center}
-	    
+
 % 		\begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
 %                         every label/.append style={align=left, font=\footnotesize, text width=4cm}]
 %         \node[main node] (1) { Model Interpretation };
 %         \node[main node,
-%             label={below: 
-%             \tab[0.25cm] - Decision trees \\ 
-%             \tab[0.25cm] - Decision rules \\ 
+%             label={below:
+%             \tab[0.25cm] - Decision trees \\
+%             \tab[0.25cm] - Decision rules \\
 %             \tab[0.25cm] - GLMs}
 %             ] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };
 %         \node[main node] (3) [below right = 1cm and -0cm of 1] { Black Box Models };
 %         \node[main node,
-%             label={below: 
+%             label={below:
 %              - \textbf{Advantage:} Can exploit model structure\\
 %             - Random forest explainer \\ - Visualize activations of NNs}
 %             ] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };
 %         \node[main node, fill=lightgray,
 %             label={below:
-%             - \textbf{Advantage:} Applicable to any model\\ 
+%             - \textbf{Advantage:} Applicable to any model\\
 %             - Feature effect methods\\
 %             - Feature importance methods}
 %             ] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };
@@ -135,127 +133,91 @@ figure/model_agnostic
 % 	\end{center}
 % \end{frame}
 
-\begin{frame}{Intrinsic, Model-specific, Model-agnostic}
-%	\begin{center}
-%		\includegraphics[width=0.8\textwidth]{figure/overview}
-%	\end{center}
-	\begin{center}
-	    
-	    \resizebox{9.5cm}{3.5cm}{%
-		\begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
-                        every label/.append style={align=left, font=\footnotesize, text width=4cm}]
-        \node[main node] (1) { Model Interpretation };
-        \only<1>{\node[main node, fill=lightgray] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };}
-        \only<2->{\node[main node] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };}
-        \node[main node] (3) [below right = 1cm and -0cm of 1] { Black Box Models };
-        \only<1,3->{\node[main node] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };}
-        \only<2>{\node[main node, fill=lightgray] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };}
-        \only<-2>{\node[main node] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };}
-        \only<3->{\node[main node, fill=lightgray] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };}
-        \draw (1) -- (2);
-        \draw (1) -- (3);
-        \draw (3) -- (4);
-        \draw (3) -- (5);
-
-    \end{tikzpicture}}
-	\end{center}
-	
-	\only<1>{\begin{columns}[totalwidth=\textwidth]
-		\begin{column}{0.79\textwidth}
-	   \textbf{Intrinsically Interpretable Models:}
-		\medskip
-		
-		\begin{itemize}
-		%\itemsep1em
-			\item Simple model structure (e.g., weighted sum or tree)
-			\item Examples: GLMs, decision trees
-            \item Pro: Additional IML methods not necessarily required
-			\item Con: \\Limited model complexity can reduce performance, \\can still be hard to interpret (many features/interactions)
-			% \item Examples: linear model, decision tree, decision rule, GLMs
-			% \item Interpretable because of simple model structure, \\
-			% e.g., weighted combination of feature values or tree structure
-			% \item Difficult to interpret with many features or interactions
-		\end{itemize}
-
-	\end{column}
-	\begin{column}{0.21\textwidth}
-	
-	\resizebox{2.75cm}{3cm}{%	
-   \begin{tikzpicture}[scale=0.7, transform shape]
-   \usetikzlibrary{arrows}
-    \usetikzlibrary{shapes}
-     \tikzset{treenode/.style={draw, circle, font=\small}}
-     \tikzset{line/.style={draw, thick}}
-     \node [treenode, draw=red] (a0) {$a_0$};
-     \node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
-     \node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
-     
-     \node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
-     \node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
-     
-     \node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
-     \node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
-     
-     \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
-     \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
-     
-     \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};;
-     \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
-     
-          
-     \path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};;
-     \path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
-     
-   \end{tikzpicture}}
-	\end{column}
-	\end{columns}}
-
-	
-	\only<2>{\begin{columns}[totalwidth=\textwidth]
-	\begin{column}{0.7\linewidth}
-	    \textbf{Model-specific Methods:}
-		    \medskip
-			\begin{itemize}
-		    %\itemsep1em
-		        \item Designed for specific model types (e.g., NNs)
-		        \item Examples: \\Gini importance of tree-based models,\\
-                Layer-wise relevance propagation (LRP)
-                \item Pro: Exploit model structure
-                \item Con: Restricted to specific model class
-                %\item Example: implicitly integrated feature interpretation methods in tree based models, e.g., Gini Importance
-    			% \item Advantage: Can exploit model structure
-       %          \item Visualize activations of NNs
-		    \end{itemize}
-	\end{column}  
-	\begin{column}{0.3\linewidth}
-	
-    \centering \includegraphics[page=1, width=\textwidth]{figure/catLRP.jpg}
-    \end{column}
-	\end{columns}}
-		
-	
-	
-	\only<3>{\begin{columns}[totalwidth=\textwidth]
-	\begin{column}{0.7\linewidth}
-	    \textbf{Model-agnostic Methods:}
-		\medskip
-		\begin{itemize}
-		%\itemsep1em
-			\item In ML: Tune over many model classes \\ 
-            $\leadsto$ Unknown which model is best / deployed \\
-            $\leadsto$ Need for IML methods that work for any model
-		    \item Applied after training (post-hoc)
-      \item Applicable to intrinsically interpretable models\\
-       $\leadsto$ provides insights into  explanations \\
-		      %\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations 
-		      %$\leadsto$ feature or data attribution, counterfactual explanations
-   \end{itemize}
-	\end{column}
-	\begin{column}{0.3\linewidth}
-	\quad \vspace{0.15cm} \quad \\
-    \centering \includegraphics[page=1, width=\textwidth]{figure/model_agnostic.jpg}
-    \end{column}
-	\end{columns}}
+\begin{framev}[align=top]{Intrinsic, Model-specific, Model-agnostic}
+\begin{center}
+\resizebox{9.5cm}{3.5cm}{%
+\begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
+every label/.append style={align=left, font=\footnotesize, text width=4cm}]
+\node[main node] (1) { Model Interpretation };
+\only<1>{\node[main node, fill=lightgray] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };}
+\only<2->{\node[main node] (2) [below left = 1cm and 0cm of 1]  { Interpretable Models };}
+\node[main node] (3) [below right = 1cm and -0cm of 1] { Black Box Models };
+\only<1,3->{\node[main node] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };}
+\only<2>{\node[main node, fill=lightgray] (4) [below left = 1cm and -1cm of 3] { Model-specific Methods  };}
+\only<-2>{\node[main node] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };}
+\only<3->{\node[main node, fill=lightgray] (5) [below right = 1cm and -1cm of 3] { Model-agnostic Methods };}
+\draw (1) -- (2);
+\draw (1) -- (3);
+\draw (3) -- (4);
+\draw (3) -- (5);
+\end{tikzpicture}}
+\end{center}
+\only<1>{%
+\splitVTT[0.79]{%
+\textbf{Intrinsically Interpretable Models:}\\
+\spacer[0.25]
+\begin{itemizeM}
+\item Simple model structure (e.g., weighted sum or tree)
+\item Examples: GLMs, decision trees
+\item Pro: Additional IML methods not necessarily required
+\item Con: \\ Limited model complexity can reduce performance, \\ can still be hard to interpret (many features/interactions)
+\end{itemizeM}
+}{%
+\spacer[0.25]
+\begin{center}
+\resizebox{2.75cm}{3cm}{%
+\begin{tikzpicture}[scale=0.7, transform shape]
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzset{treenode/.style={draw, circle, font=\small}}
+\tikzset{line/.style={draw, thick}}
+\node [treenode, draw=red] (a0) {$a_0$};
+\node [treenode, below=0.75cm of a0, xshift=-1cm]  (a1) {$a_1$};
+\node [treenode, draw=red, below=0.75cm of a0, xshift=1cm]  (a2) {$a_2$};
+\node [treenode, draw=red, below=0.75cm of a2, xshift=-1cm] (a3) {$a_3$};
+\node [treenode, below=0.75cm of a2, xshift=1cm]  (a4) {$a_4$};
+\node [treenode, below=0.75cm of a3, xshift=-1cm] (a5) {$a_5$};
+\node [treenode, below=0.75cm of a3, xshift=1cm]  (a6) {$a_6$};
+\path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<0.3$};
+\path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq0.3$};
+\path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_1<0.6$};
+\path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_1\geq0.6$};
+\path [line] (a3.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_2<0.2$};
+\path [line] (a3.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_2\geq0.2$};
+\end{tikzpicture}}
+\end{center}
+}}
+\only<2>{%
+\splitVTT[0.7]{%
+\textbf{Model-specific Methods:}\\
+\spacer[0.25]
+\begin{itemizeM}
+\item Designed for specific model types (e.g., NNs)
+\item Examples: \\ Gini importance of tree-based models,\\
+Layer-wise relevance propagation (LRP)
+\item Pro: Exploit model structure
+\item Con: Restricted to specific model class
+\end{itemizeM}
+}{%
+\spacer[0.25]
+\imageC{figure/catLRP.jpg}
+}}
+\only<3>{%
+\splitVTT[0.7]{%
+\textbf{Model-agnostic Methods:}\\
+\spacer[0.25]
+\begin{itemizeM}
+\item In ML: Tune over many model classes \\
+$\leadsto$ Unknown which model is best / deployed \\
+$\leadsto$ Need for IML methods that work for any model
+\item Applied after training (post-hoc)
+\item Applicable to intrinsically interpretable models\\
+$\leadsto$ provides insights into explanations
+\end{itemizeM}
+}{%
+\spacer[0.25]
+\imageC{figure/model_agnostic.jpg}
+}}
 
 
  %    \only<4>{\begin{columns}[totalwidth=\textwidth]
@@ -264,9 +226,9 @@ figure/model_agnostic
  %        \item Model-agnostic methods:
  %        \medskip
 	%     \begin{itemize}
-	% 	      \item Model-agnostic methods work for any model \\ $\leadsto$ Only access to data and model required 
+	% 	      \item Model-agnostic methods work for any model \\ $\leadsto$ Only access to data and model required
  %             \item Also applicable to intrinsically interpretable models to additionally gain insights into other types of explanations \\
-	% 	      %\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations 
+	% 	      %\item Can also be applied to intrinsically interpretable models to additionally gain insights into other types of explanations
 	% 	      $\leadsto$ feature or data attribution, counterfactual explanations
  %        \end{itemize}
 	% \end{itemize}
@@ -276,7 +238,7 @@ figure/model_agnostic
  %    \centering \includegraphics[page=1, width=\textwidth]{figure/counterfactuals_obj}
  %    \end{column}
 	% \end{columns}}
-\end{frame}
+\end{framev}
 
 
 
@@ -293,164 +255,119 @@ figure/model_agnostic
 % \end{frame}
 
 
-\begin{frame}{Types of Explanations}
+\begin{framev}[align=top]{Types of Explanations}
 % 	\begin{center}
 % 		\includegraphics[width=\textwidth]{figure/1-attributions.png}
 %     \end{center}
-    \begin{center}
-        \begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
-                            every label/.append style={align=left, font=\footnotesize, text width=4cm},
-                            scale=0.7, transform shape]
-            \node[main node] (1) { Model Interpretation };
-            \only<-4>{\node[main node, fill=lightgray] (2) [below left = 1.3cm and 1.5cm of 1]  { Feature-based Explanations };}
-            \only<5->{\node[main node] (2) [below left = 1.3cm and 1.5cm of 1]  { Feature-based Explanations };}
-            \only<1,2,3,4,7,8>{\node[main node, text width=3cm, align=center] (3) [below = 1.3cm of 1] { Data Attribution };}
-            \only<5,6>{\node[main node, fill=lightgray, text width=3cm, align=center] (3) [below = 1.3cm of 1] { Data Attribution };}
-            \only<-7>{\node[main node] (4) [below right = 1.3cm and 1.5cm of 1] { Counterfactual Explanations };}
-            \only<7->{\node[main node, fill=lightgray] (4) [below right = 1.3cm and 1.5cm of 1] { Counterfactual Explanations };}
-            \draw (1) -- (2);
-            \draw (1) -- (3);
-            \draw (1) -- (4);
-    
-        \end{tikzpicture} 
-    \end{center}
-    
-    \only<1>{
-\textbf{Feature-based Explanations:}
-\medskip
-\begin{itemize}
-    \item Analyze the role of individual features in model behavior.
-    \item Types of feature-based explanations: \\
-    %Feature effects, feature importance, feature interactions
-    \begin{itemize}\scriptsize
-        \item Feature Importance%: How relevant a feature is %(e.g., PFI).
-        \item Feature Effects%: How predictions change when a feature varies% (e.g., PDP, ALE).
-        \item Feature Interactions%: How combinations of features jointly affect predictions %(e.g., H-statistic).
-    \end{itemize}
-    \item Common principle: 
-    Vary or perturb feature values and observe changes in predictions, variance, or performance.
-\end{itemize}
-        }
-	
-	\only<3>{%Feature Effects vs. Feature Importance
-	\textbf{Feature Effects} indicate changes (direction and magnitude) in model prediction due to changes in feature values.
-	\medskip
-	\begin{columns}[T, totalwidth=\textwidth]
-    \begin{column}{0.4\linewidth}
-	    \begin{itemize}
-	    	\item Model-agnostic methods: \\ ICE curves, PD plots $\hdots$
-	    	\item Pendant in linear models: \\Weights / coefficients $\theta_j$
-	    	\item Further examples: %Saliency maps, model-agnostic methods such as 
-            ALE, SHAP, and LIME
-	    \end{itemize}
-	\end{column}
-	\begin{column}{0.6\linewidth}
-    %\includegraphics[page=1, width=\textwidth, trim=215 0 215 43, clip]{figure/feature-effect}
-    \includegraphics[page=1, width=\textwidth, trim=0 0 215 0, clip]{figure/feature-effect}
-    \end{column}
-	\end{columns}
-	}
-	
-	\only<2>{%Feature Effects vs. Feature Importance
-	\textbf{Feature Importance} %methods rank features by how much they contribute to the 
-    quantifies relevance of features, e.g., their contribution to model prediction, predictive performance, or prediction variance. %$\Rightarrow$ Allows  features
-	\medskip
-	\begin{columns}[T, totalwidth=\textwidth]
-    \begin{column}{0.55\linewidth}
-	    \begin{itemize}
-	    	\item Model-agnostic methods: PFI, $\hdots$
-		\item Pendant in linear models: t-statistic, p-value (significant effect)
-	    \end{itemize}
-	\end{column}
-	\begin{column}{0.45\linewidth}
-            \includegraphics[page=1, width=0.9\textwidth, trim=0 0 0 30, clip]{figure/feature-importance}
-    % \includegraphics[width=0.9\textwidth]{figure/feature-importance}
-    \end{column}
-	\end{columns}
-	}
-
-
-	\only<4>{
-    \begin{columns}[T, totalwidth=\textwidth]
-        \begin{column}{0.51\textwidth}
-            \textbf{Feature Interaction:}\\ 
-            How combinations of features jointly affect predictions.
-            %Does the influence of a feature on model predictions \textbf{depend on other features}?
-	    \begin{itemize}
-	    	\item Model-agnostic methods: \\ Friedman's H-statistic
-	    	\item Pendant in linear models: \\Coefficients of interaction terms $\theta_{jk}$
-	    \end{itemize}
-        \end{column}
-        \begin{column}{0.49\textwidth}
-            \includegraphics[width = \textwidth, trim={0cm 0cm 12cm 0cm}, clip]{figure/interaction_separable_2}
-        \end{column}
-    \end{columns}
-	}
-    
-	\only<5-6>{\textbf{Data Attribution:} Identify training instances that most influenced a prediction.
-    \medskip
-    
-    \textbf{Example:} A model should distinguish muffins and dogs.
-    
-    \medskip
-    } % (e.g. Influence Functions)
-	
-	\only<5>{
-    	Question: Why does it misclassify this dog image (test point) as a muffin?
-        %How does this incorrect prediction come about? 
-	\begin{center}
-		\includegraphics[page=1, width=0.5\textwidth]{figure/Chihuahua_or_muffin_model.png}
-	\end{center}
+\begin{center}
+\begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
+every label/.append style={align=left, font=\footnotesize, text width=4cm},
+scale=0.7, transform shape]
+\node[main node] (1) { Model Interpretation };
+\only<-4>{\node[main node, fill=lightgray] (2) [below left = 1.3cm and 1.5cm of 1]  { Feature-based Explanations };}
+\only<5->{\node[main node] (2) [below left = 1.3cm and 1.5cm of 1]  { Feature-based Explanations };}
+\only<1,2,3,4,7,8>{\node[main node, text width=3cm, align=center] (3) [below = 1.3cm of 1] { Data Attribution };}
+\only<5,6>{\node[main node, fill=lightgray, text width=3cm, align=center] (3) [below = 1.3cm of 1] { Data Attribution };}
+\only<-7>{\node[main node] (4) [below right = 1.3cm and 1.5cm of 1] { Counterfactual Explanations };}
+\only<7->{\node[main node, fill=lightgray] (4) [below right = 1.3cm and 1.5cm of 1] { Counterfactual Explanations };}
+\draw (1) -- (2);
+\draw (1) -- (3);
+\draw (1) -- (4);
+\end{tikzpicture}
+\end{center}
+\only<1>{%
+\textbf{Feature-based Explanations:}\\
+\spacer[0.25]
+\begin{itemizeM}
+\item Analyze the role of individual features in model behavior.
+\item Types of feature-based explanations: \\
+\begin{itemizeS}[scriptsize]
+\item Feature Importance
+\item Feature Effects
+\item Feature Interactions
+\end{itemizeS}
+\item Common principle:
+Vary or perturb feature values and observe changes in predictions, variance, or performance.
+\end{itemizeM}
 }
-	
-	\only<6>{
-	\textbf{Approach}: Measure how perturbations to training data affect prediction/loss.
-
-    %Look at training data and find data points caused the model prediction.
-	\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.5\linewidth}
-	\begin{center}
-		\includegraphics[page=1, width=0.88\textwidth]{figure/Chihuahua_or_muffin.png} 
-	\end{center}
-	
-	\end{column}
-	\begin{column}{0.5\linewidth}
-	
-    %Method searches for the most similar images and bases the decision on them
-    \begin{itemize}
-        \item[$\leadsto$] Influential training instances drive prediction of test points.
-        %Training images looking most like new input show a muffin 
-        \item[$\leadsto$] If these resemble muffins, the model may predict muffin instead of dog.
-        %Wrong output (muffin instead of dog)
-    \end{itemize}
-    \end{column}
-	\end{columns}}
-	
-	\only<7>{\quad \vspace{0.15cm} \quad \\
-    \begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.6\linewidth}
-	\textbf{Counterfactual Explanations:}
-	\medskip
-		\begin{itemize}
-		%\itemsep1em
-            \item Identify smallest necessary change in feature values so that a desired outcome is predicted
-		    \item Contrastive explanations 
-            \item Diverse counterfactuals 
-            \item Feasible \& actionable explanations
-		\end{itemize}
-    \end{column}
-	\begin{column}{0.38\linewidth}
-	
-        \centering \includegraphics[page=1, width=\textwidth]{figure/counterfactuals_obj}
-    \end{column}
-	\end{columns}}
-	
-	\only<8>{
-	\textbf{Example} (loan application):
-	\begin{center}
-	\includegraphics[page=1, width=0.6\textwidth]{figure/counterfactual.pdf}
-	\end{center}}
-\end{frame}
+\only<3>{%
+\textbf{Feature Effects} indicate changes (direction and magnitude) in model prediction due to changes in feature values.\\
+\spacer[0.25]
+\splitVTT[0.4]{%
+\begin{itemizeM}
+\item Model-agnostic methods: \\ ICE curves, PD plots $\hdots$
+\item Pendant in linear models: \\ Weights / coefficients $\theta_j$
+\item Further examples:
+ALE, SHAP, and LIME
+\end{itemizeM}
+}{%
+\spacer[0.25]
+\includegraphics[page=1, width=\textwidth, trim=0 0 215 0, clip]{figure/feature-effect}
+}}
+\only<2>{%
+\textbf{Feature Importance} quantifies relevance of features, e.g., their contribution to model prediction, predictive performance, or prediction variance.\\
+\spacer[0.25]
+\splitVTT[0.55]{%
+\begin{itemizeM}
+\item Model-agnostic methods: PFI, $\hdots$
+\item Pendant in linear models: t-statistic, p-value (significant effect)
+\end{itemizeM}
+}{%
+\spacer[0.25]
+\includegraphics[page=1, width=0.9\textwidth, trim=0 0 0 30, clip]{figure/feature-importance}
+}}
+\only<4>{%
+\splitVTT[0.51]{%
+\textbf{Feature Interaction:}\\
+How combinations of features jointly affect predictions.
+\begin{itemizeM}
+\item Model-agnostic methods: \\ Friedman's H-statistic
+\item Pendant in linear models: \\ Coefficients of interaction terms $\theta_{jk}$
+\end{itemizeM}
+}{%
+\spacer[0.25]
+\includegraphics[width=\textwidth, trim={0cm 0cm 12cm 0cm}, clip]{figure/interaction_separable_2}
+}}
+\only<5-6>{%
+\textbf{Data Attribution:} Identify training instances that most influenced a prediction.\\
+\spacer[0.25]
+\textbf{Example:} A model should distinguish muffins and dogs.\\
+\spacer[0.25]
+}
+\only<5>{%
+Question: Why does it misclassify this dog image (test point) as a muffin?
+\imageC[0.5]{figure/Chihuahua_or_muffin_model.png}
+}
+\only<6>{%
+\textbf{Approach}: Measure how perturbations to training data affect prediction/loss.\\
+\spacer[0.25]
+\splitVCC[0.5]{%
+\imageC[0.88]{figure/Chihuahua_or_muffin.png}
+}{%
+\begin{itemizeM}
+\item[$\leadsto$] Influential training instances drive prediction of test points.
+\item[$\leadsto$] If these resemble muffins, the model may predict muffin instead of dog.
+\end{itemizeM}
+}}
+\only<7>{%
+\spacer[0.25]
+\splitVCC[0.6]{%
+\textbf{Counterfactual Explanations:}\\
+\spacer[0.25]
+\begin{itemizeM}
+\item Identify smallest necessary change in feature values so that a desired outcome is predicted
+\item Contrastive explanations
+\item Diverse counterfactuals
+\item Feasible \& actionable explanations
+\end{itemizeM}
+}{%
+\imageC{figure/counterfactuals_obj}
+}}
+\only<8>{%
+\textbf{Example} (loan application):
+\imageC[0.6]{figure/counterfactual.pdf}
+}
+\end{framev}
 
 
 
@@ -513,7 +430,7 @@ figure/model_agnostic
 % \begin{frame}{Explanation using training instances}
 % 	\textbf{Data attribution:} Which training instances results in the decision for the instance $x$ of the model?
 % 	\begin{center}
-% 		\includegraphics[page=1, width=0.3\textwidth]{figure/Chihuahua_or_muffin.png} 
+% 		\includegraphics[page=1, width=0.3\textwidth]{figure/Chihuahua_or_muffin.png}
 % 	\end{center}
 % 	\begin{itemize}
 % 		\item[$\leadsto$]  Model chose the wrong output
@@ -523,7 +440,7 @@ figure/model_agnostic
 % \begin{frame}{Explanation using Counterfactuals}
 %     A counterfactual is small ``imperceptible'' change in $x$ causing a different prediction.\\
 %     $\leadsto$ What if a small difference $ |x - x'| \leq \epsilon$ to $x$ causes a large change in the model output ?
-    
+
 %     \textbf{Example} (loan application):
 % 	\begin{center}
 % 	\includegraphics[page=1, width=0.7\textwidth]{figure/counterfactual.pdf}
@@ -531,45 +448,36 @@ figure/model_agnostic
 
 % \end{frame}
 
-\begin{frame}{Local, Global, and Regional Explanations}
-\begin{columns}[T, totalwidth=\textwidth]
-    \begin{column}{0.75\textwidth}
-    \only<1->{
-    \textbf{Local:} Explain model behavior for \textbf{single instances}:
-    \begin{itemize}
-        \item Provide nuanced instance-specific insights
-        \item Crucial for complex models where features typically affect instances differently (due to interactions)
-        \item Examples: Counterfactuals, LIME, SHAP, ICE
-    \end{itemize}
+\begin{framev}[align=top]{Local, Global, and Regional Explanations}
+\splitVTT[0.75]{%
+\only<1->{%
+\textbf{Local:} Explain model behavior for \textbf{single instances}:
+\begin{itemizeM}
+\item Provide nuanced instance-specific insights
+\item Crucial for complex models where features typically affect instances differently (due to interactions)
+\item Examples: Counterfactuals, LIME, SHAP, ICE
+\end{itemizeM}
 }
-   \only<2->{
-        \textbf{Global:} Explain model behavior for \textbf{entire input space}:
-    \begin{itemize}
-        \item Provide high-level insights into model behavior, \\often by aggregating local explanations
-        %Explain average model behavior, across all data points
-        \item Easier to communicate but loss of detail \& over-simplification (hides differences)
-        \item Examples: PD plots, ALE plots, PFI
-    \end{itemize}
+\only<2->{%
+\textbf{Global:} Explain model behavior for \textbf{entire input space}:
+\begin{itemizeM}
+\item Provide high-level insights into model behavior, \\ often by aggregating local explanations
+\item Easier to communicate but loss of detail \& over-simplification (hides differences)
+\item Examples: PD plots, ALE plots, PFI
+\end{itemizeM}
 }
-   \only<3->{
-    \textbf{Regional explanations} -- for \textbf{subspaces} / \textbf{regions}:
-    \begin{itemize}
-        \item Compromise between nuanced \& high-level insights
-        \item Useful when local explanations group well without losing much detail
-    \end{itemize}
+\only<3->{%
+\textbf{Regional explanations} -- for \textbf{subspaces} / \textbf{regions}:
+\begin{itemizeM}
+\item Compromise between nuanced \& high-level insights
+\item Useful when local explanations group well without losing much detail
+\end{itemizeM}
 }
-    \end{column}
-
-    \begin{column}{0.25\textwidth}
-    \centering
-    %\includegraphics[width=0.98\textwidth]{figure/lime5}
-    % \only<1>{\scriptsize \centerline{Local (red) vs. Global (blue)}}
-    % \includegraphics<1>[width=\textwidth]{figure/01_bike_sharing_dataset_18_1.png}    
-    \includegraphics[width=0.95\textwidth]{figure/local_regional_global_col.png}
-    
-    \end{column}
-\end{columns}
-\end{frame}
+}{%
+\spacer[0.25]
+\imageC[0.95]{figure/local_regional_global_col.png}
+}
+\end{framev}
 
 
 
@@ -577,7 +485,7 @@ figure/model_agnostic
 
 % \begin{center}
 % \scriptsize \hspace{10pt} Local (red) vs. Global (blue)\\
-% \includegraphics[width=0.35\textwidth]{figure/01_bike_sharing_dataset_18_1.png}       
+% \includegraphics[width=0.35\textwidth]{figure/01_bike_sharing_dataset_18_1.png}
 % \end{center}
 
 % \begin{columns}[c, totalwidth=\textwidth]
@@ -605,75 +513,34 @@ figure/model_agnostic
 % -------------------------------------------------
 % Local – Global – Regional explanations (Bike-sharing)
 % -------------------------------------------------
-\begin{frame}{Local, Global, Regional Explanations}
-  \begin{columns}[T,totalwidth=\textwidth]
-
-    % ---------- SHORT EXPLANATION ----------
-    \begin{column}{0.6\linewidth}
-      \small
-      \begin{itemize}
-        \item<1-> \textbf{Local} (red): ICE curves for one instance\\
-        $\leadsto$ Detailed but cluttered/obscure pattern
-        \item<1-> \textbf{Global} (blue): PDP averaged over \emph{all} days\\
-        $\leadsto$ Averaged curve hides heterogeneity
-        \item<2-> \textbf{Regional}: Split data on \texttt{workingday}
-             \begin{itemize}%\scriptsize
-             \item Region 1: morning and  evening peak
-             \item Region 2: late-morning leisure peak
-        \end{itemize}
-      \end{itemize}
-    \end{column}
-        % ---------- IMAGE ----------
-    \begin{column}{0.4\linewidth}
-  \centering
-
-  % 1) Local vs. Global
-  %{\scriptsize Local (red) vs.\ Global (blue)}
-  \includegraphics<1->[trim=0 0 0 20, clip, width=\textwidth]{figure/01_bike_sharing_dataset_18_1.png}
-
-  % {\scriptsize Region 1 (working day)}
-  % % 2) Region 1 – working day
-  % \includegraphics[width=0.8\textwidth]{figure/01_bike_sharing_dataset_28_0.png}\\[0.2em]
-
-  % {\scriptsize Region 2 (non-working day)}
-  % % 3) Region 2 – non-working day
-  % \includegraphics[width=0.8\textwidth]{figure/01_bike_sharing_dataset_28_1.png}\\[0.2em]
-    \end{column}
-  \end{columns}
-
-\begin{itemize}
-    % \item[] %\textbf{Regional}: split on \texttt{workingday}
-    %     \begin{itemize}\scriptsize
-    %          \item Region 1 – working days: broad morning and single evening peak.
-    %          \item Region 2 – non-working days: late-morning leisure peak.
-    %     \end{itemize}
-    \item<2->[]
-    $\leadsto$ Preserves detail without overload\\$\leadsto$ Challenge: find regions automatically
-    %—yet learning meaningful data-driven regions is non-trivial.
-    %Capture detail without information overload (challenge: finding good regions)
-%\textbf{Take-away}: %interaction between \texttt{hr} and \texttt{workingday} is crucial;
-%Regional explanations capture detail without information overload
-\end{itemize}
-\only<2->{
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.125\textwidth}
-    \centering
-    \scriptsize Region 1 (working day)
-    \end{column}
-    \begin{column}{0.37\textwidth}
-\includegraphics[trim=0 0 0 20, clip, width=\textwidth]{figure/01_bike_sharing_dataset_28_1.png}
-    \end{column}
-    \begin{column}{0.01\textwidth}
-    \end{column}
-    \begin{column}{0.37\textwidth}
-\includegraphics[trim=0 0 0 20, clip, width=\textwidth]{figure/01_bike_sharing_dataset_28_0.png}
-    \end{column}
-    \begin{column}{0.125\textwidth}
-    \centering
-        \scriptsize Region 2 (non-working day)
-    \end{column}
-\end{columns}}
-\end{frame}
+\begin{framev}[align=top]{Local, Global, Regional Explanations}
+\splitVTT[0.6]{%
+\begin{itemizeM}
+\item<1-> \textbf{Local} (red): ICE curves for one instance\\
+$\leadsto$ Detailed but cluttered/obscure pattern
+\item<1-> \textbf{Global} (blue): PDP averaged over \emph{all} days\\
+$\leadsto$ Averaged curve hides heterogeneity
+\item<2-> \textbf{Regional}: Split data on \texttt{workingday}\\
+$\leadsto$ Preserves detail without overload\\
+$\leadsto$ Challenge: find regions automatically
+\end{itemizeM}
+}{%
+\spacer[0.25]
+\includegraphics<1->[trim=0 0 0 20, clip, width=\textwidth]{figure/01_bike_sharing_dataset_18_1.png}
+}
+\only<2->{%
+\twobytwo{
+\spacer[0.25]
+\centering \scriptsize Region 1 (working day): morning and evening peak
+}{
+\spacer[0.25]
+\centering \scriptsize Region 2 (non-working day): late-morning leisure peak
+}{
+\includegraphics[trim=0 0 0 20, clip, width=0.99\textwidth]{figure/01_bike_sharing_dataset_28_1.png}
+}{
+\includegraphics[trim=0 0 0 20, clip, width=0.99\textwidth]{figure/01_bike_sharing_dataset_28_0.png}
+}}
+\end{framev}
 
 
 
@@ -717,50 +584,48 @@ figure/model_agnostic
 %     \begin{tikzpicture}[every path/.style={->,line width=0.35mm,thick},
 %                         every label/.append style={align=left, font=\footnotesize, text width=6cm}]
 %         \node[main node, text width=4cm, align=center] (1) { Model Interpretation };
-%         \node[main node, text width=4cm, align=center, 
+%         \node[main node, text width=4cm, align=center,
 %             label={below:
-%             \tab - Instance wise feature selections \\ 
-%             \tab - Model-agnostic methods \\ \tab[1.5cm] - SHAP\\ 
+%             \tab - Instance wise feature selections \\
+%             \tab - Model-agnostic methods \\ \tab[1.5cm] - SHAP\\
 %             \tab[1.5cm] - LIME}
 %             ] (2) [below left = 1.3cm and 0cm of 1]  { Local Explanations };
-%         \node[main node,  text width=4cm, align=center, 
+%         \node[main node,  text width=4cm, align=center,
 %             label={below:
-%             %Rule-based Explanations\\ 
-%             \tab - Permutation feature importance \\ 
-%             \tab - Functional ANOVA \\ 
+%             %Rule-based Explanations\\
+%             \tab - Permutation feature importance \\
+%             \tab - Functional ANOVA \\
 %             \tab - PDP}
 %             ] (3) [below right = 1.3cm and 0cm of 1] { Global Explanations };
 %         \draw (1) -- (2);
 %         \draw (1) -- (3);
 
-%     \end{tikzpicture}  
+%     \end{tikzpicture}
 % \end{center}
 % \end{frame}
 
 
-\begin{frame}{Fixed Model vs. Refits}
-\begin{itemize}
-    %\item Global interpretation methods use model and data as input and produce explanations\\
-     \item Global interpretation methods: Input: model $+$ data, output: explanations\\
-    $\leadsto$ Explanations can be viewed as statistical estimators
-    \item[] \centerline{\includegraphics[width=0.9\textwidth]{figure/fixed_model_vs_refits.jpg}}
-    \item Situation in ML: Deployed model is trained on all available data\\
-    $\leadsto$ No unseen test data left to, e.g., reliably estimate performance\\
-    $\leadsto$ IML method could use same data model was trained on \\
-    $\leadsto$ But: Some IML methods require measuring loss on unseen test data
-    % (or some artificially created data?)
-    \item Alternative: Explain the inducer that created the model (not a fixed model)\\
-    $\leadsto$ Idea: Use resample strategies (e.g. CV) as in performance estimation\\
-    $\leadsto$ Requires refitting
-\end{itemize}
-\end{frame}
+\begin{framev}[align=top]{Fixed Model vs. Refits}
+\begin{itemizeM}
+\item Global interpretation methods: Input: model $+$ data, output: explanations\\
+$\leadsto$ Explanations can be viewed as statistical estimators
+\item[] \imageC[0.9]{figure/fixed_model_vs_refits.jpg}
+\item Situation in ML: Deployed model is trained on all available data\\
+$\leadsto$ No unseen test data left to, e.g., reliably estimate performance\\
+$\leadsto$ IML method could use same data model was trained on \\
+$\leadsto$ But: Some IML methods require measuring loss on unseen test data
+\item Alternative: Explain the inducer that created the model (not a fixed model)\\
+$\leadsto$ Idea: Use resample strategies (e.g. CV) as in performance estimation\\
+$\leadsto$ Requires refitting
+\end{itemizeM}
+\end{framev}
 
 % \begin{frame}{Fixed Model vs. Refits}
 % \begin{columns}[c, totalwidth=\textwidth]
 %     \begin{column}{0.6\linewidth}
 % 	\begin{itemize}
 % 		%\itemsep1em
-%         %\item Learner vs. model 
+%         %\item Learner vs. model
 % 		\item Fixed model \\$\Rightarrow$ Trained model is object of analysis
 % 		\item<2-> Refitting \\$\Rightarrow$ Learning process is object of analysis
 % 		%\item Advantage of refitting: Includes information about variability in learning process
@@ -882,35 +747,33 @@ figure/model_agnostic
 % \end{frame}
 
 
-\begin{frame}{Levels of interpretability}
-	\begin{center}
-    \vspace{-0.5cm}
-        \begin{tabular}{ 
-         >{\centering\arraybackslash}m{0.08\textwidth} >{\centering\arraybackslash}m{0.001\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} >{\centering\arraybackslash}m{0.001\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
-         && \textbf{Research Question} && \textbf{Objects of analysis} \\ &&&\\[-2ex]
-         
-         1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}How to explain a given model fitted on a data set? && \cellcolor{imldarkblue}\color{white} (deployed) model \centerline{$\theta \mapsto \hat{f}(\theta)$} \leavevmode\\ 
-        \only<2->{&&&\\[-1.5ex] 2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}How does an optimizer choose a model based on a data set? && \cellcolor{imlmedblue}\color{white} Model selection process (e.g., decisions made by AutoML systems or HPO) \leavevmode\\ }
-        \only<3>{&&&\\[-1.5ex] 3\textsuperscript{rd} level view && \cellcolor{imllightblue}\color{white}How do data properties relate to performance of a learner and its hyperparameters? && \cellcolor{imllightblue}\color{white} Properties of ML algorithms in general (benchmark) \leavevmode\\}
-    \end{tabular}
-    
-\only<1>{\vspace{0.3cm}}
+\begin{framev}[align=top]{Levels of interpretability}
+\begin{center}
+\spacer[-0.5]
+\begin{tabular}{
+>{\centering\arraybackslash}m{0.08\textwidth} >{\centering\arraybackslash}m{0.001\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} >{\centering\arraybackslash}m{0.001\textwidth} >{\centering\arraybackslash}m{0.38\textwidth}}
+&& \textbf{Research Question} && \textbf{Objects of analysis} \\ &&&\\[-2ex]
+1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}How to explain a given model fitted on a data set? && \cellcolor{imldarkblue}\color{white} (deployed) model \centerline{$\theta \mapsto \hat{f}(\theta)$} \leavevmode\\
+\only<2->{&&&\\[-1.5ex] 2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}How does an optimizer choose a model based on a data set? && \cellcolor{imlmedblue}\color{white} Model selection process (e.g., decisions made by AutoML systems or HPO) \leavevmode\\}
+\only<3>{&&&\\[-1.5ex] 3\textsuperscript{rd} level view && \cellcolor{imllightblue}\color{white}How do data properties relate to performance of a learner and its hyperparameters? && \cellcolor{imllightblue}\color{white} Properties of ML algorithms in general (benchmark) \leavevmode\\}
+\end{tabular}
+\only<1>{\spacer[0.3]}
 \includegraphics<1>[page=1, width=0.8\textwidth]{figure/blackbox levels.pdf}
-\only<2>{\vspace{-0.3cm}}
+\only<2>{\spacer[-0.3]}
 \includegraphics<2>[page=2, width=0.8\textwidth]{figure/blackbox levels.pdf}
-\only<3>{\vspace{0.05cm}}
+\only<3>{\spacer[0.05]}
 \includegraphics<3>[page=3, width=0.8\textwidth]{figure/blackbox levels.pdf}
 \end{center}
-\end{frame}
+\end{framev}
 
 
 % \begin{frame}{Levels of interpretability (Variant 1)}
 % 	\begin{center}
-%         \begin{tabular}{ 
-%          >{\centering\arraybackslash}m{0.083\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.377\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
+%         \begin{tabular}{
+%          >{\centering\arraybackslash}m{0.083\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.377\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} }
 %          && \textbf{Research Question} && \textbf{Aim} \\ &&&\\[-2ex]
-         
-%          1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}How to explain a given model fitted on a data set? && \cellcolor{imldarkblue}\color{white}\textit{understand} (deployed) models \centerline{$\theta \mapsto \hat{f}(\theta)$} \leavevmode\\ 
+
+%          1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}How to explain a given model fitted on a data set? && \cellcolor{imldarkblue}\color{white}\textit{understand} (deployed) models \centerline{$\theta \mapsto \hat{f}(\theta)$} \leavevmode\\
 %         \only<2->{&&&\\[-1.5ex] 2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}How does an optimizer choose a model based on a data set? && \cellcolor{imlmedblue}\color{white} \textit{understand} decisions made by AutoML systems or a hyperparameter optimization process for a given task \leavevmode\\ }
 
 %         \only<3>{&&&\\[-1.5ex] 3\textsuperscript{rd} level view && \cellcolor{imllightblue}\color{white}How do properties of data sets (e.g., number of observations / features) relate to performance of a learner and its hyperparameters? && \cellcolor{imllightblue}\color{white} \textit{understand} properties of ML algorithms in general \leavevmode\\}
@@ -923,17 +786,17 @@ figure/model_agnostic
 
 % \begin{frame}{Levels of interpretability (Variant 2)}
 % 	\begin{center}
-%         \begin{tabular}{ 
-%          >{\centering\arraybackslash}m{0.1\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.36\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} } 
+%         \begin{tabular}{
+%          >{\centering\arraybackslash}m{0.1\textwidth} >{\centering\arraybackslash}m{0.01\textwidth} >{\centering\arraybackslash}m{0.36\textwidth} >{\centering\arraybackslash}m{0.005\textwidth} >{\centering\arraybackslash}m{0.38\textwidth} }
 %          \only<1>{&& \textcolor{white}{Requirement} && \textcolor{white}{Approach} \\ &&&\\}
 %          \only<2->{&& \textbf{Requirement} && \textbf{Approach} \\ &&&\\
-         
+
 %          1\textsuperscript{st} level view && \cellcolor{imldarkblue}\color{white}\textit{understand} (deployed) models \centerline{$\theta \mapsto \hat{f}(\theta)$} && \cellcolor{imldarkblue}\color{white} 1. Develop/extend interpretation methods for improved insights  \newline 2. Design optimization algorithms that favor interpretable models \\ &&&\\}
-         
-%          \only<4->{2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}\textit{understand} decisions made by AutoML systems for a given task 
-%          %\centerline{$\lambda\mapsto \hat{c}(\lambda)$} 
+
+%          \only<4->{2\textsuperscript{nd} level view && \cellcolor{imlmedblue}\color{white}\textit{understand} decisions made by AutoML systems for a given task
+%          %\centerline{$\lambda\mapsto \hat{c}(\lambda)$}
 %          && \cellcolor{imlmedblue}\color{white}\centerline{Adapt IML methods}\leavevmode \centerline{to interpret AutoML systems} \leavevmode\\ &&&\\}
-         
+
 %         \only<6>{3\textsuperscript{rd} level view && \cellcolor{imllightblue}\textit{understand} properties of optimizers / ML algorithms in general && \cellcolor{imllightblue}Conduct large-scale benchmarks \centerline{and analyze the results} \leavevmode\\ &&&\\}
 
 %         \only<1>{1\textsuperscript{st} level view && \multicolumn{3}{c}{How to explain a given model fitted on a data set?} \leavevmode\\ &&&\\}
