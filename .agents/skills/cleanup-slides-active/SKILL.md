@@ -118,6 +118,27 @@ The title slide should use `\titlemeta` with its four positional arguments:
 3. a figure
 4. an itemized list of learning goals
 
+Whenever an active multi-argument LaTeX command or helper uses adjacent argument blocks, keep adjacent closing and opening braces on the same line as `}{`.
+Do not split an argument separator across two lines as a standalone `}` line followed by a standalone `{` line.
+Apply this uniformly to `\titlemeta`, `\splitV...` helpers, and other active commands or helpers with consecutive braced arguments whenever this pattern appears.
+
+Prefer this exact structural pattern for active `\titlemeta`:
+
+```tex
+\titlemeta{
+Chunk Title
+}{
+Deck Title
+}{
+figure/example_path
+}{
+\item First learning goal
+\item Second learning goal
+}
+```
+
+Preserve the content of the four arguments, but normalize the `\titlemeta` block to this structure when cleanup touches title-slide metadata.
+
 Remove redundant active `\date{}` commands from the title slide metadata when the project title-slide pattern does not use them.
 
 ## Global style rules
@@ -180,6 +201,11 @@ If the helper is based on `minipage` alignment, verify visual alignment in the s
 In particular, `\splitVTT` can still look vertically offset when one column starts with an image, overlay, table, or list because `minipage[t]` aligns to the first baseline rather than the visible top edge.
 If that happens, fix the slide locally before changing helpers or shared style files.
 Prefer a content-level top anchor at the start of each affected column.
+For `\splitVTT` columns that start with an image, overlay wrapper, table, or list, do not leave the column starting directly with that content unless you actually verified the rendered alignment is already correct.
+In those cases, add an explicit local top anchor at the start of the column content, typically `\spacer[0.25]` on its own line, unless a different local anchor preserves the intended output more faithfully.
+Avoid placing `\spacer[0.25]` immediately before or immediately after a `\splitV...` command when the real issue is column-start alignment.
+Prefer placing the anchor inside the affected split column content, usually at the start of the column, rather than outside the split block.
+If some vertical separation around a split layout is needed, prefer adding it after the `\splitV...` block rather than before it, unless a preceding explicit line break plus spacer is required to preserve the original visible stacking of a lead-in line.
 Use `\spacer[0.25]` only when needed to preserve the intended visible separation or to correct a local alignment issue.
 Do not modify shared helper definitions unless the user explicitly asks for helper changes.
 
@@ -217,7 +243,7 @@ When spacing or font size must be controlled, use:
 - `itemizeF`: fill layout; stretches the list vertically across the available space and should be used carefully because it may interact badly with surrounding layout helpers.
 
 All `itemize...` helpers accept an optional font-size argument such as `[small]`, `[footnotesize]`, or `[large]`.
-Always use `itemizeM` for top-level lists. For second-level lists, prefer `itemizeS` or `itemizeM` depending on spacing needs. 
+Always use `itemizeM` for top-level lists. For second-level lists, prefer `itemizeS` or `itemizeM` depending on spacing needs.
 Treat raw `itemize` as equivalent to the default-spacing case unless a helper is clearly more appropriate.
 Do not use raw `itemize` when an appropriate helper exists outside `framei`.
 
@@ -226,6 +252,7 @@ Do not use raw `itemize` when an appropriate helper exists outside `framei`.
 1. Do not use `\bigskip`, `\smallskip`, `\medskip`, `\vspace`, or similar manual spacing commands in active content.
 2. If visible vertical separation must be preserved, use `\spacer[0.25]` on its own line.
 3. Ensure a line break via `\\` is present before the introduced `\spacer[0.25]` unless the preceding line already ends with a line break or the spacer is being used as a zero-height column anchor.
+If the preceding content is a short lead-in line such as an example label, descriptor, or one-line statement, keep or add the explicit trailing `\\` before the spacer; do not reinterpret that case as ordinary paragraph prose.
 4. Do not mechanically replace `\\` plus vertical spacing with a paragraph break or merged prose line if that changes visible line stacking.
 5. When replacing `\medskip`, `\smallskip`, or `\bigskip`, preserve any intentional adjacent `\\` that keeps short lead-in lines, example labels, or formula descriptors on separate rendered lines.
 6. After introducing `\spacer[0.25]`, verify that surrounding text still breaks across lines as intended and does not collapse into a longer wrapped paragraph.
@@ -275,18 +302,21 @@ For each active frame, in order:
 9. Remove forbidden empty lines.
 10. Replace raw layout code with the appropriate helper where applicable.
 11. For `\splitV...` helpers, verify visual top, center, or bottom alignment from the actual starting content of each column.
-12. If a `\splitVTT` layout is visually misaligned because of a `minipage` baseline effect, add a local top anchor at the start of the affected column content instead of editing shared helpers.
-13. Replace raw `\includegraphics` with the appropriate image helper where applicable.
-14. Normalize figure and table paths.
-15. Replace forbidden manual spacing commands while preserving intended line stacking.
-16. Normalize font size only when needed to preserve layout, existing intent, or readability.
-17. If the original frame has no font-size change, prefer keeping no font-size change.
-18. Normalize math style.
-19. Verify that the edit is still local and content-preserving.
-20. Verify that every frame environment touched in this step is properly closed before moving on.
-21. Verify that no LaTeX command in the edited frame lost its leading backslash due to patch transport or escaping.
-22. Normalize the boundary before and after the frame block so there are exactly two completely empty lines between consecutive active frame blocks when no preserved commented-out block lies between them.
-23. Verify that no commented-out frame block disappeared as a side effect of the edit.
+12. If a `\splitVTT` layout starts with an image, overlay, table, or list, treat it as needing an explicit check for baseline-offset risk.
+13. If a `\splitVTT` layout is visually misaligned because of a `minipage` baseline effect, add a local top anchor at the start of the affected column content instead of editing shared helpers.
+14. Do not try to fix split-column baseline offset by inserting `\spacer[0.25]` immediately before the `\splitV...` command; prefer an anchor inside the affected column, and if extra separation around the split is still needed, prefer placing it after the split block.
+15. When replacing manual vertical spacing with `\spacer[0.25]` after a short lead-in line, keep or add the explicit preceding `\\` unless the spacer is being used as a zero-height column anchor inside a layout helper.
+16. Replace raw `\includegraphics` with the appropriate image helper where applicable.
+17. Normalize figure and table paths.
+18. Replace forbidden manual spacing commands while preserving intended line stacking.
+19. Normalize font size only when needed to preserve layout, existing intent, or readability.
+20. If the original frame has no font-size change, prefer keeping no font-size change.
+21. Normalize math style.
+22. Verify that the edit is still local and content-preserving.
+23. Verify that every frame environment touched in this step is properly closed before moving on.
+24. Verify that no LaTeX command in the edited frame lost its leading backslash due to patch transport or escaping.
+25. Normalize the boundary before and after the frame block so there are exactly two completely empty lines between consecutive active frame blocks when no preserved commented-out block lies between them.
+26. Verify that no commented-out frame block disappeared as a side effect of the edit.
 
 ## Do not do
 
