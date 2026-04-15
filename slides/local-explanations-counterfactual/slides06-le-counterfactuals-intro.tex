@@ -4,11 +4,10 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 % Defines macros and environments
- 
+
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
-\date{}
 
 \begin{document}
 
@@ -30,7 +29,6 @@ Motivation
 }{
 figure/counterfactuals_obj
 }{
-
 \item Understand the motivation behind CEs
 \item Know why and how CEs are used
 \item Recognize the philosophical foundations of counterfactual reasoning
@@ -39,29 +37,27 @@ figure/counterfactuals_obj
 
 % ------------------------------------------------------------------------------
 
-\begin{frame}{Motivating Example: Credit Risk \& CE}
-        %\begin{center}
-            $\textbf{x}$: customer and credit information \hfill $y$: grant or reject credit \
-        \includegraphics[width=\linewidth, page=1]{figure/counterfactuals_credit.pdf} 
-        %\end{center}
+\begin{framev}[align=top]{Motivating Example: Credit Risk \& CE}
+% \begin{center}
+$\mathbf{x}$: customer and credit information \hfill $y$: grant or reject credit\\
+\includegraphics[width=\textwidth, page=1]{figure/counterfactuals_credit.pdf}
+% \end{center}
+Potential questions:
+\begin{itemizeM}
+\item Why was the credit rejected?
+\item Is this decision fair compared with similar applicants?
+\item \textbf{How should $\xv$ be changed so that the credit is accepted?}
+\end{itemizeM}
+\end{framev}
 
-	Potential questions:
-	\begin{itemize}
-		\item Why was the credit rejected?
-		\item Is this decision fair compared with similar applicants?
-		\item \textbf{How should $\xv$ be changed so that the credit is accepted?}
-	\end{itemize}
-\end{frame}
 
-
-\begin{frame}{Motivating Example: Credit Risk \& CE}
-    CEs provide answers in the form of "What-If"-scenarios.
-	
-    \includegraphics[width=\linewidth, page=2]{figure/counterfactuals_credit.pdf}
-
-    ``If the applicant had higher skills and the credit amount had been reduced to \$8.000, the loan would have been granted."  \\[0.2cm]
-
-\end{frame}
+\begin{framev}[align=top]{Motivating Example: Credit Risk \& CE}
+CEs provide answers in the form of ``What-If''-scenarios.\\
+\spacer[0.25]
+\includegraphics[width=\textwidth, page=2]{figure/counterfactuals_credit.pdf}\\
+\spacer[0.25]
+``If the applicant had higher skills and the credit amount had been reduced to \$8.000, the loan would have been granted.''
+\end{framev}
 
 
 % \begin{frame}{Counterfactual Explanations: Main Idea}
@@ -76,89 +72,74 @@ figure/counterfactuals_obj
 % \end{frame}
 
 
-\begin{frame}{Core Definition and Purpose of CE}
-  \begin{itemize}
-    \item<1-> \textbf{Counterfactual explanation (CE):} Hypothetical input \(\mathbf{x}'\) close to the data point of interest $\mathbf{x}$ whose prediction equals a user-defined desired outcome \(y'\)
-    \item<2-> \textbf{Proximity constraint:} %Find \(\mathbf{x}' \approx \mathbf{x}\) such that
-      \[
-      \text{Find} \quad \mathbf{x}' \approx \mathbf{x} \quad\text{such that} \quad f(\mathbf{x}') = y' \quad\text{and distance}\quad 
-        d(\mathbf{x},\mathbf{x}') \quad \text{is minimal}
-      \]
-    \item<3-> \textbf{Minimal actionable changes:} Difference \(\mathbf{x}'-\mathbf{x}\) shows the smallest feature change a user could realize in practice
-    \item<4-> \textbf{Primary audience:} 
-    \begin{itemize}
-        \item Individuals aiming to alter model predictions 
-        \item ML engineers exploring model behavior under adversarial conditions\\
-        $\leadsto$ how small text changes in an email flip the prediction from "spam" to "no spam"
-    \end{itemize}
-  \end{itemize}
-\end{frame}
+\begin{framev}[align=top]{Core Definition and Purpose of CE}
+\begin{itemizeM}
+\item<1-> \textbf{Counterfactual explanation (CE):} Hypothetical input $\mathbf{x}'$ close to the data point of interest $\mathbf{x}$ whose prediction equals a user-defined desired outcome $y'$
+\item<2-> \textbf{Proximity constraint:} %Find \(\mathbf{x}' \approx \mathbf{x}\) such that
+$$
+\text{Find} \quad \mathbf{x}' \approx \mathbf{x} \quad \text{such that} \quad f(\mathbf{x}') = y' \quad \text{and distance} \quad d(\mathbf{x},\mathbf{x}') \quad \text{is minimal}
+$$
+\item<3-> \textbf{Minimal actionable changes:} Difference $\mathbf{x}' - \mathbf{x}$ shows the smallest feature change a user could realize in practice
+\item<4-> \textbf{Primary audience:}
+\begin{itemizeS}
+\item Individuals aiming to alter model predictions
+\item ML engineers exploring model behavior under adversarial conditions\\
+$\leadsto$ how small text changes in an email flip the prediction from ``spam'' to ``no spam''
+\end{itemizeS}
+\end{itemizeM}
+\end{framev}
 
 
-\begin{frame}{Interpretive Aims \& Roles}
-	CEs can serve various purposes; the user can decide what to learn from them, e.g.:  \\[0.2cm]
-	``If the person had been \textbf{one year older} and the \textbf{credit amount had been increased} to \$12.000, the credit would have been granted."  \\[0.2cm]
-	\pause
-	\begin{itemize}[<+->]
-		\itemsep1.2em
-		\item \textbf{Guidance for future actions:}\\ \textit{Ok, I will apply again next year for the higher amount.}
-		\item \textbf{Provide reasons:}\\ \textit{Interesting, I did not know that age plays a role in loan applications.}
-		\item \textbf{Provide grounds to contest the decision:}\\ \textit{How dare you, I won’t accept age-based discrimination in my application.}
-		\item \textbf{Detect model biases:}\\ \textit{There is a bug, an increase in amount should not increase approval rates.}
-	\end{itemize}
-\end{frame}
+\begin{framev}[align=top]{Interpretive Aims \& Roles}
+CEs can serve various purposes; the user can decide what to learn from them, e.g.:\\
+\spacer[0.25]
+``If the person had been \textbf{one year older} and the \textbf{credit amount had been increased} to \$12.000, the credit would have been granted.''\\
+\spacer[0.25]
+\pause
+\begin{itemizeM}
+\item<+-> \textbf{Guidance for future actions:}\\
+\textit{Ok, I will apply again next year for the higher amount.}
+\item<+-> \textbf{Provide reasons:}\\
+\textit{Interesting, I did not know that age plays a role in loan applications.}
+\item<+-> \textbf{Provide grounds to contest the decision:}\\
+\textit{How dare you, I won’t accept age-based discrimination in my application.}
+\item<+-> \textbf{Detect model biases:}\\
+\textit{There is a bug, an increase in amount should not increase approval rates.}
+\end{itemizeM}
+\end{framev}
 
 
 %------------------------------------------------------------
-\begin{frame}{Philosophical Foundations \furtherreading{LEWIS1973}}
-
+\begin{framev}[align=top]{Philosophical Foundations \furtherreading{LEWIS1973}}
 Counterfactuals have a long tradition in analytic philosophy\\
 $\leadsto$ A \textbf{counterfactual conditional} takes the form:
-
 \begin{center}
-  \emph{"If $S$ had occurred, $Q$ would have occurred."}
+\emph{``If $S$ had occurred, $Q$ would have occurred.''}
 \end{center}
-
-  \begin{itemize}%[<+->]
-    \item $S$: past event that never happened 
-    $\leadsto$ CE run contrary to fact
-    \item Statement is true iff $Q$ holds in all \textbf{closest} worlds where $S$ is true
-    \item Closest worlds preserve laws and change as few facts as possible (related to $S$)
-    %\item \alert{Debate}: what counts as "closest" is controversial in philosophy
-  \end{itemize}
-\end{frame}
+\begin{itemizeM}
+\item $S$: past event that never happened\\
+$\leadsto$ CE run contrary to fact
+\item Statement is true iff $Q$ holds in all \textbf{closest} worlds where $S$ is true
+\item Closest worlds preserve laws and alter as few facts as possible (related to $S$)
+%\item \alert{Debate}: what counts as "closest" is controversial in philosophy
+\end{itemizeM}
+\end{framev}
 
 %------------------------------------------------------------
-\begin{frame}{Philosophical Foundations}
-  \begin{itemize}%[<+->]
-    \item<1-> CEs have largely been studied to explain causal dependence
-    \item<1-> \textbf{Causal dependence}: $Q$ depends on $S$   $\Leftrightarrow$ without $S$, no $Q$\\
-    $\leadsto$ Good CEs reveal critical causal factors that drove algorithmic decision\\
-    $\leadsto$ \textbf{CE objective}: find $\mathbf{x}' \!\approx\! \mathbf{x}$ with $f(\mathbf{x}')=y'$ to expose causal features
-    \item<2-> Relaxing closeness may add causally irrelevant edits to the explanation\\
+\begin{framev}[align=top]{Philosophical Foundations}
+\begin{itemizeM}
+\item<1-> CEs have largely been studied to explain causal dependence
+\item<1-> \textbf{Causal dependence}: $Q$ depends on $S$ $\Leftrightarrow$ without $S$, no $Q$\\
+$\leadsto$ Good CEs reveal critical causal factors that drove algorithmic decision\\
+$\leadsto$ \textbf{CE objective}: find $\mathbf{x}' \!\approx\! \mathbf{x}$ with $f(\mathbf{x}') = y'$ to expose causal features
+\item<2-> Relaxing closeness may add causally irrelevant edits to the explanation\\
 $\leadsto$ e.g., suggest to lower loan \emph{and} increase age (but only loan matters)
-
 \item<3-> CEs are contrastive: Explain a decision by comparing it to a different case\\
 $\leadsto$ If age were 30 (not 60), loan would have been \$9k (not rejected)\\%\$40k\\
 $\leadsto$ Answers contrastive question: \\``Why Q' instead of Q?'' (preferred by humans)
-
-    % \item \textbf{Alternative view}: Pearl (2009) models causality via graphs, then derives counterfactuals from the graph
-  \end{itemize}
-\end{frame}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+% \item \textbf{Alternative view}: Pearl (2009) models causality via graphs, then derives counterfactuals from the graph
+\end{itemizeM}
+\end{framev}
 
 % \begin{frame}{Philosophical Basis}
 % %Interestingly, counterfactuals have a long-standing tradition in philosophy and, in fact the IML discussion of CEs is based on the work of Lewis (1973).
