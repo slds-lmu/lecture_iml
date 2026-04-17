@@ -201,10 +201,15 @@ If the helper is based on `minipage` alignment, verify visual alignment in the s
 In particular, `\splitVTT` can still look vertically offset when one column starts with an image, overlay, table, or list because `minipage[t]` aligns to the first baseline rather than the visible top edge.
 If that happens, fix the slide locally before changing helpers or shared style files.
 Prefer a content-level top anchor at the start of each affected column.
-For `\splitVTT` columns that start with an image, overlay wrapper, table, or list, do not leave the column starting directly with that content unless you actually verified the rendered alignment is already correct.
-In those cases, add an explicit local top anchor at the start of the column content, typically `\spacer[0.25]` on its own line, unless a different local anchor preserves the intended output more faithfully.
+For `\splitVTT` columns that start with an image, overlay wrapper, table, or similar baseline-sensitive non-itemize content, do not leave the column starting directly with that content unless you actually verified the rendered alignment is already correct.
+In those cases, add an explicit zero-height local top layout anchor at the start of the column content, typically `\spacer[0]` on its own line, unless a different local anchor preserves the intended output more faithfully.
+For `\splitVTT` columns that start with `itemize...` helpers such as `\begin{itemizeM}` or `\begin{itemizeS}`, standardize on `\spacer[0.6]` on its own line immediately before the `\begin{itemize...}` line so the first bullet aligns with comparable bullet lists outside `\splitVTT`.
 Avoid placing `\spacer[0.25]` immediately before or immediately after a `\splitV...` command when the real issue is column-start alignment.
 Prefer placing the anchor inside the affected split column content, usually at the start of the column, rather than outside the split block.
+If a `\splitV...` block is followed by more slide content, watch for bottom-anchor risk patterns in a column.
+Treat it as a risk pattern when the column ends with a self-contained display block such as `align*`, `equation*`, `tabular`, `tikzpicture`, `\image...`, an overlay wrapper, or similar centered or boxed content, especially when the other column continues with prose or a list.
+In those cases, add `\spacer[0]` on its own line at the end of the affected column content.
+Treat this as a zero-height bottom layout anchor, not as visible spacing: it makes TeX treat the column as filled out so subsequent content stays below the split layout instead of visually leaking into it.
 If some vertical separation around a split layout is needed, prefer adding it after the `\splitV...` block rather than before it, unless a preceding explicit line break plus spacer is required to preserve the original visible stacking of a lead-in line.
 Use `\spacer[0.25]` only when needed to preserve the intended visible separation or to correct a local alignment issue.
 Do not modify shared helper definitions unless the user explicitly asks for helper changes.
@@ -237,13 +242,14 @@ When using `\imageFixed`, coordinates are measured from the top-left corner and 
 The `itemize...` helpers exist to control item spacing and, if needed, font size, while keeping slide lists consistent.
 
 When spacing or font size must be controlled, use:
-- `itemizeS`: smaller item separation; useful for denser lists.
-- `itemizeM`: medium or default item separation; effectively the standard choice and closest to ordinary `itemize`.
-- `itemizeL`: larger item separation; use when items need more visual separation.
+- `itemizeS`: smaller item separation; preferred for lists one indentation level deeper than the surrounding top-level list.
+- `itemizeM`: medium or default item separation; the cleanup default and closest to ordinary `itemize`.
+- `itemizeL`: larger item separation; keep available for explicit user choice, but do not introduce or select it during cleanup unless the user explicitly requests it.
 - `itemizeF`: fill layout; stretches the list vertically across the available space and should be used carefully because it may interact badly with surrounding layout helpers.
 
 All `itemize...` helpers accept an optional font-size argument such as `[small]`, `[footnotesize]`, or `[large]`.
-Always use `itemizeM` for top-level lists. For second-level lists, prefer `itemizeS` or `itemizeM` depending on spacing needs.
+Use `itemizeM` as the default helper choice. For lists one indentation level deeper, use `itemizeS`.
+Do not infer `itemizeL` from manually encoded spacing in the original raw source.
 Treat raw `itemize` as equivalent to the default-spacing case unless a helper is clearly more appropriate.
 Do not use raw `itemize` when an appropriate helper exists outside `framei`.
 
@@ -252,6 +258,7 @@ Do not use raw `itemize` when an appropriate helper exists outside `framei`.
 1. Do not use `\bigskip`, `\smallskip`, `\medskip`, `\vspace`, or similar manual spacing commands in active content.
 2. If visible vertical separation must be preserved, use `\spacer[0.25]` on its own line.
 3. Ensure a line break via `\\` is present before the introduced `\spacer[0.25]` unless the preceding line already ends with a line break or the spacer is being used as a zero-height column anchor.
+`\spacer[0]` is reserved for such zero-height anchors inside split columns, typically at the start or end of a column, not for visible separation between ordinary blocks.
 If the preceding content is a short lead-in line such as an example label, descriptor, or one-line statement, keep or add the explicit trailing `\\` before the spacer; do not reinterpret that case as ordinary paragraph prose.
 4. Do not mechanically replace `\\` plus vertical spacing with a paragraph break or merged prose line if that changes visible line stacking.
 5. When replacing `\medskip`, `\smallskip`, or `\bigskip`, preserve any intentional adjacent `\\` that keeps short lead-in lines, example labels, or formula descriptors on separate rendered lines.
@@ -301,22 +308,25 @@ For each active frame, in order:
 8. Do not merge consecutive rendered lines into one paragraph unless the visual output is unchanged.
 9. Remove forbidden empty lines.
 10. Replace raw layout code with the appropriate helper where applicable.
-11. For `\splitV...` helpers, verify visual top, center, or bottom alignment from the actual starting content of each column.
+11. For `\splitV...` helpers, inspect the actual starting and ending content of each column for local anchor risk patterns before deciding whether a split layout needs adjustment.
 12. If a `\splitVTT` layout starts with an image, overlay, table, or list, treat it as needing an explicit check for baseline-offset risk.
-13. If a `\splitVTT` layout is visually misaligned because of a `minipage` baseline effect, add a local top anchor at the start of the affected column content instead of editing shared helpers.
-14. Do not try to fix split-column baseline offset by inserting `\spacer[0.25]` immediately before the `\splitV...` command; prefer an anchor inside the affected column, and if extra separation around the split is still needed, prefer placing it after the split block.
-15. When replacing manual vertical spacing with `\spacer[0.25]` after a short lead-in line, keep or add the explicit preceding `\\` unless the spacer is being used as a zero-height column anchor inside a layout helper.
-16. Replace raw `\includegraphics` with the appropriate image helper where applicable.
-17. Normalize figure and table paths.
-18. Replace forbidden manual spacing commands while preserving intended line stacking.
-19. Normalize font size only when needed to preserve layout, existing intent, or readability.
-20. If the original frame has no font-size change, prefer keeping no font-size change.
-21. Normalize math style.
-22. Verify that the edit is still local and content-preserving.
-23. Verify that every frame environment touched in this step is properly closed before moving on.
-24. Verify that no LaTeX command in the edited frame lost its leading backslash due to patch transport or escaping.
-25. Normalize the boundary before and after the frame block so there are exactly two completely empty lines between consecutive active frame blocks when no preserved commented-out block lies between them.
-26. Verify that no commented-out frame block disappeared as a side effect of the edit.
+13. If a `\splitVTT` column starts with an image, overlay wrapper, table, or similar baseline-sensitive non-itemize content, place `\spacer[0]` on its own line at the start of that column unless an equivalent local top anchor is already present and should be preserved.
+14. If a `\splitVTT` column starts with an `itemize...` helper such as `itemizeM` or `itemizeS`, place `\spacer[0.6]` on its own line immediately before that `\begin{itemize...}` unless the slide already has an equivalent local adjustment that should be preserved.
+15. If a `\splitV...` block is followed by more slide content and a column ends with a self-contained display block such as `align*`, `equation*`, `tabular`, `tikzpicture`, `\image...`, an overlay wrapper, or similar centered or boxed content, place `\spacer[0]` on its own line at the end of that column unless an equivalent local bottom anchor is already present and should be preserved.
+16. Do not try to fix split-column baseline offset by inserting a spacer immediately before the `\splitV...` command; prefer an anchor inside the affected column, and if extra separation around the split is still needed, prefer placing it after the split block.
+17. When normalizing `itemize...` helpers, use `itemizeM` as the default choice and `itemizeS` for lists one indentation level deeper; do not introduce `itemizeL` unless the user explicitly requested it.
+18. When replacing manual vertical spacing with `\spacer[0.25]` after a short lead-in line, keep or add the explicit preceding `\\` unless the spacer is being used as a zero-height column anchor inside a layout helper.
+19. Replace raw `\includegraphics` with the appropriate image helper where applicable.
+20. Normalize figure and table paths.
+21. Replace forbidden manual spacing commands while preserving intended line stacking.
+22. Normalize font size only when needed to preserve layout, existing intent, or readability.
+23. If the original frame has no font-size change, prefer keeping no font-size change.
+24. Normalize math style.
+25. Verify that the edit is still local and content-preserving.
+26. Verify that every frame environment touched in this step is properly closed before moving on.
+27. Verify that no LaTeX command in the edited frame lost its leading backslash due to patch transport or escaping.
+28. Normalize the boundary before and after the frame block so there are exactly two completely empty lines between consecutive active frame blocks when no preserved commented-out block lies between them.
+29. Verify that no commented-out frame block disappeared as a side effect of the edit.
 
 ## Do not do
 
@@ -339,24 +349,28 @@ If any item is false, continue working or mark it `[blocked]`.
 5. Every active `framei`, `framev`, or other custom frame environment that supports an `align` key uses `align=top`, unless there is a concrete reason not to.
 6. Every active plain Beamer `frame` environment uses the top-aligned equivalent when possible, unless there is a concrete reason not to.
 7. Appropriate `\splitV...` or grid helpers replaced raw layout code wherever applicable.
-8. Any `\splitVTT`, `\splitVCC`, or `\splitVBB` layout in active frames was checked against the actual starting content of each column.
-9. Appropriate image helpers replaced raw `\includegraphics` wherever applicable.
-10. Paths are relative to the slide file.
-11. Forbidden manual spacing commands were removed where applicable in active frames.
-12. Replacing manual spacing did not remove necessary explicit line breaks or change visible line wrapping.
-13. Exactly two completely empty lines exist between consecutive active frame blocks cleaned by this skill when no preserved commented-out block lies between them.
-14. Font-size changes were introduced only where actually needed.
-15. If the original slide had no font-size change, no new font-size change was introduced unless required to preserve layout.
-16. No avoidable inline font-size switches remain where cleanup was applied.
-17. `eqnarray` is absent from active content.
-18. `\[ ... \]` is absent from active content.
-19. Empty lines in active code occur only at allowed boundaries.
-20. Active source is visually clean, unindented, and uniform.
-21. Output should remain as close as practical to the original PDF.
-22. Every active `\begin{framev}`, `\begin{framei}`, and plain `\begin{frame...}` has a matching closing tag. Count opening and closing tags for each environment type and confirm they are equal before finishing.
-23. No LaTeX command lost its leading backslash due to patch transport or JSON escape handling.
-24. The file compiles without fatal LaTeX errors. Run `latexmk -halt-on-error -pdf` or the project equivalent from the chapter directory and confirm a PDF is produced. If a TeX installation is unavailable, mark this item `[blocked: no TeX]` and list every unverified environment-balance count explicitly instead.
-25. The pre-edit and post-edit counts of commented-out frame blocks in or directly adjacent to edited regions are identical.
+8. Any `\splitVTT`, `\splitVCC`, or `\splitVBB` layout in active frames was checked against the actual starting and ending content of each column for anchor risk patterns.
+9. Any `\splitVTT` column that starts with an `itemize...` helper uses `\spacer[0.6]` immediately before that helper unless an equivalent local adjustment was intentionally preserved.
+10. Any `\splitVTT` column that starts with an image, overlay wrapper, table, or similar baseline-sensitive non-itemize content uses `\spacer[0]` as its local top anchor unless an equivalent local top anchor was intentionally preserved.
+11. Any `\splitV...` block that is followed by more slide content and ends a column with a self-contained display block risk pattern has `\spacer[0]` at the end of the affected column unless an equivalent local bottom anchor was intentionally preserved.
+12. Any normalized `itemize...` helper choice uses `itemizeM` as the default and `itemizeS` for lists one indentation level deeper, unless the user explicitly requested `itemizeL`.
+13. Appropriate image helpers replaced raw `\includegraphics` wherever applicable.
+14. Paths are relative to the slide file.
+15. Forbidden manual spacing commands were removed where applicable in active frames.
+16. Replacing manual spacing did not remove necessary explicit line breaks or change visible line wrapping.
+17. Exactly two completely empty lines exist between consecutive active frame blocks cleaned by this skill when no preserved commented-out block lies between them.
+18. Font-size changes were introduced only where actually needed.
+19. If the original slide had no font-size change, no new font-size change was introduced unless required to preserve layout.
+20. No avoidable inline font-size switches remain where cleanup was applied.
+21. `eqnarray` is absent from active content.
+22. `\[ ... \]` is absent from active content.
+23. Empty lines in active code occur only at allowed boundaries.
+24. Active source is visually clean, unindented, and uniform.
+25. Output should remain as close as practical to the original PDF.
+26. Every active `\begin{framev}`, `\begin{framei}`, and plain `\begin{frame...}` has a matching closing tag. Count opening and closing tags for each environment type and confirm they are equal before finishing.
+27. No LaTeX command lost its leading backslash due to patch transport or JSON escape handling.
+28. The file compiles without fatal LaTeX errors. Run `latexmk -halt-on-error -pdf` or the project equivalent from the chapter directory and confirm a PDF is produced. If a TeX installation is unavailable, mark this item `[blocked: no TeX]` and list every unverified environment-balance count explicitly instead.
+29. The pre-edit and post-edit counts of commented-out frame blocks in or directly adjacent to edited regions are identical.
 
 ## Final response format
 
