@@ -5,17 +5,15 @@
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-interpretable}
 % Defines macros and environments
- 
+
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
-\date{}
 
 \newcommand{\gh}{\hat{g}}
 
 \begin{document}
 
-	
 % Set style/preamble.Rnw as parent.
 
 % Load all R packages and set up knitr
@@ -57,20 +55,20 @@ figure/lime5
 % \end{frame}
 
 % Improved slide: LIME – Local Surrogate Explanations
-\begin{frame}[t]{LIME}
-  \begin{itemize}%[<+->]
-    %\item \textbf{Key idea:} Approximate any black‑box model $\fh$ around a single input $\xv$ with an \emph{interpretable} surrogate $\gh$
-    \item \textbf{Locality assumption:} \\$\fh$ behaves similarly simple in small neighborhood of $\xv$\\
-    $\leadsto$ Approximate $\fh$ near $\xv$ using an interpretable surrogate model $\gh$
-    \item \textbf{Interpretation strategy:}\\ Use $\gh$'s simple internal structure to explain $\fh(\xv)$ locally\\
-    $\leadsto$ \textbf{Common surrogates:} Sparse linear models, shallow decision trees
-    %\item \textbf{Algorithm:} Perturb $\xv$, obtain $\fh(\tilde{\xv})$, weight by proximity, fit $\gh$ to weighted data, interpret $\gh$’s parameters
-    %\item \textbf{Typical uses:} Debug single predictions, detect spurious features, provide actionable recourse
-    \item \textbf{Applicability:} Model‑agnostic; supports tabular, image, and text data %via modality‑specific perturbations
-    \item \textbf{In practice:} Generate samples near $\xv$, predict with $\fh$, and fit $\gh$ to these samples using $\fh$’s outputs as targets, weighting samples by their proximity/closeness to $\xv$
-
-  \end{itemize}
-\end{frame}
+\begin{framei}[align=top]{LIME}
+%\item \textbf{Key idea:} Approximate any black‑box model $\fh$ around a single input $\xv$ with an \emph{interpretable} surrogate $\gh$
+\item \textbf{Locality assumption:}\\
+$\fh$ behaves similarly simple in a small neighborhood of $\xv$\\
+$\leadsto$ Approximate $\fh$ near $\xv$ using an interpretable surrogate model $\gh$
+\item \textbf{Interpretation strategy:}\\
+Use $\gh$'s simple internal structure to explain $\fh(\xv)$ locally\\
+$\leadsto$ \textbf{Common surrogates:} sparse linear models, shallow decision trees
+%\item \textbf{Algorithm:} Perturb $\xv$, obtain $\fh(\tilde{\xv})$, weight by proximity, fit $\gh$ to weighted data, interpret $\gh$’s parameters
+%\item \textbf{Typical uses:} Debug single predictions, detect spurious features, provide actionable recourse
+\item \textbf{Applicability:} Model‑agnostic; supports tabular, image, and text data %via modality‑specific perturbations
+\item \textbf{In practice:}
+Generate samples near $\xv$, predict with $\fh$, and fit $\gh$ to these samples using $\fh$'s outputs as targets, weighting samples by their proximity to $\xv$
+\end{framei}
 
 
 % \begin{frame}{LIME}
@@ -84,46 +82,39 @@ figure/lime5
 % \end{frame}
 
 
-\begin{frame}{LIME: Characteristics}
-
-    \textbf{Definition:}
-	LIME provides a local explanation for a black-box model $\fh$ in form of a surrogate model $\gh \in \Gspace$, where $\Gspace$ is a class of interpretable models\\[2em]
-	
-	
-	Surrogate model $\gh$ should satisfy two characteristics:
-	\begin{enumerate}
-		\item \textbf{Interpretable}: Provide human-understandable insights into the relationship between input features and prediction (e.g. via coefficients, model structure)
-	\item \textbf{Local fidelity / faithfulness}: 
-    $\gh$ closely approximates $\fh$ in the vicinity of the input $\xv$ being explained
-        %similar behavior as $\fh$ in the vicinity of the obs. being predicted
-	\end{enumerate}
-	
-	\vspace{2em}
-	\textbf{Goal:} Find $\gh$ with \textbf{minimal complexity and maximal local fidelity} 
-\end{frame}
+\begin{framev}[align=top]{LIME: Characteristics}
+\textbf{Definition:}\\
+LIME provides a local explanation for a black-box model $\fh$ in form of a surrogate model $\gh \in \Gspace$, where $\Gspace$ is a class of interpretable models\\
+\spacer[0.25]
+Surrogate model $\gh$ should satisfy two characteristics:
+\begin{enumerate}
+\item \textbf{Interpretable}: Provide human-understandable insights into the relationship between input features and prediction, e.g. via coefficients or model structure
+\item \textbf{Local fidelity / faithfulness}: $\gh$ closely approximates $\fh$ in the vicinity of the input $\xv$ being explained
+%similar behavior as $\fh$ in the vicinity of the obs. being predicted
+\end{enumerate}
+\textbf{Goal:} Find $\gh$ with \textbf{minimal complexity and maximal local fidelity}
+\end{framev}
 
 
-\begin{frame}{Model Complexity}
-    
-    We can measure complexity of $\gh \in \Gspace$ using a complexity measure $J: \mathcal{G} \to \R_{0}$ \lz % $J(\gh)$ \lz
-
- 	\textbf{Example: (Sparse) Linear Models}\\
- 	\begin{itemize}
- 	    \item Let $\Gspace = \left\{g: \Xspace \to \R ~|~g(\xv) = s(\thetav^\top \xv)\right\}$ be the class of linear models
- 	    \item $s(\cdot)$ is identity (linear model) or logistic sigmoid function  (log. reg.)
- 	    \item[$\leadsto$] $J(g) = \sum_{j = 1}^p \ind_{\{ \theta_j \neq 0 \}}$: Count number of non-zero coeffs (via L$_0$-norm of $\thetav$)
- 	\end{itemize}
- 	\lz\pause
- 	
- 	\textbf{Example: Decision Trees}\\
- 	\begin{itemize}
- 	    \item Let $\Gspace = \left\{g:\Xspace \to \R ~|~g(\xv) = \sum_{m=1}^M c_m \ind_{\{ \xv \in Q_m \}}\right\}$ be the class of trees
-        \item $Q_m$ are disjoint axis parallel regions (leaves); $c_m \in \R$ constant predictions
-        %\\ 	     i.e., the class of additive models (e.g., constant $c_m$)  over the leaf-rectangles $Q_m$
- 	    \item[$\leadsto$] $J(g) = M$: Count number of terminal/leaf nodes
- 	\end{itemize}
- 	
-\end{frame}
+\begin{framev}[align=top]{Model Complexity}
+We can measure complexity of $\gh \in \Gspace$ using a complexity measure $J: \mathcal{G} \to \R_0$ \lz % $J(\gh)$ \lz
+\begin{itemizeM}
+\item \textbf{Example: (Sparse) Linear Models}\\
+Let $\Gspace = \{g: \Xspace \to \R ~|~ g(\xv) = s(\thetav^\top \xv)\}$ be the class of linear models
+\begin{itemizeS}
+\item $s(\cdot)$ is the identity (linear model) or logistic sigmoid function (logistic regression)
+\item[$\leadsto$] $J(g) = \sum_{j = 1}^p \ind_{\{\theta_j \neq 0\}}$: count the number of non-zero coefficients via the $L_0$ norm of $\thetav$
+\end{itemizeS}
+\pause
+\item \textbf{Example: Decision Trees}\\
+Let $\Gspace = \{g: \Xspace \to \R ~|~ g(\xv) = \sum_{m=1}^M c_m \ind_{\{\xv \in Q_m\}}\}$ be the class of trees
+\begin{itemizeS}
+\item $Q_m$ are disjoint axis-parallel regions (leaves); $c_m \in \R$ are constant predictions
+%\\ 	     i.e., the class of additive models (e.g., constant $c_m$)  over the leaf-rectangles $Q_m$
+\item[$\leadsto$] $J(g) = M$: count the number of terminal or leaf nodes
+\end{itemizeS}
+\end{itemizeM}
+\end{framev}
  
 % \begin{frame}{Local model fidelity}
 %  	\begin{itemize}
@@ -147,155 +138,125 @@ figure/lime5
 %  	\end{itemize}
 % \end{frame}
 
-\begin{frame}{Local Fidelity of Surrogate Models}
-
-  \begin{itemize}
-    \item Surrogate \( \gh \) is \textbf{locally faithful} to a black-box model \( \fh \) around an input \( \xv \) if
-    \[
-    \gh(\zv) \approx \fh(\zv) \quad \text{for synthetic samples } \zv \in \Zspace \subseteq \R^p \text{ generated around } \xv
-    \]
-
-    \pause
-
-    \item \textbf{Optimization principle:} Closer \( \zv \) is to \( \xv \), the more \( \gh(\zv) \) should match \( \fh(\zv) \)
-
-    \pause
-
-    \item To operationalize this optimization, we need:
-    \begin{enumerate}
-      \item \textbf{A proximity (similarity) measure} $\neigh(\zv)$ between $\zv$ and $\xv$, e.g.:
-      
-        \medskip
-        \centerline{$
-        \neigh(\zv) = \exp(-d(\xv, \zv)^2 / \sigma^2)  \text{ (exponential kernel), where}
-        $}
-        \medskip
-        
-        \begin{itemize}
-            \item \( d \): distance metric (e.g., Euclidean or Gower for mixed types)
-            \item \( \sigma \) is the kernel width that controls locality
-        \end{itemize}
-        
-        %(e.g., Euclidean or Gower), 
-        
-
-      \pause
-      \item \textbf{A loss function} \( L(\fh(\zv), \gh(\zv)) \), e.g. the L$_2$ loss/squared error:
-        \[
-        L(\fh(\zv), \gh(\zv)) = \left( \gh(\zv) - \fh(\zv) \right)^2
-        \]
-    \end{enumerate}
-
-    \pause
-
-    \item The overall \textbf{local fidelity objective} is measured by a weighted loss:
-    \[
-    L(\fh, \gh, \neigh) = \sum_{\zv \in \Zspace} \neigh(\zv) \cdot L(\fh(\zv), \gh(\zv))
-    \]
-  \end{itemize}
-\end{frame}
+\begin{framev}[align=top]{Local Fidelity of Surrogate Models}
+\begin{itemizeM}
+\item Surrogate $\gh$ is \textbf{locally faithful} to a black-box model $\fh$ around an input $\xv$ if\\
+$$\gh(\zv) \approx \fh(\zv) \quad \text{for synthetic samples } \zv \in \Zspace \subseteq \R^p \text{ generated around } \xv$$
+\pause
+\item \textbf{Optimization principle:}
+The closer $\zv$ is to $\xv$, the more $\gh(\zv)$ should match $\fh(\zv)$
+\pause
+\item To operationalize this optimization, we need:
+\begin{enumerate}
+\item \textbf{A proximity (similarity) measure} $\neigh(\zv)$ between $\zv$ and $\xv$, e.g.:
+$$
+\neigh(\zv) = \exp(-d(\xv, \zv)^2 / \sigma^2)
+$$
+(exponential kernel), where
+\begin{itemizeS}
+\item $d$ is a distance metric, e.g. Euclidean or Gower for mixed types
+\item $\sigma$ is the kernel width that controls locality
+\end{itemizeS}
+%(e.g., Euclidean or Gower),
+\pause
+\item \textbf{A loss function} $L(\fh(\zv), \gh(\zv))$, e.g. the $L_2$ loss or squared error:
+$$
+L(\fh(\zv), \gh(\zv)) = (\gh(\zv) - \fh(\zv))^2
+$$
+\end{enumerate}
+\pause
+\item The overall \textbf{local fidelity objective} is measured by a weighted loss:
+$$
+L(\fh, \gh, \neigh) = \sum_{\zv \in \Zspace} \neigh(\zv) \cdot L(\fh(\zv), \gh(\zv))
+$$
+\end{itemizeM}
+\end{framev}
 
 
+\begin{framei}[align=top]{LIME Optimization Task}
+\item Optimization problem of LIME:
+$$
+\argmin_{\gh \in \Gspace} L(\fh, \gh, \neigh) + J(\gh)
+$$
+\item \textbf{In practice} LIME uses a two-stage approach:
+\begin{enumerate}
+\item User sets complexity $J(\gh)$ beforehand, e.g. LASSO with $k$ features
+\item Optimize $L(\fh, \gh, \neigh)$ for fixed complexity
+\end{enumerate}
+\item \textbf{Goal:} Build a \textbf{model-agnostic} explainer
+\begin{itemizeS}
+\item[$\leadsto$] Optimize $L(\fh, \gh, \neigh)$ without making assumptions on the form of $\fh$
+\item[$\leadsto$] Surrogate $\gh$ approximates $\fh$ locally through sampling and fitting
+%learn $\gh$ only approximately
+\end{itemizeS}
+\end{framei}
 
 
+\begin{framev}[align=top]{LIME Algorithm: Outline \furtherreading{RIBEIRO2016}}
+\textbf{Input}:
+\begin{itemizeM}
+\item Pre-trained black-box model $\fh$
+\item Observation $\xv$ whose prediction $\fh(\xv)$ we want to explain
+\item Interpretable model class $\Gspace$ for the local surrogate
+\end{itemizeM}
+\pause
+\textbf{Algorithm}:
+\begin{enumerate}
+\item Independently sample new points $\zv \in \Zspace$
+\item Retrieve predictions $\fh(\zv)$ for the obtained points $\zv$
+\item Weight $\zv \in \Zspace$ by their proximity $\neigh(\zv)$ to quantify closeness to $\xv$
+\item Train interpretable surrogate model $\gh$ on data $\zv \in \Zspace$ using weights $\neigh(\zv)$\\
+$\leadsto$ Predictions $\fh(\zv)$ are used as the target of this model
+\item Return $\gh$ as the local explanation for $\fh(\xv)$
+%the interpretable model $\gh$ as the explainer
+\end{enumerate}
+\end{framev}
 
 
-
-\begin{frame}{LIME Optimization Task}
-	\begin{itemize}
-		\item Optimization problem of LIME: 
-		$$ \argmin_{\gh \in \Gspace} L(\fh, \gh, \neigh) + J(\gh)$$
-		\item \textbf{In practice} LIME uses a two-stage approach:
-		\begin{enumerate}
-                \item User sets complexity $J(\gh)$ beforehand (e.g., LASSO with \( k \) features)
-		    \item Optimize $L(\fh, \gh, \neigh)$ (model fidelity) for fixed complexity
-		\end{enumerate}
-		\item \textbf{Goal:} Build a \textbf{model-agnostic} explainer
-		\begin{itemize}
-    		\item[$\leadsto$] Optimize $L(\fh, \gh, \neigh)$ without making assumptions on the form of $\fh$ 
-    		\item[$\leadsto$] Surrogate \( \gh \) approximates \( \fh \) locally through sampling and fitting
-            %learn $\gh$ only approximately  
-		\end{itemize}
-		\end{itemize}
-\end{frame} 
-
-\begin{frame}{LIME Algorithm: Outline \furtherreading{RIBEIRO2016}}
-		
-		\textbf{Input}:
-		\begin{itemize}
-		    \item Pre-trained black-box model $\fh$
-		    \item Observation $\xv$ whose prediction $\fh(\xv)$ we want to explain
-		    \item Interpretable model class $\Gspace$ for local surrogate (to limit complexity)
-		\end{itemize}
-		
-		\pause
-		\medskip
-		
-		\textbf{Algorithm}:
-		\begin{enumerate}
-    		\item Independently sample new points $\zv \in \Zspace$ 
-    		\item Retrieve predictions $\fh(\zv)$ for obtained points $\zv$ 
-    		\item Weight $\zv \in \Zspace$ by their proximity $\neigh(\zv)$ to quantify closeness to \( \xv \)
-    		\item Train interpretable surrogate model $\gh$ on data $\zv \in \Zspace$ using weights $\neigh(\zv)$\\ $\leadsto$ Predictions $\fh(\zv)$ are used as target of this model
-    		\item Return \( \gh \) as the local explanation for \( \fh(\xv) \)
-            %the interpretable model $\gh$ as the explainer
-		\end{enumerate}
-		
-
-	
-\end{frame} 
-
-\begin{frame}{LIME Algorithm: Example}
-
-    	\textbf{Illustration} of LIME based on a classification task:
-		\begin{itemize}
-			\item Light/dark gray background: prediction surface of a classifier
-			\item Yellow point: $\xv$ to be explained
-			\item $\Gspace$: class of logistic regression models 
-		\end{itemize}
-		\begin{center}
-			\includegraphics[width=0.6\textwidth]{figure/lime2}
-		\end{center}
-
-\end{frame} 
+\begin{framev}[align=top]{LIME Algorithm: Example}
+\textbf{Illustration} of LIME based on a classification task:
+\begin{itemizeM}
+\item Light/dark gray background: prediction surface of a classifier
+\item Yellow point: $\xv$ to be explained
+\item $\Gspace$: class of logistic regression models
+\end{itemizeM}
+\imageC[0.6]{figure/lime2}
+\end{framev}
 
 
-\begin{frame}{LIME Algo.: Example (Step 1+2: Sampling)}
-		
-		Strategies for sampling: 
-		\begin{itemize} 
-			\item Uniformly sample new points from the feasible feature range 
-			\item Use the training data set with or without perturbations
-			\item Draw samples from the estimated univariate distribution of each feature
-			\item Create an equidistant grid over the supported feature range  
-		\end{itemize}
-		\vspace{-.5cm}
-		\begin{columns}[totalwidth=\textwidth]
-        \begin{column}{0.5\textwidth}  %%<--- here
-            \begin{figure}
-             \includegraphics[width=.95\textwidth]{figure/lime3} 
-             \vspace{-0.3cm}
-             \caption{Uniformly sampled}
-             \end{figure}
-        \end{column}
-        \begin{column}{0.5\textwidth}  %%<--- here
-		    \begin{figure}
-			\includegraphics[width=.95\textwidth]{figure/lime3a}
-			  \vspace{-0.3cm}
-    		    \caption{Equidistant grid}
-    		\end{figure}   
-    \end{column}
-\end{columns}
-\end{frame}
-		
-\begin{frame}{LIME Algo.: Example (Step 3: Proximity)}
+\begin{framev}[align=top]{LIME Algo.: Example (Step 1+2: Sampling)}
+Strategies for sampling:
+\begin{itemizeM}
+\item Uniformly sample new points from the feasible feature range
+\item Use the training data set with or without perturbations
+\item Draw samples from the estimated univariate distribution of each feature
+\item Create an equidistant grid over the supported feature range
+\end{itemizeM}
+\splitVTT{%
+\spacer[0]
+\begin{figure}
+\centering
+\image[0.95]{figure/lime3}
+\caption{Uniformly sampled}
+\end{figure}
+}{%
+\spacer[0]
+\begin{figure}
+\centering
+\image[0.95]{figure/lime3a}
+\caption{Equidistant grid}
+\end{figure}
+}
+\end{framev}
 
-	In this example, we use the exponential kernel defined on the Euclidean distance $d$
-		 $$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2).$$ 
-		\begin{center}
-			\includegraphics[width=0.7\textwidth]{figure/lime4}
-		\end{center}
-		
+
+\begin{framev}[align=top]{LIME Algo.: Example (Step 3: Proximity)}
+In this example, we use the exponential kernel defined on the Euclidean distance $d$:
+$$
+\neigh(\zv) = \exp(-d(\xv, \zv)^2 / \sigma^2)
+$$
+\imageC[0.7]{figure/lime4}
+
 % MARIUS: Not relevant for the example; if we want to introduce it, we should do it somewhere else
 % 	An alternative is the Gower proximity: 
 % 	$\neigh(\zv) = 1 - \Gower(\zv, \xv) =  1 - \frac{1}{p}\sum_{j = 1}^{p} \delta_G(z_j, x_j) $ 
@@ -304,16 +265,15 @@ figure/lime5
 % 	\frac{1}{\widehat{R}_j}|z_j- x_j| & \text{if $x_j$ and $z_j$ are numerical} \\
 % 	\mathbb{I}_{z_j \neq x_j} & \text{if $x_j$ and $z_j$ are categorical}
 % 	\end{cases}.$
-		
-\end{frame}
-		
-\begin{frame}{LIME Algo.: Example (Step 4: Surrogate)}
-		In this example, we fit a \textbf{logistic regression} model\\
-        $\leadsto$ $L(\fh(\zv), \gh(\zv))$ is the Bernoulli loss
-		\begin{center}
-			\includegraphics[width=0.7\textwidth]{figure/lime5}
-		\end{center}
-\end{frame}
+
+\end{framev}
+
+
+\begin{framev}[align=top]{LIME Algo.: Example (Step 4: Surrogate)}
+In this example, we fit a \textbf{logistic regression} model\\
+$\leadsto$ $L(\fh(\zv), \gh(\zv))$ is the Bernoulli loss
+\imageC[0.7]{figure/lime5}
+\end{framev}
 
 \endlecture
 \end{document}
