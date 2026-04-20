@@ -7,11 +7,10 @@
 \input{../../latex-math/basic-ml}
 \usepackage{siunitx}
 % Defines macros and environments
- 
+
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
-\date{}
 
 \begin{document}
 
@@ -35,87 +34,71 @@ figure_man/global_shap_depend_season.pdf
 }
 
 
-\begin{frame}{Global SHAP \furtherreading{LUNDBERG2018}}
-\textbf{Idea: }
-\begin{itemize}
-    \item Run SHAP for every obs. and thereby get a matrix of Shapley values
-    \item The matrix has one row per data observation and one column per feature
-    \item We can interpret the model globally by analyzing the Shapley value matrix
-\end{itemize}
-\vspace{2cm}
+\begin{framev}[align=top]{Global SHAP \furtherreading{LUNDBERG2018}}
+\textbf{Idea:}
+\begin{itemizeM}
+\item Run SHAP for every obs. and thereby get a matrix of Shapley values
+\item The matrix has one row per data observation and one column per feature
+\item We can interpret the model globally by analyzing the Shapley value matrix
+\end{itemizeM}
+\spacer[4.7]
 $$
 \Phi =
 \begin{bmatrix}
-    \phi_{11} & \phi_{12} & \phi_{13} & \dots  & \phi_{1p} \\
-    \phi_{21} & \phi_{22} & \phi_{23} & \dots  & \phi_{2p} \\
-    \vdots & \vdots & \vdots & \ddots & \vdots \\
-    \phi_{n1} & \phi_{n2} & \phi_{n3} & \dots  & \phi_{np} \\
+\phi_{11} & \phi_{12} & \phi_{13} & \dots & \phi_{1p} \\
+\phi_{21} & \phi_{22} & \phi_{23} & \dots & \phi_{2p} \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+\phi_{n1} & \phi_{n2} & \phi_{n3} & \dots & \phi_{np} \\
 \end{bmatrix}
 $$
+\end{framev}
 
- \end{frame}
 
- \begin{frame}{Feature Importance}
-
+\begin{framev}[align=top]{Feature Importance}
 \begin{onlyenv}<1>
-\textbf{Idea:} Average the absolute Shapley values of each feature over all obs. \\This corresponds to calculating averages column by column in matrix $\Phi$
+\textbf{Idea:} Average the absolute Shapley values of each feature over all obs.\\
+This corresponds to calculating averages column by column in matrix $\Phi$.
 $$
-I_{j}=\frac{1}{n} \sum_{i=1}^{n}\left|\phi_{j}^{(i)}\right|
+I_j = \frac{1}{n} \sum_{i=1}^{n} |\phi_j^{(i)}|
 $$
 \end{onlyenv}
-
 \begin{onlyenv}<2>
 \textbf{Interpretation:}
-\begin{itemize}
-    \item Feats \enquote{temp} and \enquote{year} have highest influence on the model's prediction
-    \item Shapley FI does not provide information on direction of the effect\\
-    $\leadsto$ Provides feature ranking based on magnitude of  Shapley values %similar to PFI
-    \item Shapley FI is based only on model predictions\\
-    Note: Other FI measures are based on model's performance (loss)
-\end{itemize}
- 
+\begin{itemizeM}
+\item Feats \enquote{temp} and \enquote{year} have highest influence on the model's prediction
+\item Shapley FI does not provide information on direction of the effect\\
+$\leadsto$ Provides feature ranking based on magnitude of Shapley values %similar to PFI
+\item Shapley FI is based only on model predictions\\
+Note: Other FI measures are based on model's performance (loss)
+\end{itemizeM}
 \end{onlyenv}
-
-
 \btVFill
+\imageC[0.5]{figure_man/global_shap_fi.pdf}
+\end{framev}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\columnwidth]{figure_man/global_shap_fi.pdf}
-\end{figure}
 
-\end{frame}
- 
-\begin{frame}{Summary Plot}
+\begin{framev}[align=top]{Summary Plot}
 \begin{onlyenv}<1>
 Combines feature importance with feature effects
-\begin{itemize}
-    \item Each point is a Shapley value for a feature and an observation
-    \item The color represents the value of the feature from low to high
-    \item Overlapping points are jittered in y-axis direction
-\end{itemize}
+\begin{itemizeM}
+\item Each point is a Shapley value for a feature and an observation
+\item The color represents the value of the feature from low to high
+\item Overlapping points are jittered in y-axis direction
+\end{itemizeM}
 \end{onlyenv}
-
 \begin{onlyenv}<2>
 \textbf{Interpretation:}\\
-\begin{itemize}
-    \item Low temp have a negative impact; high temp lead to more bike rentals
-    \item Year: two point clouds for 2011 (low value) and 2012 (high value)\\
-    \item Categorical features are gray (no low/high value)
-    \item High humidity has a huge negative impact on bike rentals
-    \item Low humidity has a rather minor positive impact on bike rentals
-\end{itemize}
- 
+\begin{itemizeM}
+\item Low temp have a negative impact; high temp lead to more bike rentals
+\item Year: two point clouds for 2011 (low value) and 2012 (high value)\\
+\item Categorical features are gray (no low/high value)
+\item High humidity has a huge negative impact on bike rentals
+\item Low humidity has a rather minor positive impact on bike rentals
+\end{itemizeM}
 \end{onlyenv}
-
 \btVFill
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\columnwidth]{figure_man/global_shap_jitter.pdf}
-    
-\end{figure}
-\end{frame} 
+\imageC[0.5]{figure_man/global_shap_jitter.pdf}
+\end{framev}
 
 % \begin{frame}{Dependence Plot}
 
@@ -162,75 +145,67 @@ Combines feature importance with feature effects
 % \end{frame}
 
 
-\begin{frame}{Dependence Plot: Effect + Interaction}
-
+\begin{framev}[align=top]{Dependence Plot: Effect + Interaction}
 \textbf{Interpretation of SHAP Dependence Plot (Feature = Temperature)}
-
-\begin{itemize}
-  \item<1-> Plot points with feature value on x-axis and corresponding SHAP value on y-axis
-  %\textbf{X-axis:} feature value (temp); \textbf{Y-axis:} SHAP value for temp
-  %\item<1-> Each point = one observation
-  \item<2-> Shows temp's influence on rentals $\leadsto$ Marginal effect similar to PD plot
-  \item<2-> SHAP values increase with temp until $\approx$25°C:\\ higher temp $\leadsto$ higher predictions
-  \item<2-> After $\approx$25°C, SHAP values decrease slightly %$\leadsto$ decreasing effect
-  \item<3-> Interaction with \textbf{season} is visible (via color-encoded observations):
-    \begin{itemize}
-        \item In \textcolor{violet}{summer}, higher temperatures decrease bike rentals
-        \item In \textcolor{blue}{winter}, higher temperatures increase bike rentals
-    \end{itemize}
-\end{itemize}
-
+\begin{itemizeM}
+\item<1-> Plot points with feature value on x-axis and corresponding SHAP value on y-axis
+%\textbf{X-axis:} feature value (temp); \textbf{Y-axis:} SHAP value for temp
+%\item<1-> Each point = one observation
+\item<2-> Shows temp's influence on rentals $\leadsto$ Marginal effect similar to PD plot
+\item<2-> SHAP values increase with temp until $\approx$25°C:\\
+higher temp $\leadsto$ higher predictions
+\item<2-> After $\approx$25°C, SHAP values decrease slightly %$\leadsto$ decreasing effect
+\item<3-> Interaction with \textbf{season} is visible (via color-encoded observations):
+\begin{itemizeS}
+\item In \textcolor{violet}{summer}, higher temperatures decrease bike rentals
+\item In \textcolor{blue}{winter}, higher temperatures increase bike rentals
+\end{itemizeS}
+\end{itemizeM}
 \btVFill
-\begin{figure}
-    \centering
-     \includegraphics<1-2>[width=0.4\textwidth]{figure_man/global_shap_depend.pdf}
-    \includegraphics<3->[width=0.5\textwidth]{figure_man/global_shap_depend_season.pdf}
-\end{figure}
+\begin{onlyenv}<1-2>
+\centering
+\image[0.4]{figure_man/global_shap_depend.pdf}
+\par
+\end{onlyenv}
+\begin{onlyenv}<3->
+\centering
+\image[0.5]{figure_man/global_shap_depend_season.pdf}
+\par
+\end{onlyenv}
+\end{framev}
 
-\end{frame}
 
-
-
-\begin{frame}{Discussion}
-
+\begin{framev}[align=top]{Discussion}
 \textbf{Advantages}
-
-\begin{itemize}
-    \item Retains local accuracy: SHAP values exactly decompose predictions
-    \item Aggregating local SHAP values yields global model insights\\
-    $\leadsto$ Visual diagnostics: feat. importance; summary and dependence plots
-    \item Efficient for tree-based models via TreeSHAP\\
-    (See \furtherreading{LUNDBERG2018} and for intuitive explanation \furtherreading{SUKUMAR})
-    \item Unifies feature attribution under a consistent additive framework
-    
-    %\item All the advantages of Shapley values
-    %\item Unify the field of interpretable machine learning in the class of additive feature attribution methods
-    %\item Has a fast implementation for tree-based models
-    %\item Various global interpretation methods
-    \item Can be used for images \furtherreading{SHAP}  and text \furtherreading{SHAP}
-\end{itemize}
-
-\medskip
-
+\begin{itemizeM}
+\item Retains local accuracy: SHAP values exactly decompose predictions
+\item Aggregating local SHAP values yields global model insights\\
+$\leadsto$ Visual diagnostics: feat. importance; summary and dependence plots
+\item Efficient for tree-based models via TreeSHAP\\
+(See \furtherreading{LUNDBERG2018} and for intuitive explanation \furtherreading{SUKUMAR})
+\item Unifies feature attribution under a consistent additive framework
+% \item All the advantages of Shapley values
+% \item Unify the field of interpretable machine learning in the class of additive feature attribution methods
+% \item Has a fast implementation for tree-based models
+% \item Various global interpretation methods
+\item Can be used for images \furtherreading{SHAP} and text \furtherreading{SHAP}
+\end{itemizeM}
+\spacer[0.25]
 \textbf{Disadvantages}
-
-\begin{itemize}
-  \item KernelSHAP is inefficient for large datasets or complex models
-   \item Ignores feature dependencies in marginal sampling (interventional SHAP)
-   \item Conditional sampling (observational SHAP) is difficult in practice (would require estimating a conditional distribution)
- 
-   %\item Disadvantages of Shapley values also apply to SHAP
-    % \begin{itemize}
-    %     \item Shapley values can be misinterpreted and access to data is needed to compute them for new data (not if TreeSHAP is used)
-    % \end{itemize}
-    %\item KernelSHAP is slow (TreeSHAP can be used as a faster alternative for tree-based models  -- and for an intuitive explanation  \furtherreading{SUKUMAR})
-    %\item KernelSHAP ignores feature dependence 
-    %\item TreeSHAP can produce unintuitive feature attributions
-    %\item It is possible to create intentionally misleading interpretations with SHAP, which can hide biases \furtherreading{SLACK2020}
-\end{itemize}
-
-
-\end{frame}
+\begin{itemizeM}
+\item KernelSHAP is inefficient for large datasets or complex models
+\item Ignores feature dependencies in marginal sampling (interventional SHAP)
+\item Conditional sampling (observational SHAP) is difficult in practice (would require estimating a conditional distribution)
+% \item Disadvantages of Shapley values also apply to SHAP
+% \begin{itemize}
+%     \item Shapley values can be misinterpreted and access to data is needed to compute them for new data (not if TreeSHAP is used)
+% \end{itemize}
+% \item KernelSHAP is slow (TreeSHAP can be used as a faster alternative for tree-based models  -- and for an intuitive explanation  \furtherreading{SUKUMAR})
+% \item KernelSHAP ignores feature dependence 
+% \item TreeSHAP can produce unintuitive feature attributions
+% \item It is possible to create intentionally misleading interpretations with SHAP, which can hide biases \furtherreading{SLACK2020}
+\end{itemizeM}
+\end{framev}
 
 \endlecture
 \end{document}
