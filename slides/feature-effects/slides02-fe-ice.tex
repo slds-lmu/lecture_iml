@@ -2,93 +2,72 @@
 
 \input{../../style/preamble}
 % Defines macros and environments
- \input{../../latex-math/basic-math}
+\input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-interpretable}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
-\date{}
 
 \begin{document}
 
 \titlemeta{
 Feature Effects
 }{
-Individual Conditional Expectation (ICE) Plot % we have an isolated word here, not sure how to fix 
+Individual Conditional Expectation (ICE) Plot % we have an isolated word here, not sure how to fix
 }{
 figure/feature-effect
 }{
-
 %\item Intro to feature effects
 \item ICE curves as local effect method
 \item How to sample grid points for ICE curves
 %\item Understand how to interpret ICE curves and PD plots
-
 }
 
 
-
-\begin{frame}{Motivation}
+\begin{framev}[align=top]{Motivation}
 %ICE curves show how different feature values of an observation affect its model prediction \newline $\Rightarrow$ \textbf{local interpretation method}
 %From a local perspective, one might be interested in how changing feature values of an observation affect model prediction
-
-\textbf{Question:} How does varying a single feature of an observation affect its predicted outcome?
-
-\smallskip
-
-\textbf{Idea:} For a given observation, change the value of the feature of interest, and visualize how prediction changes
-
-\smallskip
-
+\textbf{Question:} How does varying a single feature of an observation affect its predicted outcome?\\
+\spacer[0.25]
+\textbf{Idea:} For a given observation, change the value of the feature of interest, and visualize how prediction changes\\
+\spacer[0.25]
 \textbf{Example:} On model prediction surface (left), select observation and visualize changes in prediction for different values of $x_2$, while keeping $x_1$ fixed \\ $\Rightarrow$ \textbf{local interpretation}
-
-\bigskip
-\centering
-\includegraphics[width=\textwidth]{figure/ice_motivation}
-
+\\
+\spacer[0.25]
+\image{figure/ice_motivation}
 %$\Rightarrow$ Repeat for all observations and average the curves for global feature effect ($\leadsto$ PD plots)
-\end{frame}
+\end{framev}
 
 
-
-
-\begin{frame}[c]{Individual Conditional Expectation (ICE) \furtherreading{GOLDSTEIN2013}}
-
+\begin{framev}[align=top]{Individual Conditional Expectation (ICE) \furtherreading{GOLDSTEIN2013}}
 %Consider an index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
 %\lz
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.16\textwidth} % 0.2 4.26cm
+\splitVTT[0.16]{
+\spacer[0]
 \includegraphics[page=1, trim=0cm 0.35cm 4.53cm 0.35cm, clip, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
-\end{column}
-\begin{column}{0.84\textwidth}
-
+}{ % 0.2 4.26cm
 %%%
-
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values from the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing only feature values addressed by the feature's index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 %Assume each observation $\xi$ can be partitioned into $\xi_S$ and $\xi_C$ containing values from features addressed by the index set $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$, respectively.
 Partition each observation $\xv$ into $\xv_S$ (feature(s) of interest) and $\xv_{-S}$ (remaining features)
-\begin{itemize}
-    \item[$\leadsto$] In practice, $\xv_S$ consists of one or two features \\ (i.e., $|S| \leq 2$ and ${-S} = S^\complement$).
+\begin{itemizeM}
+\item[$\leadsto$] In practice, $\xv_S$ consists of one or two features \\ (i.e., $|S| \leq 2$ and ${-S} = S^\complement$).
     %, containing only feature values indexed by $S \subseteq \{1, \dots, p\}$ and its complement $C = S^\complement$.
-\end{itemize}
-
-\medskip
-
-Formal definition of ICE curves: 
-\begin{itemize}
-    \item Define grid points $\xv_S^* = \xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$ to vary $\xv_S$
-    \item Plot point pairs $ \Bigl\{\left(\xv_S^{*^{(k)}}, \fhice{S}^{(i)}(\xv_S^{*^{(k)}}) \right) \Bigr\}_{k=1}^g$
-    \\where $\fhice{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$
-    \item For each $k$ connect point pairs to obtain \textbf{ICE curve}
-\end{itemize}
-
-\medskip
-
-\begin{itemize}
-    \item[$\leadsto$] ICE curves visualize how prediction of $i$-th observation changes after varying its feature values indexed by $S$ using grid points $\xv_S^*$ while keeping all values in $-S$ fixed
+\end{itemizeM}
+\spacer[0.25]
+Formal definition of ICE curves:
+\begin{itemizeM}
+\item Define grid points $\xv_S^* = \xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$ to vary $\xv_S$
+\item Plot point pairs $ \Bigl\{\left(\xv_S^{*^{(k)}}, \fhice{S}^{(i)}(\xv_S^{*^{(k)}}) \right) \Bigr\}_{k=1}^g$
+\\where $\fhice{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$
+\item For each $k$ connect point pairs to obtain \textbf{ICE curve}
+\end{itemizeM}
+\spacer[0.25]
+\begin{itemizeM}
+\item[$\leadsto$] ICE curves visualize how prediction of $i$-th observation changes after varying its feature values indexed by $S$ using grid points $\xv_S^*$ while keeping all values in $-S$ fixed
 %by replacing the feature values $\xv_S^{(i)}$ with other values $\xv_S$ while keeping all other features in $\xi_C$ fixed:
 %by varying the feature values in $\xv_S$ while keeping all other features in $\xi_C$ fixed.
 
@@ -96,14 +75,9 @@ Formal definition of ICE curves:
 %     \item[$\leadsto$] Plot \quad $\fh_{S}^{(i)}(\xv_S^*) \; \text{ vs. } \; \xv_S^*$ \\
 %     where $\fh_{S}^{(i)}(\xv_S^*) = \fh(\xv_S^*, \xi_{-S})$ is prediction of $i$-th observation in which original feature value $\xi_S$ was replaced by $\xv_S^*$.
 % \end{itemize}
-\end{itemize}
-
-
+\end{itemizeM}
 %Visualize for \textbf{I}ndividual observations and \textbf{C}onditional on all other features how \textbf{E}xpected prediction changes
-
-\end{column}
-\end{columns}
-
+}
 % \begin{columns}[T, totalwidth=\textwidth]
 % \begin{column}{0.6\textwidth}
 
@@ -119,7 +93,7 @@ Formal definition of ICE curves:
 % \end{column}
 % \end{columns}
 %\footnote[frame]{Goldstein, A., Kapelner, A., Bleich, J., and Pitkin, E. (2013). Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation, 1-22. https://doi.org/10.1080/10618600.2014.907095}
-\end{frame}
+\end{framev}
 
 % \begin{frame}{Individual Conditional Expectation (ICE)}
 %
@@ -154,54 +128,42 @@ Formal definition of ICE curves:
 % aa
 % \end{frame}
 
-\begin{frame}{ICE Curves - Illustration}
-
-\begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.4\textwidth}
+\begin{framev}[align=top]{ICE Curves - Illustration}
+\splitVCC[0.4]{
 \includegraphics[page=2, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
-\end{column}
-\begin{column}{0.55\textwidth}
-
-\end{column}
-\end{columns}
-\vspace*{\topsep}
-
+\spacer[0]
+}{
+}
+\spacer[0.25]
 \textbf{1. Step - Grid points:}
-
 %For the $i$-th observation, we
-\begin{itemize}
-    \item Sample grid values $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$ along possible values of feature $S$ ($|S| = 1$)
-\item For $\xv^{(i)} = (\xv_S, \xv_{-S})$, replace  $\xv_S$ with those grid values
-\end{itemize}
+\begin{itemizeM}
+\item Sample grid values $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$ along possible values of feature $S$ ($|S| = 1$)
+\item For $\xv^{(i)} = (\xv_S, \xv_{-S})$, replace $\xv_S$ with those grid values
+\end{itemizeM}
 %h observation with these sampled grid values.
 %$\Rightarrow$ New artificial data points for $i$-th obs.
 $\Rightarrow$ Creates new artificial points for $i$-th obs. (here: $\xv_S^* = x_1^* \in \{1, 2, 3\}$ scalar)
+\end{framev}
 
-\end{frame}
 
-\begin{frame}{ICE Curves - Illustration}
-
-\begin{columns}[c, totalwidth=\textwidth]
-\begin{column}{0.4\textwidth}
+\begin{framev}[align=top]{ICE Curves - Illustration}
+\splitVCC[0.4]{
 \includegraphics<1>[page=3, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
 \includegraphics<2>[page=4, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
 \includegraphics<3>[page=5, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
-\end{column}
-\begin{column}{0.55\textwidth}
+\spacer[0]
+}{
 \includegraphics<1>[page=1, width=0.85\textwidth]{figure/ICE}
 \includegraphics<2>[page=2, width=0.85\textwidth]{figure/ICE}
 \includegraphics<3>[page=3, width=0.85\textwidth]{figure/ICE}
-\end{column}
-\end{columns}
-\vspace*{\topsep}
-
+\spacer[0]
+}
+\spacer[0.25]
 \textbf{2. Step - Predict and visualize:}
-
 For each artificially created data point of $i$-th observation, plot prediction $\fhice{S}^{(i)}(\xv_S^*)$ vs. grid values $\xv_S^*$:
-
 $$\fhice{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2, 3\}$$
-
-\end{frame}
+\end{framev}
 
 % \begin{frame}{Individual Conditional Expectation (ICE)}
 
@@ -264,24 +226,22 @@ $$\fhice{1}^{(i)}(x_1^*) = \fh(x_1^*, \xi_{2, 3}) \text{ vs. } x_1^* \in \{1, 2,
 % % ICE curves involve plotting the pairs $ \{(\xv_S^{*^{(k)}}, \fh_{S}^{(i)}(\xv_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$.
 % \end{frame}
 
-\begin{frame}{ICE Curves - Illustration}
-
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.4\textwidth}
+\begin{framev}[align=top]{ICE Curves - Illustration}
+\splitVTT[0.4]{
+\spacer[0]
 \includegraphics<1>[page=6, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
 \includegraphics<2>[page=7, trim=0cm 0.35cm 0.85cm 0.35cm, width=0.9\textwidth]{../../figure_man/ice_plot_demo}
-\end{column}
-\begin{column}{0.55\textwidth}
+\spacer[0]
+}{
+\spacer[0]
 \includegraphics<1>[page=4, width=0.85\textwidth]{figure/ICE}
 \includegraphics<2>[page=5, width=0.85\textwidth]{figure/ICE}
-\end{column}
-\end{columns}
-\vspace*{\topsep}
-
+\spacer[0]
+}
+\spacer[0.25]
 \textbf{3. Step - Repeat for other observations:}
-
-ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid values associated to the $i$-th observation.
-\end{frame}
+ICE curve for \only<1>{$i=2$}\only<2>{$i=3$} connects all predictions at grid values associated to the $i$-th observation.
+\end{framev}
 
 % \begin{frame}{ICE Curves - Illustration}
 
@@ -307,29 +267,27 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
 % % ICE curves involve plotting the pairs $ \{(\xv_S^{*^{(k)}}, \fh_{S}^{(i)}(\xv_S^*{^{(k)}})) \}_{k=1}^g $ for grid points $\xv_S^{*^{(1)}}, \dots, \xv_S^{*^{(g)}}$.
 % \end{frame}
 
-\begin{frame}{ICE Curves - Interpretation}
+\begin{framev}[align=top]{ICE Curves - Interpretation}
 \textbf{Example:} Prediction surface of a model (left), select observation and visualize changes in prediction for different values of $x_2$ while keeping $x_1$ fixed \\ $\Rightarrow$ \textbf{local interpretation}
-
-\bigskip
-\centering
-\includegraphics[width=\textwidth]{figure/ice_motivation}
-
+\\
+\spacer[0.25]
+\image{figure/ice_motivation}
 %% Wie nutzt man ICE Kurven zur lokalen Interpretation?
-\end{frame}
+\end{framev}
 
 
-\begin{frame}{Comments on Grid values}
-\begin{itemize}
+\begin{framev}[align=top]{Comments on Grid values}
+\begin{itemizeM}
 %\item ICE curves show how different feature values of an observation affect its prediction \newline $\Rightarrow$ \textbf{local interpretation method}
 \item Plotting ICE curves involves generating grid values $\xv_S^*$; shown on x-axis
 \item \textbf{Three common strategies} for grid definition:
-\begin{itemize}
+\begin{itemizeS}
 \item Equidistant grid values within feature range
 \item Random samples from observed feature values
 \item Quantiles of observed feature values
-\end{itemize}
+\end{itemizeS}
 \item \textbf{Marginal realism:} Random and quantile grids better reflect the marginal distribution of $x_S$
-        $\Rightarrow$ reduce unrealistic values along $x_S$
+$\Rightarrow$ reduce unrealistic values along $x_S$
 %Except equidistant grid, the other two options preserve (approximately) the marginal distribution of feature of interest
 %$\Rightarrow$ Avoids unrealistic feature values for distributions with outliers %or dependencies
 \item<2> \textbf{However:} For \textbf{correlated features}, extrapolation remains:
@@ -340,47 +298,38 @@ ICE curve for\only<1>{ $i=2$ }\only<2>{ $i=3$ }connects all predictions at grid 
 % \item sub-sampled grid values:
 % \item quantile grid values:
 % \end{itemize}
-\end{itemize}
-
-\vspace{0.3cm}
+\end{itemizeM}
+\spacer[0.25]
 \centering
 \includegraphics<1>[width=0.85\textwidth, trim=0cm 0cm 0cm 0cm, clip]{figure/sampling2}
 \includegraphics<2>[width=0.85\textwidth, trim=0cm 0cm 0cm 0cm, clip]{figure/sampling}
-
-
-\end{frame}
+\end{framev}
 
 % bike sharing example + defaults
-\begin{frame}{Practical considerations}
-
+\begin{framev}[align=top]{Practical considerations}
 % \begin{itemize} % removes in order to fix hanging words
   % \item 
-  \textbf{Grid resolution} (instances $\times$ grid over feature of interest)
-        \begin{itemize}
-            \item Too coarse $\Rightarrow$ may miss sharp nonlinearities or discontinuities
+\textbf{Grid resolution} (instances $\times$ grid over feature of interest)
+\begin{itemizeM}
+\item Too coarse $\Rightarrow$ may miss sharp nonlinearities or discontinuities
             %may miss sharp changes%
-            \item Too fine $\Rightarrow$ high runtime (without gaining much)
+\item Too fine $\Rightarrow$ high runtime (without gaining much)
             %time intensive%
-            \item Fix: cap at $\approx 50 - 100$ grid points; vectorize predictions by feeding the model a single data frame containing all grid-modified instances
-        \end{itemize}
+\item Fix: cap at $\approx 50 - 100$ grid points; vectorize predictions by feeding the model a single data frame containing all grid-modified instances
+\end{itemizeM}
   % \item 
-  \textbf{ICE curves} (number of instances/curves visualized)
-        \begin{itemize}
-            \item Too few $\Rightarrow$ hides instance variability, misses subgroup differences
+\textbf{ICE curves} (number of instances/curves visualized)
+\begin{itemizeM}
+\item Too few $\Rightarrow$ hides instance variability, misses subgroup differences
             %heterogeneity is hidden%
-            \item Too many $\Rightarrow$ visual overload (many overlapping curves), time intensive%
-            \item Fix: Stratified or cluster-based subsample (e.g., 100); facet by subgroup
-        \end{itemize}
+\item Too many $\Rightarrow$ visual overload (many overlapping curves), time intensive%
+\item Fix: Stratified or cluster-based subsample (e.g., 100); facet by subgroup
+\end{itemizeM}
 % \end{itemize}
-
-\begin{columns}[T, onlytextwidth]
-\begin{column}{0.5\textwidth}
-\small
-
-Default values for popular libraries: 
-
-\medskip
-
+\splitVTT[0.5]{
+\begin{small}
+Default values for popular libraries:\\
+\spacer[0.25]
 %\centering
 \begin{tabular}{lcc}
 \textbf{Library} & \textbf{Grid} & \textbf{ICE curves}\\\hline
@@ -389,21 +338,20 @@ PDPbox  (Py) & 10  & num. rows\\
 iml (R)      & 20  & num. rows\\
 pdp (R)      & 51  & num. rows\\
 \end{tabular}
-
-\end{column}
-
+\end{small}
+\spacer[0]
+}{
 % -------- RIGHT COLUMN: FIGURE --------
-\begin{column}{0.5\textwidth}
-\centering
-\includegraphics[width=\textwidth]{figure/pdp_bike.pdf}
-
-\end{column}
-\end{columns}
-
-\centerline{\small
-ICE curves (\textbf{black lines}) and their point-wise average across the grid (\textbf{yellow line})%, known as "partial dependence plot"
+\spacer[0]
+\image{figure/pdp_bike.pdf}
+\spacer[0]
 }
-\end{frame}
+{\centering
+\begin{small}
+ICE curves (\textbf{black lines}) and their point-wise average across the grid (\textbf{yellow line})%, known as "partial dependence plot"
+\end{small}
+\par}
+\end{framev}
 
 \endlecture
 \end{document}
