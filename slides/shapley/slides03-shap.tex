@@ -24,7 +24,6 @@
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
-\date{}
 
 \begin{document}
 
@@ -36,11 +35,10 @@ SHAP (SHapley Additive exPlanation)
 }{
 figure_man/exSHAP.png
 }{
-
-  \item Recall order- and set-based definitions of Shapley values in ML
-  \item Interpret predictions via additive Shapley decomposition
-  \item Understand SHAP as surrogate-based model
-  \item Understand SHAP properties
+\item Recall order- and set-based definitions of Shapley values in ML
+\item Interpret predictions via additive Shapley decomposition
+\item Understand SHAP as surrogate-based model
+\item Understand SHAP properties
 }
 
 % \newcommand{\learninggoals}{
@@ -92,38 +90,33 @@ figure_man/exSHAP.png
 % \end{frame}
 
 
-\begin{frame}{Shapley Values in ML - A Short Recap}
-
+\begin{framev}[align=top]{Shapley Values in ML - A Short Recap}
 % \textbf{Question:} How much does $x_j$ contribute to prediction of a specific obs. $\xv$?
 % 
 % \textbf{Idea:} Use Shapley values to compute fair attributions.
 % 
 % \pause
 \textbf{Shapley values (order definition):} Average over marginal contributions across all permutations of feature indices $\tau \in \Pi$:
-
-\[
+$$
 \phi_j(\xv) = \frac{1}{p!} \sum_{\tau \in \Pi} 
 \underbrace{\fh_{\Stauj}(\xv_{\Stauj}) - \fh_{\Stau}(\xv_{\Stau})}_{\text{marginal contribution of feature $j$}}
-\]
-
+$$
 %\pause
 %\textbf{Procedure:}
-\begin{itemize}
-  \item For each permutation $\tau$, determine coalition $\Stau$: features before $j$ in $\tau$
-  \item In \(\fh_S\), features not in \(S\) are marginalized (e.g., randomly imputed)
-  %$\leadsto$ In practice, features not in \(S\) are 
-  \item Compute marginal contribution of adding $j$ to $\Stau$ via the difference above
-  \item Average over all $p!$ permutations (in practice, over $M << p!$)
-\end{itemize}
-
-\pause\medskip
-
+\begin{itemizeM}
+\item For each permutation $\tau$, determine coalition $\Stau$: features before $j$ in $\tau$
+\item In $\fh_S$, features not in $S$ are marginalized (e.g., randomly imputed)
+%$\leadsto$ In practice, features not in \(S\) are 
+\item Compute marginal contribution of adding $j$ to $\Stau$ via the difference above
+\item Average over all $p!$ permutations (in practice, over $M \ll p!$)
+\end{itemizeM}
+\pause
+\spacer[0.25]
 \textbf{Alternative (set definition):} Average marginal contribution over all subsets, weighted by their relative number of appearances in permutations:
-
-\[
+$$
 \phi_j(\xv) = 
 \sum_{S \subseteq \{1,\dots,p\} \setminus \{j\}} \frac{|S|!(p - |S| - 1)!}{p!} \left[\fh_{S \cup \{j\}}(\xv_{S \cup \{j\}}) - \fh_S(\xv_S)\right].
-\]
+$$
 % 
 % \pause
 % \textbf{Notes:}
@@ -144,7 +137,7 @@ figure_man/exSHAP.png
 % \end{tabular}
 % }
 
-\end{frame}
+\end{framev}
 
 % 
 % \begin{frame}{Shapley Values in ML - A short Recap}
@@ -202,36 +195,32 @@ figure_man/exSHAP.png
 
 
 
-\begin{frame}{Shapley Values in ML - Example}
-  
-  \textbf{Example (Bike sharing data):}
-
-  \begin{itemize}
-  \item Train random forest using humidity (hum), temperature (temp), windspeed (ws)
-      \item Consider observation of interest $\xv$ with prediction $\fh(\xv) = \color{orange}{2573}$
-      \item Mean prediction $\E_{\xv}[\fh(\xv)] = \color{blue}{4515}$
-      \item Compute exact Shapley value for $\xv$ for feature hum:
-  \end{itemize}
-  
-      \begin{center}
-      \begin{tabular}{c|c|c|c|c}
-   $S$    &  $\Scupj$  & $\fh_S$ &  $\fh_{\Scupj}$  & weight\\\hline
-     $\varnothing$&    hum  & \color{blue}{4515} & 4635 & $2/6$\\
-       temp &  temp, hum & 3087 & 3060& $1/6$\\
-       ws &  ws, hum & 4359  & 4450 & $1/6$\\
-       temp, ws & temp, ws, hum & 2623 & \color{orange}{2573} & $2/6$
-      \end{tabular}
-      \end{center}
-$$\Rightarrow
-\phi_{\text{hum}}(\xv) = \tfrac{2}{6} (4635-4515) + \tfrac{1}{6} (3060-3087) + \tfrac{1}{6} (4450-4359) + \tfrac{2}{6} (2573-2623) = 34
-$$
-$\Rightarrow$ Analogously $\phi_{\text{temp}}(\xv) = -1654$, $\phi_{\text{ws}}(\xv) = -322$
+\begin{framev}[align=top]{Shapley Values in ML - Example}
+\textbf{Example (Bike sharing data):}
+\begin{itemizeM}
+\item Train random forest using humidity (hum), temperature (temp), windspeed (ws)
+\item Consider observation of interest $\xv$ with prediction $\fh(\xv) = \color{orange}{2573}$
+\item Mean prediction $\E_{\xv}[\fh(\xv)] = \color{blue}{4515}$
+\item Compute exact Shapley value for $\xv$ for feature hum:
+\end{itemizeM}
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+$S$ & $\Scupj$ & $\fh_S$ & $\fh_{\Scupj}$ & weight\\\hline
+$\varnothing$& hum & \color{blue}{4515} & 4635 & $2/6$\\
+temp & temp, hum & 3087 & 3060& $1/6$\\
+ws & ws, hum & 4359 & 4450 & $1/6$\\
+temp, ws & temp, ws, hum & 2623 & \color{orange}{2573} & $2/6$
+\end{tabular}
+\end{center}
+\begin{itemizeM}
+\item[$\Rightarrow$] {\small $\phi_{\text{hum}}(\xv) = \tfrac{2}{6}(4635-4515) + \tfrac{1}{6}(3060-3087) + \tfrac{1}{6}(4450-4359) + \tfrac{2}{6}(2573-2623) = 34$}
+\item[$\Rightarrow$] {\small Analogously $\phi_{\text{temp}}(\xv) = -1654$, $\phi_{\text{ws}}(\xv) = -322$}
+\end{itemizeM}
 % \begin{align*}
 %  v(P) &= \fh(\xv) - \E(\fh) = \phi_{\text{hum}} + \phi_{\text{temp}} + \phi_{\text{ws}} \\
 %  &= {\color{orange} 2573} - {\color{blue} 4515} = 34 - 1654 - 322 = -1942
 %  \end{align*}
-
-\end{frame}
+\end{framev}
 
 % 
 % \begin{frame}{From Shapley to SHAP}
@@ -265,66 +254,48 @@ $\Rightarrow$ Analogously $\phi_{\text{temp}}(\xv) = -1654$, $\phi_{\text{ws}}(\
 % \end{columns}
 % \end{frame}
 
-\begin{frame}{From Shapley Values to SHAP}
-
-
-\begin{columns}[T, onlytextwidth]
-\begin{column}{0.51\textwidth}
-
+\begin{framev}[align=top]{From Shapley Values to SHAP}
+\splitVTT[0.51]{
 %\textbf{Example (cont.):} Shapley values for other features $\phi_{\text{temp}} = -1654$, $\phi_{\text{ws}} = -322$
-
 %\medskip
-
 % \textbf{Interpretation:} \texttt{hum} raises prediction by 34, \texttt{temp} and \texttt{ws} lower it by 1654 and 322, explaining the deviation from the mean
-
 % \medskip
 \textbf{Shapley value interpretation (for $\xv$):}
-\begin{itemize}
-  \item \texttt{hum}\(\;(+34)\) pushes pred. \emph{above} baseline (= average prediction).  
-  \item \texttt{temp} \(\;(-1654)\) and \texttt{ws} \(\;(-322)\) pull prediction \emph{below} baseline.
-  \item Together, they explain full deviation from average prediction.
-\end{itemize}
-
+\begin{itemizeM}
+\item \texttt{hum} $(+34)$ pushes pred. \emph{above} baseline (= average prediction).
+\item \texttt{temp} $(-1654)$ and \texttt{ws} $(-322)$ pull prediction \emph{below} baseline.
+\item Together, they explain full deviation from average prediction.
+\end{itemizeM}
 %\medskip
-
-
 % \textbf{Recall:} Shapley values explain how features shift prediction from baseline $\E(\fh)$:
 % \footnotesize
 % \begin{align*}
 %  \fh(\xv) - \E_{\xv}[\fh(\xv)] &= \phi_{\text{hum}}(\xv) + \phi_{\text{temp}}(\xv)  + \phi_{\text{ws}}(\xv) \\
 %  {\color{orange} 2573} - {\color{blue} 4515} &= 34 - 1654 - 322 = -1942
 % \end{align*}
-
-\end{column}
-\begin{column}{0.49\textwidth}
+}{
+\spacer[0]
 %\vspace{-1cm}
 \includegraphics[trim={10 17 5 5},clip, width=\linewidth]{figure/shapley2shap.pdf}
-\end{column}
-\end{columns}
+\spacer[0]
+}
 \pause
 \textbf{Shapley-based additive decomposition} of prediction for $\xv$ gives insights on how features shift prediction from baseline $\E(\fh)$:
-
-\medskip
-
-\centerline{$
+$$
 \underbrace{{\color{orange} \fh(\xv)}}_{\text{actual prediction}}
 ={\color{blue} \underbrace{\phi_0}_{\E_{\mathbf X}[\fh(\mathbf X)]}}
 +\sum_{j\in\{\text{hum},\text{temp},\text{ws}\}}\phi_j(\xv)
-$}
+$$
 %\footnotesize
-\medskip
-\centerline{$
+$$
 \phantom{=} \; {\color{orange} 2573}
 = {\color{blue} 4515}
 \;+\;
 \bigl(34 -1654 - 322\bigr)
 \;=\;4515-1942
-$}
-\medskip
-
-\(\leadsto\) Like a LM evaluated at \(\xv\): global intercept \(\phi_0\) plus per-feature contribs \(\phi_j(\xv)\).
-
-\medskip
+$$
+$\leadsto$ Like a LM evaluated at $\xv$: global intercept $\phi_0$ plus per-feature contribs $\phi_j(\xv)$.\\
+\spacer[0.25]
 %\vspace{0.4em}
 % \textbf{SHAP:} Express prediction of $\xv$ as additive decomposition of Shapley values
 % \[
@@ -343,10 +314,9 @@ $}
 
 \textbf{SHAP Motivation:}
 Can we efficiently estimate this Shapley-based additive decomp. of $\fh(\xv)$ via a surrogate model (while preserving Shapley axioms)?
-
 %Additive explanation model: intercept $\phi_0$ plus per-feature effects $\phi_j$ (analogous to a linear model)
 %Reminds of linear models: $\phi_j$ as effect of feature $j$ and intercept $\phi_0$ 
-\end{frame}
+\end{framev}
 
 
 
@@ -481,36 +451,31 @@ Can we efficiently estimate this Shapley-based additive decomp. of $\fh(\xv)$ vi
 % 
 % \end{frame}
 
-\begin{frame}{SHAP Framework \furtherreading{LUNDBERG2017}}
-
+\begin{framev}[align=top]{SHAP Framework \furtherreading{LUNDBERG2017}}
 \textbf{SHAP} expresses the prediction of $\xv$ as a sum of contribs from each feature:
-
-\[
+$$
 g(\zv') = \phi_0 + \textstyle\sum_{j=1}^p \phi_j z'_j
-\]
-
-\begin{itemize}
-  \item $\zv' \in \{0,1\}^p$: simplified binary input referring to a coalition (coal. vector)
-  \item \(z'_j = 1\): feature $j$ is "present" $\Rightarrow$ use $x_j$ in model evaluation
-  \item \(z'_j = 0\): feature $j$ is "absent"\\$\Rightarrow$ influence of $x_j$ is removed via marginalization over a reference distrib.% (averaging predictions over its possible values, given the present features)%\\
-  %$\leadsto$ \textit{Note: In practice (e.g., KernelSHAP), marginalization is approximated via random imputations from background data.}
-\end{itemize}
-
-\pause\medskip
-
-\textbf{SHAP as a theoretical framework:} Fit a surrogate model \( g(\zv') \) satisfying Shapley axioms and recovering $\fh(\xv)$ when all features are "present":
+$$
+\begin{itemizeM}
+\item $\zv' \in \{0,1\}^p$: simplified binary input referring to a coalition (coal. vector)
+\item $z'_j = 1$: feature $j$ is "present" $\Rightarrow$ use $x_j$ in model evaluation
+\item $z'_j = 0$: feature $j$ is "absent"\\
+$\Rightarrow$ influence of $x_j$ is removed via marginalization over a reference distrib.% (averaging predictions over its possible values, given the present features)%\\
+%$\leadsto$ \textit{Note: In practice (e.g., KernelSHAP), marginalization is approximated via random imputations from background data.}
+\end{itemizeM}
+\pause
+\textbf{SHAP as a theoretical framework:} Fit a surrogate model $g(\zv')$ satisfying Shapley axioms and recovering $\fh(\xv)$ when all features are "present":
 %Construct a surrogate model $g(\zv')$ such that it satisfies the Shapley value axioms and recovers $\fh(\xv)$ when all features are "present":
-\[
+$$
 \fh(\xv) = g(\mathbf{1}) = \phi_0 + \textstyle\sum_{j=1}^p \phi_j
-\]
-\textbf{Evaluation of $g(\zv')$:} Let \( S = \{ j : z'_j = 1 \} \) be the active coalition. Then:
-\begin{itemize}
-    \item $g(\zv') \approx \mathbb{E}[ \fh(\mathbf{X}) \mid \mathbf{X}_S = \mathbf{x}_S]\;\text{(conditional expectation)}$
-    \item $g(\zv') \approx \mathbb{E}_{\mathbf{X}_{-S}} [ \fh(\mathbf{x}_S, \mathbf{X}_{-S}) ] \;\;\text{(marginal expectation, i.e., PD function)}$
-    \item\textit{Note: Practical implementations (e.g., KernelSHAP) use the marginal expectation, approximated via random imputations from background data.}
-\end{itemize}
-
-\end{frame}
+$$
+\textbf{Evaluation of $g(\zv')$:} Let $S = \{ j : z'_j = 1 \}$ be the active coalition. Then:
+\begin{itemizeM}
+\item $g(\zv') \approx \mathbb{E}[ \fh(\mathbf{X}) \mid \mathbf{X}_S = \mathbf{x}_S]\;\text{(conditional expectation)}$
+\item $g(\zv') \approx \mathbb{E}_{\mathbf{X}_{-S}} [ \fh(\mathbf{x}_S, \mathbf{X}_{-S}) ] \;\;\text{(marginal expectation, i.e., PD function)}$
+\item \textit{Note: Practical implementations (e.g., KernelSHAP) use the marginal expectation, approximated via random imputations from background data.}
+\end{itemizeM}
+\end{framev}
 
 
 % \begin{frame}{SHAP Framework \furtherreading{LUNDBERG2017}}
@@ -567,14 +532,10 @@ g(\zv') = \phi_0 + \textstyle\sum_{j=1}^p \phi_j z'_j
 
 %  \end{frame}
 
-\begin{frame}{SHAP Framework \furtherreading{LUNDBERG2017}}
-
+\begin{framev}[align=top]{SHAP Framework \furtherreading{LUNDBERG2017}}
 %\textbf{Goal:} Explain a prediction \(\fh(\xv)\) by decomposing it into additive feature contributions using a local surrogate model derived from Shapley values.
-
-\medskip
-
-\textbf{SHAP}  
-defines an additive surrogate \(g(\zv')\) over a binary input \(\zv' \in \{0,1\}^p\):
+\textbf{SHAP}
+defines an additive surrogate $g(\zv')$ over a binary input $\zv' \in \{0,1\}^p$:
 % \only<1>{
 % \[
 % g(\zv') = \phi_0 + \sum_{j=1}^p \phi_j z'_j
@@ -609,45 +570,43 @@ defines an additive surrogate \(g(\zv')\) over a binary input \(\zv' \in \{0,1\}
 
 \only<1->{
 \begin{exampleblock}{}
-\[
+$$
 g\left(\tikzmark{zp} \zv'^{(k)}\right) =
 \tikzmark{ph0} \phi_0 + \sum_{j=1}^p \tikzmark{phj} \phi_j z_j'^{(k)}
-\]
+$$
 \begin{tikzpicture}[
-  remember picture,
-  overlay,
-  expl/.style={draw=blue,fill=white,rounded corners,text width=3.5cm},
-  arrow/.style={blue,ultra thick,->,>=latex}
+remember picture,
+overlay,
+expl/.style={draw=blue,fill=white,rounded corners,text width=3.5cm},
+arrow/.style={blue,ultra thick,->,>=latex}
 ]
 \node<1>[expl] (zex) at (2,1.5cm)
-  {\(\zv'^{(k)}\): \textbf{coalition vector} \\ subset of features};
+{$\zv'^{(k)}$: \textbf{coalition vector} \\ subset of features};
 \node<1>[expl] (ph0ex) at (4,-.5cm)
-  {\(\phi_0\): \textbf{baseline} \(\E[\fh(\Xv)]\)};
+{$\phi_0$: \textbf{baseline} $\E[\fh(\Xv)]$};
 \node<1>[expl] (phjex) at (10,0cm)
-  {\(\phi_j\): \textbf{feature attribution} \\ marginal effect of \(j\) in coalition};
-
+{$\phi_j$: \textbf{feature attribution} \\ marginal effect of $j$ in coalition};
 \draw<1>[arrow] (zex.east) to[out=0,in=120] ([xshift= 1ex, yshift=2.3ex]{pic cs:zp});  
 \draw<1>[arrow] (ph0ex.east) to[out=0,in=270] ([xshift= 1ex, yshift=-0.8ex]{pic cs:ph0});  
 \draw<1>[arrow] (phjex.west) to[out=180,in=270] ([xshift= 1ex, yshift=-1ex]{pic cs:phj});
-
 \node<2>[expl] (zex2) at (2,1cm)
-  {\(g(\zv'^{(k)})\): \textbf{approx. prediction} for coalition};
+{$g(\zv'^{(k)})$: \textbf{approx. prediction} for coalition};
 \draw<2>[arrow] (zex2.east) to[out=0,in=140] ([xshift= 1ex, yshift=2.3ex]{pic cs:zp});  
 \node<2>[expl] (phjsh) at (10,1.5cm)
-  {\(\phi_j\): \textbf{Shapley value}};
+{$\phi_j$: \textbf{Shapley value}};
 \draw<2>[arrow] (phjsh.west) to[out=180,in=50] ([xshift= 1ex, yshift=2ex]{pic cs:phj}); 
 \draw<2>[thick, decoration={brace, mirror, raise=0.5cm}, decorate]
-  (5.7,0.7) -- (8.2,0.7)
-  node[pos=0.5,below=15pt,black]{\textbf{Additive Feature Attribution}};
+(5.7,0.7) -- (8.2,0.7)
+node[pos=0.5,below=15pt,black]{\textbf{Additive Feature Attribution}};
 \end{tikzpicture}
 \end{exampleblock}
 
 \begin{onlyenv}<2>
-\vspace{1cm}
-\textbf{Next:} How do we estimate the Shapley values \(\phi_j\) efficiently?
+\spacer[1]
+\textbf{Next:} How do we estimate the Shapley values $\phi_j$ efficiently?
 \end{onlyenv}
 }
-\end{frame}
+\end{framev}
 
 
 %\begin{frame}{Example}
@@ -680,47 +639,38 @@ g\left(\tikzmark{zp} \zv'^{(k)}\right) =
 %\end{frame}
 
 
-\begin{frame}{Properties}
-
+\begin{framev}[align=top]{Properties}
 \textbf{Local Accuracy}
 $$
 \fh(\xv)=g\left(\mathbf{z}^{\prime}\right)=\phi_{0}+\sum_{j=1}^{p} \phi_{j} z_{j}^{\prime}
 $$
-
 \begin{onlyenv}<1>
-\textbf{Intuition:} If coalition includes all features ($\mathbf{z}^{\prime} = (z^{\prime}_1, \dots, z^{\prime}_p)^\top = (1, \dots, 1)^\top $), the attributions $\phi_j$ and the baseline $\phi_0$ sum up to the original model output $\fh(\xv)$\\\medskip
+\textbf{Intuition:} If coalition includes all features ($\mathbf{z}^{\prime} = (z^{\prime}_1, \dots, z^{\prime}_p)^\top = (1, \dots, 1)^\top$), the attributions $\phi_j$ and the baseline $\phi_0$ sum up to the original model output $\fh(\xv)$.\\
+\spacer[0.25]
 Local accuracy corresponds to \textbf{axiom of efficiency} in Shapley game theory
-
 \end{onlyenv}
-
 \begin{onlyenv}<2->
 \textbf{Missingness}
 $$
 z_{j}^{\prime}=0 \Longrightarrow \phi_{j}=0
 $$
 \end{onlyenv}
-
 \begin{onlyenv}<2>
-\textbf{Intuition:}  A "missing" feature (whose value is imputed) gets zero attribution 
+\textbf{Intuition:} A "missing" feature (whose value is imputed) gets zero attribution
 \end{onlyenv}
-
 \begin{onlyenv}<3->
 \textbf{Consistency} (Let $\mathbf{z}^{\prime (k)}_{-j} \text{ refer to } z_{j}^{\prime (k)}=0$) \\
 \end{onlyenv}
-
 \begin{onlyenv}<3>
 For any two models $\fh$ and $\fh^{\prime}$, if for all inputs $\mathbf{z}^{\prime (k)} \in \{0, 1\}^p$
-
 $$
 \fh_{x}^{\prime}\left(\mathbf{z}^{\prime (k)}\right)-\fh_{x}^{\prime}\left(\mathbf{z}^{\prime (k)}_{-j}\right) \geq \fh_{x}\left(\mathbf{z}^{\prime (k)}\right)-\fh_{x}\left(\mathbf{z}^{\prime (k)} _{-j}\right) \Longrightarrow \phi_{j}\left(\fh^{\prime}, \xv\right) \geq \phi_{j}(\fh, \xv)
 $$
-
-\textbf{Intution:} If a model changes so that the marginal contribution of a feature value increases or stays the same, the Shapley value also increases or stays the same\\\medskip
+\textbf{Intuition:} If a model changes so that the marginal contribution of a feature value increases or stays the same, the Shapley value also increases or stays the same.\\
+\spacer[0.25]
 \textbf{Consistency} implies Shapley’s axioms of \textbf{additivity, dummy, symmetry}.
 \end{onlyenv}
-
-
-\end{frame}
+\end{framev}
 
 \endlecture
 \end{document}
