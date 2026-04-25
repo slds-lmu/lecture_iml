@@ -17,7 +17,6 @@
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lectureml/}{compstat-lmu.github.io/lecture\ml}}
-\date{}
 
 \def\firstrowcolor{}
 \def\secondrowcolor{}
@@ -47,11 +46,11 @@ Explainable Boosting Machines (EBM)
 }{
 figure/ebm.jpg
 }{
-  \item Understand link between GAM and EBM
-  \item Learn univariate EBMs\\
-  $\hat{=}$ GAM + boosting + shallow bagged trees
-  \item Extend to GA2M: GAMs with selected pairwise interactions
-  \item Detect interactions efficiently using FAST algorithm
+\item Understand link between GAM and EBM
+\item Learn univariate EBMs\\
+$\hat{=}$ GAM + boosting + shallow bagged trees
+\item Extend to GA2M: GAMs with selected pairwise interactions
+\item Detect interactions efficiently using FAST algorithm
 }
 
 
@@ -60,12 +59,15 @@ figure/ebm.jpg
 
 % Improved and streamlined version of regression tree splitting slides
 % --- Slide 1: RSS as Impurity Measure ---
-\begin{frame}{Recap: Split Selection Decision Tree}
-  \begin{itemize}
-    \item \textbf{Impurity (Regression):} Variance of target $Y$ in a node:
-    \[ \text{Var}(Y) = \frac{1}{n}\sum_{i=1}^n (y^{(i)} - \bar{y})^2 = \frac{1}{n} \sum_{i=1}^n (y^{(i)})^2 - \bar{y}^2 \]
-    \item \textbf{Sum of squared errors (SSE) =  residual sum of squares (RSS)}: 
-$$%\Rightarrow
+\begin{framev}[align=top]{Recap: Split Selection Decision Tree}
+\begin{itemizeM}
+\item \textbf{Impurity (Regression):} Variance of target $Y$ in a node:
+$$
+\text{Var}(Y) = \frac{1}{n}\sum_{i=1}^n (y^{(i)} - \bar{y})^2 = \frac{1}{n} \sum_{i=1}^n (y^{(i)})^2 - \bar{y}^2
+$$
+\item \textbf{Sum of squared errors (SSE) = residual sum of squares (RSS)}:
+$$
+%\Rightarrow
 %    \begin{aligned}
 %\textstyle
 \text{RSS} 
@@ -79,91 +81,83 @@ $$%\Rightarrow
 %\end{aligned}
 $$
 %\Rightarrow \text{RSS} = SS_n - \frac{S_n^2}{n}$ with $S_n = \sum_{i=1}^n y^{(i)}, \quad SS_n = \sum_{i=1}^n (y^{(i)})^2$
-      \[
-        \text{Hence: } \boxed{\text{RSS}=SS_{n}-\dfrac{S_{n}^{2}}{n}
-        \quad\text{with}\quad
-        S_{n}=\sum_{i=1}^{n}y^{(i)},\;
-        SS_{n}=\sum_{i=1}^{n}(y^{(i)})^{2}}
-      \]
-    \item \textbf{Split criterion:} 
-    \begin{itemize}
-    \item \textbf{Minimize post-split RSS:}
-    $
-    \text{RSS}_{\text{split}} = \text{RSS}_L + \text{RSS}_R
-    $
-    \item \textbf{Maximize reduction in RSS:}
-    $
-    \Delta \text{RSS} = \text{RSS}_{\text{parent}} - (\text{RSS}_L + \text{RSS}_R)
-    $
-  \end{itemize}
-  \end{itemize}
-  % \vspace{0.5em}
-  % \textit{Used in CART for regression (Breiman et al., 1984)}
-\end{frame}
+$$
+\text{Hence: } \boxed{\text{RSS}=SS_{n}-\dfrac{S_{n}^{2}}{n}
+\quad\text{with}\quad
+S_{n}=\sum_{i=1}^{n}y^{(i)},\;
+SS_{n}=\sum_{i=1}^{n}(y^{(i)})^{2}}
+$$
+\item \textbf{Split criterion:}
+\begin{itemizeS}
+\item \textbf{Minimize post-split RSS:} $\text{RSS}_{\text{split}} = \text{RSS}_L + \text{RSS}_R$
+\item \textbf{Maximize reduction in RSS:} $\Delta \text{RSS} = \text{RSS}_{\text{parent}} - (\text{RSS}_L + \text{RSS}_R)$
+\end{itemizeS}
+\end{itemizeM}
+% \vspace{0.5em}
+% \textit{Used in CART for regression (Breiman et al., 1984)}
+\end{framev}
 
 % --- Slide 2: Naive Split Computation ---
-\begin{frame}{Naive Split Selection: Explicit Comput.}
-  % \begin{itemize}
-  %   \item Sort data by feature $X$, examine $n-1$ potential split points
-  %   \item For each split at split point $s_i$:
-  %   \begin{itemize}
-  %     \item Compute group sizes $N_L$, $N_R$
-  %     \item Compute means $\bar{y}_L$, $\bar{y}_R$ and $\text{RSS}_L = \sum (y^{(i)} - \bar{y}_L)^2$
-  %     \item Total impurity: $\text{RSS}_L + \text{RSS}_R$
-  %   \end{itemize}
-  %   \item Select split that minimizes total RSS
-  %   \item \textbf{Computational cost:} $O(n^2)$ per feature (recomputes means/RSS from scratch in L and R node)
-  % \end{itemize}
-\begin{itemize}
-  \item For a given feature \( X_j \), sort the pairs \( (x_j^{(i)}, y^{(i)}) \) by increasing \( x_j^{(i)} \).
-
-  \item For each of the \( n - 1 \) potential split points at \( s_k =  \frac{1}{2}(x_j^{(k)} + x_j^{(k+1)})\):
-  \begin{itemize}
-    \item Define partitions:
-    $\mathcal{I}_L = \{ i : x^{(i)} \leq s_k \}, \quad \mathcal{I}_R = \{ i : x^{(i)} > s_k \}
-    $
-    \item Compute group means and counts after splitting at $s_k$:
-    \[\textstyle 
-    \bar{y}_L = \frac{1}{N_L} \sum_{i \in \mathcal{I}_L} y^{(i)}, \quad
-    \bar{y}_R = \frac{1}{N_R} \sum_{i \in \mathcal{I}_R} y^{(i)}, \text{ with }   N_L = |\mathcal{I}_L|, \quad N_R = |\mathcal{I}_R|
-    \]
-    \item Compute RSS after splitting at $s_k$:
-    \[\textstyle
-    \text{RSS}_\text{split}(s_k) = \text{RSS}_L(s_k) + \text{RSS}_R(s_k) = \sum_{i \in \mathcal{I}_L} (y^{(i)} - \bar{y}_L)^2 + \sum_{i \in \mathcal{I}_R} (y^{(i)} - \bar{y}_R)^2
-    \]
-    % \item Total impurity after split:
-    % \[
-    % \text{RSS}_{\text{split}} = \text{RSS}_L + \text{RSS}_R
-    % \]
-  \end{itemize}
-  \item Select split point \( s_k \) that minimizes \( \text{RSS}_\text{split}(s_k) \)
-  \item \textbf{Compute cost:} \( O(n^2) \) per feat. (recompute mean \& RSS at each split)
-\end{itemize}
-  % --- TikZ figure: explicit computation for naive split selection ---
-  \centering
+\begin{framev}[align=top]{Naive Split Selection: Explicit Comput.}
+% \begin{itemize}
+%   \item Sort data by feature $X$, examine $n-1$ potential split points
+%   \item For each split at split point $s_i$:
+%   \begin{itemize}
+%     \item Compute group sizes $N_L$, $N_R$
+%     \item Compute means $\bar{y}_L$, $\bar{y}_R$ and $\text{RSS}_L = \sum (y^{(i)} - \bar{y}_L)^2$
+%     \item Total impurity: $\text{RSS}_L + \text{RSS}_R$
+%   \end{itemize}
+%   \item Select split that minimizes total RSS
+%   \item \textbf{Computational cost:} $O(n^2)$ per feature (recomputes means/RSS from scratch in L and R node)
+% \end{itemize}
+\begin{itemizeM}
+\item For a given feature $X_j$, sort the pairs $(x_j^{(i)}, y^{(i)})$ by increasing $x_j^{(i)}$.
+\item For each of the $n - 1$ potential split points at $s_k = \frac{1}{2}(x_j^{(k)} + x_j^{(k+1)})$:
+\begin{itemizeS}
+\item Define partitions: $\mathcal{I}_L = \{ i : x^{(i)} \leq s_k \}, \quad \mathcal{I}_R = \{ i : x^{(i)} > s_k \}$
+\item Compute group means and counts after splitting at $s_k$:
+$$
+\textstyle
+\bar{y}_L = \frac{1}{N_L} \sum_{i \in \mathcal{I}_L} y^{(i)}, \quad
+\bar{y}_R = \frac{1}{N_R} \sum_{i \in \mathcal{I}_R} y^{(i)}, \text{ with } N_L = |\mathcal{I}_L|, \quad N_R = |\mathcal{I}_R|
+$$
+\item Compute RSS after splitting at $s_k$:
+$$
+\textstyle
+\text{RSS}_\text{split}(s_k) = \text{RSS}_L(s_k) + \text{RSS}_R(s_k) = \sum_{i \in \mathcal{I}_L} (y^{(i)} - \bar{y}_L)^2 + \sum_{i \in \mathcal{I}_R} (y^{(i)} - \bar{y}_R)^2
+$$
+% \item Total impurity after split:
+% \[
+% \text{RSS}_{\text{split}} = \text{RSS}_L + \text{RSS}_R
+% \]
+\end{itemizeS}
+\item Select split point $s_k$ that minimizes $\text{RSS}_\text{split}(s_k)$.
+\item \textbf{Compute cost:} $O(n^2)$ per feat. (recompute mean \& RSS at each split)
+\end{itemizeM}
+\centering
 \begin{tikzpicture}[x=1.2cm,y=0.9cm]
-  \foreach \x/\val/\i in {0/1.2/1, 1/2.0/2, 2/1.5/3, 3/3.2/4, 4/2.8/5, 5/4.1/6} {
-    \node[circle, draw, fill=blue!12, inner sep=2pt] (y\i) at (\x,0) {$y^{(\i)}$};
-  }
-  \foreach \s/\j in {0.5/1,1.5/2,2.5/3,3.5/4,4.5/5}{
-    \draw[dashed] (\s,0.55) -- (\s,-0.55);
-    \node[font=\scriptsize] at (\s,0.8) {$s_{\j}$};
-  }
-  \draw[decorate, decoration={brace,mirror, amplitude=4pt}]
-        (-0.25,-0.75) -- (2.5,-0.75)
-        node[midway,below=4pt,font=\scriptsize] {left: $N_L=3$};
-  \draw[decorate, decoration={brace,mirror, amplitude=4pt}]
-        (2.5,-0.75) -- (5.25,-0.75)
-        node[midway,below=4pt,font=\scriptsize] {right: $N_R=3$};
-  \node[draw,rounded corners,align=left,font=\scriptsize] (comp) at (2.5,-2.0) {
-      Compute: 
-      $\displaystyle\bar{y}_L,\;\bar{y}_R\;$ and 
-      $\displaystyle\text{RSS}_L + \text{RSS}_R$};
-  \draw[->,>=latex] (2.5,-0.55) -- (comp.north);
-  \node[font=\tiny,anchor=west] at (0.2,-2.55)
-        {$\color{gray}{\mathcal{O}(n^2)\ \text{operations (recompute for each split } s_i \text{ per feature})}$};
+\foreach \x/\val/\i in {0/1.2/1, 1/2.0/2, 2/1.5/3, 3/3.2/4, 4/2.8/5, 5/4.1/6} {
+\node[circle, draw, fill=blue!12, inner sep=2pt] (y\i) at (\x,0) {$y^{(\i)}$};
+}
+\foreach \s/\j in {0.5/1,1.5/2,2.5/3,3.5/4,4.5/5}{
+\draw[dashed] (\s,0.55) -- (\s,-0.55);
+\node[font=\scriptsize] at (\s,0.8) {$s_{\j}$};
+}
+\draw[decorate, decoration={brace,mirror, amplitude=4pt}]
+(-0.25,-0.75) -- (2.5,-0.75)
+node[midway,below=4pt,font=\scriptsize] {left: $N_L=3$};
+\draw[decorate, decoration={brace,mirror, amplitude=4pt}]
+(2.5,-0.75) -- (5.25,-0.75)
+node[midway,below=4pt,font=\scriptsize] {right: $N_R=3$};
+\node[draw,rounded corners,align=left,font=\scriptsize] (comp) at (2.5,-2.0) {
+Compute:
+$\displaystyle\bar{y}_L,\;\bar{y}_R\;$ and
+$\displaystyle\text{RSS}_L + \text{RSS}_R$};
+\draw[->,>=latex] (2.5,-0.55) -- (comp.north);
+\node[font=\tiny,anchor=west] at (0.2,-2.55)
+{$\color{gray}{\mathcal{O}(n^2)\ \text{operations (recompute for each split } s_i \text{ per feature})}$};
 \end{tikzpicture}
-\end{frame}
+\end{framev}
 
 % % --- Slide 3: Optimized Split via Prefix Sums ---
 % \begin{frame}{Efficient Split Selection: Prefix-Sum Trick}
@@ -181,9 +175,9 @@ $$
 
 
 
-\begin{frame}{Efficient Split Selection}
-\begin{itemize}
-  \item \textbf{Setup:} For feature \(X_j\), sort the data \((x_j^{(i)}, y^{(i)})_{i=1}^n\) by increasing \(x_j^{(i)}\)
+\begin{framev}[align=top]{Efficient Split Selection}
+\begin{itemizeM}
+\item \textbf{Setup:} For feature $X_j$, sort the data $(x_j^{(i)}, y^{(i)})_{i=1}^n$ by increasing $x_j^{(i)}$
   % \item \textbf{Candidate split at threshold } \(s_k := \tfrac{1}{2}(x_j^{(k)} + x_j^{(k+1)})\)
 
   % \item \textbf{Define index sets (based on split at } \(s_k\)\textbf{):}
@@ -192,47 +186,44 @@ $$
   %     \mathcal{I}_R = \{ i : x_j^{(i)} > s_k \}
   %   \]
 
-  \item \textbf{Define group statistics (cumulative sums) after split at $s_k$:}
-    % \[
-    % \begin{aligned}
-    %   S_L &= \textstyle\sum_{i \in \mathcal{I}_L} y^{(i)}, \qquad
-    %   SS_L = \sum_{i \in \mathcal{I}_L} (y^{(i)})^2, \qquad
-    %   N_L = |\mathcal{I}_L| \\
-    %   S_R &= \textstyle\sum_{i \in \mathcal{I}_R} y^{(i)}, \qquad
-    %   SS_R = \sum_{i \in \mathcal{I}_R} (y^{(i)})^2, \qquad
-    %   N_R = |\mathcal{I}_R|
-    % \end{aligned}
-    % \]
-      \[
-    \begin{aligned}
-      S_L &= \textstyle\sum_{i \in \mathcal{I}_L} y^{(i)}, \qquad
-      SS_L = \sum_{i \in \mathcal{I}_L} (y^{(i)})^2, \qquad
-      N_L = |\mathcal{I}_L| \\
-      S_R &= \textstyle S_n - S_L, \qquad
-      SS_R = SS_n - SS_L, \qquad
-      N_R = n - N_L
-    \end{aligned}
-    \]
-
-  \item \textbf{RSS for child nodes and parent node:}
-    \[
-      \text{RSS}_L(s_k) = SS_L - \frac{S_L^2}{N_L}, 
-      \text{RSS}_R(s_k) = SS_R - \frac{S_R^2}{N_R}, 
-      \text{RSS}_{\text{parent}} = SS_L + SS_R - \frac{S_n^2}{n}
-    \]
-  \item<2-> \textbf{Reduction in RSS:}
-    \[
-      \Delta\text{RSS}(s_k) = \text{RSS}_{\text{parent}} - (\text{RSS}_L + \text{RSS}_R)
-      = \frac{S_L^2}{N_L} + \frac{S_R^2}{N_R} - \frac{S_n^2}{n}
-    \]
-
-    \emph{All squared-target terms \( SS_L \), \( SS_R \) cancel. Only first-order sums needed.}
-
-  \item<2-> \textbf{Search:} Choose best split \(s_k^\star = \arg\max_{s_k} \Delta\text{RSS}(s_k)\)
-
-  \item<2-> \textbf{Complexity per feature:}\\\; \(O(n\log n)\) (sorting) + \(O(n)\) (cumulative sums and scan)
-\end{itemize}
- HB\end{frame}
+\item \textbf{Define group statistics (cumulative sums) after split at $s_k$:}
+% \[
+% \begin{aligned}
+%   S_L &= \textstyle\sum_{i \in \mathcal{I}_L} y^{(i)}, \qquad
+%   SS_L = \sum_{i \in \mathcal{I}_L} (y^{(i)})^2, \qquad
+%   N_L = |\mathcal{I}_L| \\
+%   S_R &= \textstyle\sum_{i \in \mathcal{I}_R} y^{(i)}, \qquad
+%   SS_R = \sum_{i \in \mathcal{I}_R} (y^{(i)})^2, \qquad
+%   N_R = |\mathcal{I}_R|
+% \end{aligned}
+% \]
+$$
+\begin{aligned}
+S_L &= \textstyle\sum_{i \in \mathcal{I}_L} y^{(i)}, \qquad
+SS_L = \sum_{i \in \mathcal{I}_L} (y^{(i)})^2, \qquad
+N_L = |\mathcal{I}_L| \\
+S_R &= \textstyle S_n - S_L, \qquad
+SS_R = SS_n - SS_L, \qquad
+N_R = n - N_L
+\end{aligned}
+$$
+\item \textbf{RSS for child nodes and parent node:}
+$$
+\text{RSS}_L(s_k) = SS_L - \frac{S_L^2}{N_L},
+\text{RSS}_R(s_k) = SS_R - \frac{S_R^2}{N_R},
+\text{RSS}_{\text{parent}} = SS_L + SS_R - \frac{S_n^2}{n}
+$$
+\item<2-> \textbf{Reduction in RSS:}
+$$
+\Delta\text{RSS}(s_k) = \text{RSS}_{\text{parent}} - (\text{RSS}_L + \text{RSS}_R)
+= \frac{S_L^2}{N_L} + \frac{S_R^2}{N_R} - \frac{S_n^2}{n}
+$$
+\emph{All squared-target terms $SS_L$, $SS_R$ cancel. Only first-order sums needed.}
+\item<2-> \textbf{Search:} Choose best split $s_k^\star = \arg\max_{s_k} \Delta\text{RSS}(s_k)$
+\item<2-> \textbf{Complexity per feature:}\\
+$O(n\log n)$ (sorting) + $O(n)$ (cumulative sums and scan)
+\end{itemizeM}
+\end{framev}
 
 
 
@@ -388,87 +379,77 @@ $$
 % ------------------------------------------------------------
 % --- Slide : Prefix-Sum Trick - Worked Example  -------------
 % ------------------------------------------------------------
-\begin{frame}{Efficient Split Selection - Example}
+\begin{framev}[align=top]{Efficient Split Selection - Example}
 \centering
-{
-\scriptsize
-\[
-  \boxed{y^{(1)}\!=\!1.2,\;
-         y^{(2)}\!=\!2.0,\;
-         y^{(3)}\!=\!1.5,\;
-         y^{(4)}\!=\!3.2,\;
-         y^{(5)}\!=\!2.8,\;
-         y^{(6)}\!=\!4.1}
-  \quad(\,x_j^{(1)}\le\dots\le x_j^{(6)}\,)
-\]
-}
+\begin{scriptsize}
+$$
+\boxed{y^{(1)}\!=\!1.2,\;
+y^{(2)}\!=\!2.0,\;
+y^{(3)}\!=\!1.5,\;
+y^{(4)}\!=\!3.2,\;
+y^{(5)}\!=\!2.8,\;
+y^{(6)}\!=\!4.1}
+\quad(\,x_j^{(1)}\le\dots\le x_j^{(6)}\,)
+$$
+\end{scriptsize}
 \begin{tikzpicture}[>=latex,x=1.75cm,y=0.75cm,font=\tiny]
-  % sorted targets --------------------------------------------------
-  \foreach \x/\i in {0/1,1/2,2/3,3/4,4/5,5/6}{
-    \node[circle,draw,fill=blue!12,inner sep=2pt] (y\i) at (\x,0) {$y^{(\i)}$};
-  }
-
-  % prefix sums S_k -------------------------------------------------
-  \foreach \x/\val/\i in {0/1.2/1,1/3.2/2,2/4.7/3,3/7.9/4,4/10.7/5,5/14.8/6}{
-    \node[draw,fill=green!10,minimum width=1.4cm,minimum height=0.5cm,
-          align=center] (S\i) at (\x,-1.0) {$S_{\i}=\val$};
-  }
-  \node[anchor=east] at (-0.35,-1.0) {cumulative sums $S_k$ \;};
-
-  % split after k = 4 ----------------------------------------------
-  \draw[dashed] (3.5,0.55) -- (3.5,-1.6);
-  \node[anchor=south] at (3.5,0.7) {$k=4$};
-
-  \draw[decorate,decoration={brace,mirror,amplitude=4pt}]
-        (-0.25,-1.45) -- (3.5,-1.45)
-        node[midway,below=4pt] {$N_L=4$};
-  \draw[decorate,decoration={brace,mirror,amplitude=4pt}]
-        (3.5,-1.45) -- (5.25,-1.45)
-        node[midway,below=4pt] {$N_R=2$};
-
-  % computation box -------------------------------------------------
-  \node[draw,rounded corners,align=left,anchor=north,
-        minimum width=7.1cm] (box) at (2.5,-2.8) {
-     \strut$\displaystyle
-       G(k{=}4)=\frac{S_4^{2}}{4}
-               +\frac{(S_6-S_4)^{2}}{2}$\\[2pt]
-     \phantom{$G(k{=}4)$}$=\dfrac{7.9^{2}}{4}
-       +\dfrac{(14.8-7.9)^{2}}{2}
-       \;\approx\;39.41$
-  };
-  \draw[->] (3.0,-1.25) -- (box.north);
+% sorted targets --------------------------------------------------
+\foreach \x/\i in {0/1,1/2,2/3,3/4,4/5,5/6}{
+\node[circle,draw,fill=blue!12,inner sep=2pt] (y\i) at (\x,0) {$y^{(\i)}$};
+}
+\foreach \x/\val/\i in {0/1.2/1,1/3.2/2,2/4.7/3,3/7.9/4,4/10.7/5,5/14.8/6}{
+\node[draw,fill=green!10,minimum width=1.4cm,minimum height=0.5cm,
+align=center] (S\i) at (\x,-1.0) {$S_{\i}=\val$};
+}
+\node[anchor=east] at (-0.35,-1.0) {cumulative sums $S_k$ \;};
+\draw[dashed] (3.5,0.55) -- (3.5,-1.6);
+\node[anchor=south] at (3.5,0.7) {$k=4$};
+\draw[decorate,decoration={brace,mirror,amplitude=4pt}]
+(-0.25,-1.45) -- (3.5,-1.45)
+node[midway,below=4pt] {$N_L=4$};
+\draw[decorate,decoration={brace,mirror,amplitude=4pt}]
+(3.5,-1.45) -- (5.25,-1.45)
+node[midway,below=4pt] {$N_R=2$};
+\node[draw,rounded corners,align=left,anchor=north,
+minimum width=7.1cm] (box) at (2.5,-2.8) {
+\strut$\displaystyle
+G(k{=}4)=\frac{S_4^{2}}{4}
++\frac{(S_6-S_4)^{2}}{2}$\\[2pt]
+\phantom{$G(k{=}4)$}$=\dfrac{7.9^{2}}{4}
++\dfrac{(14.8-7.9)^{2}}{2}
+\;\approx\;39.41$
+};
+\draw[->] (3.0,-1.25) -- (box.north);
 \end{tikzpicture}
-
-\vspace{0.5em}
-\begin{itemize}
-  \item $G(k)$ omits $-\!S_n^{2}/n$  
-        (identical for all splits $\Rightarrow$ does not affect $\arg\max$).
-  \item Only cumulative sums $S_k$ are required, no $SS_k$ is stored or updated.
-  \item \(\mathcal{O}(1)\) per split \(\Rightarrow\) \(\mathcal{O}(n)\) per feature.
-\end{itemize}
-\end{frame}
+\spacer[0.25]
+\begin{itemizeM}
+\item $G(k)$ omits $-\!S_n^{2}/n$ (identical for all splits $\Rightarrow$ does not affect $\arg\max$).
+\item Only cumulative sums $S_k$ are required, no $SS_k$ is stored or updated.
+\item $\mathcal{O}(1)$ per split $\Rightarrow$ $\mathcal{O}(n)$ per feature.
+\end{itemizeM}
+\end{framev}
 
 
-\begin{frame}{Explainable Boosting Machines (EBM)}
+\begin{framev}[align=top]{Explainable Boosting Machines (EBM)}
 \textbf{Recall GAM}: 
 $$
 g\big(\mathbb{E}[y \mid \mathbf{x}]\big) = \theta_0 + f_1(x_{1}) + f_2(x_{2}) + \ldots + f_p(x_{p}),
 $$
-
-\begin{itemize}
-    \item One shape function $f_j$ per feature $x_j$\\ $\leadsto$ \textbf{Feature-level interpretability}
-    \item Captures non-linear univariate effects\\ $\leadsto$ \textbf{Better performance / more flexible than GLMs}
-\end{itemize}
-
-\medskip
+\begin{itemizeM}
+\item One shape function $f_j$ per feature $x_j$\\
+$\leadsto$ \textbf{Feature-level interpretability}
+\item Captures non-linear univariate effects\\
+$\leadsto$ \textbf{Better performance / more flexible than GLMs}
+\end{itemizeM}
+\spacer[0.25]
 
 \textbf{EBM idea:} \textbf{GAMs} train with \textbf{gradient boosting} over \textbf{shallow bagged trees}
-\begin{itemize}
-    \item \textbf{GAMs} - feature-wise interpretability via separate shape functions $f_j(x_j)$\\
-    $\leadsto$ Potentially include pairwise interactions manually
-    \item \textbf{Gradient Boosting} - incrementally fits residuals to improve predictive performance while retaining additivity
-    \item \textbf{Shallow Bagged Trees} - low-depth trees (2-4 leaves) reduce variance and create interpretable shape functions
-\end{itemize}
+\begin{itemizeM}
+\item \textbf{GAMs} - feature-wise interpretability via separate shape functions $f_j(x_j)$\\
+$\leadsto$ Potentially include pairwise interactions manually
+\item \textbf{Gradient Boosting} - incrementally fits residuals to improve predictive performance while retaining additivity
+\item \textbf{Shallow Bagged Trees} - low-depth trees (2-4 leaves) reduce variance and create interpretable shape functions
+\end{itemizeM}
 
 % \textbf{Idea of EBM}: \textbf{GAMs} trained with \textbf{gradient boosting} over \textbf{shallow bagged trees}\\
 
@@ -477,116 +458,102 @@ $$
 %         \item Accuracy close to unrestricted ensembles (e.g., random forests)
 %     \end{itemize}
 
-\end{frame}
+\end{framev}
 
 
-
-
-\begin{frame}{EBM - Two-Stage Model Construction}
+\begin{framev}[align=top]{EBM - Two-Stage Model Construction}
 \begin{enumerate}
-    \item \textbf{Stage 1: Fit Main Effects (Univariate Terms) % OLD
+\item \textbf{Stage 1: Fit Main Effects (Univariate Terms) % OLD
 %\citebutton{Lou et al. 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}
 % new
 \furtherreading{LOU2012}}
-    \begin{itemize}
-        \item Train EBM using only feature-wise shape functions $f_j(x_j)$
-        \item Freeze the univariate model after convergence
-    \end{itemize}
-    
-    \item \textbf{Stage 2: Add Selected Pairwise Interactions % OLD
+\begin{itemizeS}
+\item Train EBM using only feature-wise shape functions $f_j(x_j)$
+\item Freeze the univariate model after convergence
+\end{itemizeS}
+\item \textbf{Stage 2: Add Selected Pairwise Interactions % OLD
 %\citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
 % new
 \furtherreading{LOU2013}}
-    \begin{itemize}
-        \item Apply \textbf{FAST} to rank all $O(p^2)$ feat pairs by potential reduction in RSS
-        \item Select top $K$ pairwise interactions and store them in $\mathcal{K}$
-        \item Use boosting to fit pairwise interaction terms $f_{ij}(x_i, x_j)$ on residuals
-        \item Final model: $\hat{f}(\xv) = \sum_{j=1}^p f_j(x_j) + \sum_{(i,j)\in\mathcal{K}} f_{ij}(x_i, x_j)$
-    \end{itemize}
+\begin{itemizeS}
+\item Apply \textbf{FAST} to rank all $O(p^2)$ feat pairs by potential reduction in RSS
+\item Select top $K$ pairwise interactions and store them in $\mathcal{K}$
+\item Use boosting to fit pairwise interaction terms $f_{ij}(x_i, x_j)$ on residuals
+\item Final model: $\hat{f}(\xv) = \sum_{j=1}^p f_j(x_j) + \sum_{(i,j)\in\mathcal{K}} f_{ij}(x_i, x_j)$
+\end{itemizeS}
 \end{enumerate}
-
 % \includegraphics[width=1\linewidth]{figure/GA2M_Step1.png}
-\end{frame}
+\end{framev}
 
 
-
-\begin{frame}{Univariate EBM - Initialization}
-
+\begin{framei}[align=top]{Univariate EBM - Initialization}
 %\textbf{Initialization:}
-\begin{itemize}
-    \item Set all shape functions to zero:
-    $$
-    f_j^{[0]}(x_j) = 0 \quad \text{for all } j = 1, \dots, p
-    $$
-    \item Compute initial model prediction:
-    $$
-    \hat{y}^{[0]} = \sum_{j=1}^p f_j^{[0]}(x_j) = 0
-    $$
-    \item Compute initial pseudo-residuals (e.g., for squared loss):
-    $$
-    \tilde{r}^{[0]} = -\frac{\partial L}{\partial \hat{y}} = y - \hat{y}^{[0]} = y
-    $$
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Univariate EBM - First Feature Update}
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figure/EBM_Step1.png}
-\end{figure}
-\begin{itemize}
-    \item Fit shallow bagged tree $T_1^{[1]}$ (2-4 leaves) to training data $\left\{\left(x_1, \tilde{r}^{[0]}\right)^{(i)}\right\}_{i=1}^n$\\
-    $\leadsto$ Use only feature $x_1$ as input and $\tilde{r}^{[0]}$ as target
-    \item Update first shape function with learning rate $\eta$:
-    $$
-    f_1^{[1]}(x_1) = f_1^{[0]}(x_1) + \eta \cdot T_1^{[1]}(x_1)
-    $$
-    \item Update prediction:
-    $$
-    \hat{y}^{[1]} = \sum_{j=1}^p f_j^{[1]}(x_j)
-    $$
-    \item Recompute pseudo-residuals:
-    $$
-    \tilde{r}^{[1]} =  -\frac{\partial L}{\partial \hat{y}} = y - \hat{y}^{[1]}
-    $$
-\end{itemize}
-
-\end{frame}
+\item Set all shape functions to zero:
+$$
+f_j^{[0]}(x_j) = 0 \quad \text{for all } j = 1, \dots, p
+$$
+\item Compute initial model prediction:
+$$
+\hat{y}^{[0]} = \sum_{j=1}^p f_j^{[0]}(x_j) = 0
+$$
+\item Compute initial pseudo-residuals (e.g., for squared loss):
+$$
+\tilde{r}^{[0]} = -\frac{\partial L}{\partial \hat{y}} = y - \hat{y}^{[0]} = y
+$$
+\end{framei}
 
 
-\begin{frame}{Univariate EBM - Cycle Through Features}
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figure/EBM_Step2.png}
-\end{figure}
-\begin{itemize}
-    \item 1st boosting iteration: \\
-    Cycle through each feature $j = 2,\dots,p$:
-    \begin{itemize}
-        \item Fit shallow bagged tree $T_j^{[1]}$ using feature $x_j$ and previous residual $\tilde{r}^{[j-1]}$ %to $(x_j, \tilde{r}^{[j-1]})$
-        \item Update $f_j$: $f_j^{[1]}(x_j) = f_j^{[0]}(x_j) + \eta \cdot T_j^{[1]}(x_j)$
-        \item Recompute $\hat{y}$ and residuals: $\tilde{r}^{[j]} = y - \hat{y}^{[j]}$
-    \end{itemize}
-    \item After one full pass over features, we complete one boosting iteration
-\end{itemize}
-\end{frame}
+\begin{framev}[align=top]{Univariate EBM - First Feature Update}
+\image{figure/EBM_Step1.png}
+\spacer[0.25]
+\begin{itemizeM}
+\item Fit shallow bagged tree $T_1^{[1]}$ (2-4 leaves) to training data $\left\{\left(x_1, \tilde{r}^{[0]}\right)^{(i)}\right\}_{i=1}^n$\\
+$\leadsto$ Use only feature $x_1$ as input and $\tilde{r}^{[0]}$ as target
+\item Update first shape function with learning rate $\eta$:
+$$
+f_1^{[1]}(x_1) = f_1^{[0]}(x_1) + \eta \cdot T_1^{[1]}(x_1)
+$$
+\item Update prediction:
+$$
+\hat{y}^{[1]} = \sum_{j=1}^p f_j^{[1]}(x_j)
+$$
+\item Recompute pseudo-residuals:
+$$
+\tilde{r}^{[1]} = -\frac{\partial L}{\partial \hat{y}} = y - \hat{y}^{[1]}
+$$
+\end{itemizeM}
+\end{framev}
 
-\begin{frame}{Univariate EBM - Iterate Boosting Process}
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figure/EBM_Step3.png}
-\end{figure}
-\begin{itemize}
-    \item Repeat feature-wise updates for $M$ boosting iterations (e.g., $M=10000$)
-    \item In each boosting iteration:
-    \begin{itemize}
-        \item Cycle over all features $j=1,\dots,p$ individually %just one feature at a time 
-        \item Update only one $f_j$ at a time using residuals from previous state
-    \end{itemize}
-    \item Use small learning rate $\eta$ to ensure smooth updates and order-invariance
-\end{itemize}
-\end{frame}
+
+\begin{framev}[align=top]{Univariate EBM - Cycle Through Features}
+\image{figure/EBM_Step2.png}
+\spacer[0.25]
+\begin{itemizeM}
+\item 1st boosting iteration:\\
+Cycle through each feature $j = 2,\dots,p$:
+\begin{itemizeS}
+\item Fit shallow bagged tree $T_j^{[1]}$ using feature $x_j$ and previous residual $\tilde{r}^{[j-1]}$ %to $(x_j, \tilde{r}^{[j-1]})$
+\item Update $f_j$: $f_j^{[1]}(x_j) = f_j^{[0]}(x_j) + \eta \cdot T_j^{[1]}(x_j)$
+\item Recompute $\hat{y}$ and residuals: $\tilde{r}^{[j]} = y - \hat{y}^{[j]}$
+\end{itemizeS}
+\item After one full pass over features, we complete one boosting iteration
+\end{itemizeM}
+\end{framev}
+
+
+\begin{framev}[align=top]{Univariate EBM - Iterate Boosting Process}
+\image{figure/EBM_Step3.png}
+\spacer[0.25]
+\begin{itemizeM}
+\item Repeat feature-wise updates for $M$ boosting iterations (e.g., $M=10000$)
+\item In each boosting iteration:
+\begin{itemizeS}
+\item Cycle over all features $j=1,\dots,p$ individually %just one feature at a time 
+\item Update only one $f_j$ at a time using residuals from previous state
+\end{itemizeS}
+\item Use small learning rate $\eta$ to ensure smooth updates and order-invariance
+\end{itemizeM}
+\end{framev}
 
 
 
@@ -652,27 +619,22 @@ $$
 % \end{frame}
 
 
-\begin{frame}{Univariate EBM - Prediction \& Interpretability}
-\begin{itemize}
-    \item Final model consists of $M$ shallow trees per feature:
-    $$
-    \text{EBM Model} = \sum_{j=1}^p \sum_{m=1}^M \eta \cdot T_j^{[m]}(x_j)
-    $$
-    \item For each feature $x_j$, combine its $M$ trees into a shape function:
-    $$
-    \hat{f}_j(x_j) = \sum_{m=1}^M \eta \cdot T_j^{[m]}(x_j)
-    $$
-    \item Plot $\hat{f}_j(x_j)$ vs. $x_j$ $\leadsto$ Shows univariate marginal effect of feature $j$
-    \item One plot per feature $\leadsto$ Model is fully explainable via $p$ additive plots
-\end{itemize}
-
-\medskip
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figure/ebm_prediction.png}
-\end{figure}
-\end{frame}
+\begin{framev}[align=top]{Univariate EBM - Prediction \& Interpretability}
+\begin{itemizeM}
+\item Final model consists of $M$ shallow trees per feature:
+$$
+\text{EBM Model} = \sum_{j=1}^p \sum_{m=1}^M \eta \cdot T_j^{[m]}(x_j)
+$$
+\item For each feature $x_j$, combine its $M$ trees into a shape function:
+$$
+\hat{f}_j(x_j) = \sum_{m=1}^M \eta \cdot T_j^{[m]}(x_j)
+$$
+\item Plot $\hat{f}_j(x_j)$ vs. $x_j$ $\leadsto$ Shows univariate marginal effect of feature $j$
+\item One plot per feature $\leadsto$ Model is fully explainable via $p$ additive plots
+\end{itemizeM}
+\spacer[0.25]
+\image{figure/ebm_prediction.png}
+\end{framev}
 
 
 % \begin{frame}{Intelligible GAM - Prediction}
@@ -740,30 +702,30 @@ $$
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{EBM with Pairwise Interactions}
+\begin{framev}[align=top]{EBM with Pairwise Interactions}
 \textbf{Generalized Additive Models plus Interactions (GA2M):}
 $$
 g\big(\mathbb{E}[y \mid \xv]\big) = \theta_0 + \sum_{j=1}^p f_j(x_j) + \sum_{i<j} f_{ij}(x_i, x_j)
 $$
-
-\begin{itemize}
-    \item \textbf{Motivation}: Univariate EBM does not model interactions
-    \item \textbf{Challenge}: $O(p^2)$ potential pairwise interactions
-    $\leadsto$ often infeasible %to include all pairs directly
-    \item \textbf{Solution - FAST algorithm} % OLD
+\begin{itemizeM}
+\item \textbf{Motivation}: Univariate EBM does not model interactions
+\item \textbf{Challenge}: $O(p^2)$ potential pairwise interactions 
+$\leadsto$ often infeasible %to include all pairs directly
+\item \textbf{Solution - FAST algorithm} % OLD
 %\citebutton{Lou et al. 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
 % new
 \furtherreading{LOU2013}:
-    \begin{itemize}
-        \item Efficiently estimates importance of all feature pairs
-        \item Ranks pairs by reduction in residual sum of squares (RSS)
-        \item Avoids fitting EBM with each pairwise interaction
-    \end{itemize}
-    \item \textbf{Result}: \\Add only top-ranked interactions $f_{ij}$ via asecond-stage boosting step\\
-    $\leadsto$ Performed after the univariate EBM has been trained
-    \item \textbf{Interpretability preserved}: Each $f_{ij}(x_i, x_j)$ visualized as a 2D heatmap
-\end{itemize}
-\end{frame}
+\begin{itemizeS}
+\item Efficiently estimates importance of all feature pairs
+\item Ranks pairs by reduction in residual sum of squares (RSS)
+\item Avoids fitting EBM with each pairwise interaction
+\end{itemizeS}
+\item \textbf{Result}:\\
+Add only top-ranked interactions $f_{ij}$ via a second-stage boosting step\\
+$\leadsto$ Performed after the univariate EBM has been trained
+\item \textbf{Interpretability preserved}: Each $f_{ij}(x_i, x_j)$ visualized as a 2D heatmap
+\end{itemizeM}
+\end{framev}
 
 
 % \begin{frame}{FAST Algorithm for Interaction Detection}
@@ -1009,34 +971,32 @@ $$
 
 
 
-\begin{frame}{FAST: Pair-wise Interaction Strength}
-
+\begin{framev}[fs=small,align=top]{FAST: Pair-wise Interaction Strength}
 We evaluate a 4-leaf, axis-aligned tree $T_{ij}$ over the 2D feature projection $(x_i, x_j)$.
-
-\begin{columns}[T,totalwidth=\textwidth]
-% ----- left: predictor diagram ---------------------------------
-\begin{column}{0.4\textwidth}\centering
+\spacer[0.25]
+\splitVTT[0.4]{
+\spacer[0]
+\centering
 \only<1>{
-
 \begin{figure}
 \scalebox{0.85}{
 \begin{tikzpicture}[
-  level 1/.style={sibling distance=28mm},
-  level 2/.style={sibling distance=15mm},
-  level distance=10mm,
-  every node/.style = {circle, draw, minimum size=7mm},
-  edge from parent/.style={draw,-latex}
+level 1/.style={sibling distance=28mm},
+level 2/.style={sibling distance=15mm},
+level distance=10mm,
+every node/.style = {circle, draw, minimum size=7mm},
+edge from parent/.style={draw,-latex}
 ]
 
 \node (root) {$c_i$}
-  child { node {$c_j$}
-    child { node {A} }
-    child { node {B} }
-  }
-  child { node {$c_j$}
-    child { node {C} }
-    child { node {D} }
-  };
+child { node {$c_j$}
+child { node {A} }
+child { node {B} }
+}
+child { node {$c_j$}
+child { node {C} }
+child { node {D} }
+};
 
 %\node[draw=none] at (-2.8,0.8) {$T_{ij}:$};
 
@@ -1064,179 +1024,152 @@ We evaluate a 4-leaf, axis-aligned tree $T_{ij}$ over the 2D feature projection 
 \node[left]  at (0,\yc) {$c_i$};
 \end{tikzpicture}
 
-{\small tree $T_{ij}$ with 4 leaves}
+tree $T_{ij}$ with 4 leaves
 }
-
 \only<2>{
-\[
+$$
 \begin{array}{@{}l@{\hskip 0.6em}l@{\hskip 0.6em}l@{\hskip 0.6em}l@{\hskip 0.6em}l}
-    \begin{tikzpicture}[baseline=(current bounding box.center)]
-        \draw (0,0) rectangle (1.2,1.2);
-        \draw (0.4,0) -- (0.4,1.2); 
-        \draw (0,0.8) -- (1.2,0.8); 
-        \node at (0.2,0.4) {C};
-        \node at (0.8,0.4) {D};
-        \node at (0.2,1) {A};
-        \node at (0.8,1) {B};
-    \end{tikzpicture} & \text{$\Rightarrow$} & \begin{tikzpicture}[baseline=(current bounding box.center)]
-        \draw (0,0) rectangle (1.2,1.2);
-        \draw (0.4,0) -- (0.4,1.2); 
-        \draw (0,0.8) -- (1.2,0.8); 
-        \node at (0.2,0.4) {$\hat{y}_C$};
-        \node at (0.8,0.4) {$\hat{y}_D$};
-        \node at (0.2,1) {$\hat{y}_A$};
-        \node at (0.8,1) {$\hat{y}_B$};
-    \end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_1$}\\[0.7cm] 
-    \begin{tikzpicture}[baseline=(current bounding box.center)]
-        \draw (0,0) rectangle (1.2,1.2);
-        \draw (0.6,0) -- (0.6,1.2); 
-        \draw (0,0.6) -- (1.2,0.6); 
-        \node at (0.3,0.3) {C};
-        \node at (0.9,0.3) {D};
-        \node at (0.3,0.9) {A};
-        \node at (0.9,0.9) {B};
-    \end{tikzpicture} & \text{$\Rightarrow$} & \begin{tikzpicture}[baseline=(current bounding box.center)]
-        \draw (0,0) rectangle (1.2,1.2);
-        \draw (0.6,0) -- (0.6,1.2); 
-        \draw (0,0.6) -- (1.2,0.6); 
-        \node at (0.3,0.3) {$\hat{y}_C$};
-        \node at (0.9,0.3) {$\hat{y}_D$};
-        \node at (0.3,0.9) {$\hat{y}_A$};
-        \node at (0.9,0.9) {$\hat{y}_B$};
-    \end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_2$}\\[0.7cm] 
-    \makebox[1cm][c]{\vdots} & & \makebox[1cm][c]{\vdots} & & \makebox[1cm][c]{\vdots}\\[0.3cm]
-    \begin{tikzpicture}[baseline=(current bounding box.center)]
-        \draw (0,0) rectangle (1.2,1.2);
-        \draw (0.8,0) -- (0.8,1.2); 
-        \draw (0,0.4) -- (1.2,0.4); 
-        \node at (0.4,0.2) {C};
-        \node at (1,0.2) {D};
-        \node at (0.4,0.8) {A};
-        \node at (1,0.8) {B};
-    \end{tikzpicture} & \text{$\Rightarrow$} & \begin{tikzpicture}[baseline=(current bounding box.center)]
-        \draw (0,0) rectangle (1.2,1.2);
-        \draw (0.8,0) -- (0.8,1.2); 
-        \draw (0,0.4) -- (1.2,0.4); 
-        \node at (0.4,0.2) {$\hat{y}_C$};
-        \node at (1,0.2) {$\hat{y}_D$};
-        \node at (0.4,0.8) {$\hat{y}_A$};
-        \node at (1,0.8) {$\hat{y}_B$};
-    \end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_{b^2}$}\\ 
+\begin{tikzpicture}[baseline=(current bounding box.center)]
+\draw (0,0) rectangle (1.2,1.2);
+\draw (0.4,0) -- (0.4,1.2);
+\draw (0,0.8) -- (1.2,0.8);
+\node at (0.2,0.4) {C};
+\node at (0.8,0.4) {D};
+\node at (0.2,1) {A};
+\node at (0.8,1) {B};
+\end{tikzpicture} & \text{$\Rightarrow$} & \begin{tikzpicture}[baseline=(current bounding box.center)]
+\draw (0,0) rectangle (1.2,1.2);
+\draw (0.4,0) -- (0.4,1.2);
+\draw (0,0.8) -- (1.2,0.8);
+\node at (0.2,0.4) {$\hat{y}_C$};
+\node at (0.8,0.4) {$\hat{y}_D$};
+\node at (0.2,1) {$\hat{y}_A$};
+\node at (0.8,1) {$\hat{y}_B$};
+\end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_1$}\\[0.7cm]
+\begin{tikzpicture}[baseline=(current bounding box.center)]
+\draw (0,0) rectangle (1.2,1.2);
+\draw (0.6,0) -- (0.6,1.2);
+\draw (0,0.6) -- (1.2,0.6);
+\node at (0.3,0.3) {C};
+\node at (0.9,0.3) {D};
+\node at (0.3,0.9) {A};
+\node at (0.9,0.9) {B};
+\end{tikzpicture} & \text{$\Rightarrow$} & \begin{tikzpicture}[baseline=(current bounding box.center)]
+\draw (0,0) rectangle (1.2,1.2);
+\draw (0.6,0) -- (0.6,1.2);
+\draw (0,0.6) -- (1.2,0.6);
+\node at (0.3,0.3) {$\hat{y}_C$};
+\node at (0.9,0.3) {$\hat{y}_D$};
+\node at (0.3,0.9) {$\hat{y}_A$};
+\node at (0.9,0.9) {$\hat{y}_B$};
+\end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_2$}\\[0.7cm]
+\makebox[1cm][c]{\vdots} & & \makebox[1cm][c]{\vdots} & & \makebox[1cm][c]{\vdots}\\[0.3cm]
+\begin{tikzpicture}[baseline=(current bounding box.center)]
+\draw (0,0) rectangle (1.2,1.2);
+\draw (0.8,0) -- (0.8,1.2);
+\draw (0,0.4) -- (1.2,0.4);
+\node at (0.4,0.2) {C};
+\node at (1,0.2) {D};
+\node at (0.4,0.8) {A};
+\node at (1,0.8) {B};
+\end{tikzpicture} & \text{$\Rightarrow$} & \begin{tikzpicture}[baseline=(current bounding box.center)]
+\draw (0,0) rectangle (1.2,1.2);
+\draw (0.8,0) -- (0.8,1.2);
+\draw (0,0.4) -- (1.2,0.4);
+\node at (0.4,0.2) {$\hat{y}_C$};
+\node at (1,0.2) {$\hat{y}_D$};
+\node at (0.4,0.8) {$\hat{y}_A$};
+\node at (1,0.8) {$\hat{y}_B$};
+\end{tikzpicture} & \text{$\Rightarrow$} & \text{$RSS_{b^2}$}\\
 \end{array}
-\]
+$$
 }
-\end{column}
-% ----- right: algorithm steps ----------------------------------
-\begin{column}{0.6\textwidth}
-\small
-\begin{enumerate}\itemsep4pt
-  \item<1-> {\bf Discretize}\,: Map each axis to \(b\!\le\!256\) ordered
-        bins (quantile or equal-width).
-  \item<2-> {\bf Iterate} over \(b^{2}\) candidate cuts
-        \((c_i,c_j)\). %at bin boundaries.
-  \item<2-> {\bf Fit}\,: For each cut, assign a constant
-        \(\hat y_r\!=\!\text{mean}(y\!\in\!r)\) to
-        \(r\!\in\!\{A,B,C,D\}\).
-  \item<2-> {\bf Compute RSS summed over all regions}:   
-  {\footnotesize
-  \[
+}{
+\spacer[0]
+\begin{enumerate}
+\item<1-> {\bf Discretize}: Map each axis to $b\!\le\!256$ ordered bins (quantile or equal-width).
+\item<2-> {\bf Iterate} over $b^{2}$ candidate cuts $(c_i,c_j)$. %at bin boundaries.
+\item<2-> {\bf Fit}: For each cut, assign a constant $\hat y_r\!=\!\text{mean}(y\!\in\!r)$ to $r\!\in\!\{A,B,C,D\}$.
+\item<2-> {\bf Compute RSS summed over all regions:}
+\begin{footnotesize}
+$$
 \begin{aligned}
-\text{RSS}(c_i, c_j) 
+\text{RSS}(c_i, c_j)
 &= \sum_{r} \sum_{(x,y) \in r} (y - \hat{y}_r)^2 \\
 &= \sum_{r} \left( \sum_{(x,y) \in r} y^2 - \frac{1}{n_r} \left(\sum_{(x,y) \in r} y \right)^2 \right)
 %\sum_{r} \left( \sum_{(x,y) \in r} y^2 - 2 \hat{y}_r \sum_{(x,y) \in r} y + \hat{y}_r^2 \cdot n_r \right)
 \end{aligned}
-\]
-        % \(\text{RSS}(c_i,c_j)=\sum_{r}
-        %  \sum_{(x,y)\in r}(y-\hat y_r)^{2}
-        %  \)
-         
- % \(\text{RSS}_0\;=\;\sum_{i=1}^{n}\bigl(y_k-\bar y\bigr)^2
- %              =\sum_{i}y_k^{2}-\frac{T^{2}}{n}\)
-              
- % \(\Delta\text{RSS}(c_i,c_j) =\text{RSS}_0-\text{RSS}(c_i,c_j)\)
- }
-  \item<2-> {\bf Select}\,: Keep the split with minimal RSS.\\
-  $\leadsto$ largest RSS drop = strongest interaction. \\% of \((x_i,x_j)\) \\
-  %$\leadsto$ $\mathcal{O}(n+b^{2})$ per pair.
+$$
+% \(\text{RSS}(c_i,c_j)=\sum_{r}
+%  \sum_{(x,y)\in r}(y-\hat y_r)^{2}
+%  \)
+ 
+% \(\text{RSS}_0\;=\;\sum_{i=1}^{n}\bigl(y_k-\bar y\bigr)^2
+%              =\sum_{i}y_k^{2}-\frac{T^{2}}{n}\)
+             
+% \(\Delta\text{RSS}(c_i,c_j) =\text{RSS}_0-\text{RSS}(c_i,c_j)\)
+\end{footnotesize}
+\item<2-> {\bf Select}: Keep the split with minimal RSS.\\
+$\leadsto$ largest RSS drop = strongest interaction. \\% of $(x_i,x_j)$ \\
+%$\leadsto$ $\mathcal{O}(n+b^{2})$ per pair.
 \end{enumerate}
-
-\end{column}
-\end{columns}
-\end{frame}
+}
+\end{framev}
 
 
-
-
-
-
-
-
-
-
-
-\begin{frame}{FAST: Use RSS Drop}
-\small
-
+\begin{framev}[fs=small,align=top]{FAST: Use RSS Drop}
 To evaluate a cut pair $(c_i, c_j)$, we use precomputed per-region statistics:
-
-\begin{itemize}
-  \item For each region $r \in \{A, B, C, D\}$, compute:
-    \[
-    S_r = \sum_{(x,y)\in r} y,\quad
-    %Q_r = \sum_{(x,y)\in r} y^2,\quad
-    n_r = |\{(x,y)\in r\}|,\quad
-    \hat y_r = S_r / n_r
-    \]
-  \item Plug into RSS summed over all regions: $$
-\text{RSS}(c_i, c_j) = \sum_{r} \left( \sum_{(x,y) \in r} y^2 - \frac{1}{n_r} \left(\sum_{(x,y) \in r} y \right)^2 \right) = 
+\begin{itemizeM}
+\item For each region $r \in \{A, B, C, D\}$, compute:
+$$
+S_r = \sum_{(x,y)\in r} y,\quad
+%Q_r = \sum_{(x,y)\in r} y^2,\quad
+n_r = |\{(x,y)\in r\}|,\quad
+\hat y_r = S_r / n_r
+$$
+\item Plug into RSS summed over all regions:
+$$
+\text{RSS}(c_i, c_j) = \sum_{r} \left( \sum_{(x,y) \in r} y^2 - \frac{1}{n_r} \left(\sum_{(x,y) \in r} y \right)^2 \right) =
 %\sum_{r}\!\left(\sum_{(x,y)\in r} y^2-\frac{S_r^{2}}{n_r}\right)
 \sum_{r}\sum_{(x,y)\in r} y^2+\sum_{r}\frac{S_r^{2}}{n_r}
 $$
-  %\item Requires only scalar summaries $(S_r, Q_r, n_r)$
-  %\item No access to individual samples needed at scoring time
-  %\item Baseline (unsplit) RSS: $\text{RSS}_0 = \sum_k y_k^2 - \frac{T^2}{n}$, with $T = \sum_k y_k$ and $\bar y = T/n$
-  \item 
-For a candidate cut, compute \textbf{RSS drop}:
-\begin{align*}
-  \Delta\text{RSS}(c_i,c_j)
-     &=\text{RSS}_{\text{parent}}-\text{RSS}(c_i,c_j)\\
-     &=\left(\sum_{i = 1}^n \left(y^{(i)}\right)^{2} -\frac{S_n^{2}}{n}\right)
-       -  \sum_{r}\sum_{(x,y)\in r} y^2+\sum_{r}\frac{S_r^{2}}{n_r}
-\end{align*}
-\end{itemize}
-
-
-\end{frame}
+%\item Requires only scalar summaries $(S_r, Q_r, n_r)$
+%\item No access to individual samples needed at scoring time
+%\item Baseline (unsplit) RSS: $\text{RSS}_0 = \sum_k y_k^2 - \frac{T^2}{n}$, with $T = \sum_k y_k$ and $\bar y = T/n$
+\item For a candidate cut, compute \textbf{RSS drop}:
+$$
+\begin{aligned}
+\Delta\text{RSS}(c_i,c_j)
+&=\text{RSS}_{\text{parent}}-\text{RSS}(c_i,c_j)\\
+&=\left(\sum_{i = 1}^n \left(y^{(i)}\right)^{2} -\frac{S_n^{2}}{n}\right)
+- \sum_{r}\sum_{(x,y)\in r} y^2+\sum_{r}\frac{S_r^{2}}{n_r}
+\end{aligned}
+$$
+\end{itemizeM}
+\end{framev}
 % ============================================================================
-\begin{frame}{FAST: Use RSS drop}
-
+\begin{framev}[fs=small,align=top]{FAST: Use RSS drop}
 Because $\sum_{i = 1}^n \left(y^{(i)}\right) ^{2} = \sum_{r}\sum_{(x,y)\in r} y^2$, \emph{all squared target terms cancel}:
-\[
-  \boxed{\displaystyle
-  \Delta\text{RSS}(c_i,c_j)
-     =\sum_{r}\frac{S_r^{2}}{n_r}\;-
-      \frac{S_n^{2}}{n}}
-\]
-The parent term $S_n^{2}/n$ is constant across all cuts.  Hence
-\[
-  \textbf{maximize }\Delta\text{RSS}(c_i,c_j)=\sum_{r}\frac{S_r^{2}}{n_r}
-  \quad\Longleftrightarrow\quad
-  \textbf{minimize }\text{RSS}(c_i,c_j).
-\]
-
-
+$$
+\boxed{\displaystyle
+\Delta\text{RSS}(c_i,c_j)
+=\sum_{r}\frac{S_r^{2}}{n_r}\;-
+\frac{S_n^{2}}{n}}
+$$
+The parent term $S_n^{2}/n$ is constant across all cuts. Hence
+$$
+\textbf{maximize }\Delta\text{RSS}(c_i,c_j)=\sum_{r}\frac{S_r^{2}}{n_r}
+\quad\Longleftrightarrow\quad
+\textbf{minimize }\text{RSS}(c_i,c_j).
+$$
 \textbf{Why is this efficient?}
-\begin{itemize}
-  \item Precompute cummulative sums of \(y\) and counts across the binned grid
-  \item Enables fast lookup of region statistics \(S_r, n_r\) for any cut
-  \item No additional data scan or recomputation needed across the \(b^2\) candidate cuts
-  \item For the best cut: Compare and select the largest
-$\Delta\text{RSS}(c_i,c_j)$.
-\end{itemize}
-
-
-\end{frame}
+\begin{itemizeM}
+\item Precompute cumulative sums of $y$ and counts across the binned grid
+\item Enables fast lookup of region statistics $S_r, n_r$ for any cut
+\item No additional data scan or recomputation needed across the $b^2$ candidate cuts
+\item For the best cut: Compare and select the largest $\Delta\text{RSS}(c_i,c_j)$.
+\end{itemizeM}
+\end{framev}
 
 % % ============================================================================
 % \begin{frame}{Step 4: FAST search in $\mathcal O(b^2)$ per pair}
@@ -1527,20 +1460,19 @@ $\Delta\text{RSS}(c_i,c_j)$.
 % \end{frame}
 
 
-\begin{frame}{EBM - Boosting Pairwise Interactions}
+\begin{framev}[align=top]{EBM - Boosting Pairwise Interactions}
 %\vspace{-0.2cm}
 %\begin{figure}
 %    \centering
-    \includegraphics[width=\linewidth]{figure/GA2M_Step1.png}
+\image{figure/GA2M_Step1.png}
 %\end{figure}
-
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.3\textwidth}
-        % \vspace{-1.2cm}
-        % \hspace{-0.6cm}
-        %\includegraphics[width=\linewidth]{figure/GA2M_Step0.png}
-\begin{center}
-    \centering
+\spacer[0.25]
+\splitVTT[0.3]{
+\spacer[0]
+\centering
+% \vspace{-1.2cm}
+% \hspace{-0.6cm}
+%\includegraphics[width=\linewidth]{figure/GA2M_Step0.png}
 \begin{tikzpicture}[scale=0.9]
 
 % Rectangle dimensions
@@ -1573,26 +1505,22 @@ $\Delta\text{RSS}(c_i,c_j)$.
 \node at (\cxTwo,-0.3) {$c_{j_2}$};
 
 \end{tikzpicture}
-
-\end{center}
-    \end{column}
-    
-    \begin{column}{0.7\textwidth}
-       % \vspace{-0.6cm}
-        \begin{itemize}
-            \item \textbf{Goal:} Fit each selected interaction $f_{ij}(x_i, x_j)$ on residuals from main effects
-            \item Use tree-like predictor, inspired by FAST
-            %\item \textbf{Cuts:} 
-            \begin{itemize}
-                \item Use two axis-aligned cuts $(c_i, c_j)$ 
-                \item Plus one refinement cut to increase flexibility while keeping interpretability
-            \end{itemize}
-            \item Reuse region-wise sums from FAST lookup tables
-            \item Greedy search for cut config minimizing RSS
-        \end{itemize}
-    \end{column}
-\end{columns}
-\end{frame}
+}{
+\spacer[0.6]
+% \vspace{-0.6cm}
+\begin{itemizeM}
+\item \textbf{Goal:} Fit each selected interaction $f_{ij}(x_i, x_j)$ on residuals from main effects
+\item Use tree-like predictor, inspired by FAST
+%\item \textbf{Cuts:}
+\begin{itemizeS}
+\item Use two axis-aligned cuts $(c_i, c_j)$
+\item Plus one refinement cut to increase flexibility while keeping interpretability
+\end{itemizeS}
+\item Reuse region-wise sums from FAST lookup tables
+\item Greedy search for cut config minimizing RSS
+\end{itemizeM}
+}
+\end{framev}
 
 
 % \begin{frame}{Accurate GAM - Prediction}
@@ -1627,38 +1555,33 @@ $\Delta\text{RSS}(c_i,c_j)$.
 % \includegraphics[width=0.42\linewidth]{figure/3D Heatmap.png}
 % \end{frame}
 
-\begin{frame}{EBM - Prediction with Pairwise Interactions}
-\begin{itemize}
-    \item Each selected pair $(x_i, x_j)$ is modeled by $M$ boosted predictors trained on their residual interaction
-    \item These are aggregated into a single bivariate function $f_{ij}(x_i, x_j)$
-    \item The function is visualized as a 2D heatmap: 
-    \begin{itemize}
-        \item Axes: feature values of $x_i$ and $x_j$
-        \item Color: contribution to the final prediction
-        \item Preserves human interpretability 
-    \end{itemize}
-    \item One heatmap is generated per selected pairwise interaction
-\end{itemize}
-
-\vspace{0.3cm}
-\centering
-\includegraphics[width=0.42\linewidth]{figure/3D Heatmap.png}
-\end{frame}
+\begin{framev}[align=top]{EBM - Prediction with Pairwise Interactions}
+\begin{itemizeM}
+\item Each selected pair $(x_i, x_j)$ is modeled by $M$ boosted predictors trained on their residual interaction
+\item These are aggregated into a single bivariate function $f_{ij}(x_i, x_j)$
+\item The function is visualized as a 2D heatmap:
+\begin{itemizeS}
+\item Axes: feature values of $x_i$ and $x_j$
+\item Color: contribution to the final prediction
+\item Preserves human interpretability
+\end{itemizeS}
+\item One heatmap is generated per selected pairwise interaction
+\end{itemizeM}
+\spacer[0.25]
+\imageC[0.42]{figure/3D Heatmap.png}
+\end{framev}
 
 
-\begin{frame}{EBM - Final Model Structure}
-
-\begin{itemize}
-    \item \textbf{Main effects:} One shape function $f_j(x_j)$ per feature \\(visualized as 1D plots)
-    \item \textbf{Pairwise interactions:} Selected functions $f_{ij}(x_i, x_j)$ added for top $K$ pairs (visualized as 2D heatmaps)
-    \item \textbf{Prediction:} Additive sum of all univariate and selected bivariate contributions
-\end{itemize}
-
-\vspace{0.3cm}
-\centering
-\includegraphics[width=\linewidth]{figure/final_ebm.png}
-
-\end{frame}
+\begin{framev}[align=top]{EBM - Final Model Structure}
+\begin{itemizeM}
+\item \textbf{Main effects:} One shape function $f_j(x_j)$ per feature\\
+(visualized as 1D plots)
+\item \textbf{Pairwise interactions:} Selected functions $f_{ij}(x_i, x_j)$ added for top $K$ pairs (visualized as 2D heatmaps)
+\item \textbf{Prediction:} Additive sum of all univariate and selected bivariate contributions
+\end{itemizeM}
+\spacer[0.25]
+\image{figure/final_ebm.png}
+\end{framev}
 
 
 
@@ -1708,84 +1631,71 @@ $\Delta\text{RSS}(c_i,c_j)$.
 % \end{tabular}
 % \end{frame}
 %------------- SLIDE 1 -------------------------------------------------
-\begin{frame}{EBM \textit{vs.} Model-based Boosting}
-\small
-\begin{itemize}
-  %-- BASE LEARNER -----------------------------------------------------
-  \item \textbf{Base learner}
-        \begin{itemize}
-          \item \textbf{EBM}: bagged 2--4-leaf trees, \emph{one feature} per tree  
-                $\Rightarrow$ step-function shape $f_j$  % ASCII arrow macro
-                % OLD
+\begin{framei}[align=top]{EBM \textit{vs.} Model-based Boosting}
+%-- BASE LEARNER -----------------------------------------------------
+\item \textbf{Base learner}
+\begin{itemizeS}
+\item \textbf{EBM}: bagged 2--4-leaf trees, \emph{one feature} per tree\\
+$\Rightarrow$ step-function shape $f_j$  % ASCII arrow macro
+% OLD
 %\citebutton{Lou et al.\ 2012}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd12.pdf}
 % new
 \furtherreading{LOU2012}
-          \item \textbf{MB-boost}: user chooses component-wise learner  
-                (linear term, P-spline, tree, random effect, \dots)  
-                % OLD
+\item \textbf{MB-boost}: user chooses component-wise learner\\
+(linear term, P-spline, tree, random effect, \dots)
+% OLD
 %\citebutton{B\"uhlmann \& Hothorn 2007}{https://doi.org/10.1214/07-STS242}
 % new
 \furtherreading{BÜHLMANNHOTHORN2007}
-        \end{itemize}
+\end{itemizeS}
 \pause
-  %-- ITERATION POLICY -------------------------------------------------
-  \item \textbf{Iteration policy}
-        \begin{itemize}
-          \item \textbf{EBM}: round-robin ($\forall j$) each boosting pass; \\tiny
-                learning rate $\eta \approx 0.01$.
-          \item \textbf{MB-boost}: greedy; update the \emph{single} component that yields the largest loss reduction.
-        \end{itemize}
+%-- ITERATION POLICY -------------------------------------------------
+\item \textbf{Iteration policy}
+\begin{itemizeS}
+\item \textbf{EBM}: round-robin ($\forall j$) each boosting pass; \\
+tiny learning rate $\eta \approx 0.01$.
+\item \textbf{MB-boost}: greedy; update the \emph{single} component that yields the largest loss reduction.
+\end{itemizeS}
 \pause
-  %-- REGULARISATION ---------------------------------------------------
-  \item \textbf{Regularisation}
-        \begin{itemize}
-          \item \textbf{EBM}: many iterations $M$ (5--10k);  
-                early stopping via \emph{internal} CV on out-of-bag samples;  
-                bagging further lowers variance.
-          \item \textbf{MB-boost}: shrinkage $\nu \in (0,1]$;  
-                early stop by CV/AIC; component selection acts like an
-                $L_0/L_1$ penalty $\rightarrow$ sparsity.
-        \end{itemize}
-\end{itemize}
-\end{frame}
+%-- REGULARISATION ---------------------------------------------------
+\item \textbf{Regularisation}
+\begin{itemizeS}
+\item \textbf{EBM}: many iterations $M$ (5--10k); early stopping via \emph{internal} CV on out-of-bag samples; bagging further lowers variance.
+\item \textbf{MB-boost}: shrinkage $\nu \in (0,1]$; early stop by CV/AIC; component selection acts like an $L_0/L_1$ penalty $\rightarrow$ sparsity.
+\end{itemizeS}
+\end{framei}
 
 %------------- SLIDE 2 -------------------------------------------------
-\begin{frame}{EBM \textit{vs.} Model-based Boosting}
-\small
-\begin{itemize}
-  %-- INTERACTIONS -----------------------------------------------------
-  \item \textbf{Interactions}
-        \begin{itemize}
-          \item \textbf{EBM}: FAST ranks and selects top-$K$ interaction pairs, fitted as bivariate trees $\Rightarrow$ GA2M  
-                % OLD
+\begin{framei}[align=top]{EBM \textit{vs.} Model-based Boosting}
+%-- INTERACTIONS -----------------------------------------------------
+\item \textbf{Interactions}
+\begin{itemizeS}
+\item \textbf{EBM}: FAST ranks and selects top-$K$ interaction pairs, fitted as bivariate trees $\Rightarrow$ GA2M
+% OLD
 %\citebutton{Lou et~al.\ 2013}{https://www.cs.cornell.edu/~yinlou/papers/lou-kdd13.pdf}
 % new
 \furtherreading{LOU2013}
-          \item \textbf{MB-boost}: interactions are modelled only when the
-                user supplies dedicated interaction base learners;
-                no automatic pairwise search
-        \end{itemize}
+\item \textbf{MB-boost}: interactions are modelled only when the user supplies dedicated interaction base learners; no automatic pairwise search
+\end{itemizeS}
 \pause
-  %-- INTERPRETABILITY -------------------------------------------------
-  \item \textbf{Interpretability}
-        \begin{itemize}
-          \item \textbf{EBM}:
-          \begin{itemize}
-              \item one\;1-D step plot for each $f_{j}$
-              \item small number of 2-D heat-maps for selected $f_{ij}$
-          \end{itemize} 
-          \item \textbf{MB-boost}: depends on selected learner: linear
-                coefficients, smooth splines, random-effect curves, etc. %; statistical inference (confidence intervals, $p$-values) available for many bases
-        \end{itemize}
+%-- INTERPRETABILITY -------------------------------------------------
+\item \textbf{Interpretability}
+\begin{itemizeS}
+\item \textbf{EBM}:
+\begin{itemizeS}
+\item one\;1-D step plot for each $f_{j}$
+\item small number of 2-D heat-maps for selected $f_{ij}$
+\end{itemizeS}
+\item \textbf{MB-boost}: depends on selected learner: linear coefficients, smooth splines, random-effect curves, etc. %; statistical inference (confidence intervals, $p$-values) available for many bases
+\end{itemizeS}
 \pause
-  %-- TAKE-AWAY --------------------------------------------------------
-  \item \textbf{Take-away}  
-  \begin{itemize}
-      \item \emph{EBM} provides fast, interpretable, and interaction-sparse models
-      \item \emph{MB-boost} offers flexible stat modeling with built-in variable selection %and formal inference
-  \end{itemize}
-\end{itemize}
-\end{frame}
+%-- TAKE-AWAY --------------------------------------------------------
+\item \textbf{Take-away}
+\begin{itemizeS}
+\item \emph{EBM} provides fast, interpretable, and interaction-sparse models
+\item \emph{MB-boost} offers flexible stat modeling with built-in variable selection %and formal inference
+\end{itemizeS}
+\end{framei}
 
 
 \endlecture
