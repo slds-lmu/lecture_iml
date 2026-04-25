@@ -8,15 +8,13 @@
 % new
 \input{../../style/preamble}
 % Defines macros and environments
- \input{../../latex-math/basic-ml} 
+\input{../../latex-math/basic-ml}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/ml-ensembles}
-
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
-\date{}
 
 \begin{document}
 
@@ -50,58 +48,53 @@ figure/gam_effects.pdf
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}{Generalized Additive Model (GAM) % OLD
+\begin{framev}[align=top]{Generalized Additive Model (GAM) % OLD
 %\citebutton{Hastie and Tibshirani (1986)}{https://www.jstor.org/stable/2245459}
 % new
 \furtherreading{TIBSHIRANI1986}}
-
 \textbf{Problem}: LM not great if features act on outcome non-linearly % $\leadsto$ standard 
-
-\begin{columns}[totalwidth=\textwidth]
-    \begin{column}{0.57\textwidth}
-    
-        \only<2->{
-        \textbf{Workaround in LMs / GLMs}: 
-        \begin{itemize}
-            \item Feature transformations (e.g., exp, log)
-            \item Including high-order effects
-            \item Categorization of features (i.e., intervals/ buckets of feature values)
-        \end{itemize}}
-    \end{column}
-    \begin{column}{0.43\textwidth}
-        \begin{center}
-            \includegraphics[width = .95\textwidth]{figure/intro_lm_bike.pdf}
-            %\includegraphics[width = \textwidth]{figure/lm_bad_fit2.pdf}
-        \end{center}
-    \end{column}
-\end{columns}
-
-%\medskip
+\spacer[0.25]
+\splitVTT[0.57]{
+\spacer[0]
+\uncover<2->{
+\textbf{Workaround in LMs / GLMs}:
+\begin{itemizeM}
+\item Feature transformations (e.g., exp, log)
+\item Including high-order effects
+\item Categorization of features (i.e., intervals/ buckets of feature values)
+\end{itemizeM}
+}
+}{
+\spacer[0]
+\centering
+\image[0.95]{figure/intro_lm_bike.pdf}
+%\includegraphics[width = \textwidth]{figure/lm_bad_fit2.pdf}
+\spacer[0]
+}
+\spacer[0.25]
 
 \only<3->{
 \textbf{Idea of GAMs:}
-
-    \begin{itemize}
-        \item Instead of linear terms $\theta_j x_j$, use flexible functions $f_j(x_j)$ $\leadsto$ splines
-            $$g(\E (y \mid \xv)) = \theta_0 + f_1(x_1) + f_2(x_2) + \ldots + f_p(x_p)$$
-    
-        \item Preserves additive structure and allows to model non-linear effects
-        \item Splines have smoothness param. to control flexibility (prevent overfitting)\\
-        $\leadsto$ Needs to be chosen, e.g., via cross-validation
-    \end{itemize}}   
-
-\end{frame}
+\begin{itemizeM}
+\item Instead of linear terms $\theta_j x_j$, use flexible functions $f_j(x_j)$ $\leadsto$ splines
+$$g(\E (y \mid \xv)) = \theta_0 + f_1(x_1) + f_2(x_2) + \ldots + f_p(x_p)$$
+\item Preserves additive structure and allows to model non-linear effects
+\item Splines have smoothness param. to control flexibility (prevent overfitting)\\
+$\leadsto$ Needs to be chosen, e.g., via cross-validation
+\end{itemizeM}
+}
+\end{framev}
 
 
-\begin{frame}{Generalized Additive Model (GAM) - Example}
+\begin{framev}[align=top]{Generalized Additive Model (GAM) - Example}
 Fit a GAM with smooth splines for four numeric features of bike rental data \\
 $\leadsto$ more flexible and better model fit but less interpretable than LM
-
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.5\textwidth}
+\spacer[0.25]
+\splitVTT[0.5]{
+\spacer[0]
 \begin{table}[ht]
 \centering
-\scriptsize
+\begin{scriptsize}
 % \begin{tabular}{rrrrr}
 %   \hline
 %  & edf & Ref.df & F & p-value \\ 
@@ -112,39 +105,36 @@ $\leadsto$ more flexible and better model fit but less interpretable than LM
 %   s(days\_since\_2011) & 8.3 & 8.8 & 154.4 & 0.00 \\ 
 %   \hline
 \begin{tabular}{rrr}
-  \hline
- & edf & p-value \\ 
-  \hline
-s(temp) & 5.8 & 0.00 \\ 
-  s(hum) & 4.0 & 0.00 \\ 
-  s(windspeed) & 1.7 & 0.00 \\ 
-  s(days\_since\_2011) & 8.3 & 0.00 \\ 
-   \hline
+\hline
+& edf & p-value \\
+\hline
+s(temp) & 5.8 & 0.00 \\
+s(hum) & 4.0 & 0.00 \\
+s(windspeed) & 1.7 & 0.00 \\
+s(days\_since\_2011) & 8.3 & 0.00 \\
+\hline
 \end{tabular}
+\end{scriptsize}
 \end{table}
-
-
 \textbf{Interpretation}
-\begin{itemize}
-    %\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
-    \item Interpretation is done visually and relative to average prediction
-    %, also see PDPs
-    \item Edf: effective degrees of freedom\\
-    $\leadsto$ represents degree of smoothness/complexity
-\end{itemize}
-\end{column}
-\hfill
+\begin{itemizeM}
+%\item If the temperature increases by 1 degree Celsius then the log odds of high number of bike rentals increase linearly by 0.3 c.p.
+\item Interpretation is done visually and relative to average prediction
+%, also see PDPs
+\item Edf: effective degrees of freedom\\
+$\leadsto$ represents degree of smoothness/complexity
+\end{itemizeM}
+}{
+\spacer[0]
 \centering
-\begin{column}{0.5\textwidth}
-\includegraphics[width = \textwidth]{figure/gam_effects.pdf}
-\end{column}
-\end{columns}
-\end{frame}
+\image{figure/gam_effects.pdf}
+}
+\end{framev}
 
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-\begin{frame}{Model-based Boosting % OLD
+\begin{framei}[align=top]{Model-based Boosting % OLD
 %\citebutton{Bühlmann, Yu 2003}{https://doi.org/10.1198/016214503000125}
 % new
 \furtherreading{BÜHLMANNYU2003} % OLD
@@ -152,7 +142,6 @@ s(temp) & 5.8 & 0.00 \\
 % new
 \furtherreading{BÜHLMANNHOTHORN2008}}
 
-\begin{itemize}%[<+->]
 %\setlength\itemsep{2em}
 \item Boosting iteratively combines weak base learners to create powerful ensemble 
 \item
@@ -180,209 +169,191 @@ In each iteration, fit a set of BLs, add best one to model (with step-size $\nu$
 &= \hat{f}_0 + \textcolor{blue}{\hat{f}_3(\xv_3)} + \textcolor{orange}{\hat{f}_1(\xv_1)}
 \end{align*}
 \item Final model is additive GAM, we can read off effect curves
-\end{itemize}
-\end{frame}
+\end{framei}
 
 
-
-
-
-
-
-
-
-
-\begin{frame}{Model-based Boosting - Linear Example}
-
+\begin{framev}[align=top]{Model-based Boosting - Linear Example}
 Simple case: Use linear model with single feature (including intercept) as BL
 $$
 \bl[j](x_j, \thetav) = x_j\thetav + \thetav_0 \hspace*{0.2cm}\text{ for } j = 1,\ldots p \hspace*{0.3cm} \leadsto \text{ordinary linear regression}
 $$
-
-\begin{itemize}
+\begin{itemizeM}
 \item<1-> Here: Interpretation of weights as in LM
 \item<1-> After many iterations, it converges to same solution as LM %least square estimate of
 \item<2-> Early stopping allows feature selection \& may also prevent\\ overfitting (regularization)
 %\item Specifying loss and link function according to exponential family leads a (regularized) GLM
-\end{itemize}
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.49\linewidth}
-\scriptsize
+\end{itemizeM}
+\spacer[0.25]
+\splitVTT[0.49]{
+\spacer[0]
 \begin{table}[ht]
 \centering
-\tiny
+\begin{tiny}
 \begin{tabular}{r|r|l}
-  %\hline
-\textbf{1000 iter. with $\nu = 0.1$} & Intercept & Weights \\ 
-  \hline  \hline
-days\_since\_2011 & -1791.06 & 4.9 \\ 
-  \hline
-  hum & 1953.05 & -31.1 \\ 
-    \hline
-  season & 0 &  \begin{tabular}[c]{@{}l@{}}
-  WINTER: -323.4\\
-  SPRING: 539.5\\
-  SUMMER: -280.2\\
-  FALL: 67.2
-  \end{tabular}\\
-    \hline
-  %season &  & WINTER: -323.4, SPRING: 539.5, SUMMER: -280.2, FALL: 67.2 \\ 
-  temp & -1839.85 & 120.4 \\ 
-    \hline
-  windspeed & 725.70 & -56.9 \\ 
-    \hline
-  offset & 4504.35 &  \\ 
-   %\hline
+%\hline
+\textbf{1000 iter. with $\nu = 0.1$} & Intercept & Weights \\
+\hline \hline
+days\_since\_2011 & -1791.06 & 4.9 \\
+\hline
+hum & 1953.05 & -31.1 \\
+\hline
+season & 0 & \begin{tabular}[c]{@{}l@{}}
+WINTER: -323.4\\
+SPRING: 539.5\\
+SUMMER: -280.2\\
+FALL: 67.2
+\end{tabular}\\
+\hline
+%season &  & WINTER: -323.4, SPRING: 539.5, SUMMER: -280.2, FALL: 67.2 \\
+temp & -1839.85 & 120.4 \\
+\hline
+windspeed & 725.70 & -56.9 \\
+\hline
+offset & 4504.35 &  \\
+%\hline
 \end{tabular}
+\end{tiny}
 \end{table}
-% \centering
-% $\Rightarrow$ Converges to solution of LM 
-\end{column}
-\begin{column}{0.49\linewidth}
-
-\only<1>{\scriptsize
-\medskip
+\spacer[0]
+{\scriptsize
+\centering
+$\Rightarrow$ Converges to solution of LM
+\par
+}
+}{
+\only<1>{
+\spacer[0]
+{\scriptsize
 Relative frequency of selected BLs across iterations
-\includegraphics[width = .95 \linewidth]{figure/compboost_base_linear.pdf}}
+\par
+}
+% no use of \imageC due to additional vertical spacing which in this case looks worse
+\centering
+\image[0.95]{figure/compboost_base_linear.pdf}
 
-
+\spacer[0]
+}
 \only<2>{
+\spacer[0]
 \begin{table}[ht]
 \centering
-\tiny
+\begin{tiny}
 \begin{tabular}{r|r|l}
-  %\hline
- \textbf{20 iter. with $\nu = 0.1$} & Intercept & Weights \\ 
-  \hline  \hline
-  days\_since\_2011 & -1210.27 & 3.3 \\ 
-    \hline
-   season & 0 & 
-   \begin{tabular}[c]{@{}l@{}}
-  WINTER: -276.9\\
-  SPRING: 137.6\\
-  SUMMER: 112.8\\
-  FALL: 20.3
-   \end{tabular}\\
-     \hline
-  temp & -1118.94 & 73.2 \\ 
-    \hline
-  offset & 4504.35 &  \\ 
-   %\hline
+%\hline
+\textbf{20 iter. with $\nu = 0.1$} & Intercept & Weights \\
+\hline \hline
+days\_since\_2011 & -1210.27 & 3.3 \\
+\hline
+season & 0 &
+\begin{tabular}[c]{@{}l@{}}
+WINTER: -276.9\\
+SPRING: 137.6\\
+SUMMER: 112.8\\
+FALL: 20.3
+\end{tabular}\\
+\hline
+temp & -1118.94 & 73.2 \\
+\hline
+offset & 4504.35 &  \\
+%\hline
 \end{tabular}
+\end{tiny}
 \end{table}
-% \centering
-% \scriptsize
-% $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
-}
-\end{column}
-\end{columns}
-
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.49\linewidth}
-\scriptsize
+\spacer[0]
+{\scriptsize
 \centering
-$\Rightarrow$ Converges to solution of LM 
-\end{column}
-\begin{column}{0.49\linewidth}
-
-\only<2>{
-\centering
-\scriptsize
 $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
+\par
 }
-\end{column}
-\end{columns}
+}
+}
 % \begin{itemize}
 %     \item Linear base learners for numeric features and categorical base learner for season
 %     \item 3 base learners selected after 100 iterations
 % \end{itemize}
+\end{framev}
 
-\end{frame}
 
-
-\begin{frame}{Linear Example: Interpretation}
-
-\medskip
+\begin{framev}[align=top]{Linear Example: Interpretation}
 \textbf{Feature importance:} aggregated change in risk in each iteration per feature
-\begin{itemize}
-    \item E.g. iter. 1: \code{days\_since\_2011} with risk reduction (MSE) of 140,782.94
-    \item For every iteration the change in risk can be attributed to a feature
-\end{itemize}
-\medskip
-
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.47\linewidth}
-\hspace{46pt}{\scriptsize{1000 iterations}}
-\includegraphics[width = \linewidth]{figure/compboost_pfi_base2.pdf}\\
-\centering \scriptsize
+\begin{itemizeM}
+\item E.g. iter. 1: \code{days\_since\_2011} with risk reduction (MSE) of 140,782.94
+\item For every iteration the change in risk can be attributed to a feature
+\end{itemizeM}
+\spacer[0.25]
+\splitVTT[0.5]{
+\centering
+{\scriptsize 1000 iterations}\\
+\image{figure/compboost_pfi_base2.pdf}\\
+{\scriptsize
 In-bag-risk: 434,686.0 \\
 OOB risk (10-fold CV): 446,450.0
-\end{column}
-
-
-\begin{column}{0.47\linewidth}
-\hspace{46pt}{\scriptsize{20 iterations}}
-\includegraphics[width = \linewidth]{figure/compboost_pfi_base1.pdf}\\
-\centering \scriptsize
+}
+}{
+\centering
+{\scriptsize 20 iterations}\\
+\image{figure/compboost_pfi_base1.pdf}\\
+{\scriptsize
 In-bag-risk: 693,505.0\\
 OOB risk (10-fold CV): 705,776.0
-\end{column}
-\end{columns}
-
+}
+}
 \begin{center}
-\scriptsize
+{\scriptsize
 $\Rightarrow$ Difference in risk: 258,819.0\\
 Difference in OOB risk: 259,326.0\\
+}
 % \normalsize
 % \medskip
 % $\leadsto$ Ranking of features stays the same
 
 \end{center}
+\end{framev}
 
-\end{frame}
 
-
-\begin{frame}{Non-linear Example: Interpretation}
-
-\begin{itemize}
-    \item Fit model on bike data with different BL types (1000 iter.) % OLD
+\begin{framev}[align=top]{Non-linear Example: Interpretation}
+\begin{itemizeM}
+\item Fit model on bike data with different BL types (1000 iter.) % OLD
 %\citebutton{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}
 % new
 \furtherreading{SCHALKETAL2018}
-    \item BLs: linear and centered splines for numeric feat., categorical for season
-    %and categorical base learner for season
-\end{itemize}
-\begin{columns}[T, totalwidth = \textwidth]
+\item BLs: linear and centered splines for numeric feat., categorical for season
+%and categorical base learner for season
+\end{itemizeM}
+\spacer[0.25]
 \visible<2->{
-\begin{column}{0.5\linewidth}
-\hspace{45pt}{\scriptsize{Feature importance}}
- \includegraphics[width = \linewidth]{figure/compboost_pfi.pdf}
+\splitVCC[0.5]{
+\centering
+{\scriptsize Feature importance}\\
+\image{figure/compboost_pfi.pdf}
+\spacer[0]
 %Feature importance (risk reduction over iter.)\\
 %$\leadsto$ \code{days\_since\_2011} most important
 %\scriptsize
 %\verbatiminput{figure/mboost_output.txt}
-\end{column}
-}
-\visible<2->{
-\begin{column}{0.5\linewidth}  %%<--- here
-\hspace{23pt}{\scriptsize{Feature effect}}
-  \includegraphics[width = \linewidth]{figure/compboost_pfe.pdf}
+}{
+\centering
+{\scriptsize Feature effect}\\
+\image{figure/compboost_pfe.pdf}
+\spacer[0]
 %Partial feature effect for \code{days\_since\_2011}\\
 %$\leadsto$ Total effect: Combination of partial effects of linear BL and centered spline BL
-\end{column}
 }
-\end{columns}
-\smallskip
-\scriptsize
-\only<2->{\qquad $\Rightarrow$ In-bag-risk: 250,202.0 \, ; \, OOB risk (10-fold CV): 267,497.0 (difference to lin. example: 178,953.0)\\
-\qquad $\Rightarrow$ In-bag-risk: 434,686.0 \, ; \, OOB risk (10-fold CV): 446,450.0 (previous lin. example with 1000 iter.)}
-\begin{itemize}
-    \normalsize
-    \item<2->  Feature importance (risk reduction over iter.) \\ $\leadsto$ \code{days\_since\_2011} most important
-    \item<2-> Total effect for \code{days\_since\_2011}\\
+}
+\only<2->{
+\spacer[0]
+{\scriptsize
+\qquad $\Rightarrow$ In-bag-risk: 250,202.0 \, ; \, OOB risk (10-fold CV): 267,497.0 (difference to lin. example: 178,953.0)\\
+\qquad $\Rightarrow$ In-bag-risk: 434,686.0 \, ; \, OOB risk (10-fold CV): 446,450.0 (previous lin. example with 1000 iter.)
+}
+}
+\begin{itemizeM}
+\item<2-> Feature importance (risk reduction over iter.)\\
+$\leadsto$ \code{days\_since\_2011} most important
+\item<2-> Total effect for \code{days\_since\_2011}\\
 $\leadsto$ Combination of partial effects of linear BL and centered spline BL
-\end{itemize}
-\end{frame}
+\end{itemizeM}
+\end{framev}
 
 %------------------------------------------------------------------
 %------------------------------------------------------------------
