@@ -103,14 +103,14 @@ We can measure complexity of $\gh \in \Gspace$ using a complexity measure $J: \m
 Let $\Gspace = \{g: \Xspace \to \R ~|~ g(\xv) = s(\thetav^\top \xv)\}$ be the class of linear models
 \begin{itemizeS}
 \item $s(\cdot)$ is the identity (linear model) or logistic sigmoid function (logistic regression)
-\item[$\leadsto$] $J(g) = \sum_{j = 1}^p \ind_{\{\theta_j \neq 0\}}$: count the number of non-zero coefficients via the $L_0$ norm of $\thetav$
+\item[$\leadsto$] $J(g) = \sum_{j = 1}^p \mathds{1}_{\{\theta_j \neq 0\}}$: count the number of non-zero coefficients via the $L_0$ norm of $\thetav$
 \end{itemizeS}
 \pause
 \item \textbf{Example: Decision Trees}\\
-Let $\Gspace = \{g: \Xspace \to \R ~|~ g(\xv) = \sum_{m=1}^M c_m \ind_{\{\xv \in Q_m\}}\}$ be the class of trees
+Let $\Gspace = \{g: \Xspace \to \R ~|~ g(\xv) = \sum_{m=1}^M c_m \mathds{1}_{\{\xv \in \mathcal{R}_m\}}\}$ be the class of trees
 \begin{itemizeS}
-\item $Q_m$ are disjoint axis-parallel regions (leaves); $c_m \in \R$ are constant predictions
-%\\ 	     i.e., the class of additive models (e.g., constant $c_m$)  over the leaf-rectangles $Q_m$
+\item $\mathcal{R}_m$ are disjoint axis-parallel regions (leaves); $c_m \in \R$ are constant predictions
+%\\ 	     i.e., the class of additive models (e.g., constant $c_m$)  over the leaf-rectangles $\mathcal{R}_m$
 \item[$\leadsto$] $J(g) = M$: count the number of terminal or leaf nodes
 \end{itemizeS}
 \end{itemizeM}
