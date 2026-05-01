@@ -8,7 +8,6 @@
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
-\date{}
 
 \def\firstrowcolor{}
 \def\secondrowcolor{}
@@ -31,83 +30,68 @@ figure/tree_surface2.png
 \item Decision rules
 }
 
-\begin{frame}{Decision Trees \furtherreading{BREIMANETAL1984}}
-
+\begin{framev}[align=top]{Decision Trees \furtherreading{BREIMANETAL1984}}
 %\textbf{Problem}: Can we model non-linear effects and interactions automatically (without manual specification as in GLMs or GAMs)?\\
 %Relationship between features and target are non-linear or interactions are present\\
 %\medskip
 %\pause
 
-\textbf{Idea}: 
+\textbf{Idea}:
 %Split data in different subsets based on cut-off values in features 
 Partition data into axis-aligned regions via greedy search for feature cut points (minimizing a split criterion), then predict a constant mean $c_m$ in each leaf region $\mathcal{R}_m$:
 %Partition data into subsets based on cut-off values in features (found by minimizing a split criterion via greedy search) and predict constant mean $c_m$ in leaf node $\mathcal{R}_m$:
-
-\begin{columns}[T, totalwidth=\textwidth]
-
-\begin{column}{0.65\textwidth}
+\splitVTT[0.65]{
+\spacer[0]
 $$
 \textstyle\hat f(x) = \sum\limits_{m=1}^M c_m \mathds{1}_{\{x \in \mathcal{R}_m\}}
 $$
-
 % \begin{itemize}
 % \item where $c_m$ is a constant and 
 % \item $\mathcal{R}_m$ the $m$-th leaf node of the tree
 % \end{itemize}
 \pause
-\begin{itemize}
-    %\item Finding best split point (CART): Greedy search for the point that minimizes the variance of $y$ (regression) or the Gini index (classification)
-    \item Applicable to regression and classification
-    \item Models interactions and non-linear effects
-    \item Handles mixed feat, spaces \& missing values
-\end{itemize}
-
-\end{column}
-\begin{column}{0.35\textwidth}
-\vspace{0.15cm}
+\begin{itemizeM}
+%\item Finding best split point (CART): Greedy search for the point that minimizes the variance of $y$ (regression) or the Gini index (classification)
+\item Applicable to regression and classification
+\item Models interactions and non-linear effects
+\item Handles mixed feat, spaces \& missing values
+\end{itemizeM}
+}{
+\spacer[0]
 \centering
 \begin{tikzpicture}[scale=0.8, transform shape]
-   \usetikzlibrary{arrows}
-    \usetikzlibrary{shapes}
-     \tikzset{treenode/.style={draw, circle, font=\small}}
-     \tikzset{line/.style={draw, thick}}
-     \node [treenode, draw=red] (a0) {};
-     \node [treenode, below=0.75cm of a0, xshift=-1.5cm]  (a1) {};
-     \node [treenode, below=0.75cm of a0, xshift=1.5cm]  (a2) {};
-
-     \node [treenode, below=0.75cm of a2, xshift=-0.75cm] (a3) {$c_1$};
-     \node [treenode, below=0.75cm of a2, xshift=0.75cm]  (a4) {$c_2$};
-
-    \node [treenode, below=0.75cm of a1, xshift=-0.75cm] (a5) {$c_3$};
-    \node [treenode, below=0.75cm of a1, xshift=0.75cm]  (a6) {$c_4$};
-
-     \path [line] (a0.south) -- + (0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<3$};
-     \path [line] (a0.south) -- +(0,-0.4cm) -|  (a2.north) node [midway, above] {$x_1\geq3$};
-
-     \path [line] (a2.south) -- + (0,-0.4cm) -| (a3.north) node [midway, above] {$x_2<6$};;
-     \path [line] (a2.south) -- +(0,-0.4cm) -|  (a4.north) node [midway, above] {$x_2\geq6$};
-
-    \path [line] (a1.south) -- + (0,-0.4cm) -| (a5.north) node [midway, above] {$x_3<2$};;
-    \path [line] (a1.south) -- +(0,-0.4cm) -|  (a6.north) node [midway, above] {$x_3\geq2$};
-
-    %\path (a5.south) -- +(0,0) -|  (a5.south) node [midway, below] {$f_{1,3}(x_1,x_3)$};
-    %\path (a6.south) -- +(0,0) -|  (a6.south) node [midway, below] {$f_{1,3}(x_1,x_3)$};
-
-    %\path (a3.south) -- +(0,0) -|  (a3.south) node [midway, below] {$f_{1,2}(x_1,x_2)$};
-    %\path (a3.south) -- +(0,0) -|  (a4.south) node [midway, below] {$f_{1,2}(x_1,x_2)$};
-    % \path (a3) edge [bend right, draw=white] node [below] {$f_{1,2}(x_1,x_2)$} (a4);
-    % \path (a5) edge [bend right, draw=white] node [below] {$f_{1,3}(x_1,x_3)$} (a6);
-   \end{tikzpicture}
-   
-\end{column}
-\end{columns}
-%\vspace{-0.4cm}
-\begin{center}
-\includegraphics[width=0.45\textwidth]{figure/tree_surface1.pdf} \qquad  
-\includegraphics[width=0.33\textwidth]{figure/tree_surface2.png}
-\end{center}
-
-\end{frame}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzset{treenode/.style={draw, circle, font=\small}}
+\tikzset{line/.style={draw, thick}}
+\node [treenode, draw=red] (a0) {};
+\node [treenode, below=0.75cm of a0, xshift=-1.5cm] (a1) {};
+\node [treenode, below=0.75cm of a0, xshift=1.5cm] (a2) {};
+\node [treenode, below=0.75cm of a2, xshift=-0.75cm] (a3) {$c_1$};
+\node [treenode, below=0.75cm of a2, xshift=0.75cm] (a4) {$c_2$};
+\node [treenode, below=0.75cm of a1, xshift=-0.75cm] (a5) {$c_3$};
+\node [treenode, below=0.75cm of a1, xshift=0.75cm] (a6) {$c_4$};
+\path [line] (a0.south) -- +(0,-0.4cm) -| (a1.north) node [midway, above] {$x_1<3$};
+\path [line] (a0.south) -- +(0,-0.4cm) -| (a2.north) node [midway, above] {$x_1\geq3$};
+\path [line] (a2.south) -- +(0,-0.4cm) -| (a3.north) node [midway, above] {$x_2<6$};
+\path [line] (a2.south) -- +(0,-0.4cm) -| (a4.north) node [midway, above] {$x_2\geq6$};
+\path [line] (a1.south) -- +(0,-0.4cm) -| (a5.north) node [midway, above] {$x_3<2$};
+\path [line] (a1.south) -- +(0,-0.4cm) -| (a6.north) node [midway, above] {$x_3\geq2$};
+%\path (a5.south) -- +(0,0) -|  (a5.south) node [midway, below] {$f_{1,3}(x_1,x_3)$};
+%\path (a6.south) -- +(0,0) -|  (a6.south) node [midway, below] {$f_{1,3}(x_1,x_3)$};
+%\path (a3.south) -- +(0,0) -|  (a3.south) node [midway, below] {$f_{1,2}(x_1,x_2)$};
+%\path (a3.south) -- +(0,0) -|  (a4.south) node [midway, below] {$f_{1,2}(x_1,x_2)$};
+% \path (a3) edge [bend right, draw=white] node [below] {$f_{1,2}(x_1,x_2)$} (a4);
+% \path (a5) edge [bend right, draw=white] node [below] {$f_{1,3}(x_1,x_3)$} (a6);
+\end{tikzpicture}
+\spacer[0]
+}
+\splitVCC[0.55]{
+\imageC[0.82]{figure/tree_surface1.pdf}
+}{
+\imageC[0.73]{figure/tree_surface2.png}
+}
+\end{framev}
 
 
 % \begin{frame}{Interpretation}
@@ -120,77 +104,66 @@ $$
 
 % \end{frame}
 
-\begin{frame}{Interpretation of Tree-Based Models}
-\begin{itemize}
-    \item Interpretation via path of decision rules along tree branches
-    \item \textbf{Feature importance} (quantifies how often and how usefully $x_j$ is used): 
-    \begin{itemize}
-        \item For each split on feature $x_j$, record the decrease in the split criterion 
-        \item Aggregate this over the tree: sum or avg. over all splits involving $x_j$
-        \item Split criterion: variance (regression), Gini index / entropy (classif.)
-    \end{itemize}
-    %\item[] $\leadsto$ Quantifies how often and how usefully $x_j$ is used
-\end{itemize}
-\begin{columns}[T, totalwidth=\textwidth]
-  \begin{column}{0.6\textwidth}
-    %\begin{center}
-    % \begin{tikzpicture}[scale=0.7, every node/.style={font=\small}]
-    %   % Nodes
-    %   \node[draw, circle] (root) at (0,0) {$x_j < 5$};
-    %   \node[draw, circle] (left) at (-3,-2.5) {$x_k < 3$};
-    %   \node[draw, rectangle] (L1) at (-4.2,-5) {$c_1$};
-    %   \node[draw, rectangle] (L2) at (-1.8,-5) {$c_2$};
-
-    %   \node[draw, circle] (right) at (3,-2.5) {$x_k < 7$};
-    %   \node[draw, rectangle] (R1) at (2,-5) {$c_3$};
-    %   \node[draw, rectangle] (R2) at (4,-5) {$c_4$};
-
-    %   % Edges with labels
-    %   \draw[->] (root) -- node[above left] {\scriptsize } node[midway, left=3pt] {\scriptsize  $\Delta\text{Var} = 0.18$} (left);
-    %   \draw[->] (root) -- node[above right] {\scriptsize } node[midway, right=3pt] {\scriptsize } (right);
-
-    %   \draw[->] (left) -- node[left] {\scriptsize $\Delta\text{Var} = 0.07$} (L1);
-    %   \draw[->] (left) -- (L2);
-
-    %   \draw[->] (right) -- node[left] {\scriptsize $\Delta\text{Var} = 0.10$} (R1);
-    %   \draw[->] (right) -- (R2);
-    % \end{tikzpicture}
-    \begin{tikzpicture}[scale=0.75, every node/.style={font=\small}]
-  % Nodes: rectangular with split condition + delta
-  \node[draw, ellipse, align=center] (root) at (0,0) {$x_j < 5$\\ \scriptsize$ \Delta\text{Var} = 0.18$};
-  \node[draw, ellipse, align=center] (left) at (-3,-2.5) {$x_k < 3$\\ \scriptsize$\Delta\text{Var} = 0.07$};
-  \node[draw, ellipse, align=center] (right) at (3,-2.5) {$x_k < 7$\\ \scriptsize$\Delta\text{Var} = 0.10$};
-
-  % Leaf nodes
-  \node[draw, rectangle] (L1) at (-4.2,-5) {$c_1$};
-  \node[draw, rectangle] (L2) at (-1.8,-5) {$c_2$};
-  \node[draw, rectangle] (R1) at (2,-5) {$c_3$};
-  \node[draw, rectangle] (R2) at (4,-5) {$c_4$};
-
-  % Edges (unlabeled)
-  \draw[->] (root) -- (left);
-  \draw[->] (root) -- (right);
-  \draw[->] (left) -- (L1);
-  \draw[->] (left) -- (L2);
-  \draw[->] (right) -- (R1);
-  \draw[->] (right) -- (R2);
+\begin{framev}[align=top]{Interpretation of Tree-Based Models}
+\begin{itemizeM}
+\item Interpretation via path of decision rules along tree branches
+\item \textbf{Feature importance} (quantifies how often and how usefully $x_j$ is used):
+\begin{itemizeS}
+\item For each split on feature $x_j$, record the decrease in the split criterion
+\item Aggregate this over the tree: sum or avg. over all splits involving $x_j$
+\item Split criterion: variance (regression), Gini index / entropy (classif.)
+\end{itemizeS}
+%\item[] $\leadsto$ Quantifies how often and how usefully $x_j$ is used
+\end{itemizeM}
+\splitVTT[0.6]{
+\spacer[0]
+% \begin{tikzpicture}[scale=0.7, every node/.style={font=\small}]
+%   % Nodes
+%   \node[draw, circle] (root) at (0,0) {$x_j < 5$};
+%   \node[draw, circle] (left) at (-3,-2.5) {$x_k < 3$};
+%   \node[draw, rectangle] (L1) at (-4.2,-5) {$c_1$};
+%   \node[draw, rectangle] (L2) at (-1.8,-5) {$c_2$};
+%   \node[draw, circle] (right) at (3,-2.5) {$x_k < 7$};
+%   \node[draw, rectangle] (R1) at (2,-5) {$c_3$};
+%   \node[draw, rectangle] (R2) at (4,-5) {$c_4$};
+%   % Edges with labels
+%   \draw[->] (root) -- node[above left] {\scriptsize } node[midway, left=3pt] {\scriptsize  $\Delta\text{Var} = 0.18$} (left);
+%   \draw[->] (root) -- node[above right] {\scriptsize } node[midway, right=3pt] {\scriptsize } (right);
+%   \draw[->] (left) -- node[left] {\scriptsize $\Delta\text{Var} = 0.07$} (L1);
+%   \draw[->] (left) -- (L2);
+%   \draw[->] (right) -- node[left] {\scriptsize $\Delta\text{Var} = 0.10$} (R1);
+%   \draw[->] (right) -- (R2);
+% \end{tikzpicture}
+\begin{tikzpicture}[scale=0.75, every node/.style={font=\small}]
+% Nodes: rectangular with split condition + delta
+\node[draw, ellipse, align=center] (root) at (0,0) {$x_j < 5$\\ \scriptsize$ \Delta\text{Var} = 0.18$};
+\node[draw, ellipse, align=center] (left) at (-3,-2.5) {$x_k < 3$\\ \scriptsize$\Delta\text{Var} = 0.07$};
+\node[draw, ellipse, align=center] (right) at (3,-2.5) {$x_k < 7$\\ \scriptsize$\Delta\text{Var} = 0.10$};
+% Leaf nodes
+\node[draw, rectangle] (L1) at (-4.2,-5) {$c_1$};
+\node[draw, rectangle] (L2) at (-1.8,-5) {$c_2$};
+\node[draw, rectangle] (R1) at (2,-5) {$c_3$};
+\node[draw, rectangle] (R2) at (4,-5) {$c_4$};
+% Edges (unlabeled)
+\draw[->] (root) -- (left);
+\draw[->] (root) -- (right);
+\draw[->] (left) -- (L1);
+\draw[->] (left) -- (L2);
+\draw[->] (right) -- (R1);
+\draw[->] (right) -- (R2);
 \end{tikzpicture}
-
-    %\end{center}
-  \end{column}
-
-  \begin{column}{0.4\textwidth}
-    \begin{itemize}
-  \item Each $\Delta\text{Var}$ is assigned to the splitting feature
-  % Variance reductions $\Delta\text{Var}$ from splits are attributed to the splitting feature.
-  \item Feature importance = sum of all $\Delta\text{Var}$ for that feat.:
-  \begin{itemize}
-    \item[$x_j$:]  $0.18$
-    \item[$x_k$:]  $0.07 + 0.10 = 0.17$
-  \end{itemize}
-    \end{itemize}
-  \end{column}
-\end{columns}
+}{
+\spacer[0.6]
+\begin{itemizeM}
+\item Each $\Delta\text{Var}$ is assigned to the splitting feature
+% Variance reductions $\Delta\text{Var}$ from splits are attributed to the splitting feature.
+\item Feature importance = sum of all $\Delta\text{Var}$ for that feat.:
+\begin{itemizeS}
+\item[$x_j$:] $0.18$
+\item[$x_k$:] $0.07 + 0.10 = 0.17$
+\end{itemizeS}
+\end{itemizeM}
+}
 % \vspace{0.4cm}
 % \begin{center}
 % \begin{tikzpicture}[scale=0.7, every node/.style={font=\small}]
@@ -221,40 +194,33 @@ $$
 %     \item[] $\Rightarrow$ Feature importance($x_j$) += 0.18
 %     \item[] $\Rightarrow$ Feature importance($x_k$) += 0.07 + 0.10 = 0.17
 % \end{itemize}
+\end{framev}
 
-\end{frame}
 
-
-\begin{frame}{Decision Trees - Example}
-\begin{itemize}
-    \item Fit decision tree with tree depth of 3 on bike data
-    \item E.g., mean prediction for the first 105 days since 2011 is 1798\\
-    $\leadsto$ Applies to $\hat = 15\%$ of the data (leftmost branch)
-    \item \code{days\_since\_2011}: highest feat. importance (explains most of variance)
-\end{itemize}
-\begin{columns}[T, totalwidth=\textwidth]
-\begin{column}{0.37\textwidth}
-\vspace{1.5cm}
-\begin{table}[ht]
+\begin{framev}[align=top]{Decision Trees - Example}
+\begin{itemizeM}
+\item Fit decision tree with tree depth of 3 on bike data
+\item E.g., mean prediction for the first 105 days since 2011 is 1798\\
+$\leadsto$ Applies to $15\%$ of the data (leftmost branch)
+\item \code{days\_since\_2011}: highest feat. importance (explains most of variance)
+\end{itemizeM}
+\splitVCC[0.37]{
 \centering
-\scriptsize
+\begin{scriptsize}
 \begin{tabular}{lr}
-  \hline
- Feature & Importance \\
-  \hline
-days\_since\_2011 & 79.53 \\ 
-  temp & 17.55 \\ 
-  hum & 2.92 \\ 
-   \hline
+\hline
+Feature & Importance \\
+\hline
+days\_since\_2011 & 79.53 \\
+temp & 17.55 \\
+hum & 2.92 \\
+\hline
 \end{tabular}
-\end{table}
-\end{column}
-\begin{column}{0.63\textwidth}
-  \includegraphics[width = \textwidth]{figure/tree.pdf} 
-\end{column}
-\end{columns}
- 
-\end{frame}
+\end{scriptsize}
+}{
+\image{figure/tree.pdf}
+}
+\end{framev}
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
@@ -455,45 +421,39 @@ days\_since\_2011 & 79.53 \\
 % \end{frame}
 
 
-\begin{frame}{Unbiased Recursive Partitioning}  
-\vspace{-0.2cm}
+\begin{framev}[align=top]{Unbiased Recursive Partitioning}
 \furtherreading{HOTHORNETAL2006}
 \furtherreading{ZEILEISETAL2008}
-\furtherreading{STROBETAL2007}
-
-\vspace{0.2cm}
-\textbf{Problems} with CART (Classification and Regression Trees): 
-
+\furtherreading{STROBETAL2007}\\
+\textbf{Problems} with CART (Classification and Regression Trees):
 \begin{enumerate}
-    \item Selection bias towards high-cardinal/continuous features 
-    \item Splits on any improvement, regardless of significance \\$\leadsto$ prone to overfitting
+\item Selection bias towards high-cardinal/continuous features
+\item Splits on any improvement, regardless of significance\\
+$\leadsto$ prone to overfitting
 \end{enumerate}
-\smallskip
 \pause
-\textbf{Unbiased recursive partitioning} via conditional inference trees (\texttt{ctree}) or model-based recursive partitioning (\texttt{mob}): 
-\begin{enumerate}  
-  \item Separate selection of \textbf{feature used for splitting} and \textbf{split point}
-  \item Hypothesis test as stopping criteria 
+\textbf{Unbiased recursive partitioning} via conditional inference trees (\texttt{ctree}) or model-based recursive partitioning (\texttt{mob}):
+\begin{enumerate}
+\item Separate selection of \textbf{feature used for splitting} and \textbf{split point}
+\item Hypothesis test as stopping criteria
 \end{enumerate}
 %\medskip
+\spacer[0.25]
 \pause
-\begin{columns}[T, totalwidth = \textwidth]
-    \begin{column}{0.5\textwidth}
-    \textbf{Example (selection bias)}: \\
-         Simulate data ($n=200$), $Y \sim N(0,1)$ and 3 features of different cardinality indep. from $Y$ (repeat 500 times):
-\begin{itemize}
-    \item $X_1 \sim Binom(n, \frac{1}{2})$
-    \item $X_2 \sim M(n, (\frac{1}{4}, \frac{1}{4}, \frac{1}{4}, \frac{1}{4}))$
-    \item $X_3 \sim M(n, (\frac{1}{8}, \frac{1}{8}, \frac{1}{8}, \frac{1}{8}, \frac{1}{8}, \frac{1}{8}, \frac{1}{8}, \frac{1}{8}))$
-\end{itemize}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-    \scriptsize
-    \centering
-    Which feature is selected in the first split?
-    \includegraphics[width = \textwidth]{figure/selection_bias_simulation_1000.pdf}
-    \end{column}
-\end{columns}
+\splitVTT{
+\textbf{Example (selection bias)}:\\
+Simulate data ($n=200$), $Y \sim N(0,1)$ and 3 features of different cardinality indep. from $Y$ (repeat 500 times):
+\begin{itemizeM}
+\item $X_1 \sim Binom(n, \frac{1}{2})$
+\item $X_2 \sim M(n, (\frac{1}{4}, \frac{1}{4}, \frac{1}{4}, \frac{1}{4}))$
+\item $X_3 \sim M(n, (\frac{1}{8}, \frac{1}{8}, \frac{1}{8}, \frac{1}{8}, \frac{1}{8}, \frac{1}{8}, \frac{1}{8}, \frac{1}{8}))$
+\end{itemizeM}
+}{
+\begin{scriptsize}
+Which feature is selected in the first split?
+\end{scriptsize}
+\image{figure/selection_bias_simulation_1000.pdf}
+}
 % \medskip
 % \scriptsize
 % \pause
@@ -527,51 +487,46 @@ days\_since\_2011 & 79.53 \\
 %         %\normalsize
 %     \end{column}
 % \end{columns}
+\end{framev}
 
-\end{frame}
 
-
-\begin{frame}{Unbiased Recursive Partitioning}
-
+\begin{framev}[align=top]{Unbiased Recursive Partitioning}
 %\vspace{-0.1cm}
 Differences to CART:
-\begin{itemize}
-    \item Two-step approach (finds 1. most significant split feat., 2. best split point)
-    \item Parametric model (e.g. LM instead of constant) can be fitted in leaf nodes % OLS regression, GLMs, and survival regression    
-    \item Significance of split (p-value) given in each node
-    \item \texttt{ctree} and \texttt{mob} differ in hypothesis test used for selecting the split feature (independence test vs. fluctuation test) and how to find the best split point
-\end{itemize}
-
-\medskip
-
-\begin{columns}[c, totalwidth = \textwidth]
-     \begin{column}{0.85\textwidth}
+\begin{itemizeM}
+\item Two-step approach (finds 1. most significant split feat., 2. best split point)
+\item Parametric model (e.g. LM instead of constant) can be fitted in leaf nodes % OLS regression, GLMs, and survival regression
+\item Significance of split (p-value) given in each node
+\item \texttt{ctree} and \texttt{mob} differ in hypothesis test used for selecting the split feature (independence test vs. fluctuation test) and how to find the best split point
+\end{itemizeM}
+\spacer[0.25]
+\splitVCC[0.8]{
 \only<2>{
 \textbf{Example} (\texttt{ctree}): Bike data (constant model in final nodes)
-\centerline{\includegraphics[width =\textwidth]{figure/bike_ctree.pdf}}
+\image{figure/bike_ctree.pdf}
 }
 \only<3>{
-\textbf{Example}  (\texttt{mob}): Bike data (linear model with \texttt{temp} in final nodes)
-\centerline{\includegraphics[width = \textwidth]{figure/bike_mob.pdf}}
+\textbf{Example} (\texttt{mob}): Bike data (linear model with \texttt{temp} in final nodes)
+\image{figure/bike_mob.pdf}
 }
 % \only<3>{
 % \centerline{Train error (MSE): 758,844.0 (\texttt{ctree}), 742,244.4 (\texttt{mob})}
 % }
-     \end{column}
-     \begin{column}{0.15\textwidth}
-     \only<2-3>{\scriptsize
-     Train MSE: \\
-     758,844 (\texttt{ctree})\\
-     742,244 (\texttt{mob})
-     }
+}{
+\only<2-3>{
+\begin{scriptsize}
+Train MSE:\\
+758,844 (\texttt{ctree})\\
+742,244 (\texttt{mob})
+\end{scriptsize}
+}
 % \only<3>{
 % Comparison MSE: \\
 % \texttt{ctree}: 758,844.0 \\
 % \texttt{mob}: 742,244.4
 % }
-     \end{column}
- \end{columns}
-\end{frame}
+}
+\end{framev}
 
 
 % \begin{frame}{Model-based (MOB) Recursive Partitioning \citebutton{Zeileis et al. (2008)}{https://doi.org/10.1198/106186008X319331}}
@@ -608,89 +563,66 @@ Differences to CART:
 %------------------------------------------------------------------
 
 
-\begin{frame}[t]{Other Rule-based Models}
+\begin{framev}[align=top]{Other Rule-based Models}
+\splitVCC[0.6]{
+\textbf{Decision Rules} \furtherreading{HOLTE1993}
+\begin{itemizeM}
+\item Flat list of simple ``if -- then'' statements\\
+$\leadsto$ very intuitive and easy-to-interpret
+\item Mainly devised for classification\\
+(support for regression is limited)
+\item Numeric features are typically discretised
+\end{itemizeM}
+}{
+\begin{scriptsize}
+\textcolor{blue}{IF} $x_1 \le 2.3$ \textcolor{blue}{AND} $x_4 = \text{``A''}$ \hfill \textcolor{blue}{THEN} \hspace{5pt} $y = 1$\\[2pt]
+\textcolor{blue}{ELSE IF} $x_2 > 5.0$ \hfill \textcolor{blue}{THEN} \hspace{5pt} $y = 2$\\[2pt]
+\textcolor{blue}{ELSE} \hfill $y = 3$
+\end{scriptsize}
+}
+\spacer[0.25]
+\splitVCC[0.65]{
+\only<2->{
+% \textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
+% \begin{itemize}
+%     \item Combination of LM and decision trees 
+%     \item Uses (many) decision trees to extract important decision rules $r_1, r_2, r_3, r_4$ which are used as features in a (regularized) LM
+%     \item Allows for feature interactions and non-linearities
+% \end{itemize}
+\textbf{RuleFit} \furtherreading{FRIEDMANPOPESCU2008}
+\begin{itemizeM}
+\item Extract binary rules $r_m(\mathbf{x}) \in \{0,1\}$ from many shallow trees (one per root-to-leaf path)
+\item Fit an $L_1$-regularized LM\\
+$\hat f(\mathbf{x})=\beta_0+\textstyle\sum_m\beta_m r_m(\mathbf{x})+\sum_j\gamma_j x_j$
+\item Regularization retains only a few rules\\
+$\Rightarrow$ sparse, non-linear, interaction-aware
+\item Coefficients relate to rule/feature importance
+\end{itemizeM}
+}
+% \only<3->{\textbf{Naive Bayes}
+% \citebutton{Zhang 2004}{https://www.aaai.org/Papers/FLAIRS/2004/Flairs04-097.pdf}
+% %$$P (C_k \mid x ) = \frac{1}{Z} P(C_k) \prod_{i=1}^{n} P(x_i \mid C_k) $$
+% \begin{itemize}
+%     \item Uses Bayes' theorem to assign class prob. to observations
+%     %Product of (conditional) probabilities for a class on the value of each feature
+%     %For each feature, it calculates the probability for a class depending on the value of the feature. 
+%     \item Strong assumption: Independence of features
+% \end{itemize}}
 
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.6\textwidth}
-        \textbf{Decision Rules} \furtherreading{HOLTE1993}
-        \begin{itemize}
-            \item Flat list of simple ``if -- then'' statements\\
-            $\leadsto$ very intuitive and easy-to-interpret
-            \item Mainly devised for classification \\
-            (support for regression is limited)
-            \item Numeric features are typically discretised
-        \end{itemize}
-    \end{column}
-    \begin{column}{0.4\textwidth}
-        %\vspace{\dimexpr-2\parsep-2\parskip\relax}
-        %\begin{center}
-        \scriptsize
-\textcolor{blue}{IF}  $x_{1} \le 2.3$  \textcolor{blue}{AND}  $x_{4} = \text{``A''}$   \hfill\textcolor{blue}{THEN} \hspace{5pt} y = 1\\[2pt]
-\textcolor{blue}{ELSE IF}  $x_{2} > 5.0$  \hfill \textcolor{blue}{THEN} \hspace{5pt} y = 2\\[2pt]
-\textcolor{blue}{ELSE}  \hfill y = 3
-      %  \end{center}
-    % \vspace{\dimexpr-2\parsep-2\parskip\relax}
-    %     \begin{center}
-    %         \includegraphics[width = 0.8\textwidth]{figure/decision_rules.png}
-    %         % \only<4->{\includegraphics[width = 0.7\textwidth]{figure/knn.png} 
-    %         % \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}}
-    %     \end{center}
-    \end{column}
-\end{columns}
+% \only<4->{\textbf{k-Nearest Neighbor}
+% \citebutton{Cover 1967}{https://doi.org/10.1109/TIT.1967.1053964}
+% \begin{itemize}
+%     \item (Closely related to case-based reasoning)
+%     \item Average of the outcome of neighbors -- local explanation
+% \end{itemize}
 
-\bigskip
-
-\begin{columns}[c, totalwidth=\textwidth]
-    \begin{column}{0.65\textwidth}
-        \only<2->{
-        % \textbf{RuleFit} \citebutton{Friedman and Popescu 2008}{https://arxiv.org/abs/0811.1679}
-        % \begin{itemize}
-        %     \item Combination of LM and decision trees 
-        %     \item Uses (many) decision trees to extract important decision rules $r_1, r_2, r_3, r_4$ which are used as features in a (regularized) LM
-        %     \item Allows for feature interactions and non-linearities
-        % \end{itemize}
-        \textbf{RuleFit} \furtherreading{FRIEDMANPOPESCU2008}
-\begin{itemize}
-  \item Extract binary rules \(r_m(\mathbf{x}) \in \{0,1\}\) from many shallow trees (one per root-to-leaf path)
-  \item Fit an $L_1$-regularized LM
-$\hat f(\mathbf x)=\beta_0+\textstyle\sum_m\beta_m r_m(\mathbf x)+\sum_j\gamma_j x_j$
-  \item Regularization retains only a few rules\\
-  $\Rightarrow$ sparse, non-linear, interaction-aware
-  \item Coefficients relate to rule/feature importance
-\end{itemize}
-
-        }
-
-        % \only<3->{\textbf{Naive Bayes}
-        % \citebutton{Zhang 2004}{https://www.aaai.org/Papers/FLAIRS/2004/Flairs04-097.pdf}
-        % %$$P (C_k \mid x ) = \frac{1}{Z} P(C_k) \prod_{i=1}^{n} P(x_i \mid C_k) $$
-        % \begin{itemize}
-        %     \item Uses Bayes' theorem to assign class prob. to observations
-        %     %Product of (conditional) probabilities for a class on the value of each feature
-        %     %For each feature, it calculates the probability for a class depending on the value of the feature. 
-        %     \item Strong assumption: Independence of features
-        % \end{itemize}}
-
-        % \only<4->{\textbf{k-Nearest Neighbor}
-        % \citebutton{Cover 1967}{https://doi.org/10.1109/TIT.1967.1053964}
-        % \begin{itemize}
-        %     \item (Closely related to case-based reasoning)
-        %     \item Average of the outcome of neighbors -- local explanation
-        % \end{itemize}
-
-        % ...}
-    \end{column}
-    \begin{column}{0.35\textwidth}
-    \vspace{\dimexpr-2\parsep-2\parskip\relax}
-        \begin{center}
-            \only<2->{\includegraphics[width = 0.6\textwidth]{figure/RuleFit.png}\\
-            \furtherreading{MOLNAR2022}\\
-            \smallskip }
-            % \only<4->{\includegraphics[width = 0.7\textwidth]{figure/knn.png} 
-            % \citebutton{José 2018}{https://towardsdatascience.com/knn-k-nearest-neighbors-1-a4707b24bd1d}}
-        \end{center}
-    \end{column}
-\end{columns}
-\end{frame}
+% ...}
+}{
+\only<2->{
+\imageC[0.6]{figure/RuleFit.png}
+\furtherreading{MOLNAR2022}
+}
+}
+\end{framev}
 \endlecture
 \end{document}
