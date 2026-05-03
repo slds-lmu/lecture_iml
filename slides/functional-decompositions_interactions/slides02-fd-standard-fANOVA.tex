@@ -4,7 +4,7 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 % Defines macros and environments
- \newcommand{\open}{}
+\newcommand{\open}{}
 \newcommand{\close}{}
 
 \newcommand{\predvar}{Var\left[\hat{f}(\xv)\right]}
@@ -13,7 +13,6 @@
 \title{Interpretable Machine Learning}
 % \author{LMU}
 %\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
-\date{}
 
 \begin{document}
 
@@ -24,164 +23,141 @@ Functional ANOVA
 }{
 figure/25-05-31_Hooker_2004_graph_fANOVA
 }{
-
 \item One method for functional decomposition: Classical functional ANOVA (fANOVA)
 \item Algorithm for calculating the components in a fANOVA
 \item Variance decomposition in fANOVA
-
 }
 
 
-\begin{frame}{Introduction and History of fANOVA}
-
-\begin{itemize}
-    \item One possible method to obtain functional decomposition
-    \item Since 1940's: Developed under different names in mathematics and sensitivity analysis
-    \item Since 1990's: Developed for probability distributions or statistical data
-    \item Since 2000's: Applied to machine learning, subsequently alternatives developed extending applicability
-    \item \textbf{Assumption}: Independent features
-\end{itemize}
-
+\begin{framei}[align=top]{Introduction and History of fANOVA}
+\item One possible method to obtain functional decomposition
+\item Since 1940's: Developed under different names in mathematics and sensitivity analysis
+\item Since 1990's: Developed for probability distributions or statistical data
+\item Since 2000's: Applied to machine learning, subsequently alternatives developed extending applicability
+\item \textbf{Assumption}: Independent features
 % @ Sobol-Hoeffding Decomposition: erstes Paper von (Sobol? Hoeffding?) in 1950, nur im Unit Cube, allererste HDMR \\
-
 % Sobol in 90'ern
-
 % Sensitivity analysis
-
 % Hooker paper
-    
-\end{frame}
+\end{framei}
 
-\begin{frame}{Standard fANOVA: Idea}
 
-    \begin{itemize}
-        \item Example:
-        \begin{equation*}
-            \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2
-        \end{equation*}
-        \pause
-        \item \textbf{First idea:} Make sure higher-order terms don't contain lower-order terms \\
-        \(\Rightarrow\) First compute lower-order terms, then higher-order terms. \\
-        % \pause
-        % \item \textbf{Question:} How to compute lower-order terms? \\
-        % \(\leadsto\) First step: Use feature effect methods for main effects, here: PDP
-        \pause
-        \item \textbf{Second idea:} In 1st step, compute main effects using feat effect methods \\
-        Here: PDP + more general PD-functions
-        \pause
-        \item \textbf{Idea for fANOVA:} PD-function $\fh_{S;PD} =$ sum of all components $g_{\tilde{S}}$ up to this order
-        $$
-        \fh_{S;PD}(\xv_S) \; = \; \sum_{V \subseteq S} g_{V}(\xv_V)
-        $$
-        \pause
-        \item \textbf{Remember:} \\ Idea of PDPs or general PD-functions: Average out all other features
-        \item[$\Rightarrow$] Total formula for calculating the components \(g_S\) in the fANOVA algorithm:
-        % $$
-        % \begin{aligned}
-        \begin{multline*}
-            g_{S} (\xv_S)
-            \;=\; (\text{average out all features not contained in } S) \\
-            \;-\; (\text{All lower-order components})
-        \end{multline*}
-        % \end{aligned}
-        % $$
-    \end{itemize}
+\begin{framei}[align=top]{Standard fANOVA: Idea}
+\item Example:
+$$
+\fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2
+$$
+\pause
+\item \textbf{First idea:} Make sure higher-order terms don't contain lower-order terms \\
+$\Rightarrow$ First compute lower-order terms, then higher-order terms. \\
+% \pause
+% \item \textbf{Question:} How to compute lower-order terms? \\
+% \(\leadsto\) First step: Use feature effect methods for main effects, here: PDP
+\pause
+\item \textbf{Second idea:} In 1st step, compute main effects using feat effect methods \\
+Here: PDP + more general PD-functions
+\pause
+\item \textbf{Idea for fANOVA:} PD-function $\fh_{S;PD} =$ sum of all components $g_{\tilde{S}}$ up to this order
+$$
+\fh_{S;PD}(\xv_S) \; = \; \sum_{V \subseteq S} g_{V}(\xv_V)
+$$
+\pause
+\item \textbf{Remember:} \\ Idea of PDPs or general PD-functions: Average out all other features
+\item[$\Rightarrow$] Total formula for calculating the components $g_S$ in the fANOVA algorithm:
+% $$
+% \begin{aligned}
+\begin{multline*}
+g_{S} (\xv_S)
+\;=\; (\text{average out all features not contained in } S) \\
+\;-\; (\text{All lower-order components})
+\end{multline*}
+% \end{aligned}
+% $$
+% \textbf{Idea:} Main effects via feature effect methods, here: PDP\\
+% Starting with the main effects: % One can use one of the global feature effect plots, since they exactly provide a function only depending on one feature, which models the effect of this feature on \(\fh\).
+% \textit{Link to PDP??} \\
+% $g_{S'}$
+% \(\Rightarrow\) fANOVA uses the same idea as PDPs, but also for higher-order terms: the resp. feature is fixed and all other features are simply averaged out. \\
+\end{framei}
 
-    % \textbf{Idea:} Main effects via feature effect methods, here: PDP\\
-    % Starting with the main effects: % One can use one of the global feature effect plots, since they exactly provide a function only depending on one feature, which models the effect of this feature on \(\fh\).
-    % \textit{Link to PDP??} \\
-    
-    % $g_{S'}$
-    % \(\Rightarrow\) fANOVA uses the same idea as PDPs, but also for higher-order terms: the resp. feature is fixed and all other features are simply averaged out. \\
-    
-\end{frame}
 
-\begin{frame}{Formal Definition and Computation
+\begin{framev}[align=top]{Formal Definition and Computation
 \furtherreading{HOOKER2004}
 }
-
 % Components are recursively defined using marginals (here $-S = \{1, \ldots, p \} \setminus S$ denotes the set of all indizes not contained in \(S\)):
 \begin{definition}
-    Recursive computation using PD-functions \\
-    (here $-S = \{1, \ldots, p \} \setminus S$ denotes all indices not contained in \(S\)):
-    \begin{align*}
-    g_{S}(\xv_S)
-        & = \fh_{S;PD}(\xv_S) - \sum_{V \subsetneqq S} g_V(\xv_V)
-        % = \mathbb{E}_{\Xv_{-S}} \left[\fh(\xv_S, \Xv_{-S}) \; \middle\vert \; \xv_S \right] - \sum_{V \subsetneqq S} g_V(\xv_V)
-        = \mathbb{E}_{\Xv_{-S}} \left[ \; \fh(\xv_S, \Xv_{-S}) \; \right] - \sum_{V \subsetneqq S} g_V(\xv_V) \\
-        & = \int \fh(\xv_S, \xv_{-S}) d \mathbb{P}(\xv_{-S}) - \sum_{V \subsetneqq S} g_V(\xv_V)
-    \end{align*}
+Recursive computation using PD-functions \\
+(here $-S = \{1, \ldots, p \} \setminus S$ denotes all indices not contained in \(S\)):
+\begin{align*}
+g_{S}(\xv_S)
+& = \fh_{S;PD}(\xv_S) - \sum_{V \subsetneqq S} g_V(\xv_V)
+% = \mathbb{E}_{\Xv_{-S}} \left[\fh(\xv_S, \Xv_{-S}) \; \middle\vert \; \xv_S \right] - \sum_{V \subsetneqq S} g_V(\xv_V)
+= \mathbb{E}_{\Xv_{-S}} \left[ \; \fh(\xv_S, \Xv_{-S}) \; \right] - \sum_{V \subsetneqq S} g_V(\xv_V) \\
+& = \int \fh(\xv_S, \xv_{-S}) d \mathbb{P}(\xv_{-S}) - \sum_{V \subsetneqq S} g_V(\xv_V)
+\end{align*}
 \end{definition}
+\begin{itemizeM}
+\item Expectation integrates $\fh(\xv)$ over all input features except $\xv_S$
+% \item Subtract all components $g_V$ with $V \subsetneqq S$ to remove all lower-order effects and center the effect
+\item Subtract sum of $g_V$ to remove all lower-order effects and center the effect
+\item \textbf{Note:} If no distribution given: Uniform distribution or plain integral
+\end{itemizeM}
+\end{framev}
 
-\begin{itemize}
-    \item Expectation integrates $\fh(\xv)$ over all input features except $\xv_S$
-    % \item Subtract all components $g_V$ with $V \subsetneqq S$ to remove all lower-order effects and center the effect
-    \item Subtract sum of $g_V$ to remove all lower-order effects and center the effect
-    \item \textbf{Note:} If no distribution given: Uniform distribution or plain integral
-\end{itemize}
 
-\end{frame}
-
-\begin{frame}{Formal Definition and Computation
+\begin{framev}[align=top]{Formal Definition and Computation
 \furtherreading{HOOKER2004}
 }
-
 % Components are recursively defined using marginals (here $-S = \{1, \ldots, p \} \setminus S$ denotes the set of all indizes not contained in \(S\)):
 \begin{definition}
-    Recursive computation using PD-functions \\
-    (here $-S = \{1, \ldots, p \} \setminus S$ denotes all indices not contained in \(S\)):
-    \begin{align*}
-    g_{S}(\xv_S)
-        & = \fh_{S;PD}(\xv_S) - \sum_{V \subsetneqq S} g_V(\xv_V)
-        % = \mathbb{E}_{\Xv_{-S}} \left[\fh(\xv_S, \Xv_{-S}) \; \middle\vert \; \xv_S \right] - \sum_{V \subsetneqq S} g_V(\xv_V)
-        = \mathbb{E}_{\Xv_{-S}} \left[ \; \fh(\xv_S, \Xv_{-S}) \; \right] - \sum_{V \subsetneqq S} g_V(\xv_V)
-    \end{align*}
+Recursive computation using PD-functions \\
+(here $-S = \{1, \ldots, p \} \setminus S$ denotes all indices not contained in \(S\)):
+\begin{align*}
+g_{S}(\xv_S)
+& = \fh_{S;PD}(\xv_S) - \sum_{V \subsetneqq S} g_V(\xv_V)
+% = \mathbb{E}_{\Xv_{-S}} \left[\fh(\xv_S, \Xv_{-S}) \; \middle\vert \; \xv_S \right] - \sum_{V \subsetneqq S} g_V(\xv_V)
+= \mathbb{E}_{\Xv_{-S}} \left[ \; \fh(\xv_S, \Xv_{-S}) \; \right] - \sum_{V \subsetneqq S} g_V(\xv_V)
+\end{align*}
 \end{definition}
+\begin{itemizeM}
+% \pause
+\item Recursive computation:
+\begin{align*}
+g_{\open \emptyset \close} &= \mathbb{E}_\Xv\left[\fh(\Xv)\right] \\
+g_{\open j \close}(x_j) &= \mathbb{E}_{\Xv_{-j}}\left[\fh(\Xv) \; \vert  \; X_j = x_j \right] - g_{\open \emptyset \close}, \; \forall j \in \{1, \ldots, p\} \\% \text{ and } g_{\open 2 \close}(x_2) = \mathbb{E}_{X_{-2}}\left[\fh(\xv) \; \vert  \; x_2 \right] - g_{\open \emptyset \close}  \\
+%g_{\open 2 \close}(x_2) &= \mathbb{E}_{X_{-2}}\left[\fh(\xv) \; \vert  \; x_2 \right] - g_{\open \emptyset \close} \\
+% g_{\open j, k \close}(x_j, x_k)
+% &= \mathbb{E}_{X_{-\{ j,k \}}}\left[\fh(\xv) \; \vert \; x_j, x_k \right] - g_{\open k \close}(x_k) - g_{\open j \close}(x_j) - g_{\open \emptyset \close}, \; \forall j < k\\%,  \text{ etc.}\\
+& \vdots \\
+g_{\open 1, \dots, p \close}(\xv)
+& = \fh(\xv) -
+\textstyle\sum_{S \subsetneqq \{1,\ldots,p\}} g_{S}(\xv_S) \\
+& = \fh(\xv) -
+%\textstyle\sum_{S \subsetneqq \{1,\ldots,p\}} g_{S}(\xv_S)
+g_{\open 1, \dots, p-1 \close}(x_{1}, \dots x_{p-1}) - \dots - g_{\open 1, 2 \close}(x_1, x_2) \\
+%&\phantom{{}={}}
+& \quad - g_{\open p \close}(x_p)  - \dots - g_{\open 2 \close}(x_2) - g_{\open 1 \close}(x_1) - g_{\open \emptyset \close}
+\end{align*}
+\end{itemizeM}
+\end{framev}
 
-\begin{itemize}
-    % \pause
-    \item Recursive computation:
-    \begin{align*}
-        g_{\open \emptyset \close} &= \mathbb{E}_\Xv\left[\fh(\Xv)\right] \\
-        g_{\open j \close}(x_j) &= \mathbb{E}_{\Xv_{-j}}\left[\fh(\Xv) \; \vert  \; X_j = x_j \right] - g_{\open \emptyset \close}, \; \forall j \in \{1, \ldots, p\} \\% \text{ and } g_{\open 2 \close}(x_2) = \mathbb{E}_{X_{-2}}\left[\fh(\xv) \; \vert  \; x_2 \right] - g_{\open \emptyset \close}  \\
-        %g_{\open 2 \close}(x_2) &= \mathbb{E}_{X_{-2}}\left[\fh(\xv) \; \vert  \; x_2 \right] - g_{\open \emptyset \close} \\
-        % g_{\open j, k \close}(x_j, x_k)
-        % &= \mathbb{E}_{X_{-\{ j,k \}}}\left[\fh(\xv) \; \vert \; x_j, x_k \right] - g_{\open k \close}(x_k) - g_{\open j \close}(x_j) - g_{\open \emptyset \close}, \; \forall j < k\\%,  \text{ etc.}\\
-        & \vdots \\
-        g_{\open 1, \dots, p \close}(\xv)
-        & = \fh(\xv) -
-        \textstyle\sum_{S \subsetneqq \{1,\ldots,p\}} g_{S}(\xv_S) \\
-        & = \fh(\xv) -
-        %\textstyle\sum_{S \subsetneqq \{1,\ldots,p\}} g_{S}(\xv_S) 
-        g_{\open 1, \dots, p-1 \close}(x_{1}, \dots x_{p-1}) - \dots - g_{\open 1, 2 \close}(x_1, x_2) \\
-        %&\phantom{{}={}} 
-        & \quad - g_{\open p \close}(x_p)  - \dots - g_{\open 2 \close}(x_2) - g_{\open 1 \close}(x_1) - g_{\open \emptyset \close}
-    \end{align*}
 
-\end{itemize}
-        
-\end{frame}
-
-\begin{frame}{Standard fANOVA -- Example}
+\begin{framev}[align=top]{Standard fANOVA -- Example}
 \textbf{Example:} $\fh(\xv) = 2 + x_1^2 - x_2^2 + x_1 \cdot x_2$ (e.g., for $x_1 = 5$ and $x_2 = 10$ we have $\fh(\xv) = -23$)
-
-\begin{itemize}
-    \item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives:
-    \begin{columns}[c, totalwidth=\linewidth]
-    \begin{column}{0.75\textwidth}
-        \includegraphics[width = \textwidth]{figure/decomposition}
-    \end{column}
-    \begin{column}{0.25\textwidth}
-    For $x_1 = 5$ and $x_2 = 10$:\\
-    \begin{itemize}
-        \item $g_{\open \emptyset \close} = 2$
-        \item $g_{\open 1 \close}(x_1) = -9.67$
-        \item $g_{\open 2 \close}(x_2) = -65.33$
-        \item $g_{\open 1,2 \close}(x_1, x_2) = 50$
-        \item[$\Rightarrow$] $\fh(\xv) = -23$
-    \end{itemize}
-    \end{column}
-    \end{columns}
+\begin{itemizeM}
+\item Computation of components using feature values $x_1 = x_2 = (-10, -9, \ldots, 10)^\top$ gives:
+\splitVCC[0.7]{
+\image{figure/decomposition}
+}{
+For $x_1 = 5$ and $x_2 = 10$:\\
+\begin{itemizeM}
+\item $g_{\open \emptyset \close} = 2$
+\item $g_{\open 1 \close}(x_1) = -9.67$
+\item $g_{\open 2 \close}(x_2) = -65.33$
+\item $g_{\open 1,2 \close}(x_1, x_2) = 50$
+\item[$\Rightarrow$] $\fh(\xv) = -23$
+\end{itemizeM}
+}
 % \pause
 %     \item Vanishing condition means:
 %     \begin{itemize}
@@ -189,130 +165,112 @@ figure/25-05-31_Hooker_2004_graph_fANOVA
 %         \item Integral of $g_{1,2}$ over marginal distribution $x_1$ (or $x_2$) is always 0.
 %         %, i.e., for each slice at $x_1$ (and $x_2$), the integral of $g_{1,2}$ 
 %     \end{itemize}
-\end{itemize} 
-\end{frame}
+\end{itemizeM}
+\end{framev}
 
-\begin{frame}{Standard fANOVA - Example}
 
+\begin{framev}[align=top]{Standard fANOVA - Example}
 \textit{In-class task}
-
 %     [calculate a full complete example] \\
-
 %     Analytic examples from Sobol (1993), Sobol (2001) or Hooker(2004))
-
 %     [several examples needed, can also include those from beginning]
-    
 %     [problem with examples from beginning: If using fANOVA, we do not get the original components out of it again, right?]
-
 %     -> exactly that is the case, explain the reason here: some averaged part of interaction term is moved into lower order, we need this in fANOVA, because we need a data-driven / formula-agnostic way of computing the components
-
 %     -> use the in-class calculation task here to illustrate this
-    
-\end{frame}
+\end{framev}
 
-\begin{frame}{Standard fANOVA - Example revisited}
 
+\begin{framev}[align=top]{Standard fANOVA - Example revisited}
 \begin{example}
-
-    % $$
-    % \fh(x_1, x_2) = x_1^2 + \sin(\pi x_1) \cos(\pi x_2)
-    % \qquad (x_1, x_2) \in [0,2]^2,
-    % $$
-
-    % Use fANOVA algorithm on example from the beginning:
-    
-    $$
-        \fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \qquad (x_1, x_2) \in [0,1]^2 \qquad \text{uniformly distributed}
-    $$
-    
-    \begin{itemize}
-        \item
-        \only<1>{
-        \textbf{Intercept:}
-        \begin{align*}
-        g_\emptyset
-        &= \mathbb{E} \Bigl[ \fh(x_1, x_2) \Bigr]
-        = \int_0^1 \! \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_1\,dx_2 \\
-        &= 4
-            - \Bigl( \int_0^1 2x_1 \,dx_1 \Bigr)
-            + \Bigl( \int_0^1 0.3 e^{x_2} \,dx_2 \Bigr)
-            + \Bigl( \int_0^1 |x_1| \,dx_1 \Bigr) \Bigl( \int_0^1 x_2 \,dx_2 \Bigr) \\
-        &= 4
-            - 1
-            + 0.3 (e - 1)
-            + 0.5^2
-        = 2.95 + 0.3 e.
-        \end{align*}
-        }
-        \only<2>{
-        \textbf{First-order components:}
-        \begin{align*}
-        g_{1}(x_1)
-        &= \fh_{1;PD}(x_1) - g_\emptyset 
-        = \Bigl( \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_2 \Bigr) - g_\emptyset \\
-        &= 4 - 2x_1 + 0.3 (e-1) + |x_1| \cdot \frac{1}{2} - (2.95 + 0.3e) \\
-        &= -2x_1 + 0.5|x_1| + 0.75 \\
-        % \end{align*}
-        % }
-        % \only<2>{
-        % \textbf{First-order components:}
-        % \begin{align*}
-        g_{2}(x_2)
-        &= \fh_{2;PD}(x_2) - g_\emptyset 
-        = \Bigl( \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_1  \Bigr) - g_\emptyset \\
-        &= 4 - 1 + 0.3 e^{x_2} + \frac{1}{2} \cdot x_2 - (2.95 + 0.3e) \\
-        &= 0.3 e^{x_2} + 0.5x_2 - 0.3e + 0.05
-        \end{align*}
-        }
-        \only<3>{
-        \textbf{Second-order component:}
-        \begin{align*}
-        g_{12}(x_1, x_2)
-        &= \fh_{\{1,2\};PD}(x_1, x_2) - g_\emptyset - g_1(x_1) - g_2(x_2) \\
-        &= 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 - (2.95 + 0.3e) \\
-        &\quad - (-2x_1 + 0.5|x_1| + 0.75) - (0.3 e^{x_2} + 0.5x_2 - 0.3e + 0.05) \\
-        &= |x_1| x_2 - 0.5 |x_1| - 0.5 x_2 + 0.25
-        \end{align*}
-        \item[$\Rightarrow$] All components shifted to have mean 0
-        \item[$\Rightarrow$] Parts of $|x_1|x_2$, which intuitively seems to be the ``interaction term'', is attributed to the main effects (correctly, depends on distribution!)
-        }
-        
-    \end{itemize}
+% $$
+% \fh(x_1, x_2) = x_1^2 + \sin(\pi x_1) \cos(\pi x_2)
+% \qquad (x_1, x_2) \in [0,2]^2,
+% $$
+% Use fANOVA algorithm on example from the beginning:
+$$
+\fh(x_1, x_2) = 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \qquad (x_1, x_2) \in [0,1]^2 \qquad \text{uniformly distributed}
+$$
+\begin{itemizeM}
+\item
+\only<1>{
+\textbf{Intercept:}
+\begin{align*}
+g_\emptyset
+&= \mathbb{E} \Bigl[ \fh(x_1, x_2) \Bigr]
+= \int_0^1 \! \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_1\,dx_2 \\
+&= 4
+- \Bigl( \int_0^1 2x_1 \,dx_1 \Bigr)
++ \Bigl( \int_0^1 0.3 e^{x_2} \,dx_2 \Bigr)
++ \Bigl( \int_0^1 |x_1| \,dx_1 \Bigr) \Bigl( \int_0^1 x_2 \,dx_2 \Bigr) \\
+&= 4
+- 1
++ 0.3 (e - 1)
++ 0.5^2
+= 2.95 + 0.3 e.
+\end{align*}
+}
+\only<2>{
+\textbf{First-order components:}
+\begin{align*}
+g_{1}(x_1)
+&= \fh_{1;PD}(x_1) - g_\emptyset
+= \Bigl( \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_2 \Bigr) - g_\emptyset \\
+&= 4 - 2x_1 + 0.3 (e-1) + |x_1| \cdot \frac{1}{2} - (2.95 + 0.3e) \\
+&= -2x_1 + 0.5|x_1| + 0.75 \\
+% \end{align*}
+% }
+% \only<2>{
+% \textbf{First-order components:}
+% \begin{align*}
+g_{2}(x_2)
+&= \fh_{2;PD}(x_2) - g_\emptyset
+= \Bigl( \int_0^1 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 \,dx_1  \Bigr) - g_\emptyset \\
+&= 4 - 1 + 0.3 e^{x_2} + \frac{1}{2} \cdot x_2 - (2.95 + 0.3e) \\
+&= 0.3 e^{x_2} + 0.5x_2 - 0.3e + 0.05
+\end{align*}
+}
+\only<3>{
+\textbf{Second-order component:}
+\begin{align*}
+g_{12}(x_1, x_2)
+&= \fh_{\{1,2\};PD}(x_1, x_2) - g_\emptyset - g_1(x_1) - g_2(x_2) \\
+&= 4 - 2x_1 + 0.3 e^{x_2} + |x_1|x_2 - (2.95 + 0.3e) \\
+&\quad - (-2x_1 + 0.5|x_1| + 0.75) - (0.3 e^{x_2} + 0.5x_2 - 0.3e + 0.05) \\
+&= |x_1| x_2 - 0.5 |x_1| - 0.5 x_2 + 0.25
+\end{align*}
+\item[$\Rightarrow$] All components shifted to have mean 0
+\item[$\Rightarrow$] Parts of $|x_1|x_2$, which intuitively seems to be the ``interaction term'', is attributed to the main effects (correctly, depends on distribution!)
+}
+\end{itemizeM}
 \end{example}
-    
-\end{frame}
+\end{framev}
 
-\begin{frame}{Estimate fANOVA in practice
+
+\begin{framev}[align=top]{Estimate fANOVA in practice
 % $\rightarrow$ Estimating Expectations
 }
-
 \textbf{Main part:} Calculate all PD-functions $\rightarrow$ \textbf{$2^p$ many PD-functions}
-
 Estimation of a single PD-function: \textbf{Sampling}
-
 (so-called \textbf{Monte-Carlo integration})
-\begin{itemize}
-    \item Same idea as for PDPs: Fix \textbf{grid values} for features $x_S$ \\
-    Here: Same grid for all features over the whole algorithm
-    \item Estimate integral by sampling: for grid value $\xv_S^*$:
-    $$
-    \fh_{S, PD}(\xv_S^*) 
-    = \mathbb{E}_{\Xv_{-S}} \left[ \; \fh(\xv_S^*, \Xv_{-S}) \; \right]
-    \approx \frac{1}{n} \sum_{i=1}^n \fh(\xv_S^*, \xv_{-S}^{(i)})
-    $$
-    \item Or: for each grid value $\xv_S^*$, sample only $n_s < n$ many random samples (e.g. sampling uniformly)
-\end{itemize}
-
+\begin{itemizeM}
+\item Same idea as for PDPs: Fix \textbf{grid values} for features $x_S$ \\
+Here: Same grid for all features over the whole algorithm
+\item Estimate integral by sampling: for grid value $\xv_S^*$:
+$$
+\fh_{S, PD}(\xv_S^*)
+= \mathbb{E}_{\Xv_{-S}} \left[ \; \fh(\xv_S^*, \Xv_{-S}) \; \right]
+\approx \frac{1}{n} \sum_{i=1}^n \fh(\xv_S^*, \xv_{-S}^{(i)})
+$$
+\item Or: for each grid value $\xv_S^*$, sample only $n_s < n$ many random samples (e.g. sampling uniformly)
+\end{itemizeM}
 % Estimating expectations over uniform distribution (or marginal distribution) using e.g. Monte-Carlo sampling
-
 % [explain Monte-Carlo integration]
-    
-\end{frame}
+\end{framev}
 
-\begin{frame}{Variance decomposition - Why ``functional ANOVA''?
+
+\begin{framev}[align=top]{Variance decomposition - Why ``functional ANOVA''?
 % Why is this method even called functional ANOVA?
 }
-
 \begin{itemize}[<+->]
 \item Decomp. of $\fh(\xv)$ allows for ``functional analysis of variance'' (fANOVA)
 %$$ \var\left[\hat{f}(\xv)\right] = \var\left[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \right]$$
@@ -325,12 +283,12 @@ Estimation of a single PD-function: \textbf{Sampling}
 If features independent $\Rightarrow$ additive decomposition of variance of $\fh$ possible without covariances:
 \begin{align*}
 \var & \left[ \hat{f}(\xv) \right]
- =  \var \Big[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \Big] \\
+=  \var \Big[g_{\open \emptyset \close} + g_{\open 1 \close}(x_1) + \;\dots\; + g_{\open 1, 2 \close}(x_1, x_2) + \;\dots\; + g_{\open 1,\ldots,p \close}(\xv) \Big] \\
 % &= \sum_{S \subseteq \{1, \dots, p\}} \var\left[g_{\open S \close}(\xv_S)\right]
 & = \var\left[g_{\open \emptyset \close}\right]
-    + \var\left[g_{\open 1 \close}(x_1)\right] + \;\dots\; 
-    + \var\left[g_{\open 1, 2 \close}(x_1, x_2)\right] + \;\dots\;
-    + \var\left[g_{\open 1,\ldots,p \close}(\xv)\right]
++ \var\left[g_{\open 1 \close}(x_1)\right] + \;\dots\;
++ \var\left[g_{\open 1, 2 \close}(x_1, x_2)\right] + \;\dots\;
++ \var\left[g_{\open 1,\ldots,p \close}(\xv)\right]
 \end{align*}
 % \begin{align*}
 % \var\left[\hat{f}(\xv)\right] &= \var\left[g_{\open \emptyset \close}\right] + \var\left[g_{\open 1 \close}(x_1)\right] + \var\left[g_{\open 2 \close}(x_2)\right] \\
@@ -338,11 +296,8 @@ If features independent $\Rightarrow$ additive decomposition of variance of $\fh
 % \end{align*}
 % \end{itemize}
 % \end{frame}
-
 \item In other words: Single components uncorrelated (see later)
-
 % \begin{frame}{Variance decomposition}
-
 % \begin{itemize}
 % \item Dividing by the prediction variance, yields fraction of variance explained by each term:
 % \item Fraction of variance explained by each term:
@@ -352,7 +307,6 @@ If features independent $\Rightarrow$ additive decomposition of variance of $\fh
 \;\dots\;
 \frac{\var\left[g_{\open 1, 2 \close}(x_1, x_2)\right]}{\predvar} \;\dots\; + \frac{\var\left[g_{\open 1,\ldots,p \close}(\xv)\right]}{\predvar}
 \end{align*}
-
 \item[$\rightarrow$] \textbf{Sobol index}: Fraction of variance explained by some component $g_{\open V \close}(\xv_V)$:
 $$
 S_V = \frac{\var\left[g_{\open V \close}(\xv_V)\right]}{\var\left[\hat{f}(\xv)\right]}
@@ -360,8 +314,7 @@ $$
 $\leadsto$ Usable as importance measure of component $g_{\open V \close}(\xv_V)$\\
 % $\leadsto$ Small $S_V$ values $\Rightarrow$ Component $g_{\open V \close}$ does not explain much of total variance of $\fh$
 \end{itemize}
-
-\end{frame}
+\end{framev}
 
 
 
