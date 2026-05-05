@@ -19,7 +19,24 @@ In this way, we can simply update each of these sums by one summand when moving 
 The loss reduction can then be calculated each time using these sums.
 This reduces the total computation time to an order of \(d \cdot n\).
 
-Your task in this exercise is to implement this more efficient algorithm.
+For reference, the naive algorithm for finding the best split for a single feature $j$ is:
+
+\begin{algorithm}[H]
+\caption{Naive split search for feature $j$ (complexity: $O(n^2)$)}
+\begin{algorithmic}[1]
+\Require sorted feature values $x_{(1)}, \ldots, x_{(n)}$ and corresponding targets $y_{(1)}, \ldots, y_{(n)}$
+\Require set of candidate split values $S$
+\For{each split value $s \in S$}
+    \State Compute $\bar{y}_L = \frac{1}{n_L}\sum_{i: x_{(i)} \le s} y_{(i)}$ \Comment{$O(n)$ each time}
+    \State Compute $\bar{y}_R = \frac{1}{n_R}\sum_{i: x_{(i)} > s} y_{(i)}$
+    \State Compute loss reduction: $\Delta = \text{Var}(\text{parent}) - \frac{n_L}{n}\text{Var}(\text{left}) - \frac{n_R}{n}\text{Var}(\text{right})$
+\EndFor
+\State \textbf{return} split value $s^*$ with largest $\Delta$
+\end{algorithmic}
+\end{algorithm}
+
+Note that each loss evaluation requires a pass over all $n$ data points to compute the child node variances, leading to a time complexity of $O(n^2)$ for one feature and $O(dn^2)$ for all features.
+Your task in this exercise is to implement the more efficient algorithm described above.
 
 We provide you with an implementation of the naive CART splitting algorithm for a single feature in the files "\textit{CART.R}" and "\textit{CART.py}" (depending on your programming language) on the Moodle website.
 The code also contains a function which uses some splitting algorithm to find the optimal split, i.e., the optimal feature and value.
