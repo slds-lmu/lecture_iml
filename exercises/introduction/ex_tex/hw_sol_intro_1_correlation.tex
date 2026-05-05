@@ -28,8 +28,8 @@ The individual differences to the means are:
   \hline
  & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9  \\ 
 \hline
-  $x_1^{(i)} - \overline{x}_1$ & -1.00 & -0.75 & -0.50 & -0.25 & 0.00 & 0.25 & 0.50 & 0.75 & 1.00 \\ 
-  $x_2^{(i)} - \overline{x}_2$ & 0.55 & 0.17 & -0.11 & -0.43 & -0.38 & -0.32 & -0.17 & 0.14 & 0.58 \\ 
+  $x_1^{(i)} - \overline{x}_1$ & -1.00 & -0.75 & -0.50 & -0.25 & 0.00 & 0.25 & 0.50 & 0.75 & 1.00 \\
+  $x_2^{(i)} - \overline{x}_2$ & 0.55 & 0.17 & -0.11 & -0.43 & -0.38 & -0.32 & -0.17 & 0.14 & 0.58 \\
    \hline
 \end{tabular}
 \end{table}
@@ -69,14 +69,15 @@ Then:
   We therefore first have to estimate the whole distribution from our data points, and can then calculate the MI for this estimated distribution, which is an approximation of the true MI. \\
   This approximation becomes better and better, the more data points one samples.
   
-\end{enumerate}
-}
+% \end{enumerate}
+% }
 
-\dlz
+% \dlz
 
-\bonusloesung{
+% \bonusloesung{
+  \item
 
-  One possible solution: Estimate the distribution using histograms with Gaussian kernel. This practically means: We split the ranges of the features into intervals (buckets) and calculate the empirical distributions w.r.t. these buckets:
+  One possible solution: Estimate the distribution using histogram binning. This practically means: We split the ranges of the features into intervals (buckets) and calculate the empirical distributions w.r.t. these buckets:
   \begin{center}
   	\includegraphics[width=0.79\maxwidth]{figure/hist_x1_x2.pdf}
   \end{center}
@@ -93,6 +94,9 @@ Then:
   	\end{tabular}
   \end{table}  
   Equivalently, one could also introduce categories for the single intervals and make \(x_1\) and \(x_2\) categorical variables.
+  
+  Note: The choice of the number of bins affects the MI estimate. With fewer bins, we lose resolution; with too many bins relative to the sample size, estimates become unreliable. With only 9 data points, 3 bins is a reasonable compromise.
+  
   We then compute the table with joint and marginal distribution: 
   \begin{table}[H]
   	\centering
@@ -129,4 +133,5 @@ Now we can calculate the MI for this approximate distribution, which is very clo
 $\Rightarrow$
 The MI of around 0.6 shows that there is a clear dependency.
 
+\end{enumerate}
 }
