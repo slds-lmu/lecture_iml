@@ -2,18 +2,46 @@
 
 \loesung{
 
-\textit{TO DO: Add pseudocode of naive algo and of solution here}
-
 The implementations of the solution in R or in python can be found on Moodle in the files "\textit{CART\_sol.R}" and "\textit{CART\_sol.py}".
 As described in the exercise, the main idea is to not compute the sums for the two potential child nodes in every step.
 In the following, we present two ways to work around this.
 
-The first one is to compute the cumulative sums for the target vector, that is, compute a vector which at position $k$ contains the entry $\sum_{i=1}^k y_i$ (or $y_i^2$ respectively), and then for each split point find the corresponding index of the feature of interest, and look up the respective sums in the precomputed vector.
-This solution is implemented as ``Solution 1'' in the code.
+\textbf{Solution 1 (Cumulative sums):} Precompute the cumulative sums of $y_i$ and $y_i^2$ for the sorted data. Then for each split point, look up the left/right sums via index lookup in $O(1)$ instead of recomputing them in $O(n)$.
 
-The other, more direct way of implementation is to maintain two sums, one for the potential left child of the current split point and one for the potential right child.
-These two sums are then updated in every step, so that the left sum always increases and the right sum always decreases.
-This method is implemented as ``Solution 2'' in the code.
+\begin{algorithm}[H]
+\caption{Efficient split search -- cumulative sums (complexity: $O(n)$)}
+\begin{algorithmic}[1]
+\Require sorted targets $y_{(1)}, \ldots, y_{(n)}$ and candidate split values $S$
+\State $\texttt{cumsum\_y}[k] \gets \sum_{i=1}^{k} y_{(i)}$ for $k = 1, \ldots, n$ \Comment{Precompute once in $O(n)$}
+\State $\texttt{cumsum\_y2}[k] \gets \sum_{i=1}^{k} y_{(i)}^2$ for $k = 1, \ldots, n$
+\For{each split value $s \in S$}
+    \State Find index $k$ such that $x_{(k)} \le s < x_{(k+1)}$
+    \State $\text{sum\_L} \gets \texttt{cumsum\_y}[k]$, \quad $\text{sum\_R} \gets \texttt{cumsum\_y}[n] - \text{sum\_L}$
+    \State $\text{sum\_L2} \gets \texttt{cumsum\_y2}[k]$, \quad $\text{sum\_R2} \gets \texttt{cumsum\_y2}[n] - \text{sum\_L2}$
+    \State Compute $\text{Var}_L = \text{sum\_L2}/n_L - (\text{sum\_L}/n_L)^2$, analogously $\text{Var}_R$
+    \State Compute loss reduction $\Delta$
+\EndFor
+\State \textbf{return} split value $s^*$ with largest $\Delta$
+\end{algorithmic}
+\end{algorithm}
+
+\textbf{Solution 2 (Running sums):} Maintain running left/right sums and update them incrementally as we move through split points.
+
+\begin{algorithm}[H]
+\caption{Efficient split search -- running sums (complexity: $O(n)$)}
+\begin{algorithmic}[1]
+\Require sorted targets $y_{(1)}, \ldots, y_{(n)}$ and candidate split values $S$ (sorted)
+\State $\text{sum\_L} \gets 0$, \quad $\text{sum\_R} \gets \sum_{i=1}^{n} y_{(i)}$
+\State $\text{sum\_L2} \gets 0$, \quad $\text{sum\_R2} \gets \sum_{i=1}^{n} y_{(i)}^2$
+\State $n_L \gets 0$, \quad $n_R \gets n$
+\For{each split value $s$ (in sorted order)}
+    \State Move observations from right to left: $\text{sum\_L} \mathrel{+}= y_{(k)}$, $\text{sum\_R} \mathrel{-}= y_{(k)}$ \Comment{$O(1)$ update}
+    \State Update $\text{sum\_L2}$, $\text{sum\_R2}$, $n_L$, $n_R$ analogously
+    \State Compute $\text{Var}_L$, $\text{Var}_R$, and loss reduction $\Delta$
+\EndFor
+\State \textbf{return} split value $s^*$ with largest $\Delta$
+\end{algorithmic}
+\end{algorithm}
 
 Both these solutions in principle achieve the desired result, namely that the whole algorithm of finding the optimal split point has a computational complexity of $O(dn)$ instead of $O(d n^2)$.
 Nevertheless, the two implementations differ in another point, which may be practically even more relevant.

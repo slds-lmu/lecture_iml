@@ -19,6 +19,7 @@ Consider the following dataset with 11 observations and two features:
 \end{table}
 
 where the last column corresponds to the sum of values of each row.
+Note that in this exercise, we focus on the relationship between $x_1$ and $x_2$; the variable $y$ is not used here.
 
 The following shows the output of an LM ($x_2 \sim x_1$, that means $x_2$ is modeled as a linear function of $x_1$) and a GAM ($x_2 \sim s(x_1)$, that means $x_2$ is modeled as some smooth function of $x_1$):
 
@@ -31,8 +32,13 @@ The R$^2$-value for the GAM model is the adjusted one.
 \begin{enumerate}[a)]
 
     \item
-    In case you do not know how the adjusted $R^2$ is defined and interpreted, look it up.
-    Then interpret the $R^2$ and adjusted $R^2$ values for the two models.
+    Recall that the adjusted $R^2$ is defined as
+    $$
+    \text{adj. } R^2 = 1-\frac{SSE_{LM}\, / \, (n-p-1)}{SSE_{c}\, / \, (n-1)},
+    $$
+    where $n$ is the sample size and $p$ is the number of features.
+    Unlike the ordinary $R^2$, the adjusted $R^2$ can become negative, indicating a model that is worse than simply predicting the mean.
+    Interpret the $R^2$ and adjusted $R^2$ values for the two models.
      
 	\item
     What conclusions can you draw from the LM model output for the relationship between $x_1$ and $x_2$? 
