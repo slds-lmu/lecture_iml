@@ -5,7 +5,7 @@
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-interpretable.tex}
 % Defines macros and environments
-\usepackage[dvipsnames]{xcolor}
+\usepackage{xcolor}
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -73,8 +73,9 @@ $$
 $o_{target}(\fh(\xv'), y') = |\fh(\xv') - y'|$
 \item \textbf{Classification:}
 \begin{itemizeS}
-\item For predicted probabilities: $o_{target} = |\fh(\xv') - y'|$
-\item For predicted hard labels: $o_{target} = \mathbb{I}\{\fh(\xv') \ne y'\}$
+\item For predicted probabilities: $o_{target}(\fh(\xv'), y') = |\fh(\xv') - y'|$ 
+\vspace{0.1cm}
+\item For predicted hard labels: $o_{target}(\fh(\xv'), y') = \mathds{1}_{\{\fh(\xv') \ne y'\}}$
 \end{itemizeS}
 \end{itemizeM}
 \pause
@@ -88,12 +89,12 @@ where
 % \delta_G(x'_j, x_j) =
 % \begin{cases}
 % \frac{1}{\widehat{R}_j} \, |x'_j - x_j| & \text{if $x_j$ is numerical} \\
-% \mathbb{I} \left\{ x'_j \ne x_j \right\} & \text{if $x_j$ is categorical}
+% \mathds{1}_{\left\{ x'_j \ne x_j \right\}} & \text{if $x_j$ is categorical}
 % \end{cases}
 % \end{equation*}
 \begin{itemizeM}
-\item $\delta_G(x'_j, x_j) = \mathbb{I}\{x'_j \ne x_j\}$ if $x_j$ is categorical
-\item $\delta_G(x'_j, x_j) = \frac{1}{\widehat{R}_j} |x'_j - x_j|$ if $x_j$ is numerical\\
+\item $\delta_G(x'_j, x_j) = \mathds{1}_{\{x'_j \ne x_j\}}$ if $x_j$ is categorical
+\item $\delta_G(x'_j, x_j) = \dfrac{1}{\widehat{R}_j} |x'_j - x_j|$ if $x_j$ is numerical\\
 $\leadsto \widehat{R}_j$: range of feature $j$ in the training set to ensure $\delta_G(x'_j, x_j) \in [0, 1]$
 \end{itemizeM}
 \end{framev}
@@ -140,7 +141,7 @@ e.g., using L$_0$-norm (number of changed features) or L$_1$-norm (LASSO)
 \item<+-> Alternative: Include separate objective measuring sparsity, e.g., via L$_0$-norm
 %we can also account for sparsity by adding an extra term to our objective that counts the number of changed features via the L0-norm
 $$
-o_{sparse}(\xv', \xv) = \sum_{j = 1}^p \ind_{\{x'_j \neq x_j\}}
+o_{sparse}(\xv', \xv) = \sum_{j = 1}^p \mathds{1}_{\{x'_j \neq x_j\}}
 $$
 \end{itemizeM}
 \end{framev}
@@ -166,9 +167,9 @@ $\leadsto$ Common proxy: ensure that $\xv'$ is close to training data $\Xmat$
 \textbf{Example from \furtherreading{VERMA2020}}
 \begin{itemizeM}
 \item Input \textcolor{blue}{$\xv$} originally classified as $\pmb{\circleddash}$
-\item Two valid CEs in class $\pmb\oplus$: {\color{Red} CF1} and {\color{Green} CF2}
-\item {\color{Red} Path \textbf{A} (CF1)} is shorter (but unrealistic)
-\item {\color{Green} Path \textbf{B} (CF2)} is longer but in data manifold
+\item Two valid CEs in class $\pmb\oplus$: {\color{red} CF1} and {\color{green} CF2}
+\item {\color{red} Path \textbf{A} (CF1)} is shorter (but unrealistic)
+\item {\color{green} Path \textbf{B} (CF2)} is longer but in data manifold
 \end{itemizeM}
 %Two possible paths for \textcolor{blue}{$\xv$},			originally classified in the negative class. The two counterfactuals (\textcolor{red}{CF1} and \textcolor{green}{CF2}) are valid. Note that the red path $A$ for CF1 is the shortest, whereas the green path $B$ for CF2 adheres closely to the manifold of the training data, but is longer.
 }
