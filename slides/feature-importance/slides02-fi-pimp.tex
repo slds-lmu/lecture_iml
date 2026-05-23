@@ -49,19 +49,13 @@ figure_man/pimp
   %\item It fixes the problem that the importance measure prefers features with many categories.
   \item PIMP idea: Test if an observed $\widehat{\text{PFI}}_j^{\text{obs}}$ score is \emph{significantly} greater than expected under the null hypothesis of $X_j$ being not important\\
   $\leadsto$ Accounts for spurious importance due to randomness
-  %Addresses random fluctuations that cause non-zero PFI scores
-  %Useful because PFI can be non-zero due to randomness/stochasticity
-  %It computes the distribution of importances under the $H_0$-hypothesis that the feature is independent of the target $y$
  \item Null hypothesis $H_0$: Feature $X_j$ is conditionally indep. of $y$ (unimportant)
   \item Approximate null distrib. of PFI scores under $H_0$ by repeated permuts:\\
   Permute $y$ $\rightarrow$ retrain $\rightarrow$ recompute $\widehat{\text{PFI}}_j$ scores for all $j$ $\rightarrow$ repeat $B$ times\\
   $\Rightarrow$ Permuting $y$ breaks relationship to all features (PFI scores reflect noise only)%\\
-  %$\Rightarrow$ By computing PFI scores again, we obtain distribution of PFI scores under $H_0$
-  \item %We now rescale the importance to a 
+  \item
   Assess the significance of PFI scores via tail probability under $H_0$\\
-  %Compute p-value via tail probability under $H_0$ over all $B$ repetitions
     $\Rightarrow$ Use this as a new feat. importance score, adjusting for random chance
-  %and use this as new importance measure
 \end{itemize}
 
 %\footnote[frame]{\fullcite{altmann2010permutation}}
@@ -82,10 +76,9 @@ figure_man/pimp
 	\item<2-3> Train model on original data  $(\Xmat, \yv)$ with unpermuted target
 	\item<3> For each feature $j \in \{1,\ldots,p\}$:
 		\begin{itemize}
-        		\item Compute $\widehat{\text{PFI}}_j^{\text{obs}}$ for the model without permutation of $y$ (under $H_1$)
+			\item Compute $\widehat{\text{PFI}}_j^{\text{obs}}$ for the model without permutation of $y$ (under $H_1$)
 			\item Fit probability distribution to all PFI scores $\{\widehat{\text{PFI}}_j^{(b)}\}_{b=1}^{B}$ (under $H_0$)\\
             e.g., by assuming Gaussian/lognormal/gamma distrib (parametric)%\\
-            %$\leadsto$ non-parametric by computing empirical tail probability
 			\item Compute p-value: Prob. that null importance exceeds observed: 
             \begin{itemize}
                 \item parametric by taking tail probability of assumed distribution $$\mathbb{P}(\widehat{\text{PFI}}_j^{(m)} \geq \widehat{\text{PFI}}_j^{\text{obs}})$$
@@ -111,12 +104,6 @@ figure_man/pimp
   \item Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
 \end{itemize}
 
-% $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$, 
-% $x_1$, $x_2$ highly correlated but independent of $y$, 
-% $x_4$ is independent of $y$ and all other variables.
-% Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
-%Fitting a \texttt{lm} yields $\fh(x) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
-%
 %\begin{figure}
   \includegraphics[width=\linewidth]{figure_man/pimp.pdf}
   %\caption{$H_0$ distribution (1000 samples) for each feature as histograms, the true PFI indicated in red. PIMP only considers $x_3$ relevant. Although PFI for $x_1$ and $x_2$ is nonzero, PIMP considers them irrelevant since they are not predictive of $y$. Even after permuting $y$, the model relies on them.}
@@ -128,25 +115,12 @@ figure_man/pimp
     \item Recall: PFI for $x_1$, $x_2$, $x_3$ is non-0 suggesting they are important (red lines)
     \item PIMP considers $x_1$, $x_2$ not significantly relevant (p-value > 0.05) 
 
-    %since they are not predictive of $y$
 \end{itemize}
 \end{frame}
 
-% \begin{frame}{Digression: Multiple testing problem \furtherreading{ROMANO2010}}
-% \begin{itemize}[<+->]
-%   \item When should we reject the $H_0$-hypothesis for a feature? 
-%   \item The larger the number of features, the more tests need to be performed by PIMP\\
-%   $\leadsto$ \textbf{Multiple testing problem}: If multiplicity of tests is not taken into account, the probability that some of the true $H_0$-hypothesis is rejected (type-I error) by chance may be large
-%   \item Accounting for multiplicity of individual tests can be achieved by controlling an appropriate error rate, e.g., the \textbf{family-wise error rate} (FWE: probability of at least one type-I error)
-%   \item One classical method to control the FWE is the \textbf{Bonferroni correction} which rejects a null hypothesis if its p-value is smaller than $\alpha/m$ with $m$ as the number of performed parallel tests
-%   %\item We refer to other lectures or the statistics literature for more details
-%   \end{itemize} 
-
-%   %\footnote[frame]{\fullcite{romano2010multiple}}
-%   %{\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
-% \end{frame}
-
 \begin{frame}{Digression: Multiple Testing \furtherreading{ROMANO2010}}
+% \footnote[frame]{\fullcite{romano2010multiple}}
+% {\tiny{Romano, J. P., Shaikh, A. M., and Wolf, M. (2010). Multiple Testing. The New Palgrave Dictionary of Economys. \url{https://home.uchicago.edu/~amshaikh/webfiles/palgrave.pdf}}\par}
 
 \begin{itemize}%[<+->]
   \item When should we reject $H_0$ for a given feature?
