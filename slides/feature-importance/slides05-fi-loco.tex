@@ -40,27 +40,12 @@ figure_man/feature-importance.png
 
 %TODO: Remove gray figure background (e.g. theme_bw())
 
-% \begin{frame}{Reminder: Feature Importance Scheme}
-% In general, feature importance methods share two components
-% \lz
-% \begin{enumerate}
-%   \item \textbf{Perturbation/Removal:} Generate predictions for which the feature of interest has been perturbed/removed.
-%   \item \textbf{Performance Comparision:} Compare performance under perturbation/removal with the original model performance.
-% \end{enumerate}
-% \lz
-% Depending on the type of perturbation/removal feature importance methods provide insight into different aspects of model and data.\\
-% \lz
-% \textbf{LOCO idea:} Simply remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.\\
-
-% \end{frame}
-
 \begin{framev}[align=top]{LOCO \furtherreading{LEI2018} \furtherreading{TIBSHIRANI2018}}
 % citation of the original LOCO paper
 %
-\textbf{LOCO idea:} Remove the feature from data, refit model on reduced data, and measure the loss in performance compared to model fitted on complete data.\\ %Remove the feature from the dataset and refit the model on the reduced dataset. The performance loss compared to the full model is interpreted as feature importance.
+\textbf{LOCO idea:} Remove the feature from data, refit model on reduced data, and measure the loss in performance compared to model fitted on complete data.\\
 \pause
 \spacer[0.25]
-%\textbf{Definition:} Given train and test data $\Dtrain, \Dtest \subseteq \D$, for learner $\ind$ and model $\fh = \ind(\Dtrain)$. Then LOCO for a feature $j \in \pset$ can be computed as follows:
 \textbf{Definition:} Given train and test data $\Dtrain, \Dtest \subseteq \D$, a learner $\ind$, and model $\fh := \ind(\Dtrain)$, the LOCO importance for feat $j \in \pset$ is computed by:\\
 \spacer[0.25]
 \begin{enumerate}
@@ -84,9 +69,6 @@ $$
 \begin{framev}[align=top]{Bike Sharing Example}
 %
 \image{figure_man/bike_sharing_loco.pdf}
-%\caption{A random forest with default hyperparameters was fit on $70\%$ of the bike sharing data (training set) to optimize MSE. Then LOCO was computed for all features on the test data. The temperature is the most important feature. Without access to \texttt{temp}, the MSE increases by approx. $140,000$.}
-%
- %\textbf{Interpretation:} $\text{LOCO}_j$ quantifies how important variable $x_j$ is to the generalization performance of the learner on $\Dtrain$.\\
 %
 \begin{itemizeS}
 \item Trained random forest (default hyperparams) on 70\% of bike sharing data
@@ -129,7 +111,6 @@ Can we get insight into whether the ...
 \item $y = x_2 + x_3 + \epsilon$ with $\epsilon \sim N(0, 2)$
 \item Trained LM: $\fh(x) = -0.02 - 1.02 x_1 + 2.05 x_2 + 0.98 x_3$
 \end{itemizeM}
-%Sample $1000$ observations with $x_1, x_3 \sim N(0, 5), x_2 = x_1 + \epsilon_2$ with $\epsilon_2 \sim N(0, 0.1)$ and $y = x_2 + x_3 + \epsilon$ with $\epsilon \sim N(0, 2)$.
 \pause
 \splitVCC[0.42]{
 \image{figure_man/simulation_loco_corr.pdf}\\
@@ -137,27 +118,6 @@ Can we get insight into whether the ...
 }{
 \imageC[0.9]{figure_man/simulation_loco}
 LOCO importance from LM trained on 70\% of data, evaluated on remaining 30\%
-%LOCO importance of LM fitted on 70\% of the data computed on 30\% remaining observations
-%\begin{figure}
-%\centering
-%\hfill
- % \begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=0.6, line width=0.3mm, black, fill=white}]
-%		\node[draw, circle, font=\large] (x1) at  (-.5, 2) {$X_1$};
-%		\node[draw, circle, font=\large] (x2) at  (-.5,1) {$X_2$};
-%		\node[draw, circle, font=\large] (x3) at  (.5,1) {$X_3$};
-%		\node[draw, circle, font=\large] (y) at  (0,0) {$Y$};
-%		\draw[->, black] (x1) -- (x2);
-%		\draw[->, black] (x3) -- (y);
-%		\draw[->, black] (x2) -- (y);
-%	\end{tikzpicture} 
-%\hfill
-% \includegraphics[width=\linewidth]{figure_man/simulation_loco_corr.pdf} 
-% \hfill
-% \includegraphics[width=\linewidth]{figure_man/simulation_loco}
-%\hfill
-%\end{figure}
-%Linear Gaussian data generating process with correlation matrix as depicted left.
-%A linear model was fit with $\fh(x) = -0.09 - 0.86 x_1 + 1.86 x_2 + 0.96 x_3$.\\
 }
 \spacer[0.25]
 \pause
@@ -168,7 +128,6 @@ $\Rightarrow$ We also can't infer (2), e.g., $Cor(x_2, y) = 0.68$ but $\text{LOC
 \pause
 $\Rightarrow$ We can get insight into (3): $x_2$, $x_1$ highly corr. with $\text{LOCO}_1 = \text{LOCO}_2 \approx 0$ \\
 \phantom{$\Rightarrow$} $\leadsto$ $x_2$ and $x_1$ take each others place if one of them is left out (unlike $x_3$)
-%As $x_2$ and $x_1$ are highly correlated, they can take each others place, which is not the case for $x_3$.
 \end{framev}
 
 %TODO: Why only?
@@ -185,7 +144,6 @@ Cons:
 \item Provides insight into a learner on specific data, not a specific model\\
 $+$ for algorithm-level insight\\
 $-$ for model-specific insights
-%Does not provide insight into a specific model, but rather a learner on a specific dataset
 \item Model training is a random process and LOCO estimates can be noisy\\
 $\leadsto$ Limits inference on model and data, or multiple refittings necessary?
 \item Requires re-fitting the learner for each feature\\

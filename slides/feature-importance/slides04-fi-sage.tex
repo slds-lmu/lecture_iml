@@ -72,7 +72,7 @@ Although $x_3$ alone contributes as much to the prediction as $x_1$ and $x_2$ jo
 
 
 \begin{framev}[align=top]{SAGE Idea \furtherreading{COVERT2020}}
-\textbf{SAGE:} %Leverage game-theoretic 
+\textbf{SAGE:}
 Use Shapley values to compute a fair attribution of importance (via model performance)\\
 \spacer[0.25]
 \textbf{Idea:}
@@ -83,20 +83,12 @@ $\leadsto$ features jointly contribute to achieve a certain model performance
 \item Payoff to be fairly distributed: model performance
 \item Surplus contribution of a feature depends on the coalition of features that are already accessible by the model
 \end{itemizeM}
-%, where each feature is a player and model performance is the payoff. The surplus contribution of a feature depends on the coalition of features that are already in the room.\\
-%\pause
 \spacer[0.25]
 \textbf{Note:}
 \begin{itemizeM}
 \item Similar idea (called SFIMP) was proposed in \furtherreading{CASALICCHIO2018}
 \item Definition based on model refits was proposed in context of feature selection in \furtherreading{COHEN2007}
 \end{itemizeM}
-%$\Rightarrow$ Global feature importance technique\\
-%$\Rightarrow$ Compute approximate Shapley values $\phi_j$ using appropriate value function 
-%\lz
-%$\Rightarrow$ SAGE translates SHAP into a global feature importance technique\\
-%\lz
-%In order to compute SAGE, approximate Shapley values $\phi_j$ as for SHAP, replacing SHAP value functions with SAGE value functions.\\
 \spacer[0.25]
 %\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
 \end{framev}
@@ -109,9 +101,7 @@ To deprive information of the non-coalition features $-S$ from the model, margin
 $$
 \fh_S(x_S) = \E[\fh(x) | X_S = x_S]
 $$
-%\lz
 %\footnote[frame]{\fullcite{NEURIPS2020_c7bf0b7c}}
-%For SAGE, value functions quantify the predictive power of a coalition $S$ in terms of reduction in risk over the mean prediction.\\
 \pause
 \spacer[0.25]
 \textbf{SAGE value function:}
@@ -137,21 +127,17 @@ When computing the marginalized prediction $\fh_S(x_S)$, the ``dropped'' feature
 \item the marginal distribution $\P(x_{-S})$ $\Rightarrow$ marginal SAGE
 \item the conditional distribution $\P(x_{-S}|x_S)$ $\Rightarrow$ conditional SAGE
 \end{itemizeM}
-%\lz\pause
-%Interpretation of SAGE value functions differs, depending on whether conditional or marginal sampling is used.
 \spacer[0.25]
 \pause
 \textbf{Interpretation marginal sampling:} $v(S)$ quantifies the reliance of the model on features $x_S$
 \begin{itemizeM}
-\item %features $x_S$ not being causal for the prediction is a sufficient condition for $v(S) = 0$
-features $x_S$ not being causal for the prediction $\Rightarrow$ $v(S) = 0$
+\item features $x_S$ not being causal for the prediction $\Rightarrow$ $v(S) = 0$
 \end{itemizeM}
 \spacer[0.25]
 \pause
 \textbf{Interpretation conditional sampling}: $v(S)$ quantifies whether variables $x_S$ contain prediction-relevant information (e.g. $y \not \indep x_S$) that is (directly or indirectly) exploited by the model
 \begin{itemizeM}
-\item %features $x_S$ not being causal for the prediction is not a sufficient condition for $v(S) = 0$
-features $x_S$ not being causal for the prediction $\not \Rightarrow$ $v(S) = 0$
+\item features $x_S$ not being causal for the prediction $\not \Rightarrow$ $v(S) = 0$
 \begin{itemizeS}
 \item e.g., if $x_1$ and $x_2$ are perfectly correlated, even if only $x_1$ has a nonzero coefficient, both are considered equally important
 % (see omitted variable bias as in M-plots)
@@ -163,8 +149,6 @@ features $x_S$ not being causal for the prediction $\not \Rightarrow$ $v(S) = 0$
 
 \begin{framev}[align=top]{SAGE - marginal and cond. sampling}
 \textbf{Example:}
-%$x_1 = \epsilon_1$, $x_2 = x_1 + \epsilon_2$, $x_3 = x_2 + \epsilon_3$, $y = x_3 + \epsilon_y$ with $\epsilon_j$ independent noise terms (causal DAG: $x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow y$). Assume fitting LM yields $\fh \approx 0.95 x_3 + 0.05 x_2$. 
-%
 \splitVTT[0.4]{
 \spacer[0.6]
 \begin{itemizeM}
@@ -196,8 +180,6 @@ $\Rightarrow$ Since $y \indep x_1, x_2 | x_3$, only $v(\{1,2,3\}) - v(\{1, 2\})$
 \textbf{SAGE values $\phi_j$}: fair attribution of importance
 \begin{itemizeM}
 \item can be computed by averaging the contribution of $x_j$ over all feat orderings
-%\item for feature permutation $\pi$ and the corresponding feature ordering $(x_{\pi(1)}, \dots, x_{phi(d)})$, for feature $x_j$ the coalition $S(j; \pi)$ is defined as the set of features preceding $x_j$, i.e. $S(j; \pi) := \{i : \pi(i) < \pi(j)\}$
-%\item the contribution of $j$ in an ordering $\pi$ is given as $v(j \cup S(j; \pi)) - v(S(j; \pi))$
 \item for feature permutation $\tau$, the contribution of $j$ in the set $\Stau$ is given as $v(\Stauj) - v(\Stau)$\\
 Note: $\Stau$ is the set of features preceding $j$ in permutation $\tau$
 \end{itemizeM}
@@ -285,8 +267,6 @@ $\leadsto$ zero $\phi_j$ does not imply $\xj \not \rightarrow \hat{y}$
 $\leadsto$ prediction-relevance implies nonzero $\phi_j$
 \item $x_j \indep y$ does not imply $x_j \indep y | x_S$ and consequently does not imply $v(j \cup S) - v(S) = 0$
 $\leadsto$ $\phi_j$ may be nonzero although $\xj \indep y$
-    %   \item $x_j \indep y$ in general does not imply $x_j \indep y | x_S$ and consequently does not imply that $v(j \cup S) - v(S) = 0$\\
-    %   $\leadsto$ $\phi_j$ may be nonzero although $\xj \indep y$
 \end{itemizeS}
 \item<3> model requires access to $x_j$ to achieve its prediction performance?
 \begin{itemizeS}
@@ -298,9 +278,6 @@ $\leadsto$ $\phi_j$ may be nonzero although feature has no unique contrib.
 \end{enumerate}
 \end{framev}
 
-% \begin{frame}
-%   \printbibliography
-% \end{frame}
 
 \begin{framev}[align=top]{Deep dive: Shapley axioms for SAGE}
 The Shapley axioms can be translated into properties of SAGE. The interpretation depends on whether conditional or marginal sampling is used.
