@@ -49,8 +49,8 @@ $\leadsto$ Gamma distribution
 \textbf{Solution}: GLMs extend LMs by allowing other distrib.-s from exp. family\\
 %$$g(\E (y \mid \xv)) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p$$
 % \begin{align*}
-% &g(\E (y \mid \xv)) = 
-% %\theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p = 
+% &g(\E (y \mid \xv)) =
+% %\theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p =
 % \xv^\top \theta\\
 % \Leftrightarrow \; & \E (y \mid \xv) = g^{-1}(\xv^\top \theta)
 % \end{align*}
@@ -71,7 +71,7 @@ $\leadsto$ LM is special case: Gaussian distrib. for $y \mid \xv$ with $g$ as id
     %    \item exponential family defining $\E_Y$ -- can be freely chosen
      %   \item weighted sum $X^\top W$
     %\end{itemize}
-    %\medskip 
+    %\medskip
     %\pause
  %Interaction effects via feature engineering:
  %\begin{itemize}
@@ -86,7 +86,7 @@ $\leadsto$ LM is special case: Gaussian distrib. for $y \mid \xv$ with $g$ as id
 \begin{itemizeM}
 \item Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function:
 %\begin{align*}
-%    g(x) &= \log\left(\frac{x}{1 - x}\right)  
+%    g(x) &= \log\left(\frac{x}{1 - x}\right)
 %    \Rightarrow \; g^{-1}(x) &= \frac{1}{1+\exp(-x)}
 %\end{align*}
 $$
@@ -136,7 +136,7 @@ $$\pi(\xv) = \E(y \mid \xv) = P(y = 1 \mid \xv) = g^{-1}(\xv^\top \thetav) = \fr
 \end{itemizeS}
 \end{itemizeM}
 \image{figure/reg_class_log_6.pdf}
-% figs from i2ml course, Chapter 03.04: Logistic Regression, slide 7 
+% figs from i2ml course, Chapter 03.04: Logistic Regression, slide 7
 \end{framev}
 
 
@@ -172,44 +172,22 @@ $$\pi(\xv) = \E(y \mid \xv) = P(y = 1 \mid \xv) = g^{-1}(\xv^\top \thetav) = \fr
 \begin{framev}[align=top]{GLM - Log. Regression - Interpretation}
 \begin{itemizeM}
 \item \textbf{Recall:} Odds is ratio of two probabilities, odds ratio is ratio of two odds
-\item Weights $\theta_j$ are interpreted linear as in LM (but w.r.t. log-odds)\\
+\item Weights $\theta_j$ are interpreted linear as in LM (but w.r.t. log-odds) \\
 $\leadsto$ difficult to comprehend
 %relate to log-odds %$\leadsto$ Effects are linear as in LM (but w.r.t. log-odds)
-$$log\text{-}odds = \log\left(\frac{\pi(\xv)}{1 - \pi(\xv)}\right) = \log\left(\frac{P(y = 1)}{P(y = 0)}\right) = \theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p$$
-\textbf{Interpretation}: Changing $x_j$ by one unit changes log-odds of class 1 compared to class 0 by $\theta_j$
-%\leadsto$ Effects are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
+$$log\text{-}odds = \log \left(\frac{\pi(\xv)}{1 - \pi(\xv)}\right) = \log \left(\frac{P(y=1 \mid \xv)}{P(y=0 \mid \xv)}\right) = \theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p  $$
+\textbf{Interpretation:} Changing $x_j$ by one unit, changes log-odds of class 1 compared to class 0 by $\theta_j$%\\
+%$\leadsto$ Effects are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
 \pause
-\item Odds for cls 1 vs. cls 0: %Odds can be caulculated by:
-% deliberate choice to use in line with \displaystyle given full slide
+\item Odds for class 1 vs. class 0: %Odds can be caulculated by:
 $odds = \displaystyle\frac{\pi(\xv)}{1 - \pi(\xv)}= \exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p)$
-\item Instead of interpreting changes w.r.t. log-odds, it is more common to use the odds ratio
-$$\frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j(x_j + 1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp(\theta_j)$$
-\textbf{Interpretation}: Changing $x_j$ by one unit changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\theta_j)$
+\item Instead of interpreting changes w.r.t. log-odds, it is more common to use $odds\text{ }ratio$
+$$ = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j (x_j+1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp{(\theta_j)} $$
+\textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\theta_j)$
 %\pause
 %\item Interpretation for different feature types is the same as for linear regression (however, linear interpretation only possible w.r.t. log odds $\leadsto$ difficult to comprehend)
 \end{itemizeM}
 \end{framev}
-
-<<<<<<< HEAD
-    \begin{itemize}
-        \item \textbf{Recall:} Odds is ratio of two probabilities, odds ratio is ratio of two odds 
-        \item Weights $\theta_j$ are interpreted linear as in LM (but w.r.t. log-odds) \\
-        $\leadsto$ difficult to comprehend
-        %relate to log-odds %$\leadsto$ Effects are linear as in LM (but w.r.t. log-odds)
-        $$log\text{-}odds = \log \left(\frac{\pi(\xv)}{1 - \pi(\xv)}\right) = \log \left(\frac{P(y=1 \mid \xv)}{P(y=0 \mid \xv)}\right) = \theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p  $$
-        \textbf{Interpretation:} Changing $x_j$ by one unit, changes log-odds of class 1 compared to class 0 by $\theta_j$%\\
-        %$\leadsto$ Effects are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
-        \pause
-        \item Odds for cls 1 vs. cls 0: %Odds can be caulculated by:
-        $odds = \displaystyle\frac{\pi(\xv)}{1 - \pi(\xv)}= \exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p)$
-        \item Instead of interpreting changes w.r.t. log-odds, it is more common to use $odds\text{ }ratio$ 
-        $$ = \frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j (x_j+1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp{(\theta_j)} $$
-        \textbf{Interpretation}: Changing $x_j$ by one unit, changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\theta_j)$
-        %\pause
-        %\item Interpretation for different feature types is the same as for linear regression (however, linear interpretation only possible w.r.t. log odds $\leadsto$ difficult to comprehend)
-    \end{itemize}	
-=======
->>>>>>> master
 
 \begin{framev}[align=top]{GLM - Logistic Regression - Example}
 \begin{itemizeM}
@@ -226,16 +204,16 @@ $$\frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \the
 %\begin{table}[ht]
 % \begin{tabular}{rrrrr}
 %   \hline
-%  & Weights & SE & z value & p-value \\ 
+%  & Weights & SE & z value & p-value \\
 %   \hline
-% (Intercept) & -8.5 & 1.2 & -7.1 & 0.00 \\ 
-%   seasonSPRING & 1.7 & 0.6 & 2.9 & 0.00 \\ 
-%   seasonSUMMER & -0.9 & 0.8 & -1.1 & 0.26 \\ 
-%   seasonFALL & -0.6 & 0.6 & -1.2 & 0.25 \\ 
-%   temp & 0.3 & 0.0 & 7.4 & 0.00 \\ 
-%   hum & -0.1 & 0.0 & -5.0 & 0.00 \\ 
-%   windspeed & -0.1 & 0.0 & -3.0 & 0.00 \\ 
-%   days\_since\_2011 & 0.0 & 0.0 & 11.6 & 0.00 \\ 
+% (Intercept) & -8.5 & 1.2 & -7.1 & 0.00 \\
+%   seasonSPRING & 1.7 & 0.6 & 2.9 & 0.00 \\
+%   seasonSUMMER & -0.9 & 0.8 & -1.1 & 0.26 \\
+%   seasonFALL & -0.6 & 0.6 & -1.2 & 0.25 \\
+%   temp & 0.3 & 0.0 & 7.4 & 0.00 \\
+%   hum & -0.1 & 0.0 & -5.0 & 0.00 \\
+%   windspeed & -0.1 & 0.0 & -3.0 & 0.00 \\
+%   days\_since\_2011 & 0.0 & 0.0 & 11.6 & 0.00 \\
 %   \hline
 % \end{tabular}
 \begin{scriptsize}
@@ -243,14 +221,14 @@ $$\frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \the
 \hline
 & Weights & SE & p-value \\
 \hline
-(Intercept) & -8.52 & 1.21 & 0.00 \\ 
-seasonSPRING & 1.74 & 0.60 & 0.00 \\ 
-seasonSUMMER & -0.86 & 0.77 & 0.26 \\ 
-seasonFALL & -0.64 & 0.55 & 0.25 \\ 
-temp & 0.29 & 0.04 & 0.00 \\ 
-hum & -0.06 & 0.01 & 0.00 \\ 
-windspeed & -0.09 & 0.03 & 0.00 \\ 
-days\_since\_2011 & 0.02 & 0.00 & 0.00 \\ 
+(Intercept) & -8.52 & 1.21 & 0.00 \\
+seasonSPRING & 1.74 & 0.60 & 0.00 \\
+seasonSUMMER & -0.86 & 0.77 & 0.26 \\
+seasonFALL & -0.64 & 0.55 & 0.25 \\
+temp & 0.29 & 0.04 & 0.00 \\
+hum & -0.06 & 0.01 & 0.00 \\
+windspeed & -0.09 & 0.03 & 0.00 \\
+days\_since\_2011 & 0.02 & 0.00 & 0.00 \\
 \hline
 \end{tabular}
 \end{scriptsize}
