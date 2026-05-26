@@ -39,47 +39,17 @@ figure/lime5
 % Prerequisite: le-intro
 
 % ------------------------------------------------------------------------------
-% \begin{frame}{LIME}
-% \begin{itemize}
-% 		% \item LIME assumption: Even if an ML model is very complex, local predictions may be explained by a simpler, interpretable model
-% 		% \smallskip\pause
-% 		\item LIME explains \textbf{individual} predictions of \textbf{any} black-box model by approximating the model \textbf{locally} with an interpretable model (local surrogate model)\\
-%         $\leadsto$ \textbf{Assumption:} Complex models behave simply in small input neighborhoods
-% 		\smallskip\pause
-% 		\item Called local surrogate models $\leadsto$ often inherently interpretable models such as linear models or classification/regression trees are chosen\\
-% 		\smallskip\pause
-% 		\item LIME should answer why a ML model predicted $\hat y$ for input $\xv$
-% 		\smallskip\pause
-% 		\item LIME is model-agnostic and can handle tabular, image and text data 
-% \end{itemize}
-% \end{frame}
-
-% Improved slide: LIME – Local Surrogate Explanations
 \begin{framei}[align=top]{LIME}
-%\item \textbf{Key idea:} Approximate any black‑box model $\fh$ around a single input $\xv$ with an \emph{interpretable} surrogate $\gh$
 \item \textbf{Locality assumption:}\\
 $\fh$ behaves similarly simple in a small neighborhood of $\xv$\\
 $\leadsto$ Approximate $\fh$ near $\xv$ using an interpretable surrogate model $\gh$
 \item \textbf{Interpretation strategy:}\\
 Use $\gh$'s simple internal structure to explain $\fh(\xv)$ locally\\
 $\leadsto$ \textbf{Common surrogates:} sparse linear models, shallow decision trees
-%\item \textbf{Algorithm:} Perturb $\xv$, obtain $\fh(\tilde{\xv})$, weight by proximity, fit $\gh$ to weighted data, interpret $\gh$’s parameters
-%\item \textbf{Typical uses:} Debug single predictions, detect spurious features, provide actionable recourse
 \item \textbf{Applicability:} Model‑agnostic; supports tabular, image, and text data %via modality‑specific perturbations
 \item \textbf{In practice:}
 Generate samples near $\xv$, predict with $\fh$, and fit $\gh$ to these samples using $\fh$'s outputs as targets, weighting samples by their proximity to $\xv$
 \end{framei}
-
-
-% \begin{frame}{LIME}
-%   \begin{itemize}
-%     \item<1-> \textbf{Core idea:} Complex models may be approximated locally by simpler, interpretable models\\
-%     $\leadsto$ Explain individual predictions of any model via local surrogate models
-%     \item<3-> \textbf{Surrogates:} Typically simple models (e.g., linear, decision tree) fitted to perturbed samples near the input $\xv$
-%     \item<4-> \textbf{Goal:} Provide human-interpretable justification for why the model predicted $\hat{y}$ for input $\xv$
-%     \item<5-> \textbf{Properties:} Model-agnostic; applicable to tabular, image, and text data (with modality-specific perturbations)
-%   \end{itemize}
-% \end{frame}
 
 
 \begin{framev}[align=top]{LIME: Characteristics}
@@ -90,7 +60,6 @@ Surrogate model $\gh$ should satisfy two characteristics:
 \begin{enumerate}
 \item \textbf{Interpretable}: Provide human-understandable insights into the relationship between input features and prediction, e.g. via coefficients or model structure
 \item \textbf{Local fidelity / faithfulness}: $\gh$ closely approximates $\fh$ in the vicinity of the input $\xv$ being explained
-%similar behavior as $\fh$ in the vicinity of the obs. being predicted
 \end{enumerate}
 \textbf{Goal:} Find $\gh$ with \textbf{minimal complexity and maximal local fidelity}
 \end{framev}
@@ -116,28 +85,6 @@ Let $\Gspace = \{g: \Xspace \to \R ~|~ g(\xv) = \sum_{m=1}^M c_m \mathds{1}_{\{\
 \end{itemizeM}
 \end{framev}
  
-% \begin{frame}{Local model fidelity}
-%  	\begin{itemize}
-%  		\item $\gh$ is locally faithful to $\fh$ w.r.t. $\xv$ 
-%  		if for $\zv \in \Zspace \subseteq \R^p$ close to $\xv$, predictions of $\gh(\zv)$ are close to $\fh(\zv)$ 
-%  		\item In an optimization task: the closer $\zv$ is to $\xv$, the closer $\gh(\zv)$ should be to $\fh(\zv)$  
-%  		\pause
-%  		\item Two required measures:
-%  		\begin{enumerate}
-%  			\item A proximity (similarity) measure $\neigh(\zv)$ between $\zv$ and $\xv$, e.g. the exponential kernel:
-%  			$$\neigh(\zv) = exp(-d(\xv, \zv)^2/\sigma^2)$$ 
-%  			with $\sigma$ as the kernel width and $d$ as the Euclidean distance (numeric features) or the Gower distance (mixed features) 
-%  			\pause
-%  			\item A distance measure or loss function $L(\fh(\zv), \gh(\zv))$, e.g. the L$_2$ loss/squared error
-%  			$$L(\fh(\zv), \gh(\zv)) = (\gh(\zv) - \fh(\zv))^2$$ 
-%  		\end{enumerate}
-%  		\pause
-%  		\item Given points $\zv$, we can measure local fidelity of $\gh$ with respect to $\fh$ in terms of a weighted loss
-%  		$$ L(\fh, g, \neigh) = \sum_{\zv \in \Zspace} \neigh(\zv) L(\fh(\zv), \gh(\zv)) $$
-%  		%\item Note that identifying \textbf{locally} faithful explanations that are interpretable is less of a challenge than identifying \textbf{globally} faithful explanations. Yet, global fidelity implies local fidelity but not vice versa.
-%  	\end{itemize}
-% \end{frame}
-
 \begin{framev}[align=top]{Local Fidelity of Surrogate Models}
 \begin{itemizeM}
 \item Surrogate $\gh$ is \textbf{locally faithful} to a black-box model $\fh$ around an input $\xv$ if\\
@@ -169,6 +116,7 @@ $$
 $$
 L(\fh, \gh, \neigh) = \sum_{\zv \in \Zspace} \neigh(\zv) \cdot L(\fh(\zv), \gh(\zv))
 $$
+%\item Note that identifying \textbf{locally} faithful explanations that are interpretable is less of a challenge than identifying \textbf{globally} faithful explanations. Yet, global fidelity implies local fidelity but not vice versa.
 \end{itemizeM}
 \end{framev}
 
@@ -187,7 +135,6 @@ $$
 \begin{itemizeS}
 \item[$\leadsto$] Optimize $L(\fh, \gh, \neigh)$ without making assumptions on the form of $\fh$
 \item[$\leadsto$] Surrogate $\gh$ approximates $\fh$ locally through sampling and fitting
-%learn $\gh$ only approximately
 \end{itemizeS}
 \end{framei}
 
@@ -208,7 +155,6 @@ $$
 \item Train interpretable surrogate model $\gh$ on data $\zv \in \Zspace$ using weights $\neigh(\zv)$\\
 $\leadsto$ Predictions $\fh(\zv)$ are used as the target of this model
 \item Return $\gh$ as the local explanation for $\fh(\xv)$
-%the interpretable model $\gh$ as the explainer
 \end{enumerate}
 \end{framev}
 

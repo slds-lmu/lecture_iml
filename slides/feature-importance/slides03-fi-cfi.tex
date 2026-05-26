@@ -53,7 +53,6 @@ figure_man/feature-importance.png
 \item \textbf{PFI Idea:} Replace feature(s) $X_S$ with perturbed $\tilde X_S$ to preserve marginal distr. $\P(X_S)$ so that $\tilde X_S \indep Y$ (indep.), e.g., by random permutations
 \item \textbf{Problem:} Breaks not only association between $X_S$ and $Y$ (what we want) but also between $X_S$, $X_{-S}$ $\Rightarrow$ $\P(X_S, X_{-S}) \neq \P(\tilde X_S, X_{-S})$ (extrapolation)
 \item \textbf{CFI Idea:} Replace feature(s) $X_S$ with perturbed $\tilde X_S$ to preserve joint distr. so that $\P(X_S, X_{-S}) = \P(\tilde X_S, X_{-S})$ (no extrapolation) while still $\tilde X_S \indep Y$
-%Sample $X_S$ from conditional dist. $\P(X_S|X_{-S})$ to preserve joint dist., i.e., $\P(X_S|X_{-S}) \P(X_{-S}) = \P(X_S, X_{-S})$
 \end{itemize}
 %\\
 %\lz
@@ -73,26 +72,12 @@ $X_1 \sim \mathcal{N}(0,1)$ (if $X_2 < 0.5$) or $\mathcal{N}(4,4)$ \\(if $ X_2 \
 \furtherreading{MOLNAR2020}
 \end{center}
 }{
-%\begin{itemize}
-% $X_2 \sim U(0,1)$ and 
-% \begin{align*}
-% X_1 \sim \begin{cases}
-% N(0, 1) \text{, if } X_2<0.5\\
-% N(4, 4), \text{else}
-% \end{cases}
-%\end{align*}
-%\item
 \textbf{Left:} For $X_2<0.5$, permuting $X_1$ (crosses) preserves marginal (but not joint) distrib. \\
 $\leadsto$ Bottom: Marginal density of $X_1$\\
 \spacer[0.25]
-%\item
 \textbf{Right:} Permuting $X_1$ within subgroups $X_2<0.5$ \& $X_2\geq 0.5$ reduces extrapolation\\
 $\leadsto$ Bottom: $X_1$-density cond. on groups
-%\item \textbf{Bottom left:} Marginal density of $X_1$
-%\item \textbf{Bottom right:} Densities of $X_1$ conditional on the groups
-%\end{itemize}
 }
-%$X_2 \sim U(0,1)$ and $X_1 \sim N(0, 1)$ if $X_2<0.5$, else $X_1 \sim N(4,4)$ (black dots)
 }
 \end{framev}
 
@@ -107,22 +92,6 @@ Let $y = x_3 + \epsilon_y$, with $\epsilon_y \sim \mathcal{N}(0, 0.1)$.
 \item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$; all noise terms $\epsilon_j$ are indep.
 \item Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
 \end{itemizeM}
-% \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
-% Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.
-% %\begin{figure}
-% % \hfill
-% %   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_pre.pdf}\hfill
-% %   \includegraphics[width=0.3\linewidth]{figure_man/pfi_hexbin_post.pdf} \hfill
-% %   \includegraphics[width=0.39\linewidth]{figure_man/pfi_extrapolation.pdf} \hfill
-% \centerline{\includegraphics[width=0.9\linewidth]{figure_man/pfi_hexbin_extrapolation.pdf}}
-% Hexbin plot of $x_1, x_2$ before permuting $x_1$ (left), after permuting $x_1$ (center), and PFI scores (right)
-% \lz
-% % \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left) and after permuting $x_1$ (center). Right: PFI including $.05$ to $.95$ quantiles.}
-% %\end{figure}
-% % 
-% $\Rightarrow$ $x_1$ and $x_2$ should be irrelevant for the prediction $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
-% $\Rightarrow$ PFI evaluates model on unrealistic obs. outside $\P(\xv)$ $\leadsto$ $x_1$ and $x_2$ are considered relevant
-% %$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant
 \image{figure_man/pfi_hexbin_extrapolation.pdf}
 Hexbin plot of $(x_1, x_2)$ before (left) and after (center) permuting $x_1$;  
 \\PFI scores (right).
@@ -157,12 +126,10 @@ $\leadsto$ $x_1, x_2$ are misleadingly considered relevant
 
 % CFI DEFINITION
 \begin{framev}[align=top]{CFI \furtherreading{STROBL2008} \furtherreading{HOOKER2021}}
-%  {\color{blue}\textbf{with feat. values $x_S$}} and {\color{red}\textbf{with permuted feat. values $\pert{x}{}{}_S$}} 
 CFI for $X_S$ using test data $\D$:
 \begin{itemizeM}
 \item Measure the error {\color{blue}\textbf{with unperturbed features $x_S$}}.
 \item Measure the error \textbf{\color{red}with perturbed feature values $\pert{x}{}{}_S \sim \P(X_S|X_{-S})$}
-%\color{black} $\pert{x}{S}{-S}$, where $\pert{x}{S}{-S}_S \sim \P(x_S|x_{-S})$
 \item Repeat perturbing $X_S$ (e.g., $m$ times) and avg. difference of both errors:
 $$\widehat{CFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{-S}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
 \end{itemizeM}
@@ -228,7 +195,6 @@ Here, $X_S$ is permuted \textit{within} each group of $X_{-S}$ to preserve $\mat
 $\Rightarrow$ CFI $= 0$
 \item Why? Under the conditional indep.
 $\P(\pert{X}{}{}_S, X_{-S}, Y) = \P(X_S, X_{-S}, Y)$
-%$\P(\pert{x}{S}{-S}, y) = \P(x,y)$
 \\
 $\leadsto$ no prediction-relevant information is destroyed by permutation of $x_S$ conditional on $x_{-S}$
 \end{itemizeM}
@@ -239,7 +205,6 @@ $\leadsto$ no prediction-relevant information is destroyed by permutation of $x_
 \item If the model does not use a feature $\Rightarrow$ CFI $= 0$
 \item Why? Then the prediction is not affected by any perturbation of the feat\\
 $\leadsto$ model performance does not change after conditional permutation
-%(and consequently the performance is invariant).
 \end{itemizeM}
 %\footnote[frame]{\fullcite{konig_relative_2021}}
 \end{framev}
@@ -257,12 +222,10 @@ Can we gain insight into whether ...
 \begin{itemizeS}
 \item If $x_j \not \indep y$ but $x_j \indep y | x_{-j}$ (e.g., $x_j$ and $x_{-j}$ share information) \\$\Rightarrow$ $CFI_j = 0$
 \item $x_j$ is not exploited by model (regardless of its usefulness for $y$) \\$\Rightarrow$ $CFI_j = 0$
-%\item If a feature is not exploited by the model, CFI is zero, irrespective of whether the feature is useful or not.
 \end{itemizeS}
 \item<3> Does the model need access to $x_j$ to achieve its prediction performance?
 \begin{itemizeS}
 \item $CFI_j \neq 0 \Rightarrow$ $x_j$ contributes unique information (meaning $x_j \not \indep y | x_{-j}$)
-%Nonzero CFI implies that the feature contributes unique information (meaning $x_S \not \indep y | x_{-S}$).
 \item Only uncovers the relationships that were exploited by the model
 \end{itemizeS}
 \end{enumerate}
@@ -278,9 +241,6 @@ Can we gain insight into whether ...
 \item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$; all noise terms $\epsilon_j$ are indep.
 \item Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
 \end{itemizeM}
-% \textbf{Example:} Let $y = x_3 + \epsilon_y$ with $\epsilon_Y \sim N(0, 0.1)$ where $x_1 :=  \epsilon_1$, $x_2 := x_1 + \epsilon_2$ are highly correlated ($\epsilon_1 \sim N(0,1), \epsilon_2 \sim N(0, 0.01)$) and $x_3 := \epsilon_3$, $x_4 := \epsilon_4$,  with $\epsilon_3, \epsilon_4 \sim N(0,1)$. All noise terms are independent.
-% Fitting a LM yields $\fh(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$.%\\
-%
 \begin{figure}
 %\hfill
 \splitVCompact{0.28}{0.65}{
@@ -292,17 +252,12 @@ Can we gain insight into whether ...
 }
 \caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left). PFI and CFI (right).}
 \end{figure}
-% 
-%$\Rightarrow$ $x_1$ and $x_2$ are irrelevant for the prediction for $x: \P(x) > 0$ \\
-%$\Rightarrow$ Since PFI evaluates the model on unrealistic observations, the features $x_1$ and $x_2$ are nevertheless considered relevant \\
 \begin{itemizeS}
 \item $x_1$ and $x_2$ cancel in $\fh(\xv)$ and should be irrelevant for the prediction
 \item PFI evaluates model on unrealistic obs. \\$\leadsto$ $x_1$, $x_2$ appear relevant (PFI $> 0$)
 \item CFI evaluates model on realistic obs. (due to conditional sampling) \\
 $\leadsto$ $x_1$, $x_2$ appear irrelevant (CFI $= 0$)
 \end{itemizeS}
-% $\fh(\xv)$ for $\{\xv: \P(\xv) > 0\}$ as $0.3 x_1 - 0.3 x_2 \approx 0$ \\
-%$\Rightarrow$ Since $x_1$ can be reconstructed from $x_2$ and vice versa, CFI considers $x_1$ and $x_2$ to be irrelevant
 \end{framev}
 
 % \begin{frame}{Bibliography}
