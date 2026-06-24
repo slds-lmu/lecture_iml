@@ -44,7 +44,7 @@ In essence, both definitions are almost the same, just that those terms from the
 \begin{enumerate}
 
     \item \label{ex_sol:Shapley_axioms_proofs_a} \textbf{Proof of the first 3 Axioms:}
-    The Dummy and Additivity properties are relatively easy to proof.
+    The Dummy and Additivity properties are relatively easy to prove.
     
     \begin{theorem}[Null Player (Dummy)]
     Let $\{\phi_j\}_{j \in P}$ be the Shapley values induced by $v$.
@@ -81,9 +81,9 @@ In essence, both definitions are almost the same, just that those terms from the
         \begin{align*}
             &\phi_{j, v} \,=\, \phi_{j, v_1+v_2}
             \,=\, \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v(S \cup \{j\}) - v(S) \Bigr)  \\
-            &\,=\, \sum_{S \subseteq P \setminus \{j, k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v_1(\Scupj) - v_1(S) + v_2(\Scupj) - v_2(S) \Bigr) \\
-            &\,=\, \sum_{S \subseteq P \setminus \{j, k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v_1(\Scupj) - v_1(S) \Bigr) 
-            \,+\, \sum_{S \subseteq P \setminus \{j, k\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v_2(\Scupj) - v_2(S) \Bigr) \\
+            &\,=\, \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v_1(\Scupj) - v_1(S) + v_2(\Scupj) - v_2(S) \Bigr) \\
+            &\,=\, \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v_1(\Scupj) - v_1(S) \Bigr)
+            \,+\, \sum_{S \subseteq P \setminus \{j\}} \frac{|S|!\,\bigl(p - |S| - 1\bigr)!}{p!} \, \Bigl( v_2(\Scupj) - v_2(S) \Bigr) \\
             &\,=\, \phi_{j, v_1} + \phi_{j, v_2}.
         \end{align*}
         
@@ -154,6 +154,8 @@ In essence, both definitions are almost the same, just that those terms from the
     $$
     \end{theorem}
 
+    Note that, as is standard in cooperative game theory, we assume $v(\varnothing) = 0$.
+
     The proof idea is as follows: Because we sum up the Shapley values over all players, the values $v(S)$ of each coalition not equal to $P$, so $S \subsetneq P$, appear with both minus and plus signs that exactly cancel each other out.
     Apart from that, the term $v(P)$ occurs for every player, and one only needs to calculate that its weights sum up to 1.
     
@@ -183,18 +185,18 @@ In essence, both definitions are almost the same, just that those terms from the
         \begin{multline*}
             \sum_{j=1}^p \Bigl( v\bigl( \mathrm{Pred}_\pi(j) \cup \{j\} \bigr)
                 - v\bigl( \mathrm{Pred}_\pi(j) \bigr) \Bigr)
-            = \sum_{i=1}^p \Bigl( v\bigl( \{ \pi(1), \dots \pi(i) \} \bigr)
-                - v\bigl( \{ \pi(1), \dots \pi(i-1) \} \bigr) \Bigr) \\
+            = \sum_{i=1}^p \Bigl( v\bigl( \{ \pi(1), \dots, \pi(i) \} \bigr)
+                - v\bigl( \{ \pi(1), \dots, \pi(i-1) \} \bigr) \Bigr) \\
             = \underbrace{v \bigl( \{ \pi(1) \} \bigr) - v(\varnothing)}_{i=1 \text{ or } j = \pi(1)}
                 \;+\; \underbrace{v \bigl( \{ \pi(1), \pi(2) \} \bigr) - v \bigl( \{ \pi(1) \} \bigr)}_{i=2 \text{ or } j = \pi(2)}
                 \;+\; \underbrace{v \bigl( \{ \pi(1), \pi(2), \pi(3) \} \bigr) - v \bigl( \{ \pi(1), \pi(2) \} \bigr)}_{i=3 \text{ or } j = \pi(3)} \\
                 \;+\; \dots 
                 \;+\; \underbrace{v \bigl( \{ \pi(1), \ldots, \pi(p) \} \bigr) - v \bigl( \{ \pi(1), \ldots, \pi(p - 1) \} \bigr)}_{i=p \text{ or } j = \pi(p)} 
-            = v \bigl( \pi(1), \ldots, \pi(p) \} \bigr) - v(\varnothing)
-            = v (P).
+            = v \bigl( \{ \pi(1), \ldots, \pi(p) \} \bigr) - v(\varnothing)
+            = v(P) - v(\varnothing) = v (P).
         \end{multline*}
 
-        In other words, the inner sum is a telescope sum, where all the terms except the first and the last one cancel.
+        In other words, the inner sum is a telescoping sum, where all the terms except the first and the last one cancel.
         Plugging this into the outer sum yields the desired result:
         \begin{gather*}
             \sum_{j=1}^p \phi_j 
@@ -209,13 +211,12 @@ In essence, both definitions are almost the same, just that those terms from the
         
     \end{proof}
 
-    When using the set-based definition, one can show that the term $v(P)$ appears exactly once per player (hence $p$ times in total) for the coalition $S = P \setminus \{j\}$ with the weight $\frac{|P - 1|! \, \bigl(|P| - |P - 1| - 1\bigr)!}{|P|!} = \frac{1}{p}$ each, and then one just has to show that for all the other terms, their number of appearance together with their weights cause them to cancel out.
+    When using the set-based definition, one can show that the term $v(P)$ appears exactly once per player (hence $p$ times in total) for the coalition $S = P \setminus \{j\}$ with the weight $\frac{(|P| - 1)! \, \bigl(|P| - (|P| - 1) - 1\bigr)!}{|P|!} = \frac{1}{p}$ each, and then one just has to show that for all the other terms, their number of appearance together with their weights cause them to cancel out.
     See also \href{https://math.stackexchange.com/questions/2747088/shapley-value-is-efficient}{here}.
 
     
     
     \item \textbf{Bonus: Proof of Linearity}
-
     This is as straightforward as the additivity:
 
     \begin{theorem}[Linearity]

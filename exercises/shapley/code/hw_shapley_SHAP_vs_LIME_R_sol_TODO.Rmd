@@ -152,7 +152,7 @@ shapley_test <- function(population, shapley_fct, v_function=payoff) {
   sum_ <- sum(shapley_values)
   print(sum_)
   print(v_function(population))
-  print(sum_ == v_function(population))
+  print(isTRUE(all.equal(sum_, v_function(population), tolerance = 1e-8)))
 }
 ```
 
@@ -354,7 +354,7 @@ payoff_func_1 <- function(coalition) {
   l <- 'l' %in% coalition
   
   ### Definition of the overall performance.
-  10*t + 10*m + 2*j
+  10*t + 10*m + 10*s + 2*j
 }
 
 ### Define the second payoff function accordingly (which hence consists of the  
@@ -444,11 +444,11 @@ y_test <- factor(test_data[ , which(names(test_data) == "Man.of.the.Match")])
 
 ### Modelling a random forest using the ranger package. Other packages are possible  
   ### as well.
-classifier_RF <- ranger(Man.of.the.Match ~ ., training_data)
+classifier_RF <- ranger(Man.of.the.Match ~ ., training_data, probability = TRUE)
 classifier_RF
 
 ### Example instance
-predict(classifier_RF, X_test[1:5,])$predictions
+predict(classifier_RF, X_test[1:5,])$predictions[, 2]
 
 ### As a classifier, this model of course produces probabilities as outputs, which are then
 ### transformed into a binary prediction. This is not very well suited for Shapley values,
@@ -473,7 +473,7 @@ marginal_vfunc <- function(S, observation, X, model, nr_samples = 100) {
   
   ### Use the model to predict the target and take the arithmetic mean of the  
   ### predictions.
-  mean(predict(model, X_tmp)$predictions)
+  mean(predict(model, X_tmp)$predictions[, 2])
 }
 
 marginal_vfunc(names(X_train)[1:3], X_test[1, ], X_train, classifier_RF, nr_samples = 1000)
@@ -516,7 +516,9 @@ shap_weights <- function(mask) {
   z_prime_abs <- rowSums(mask)
   
   ### The application of the formula.
-  (p - 1) / (choose(p, z_prime_abs) * z_prime_abs * (p - z_prime_abs))
+  weights <- (p - 1) / (choose(p, z_prime_abs) * z_prime_abs * (p - z_prime_abs))
+  weights[!is.finite(weights)] <- 0
+  weights
 }
 
 ### A function to create the dataset generated during the SHAP calculations. This  
@@ -535,7 +537,7 @@ replace_dataset <- function(obs, X, n_samples, mask) {
   ### term. At the positions where the mask is 1 we basically subtract X_sample  
   ### from X_sample and what is left is the respective entry in df_obs. So at  
   ### these positions we effectively replace the original entries by the ones in df_obs.
-  X_sample <- X_new - mask * (obs_rep - X_new)
+  X_sample <- X_new + mask * (obs_rep - X_new)
   
   ### Return the result.
   X_sample
@@ -547,7 +549,7 @@ kernel_shap <- function(obs, X, n_samples, model) {
   mask <- sample_mask(n_samples, ncol(X))
   df <- replace_dataset(obs, X, n_samples, mask)
   weights <- shap_weights(mask)
-  pred <- predict(model, df)$predictions
+  pred <- predict(model, df)$predictions[, 2]
   
   ### Now save the mask as well as the respective predictions.
   df_shap <- as.data.frame(mask)
