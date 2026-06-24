@@ -21,7 +21,7 @@ In case you did not finish that other exercise back then, the files \textit{XX.p
     Extend the \texttt{pdp} function to a new function \texttt{pd\_func}, which can compute an arbitrary PD-function of arbitrary dimension.
     This means that the parameters change as follows:
     \begin{itemize}
-        \item Instead of a single feature index \texttt{j}, we know consider an ordered list of indices \texttt{S}, which must be a subset of $\{1, \dots, p\}$, but can also be empty (for the intercept case),
+        \item Instead of a single feature index \texttt{j}, we now consider an ordered list of indices \texttt{S}, which must be a subset of $\{1, \dots, p\}$, but can also be empty (for the intercept case),
         \item the \texttt{grid} is an $\texttt{length(S)} \times g$ matrix, in which the $j$-th row contains all grid values for the $j$-th feature in $S$,
         \item the output of \texttt{pd\_func(model, X, S, grid)} is a $\underbrace{g \times g \times \dots \times g}_{|S| \text{ many dimensions}}$ matrix / tensor, containing the values of the PD-function at all grid points.
     \end{itemize}
@@ -52,7 +52,7 @@ In case you did not finish that other exercise back then, the files \textit{XX.p
     \begin{itemize}
         \item Extend your functions such that if the \texttt{grid} parameter is not given, they can construct a grid from the data (e.g., via quantiles or equidistantly) automatically.
         \item Extend your functions to allow for a different number of grid values for different features.
-        \item Implement a more efficient algorithm for calculating all PD-function of a given model: Each PD-function can be obtained as the one-dimensional integral / expectation of a PD-function one order higher, therefore compute the PD-functions hierarchically starting from the highest order and going to the lowest (using dynamical programming), and then compute the fANOVA components starting from the lowest order, and using the PD-functions computed before.
+        \item Implement a more efficient algorithm for calculating all PD-functions of a given model: Each PD-function can be obtained as the one-dimensional integral / expectation of a PD-function one order higher, therefore compute the PD-functions hierarchically starting from the highest order and going to the lowest (using dynamic programming), and then compute the fANOVA components starting from the lowest order, and using the PD-functions computed before.
     \end{itemize}
     
         
