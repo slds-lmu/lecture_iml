@@ -1,11 +1,11 @@
 library(randomForest)
 library(ggplot2)
-source("exercises/feature-effects/rsrc/get_bounds().R")
-source("exercises/feature-effects/rsrc/calculate_ale().R")
-source("exercises/feature-effects/rsrc/prepare_ale().R")
+source("get_bounds.R")
+source("calculate_ale.R")
+source("prepare_ale.R")
 
-# Set up your working directory using swd() and get the dataset file. 
-df = read.csv(file = 'exercises/feature-effects/rsrc/datasets/wheat_seeds.csv')
+# Set up your working directory to rsrc/ and get the dataset file.
+df = read.csv(file = '../code/datasets/wheat_seeds.csv')
 
 # Split the dataset to 70% train data and 30% test data.
 set.seed(100)
@@ -37,4 +37,4 @@ ggplot(data = prepared_ale, mapping = aes(x = x, y = y)) +
   geom_line() + 
   geom_point()
 
-ggsave('exercises/feature-effects/figure/example_ale.pdf',width=4,height=3)
+ggsave('../figure/example_ale.pdf',width=4,height=3)

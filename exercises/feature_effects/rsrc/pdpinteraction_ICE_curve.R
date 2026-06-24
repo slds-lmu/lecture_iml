@@ -25,4 +25,4 @@ p1 = p1 + scale_y_continuous(name = expression(hat(f)[S])) +
   geom_line(data = dat[dat$x2 == 1,], aes(x = x1, y = y), color = "lightgreen", lwd =2) + 
   geom_line(data = dat[dat$x2 == 0,], aes(x = x1, y = y), color = "lightblue", lwd = 2) 
 
-ggsave('exercises/feature-effects/figure/pdpinteraction_ICE_curve.pdf',width=3,height=2)
+ggsave('../figure/pdpinteraction_ICE_curve.pdf',width=3,height=2)

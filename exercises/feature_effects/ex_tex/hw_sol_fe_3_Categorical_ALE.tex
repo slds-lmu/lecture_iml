@@ -1,14 +1,9 @@
 \loesung{
 \begin{enumerate}[a)]
 \item 
-Overall, all customers, regardless of their personal status and gender, have on 
-average a high probability of being a low (good) risk for the bank. 
-The average marginal prediction for divorced or separated male customers
-reveals a slightly higher risk for this group. 
-\item 
-The ALE is faster to compute and unbiased. Unbiasedness means that it does 
-not suffer from the extrapolation problem which is especially apparent in PDPs 
-when features are correlated.
+Reading the P(good credit risk) panel (left): All categories show a high average probability of being classified as low risk (good). However, \texttt{male : divorced/separated} has the lowest average probability ($\approx$0.68 vs.\ $\approx$0.72 for other groups), suggesting the model treats this group slightly differently.
+\item
+ALE plots are preferable to PDPs when features are correlated, because PDPs average predictions over the entire marginal distribution, including potentially unrealistic feature combinations that rarely or never occur in the data (the extrapolation problem). ALE avoids this by only using predictions within each feature's local neighborhood and computing local differences rather than absolute predictions. This makes ALE unbiased even with correlated features. Additionally, ALE is computationally more efficient, requiring $O(2n)$ model evaluations vs.\ $O(n \cdot g)$ for PDP (where $g$ is the grid size).
 % SAY in CLASS:
 % Since \texttt{personal\_status\_sex} is a categorical feature, we cannot 
 % use the Pearson correlation coefficients (even for 

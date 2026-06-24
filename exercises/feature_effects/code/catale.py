@@ -12,7 +12,7 @@ def order_levels(data, feature_name):
   Parameters:
     
     data (np.array with shape (num_instances, num_features)): Input data.
-    feature_name (char): name of categorical feature which shoul be ordered
+    feature_name (char): name of categorical feature which should be ordered
    
   Returns: np.array (char) of ordered class labels
   """
@@ -39,7 +39,7 @@ def order_levels(data, feature_name):
       
   # Create a matrix of distances
   dists = dists.pivot(index='class1', columns='class2', values='dist')
-  mds = manifold.MDS(1)
+  mds = manifold.MDS(n_components=1, dissimilarity='precomputed', random_state=0)
   scaled = mds.fit_transform(dists)
   
   order = feature_lev[scaled.flatten().argsort()]
@@ -73,8 +73,8 @@ def get_diff_numeric(feature_k, feature_j):
   param_grid = {'class1': feature_lev, 'class2' : feature_lev}
   dists = pd.DataFrame(ParameterGrid(param_grid))
   
-  # get decentiles: 
-  quants = np.quantile(feature_k, q = np.linspace(0, 1, num = 10))
+  # get deciles: 
+  quants = np.quantile(feature_k, q = np.linspace(0, 1, num = 11))
   
   # derive empirical distribution function for each category
   ecdfs = {}
@@ -90,7 +90,7 @@ def get_diff_numeric(feature_k, feature_j):
     ecdf_dists.append(max(abs(ecdfs[i1] - ecdfs[i2])))
 
   dists["dist"] = ecdf_dists
-  # get maximum distance over decentiles for each pair of categories
+  # get maximum distance over deciles for each pair of categories
   return(dists)
 
 
