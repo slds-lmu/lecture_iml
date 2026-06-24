@@ -157,17 +157,11 @@ def weight_points(x_interest, Z, kernel_width=0.2):
         weights (np.ndarray): Normalized weights between 0..1 with shape (?,).
     """
 
-    weights = []
-    eucl = []
-    for z in Z:
-        eucl = sqrt(sum(np.square(z-x_interest)))
-        dist = np.exp(-eucl/(kernel_width*kernel_width))
-        weights.append(dist)
-
-    weights = np.array(weights)
+    dists_sq = np.sum(np.square(Z - x_interest), axis=1)
+    weights = np.exp(-dists_sq / (kernel_width * kernel_width))
 
     # Normalize between 0 and 1
-    weights = (weights - min(weights)) / (max(weights) - min(weights))
+    weights = (weights - weights.min()) / (weights.max() - weights.min())
 
     return weights
 
@@ -183,10 +177,10 @@ def fit_explainer_model(Z, y, weights=None, seed=0):
         seed (int): Seed for the decision tree.
 
     Returns:
-        model (DecisionTreeRegressor): Fitted explainer model.
+        model (DecisionTreeClassifier): Fitted explainer model.
     """
 
-    explainer_model = tree.DecisionTreeRegressor(random_state=seed)
+    explainer_model = tree.DecisionTreeClassifier(random_state=seed)
     explainer_model.fit(Z, y, sample_weight=weights)
 
     return explainer_model
