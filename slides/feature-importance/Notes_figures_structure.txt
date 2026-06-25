@@ -1,0 +1,90 @@
+
+
+
+Big problem of the python code:
+    It uses Gunnar's self-built package rfi, which in the meantime was renamed into fippy
+        https://github.com/gcskoenig/fippy
+
+    -> See adaptation in AdvML 2025 exam
+
+        Steps / Debug Log:
+        - Install ray from conda-forge
+        - Clone fippy repo
+        - Install fippy repo using pip  (without -e option)
+        - Rename everything necessary in script: Github_Repos/lectures_admin_exam_repo/2025_AdvML_IML/pysrc
+            - chains not needed
+            - decorrelator not necessary any more?? Or, if needed to be given otherwise, I didn't find out, how ...
+        - Different signature of explainer
+        - New bug:
+            In fippy package, in fippy/explainers/explainer.py, class Explainer, method _compute_loss_diff, calls pandas.Series on output of self.model on some data
+                problem: self.model outputs array of shape (n, 1) (vector of outputs for some data set), whereas pandas.Series does not accept (n, 1) anymore, so need to throw away one dimension by indexing
+        - hbarplot method of ModelExplanation class changed in that the plot does not want an aggregated loss (e.g. MSE) anymore, but single losses, so that it can compute statistics
+            -> Leave this out for the moment ...
+        - ModelExplanation class has no method "fi_means_quantiles" anymore -> This method was commented out, why ??
+            See commit 079ee8e, message "bugfixes", from 25th May 2024
+                https://github.com/gcskoenig/fippy/commit/079ee8e5ad45bf5d07d109bef6256081af44e07f#diff-f6eb2c9900777934fa55936154780df768cb5cf1c55901392f53cf6f21637290
+                learnerexplanation.py and modelexplanation.py  are replaced by a common parent class, and in this common parent class, "fi_means_quantiles" is commented out, even though it is already adapted to both cases, why ??
+            => simply uncomment this method  ?!
+
+        Additionally (independent of rfi -> fippy):
+        - For interactions, simple linear model is not enough, but instead pipeline with linear model & ppreprocessing with polynomial features is necessary (s. sklearn-docs)
+
+
+
+Self-contained  (fig + R-code):
+    fig_pfi_hexbin_extrapolation.R
+        -> data same as in pysrc/extrapolation.csv
+    fig_pfi_interactions.R
+        -> data same as in rsrc/df_interactions.csv  =  pysrc/df_interactions.csv
+    fig_pfi_test_vs_train.R
+        -> final results: rsrc/results.csv
+    fig_pimp.R
+        -> data same as in pysrc/extrapolation.csv
+        -> all results: pimp.Rds
+
+    fig_conditional_sampling.R
+
+Mixed:
+    fig_cfi_pfi.R
+        -> data: pysrc/extrapolation.csv
+        -> pysrc/extrapolation_example.py
+        -> final results: pysrc/df_res.csv
+    -> figure_man/cfi_pfi.pdf
+
+    fig_sage_pfi_interactions.R
+        -> data: rsrc/df_interactions.csv  =  pysrc/df_interactions.csv
+        -> pysrc/sage_exmple.py, part 2
+        -> final results: total in pysrc/df_interactions_res.csv, split as two parts in pysrc/ex_msage.csv  &  pysrc/ex_pfi.csv
+    -> figure_man/fig_sage_pfi_interactions.pdf
+
+        see 2023 retake exam / 2025 main exam for additional normalization
+
+    fig_sage_variants.R
+        load results from: pysrc/df_res2.csv
+            produced (incl. data) in pysrc/sage_exmple.py, part 1
+    -> figure_man/fig_sage_variants.pdf
+
+Missing:
+    Any code for cfi_pfi_sage_extrapolation.pdf   ???
+        Or in old   ???
+
+    For
+        pfi_extrapolation.pdf
+        pfi_hexbin_pre.pdf
+        pfi_hexbin_post.pdf
+
+    -> all in old_pfi.R
+
+Furthermore
+
+    These two are the same, delete the .py  ?
+        pysrc/df_interactions_res.py
+        pysrc/df_interactions_res.csv
+
+    These two are the same, delete the latter  ?
+        pysrc/ex_pfi.csv
+        pysrc/ex_pfi.csvscores_pfi.csv
+
+TO DO:
+
+    Variables are not ordered in some of these plots, see fig_sage_pfi_interactions.R in AdvML Main Exam SS 2025 for how to order
