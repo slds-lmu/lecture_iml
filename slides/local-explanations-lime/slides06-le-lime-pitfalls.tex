@@ -58,6 +58,22 @@ $\leadsto$ But several papers highlight important (practical) limitations
 
 \begin{framei}[align=top]{Pitfall: Sampling}
 \item \textbf{Pitfall}: Common sampling strategies for $\zv \in \Zspace$ ignore feat dependencies
+% \item \textbf{Implication}:  Unlikely data points might be used to learn local explanation models
+\splitVTT{%
+	\spacer[0]
+	\begin{figure}
+		\centering
+		\image[0.75]{figure/lime3}
+		\caption{Uniformly sampled}
+	\end{figure}
+}{%
+	\spacer[0]
+	\begin{figure}
+		\centering
+		\image[0.75]{figure/lime3a}
+		\caption{Equidistant grid}
+	\end{figure}
+}
 \item \textbf{Implication:} Surrogate model may be trained on unrealistic points\\
 $\leadsto$ Undermines the fidelity and validity of the explanation
 \pause
@@ -271,8 +287,8 @@ LIME returns different coefficients for similar points.
 \splitVTT[0.64]{
 \spacer[0.6]
 \begin{itemizeM}
-\item \textbf{Problem}: LIME relies on superpixels, but their definition differ for image data
-\item \textbf{Observation}: Definition of superpixel influences their size, shape, and alignment
+\item \textbf{Problem}: LIME relies on superpixels for image data
+\item \textbf{Observation}: Definition of superpixel differ, influencing their size, shape, and alignment
 \pause
 \item \textbf{Implication}: Specification of superpixel has a large influence on LIME explanations
 \item \textbf{Attack}: Change superpixels as part of an adversarial attack $\leadsto$ changed explanation
