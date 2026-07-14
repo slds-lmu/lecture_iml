@@ -13,4 +13,4 @@ cf = data.frame(sex = c("f", "f", "m", "m", "m", "m", "m", "m", "f"),
                 credit = rep("yes", 9))
 
 # PLOT -------------------------------------------------------------------------
-print(xtable::xtable(x = cf, digits = 0),file="exercises/local-explanations/rsrc/table_customer_inquiry_Counterfactuals.txt")
+print(xtable::xtable(x = cf, digits = 0),file="exercises/local_explanations_lime/rsrc/table_customer_inquiry_Counterfactuals.txt")
