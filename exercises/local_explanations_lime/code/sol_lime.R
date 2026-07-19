@@ -170,7 +170,7 @@ fit_explainer_model <- function(df, weights = NULL, seed = 0) {
   rpart(form, weights = weights, data = df)
 }
 
-if (FALSE) {
+if (TRUE) {
   set.seed(2022L)
   library("e1071") # SVM 
   library("gridExtra") # to plot two ggplots next to each other
