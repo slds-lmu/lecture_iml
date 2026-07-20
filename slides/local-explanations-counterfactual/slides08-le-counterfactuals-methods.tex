@@ -1,4 +1,4 @@
-\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
+\documentclass[10pt,compress,t,notes=noshow,xcolor=table]{beamer}
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
@@ -122,6 +122,40 @@ $$
 %Instead of one, MOC returns multiple CEs that represent different trade-offs between the objectives and are constructed to be diverse in feature space
 %\footnote[frame]{Dandl et al. (2020) Multi-Objective Counterfactual Explanations. In: Bäck T. et al. (eds) Parallel Problem Solving from Nature – PPSN XVI. PPSN 2020. Lecture Notes in Computer Science, vol 12269. Springer, Cham.}
 \end{framei}
+
+
+\begin{framev}[align=top]{Multi-Objective CE \furtherreading{DANDL2020}}
+	
+	Details on NSGA-II:
+	
+	\begin{itemizeM}
+		\item Initialize a set of candidates
+		(e.g., randomly or using nearest training samples)
+		
+		\item Evaluate each candidate $\xv'$ using the objective functions
+		      $ \left(o_{target}(\fh(\xv'), y'), o_{proximity}(\xv', \xv), o_{sparse}(\xv', \xv), o_{plausible}(\xv', \Xmat) \right)^\top $
+		
+		\item Repeat until the stopping criterion is met:
+	\end{itemizeM}
+	
+	\only<1>{\includegraphics[page=1, trim = {0 2.2cm 0 0}, clip, width=.8\textwidth]{figure/nsga_ii.pdf}}
+	
+	\only<1>{i) Recombine and mutate selected candidates to generate offspring population}
+	
+	\only<2>{\includegraphics[page=2, trim = {0 2.2cm 0 0}, clip, width=.8\textwidth]{figure/nsga_ii.pdf}}
+	
+	\only<2>{Find best set among parent and offspring populations}
+	
+	\only<3>{\includegraphics[page=3, trim = {0 2.2cm 0 0}, clip, width=.8\textwidth]{figure/nsga_ii.pdf}}
+	
+	\only<3>{ii) Perform non-dominated sorting and prefer diverse solutions}
+	
+	\only<4>{\includegraphics[page=4, trim = {0 2.2cm 0 0}, clip, width=.8\textwidth]{figure/nsga_ii.pdf}}
+	
+	\only<4>{iii) Continue optimization with the selected population}
+	
+\end{framev}
+
 
 
 \begin{framei}[align=top]{Example: Credit Data}
