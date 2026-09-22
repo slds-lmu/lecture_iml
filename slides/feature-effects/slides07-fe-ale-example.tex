@@ -70,14 +70,13 @@ $$
 \begin{itemizeM}
 \item Let's zoom in on the $k$-th interval: \textbf{$[20^\circ\text{C}, 21^\circ\text{C})$}.
 \item \textit{Note:} Equidistant intervals preserve resolution, but quantile-based intervals may be used to ensure a balanced number of samples per interval.
+\item<2-> \textbf{Key intuition:} “Partitioning turns the feature range into small neighborhoods where effects can be estimated locally.”
 \end{itemizeM}
 \end{framev}
 
 
 % ------------------------------------------------------------
 \begin{framev}[align=top]{Step 2: Calculate Finite Differences}
-\textbf{What happens to the prediction when we cross an interval?}
-\spacer[0.2]
 \splitVTT[0.45]{
 % --- LEFT COLUMN: CONCISE EXPLANATION ---
 \spacer[0.6]
@@ -118,7 +117,11 @@ $$
 \draw<3->[->, thick] (predlo) -- (diff);
 \draw<3->[->, thick] (predhi) -- (diff);
 \end{tikzpicture}
+\spacer[0]
 }
+\begin{itemizeM}
+\item<4-> \textbf{Key intuition:} “What happens if we move temperature across this small interval?”
+\end{itemizeM}
 \end{framev}
 
 
@@ -148,6 +151,7 @@ $obs_D$ & $70\%$ & $13$ km/h & $54$ bikes \\
 \spacer[0.25]
 \begin{itemizeM}
 \item By averaging these, we estimate the expected local effect: $\bar{\Delta}_{[20,21)} = \mathbf{52.5}$.
+\item<2-> \textbf{Key intuition:} “Average only over observations that actually live in this temperature region.”
 \end{itemizeM}
 \end{framev}
 
@@ -180,6 +184,9 @@ To find the uncentered ALE effect at $x = 21^\circ\text{C}$, we must \textbf{acc
 (0,0) -- (0,2.6) node [black, midway, xshift=-1.3cm] {$\hat{\tilde{f}}_{\text{ALE}}(21)$};
 \end{tikzpicture}
 \end{center}
+\begin{itemizeM}
+\item<2-> \textbf{Key intuition:} “Add up these small local effects to recover the global temperature effect.”
+\end{itemizeM}
 \end{framev}
 
 
@@ -210,6 +217,9 @@ Centering shifts the curve so the average effect across the dataset is $0$.
 \end{scope}
 \end{tikzpicture}
 \end{center}
+\begin{itemizeM}
+\item<2-> \textbf{Key intuition:} “Shift the curve so that it has mean zero.”
+\end{itemizeM}
 \end{framev}
 
 
@@ -255,17 +265,6 @@ $$
 \hat{\tilde f}_{\text{temp},\text{ALE}}(x_{\text{temp}}^{(i)})
 $$
 \end{enumerate}
-\end{framev}
-
-
-% ------------------------------------------------------------
-\begin{framev}[align=top]{Key Intuition}
-\begin{itemizeM}
-\item \textbf{Finite difference:} “What happens if we move temperature across this small interval?”
-\item \textbf{Local averaging:} “Average only over observations that actually live in this temperature region.”
-\item \textbf{Accumulation:} “Add up these small local effects to recover the global temperature effect.”
-\item \textbf{Centering:} “Shift the curve so that it has mean zero.”
-\end{itemizeM}
 \end{framev}
 
 \endlecture
