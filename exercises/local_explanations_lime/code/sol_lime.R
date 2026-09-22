@@ -110,7 +110,7 @@ sample_points <- function(model, dataset, num_points, seed = 0) {
   names(Z) <- names(dataset)
   
   ### Predict the outcome for the sampled data points.
-  pred <- predict(model, Z)
+  pred <- predict(model, Z, type = "class")
   
   ### Add the predictions to the data.frame and return it.
   data.frame(Z, pred)
@@ -166,7 +166,7 @@ fit_explainer_model <- function(df, weights = NULL, seed = 0) {
   ### ... to put them into a formula object...
   form <- formula(paste("pred ~", xnam, "+", ynam))
   
-  ### ... which then can be used to git the decision tree.
+  ### ... which then can be used to fit the decision tree.
   rpart(form, weights = weights, data = df)
 }
 

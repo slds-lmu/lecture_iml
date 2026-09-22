@@ -24,21 +24,22 @@ def generate_whatif(x_interest, model, dataset) :
   return None
 
 
-def evaluate_counterfactual(counterfactual, x_interest, model) :
+def evaluate_counterfactual(counterfactual, x_interest, model, feature_labels=None) :
   """
-   Evaluates if counterfactuals are minimal, i.e., if setting one feature to 
+   Evaluates if counterfactuals are minimal, i.e., if setting one feature to
    the value of x_interest still results in a different prediction than for x_interest.
-   
-   Parameter: 
-   counterfactual (np.array with shape (1, num_features)): Counterfactual of `x_interest`. 
-   x_interest (np.array with shape (1, num_features)): Datapoint of interest. 
+
+   Parameter:
+   counterfactual (np.array with shape (1, num_features)): Counterfactual of `x_interest`.
+   x_interest (np.array with shape (1, num_features)): Datapoint of interest.
    model: Binary classifier which has a predict method.
-  
-   Returns: 
-   List with indices of features that if set for the counterfactual to the value of 
-   `x_interest`, still leads to a different prediction than for x_interest. 
+   feature_labels (list or None): Feature names. If None, feature indices are returned.
+
+   Returns:
+   List with names (or indices) of features that if set for the counterfactual to the value of
+   `x_interest`, still leads to a different prediction than for x_interest.
   """
-  
+
   return None
 
 

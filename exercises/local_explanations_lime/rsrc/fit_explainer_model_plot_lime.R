@@ -1,5 +1,5 @@
 # PREREQ -----------------------------------------------------------------------
-source("exercises/local-explanations/rsrc/weight_points_plot_lime.R")
+source("exercises/local_explanations_lime/rsrc/weight_points_plot_lime.R")
 
 # plot -----------------------------------------------------------------------
 print("Run `fit_explainer_model` ...")
@@ -17,7 +17,7 @@ plt2 = plot_points_in_grid(plt = plot2, df = samp,
 plt1 = plt1 + ggplot2::ggtitle("SVM")
 plt2 = plt2 + ggplot2::ggtitle("Decision Tree Explainer")
 
-pdf(file="exercises/local-explanations/figure/fit_explainer_model_plot_lime.pdf",height=2.75,width=7)
+pdf(file="exercises/local_explanations_lime/figure/fit_explainer_model_plot_lime.pdf",height=2.75,width=7)
 
 plot = grid.arrange(plt1, plt2, ncol = 2L)
 plot

@@ -105,8 +105,8 @@ sample_points = function(model, dataset, num_points, seed=0) {
   x2 = runif(n = num_points, min = range_x2[1], max = range_x2[2])
   Z = data.frame(x1, x2)
   names(Z) = names(dataset)
-  pred = predict(model, Z)
-  
+  pred = predict(model, Z, type = "class")
+
   return(data.frame(Z, pred))
 }
 
@@ -130,8 +130,7 @@ weight_points = function(x_interest, df, kernel_width=0.2) {
   
   df = as.matrix(df)
   weights = apply(df, MARGIN = 1, FUN = function(x) {
-    eucldist = sqrt(sum((x-x_interest)^2))
-    exp(-eucldist/(kernel_width*kernel_width))
+    exp(-sum((x-x_interest)^2)/(kernel_width*kernel_width))
   })
   
   # Normalize between 0 and 1

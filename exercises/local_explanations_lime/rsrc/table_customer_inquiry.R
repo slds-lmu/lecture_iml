@@ -6,4 +6,4 @@ x = data.frame(sex = "m", age = 50, salary = 1300, savings = 500, credit_amount 
 
 # PLOT -------------------------------------------------------------------------
 print(xtable::xtable(x = x, digits = 0), include.rownames = FALSE,
-      file="exercises/local-explanations/rsrc/table_customer_inquiry.txt")
+      file="exercises/local_explanations_lime/rsrc/table_customer_inquiry.txt")

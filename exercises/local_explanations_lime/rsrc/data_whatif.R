@@ -1,4 +1,4 @@
-df = read.csv(file = "exercises/local-explanations/rsrc/datasets/wheat_seeds.csv")
+df = read.csv(file = "exercises/local_explanations_lime/rsrc/datasets/wheat_seeds.csv")
 table(df$Type)
 
 # Create a binary classification task

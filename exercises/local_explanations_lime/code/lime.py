@@ -156,7 +156,7 @@ def fit_explainer_model(Z, y, weights=None, seed=0):
         seed (int): Seed for the decision tree.
 
     Returns:
-        model (DecisionTreeRegressor): Fitted explainer model.
+        model (DecisionTreeClassifier): Fitted explainer model.
     """
 
     return None

@@ -1,5 +1,34 @@
 \loesung{
 
-In the Jupyter notebook.
+For code, see the Jupyter notebook or the R solution files.
 
+\begin{enumerate}
+    \item Apply a LIME implementation to the FIFA dataset. See notebook for concrete results.
+
+    \item Varying the kernel width $\sigma$ has a strong influence on LIME explanations:
+    \begin{itemize}
+        \item A large $\sigma$ gives high weight to distant points, making the surrogate model approximate the global behavior of $\fh$ rather than the local behavior around $\xv$. This reduces locality.
+        \item A small $\sigma$ concentrates weight on very few nearby points, which can make the surrogate model unstable (high variance across runs due to the random sampling).
+        \item There is no principled way to choose $\sigma$; it is a hyperparameter that must be tuned or set by the user.
+    \end{itemize}
+
+    \item Key similarities and differences between LIME and SHAP:
+
+    \textbf{Similarities:}
+    \begin{itemize}
+        \item Both are \emph{local} explanation methods: they explain a single prediction $\fh(\xv)$.
+        \item Both produce \emph{additive feature attributions}: each feature receives a numerical contribution to the prediction.
+        \item Both are \emph{model-agnostic}: they treat $\fh$ as a black box and only require access to its predictions.
+    \end{itemize}
+
+    \textbf{Differences:}
+    \begin{itemize}
+        \item \textbf{Foundation:} SHAP is grounded in cooperative game theory (Shapley values) and has a unique solution satisfying the efficiency, symmetry, dummy, and additivity axioms. LIME is an optimization-based approach that minimizes a weighted loss with no such axiomatic guarantees.
+        \item \textbf{Sampling:} SHAP samples \emph{coalitions} (feature subsets), marginalizing over the remaining features. LIME samples \emph{data points} in the feature space around $\xv$.
+        \item \textbf{Surrogate model:} LIME allows flexible surrogate model classes (linear models, decision trees, etc.). SHAP always produces a linear (additive) decomposition.
+        \item \textbf{Kernel:} LIME uses a user-chosen exponential kernel with width $\sigma$, making results sensitive to this choice. KernelSHAP uses a specific SHAP kernel that yields exact Shapley values in the limit.
+        \item \textbf{Efficiency:} SHAP satisfies the efficiency property: $\sum_j \phi_j = \fh(\xv) - \E[\fh(\Xv)]$. LIME does not guarantee that feature attributions sum to a specific quantity.
+        \item \textbf{Stability:} SHAP values are uniquely defined (given the value function), while LIME explanations can vary across runs due to the stochastic sampling of neighborhood points.
+    \end{itemize}
+\end{enumerate}
 }

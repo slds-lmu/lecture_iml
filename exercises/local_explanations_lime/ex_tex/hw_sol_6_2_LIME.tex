@@ -1,5 +1,8 @@
 \loesung{
 \label{ex_sol:LIME_implementation}
+
+The code for this exercise can be found in \texttt{sol\_lime.py} for Python or \texttt{sol\_lime.R} for R.
+
 \begin{enumerate}[a)]
 \item Inspect Implemented Functions
 
@@ -40,11 +43,14 @@ Example:
 \lstinputlisting[firstline=5,lastline=22]{"rsrc/fit_explainer_model_plot_lime.R"}
 \begin{center}
   \includegraphics[width=\maxwidth]{figure/fit_explainer_model_plot_lime.pdf}
-\end{center} 
-  
+\end{center}
 
-
-
+What could be problematic with a decision tree as the surrogate model?
+\begin{itemize}
+  \item Decision trees produce piecewise constant predictions, so they cannot capture smooth decision boundaries well. The local approximation may appear ``blocky'' compared to the original model.
+  \item The tree depth (complexity) must be chosen carefully: a shallow tree is easy to interpret but may be too coarse; a deep tree fits the local data better but becomes harder to interpret, defeating the purpose of LIME.
+  \item The surrogate model is fitted on sampled data that covers the entire feature space (not just the local neighborhood). The proximity weights help focus on the neighborhood, but far-away points with small weights can still influence the tree splits.
+\end{itemize}
 
 
 
