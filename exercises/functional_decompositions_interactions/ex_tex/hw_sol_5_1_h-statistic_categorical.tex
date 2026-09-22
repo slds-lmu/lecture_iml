@@ -4,7 +4,7 @@
 
 \item
 
-First we evaluate $f$ on all points:
+First we evaluate $\fh$ on all points:
 \[
 \begin{array}{c|cc}
       & x_2=0 & x_2=1 \\ \hline
@@ -30,7 +30,7 @@ The PD-functions have the means
 
 \begin{align*}
 & \E[\fh_{1, PD}(X_1)] = \tfrac{1}{2} (3.5 + 6.5) = 5 = \mu, \\
-& \E[\fh_{2, PD}(X_2)] = \tfrac{1}{2} (3.+ 7) = 5 = \mu,
+& \E[\fh_{2, PD}(X_2)] = \tfrac{1}{2} (3 + 7) = 5 = \mu,
 \end{align*}
 
 as expected.
@@ -55,13 +55,13 @@ H_{1,2}^2
 & =
 \frac{\displaystyle
     \sum_{i,j = 1}^2 \bigl(
-    \hat f_{12,PD}(x_1^{(i)},x_2^{(j)})-
-    \hat f_{1,PD}(x_1^{(i)})-
-    \hat f_{2,PD}(x_2^{(j)})+\mu
+    \fh_{12,PD}(x_1^{(i)},x_2^{(j)})-
+    \fh_{1,PD}(x_1^{(i)})-
+    \fh_{2,PD}(x_2^{(j)})+\mu
     \bigr)^2
 }{\displaystyle
     \sum_{i,j = 1}^2 \bigl(
-    \hat f(x_1^{(i)},x_2^{(j)})-\mu
+    \fh(x_1^{(i)},x_2^{(j)})-\mu
     \bigr)^2
 } \\
 & = 
@@ -146,20 +146,18 @@ For the denominator, we have a very similar, but easier, calculation:
 \end{align*}
 These calculations show that the two versions of the formula, the one with the uncentered PD-functions and the one with the centered PD-functions, are equal.
 
-If we instead have an empirical distribution from an empirical dataset, or a finite probability distribution, we can replace the variance with the empirical variance and obtain the other two formulae given in the exercise.
-For example, for the uncentered version we have in this case
-
-$$
-\var \Bigl[ \fh_{12,PD}(x_1, x_2) - \fh_{1,PD}(x_1) - \fh_{2,PD}(x_2) \Bigr]
-= \sum_{i = 1}^n \bigl(
-    \fh_{12,PD}(x_1^{(i)},x_2^{(i)})-
+If we instead have an empirical distribution from an empirical dataset, or a finite probability distribution, we can replace the variance with the empirical variance. Since the $H^2$-statistic is a ratio of two variances, the $\tfrac{1}{n}$ factor appears in both numerator and denominator and cancels. This yields the raw-sum formulae given in the exercise.
+For example, for the uncentered version we have
+\[
+\var \Bigl[ \fh_{12,PD}(X_1, X_2) - \fh_{1,PD}(X_1) - \fh_{2,PD}(X_2) \Bigr]
+= \frac{1}{n} \sum_{i,j = 1}^n \bigl(
+    \fh_{12,PD}(x_1^{(i)},x_2^{(j)})-
     \fh_{1,PD}(x_1^{(i)})-
-    \fh_{2,PD}(x_2^{(i)})
+    \fh_{2,PD}(x_2^{(j)})
     + \mu
-\bigr)^2
-$$
-
-Analogous for all the other terms.
+\bigr)^2,
+\]
+where we sum over all pairs $(x_1^{(i)}, x_2^{(j)})$ with independent indices $i,j$. Analogous for the denominator.
 
 In the same way, one can prove that the centered and uncentered versions are equivalent for higher interaction orders.
 For example, for interaction order 3, we have

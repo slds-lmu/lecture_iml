@@ -1,7 +1,7 @@
 \aufgabe{Friedman's H-statistic for categorical features}{ \label{ex:h-statistic_categorical}
 
 As in exercise \ref{ex:fANOVA_categorical}, we consider categorical features, and want to calculate the H-statistic for such a case.
-Calculating the H-statistic for categorical features or targets basically works the same as for the fANOVA in exercise \ref{ex:fANOVA_categorical}.
+Calculating the H-statistic for categorical features basically works the same as for the fANOVA in exercise \ref{ex:fANOVA_categorical}.
 
 We are given two independent categorical random variables, which are Bernoulli distributed:
 $$
@@ -19,13 +19,13 @@ Your task is to compute the H-statistic $H_{1,2}$ for measuring the interaction 
     \item Compute all partial dependence (PD) functions:
     \begin{align*}
         \fh_{\emptyset,PD} = \mu
-        & = \E[f(X_1, X_2)], \\
-        \fh_{1,PD}(x_1 )
-        & = \E_{X_2}[\fh(x_1, X_2)] = \tfrac12 \sum_{j=1}^2 f(x_1, x_2^{(j)}), \\
+        & = \E[\fh(X_1, X_2)], \\
+        \fh_{1,PD}(x_1)
+        & = \E_{X_2}[\fh(x_1, X_2)] = \tfrac12 \sum_{j=1}^2 \fh(x_1, x_2^{(j)}), \\
         \fh_{2, PD}(x_2)
         & = \E_{X_1}[\fh(X_1, x_2)].
     \end{align*}
-    (The last PD function is of course $\fh_{12,PD} (x_1,x_2) = f(x_1,x_2)$.)
+    (The last PD function is of course $\fh_{12,PD} (x_1,x_2) = \fh(x_1,x_2)$.)
     
     When computing the PD-functions, you can simply write out the four function values explicitly.
     
@@ -69,9 +69,11 @@ Your task is to compute the H-statistic $H_{1,2}$ for measuring the interaction 
                 \fh( X_1, X_2 )
                 \Bigr]
             }
-        } \\.  
+        }
     \end{aligned}
     \]
+
+    \textit{Note:} The first two formulas (using raw sums) are convenient for computation on finite samples or discrete distributions; the third formula (using variances) is most useful for theoretical analysis and proofs.
 
     \item \textbf{Bonus:} Prove that the three formulas given above for calculating the H-statistic are equivalent in general, that is, for an arbitrary $p$-dimensional function $\fh$ and arbitrary interacting set of features $S$.
     
