@@ -19,6 +19,37 @@ Which of the following statement(s) is/are correct?
     	\begin{itemize}
     		\item[$\Rightarrow$] \textbf{Partially Correct}, we also introduced regional methods in the lecture, which are in between global and local methods.
     	\end{itemize}
+    
+      % Dimension: Model refitting, permuting / changing data
+    \item Machine learning interpretability methods never consider changing the original data.
+    \begin{itemize}
+    	\item[$\Rightarrow$] \textbf{Wrong}.
+    	E.g. counterfactual explanations explicitly consider changes in a data point (can also be a training data point). Also e.g. ALE or permutation-based feature importance can be considered to do this (see later in the lecture).
+    \end{itemize}
+
+
+	 % interpretability vs. performance tradeoff
+	\item When training two different ML-models (denote them with model \(m_1\) and model $m_2$), and if $m_1$ is inherently more interpretable than \(m_2\), then $m_1$ will always perform better (i.e. make more accurate predictions) than $m_2$.
+	% After having trained some ML-model, when training another, more interpretable model, this always increases performance.
+	\begin{itemize}
+		\item[$\Rightarrow$] \textbf{Wrong}. There is no rule for the general case, this may happen, but not necessarily. In most cases, performance will decrease due to the interpretability-performance-tradeoff. Another situation may be that insights from interpreting a model (or using an inherently interpretable model) can lead to insights about the DGP or the problem itself, which again may result in a model with better performance.
+	\end{itemize}
+
+
+	\item For using IML methods, access to the training data is always enough.
+	\begin{itemize}
+		\item[$\Rightarrow$] \textbf{Wrong}. Often additional data points are necessary to obtain unbiased interpretation results. This is why some IML methods use model refitting.
+	\end{itemize}
+
+    
+    % Feature effect methods vs. feature importance methods
+    \item While feature effect methods show the influence of a feature on the target, feature importance methods focus on a feature's impact on the model performance.
+    \begin{itemize}
+    	\item[$\Rightarrow$] \textbf{Correct}. Recall: loss-based vs. variance-based feature importance. \\
+    	On the other hand: "How important is each feature / contributes each feature to an individual prediction?" \(\rightarrow\) This is reflected by Shapley values. (See also Shapley-value-based feature importance methods.) \\
+    	"How important is each feature when the prediction changes (when changing feature values)?" \(\rightarrow\) This is computed / reflected by marginal effects, or average marginal effects, or the partial derivative. \\
+    	Also: Actually "Feature effect methods show the influence of a feature on the model prediction" would be more correct.
+    \end{itemize}
 %        \item We can also draw conclusions about feature importance from feature effect methods. 
 %        \begin{itemize}
 %        	\item[$\Rightarrow$] \textbf{Correct}, but it should be noted that this does not hold vice versa.
@@ -43,19 +74,6 @@ Which of the following statement(s) is/are correct?
     		\item[$\Rightarrow$] \textbf{Correct}. Note that this is also the case for non-differentiable or non-numerical (e.g. categorical) features. One can use this idea to derive a definition of interactions in more general situations (using finite differences).
     	\end{itemize}
 
-        % interpretability vs. performance tradeoff
-    	\item When training two different ML-models (denote them with model \(m_1\) and model $m_2$), and if $m_1$ is inherently more interpretable than \(m_2\), then $m_1$ will always perform better (i.e. make more accurate predictions) than $m_2$.
-        % After having trained some ML-model, when training another, more interpretable model, this always increases performance.
-    	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Wrong}. There is no rule for the general case, this may happen, but not necessarily. In most cases, performance will decrease due to the interpretability-performance-tradeoff. Another situation may be that insights from interpreting a model (or using an inherently interpretable model) can lead to insights about the DGP or the problem itself, which again may result in a model with better performance.
-    	\end{itemize}
-
-        % Dimension: Model refitting
-    	\item For using IML methods, access to the training data is always enough.
-    	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Wrong}. Often additional data points are necessary to obtain unbiased interpretation results. This is why some IML methods use model refitting.
-    	\end{itemize}
-
         % Feature interactions vs. data dependence, interpretability-performance-tradeoff
     	\item % Feature interactions can be easily learned by an ML-model.
         Feature interactions are difficult to learn for an ML-model.
@@ -63,21 +81,11 @@ Which of the following statement(s) is/are correct?
     		\item[$\Rightarrow$] \textbf{Often correct}, but this depends on the model complexity. In general, this depends on the type of model, so whether the model is able at all to learn the interactions (e.g. possible for big neural networks, possible for general tree ensembles, impossible for GAMs, for linear models this depends on the terms included). Additionally, interactions are often difficult to learn / to identify if not using a very complex model (e.g. an ensemble or NN), i.p. if one has many features (number of possible interactions increases exponentially) or there are dependencies between the features (as is often the case in practice).
     	\end{itemize}
 
-        % Dimension: Model refitting, permuting / changing data
-    	\item Machine learning interpretability methods never consider changing the original data.
-    	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Wrong}.
-            E.g. counterfactual explanations explicitly consider changes in a data point (can also be a training data point). Also e.g. ALE or permutation-based feature importance can be considered to do this (see later in the lecture).
-    	\end{itemize}
-
-        % Feature effect methods vs. feature importance methods
-    	\item While feature effect methods show the influence of a feature on the target, feature importance methods focus on a feature's impact on the model performance.
-    	\begin{itemize}
-    		\item[$\Rightarrow$] \textbf{Correct}. Recall: loss-based vs. variance-based feature importance. \\
-            On the other hand: "How important is each feature / contributes each feature to an individual prediction?" \(\rightarrow\) This is reflected by Shapley values. (See also Shapley-value-based feature importance methods.) \\
-            "How important is each feature when the prediction changes (when changing feature values)?" \(\rightarrow\) This is computed / reflected by marginal effects, or average marginal effects, or the partial derivative. \\
-            Also: Actually "Feature effect methods show the influence of a feature on the model prediction" would be more correct.
-    	\end{itemize}
+      \item As models capture increasingly complex (higher-order) feature interactions, they become more difficult to interpret.
+        \begin{itemize}
+      		\item[$\Rightarrow$] \textbf{Correct}. When we add interaction terms to a linear model or allow a decision tree to split further, it becomes harder to interpret the model, e.g., via visualizations or by interpreting coefficients. 
+     	\end{itemize}
+      
         
     \end{enumerate}
 

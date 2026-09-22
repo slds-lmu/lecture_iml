@@ -1,0 +1,156 @@
+\documentclass[11pt,compress,t,n
+otes=noshow, aspectratio=169, xcolor=table]{beamer}
+% alternatively combining latex files with subfile package https://tex.stackexchange.com/a/155883/26830 (however, page numbering and some other stuff does not work well)
+
+% deactivate beamer navigation
+%\setbeamertemplate{navigation symbols}{}
+%\usepackage{geometry}
+%\geometry{papersize={180mm, 135mm}, top=-1.5mm} % 210mm, 297mm
+
+% set path of iml lecture here, e.g., relative to the current dir
+\newcommand{\pathiml}{../}
+\usepackage[nospeakermargin]{\pathiml/local/lmu-lecture-combine}
+\usepackage{doi}
+\usepackage{pax}
+\setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
+%\useoutertheme{metropolis}
+% remove section slides
+\AtBeginSection[]
+{
+	\begin{frame}<beamer>
+		\frametitle{Advanced Machine Learning}
+		\tableofcontents[currentsection, subsectionstyle=hide]
+	\end{frame}
+}
+% includepdf slides, pagecommad will set counter for framenumber
+\usepackage{pdfpages}
+% if speakermargin, use this
+%\includepdfset{trim=0mm 0mm 0mm 0mm, pagecommand={\global\setcounter{framenumber}{\value{page}}}}
+% if nospeakermargin, use this
+\includepdfset{trim=0mm 80mm 0mm 0mm, offset = 0 120, pagecommand={\global\setcounter{framenumber}{\value{page}}}}
+% trim=0mm 6mm 0mm 0mm, offset=0 15,
+% add footer:
+\usepackage{framed, color}
+\usepackage{xcolor}
+
+\newif\ifchapterslideno
+\chapterslidenofalse % default: footline shows only total number
+%\chapterslidenotrue % alternative: footline shows total and chapter no
+
+\ifchapterslideno
+% ---- Alternative footline ----
+\usepackage{calc}
+\usepackage{transparent} % (optional, for your transparent page numbers)
+\setbeamertemplate{footline}[text line]{%
+	\noindent\hspace*{\dimexpr-\oddsidemargin-1in\relax}%
+	\colorbox{white}{
+		\makebox[\dimexpr\paperwidth-9ex\relax]{
+			\color{black}
+			\begin{minipage}[c][2.5ex][b]{0.5\linewidth}
+				\secname
+			\end{minipage}
+			\hfill\begin{minipage}[c][2.5ex][b]{0.5\linewidth}
+				\flushright
+				%\insertframenumber{}~/~\inserttotalframenumber~~
+			\end{minipage}
+	}}%
+	\begin{minipage}[c][3.5ex][t]{6.5ex}
+		\flushright
+		\fontsize{4pt}{6}\selectfont\transparent{0.3}\insertframenumber{}~/~\inserttotalframenumber~~
+	\end{minipage}
+	\hspace*{-\paperwidth}
+}
+\else
+% ---- Default footline ----
+\setbeamertemplate{footline}[text line]{%
+	\noindent\hspace*{\dimexpr-\oddsidemargin-1in\relax}%
+	\colorbox{white}{
+		\makebox[\dimexpr\paperwidth-2\fboxsep\relax]{
+			\color{black}
+			\begin{minipage}[c][2.5ex][b]{0.5\linewidth}
+				\secname
+			\end{minipage}
+			\hfill\begin{minipage}[c][2.5ex][b]{0.5\linewidth}
+				\flushright
+				\insertframenumber{}~/~\inserttotalframenumber~~
+			\end{minipage}
+	}}%
+	\hspace*{-\paperwidth}
+}
+\fi
+
+% \setbeamertemplate{footline}[text line]{%
+	%     \noindent\hspace*{\dimexpr-\oddsidemargin-1in\relax}%
+	%      \colorbox{white}{
+		%      \makebox[\dimexpr\paperwidth-2\fboxsep\relax]{
+			%      \color{black}
+			%      \begin{minipage}[c][4.5ex][c]{0.5\linewidth}
+				%        \secname
+				%      \end{minipage}
+			%      \hfill\begin{minipage}[c][4.5ex][c]{0.5\linewidth}
+				%        \flushright
+				%        \insertframenumber{}~/~\inserttotalframenumber~~
+				%      \end{minipage}
+			%      }}%
+	%   \hspace*{-\paperwidth}
+	% }
+%\fi
+
+\begin{document}
+	\setbeamercolor{background canvas}{bg=}
+	
+	% General remark: hyperlinks in included pdfs are not clickable anymore in the combined pdf unless you use pax to extract annotations from original files and complile this file locally (see https://tex.stackexchange.com/questions/497624/merging-multiple-pdf-files-without-breaking-hyperlinks)
+	
+	
+	
+	% \section{Shapley Values - Game Theory}
+	% \includepdf[pages={1-last}]{slides01-shapley-game-theory.pdf}
+	% 
+	% \section{Shapley Values - Local Feature Effects}
+	% \includepdf[pages={1-last}]{slides02-shapley-ml.pdf}
+	
+	\begin{frame}{Advanced Machine Learning}
+			\tableofcontents
+	\end{frame}
+	
+	\begin{frame}{Local Explanation}
+		\Large{Interpretable Regional Descriptors}
+		
+		\small
+		
+		\vspace{1cm}
+		\textbf{Learning goals}: 
+		\begin{itemize}
+			\item Understand motivation for IRD
+			\item See how methods can be embedded in a general framework
+			\item Understand what influences performance
+		\end{itemize}
+	
+	\vspace{3cm}
+	\footnotesize
+	Dandl, Casalicchio, Bischl, Bothmann (2023).
+	``Interpretable Regional Descriptors: Hyperbox-Based
+	Local Explanations.'', ECML PKDD 2023, pp. 479 -- 495. \doi{10.1007/978-3-031-43418-1\_29}
+	\end{frame}
+	
+	
+	\section{Interpretable Regional Descriptors - Motivation}
+	\includepdf[pages={2-7}]{slides_ird.pdf}
+	
+	\section{Interpretable Regional Descriptors - Framework}
+	\includepdf[pages={8-15}]{slides_ird.pdf}
+	
+	\section{Interpretable Regional Descriptors - Methods}
+	\includepdf[pages={16-21}]{slides_ird.pdf}
+	
+	\section{Interpretable Regional Descriptors - Postprocessing}
+	\includepdf[pages={22-23}]{slides_ird.pdf}
+	
+	
+	\section{Interpretable Regional Descriptors - Benchmark}
+	\includepdf[pages={24-31}]{slides_ird.pdf}
+	
+	\section{Interpretable Regional Descriptors - Summary}
+	\includepdf[pages={32-last}]{slides_ird.pdf}
+	
+\end{document}
