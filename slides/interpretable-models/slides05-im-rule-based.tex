@@ -31,15 +31,8 @@ figure/tree_surface2.png
 }
 
 \begin{framev}[align=top]{Decision Trees \furtherreading{BREIMANETAL1984}}
-%\textbf{Problem}: Can we model non-linear effects and interactions automatically (without manual specification as in GLMs or GAMs)?\\
-%Relationship between features and target are non-linear or interactions are present\\
-%\medskip
-%\pause
-
 \textbf{Idea}:
-%Split data in different subsets based on cut-off values in features 
 Partition data into axis-aligned regions via greedy search for feature cut points (minimizing a split criterion), then predict a constant mean $c_m$ in each leaf region $\mathcal{R}_m$:
-%Partition data into subsets based on cut-off values in features (found by minimizing a split criterion via greedy search) and predict constant mean $c_m$ in leaf node $\mathcal{R}_m$:
 \splitVTT[0.65]{
 \spacer[0]
 $$
@@ -93,16 +86,6 @@ $$
 }
 \end{framev}
 
-
-% \begin{frame}{Interpretation}
-% \begin{itemize}
-%     \item Directly by following the tree structure (i.e., sequence of decision rules)
-%     \item Importance of $x_j$: Aggregate ``improvement in split criterion'' over all splits where $x_j$ was involved\\
-%     \item[] $\leadsto$ e.g., variance for regression or Gini index for classification
-%     %Feature importance: How much did split criterion improve compared to parent node% by (scaled) score of how much splitting criterion (e.g. variance) is reduced compared to a parent node
-% \end{itemize}
-
-% \end{frame}
 
 \begin{framev}[align=top]{Interpretation of Tree-Based Models}
 \begin{itemizeM}
@@ -164,36 +147,6 @@ $$
 \end{itemizeS}
 \end{itemizeM}
 }
-% \vspace{0.4cm}
-% \begin{center}
-% \begin{tikzpicture}[scale=0.7, every node/.style={font=\small}]
-%   % Nodes
-%   \node[draw, circle] (root) at (0,0) {$x_j < 5$};
-%   \node[draw, circle] (left) at (-3,-2.5) {$x_k < 3$};
-%   \node[draw, rectangle] (L1) at (-4.2,-5) {$c_1$};
-%   \node[draw, rectangle] (L2) at (-1.8,-5) {$c_2$};
-
-%   \node[draw, circle] (right) at (3,-2.5) {$x_k < 7$};
-%   \node[draw, rectangle] (R1) at (2,-5) {$c_3$};
-%   \node[draw, rectangle] (R2) at (4,-5) {$c_4$};
-
-%   % Edges with labels
-%   \draw[->] (root) -- node[above left] {\scriptsize yes} node[midway, left=3pt] {\scriptsize  $\Delta\text{Var} = 0.18$} (left);
-%   \draw[->] (root) -- node[above right] {\scriptsize no} node[midway, right=3pt] {\scriptsize $\Delta\text{Var} = 0.10$} (right);
-
-%   \draw[->] (left) -- node[left] {\scriptsize $\Delta\text{Var} = 0.07$} (L1);
-%   \draw[->] (left) -- (L2);
-
-%   \draw[->] (right) -- (R1);
-%   \draw[->] (right) -- (R2);
-% \end{tikzpicture}
-% \end{center}
-
-% \vspace{0.2cm}
-% \begin{itemize}
-%     \item[] $\Rightarrow$ Feature importance($x_j$) += 0.18
-%     \item[] $\Rightarrow$ Feature importance($x_k$) += 0.07 + 0.10 = 0.17
-% \end{itemize}
 \end{framev}
 
 
@@ -249,177 +202,6 @@ hum & 2.92 \\
 %$\leadsto$ many different ways to learn a set of rules (incl. a default rule if none of the rules are met)
 
 %\end{frame}
-
-
-
-
-
-
-% %------------------------------------------------------------------
-% %------------------------------------------------------------------
-
-
-% \begin{frame}{Model-based Boosting \citebutton{Bühlmann and Yu 2003}{https://doi.org/10.1198/016214503000125}}
-
-% \begin{itemize}%[<+->]
-% %\setlength\itemsep{2em}
-% \item<1-> Recall: Boosting iteratively combines weak base learners (BL) %to create a powerful ensemble model
-% \item<1->
-% Idea: Use simple linear BL to ensure interpretability \\
-% %$\leadsto$ e.g., linear BL with single features in each iteration
-% %Boosting with gradient descent using interpretable base learners (e.g., use base learners with single features in each iteration $\leadsto$ coordinate gradient descent)
-% %The resulting ensemble is also interpretable.
-% %\pause
-% \item<2->
-% Possible to combine linear BL of same type (with distinct parameters $\theta$ and $\theta^{\star}$):
-% %Two linear base learners $b_j(x, \theta)$ and $b_j(x, \theta^{\star})$ of the same type, but distinct parameter vectors $\theta$ and $\theta^{\star}$ can be combined in a base learner of the same type:
-% $$b_j(x, \theta) + b_j(x, \theta^{\star}) = b_j(x, \theta + \theta^{\star})$$
-% %\pause
-% \item<3-> %In each iteration, a set of BLs is fitted on pseudo residuals. The one with the best fit is added to the previously computed model (using step-size $\nu$), e.g.,
-% In each iteration, fit a set of BLs and add the best BL to previous model (using step-size $\nu$):
-% %\medskip
-% \begin{align*}
-% \widehat{f}^{[1]}(x) &= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} \\
-% \visible<4->{\widehat{f}^{[2]}(x) &= \widehat{f}^{[1]}(x) + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} 
-% %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})}
-% \\
-% \visible<5->{
-% \widehat{f}^{[3]}(x) &= \widehat{f}^{[2]}(x) + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
-% %= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
-% \\
-% &= \hat{f}_0 + \nu \left(\textcolor{blue}{b_3(x_3, \theta^{[1]} + \theta^{[2]})} + \textcolor{orange}{b_1(x_1, \theta^{[3]})}\right) 
-% \\
-% &= \hat{f}_0 + \textcolor{blue}{\hat{f}_3(x_3)} + \textcolor{orange}{\hat{f}_1(x_1)}
-% }
-% }
-% \end{align*}
-% \item<6-> Final model is additive (as GAMs), where each component function is interpretable
-
-% \end{itemize}
-% \end{frame}
-
-
-% \begin{frame}{Model-based Boosting - Example}
-
-% Simple case: Use linear model with single feature (including intercept) as BL
-% $$
-% b_j(x_j, \theta) = x_j\theta + \theta_0 \hspace*{0.2cm}\text{ for } j = 1,\ldots p \hspace*{0.3cm} \leadsto \text{ordinary linear regression}
-% $$
-
-% \begin{itemize}
-% \item<1-> Here: Interpretation of weights as in LM
-% \item<1-> After many iterations, it converges to same solution as least square estimate of LMs
-% \item<2-> Early stopping allows feature selection and might prevent overfitting (regularization)
-% %\item Specifying loss and link function according to exponential family leads a (regularized) GLM
-% \end{itemize}
-% \begin{columns}[T, totalwidth=\textwidth]
-% \begin{column}{0.49\textwidth}
-% \scriptsize
-% \begin{table}[ht]
-% \centering
-% \begin{tabular}{r|r|l}
-%   %\hline
-% \textbf{1000 iter. with $\nu = 0.1$} & Intercept & Weights \\ 
-%   \hline  \hline
-% days\_since\_2011 & -1791.06 & 4.9 \\ 
-%   \hline
-%   hum & 1953.05 & -31.1 \\ 
-%     \hline
-%   season & 0 &  \begin{tabular}[c]{@{}l@{}}
-%   WINTER: -323.4\\
-%   SPRING: 539.5\\
-%   SUMMER: -280.2\\
-%   FALL: 67.2
-%   \end{tabular}\\
-%     \hline
-%   %season &  & WINTER: -323.4, SPRING: 539.5, SUMMER: -280.2, FALL: 67.2 \\ 
-%   temp & -1839.85 & 120.4 \\ 
-%     \hline
-%   windspeed & 725.70 & -56.9 \\ 
-%     \hline
-%   offset & 4504.35 &  \\ 
-%    %\hline
-% \end{tabular}
-% \end{table}
-% \centering
-% $\Rightarrow$ Converges to solution of LM
-% \end{column}
-% \begin{column}{0.49\textwidth}
-
-% \only<1>{\scriptsize
-% Relative frequency of selected BLs across iterations
-% \includegraphics[width = .95 \textwidth]{figure/compboost_base_linear.pdf}}
-
-% \pause
-% \scriptsize
-% \only<2>{
-% \begin{table}[ht]
-% \centering
-% \begin{tabular}{r|r|l}
-%   %\hline
-%  \textbf{20 iter. with $\nu = 0.1$} & Intercept & Weights \\ 
-%   \hline  \hline
-%   days\_since\_2011 & -1210.27 & 3.3 \\ 
-%     \hline
-%    season & 0 & 
-%    \begin{tabular}[c]{@{}l@{}}
-%   WINTER: -276.9\\
-%   SPRING: 137.6\\
-%   SUMMER: 112.8\\
-%   FALL: 20.3
-%    \end{tabular}\\
-%      \hline
-%   temp & -1118.94 & 73.2 \\ 
-%     \hline
-%   offset & 4504.35 &  \\ 
-%    %\hline
-% \end{tabular}
-% \end{table}
-% \centering
-% $\Rightarrow$ 3 BLs selected after 20 iter. (feature selection)
-% }
-% \end{column}
-% \end{columns}
-% % \begin{itemize}
-% %     \item Linear base learners for numeric features and categorical base learner for season
-% %     \item 3 base learners selected after 100 iterations
-% % \end{itemize}
-% \end{frame}
-
-% \begin{frame}{Model-based Boosting - Interpretation}
-
-% \begin{itemize}
-%     \item Fit model on bike data with different BL types \citebutton{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}
-%     \item BLs: linear and centered splines for numeric features, categorical for season
-%     %and categorical base learner for season
-% \end{itemize}
-% \begin{columns}[T, totalwidth=\textwidth]
-% \visible<2->{
-% \begin{column}{0.5\textwidth}
-% \hspace{45pt}{\scriptsize{Feature importance}}
-%  \includegraphics[width = \textwidth]{figure/compboost_pfi.pdf}
-% %Feature importance (risk reduction over iter.)\\
-% %$\leadsto$ \code{days\_since\_2011} most important
-% %\scriptsize
-% %\verbatiminput{figure/mboost_output.txt}
-% \end{column}
-% }
-% \visible<3->{
-% \begin{column}{0.5\textwidth}  %%<--- here
-% \hspace{23pt}{\scriptsize{Feature effect}}
-%   \includegraphics[width = \textwidth]{figure/compboost_pfe.pdf}
-% %Partial feature effect for \code{days\_since\_2011}\\
-% %$\leadsto$ Total effect: Combination of partial effects of linear BL and centered spline BL
-% \end{column}
-% }
-% \end{columns}
-% \begin{itemize}
-%     \item<2->  Feature importance (risk reduction over iter.) $\leadsto$ \code{days\_since\_2011} most important
-%      \item<3-> Total effect for \code{days\_since\_2011}\\
-% $\leadsto$ Combination of partial effects of linear BL and centered spline BL
-% \end{itemize}
-% \end{frame}
-
 
 \begin{framev}[align=top]{Unbiased Recursive Partitioning}
 \furtherreading{HOTHORNETAL2006}

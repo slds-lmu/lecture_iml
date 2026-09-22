@@ -76,36 +76,7 @@ $\leadsto$ Other ML models often learn them automatically
 \item Marginal effect of a feat. cannot be interpreted by single weights anymore\\
 $\leadsto$ Feature $x_j$ occurs multiple times (with different weights) in equation
 \end{itemizeM}
-%Weights cannot be interpreted in isolation as before
-% $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon$$
-
-% \begin{itemize}
-% \item Results in polynomial regression 
-% \item Weights cannot be interpreted in isolation as before
-% \end{itemize}
 \end{framev}
-
-% \begin{frame}{Linear and Polynomial Regression}
-
-% \begin{align*}
-% \mathbb{E}_Y(Y \vert X) &= \theta_0 + \theta_1 x_1 + \dots + \theta_p x_p + \epsilon \\
-%  &= X^T\theta + \mathcal{E}
-% \end{align*}
-
-% \begin{itemize}
-% \itemsep1em
-% \item Model equation is identical across the entire feature space.
-% %\item The predictive power of LMs is determined by specifying the correct model structure.
-% \item Polynomial regression extends the LM by non-linear effects.
-% %A polynomial regression model is an extension of the LM that includes higher order terms or interactions.
-% %This enables us to model non-linear data while making use of the entire arsenal of LM functionality.
-% \item We can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
-% %By knowing the model equation, we can exactly determine feature effects (e.g., beta coefficients, effect plots) and importance scores (e.g., p-values, t-statistics).
-% \item For higher order effects or interactions, beta coefficients cannot be interpreted in isolation.
-% \item Note: For inference-based metrics (p-values, confidence intervals) to be valid, error term needs to be normally distributed with zero mean, i.e., $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert x) \sim N(x^T \theta, \sigma^2)$.\\
-% $\leadsto$ Restricts use of LMs in practice as distribution of error is a prior assumption about data.
-% \end{itemize}
-% \end{frame}
 
 \begin{framev}[align=top]{Example: Interaction Effect}
 \textbf{Ex.}: Interaction between \code{temp} and \code{season} will affect marginal effect of \code{temp}% with (right) and without (left) interaction.
@@ -187,8 +158,6 @@ $\leadsto$ \code{SPRING}:\\
 $({\color{winter}39.1} {\color{spring}+407.4}) \cdot x_{temp} + ({\color{winter}8.6} {\color{spring} - 18.7}) \cdot x_{temp}^2$ \\
 $\leadsto$ \code{SUMMER}:\\ $({\color{winter}39.1} {\color{summer}+801.1}) \cdot x_{temp} + ({\color{winter}8.6} {\color{summer} - 27.2}) \cdot x_{temp}^2$ \\
 $\leadsto$ \code{FALL}: \\$({\color{winter}39.1} {\color{fall}+217.4}) \cdot x_{temp} + ({\color{winter}8.6} {\color{fall} - 11.3}) \cdot x_{temp}^2$
-% \item<2>[$\leadsto$] High-order and interaction effects make the model more flexible but also less interpretable (more weights)
-% \item<2>[$\leadsto$] High-order and interaction effects need to be specified manually (inconvenient) - ML models do this automatically
 \end{itemizeS}
 }{
 \spacer[0]
@@ -258,13 +227,6 @@ days\_since\_2011 & 4.8 \\
 
 
 \begin{framev}[align=top]{Regularization via LASSO \furtherreading{TIBSHIRANI1996}}
-% \begin{itemize}
-%     \item LASSO adds an $L_1$-norm penalization term ($\lambda||\theta||_1$) to the least squares optimization problem%\\
-%     % $\leadsto$ Shrinks some feature weights to zero (feature selection)\\
-%     % $\leadsto$ Sparser models (with fewer features) are more interpretable
-%     % %Aim: Feature selection (sparsity) and regularization of feature weights
-%     % \item Penalization parameter $\lambda$ must be chosen (e.g., by CV) %or depending on the number of features to keep
-% \end{itemize}
 \splitVTT[0.6]{
 \spacer[0.6]
 \begin{itemizeM}
@@ -298,12 +260,9 @@ $$
 \splitVTT[0.65]{
 \spacer[0.6]
 \begin{itemizeM}
-%\item LASSO with main effects and interaction \code{temp} with \code{season}
 \item $\lambda$ is chosen $\leadsto$ 6 selected features ($\neq 0$)
 \item LASSO shrinks weights of single categories separately (due to dummy encoding)\\
-%only weights of single categories are set to zero (due to dummy encoding) not the whole feature\\
 $\leadsto$ No feature selection of whole categorical features (only w.r.t. category levels)\\
-%May be problematic for categorical features as only weights of single categories are set to zero (due to dummy encoding) instead of the whole categorical feature\\ %, polynomials and interactions
 $\leadsto$ Solution: group LASSO \furtherreading{YUANLIN2006}
 \end{itemizeM}
 \spacer[0.25]
