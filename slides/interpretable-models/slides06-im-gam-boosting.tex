@@ -18,17 +18,6 @@
 
 \begin{document}
 
-% OLD
-%\newcommand{\titlefigure}{figure/gam_effects.pdf}
-%\newcommand{\learninggoals}{
-%\item Generalized additive model
-%% \item Decision trees
-%% \item Other interpretable models}
-%\item Model-based boosting with simple base learners
-%\item Feature effect and importance in model-based boosting}
-%
-%\lecturechapter{GAM \& Boosting}
-%\lecture{Interpretable Machine Learning}
 % new
 \titlemeta{
 Interpretable Models 2
@@ -49,7 +38,6 @@ figure/gam_effects.pdf
 %------------------------------------------------------------------
 
 \begin{framev}[align=top]{Generalized Additive Model (GAM) % OLD
-%\citebutton{Hastie and Tibshirani (1986)}{https://www.jstor.org/stable/2245459}
 % new
 \furtherreading{TIBSHIRANI1986}}
 \textbf{Problem}: LM not great if features act on outcome non-linearly % $\leadsto$ standard 
@@ -135,11 +123,7 @@ $\leadsto$ represents degree of smoothness/complexity
 %------------------------------------------------------------------
 
 \begin{framei}[align=top]{Model-based Boosting % OLD
-%\citebutton{Bühlmann, Yu 2003}{https://doi.org/10.1198/016214503000125}
-% new
 \furtherreading{BÜHLMANNYU2003} % OLD
-%\citebutton{Bühlmann, Hothorn 2008}{https://arxiv.org/abs/0804.2752}
-% new
 \furtherreading{BÜHLMANNHOTHORN2008}}
 
 %\setlength\itemsep{2em}
@@ -161,9 +145,7 @@ In each iteration, fit a set of BLs, add best one to model (with step-size $\nu$
 \begin{align*}
 \fmh[1] &= \hat{f}_0 + \nu \textcolor{blue}{\bl[3](\xv_3, \thetam[1])} \\
 \fmh[2] &= \fmh[1] + \nu \textcolor{blue}{\bl[3](\xv_3, \thetam[2])} \\
-%= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})}
 \fmh[3] &= \fmh[2] + \nu \textcolor{orange}{\bl[1](\xv_1, \thetam[3])} \\
-%= \hat{f}_0 + \nu \textcolor{blue}{b_3(x_3, \theta^{[1]})} + \nu \textcolor{blue}{b_3(x_3, \theta^{[2]})} + \nu \textcolor{orange}{b_1(x_1, \theta^{[3]})} 
 &= \hat{f}_0 + \nu \left(\textcolor{blue}{\bl[3](\xv_3, \thetam[1] + \thetam[2])} + \textcolor{orange}{\bl[1](\xv_1, \thetam[3])}\right) 
 \\
 &= \hat{f}_0 + \textcolor{blue}{\hat{f}_3(\xv_3)} + \textcolor{orange}{\hat{f}_1(\xv_1)}
@@ -314,11 +296,8 @@ Difference in OOB risk: 259,326.0\\
 \begin{framev}[align=top]{Non-linear Example: Interpretation}
 \begin{itemizeM}
 \item Fit model on bike data with different BL types (1000 iter.) % OLD
-%\citebutton{Daniel Schalk et al. 2018}{https://doi.org/10.21105/joss.00967}
-% new
 \furtherreading{SCHALKETAL2018}
 \item BLs: linear and centered splines for numeric feat., categorical for season
-%and categorical base learner for season
 \end{itemizeM}
 \spacer[0.25]
 \visible<2->{
@@ -327,8 +306,6 @@ Difference in OOB risk: 259,326.0\\
 {\scriptsize Feature importance}\\
 \image{figure/compboost_pfi.pdf}
 \spacer[0]
-%Feature importance (risk reduction over iter.)\\
-%$\leadsto$ \code{days\_since\_2011} most important
 %\scriptsize
 %\verbatiminput{figure/mboost_output.txt}
 }{
@@ -336,8 +313,6 @@ Difference in OOB risk: 259,326.0\\
 {\scriptsize Feature effect}\\
 \image{figure/compboost_pfe.pdf}
 \spacer[0]
-%Partial feature effect for \code{days\_since\_2011}\\
-%$\leadsto$ Total effect: Combination of partial effects of linear BL and centered spline BL
 }
 }
 \only<2->{
