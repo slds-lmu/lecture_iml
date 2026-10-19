@@ -29,14 +29,13 @@ The survey by Knab et al.\ organizes follow-up work by \textbf{where it changes 
 \textbf{Pitfall} & \textbf{Follow-up intuition} & \textbf{Examples} \\
 \midrule
 Unrealistic samples & Learn what plausible neighbors look like & \textcolor{limeBlue}{\textbf{MeLIME}} \\
-Locality; local vs.\ global signals & Sample at the right scale or near the boundary & \textcolor{limeTeal}{\textbf{s-LIME}; LS} \\
-Unstable explanations & Stabilize feature selection or use prior knowledge & \textcolor{limeBlue}{\textbf{S-LIME}; BayLIME} \\
+Locality; local vs.\ global signals & Sample at the right scale or near the boundary & \textcolor{limeTeal}{\textbf{Smoothed LIME}; LS} \\
+Unstable explanations & Stabilize feature selection or use prior knowledge & \textcolor{limeBlue}{Stabilized LIME; BayLIME} \\
 Poor local fit & Allow a richer surrogate & \textcolor{limeTeal}{\textbf{LIMEtree}} \\
 Image segmentation & Explain meaningful regions at different scales & \textcolor{limeBlue}{\textbf{DSEG-LIME}} \\
 \bottomrule
 \end{tabular}
 \end{center}
-\textbf{Focus:} Representative ideas, each targeting a particular weakness.
 \end{framev}
 
 
@@ -95,7 +94,7 @@ Image segmentation & Explain meaningful regions at different scales & \textcolor
 \end{framev}
 
 
-\begin{framev}[align=top]{s-LIME: Sample at the Desired Scale}
+\begin{framev}[align=top]{Smoothed LIME: Sample at the Desired Scale}
 \textbf{Pitfall:} A very narrow kernel can leave almost no useful samples.\\
 \spacer[0.25]
 \splitVTT[0.5]{
@@ -120,7 +119,7 @@ Image segmentation & Explain meaningful regions at different scales & \textcolor
 }{
 \spacer[0]
 \centering
-\textbf{s-LIME: shrink the sampling region}\\
+\textbf{Smoothed LIME: shrink the sampling region}\\
 \spacer[0.25]
 \begin{tikzpicture}[x=0.9cm,y=0.8cm]
 \fill[limeTeal!10] (1.9,0) rectangle (2.5,1.75);
@@ -148,10 +147,10 @@ Image segmentation & Explain meaningful regions at different scales & \textcolor
 \end{framev}
 
 
-\begin{framev}[align=top]{Stability: S-LIME and BayLIME}
+\begin{framev}[align=top]{Stability: Stabilized LIME and BayLIME}
 \textbf{Pitfall:} Repeating the explanation for the \textbf{same input} can select different features.\\
 \spacer[0.25]
-\textbf{S-LIME (Stabilized LIME):} Collect enough evidence before choosing a feature. \furtherreading{ZHOU2021SLIME}
+\textbf{Stabilized LIME:} Collect enough evidence before choosing a feature. \furtherreading{ZHOU2021SLIME}
 \begin{center}
 \begin{tikzpicture}[every node/.style={align=center},followupflow/.style={draw=limeBlue!65,rounded corners,fill=limeBlue!7,text width=2.85cm,minimum height=1cm,inner sep=4pt}]
 \node[followupflow] (sample) {Draw perturbations};
@@ -167,7 +166,7 @@ Image segmentation & Explain meaningful regions at different scales & \textcolor
 \item \textbf{Trade-offs:} More samples cost model queries; prior knowledge can help only to the extent that it is appropriate.
 \end{itemizeM}
 \spacer[0.25]
-\textbf{Scope:} Repeatability at one input does not establish accuracy or robustness across nearby inputs.\\
+% \textbf{Scope:} Repeatability at one input does not establish accuracy or robustness across nearby inputs.\\
 \spacer[0.25]
 \end{framev}
 
