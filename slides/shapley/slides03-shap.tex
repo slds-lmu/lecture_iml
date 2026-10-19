@@ -477,6 +477,41 @@ $$
 \end{itemizeM}
 \end{framev}
 
+\begin{framev}[align=top]{Evaluating Coalitions: Conditional vs. Marginal}
+To evaluate $g(\zv')$ for active coalition $S = \{j : z'_j = 1\}$, absent features $\Xv_{-S}$ are integrated out in one of two ways:
+
+\spacer[0.2]
+
+\splitVTT[0.48]{
+\textbf{1. Observational (Conditional)}
+$$
+\fh_S(\xv_S) = \E_{\Xv_{-S} \mid \Xv_S = \xv_S} \big[ \fh(\xv_S, \Xv_{-S}) \big]
+$$
+\begin{itemizeM}
+\item \textbf{Idea:} Vary $\Xv_{-S}$ given $\Xv_S = \xv_S$.
+\item \textbf{Pro:} Respects correlations; stays on realistic data manifold.
+\item \textbf{Con:} Hard to estimate; can assign $\phi_j \neq 0$ to unused features.
+\end{itemizeM}
+}{
+\textbf{2. Interventional (Marginal)}
+$$
+\fh_S(\xv_S) = \E_{\Xv_{-S}} \big[ \fh(\xv_S, \Xv_{-S}) \big]
+$$
+\begin{itemizeM}
+\item \textbf{Idea:} Sample $\Xv_{-S}$ independently (PD function).
+\item \textbf{Pro:} Easy via background data; strictly faithful to $\fh$ (\textit{KernelSHAP}).
+\item \textbf{Con:} Evaluates $\fh$ on unrealistic, out-of-distribution points.
+\end{itemizeM}
+}
+
+\pause
+\spacer[0.25]
+\textbf{Takeaway (True to Data vs. True to Model):}
+\begin{itemizeM}
+\item[$\Rightarrow$] \textbf{Conditional} audits model + data dependencies; \textbf{Marginal} audits $\fh$ in isolation.
+\end{itemizeM}
+\end{framev}
+
 
 % \begin{frame}{SHAP Framework \furtherreading{LUNDBERG2017}}
 
