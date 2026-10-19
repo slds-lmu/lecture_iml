@@ -113,9 +113,6 @@ figure/ale_plot.pdf
 
 \begin{framev}[align=top]{Why regional explanations?}
 \textbf{Problem:} PD \& ICE plots can be confounded by feature interactions.\\
-%How to produce plots in which feature effects are less confounded by interactions? \\
-%\textbf{Goal:} Identify groups of instances where ICE curves are homogeneous.\\
-%\textbf{Regional Effect Plots (REPs):} Group similar ICE curves so that interactions within each group are minimized.
 \textbf{Solution:} Group homogeneous ICE curves in such a way that reduces the presence of individual interaction effects within a group \\$\leadsto$ Regional effect plots (REPs).
 \noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
 \spacer[0]
@@ -142,16 +139,7 @@ figure/ale_plot.pdf
 
 
 \begin{framev}[align=top]{ICE Curve: Local Feature Effects}
-%ICE curves show how different feature values of an observation affect its model prediction \newline $\Rightarrow$ \textbf{local interpretation method}
-%From a local perspective, one might be interested in how changing feature values of an observation affect model prediction
 \textbf{Question:} How do feature changes affect the prediction for \textbf{one obs.}?\\
-%\smallskip
-%\textbf{Idea:} Change values of observation and feature of interest, and visualize how prediction changes
-% \textbf{Idea:} For each observation $\xv$, define individual conditional expectation $\fh({\color{red}\tilde x_j}, \xv_{-j})$ %ICE_j^\xv(\tilde x_j) :=
-% \begin{itemize}
-%     \item Partition $\xv = (x_j, \xv_{-j})$ into $x_j$ (feature of interest) and $\xv_{-j}$ (remaining features)
-%     \item Replace observed value $x_j$ with {\color{red} grid values $\tilde x_j$} while keeping values $\xv_{-j}$ fixed
-% \end{itemize}
 \textbf{Idea:} Split $\xv = (x_j, \xv_{-j})$ into $x_j$ (feat of interest) and $\xv_{-j}$ (remaining feats)
 \begin{itemizeM}
 \item Replace observed values $x_j$ with {\color{red} grid values $\tilde x_j$} while keeping $\xv_{-j}$ fixed
@@ -162,7 +150,6 @@ figure/ale_plot.pdf
 \vfill
 \centering
 \includegraphics[width=\textwidth, page = 1]{figure/ice_motivation_bike}
-%$\Rightarrow$ Repeat for all observations and average the curves for global feature effect ($\leadsto$ PD plots)
 \end{framev}
 
 
@@ -186,8 +173,6 @@ $}
 \vfill
 \centering
 \includegraphics[width=\textwidth, page = 2]{figure/ice_motivation_bike}
-%Aggregates to Global PD
-%point-wise average of ICE
 %Extrapolation?
 \end{framev}
 
@@ -210,16 +195,12 @@ $
 %\centerline{$\mathbb{E} \left[ \tfrac{\partial^2 f(\xv)}{\partial x_j \partial x_k} \right]^2 > 0$}
 %\medskip
 \begin{itemizeM}
-%is a sum of two functions, each independent of $x_j$, $x_k$:
-% $f_{-j}$ and $f_{-k}$ that do not depend on $x_j$ and $x_k$, respectively:
 \item[$\Rightarrow$]
 If $x_j$ and $\xv_{-j}$ don't interact, we can decomp. $f(\xv) = g_{j}(x_{j}) + g_{-j}(\xv_{-j})$\\
 \item[$\Rightarrow$]
 If $x_j$ and $x_k$ don't interact, decomposition: $f(\xv) = g_{-j}(\xv_{-j}) + g_{-k}(\xv_{-k})$
 %\item<3>[$\Rightarrow$] $\highlight{f(\xv) - g_{j}(x_{j}) - g_{-j}(\xv_{-j})} = 0$ %if there are no interactions between feature $j$ and any other feature $-j$
 \end{itemizeM}
-%\medskip
-%\centerline{$f(\xv) = f_{-j}(x_1, \ldots, x_{j-1}, x_{j+1}, \ldots, x_p) + f_{-k}(x_1, \ldots, x_{k-1}, x_{k+1}, \ldots, x_p)$}
 \only<1>{
 {
 \textbf{Example:} Not additively separable: \\
@@ -228,15 +209,8 @@ If $x_j$ and $x_k$ don't interact, decomposition: $f(\xv) = g_{-j}(\xv_{-j}) + g
 }
 \only<2>{\textbf{Example:} Separable: {\footnotesize $f(\xv) = x_1 + x_2 + \log(x_1 \cdot x_2)
 = \left(x_1 + \log(x_1)\right) + \left(x_2 + \log(x_2)\right) = g_1(x_1) + g_2(x_2)$}
-% \begin{itemize}
-%     \item Not separable: $f(\xv) = x_1 + x_2 + x_1 \cdot x_2$
-%     \item Separable: {\small $f(\xv) = x_1 + x_2 + \log(x_1 \cdot x_2)
-% 	       = x_1 + \log(x_1) + x_2 + \log(x_2) = g_1(x_1) + g_2(x_2)$}
-% \end{itemize}
 \image[0.9]{figure/interaction_separable_2}
 %\pause\color{red}
-%$\Rightarrow$ \textbf{Different shapes of ICE curves indicate interactions}
-% ICE curves can be used to identify potential interactions (different shapes)
 }
 % \only<3>{
 
@@ -310,7 +284,6 @@ If $x_j$ and $x_k$ don't interact, decomposition: $f(\xv) = g_{-j}(\xv_{-j}) + g
 \begin{framev}[align=top]{REPID: Regional Effect Plots \furtherreading{HERBINGER2022}}
 \textbf{Recall:} Different shapes of ICE curves $\Rightarrow$ interactions (ignore vertical shifts)\\
 $\Rightarrow$ Focus on shape differences of {\color{cice}\bfseries mean-centered ICE curves}. \\
-%\includegraphics[width = 0.8\textwidth, trim={0cm 0cm 0cm 0cm}, clip]{figure/interaction_separable_2}
 Mean-centered ICE curve for obs. $\xv$ evaluated at $m$ grid points $\tilde x_j^{(1)}, \dots, \tilde x_j^{(m)}$ is:
 {\color{cice}
 $$\hat f^c(\tilde x_j, \xv_{-j}) = \hat{f}(\tilde x_j, \xv_{-j}) - \frac{1}{m} \sum\nolimits_{k=1}^m \hat{f}(\tilde x_j^{(k)}, \xv_{-j})$$}
@@ -322,7 +295,6 @@ $$\hat f^c(\tilde x_j, \xv_{-j}) = \hat{f}(\tilde x_j, \xv_{-j}) - \frac{1}{m} \
 \spacer[0]
 \image{figure/ice_rep_distance0.png}
 }
-%\includegraphics[width = 0.3\textwidth, trim={13cm 0cm 0cm 0cm}, clip]{figure/interaction_separable_2}
 \end{framev}
 
 
@@ -344,9 +316,6 @@ $f(X) = 0.2 X_1 - 8 X_2 + \highlightYG{8 X_2  \mathbb{1}_{(X_1 > 0)}} \color{bla
 $\leadsto$ Model: Random forest
 \begin{columns}[T,totalwidth=\linewidth]
 \begin{column}{0.46\textwidth}
-%$\leadsto$ True relationship: $f(X) = 0.2 X_1 - 8 X_2 + \color{YellowGreen}{8 X_2  \mathbb{1}_{(X_1 > 0)}} \color{black}+ \color{ForestGreen}{16 X_2  \mathbb{1}_{(X_3 = 0)}} \color{black}+ \epsilon, \; \epsilon \sim \mathcal{N}(0,1)$\\
-%\begin{itemize}
-  %\setlength{\itemindent}{0em}
 \textbf{Problem:}
 \begin{itemizeM}
 \item \only<1>{PD curve of $\highlight{X_2}$ is misleading due to interactions $\leadsto$ ICE}
@@ -358,7 +327,6 @@ $\leadsto$ Model: Random forest
 \textbf{Idea:} Find regions with similar ICE curves and aggregate them to regional effects \\
 }
 % \item<2-> \textbf{Idea:} Find regions where variance of ICE curves is minimized by recursive partitioning the feature space w.r.t. all other features $-j$\\
-%Find regions with similar ICE curves and aggregate them to regional effects\\
 %\item
 %$\leadsto$ REP more representative due to less interactions
    %\item[$\leadsto$]\textbf{Idea} Recursively partition feature space w.r.t. $-j$ such that distance of ICE curves to REP is small}
