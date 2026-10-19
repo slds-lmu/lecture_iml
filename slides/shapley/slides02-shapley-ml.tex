@@ -65,6 +65,33 @@ $\Rightarrow$ Shapley values %provide a principled answer
 }
 \end{framev}
 
+\begin{framev}[fs=small,align=top]{From Game Theory to Machine Learning: Intuition}
+\textbf{Players? Game? Payout?} How does game theory connect to ML interpretability?
+
+\pause
+\begin{exampleblock}{Example: Predicting Apartment Prices}
+A model $\fh$ predicts $\fh(\xv) = \text{€}300\text{k}$ for an apartment $\xv$ (\texttt{area=50$m^2$}, \texttt{floor=2nd}, \texttt{park=nearby}, \texttt{cats=banned}), while the average prediction is $\fh_{\emptyset} := \E_{\xv}(\fh(\xv)) = \text{€}310\text{k}$. How do we explain this $-\text{€}10\text{k}$ difference?
+\end{exampleblock}
+
+\pause
+\spacer[0.2]
+\begin{itemizeS}
+\item \textbf{Game:} Predict $\fh(\xv) = \fh(x_1, \ldots, x_p)$ for a \textbf{single observation} $\xv$ (our apartment)
+\pause
+\item \textbf{Players:} Feature values $x_j, j \in \pset$ (e.g., \texttt{cats=banned}) cooperating to produce $\fh(\xv)$
+\pause
+\item \textbf{Payout:} Value of prediction for coalition $S \subseteq P$. To ensure $v(\emptyset) = 0$, we subtract $\fh_{\emptyset}$:
+$$
+v(S) = \fh_S(\xv_S) - \fh_{\emptyset}
+$$
+\pause
+\textit{How to evaluate a subset $S$ keeping $\fh$ fixed?}\\
+$\leadsto$ Marginalize over $X_{-S}$ via the \textbf{PD function}: $\fh_S(\xv_S) := \int \fh(\xv_S, X_{-S}) \, d\P_{X_{-S}}$
+\pause
+\item \textbf{Goal:} Fairly distribute the \textbf{total payout} $v(P) = \fh(\xv) - \fh_{\emptyset} = -\text{€}10\text{k}$ among the features
+\end{itemizeS}
+\end{framev}
+
 
 \begin{framev}[fs=small,align=top]{From Game Theory to Machine Learning}
 \begin{itemizeS}
