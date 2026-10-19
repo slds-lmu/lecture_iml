@@ -1,12 +1,92 @@
 \documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
 \input{../../style/preamble}
-\input{../../latex-math/basic-ml.tex}
-\input{../../latex-math/basic-math.tex}
+ \input{../../latex-math/basic-math}
+  \input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-interpretable}
 
 % \usepackage{../../style/lmu-lecture}
-
-% Defines macros and environments
+% =====================================================================
+%  Session-specific definitions (both modes)
+% =====================================================================
+\usepackage{amssymb}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,decorations.pathreplacing,shapes.geometric}
+ 
+% list environments: use the course versions if they exist
+\makeatletter
+\@ifundefined{itemizeM}{\newenvironment{itemizeM}{\begin{itemize}\setlength{\itemsep}{0.45em}}{\end{itemize}}}{}
+\@ifundefined{itemizeS}{\newenvironment{itemizeS}{\begin{itemize}\setlength{\itemsep}{0.15em}}{\end{itemize}}}{}
+\makeatother
+ 
+\definecolor{evblue}{HTML}{4D88FF}   % course logo blue
+\definecolor{evorange}{HTML}{D55E00} % second accent (colorblind-safe)
+\definecolor{evgray}{gray}{0.45}
+\hypersetup{colorlinks=true,urlcolor=evblue!70!black,linkcolor=black}
+ 
+% PD notation used today (consistent with the PD chunk of the course)
+\newcommand{\fpdtrue}[1]{f^{\,\text{true}}_{#1,PD}}  % DGP-PD (ground truth)
+\newcommand{\fpdbar}[1]{\bar{f}_{#1,PD}}             % learner-PD
+ 
+% ---------------------------------------------------------------------
+% Citations: \defref{KEY}{Short form}{URL}
+%   \citeref{KEY}  -> [Short form], linked
+%   \readbtn{KEY}  -> small linked button, for frame titles. Keys are
+%                     upper case so that upper-cased frame titles are safe.
+% ---------------------------------------------------------------------
+\makeatletter
+\newcommand{\defref}[3]{%
+  \@namedef{evref@lab@#1}{#2}%
+  \expandafter\edef\csname evref@url@#1\endcsname{\detokenize{#3}}}
+\newcommand{\citeref}[1]{%
+  \href{\csname evref@url@#1\endcsname}{[\csname evref@lab@#1\endcsname]}}
+\newcommand{\readbtn}[1]{%
+  \href{\csname evref@url@#1\endcsname}{\tikz[baseline=(rb.base)]
+    \node[fill=evblue!22,rounded corners=1.5pt,inner sep=1.6pt,
+          font=\tiny\normalfont\color{black}](rb){\csname evref@lab@#1\endcsname};}}
+\makeatother
+ 
+\newcommand{\ok}{{\color{evblue!80!black}$\checkmark$}}
+\newcommand{\okc}{{\color{evblue!80!black}($\checkmark$)}}
+\newcommand{\riskmark}{{\color{evorange}\textbf{!}}}
+ 
+% placeholder for a figure from a paper: [height]{what}{caption}{KEY}
+\newcommand{\figplaceholder}[4][0.4]{%
+  \begin{center}\fbox{\parbox[c][#1\textheight][c]{0.86\textwidth}{\centering
+    \textbf{Insert #2}\\[0.35em]{\scriptsize #3}\\[0.35em]{\scriptsize\citeref{#4}}}}\end{center}}
+ 
+% ---------------------------------------------------------------------
+% References used in this session (all links retrieved while preparing)
+% ---------------------------------------------------------------------
+\defref{DOSHIVELEZ2017}{Doshi-Velez and Kim 2017}{https://arxiv.org/abs/1702.08608v2}
+\defref{NAUTA2023}{Nauta et al. 2023}{https://doi.org/10.1145/3583558}
+\defref{JACOVI2020}{Jacovi and Goldberg 2020}{https://aclanthology.org/2020.acl-main.386}
+\defref{MOLNAR2023}{Molnar et al. 2023}{https://doi.org/10.1007/978-3-031-44064-9_24}
+\defref{MOLNAR2020}{Molnar et al. 2020}{https://doi.org/10.1007/978-3-030-43823-4_17}
+\defref{MOLNAR2022}{Molnar et al. 2022}{https://doi.org/10.1007/978-3-031-04083-2_4}
+\defref{MOLNARBOOK}{Molnar, iML book, Ch.~32}{https://christophm.github.io/interpretable-ml-book/evaluation.html}
+\defref{MOOSBAUER2021}{Moosbauer et al. 2021}{https://papers.nips.cc/paper/2021/hash/12ced2db6f0193dda91ba86224ea1cd8-Abstract.html}
+\defref{FRIEDMAN2008}{Friedman and Popescu 2008}{https://projecteuclid.org/euclid.aoas/1223908046}
+\defref{GOLDSTEIN2015}{Goldstein et al. 2015}{https://arxiv.org/abs/1309.6392}
+\defref{APLEY2020}{Apley and Zhu 2020}{https://arxiv.org/abs/1612.08468v2}
+\defref{HERBINGER2024}{Herbinger et al. 2024}{https://jmlr.org/papers/v25/23-0699.html}
+\defref{FREITAS2014}{Freitas 2014}{https://doi.org/10.1145/2594473.2594475}
+\defref{LAGE2019}{Lage et al. 2019}{https://ojs.aaai.org/index.php/HCOMP/article/view/5280}
+\defref{POURSABZI2021}{Poursabzi-Sangdeh et al. 2021}{https://arxiv.org/abs/1802.07810v3}
+\defref{HASE2020}{Hase and Bansal 2020}{https://aclanthology.org/2020.acl-main.491}
+\defref{BANSAL2021}{Bansal et al. 2021}{https://arxiv.org/abs/2006.14779}
+\defref{KAUR2020}{Kaur et al. 2020}{https://www.microsoft.com/en-us/research/publication/interpreting-interpretability-understanding-data-scientists-use-of-interpretability-tools-for-machine-learning/}
+\defref{ADEBAYO2018}{Adebayo et al. 2018}{https://arxiv.org/abs/1810.03292v2}
+\defref{BANIECKI2022}{Baniecki et al. 2022}{https://doi.org/10.1007/978-3-031-26409-2_8}
+\defref{SEMENOVA2022}{Semenova et al. 2022}{https://arxiv.org/abs/1908.01755v4}
+\defref{FISHER2019}{Fisher et al. 2019}{https://www.jmlr.org/papers/v20/18-760.html}
+\defref{ALVAREZMELIS2018}{Alvarez-Melis and Jaakkola 2018}{https://arxiv.org/abs/1806.08049v1}
+\defref{NADEAU2003}{Nadeau and Bengio 2003}{https://mlanthology.org/mlj/2003/nadeau2003mlj-inference}
+\defref{LIU2021}{Liu et al. 2021}{https://arxiv.org/abs/2106.12543v4}
+\defref{HOFFMAN2018}{Hoffman et al. 2018}{https://arxiv.org/abs/1812.04608}
+ 
 
 \title{Interpretable Machine Learning}
 % \author{LMU}
@@ -27,18 +107,172 @@
 \titlemeta{
 Evaluation of IML
 }{
-Why is it hard?
+What makes an explanation good?   
 }{
 %figure/performance_vs_interpretability
 }{
-\item No ground truth for explanations
-\item Plausibility vs. faithfulness
-\item The running example where two methods disagree
+\item Distinguish faithfulness to the model from plausibility to humans
+\item Name what an explanation can be evaluated against
+\item Describe the three levels of evaluation and their trade-offs
 }
 
-\begin{framev}[align=top]{}
+%---------------------------------------------------------------
+
+\begin{framev}[align=mid]{Reminder Notation}
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.75\textwidth}@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$\ftrue$ & true function of the data-generating process (DGP), $y = \ftrue(\xv) + \epsilon$ \\
+$\fh$ & model fitted by a learner on the random training set $\D$ \\
+$f_{S,PD}$ & PD function of the model $\fh$ (\emph{model-PD}) \\
+$\fpdtrue{S}$ & PD function of $\ftrue$ (\emph{DGP-PD}), the ground truth \\
+$\fpdbar{S}$ & \emph{learner-PD}: $\E_{\D}(f_{S,PD})$, averaged over training sets \\
+$\fh_{S,PD}$ & Monte Carlo estimate of $f_{S,PD}$ from $m$ background points \\
+$e$, $g_e$ & an explanation, and the function $g_e: \Xspace \to \R$ it asserts \\
+$H^2_{jk}$ & interaction statistic for features $j$ and $k$ \\
+\bottomrule
+\end{tabular}
+\end{framev}
+
+\begin{framev}[align=mid]{Same Model, Two Stories}
+% \splitVTT[0.44]{
+% \spacer[0]
+% \small
+% \textbf{Data:} $x_1 \sim U(0,1)$, \ $x_2 = x_1 + \delta$,\\ $\delta \sim \normal(0, 0.02)$\par
+% \spacer[0.4]
+% \textbf{Model}, fits $y = x_1 + \epsilon$ well:\par
+% \[\fh(\xv) = x_1 + 10\,(x_1 - x_2)^2\]
+% On the data, $(x_1 - x_2)^2 \approx 0$,\\ so $\fh(\xv) \approx x_1$.\par
+% \spacer[0.5]
+% {
+% \centering
+% \begin{tikzpicture}[scale=1.75]
+%   \draw[->] (0,0) -- (1.08,0) node[below left, font=\scriptsize] {$x_1$};
+%   \draw[->] (0,0) -- (0,1.08) node[below left, font=\scriptsize] {$x_2$};
+%   \foreach \u in {0.04,0.1,...,0.98} \fill[black!70] ({\u},{\u+0.015*sin(900*\u)}) circle (0.35pt);
+%   \foreach \y in {0.05,0.2,...,0.95} \node[evorange, font=\tiny] at (0.2,\y) {$\times$};
+%   \node[evorange, font=\tiny, align=left, anchor=west] at (0.32,1.12) {PDP evaluates $\fh$ at\\$x_1 = 0.2$ for all $x_2$};
+% \end{tikzpicture}\par
+% }
+% }{
+%\spacer[0]
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=\linewidth, height=0.52\textheight,
+  axis lines=left, xlabel={$x_1$}, ylabel={centered effect},
+  xmin=0, xmax=1, ymin=-1.1, ymax=2.4, xtick={0,0.5,1},
+  tick label style={font=\scriptsize}, label style={font=\scriptsize},
+  legend style={draw=none, font=\scriptsize, at={(0.5,1.0)}, anchor=north}]
+  \addplot[evorange, domain=0:1, samples=60] {(x-0.5) + 10*((x-0.5)^2 - 1/12)};
+  \addlegendentry{PDP}
+  \addplot[very thick, evblue, domain=0:1, samples=10] {x-0.5};
+  \addlegendentry{ALE}
+\end{axis}
+\end{tikzpicture}
+\spacer[0.3]
+\raggedright\small
+\pause
+Same model, same data, two very different curves. \\
+Task for you: Can you construct a function $\fh$ that yields these kinds of curves?\\[0.3em]
+Question: \textbf{Which one is correct?}
+%}
+\end{framev}
+ 
+ 
+\begin{framev}[align=mid]{Faithfulness vs.\ Plausibility \readbtn{JACOVI2020}}
+\begin{definition}
+\textbf{Faithfulness:} how accurately an explanation reflects the true reasoning process of the model.\\[0.3em]
+\textbf{Plausibility:} how convincing the explanation is to humans.
+\end{definition}
+\spacer[0.4]
+In the example:
+\begin{itemizeM}
+\item ALE: plausible (``more $x_1$, more $y$'') and faithful to what $\fh$ does \emph{on the data}
+\item PDP: faithful to what $\fh$ does \emph{off the data}, where $x_1 \neq x_2$, and implausible
+\item[] \pause \hspace*{-1.2em}$\Rightarrow$ Both are correct answers, but to \emph{different questions}
+\item Humans can judge plausibility, not faithfulness: faithfulness evaluation should not rely on human judgment \citeref{JACOVI2020}
+\end{itemizeM}
+\end{framev}
+ 
+ 
+\begin{framev}[align=mid]{What Is an Explanation Evaluated Against?}
+\centering
+\begin{tikzpicture}[
+    every node/.style={font=\small},
+    ent/.style={draw, rounded corners, thick, minimum width=2.2cm, minimum height=0.9cm, align=center},
+    lab/.style={font=\scriptsize, align=center, inner sep=1.5pt}]
+  \node[ent, fill=evblue!12] (e) at (0,0) {Explanation $e$};
+  \node[ent] (m) at (-3.4,-2.1) {Model $\fh$};
+  \node[ent] (d) at (3.4,-2.1) {DGP $\ftrue$};
+  \node[ent] (h) at (0,1.8) {Human};
+  \draw[very thick, evblue] (e) -- node[lab, above left=1pt] {faithfulness, fidelity} (m);
+  \draw[very thick, evblue] (e) -- node[lab, above right=1pt] {ground truth\\about the world} (d);
+  \draw[very thick, evblue] (e) -- node[lab, right=3pt] {plausibility, understanding,\\reliance} (h);
+  \draw[thick, dashed, evgray] (m) -- node[lab, below=2pt] {model quality, e.g., test error} (d);
+\end{tikzpicture}
+\spacer[0.6]
+\raggedright
+\begin{itemizeM}
+\item Explaining the model $\neq$ explaining the data \citeref{MOLNAR2023}
+\item An explanation can be perfectly faithful to a model that is wrong about the world
+\end{itemizeM}
+\end{framev}
+ 
+ 
+\begin{framev}[align=mid]{Why Not Just Look at It?}
+\begin{itemizeM}
+\item We need interpretability because the problem formalization is \emph{incomplete}: fairness, safety, or scientific insight are not in the loss \citeref{DOSHIVELEZ2017}
+\item Incompleteness $\neq$ uncertainty: uncertainty gives quantified variance, incompleteness gives unquantified bias
+\item So the training objective cannot tell us whether an explanation is good either
+\end{itemizeM}
+\pause
+\spacer[0.3]
+\begin{block}{Current practice}
+A review of more than 300 papers that introduce XAI methods found that 1 in 3 evaluate exclusively with anecdotal evidence, and 1 in 5 evaluate with users \citeref{NAUTA2023}.
+\end{block}
+\spacer[0.3]
+Anecdotal evidence: ``look at this nice PDP, it makes sense''.
+\end{framev}
+ 
+ 
+\begin{framev}[align=mid]{Three Levels of Evaluation \readbtn{DOSHIVELEZ2017}}
+
+\begin{tikzpicture}[
+    lvl/.style={draw, rounded corners, thick, minimum width=7.6cm, minimum height=1.25cm, align=left, text width=7.3cm, font=\small}]
+  \node[lvl, fill=evblue!18] (a) at (0,2.9) {\textbf{Application-grounded:} real humans, real task\\[-0.1em]
+    {\scriptsize e.g., loan officers decide with and without PDPs}};
+  \node[lvl, fill=evblue!10] (b) at (0,1.45) {\textbf{Human-grounded:} lay people, simplified task\\[-0.1em]
+    {\scriptsize e.g., crowd workers predict the output of a rule set}};
+  \node[lvl, fill=evblue!4] (c) at (0,0) {\textbf{Functionally-grounded:} no humans, formal proxy\\[-0.1em]
+    {\scriptsize e.g., number of rules, error of a PDP against ground truth}};
+  \draw[-{Stealth[length=2.5mm]}, very thick, evgray] ($(c.south west)+(-0.35,0)$) -- node[sloped, above, font=\scriptsize] {realism, cost} ($(a.north west)+(-0.35,0)$);
+  \draw[-{Stealth[length=2.5mm]}, very thick, evgray] ($(a.north east)+(0.35,0)$) -- node[sloped, above, font=\scriptsize] {scalability, control} ($(c.south east)+(0.35,0)$);
+\end{tikzpicture}
+\spacer[0.6]
+\raggedright
+\begin{itemizeM}
+\item[$\leadsto$] A proxy is only as good as the human evidence that it tracks interpretability
+\end{itemizeM}
+
+\end{framev}
+ 
+ 
+\begin{framev}[align=mid]{Summary: What Makes an Explanation Good?}
+\begin{itemizeM}
+\item An explanation is always evaluated against something: the model (faithfulness), the data-generating process (ground truth), or the human (plausibility, understanding, reliance).
+\item Faithful and plausible are different properties. A convincing curve can misrepresent the model, and a faithful curve can look absurd, e.g., a PDP that reports the model's behavior far from the data.
+\item Distinguish application-, human-, and functionally-grounded evaluation. Moving down the levels trades realism for scalability and control.
+\item Showing a few convincing plots is anecdotal evidence, not an evaluation, yet it remains common in the literature.
+\end{itemizeM}
+\end{framev}
 
 
+ \begin{framev}[align=mid]{Solution to Task}
+
+\includegraphics[width=0.9\textwidth]{plots/pdp_vs_ale.png}
 
 \end{framev}
 

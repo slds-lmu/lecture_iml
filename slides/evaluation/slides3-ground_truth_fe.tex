@@ -1,0 +1,354 @@
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+ \input{../../latex-math/basic-math}
+  \input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-interpretable}
+
+% \usepackage{../../style/lmu-lecture}
+% =====================================================================
+%  Session-specific definitions (both modes)
+% =====================================================================
+\usepackage{amssymb}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,decorations.pathreplacing,shapes.geometric}
+ 
+% list environments: use the course versions if they exist
+\makeatletter
+\@ifundefined{itemizeM}{\newenvironment{itemizeM}{\begin{itemize}\setlength{\itemsep}{0.45em}}{\end{itemize}}}{}
+\@ifundefined{itemizeS}{\newenvironment{itemizeS}{\begin{itemize}\setlength{\itemsep}{0.15em}}{\end{itemize}}}{}
+\makeatother
+ 
+\definecolor{evblue}{HTML}{4D88FF}   % course logo blue
+\definecolor{evorange}{HTML}{D55E00} % second accent (colorblind-safe)
+\definecolor{evgray}{gray}{0.45}
+\hypersetup{colorlinks=true,urlcolor=evblue!70!black,linkcolor=black}
+ 
+% PD notation used today (consistent with the PD chunk of the course)
+\newcommand{\fpdtrue}[1]{f^{\,\text{true}}_{#1,PD}}  % DGP-PD (ground truth)
+\newcommand{\fpdbar}[1]{\bar{f}_{#1,PD}}             % learner-PD
+ 
+% ---------------------------------------------------------------------
+% Citations: \defref{KEY}{Short form}{URL}
+%   \citeref{KEY}  -> [Short form], linked
+%   \readbtn{KEY}  -> small linked button, for frame titles. Keys are
+%                     upper case so that upper-cased frame titles are safe.
+% ---------------------------------------------------------------------
+\makeatletter
+\newcommand{\defref}[3]{%
+  \@namedef{evref@lab@#1}{#2}%
+  \expandafter\edef\csname evref@url@#1\endcsname{\detokenize{#3}}}
+\newcommand{\citeref}[1]{%
+  \href{\csname evref@url@#1\endcsname}{[\csname evref@lab@#1\endcsname]}}
+\newcommand{\readbtn}[1]{%
+  \href{\csname evref@url@#1\endcsname}{\tikz[baseline=(rb.base)]
+    \node[fill=evblue!22,rounded corners=1.5pt,inner sep=1.6pt,
+          font=\tiny\normalfont\color{black}](rb){\csname evref@lab@#1\endcsname};}}
+\makeatother
+ 
+\newcommand{\ok}{{\color{evblue!80!black}$\checkmark$}}
+\newcommand{\okc}{{\color{evblue!80!black}($\checkmark$)}}
+\newcommand{\riskmark}{{\color{evorange}\textbf{!}}}
+ 
+% placeholder for a figure from a paper: [height]{what}{caption}{KEY}
+\newcommand{\figplaceholder}[4][0.4]{%
+  \begin{center}\fbox{\parbox[c][#1\textheight][c]{0.86\textwidth}{\centering
+    \textbf{Insert #2}\\[0.35em]{\scriptsize #3}\\[0.35em]{\scriptsize\citeref{#4}}}}\end{center}}
+ 
+% ---------------------------------------------------------------------
+% References used in this session (all links retrieved while preparing)
+% ---------------------------------------------------------------------
+\defref{DOSHIVELEZ2017}{Doshi-Velez and Kim 2017}{https://arxiv.org/abs/1702.08608v2}
+\defref{NAUTA2023}{Nauta et al. 2023}{https://doi.org/10.1145/3583558}
+\defref{JACOVI2020}{Jacovi and Goldberg 2020}{https://aclanthology.org/2020.acl-main.386}
+\defref{MOLNAR2023}{Molnar et al. 2023}{https://doi.org/10.1007/978-3-031-44064-9_24}
+\defref{MOLNAR2020}{Molnar et al. 2020}{https://doi.org/10.1007/978-3-030-43823-4_17}
+\defref{MOLNAR2022}{Molnar et al. 2022}{https://doi.org/10.1007/978-3-031-04083-2_4}
+\defref{MOLNARBOOK}{Molnar, iML book, Ch.~32}{https://christophm.github.io/interpretable-ml-book/evaluation.html}
+\defref{MOOSBAUER2021}{Moosbauer et al. 2021}{https://papers.nips.cc/paper/2021/hash/12ced2db6f0193dda91ba86224ea1cd8-Abstract.html}
+\defref{FRIEDMAN2008}{Friedman and Popescu 2008}{https://projecteuclid.org/euclid.aoas/1223908046}
+\defref{GOLDSTEIN2015}{Goldstein et al. 2015}{https://arxiv.org/abs/1309.6392}
+\defref{APLEY2020}{Apley and Zhu 2020}{https://arxiv.org/abs/1612.08468v2}
+\defref{HERBINGER2024}{Herbinger et al. 2024}{https://jmlr.org/papers/v25/23-0699.html}
+\defref{FREITAS2014}{Freitas 2014}{https://doi.org/10.1145/2594473.2594475}
+\defref{LAGE2019}{Lage et al. 2019}{https://ojs.aaai.org/index.php/HCOMP/article/view/5280}
+\defref{POURSABZI2021}{Poursabzi-Sangdeh et al. 2021}{https://arxiv.org/abs/1802.07810v3}
+\defref{HASE2020}{Hase and Bansal 2020}{https://aclanthology.org/2020.acl-main.491}
+\defref{BANSAL2021}{Bansal et al. 2021}{https://arxiv.org/abs/2006.14779}
+\defref{KAUR2020}{Kaur et al. 2020}{https://www.microsoft.com/en-us/research/publication/interpreting-interpretability-understanding-data-scientists-use-of-interpretability-tools-for-machine-learning/}
+\defref{ADEBAYO2018}{Adebayo et al. 2018}{https://arxiv.org/abs/1810.03292v2}
+\defref{BANIECKI2022}{Baniecki et al. 2022}{https://doi.org/10.1007/978-3-031-26409-2_8}
+\defref{SEMENOVA2022}{Semenova et al. 2022}{https://arxiv.org/abs/1908.01755v4}
+\defref{FISHER2019}{Fisher et al. 2019}{https://www.jmlr.org/papers/v20/18-760.html}
+\defref{ALVAREZMELIS2018}{Alvarez-Melis and Jaakkola 2018}{https://arxiv.org/abs/1806.08049v1}
+\defref{NADEAU2003}{Nadeau and Bengio 2003}{https://mlanthology.org/mlj/2003/nadeau2003mlj-inference}
+\defref{LIU2021}{Liu et al. 2021}{https://arxiv.org/abs/2106.12543v4}
+\defref{HOFFMAN2018}{Hoffman et al. 2018}{https://arxiv.org/abs/1812.04608}
+ 
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+
+\begin{document}
+
+% \newcommand{\titlefigure}{figure/performance_vs_interpretability}
+% \newcommand{\learninggoals}{
+% \item Why interpretability?
+% \item Developments until now?
+% \item Use cases for interpretability}
+
+
+% \lecturechapter{Introduction, Motivation, and History}
+% \lecture{Interpretable Machine Learning}
+
+\titlemeta{
+Evaluation of IML
+}{
+Ground Truth for Feature Effects 
+}{
+%figure/performance_vs_interpretability
+}{
+\item Separate the estimand from the model-PD and its estimate
+\item Decompose the estimation error into bias, model variance, and Monte Carlo variance
+\item Construct and interpret pointwise confidence bands for PDPs
+}
+
+%---------------------------------------------------------------
+% =====================================================================
+%  CHUNK 3 -- Ground truth for feature effects         [approx. 13 min]
+%  Type: formal core, one derivation, worked numeric example
+%  (the HPO research slide can be dropped if time is short: -2 min)
+% =====================================================================
+
+
+\begin{framev}[align=mid]{Ground Truth Needs a Known Data-Generating Process}
+\begin{itemizeS}
+\item Real data: there is no ground truth for ``the effect of $x_1$''
+\item Simulation: choose $\ftrue$ and $\P(\xv)$ yourself, then compare
+\end{itemizeS}
+\spacer[0.6]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners, thick, minimum height=0.85cm, minimum width=1.5cm, align=center, font=\small, inner sep=3pt},
+  arr/.style={-{Stealth[length=2mm]}, thick},
+  lab/.style={font=\scriptsize, midway, above}]
+  \node[box, fill=evblue!12] (dgp) at (0,0) {DGP\\$\ftrue$, $\P(\xv)$};
+  \node[box] (d) at (2.75,0) {Data\\$\D$};
+  \node[box] (m) at (5.2,0) {Model\\$\fh$};
+  \node[box] (est) at (7.75,0) {Estimate\\$\fh_{S,PD}$};
+  \node[box, fill=evblue!12] (gt) at (3.4,-2.0) {Ground truth\\$\fpdtrue{S}$};
+  \node[box, fill=evorange!15] (err) at (7.75,-2.0) {Error\\$(\fh_{S,PD} - \fpdtrue{S})^2$};
+  \draw[arr] (dgp) -- node[lab] {sample} (d);
+  \draw[arr] (d) -- node[lab] {learner} (m);
+  \draw[arr] (m) -- node[lab] {PD} (est);
+  \draw[arr] (dgp) |- node[pos=0.25, left, font=\scriptsize, align=right] {analytic or\\large MC} (gt);
+  \draw[arr] (gt) -- (err);
+  \draw[arr] (est) -- (err);
+\end{tikzpicture}
+\spacer[0.6]
+\raggedright
+\begin{itemizeS}
+\item Repeat over many draws of $\D$ to get the distribution of the error
+\item Synthetic benchmarks with known ground truth exist, e.g., XAI-Bench for feature attribution methods~\citeref{LIU2021}
+\end{itemizeS}
+\end{framev}
+
+
+\begin{framev}[align=mid]{Estimand and Estimators \readbtn{MOLNAR2023}}
+\begin{definition}
+For a fixed value $\xv_S$:
+\vspace{-0.5em}
+\begin{align*}
+\text{DGP-PD (estimand):} \quad & \fpdtrue{S}(\xv_S) = \E_{\xv_{-S}}\big(\ftrue(\xv_S,\xv_{-S})\big)\\
+\text{model-PD:} \quad & f_{S,PD}(\xv_S) = \E_{\xv_{-S}}\big(\fh(\xv_S,\xv_{-S})\big), \quad \fh \text{ fitted on } \D\\
+\text{learner-PD:} \quad & \fpdbar{S}(\xv_S) = \E_{\D}\big(f_{S,PD}(\xv_S)\big)\\
+\text{estimate:} \quad & \fh_{S,PD}(\xv_S) = \tfrac{1}{m}\textstyle\sum_{i=1}^{m}\fh(\xv_S,\xv_{-S}^{(i)})
+\end{align*}
+\end{definition}
+\begin{itemizeS}
+\item Random: the training set $\D$, and the $m$ background points $\xv_{-S}^{(i)} \iid \P(\xv_{-S})$, drawn independently of $\D$
+\end{itemizeS}
+\spacer[0.6]
+\centering
+\begin{tikzpicture}[node distance=1.5cm, every node/.style={font=\small},
+  arr/.style={{Stealth[length=1.8mm]}-{Stealth[length=1.8mm]}, thick, evgray}]
+  \node (t) {$\fpdtrue{S}$};
+  \node[right=of t] (b) {$\fpdbar{S}$};
+  \node[right=of b] (m) {$f_{S,PD}$};
+  \node[right=of m] (e) {$\fh_{S,PD}$};
+  \draw[arr] (t) -- node[above, font=\scriptsize] {bias} (b);
+  \draw[arr] (b) -- node[above, font=\scriptsize] {model var.} (m);
+  \draw[arr] (m) -- node[above, font=\scriptsize] {MC var.} (e);
+\end{tikzpicture}
+\end{framev}
+
+
+\begin{framev}[align=mid]{Derivation: Three Sources of Error}
+Fix $\xv_S$ and write $\hat P = \fh_{S,PD}(\xv_S)$, \ $P = f_{S,PD}(\xv_S)$, \ $\bar P = \fpdbar{S}(\xv_S)$, \ $P^\ast = \fpdtrue{S}(\xv_S)$.
+\begin{align*}
+\E\big((\hat P - P^\ast)^2\big) &= \big(\E(\hat P) - P^\ast\big)^2 + \var(\hat P) & &{\scriptstyle\text{bias--variance}}\\
+\uncover<2->{\E(\hat P) &= \E_{\D}\big(\E(\hat P \mid \D)\big) = \E_{\D}(P) = \bar P & &{\scriptstyle\text{MC unbiased given }\D}}\\
+\uncover<3->{\var(\hat P) &= \var_{\D}\big(\E(\hat P \mid \D)\big) + \E_{\D}\big(\var(\hat P \mid \D)\big) & &{\scriptstyle\text{total variance}}}\\
+\uncover<4->{&= \var_{\D}(P) + \tfrac{1}{m}\,\E_{\D}\Big(\var_{\xv_{-S}}\big(\fh(\xv_S,\xv_{-S})\big)\Big) & &{\scriptstyle\text{i.i.d.\ background}}}
+\end{align*}
+\uncover<5->{%
+\begin{block}{Result}
+\vspace{-0.9em}
+\[\text{MSE} = \underbrace{(\bar P - P^\ast)^2}_{\text{bias}^2} + \underbrace{\var_{\D}(P)}_{\text{model variance}} + \underbrace{\tfrac{1}{m}\,\E_{\D}\big(\var_{\xv_{-S}}(\fh(\xv_S,\xv_{-S}))\big)}_{\text{Monte Carlo variance}}\]
+\vspace{-0.7em}
+\begin{itemizeS}
+\item Bias: the learner cannot represent $\ftrue$, or extrapolates where data are sparse
+\item Model variance: refit on a new $\D$, get a different PDP
+\item MC variance: the spread of the ICE curves at $\xv_S$, divided by $m$
+\end{itemizeS}
+\end{block}}
+\end{framev}
+
+
+\begin{framev}[align=mid]{Worked Example: Putting Numbers In}
+\splitVTT[0.47]{
+\spacer[0]
+\small
+\textbf{DGP:} $\ftrue(\xv) = 2x_1 + x_2$,\\ $x_1, x_2 \sim U(0,1)$ independent\par
+\spacer[0.4]
+\textbf{Model}, with a spurious interaction:
+\[\fh(\xv) = 2x_1 + x_2 + 0.5\,x_1x_2\]
+\textbf{At $x_1 = 1$:}
+\begin{align*}
+\fpdtrue{1}(1) &= 2 + \E(x_2) = 2.5\\
+f_{1,PD}(1) &= 2 + 1.5\,\E(x_2) = 2.75
+\end{align*}
+Error of this model's PD: $0.25$
+}{
+\spacer[0]
+\pause
+\small
+\textbf{Estimate} with $m = 3$ background values $x_2 \in \{0.1, 0.4, 0.9\}$:
+\begin{align*}
+\fh(1, x_2) &= 2 + 1.5\,x_2\\
+&\in \{2.15,\ 2.60,\ 3.35\}\\
+\fh_{1,PD}(1) &= 8.10/3 = 2.70
+\end{align*}
+\textbf{MC standard deviation:}
+\begin{align*}
+\var_{x_2}(2 + 1.5\,x_2) &= 1.5^2 \cdot \tfrac{1}{12} = 0.1875\\
+\sqrt{0.1875/3} &= 0.25 \quad (m = 3)\\
+\sqrt{0.1875/300} &= 0.025 \quad (m = 300)
+\end{align*}
+}
+\spacer[0.4]
+\pause
+\begin{block}{Reading}
+With $m = 3$, the Monte Carlo noise ($0.25$) is as large as the model's error ($0.25$). 
+$\leadsto$ Use enough background points before blaming the model.
+\end{block}
+\end{framev}
+
+
+\begin{framev}[align=mid]{Pointwise Confidence Bands}
+\textbf{Model-PD band}, model fixed, captures only Monte Carlo noise:
+\[\fh_{S,PD}(\xv_S) \pm z_{1-\alpha/2}\,\frac{\hat\sigma(\xv_S)}{\sqrt{m}}, \quad \hat\sigma^2(\xv_S) = \frac{1}{m-1}\sum_{i=1}^m\big(\fhice{S}^{(i)}(\xv_S) - \fh_{S,PD}(\xv_S)\big)^2\]
+\pause
+\textbf{Learner-PD band}, includes model variance: refit on $k$ resampled training sets, get PD estimates with mean $\bar P_k$ and sample variance $s^2$ at $\xv_S$.
+\begin{itemizeS}
+\item Overlapping training sets make $s^2$ too small. Correct it \citeref{NADEAU2003}, as done for PDPs in \citeref{MOLNAR2023}:
+\end{itemizeS}
+\[\widehat{\var}(\bar P_k) = \Big(\frac{1}{k} + \frac{n_{\text{test}}}{n_{\text{train}}}\Big)\, s^2, \qquad \bar P_k \pm t_{k-1,\,1-\alpha/2}\,\sqrt{\widehat{\var}(\bar P_k)}\]
+\pause
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.7\textwidth, height=0.27\textheight, axis lines=left,
+  xmin=0, xmax=1, ticks=none, xlabel={$x_S$}, ylabel={PD},
+  label style={font=\scriptsize},
+  legend style={draw=none, font=\tiny, at={(1.02,1)}, anchor=north west}]
+  \addplot[name path=up, draw=none, forget plot, domain=0:1, samples=40] {0.9*sin(deg(5.5*x))+0.05 + 0.08 + 1.2*(x-0.5)^2};
+  \addplot[name path=lo, draw=none, forget plot, domain=0:1, samples=40] {0.9*sin(deg(5.5*x))+0.05 - 0.08 - 1.2*(x-0.5)^2};
+  \addplot[evblue!20] fill between[of=up and lo];
+  \addlegendentry{band}
+  \addplot[thick, evblue, domain=0:1, samples=40] {0.9*sin(deg(5.5*x))+0.05};
+  \addlegendentry{estimate}
+  \addplot[thick, dashed, black, domain=0:1, samples=40] {sin(deg(5.5*x))};
+  \addlegendentry{ground truth}
+\end{axis}
+\end{tikzpicture}\\
+{\tiny schematic: bands widen where data are sparse}
+\end{framev}
+
+
+\begin{framev}[align=mid]{Research Example: Explaining HPO with PDPs \readbtn{MOOSBAUER2021}}
+\begin{itemizeS}
+\item Explain an HPO run: PDP of a surrogate model of validation error over hyperparameters $\lamv$
+\item Bayesian optimization samples densely where performance is good. This \emph{sampling bias} makes the surrogate unreliable elsewhere.
+\item A GP surrogate with posterior mean $\hat m$ and covariance $\hat K$ gives the PD and its uncertainty:
+\end{itemizeS}
+\[\hat m_S(\lamv_S) = \tfrac{1}{n}\textstyle\sum_{i}\hat m(\lamv_S,\lamv_{-S}^{(i)}), \qquad \hat s^2_S(\lamv_S) = \tfrac{1}{n^2}\,\mathbf{1}^\top \hat K(\lamv_S)\,\mathbf{1}\]
+\begin{itemizeS}
+\item[] \hspace*{-1.2em}{\small in practice approximated by the average posterior variance $\tfrac{1}{n}\sum_i \hat K_{ii}(\lamv_S)$}
+\item Splitting the search space into regions with low uncertainty yields reliable regional PDPs
+\end{itemizeS}
+
+\centering
+\includegraphics[width=0.5\textwidth]{plots/pdp_bo.png}
+
+\end{framev}
+
+
+\begin{framev}[align=mid]{Accurate Model, Wrong Effect}
+\splitVTT[0.5]{
+\spacer[0]
+\small
+\textbf{DGP:} $y = x_1 + \epsilon$, \ $x_2 = x_1 + \delta$ with small $\delta$\par
+\spacer[0.4]
+Two models with almost the same test error:
+\begin{itemizeS}
+\item Model A: $\fh_A(\xv) = x_1$
+\item Model B: $\fh_B(\xv) = x_2$
+\end{itemizeS}
+Their test MSEs differ by $\var(\delta)$ only.\par
+\spacer[0.4]
+PD of $x_1$:
+\begin{itemizeS}
+\item A: $x_1 + \text{const}$, the ground truth
+\item B: $\E(x_2) = \text{const}$, flat
+\end{itemizeS}
+}{
+\spacer[0]
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=\linewidth, height=0.5\textheight, axis lines=left,
+  xmin=0, xmax=1, ymin=-0.65, ymax=0.75, xtick={0,0.5,1}, ytick={-0.5,0,0.5},
+  xlabel={$x_1$}, ylabel={centered PD of $x_1$},
+  tick label style={font=\scriptsize}, label style={font=\scriptsize},
+  legend style={draw=none, font=\scriptsize, at={(0.02,1)}, anchor=north west}]
+  \addplot[line width=3pt, black!20, domain=0:1] {x-0.5};
+  \addlegendentry{ground truth}
+  \addplot[thick, evblue, domain=0:1] {x-0.5};
+  \addlegendentry{model A}
+  \addplot[thick, evorange, domain=0:1] {0};
+  \addlegendentry{model B}
+\end{axis}
+\end{tikzpicture}
+}
+\spacer[0.4]
+\pause
+\begin{block}{Reading}
+B's PDP is perfectly faithful to B and wrong about the world. A ground-truth evaluation always evaluates the explanation \emph{and} the model.
+\end{block}
+\end{framev}
+
+
+\begin{framev}[align=mid]{Summary: Ground Truth for Feature Effects}
+\begin{itemizeM}
+\item Ground truth for feature effects only exists in simulation: we choose $\ftrue$, compute the DGP-PD, and compare it with the estimated PD.
+\item The squared error of a PD estimate decomposes into the learner's bias, the model variance across training sets, and the Monte Carlo variance. The last term shrinks with the number of background points $m$ and grows with the spread of the ICE curves.
+\item Model-PD bands capture only Monte Carlo noise. Learner-PD bands from refits also capture model variance, but need a variance correction because the training sets overlap.
+\item An accurate model can still have a PDP far from the ground truth, so a ground-truth evaluation always evaluates the explanation and the model together.
+\end{itemizeM}
+\end{framev}
+
+
+\endlecture
+\end{document}
