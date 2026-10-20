@@ -1,0 +1,286 @@
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+ \input{../../latex-math/basic-math}
+  \input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-interpretable}
+
+% \usepackage{../../style/lmu-lecture}
+% =====================================================================
+%  Session-specific definitions (both modes)
+% =====================================================================
+\usepackage{amssymb}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,decorations.pathreplacing,shapes.geometric}
+ 
+% list environments: use the course versions if they exist
+\makeatletter
+\@ifundefined{itemizeM}{\newenvironment{itemizeM}{\begin{itemize}\setlength{\itemsep}{0.45em}}{\end{itemize}}}{}
+\@ifundefined{itemizeS}{\newenvironment{itemizeS}{\begin{itemize}\setlength{\itemsep}{0.15em}}{\end{itemize}}}{}
+\makeatother
+ 
+\definecolor{evblue}{HTML}{4D88FF}   % course logo blue
+\definecolor{evorange}{HTML}{D55E00} % second accent (colorblind-safe)
+\definecolor{evgray}{gray}{0.45}
+\hypersetup{colorlinks=true,urlcolor=evblue!70!black,linkcolor=black}
+ 
+% PD notation used today (consistent with the PD chunk of the course)
+\newcommand{\fpdtrue}[1]{f^{\,\text{true}}_{#1,PD}}  % DGP-PD (ground truth)
+\newcommand{\fpdbar}[1]{\bar{f}_{#1,PD}}             % learner-PD
+ 
+% ---------------------------------------------------------------------
+% Citations: \defref{KEY}{Short form}{URL}
+%   \citeref{KEY}  -> [Short form], linked
+%   \readbtn{KEY}  -> small linked button, for frame titles. Keys are
+%                     upper case so that upper-cased frame titles are safe.
+% ---------------------------------------------------------------------
+\makeatletter
+\newcommand{\defref}[3]{%
+  \@namedef{evref@lab@#1}{#2}%
+  \expandafter\edef\csname evref@url@#1\endcsname{\detokenize{#3}}}
+\newcommand{\citeref}[1]{%
+  \href{\csname evref@url@#1\endcsname}{[\csname evref@lab@#1\endcsname]}}
+\newcommand{\readbtn}[1]{%
+  \href{\csname evref@url@#1\endcsname}{\tikz[baseline=(rb.base)]
+    \node[fill=evblue!22,rounded corners=1.5pt,inner sep=1.6pt,
+          font=\tiny\normalfont\color{black}](rb){\csname evref@lab@#1\endcsname};}}
+\makeatother
+ 
+\newcommand{\ok}{{\color{evblue!80!black}$\checkmark$}}
+\newcommand{\okc}{{\color{evblue!80!black}($\checkmark$)}}
+\newcommand{\riskmark}{{\color{evorange}\textbf{!}}}
+ 
+% placeholder for a figure from a paper: [height]{what}{caption}{KEY}
+\newcommand{\figplaceholder}[4][0.4]{%
+  \begin{center}\fbox{\parbox[c][#1\textheight][c]{0.86\textwidth}{\centering
+    \textbf{Insert #2}\\[0.35em]{\scriptsize #3}\\[0.35em]{\scriptsize\citeref{#4}}}}\end{center}}
+ 
+% ---------------------------------------------------------------------
+% References used in this session (all links retrieved while preparing)
+% ---------------------------------------------------------------------
+\defref{DOSHIVELEZ2017}{Doshi-Velez and Kim 2017}{https://arxiv.org/abs/1702.08608v2}
+\defref{NAUTA2023}{Nauta et al. 2023}{https://doi.org/10.1145/3583558}
+\defref{JACOVI2020}{Jacovi and Goldberg 2020}{https://aclanthology.org/2020.acl-main.386}
+\defref{MOLNAR2023}{Molnar et al. 2023}{https://doi.org/10.1007/978-3-031-44064-9_24}
+\defref{MOLNAR2020}{Molnar et al. 2020}{https://doi.org/10.1007/978-3-030-43823-4_17}
+\defref{MOLNAR2022}{Molnar et al. 2022}{https://doi.org/10.1007/978-3-031-04083-2_4}
+\defref{MOLNARBOOK}{Molnar, iML book, Ch.~32}{https://christophm.github.io/interpretable-ml-book/evaluation.html}
+\defref{MOOSBAUER2021}{Moosbauer et al. 2021}{https://papers.nips.cc/paper/2021/hash/12ced2db6f0193dda91ba86224ea1cd8-Abstract.html}
+\defref{FRIEDMAN2008}{Friedman and Popescu 2008}{https://projecteuclid.org/euclid.aoas/1223908046}
+\defref{GOLDSTEIN2015}{Goldstein et al. 2015}{https://arxiv.org/abs/1309.6392}
+\defref{APLEY2020}{Apley and Zhu 2020}{https://arxiv.org/abs/1612.08468v2}
+\defref{HERBINGER2024}{Herbinger et al. 2024}{https://jmlr.org/papers/v25/23-0699.html}
+\defref{FREITAS2014}{Freitas 2014}{https://doi.org/10.1145/2594473.2594475}
+\defref{LAGE2019}{Lage et al. 2019}{https://ojs.aaai.org/index.php/HCOMP/article/view/5280}
+\defref{POURSABZI2021}{Poursabzi-Sangdeh et al. 2021}{https://arxiv.org/abs/1802.07810v3}
+\defref{HASE2020}{Hase and Bansal 2020}{https://aclanthology.org/2020.acl-main.491}
+\defref{BANSAL2021}{Bansal et al. 2021}{https://arxiv.org/abs/2006.14779}
+\defref{KAUR2020}{Kaur et al. 2020}{https://www.microsoft.com/en-us/research/publication/interpreting-interpretability-understanding-data-scientists-use-of-interpretability-tools-for-machine-learning/}
+\defref{ADEBAYO2018}{Adebayo et al. 2018}{https://arxiv.org/abs/1810.03292v2}
+\defref{BANIECKI2022}{Baniecki et al. 2022}{https://doi.org/10.1007/978-3-031-26409-2_8}
+\defref{SEMENOVA2022}{Semenova et al. 2022}{https://arxiv.org/abs/1908.01755v4}
+\defref{FISHER2019}{Fisher et al. 2019}{https://www.jmlr.org/papers/v20/18-760.html}
+\defref{ALVAREZMELIS2018}{Alvarez-Melis and Jaakkola 2018}{https://arxiv.org/abs/1806.08049v1}
+\defref{NADEAU2003}{Nadeau and Bengio 2003}{https://mlanthology.org/mlj/2003/nadeau2003mlj-inference}
+\defref{LIU2021}{Liu et al. 2021}{https://arxiv.org/abs/2106.12543v4}
+\defref{HOFFMAN2018}{Hoffman et al. 2018}{https://arxiv.org/abs/1812.04608}
+ 
+
+\title{Interpretable Machine Learning}
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+
+\begin{document}
+
+% \newcommand{\titlefigure}{figure/performance_vs_interpretability}
+% \newcommand{\learninggoals}{
+% \item Why interpretability?
+% \item Developments until now?
+% \item Use cases for interpretability}
+
+
+% \lecturechapter{Introduction, Motivation, and History}
+% \lecture{Interpretable Machine Learning}
+
+\titlemeta{
+Evaluation of IML
+}{
+What makes an explanation good?   
+}{
+%figure/performance_vs_interpretability
+}{
+\item List complexity proxies for interpretable models and their limits
+\item Compute the interaction strength IAS from a first-order ALE model
+\item Read accuracy-complexity trade-offs as a Pareto front
+}
+
+%---------------------------------------------------------------
+
+\begin{framev}[align=mid]{Model-Specific Proxies}
+\centering\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Model class & Typical proxy for ``interpretable'' \\
+\midrule
+Sparse linear model & number of nonzero coefficients $\|\hat\thetav\|_0$ \\
+GAM & number of shape functions, their wiggliness \\
+Decision tree & depth, number of leaves \\
+Rule list, decision set & number of rules, conditions per rule \\
+\bottomrule
+\end{tabular}
+\spacer[0.8]
+\raggedright
+\begin{itemizeM}
+\item Functionally grounded: acceptable \emph{if} humans were shown to understand this model class \citeref{DOSHIVELEZ2017}
+\item Problem 1: proxies are not comparable across model classes.\\ Is a depth-4 tree simpler than a GAM with 6 smooth terms?
+\item Problem 2: is size the right axis at all? 
+\end{itemizeM}
+\end{framev}
+
+
+\begin{framev}[align=mid]{A Model-Agnostic View: Functional Decomposition \readbtn{MOLNAR2020}}
+\[\fh(\xv) = f_0 + \sum_{j} f_j(x_j) + \sum_{j<k} f_{jk}(x_j,x_k) + \dots + f_{1,\dots,p}(\xv)\]
+Use the ALE main effects: \ $f_{ALE1st}(\xv) = f_0 + \sum_{j=1}^p f_{j,ALE}(x_j)$, \ $f_0 = \frac1n\sum_i \fh(\xi)$
+\spacer[0.4]
+\begin{itemizeS}
+\item \textbf{NF:} number of features used (change a feature, check whether any prediction changes)
+\item \textbf{IAS:} how much of $\fh$ the main effects miss
+\item \textbf{MEC:} how complex the main effects are
+\end{itemizeS}
+\begin{definition}[Interaction strength]
+\[\mathrm{IAS} = \frac{\sum_{i=1}^n\big(\fh(\xi) - f_{ALE1st}(\xi)\big)^2}{\sum_{i=1}^n\big(\fh(\xi) - f_0\big)^2} = 1 - R^2\big(f_{ALE1st};\fh\big)\]
+\end{definition}
+\begin{itemizeS}
+\item The same idea as fidelity with ALE instead of PD
+\end{itemizeS}
+\end{framev}
+
+
+\begin{framev}[align=mid]{IAS: Numeric Instance}
+$\fh(\xv) = x_1 + x_2 + x_1x_2$, \ $x_1, x_2 \sim U(-1,1)$ independent
+\begin{align*}
+\frac{\partial\fh}{\partial x_1} = 1 + x_2 \;&\Rightarrow\; \E(1 + x_2 \mid x_1) = 1 \;\Rightarrow\; f_{1,ALE}(x_1) = x_1\\
+&\phantom{\Rightarrow}\;\text{likewise } f_{2,ALE}(x_2) = x_2\\
+\uncover<2->{f_{ALE1st}(\xv) &= f_0 + x_1 + x_2, \qquad f_0 = \E(\fh) = 0}\\
+\uncover<3->{\mathrm{IAS} &\to \frac{\E\big((x_1x_2)^2\big)}{\E\big((x_1 + x_2 + x_1x_2)^2\big)} = \frac{1/9}{1/3 + 1/3 + 1/9} = \frac17 \approx 0.14}
+\end{align*}
+\uncover<3->{%
+\begin{itemizeS}
+\item Cross terms vanish, e.g., $\E(x_1\cdot x_1x_2) = \E(x_1^2)\,\E(x_2) = 0$
+\item Simulation with $n = 20{,}000$: $\widehat{\mathrm{IAS}} = 0.144$
+\end{itemizeS}}
+\spacer[0.4]
+\uncover<4->{%
+\begin{block}{Reading}
+One seventh of the variance of the predictions is invisible in the two ALE plots.
+\end{block}}
+\end{framev}
+
+
+\begin{framev}[align=mid]{Main Effect Complexity}
+Approximate each ALE curve by a piecewise linear $g_j$ with $K_j$ segments. Add segments until $R^2(g_j; f_{j,ALE}) \geq 1 - \varepsilon$ (e.g., $\varepsilon = 0.05$); set slopes to zero where the fit stays good enough.
+\begin{definition}
+\vspace{-0.6em}
+\begin{align*}
+\mathrm{MEC}_j &= K_j + \textstyle\sum_{k=1}^{K_j}\I(\beta_{1,k} \neq 0) - 1, \qquad \beta_{1,k}: \text{slope of segment } k\\
+\mathrm{MEC} &= \frac{\sum_j V_j\,\mathrm{MEC}_j}{\sum_j V_j}, \qquad V_j = \frac1n\textstyle\sum_{i} f_{j,ALE}\big(x_j^{(i)}\big)^2
+\end{align*}
+\end{definition}
+\centering
+\begin{tikzpicture}[x=0.9cm, y=0.9cm, every node/.style={font=\scriptsize}]
+  \begin{scope}
+    \draw[->, evgray] (0,0) -- (2.2,0); \draw[->, evgray] (0,0) -- (0,1.5);
+    \draw[very thick, evblue] (0.1,0.2) -- (2.0,1.3);
+    \node at (1.05,-0.35) {linear: $K = 1$, 1 slope};
+    \node at (1.05,-0.75) {$\mathrm{MEC}_j = 1$};
+  \end{scope}
+  \begin{scope}[xshift=3.3cm]
+    \draw[->, evgray] (0,0) -- (2.2,0); \draw[->, evgray] (0,0) -- (0,1.5);
+    \draw[very thick, evblue] (0.1,0.3) -- (1.05,0.3); \draw[very thick, evblue] (1.05,1.2) -- (2.0,1.2);
+    \node at (1.05,-0.35) {step: $K = 2$, 0 slopes};
+    \node at (1.05,-0.75) {$\mathrm{MEC}_j = 1$};
+  \end{scope}
+  \begin{scope}[xshift=6.6cm]
+    \draw[->, evgray] (0,0) -- (2.2,0); \draw[->, evgray] (0,0) -- (0,1.5);
+    \draw[thin, black!40, domain=0.1:2.0, samples=40] plot (\x, {0.25+1.1*sin(deg(1.55*\x))});
+    \draw[very thick, evblue] (0.1,0.42) -- (0.7,1.17) -- (1.4,1.25) -- (2.0,0.45);
+    \node at (1.05,-0.35) {curve: $K = 3$, 3 slopes};
+    \node at (1.05,-0.75) {$\mathrm{MEC}_j = 5$};
+  \end{scope}
+\end{tikzpicture}
+\spacer[0.2]
+\raggedright
+\begin{itemizeS}
+\item One line or one step costs 1; every further segment or slope costs 1 more
+\item Weighting by $V_j$: features with large effects count more
+\end{itemizeS}
+\end{framev}
+
+
+\begin{framev}[align=mid]{Accuracy vs.\ Interpretability as a Pareto Front}
+\splitVTT[0.55]{
+\spacer[0]
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=\linewidth, height=0.6\textheight, axis lines=left,
+  xmin=0, xmax=10, ymin=0, ymax=10, ticks=none,
+  xlabel={complexity, e.g., MEC or IAS}, ylabel={test error},
+  label style={font=\scriptsize}]
+  \addplot[thick, evblue, mark=*, mark options={fill=evblue}] coordinates {(0.8,8.6) (2.2,5.6) (4.0,3.6) (7.0,2.4) (9.2,2.1)};
+  \addplot[only marks, mark=o, thick, evorange] coordinates {(5.5,6.2) (8.0,4.4) (3.2,7.4)};
+  \node[font=\tiny, anchor=west] at (axis cs:0.9,8.9) {linear};
+  \node[font=\tiny, anchor=west] at (axis cs:2.3,5.95) {GAM};
+  \node[font=\tiny, anchor=west] at (axis cs:4.1,3.95) {boosting, shallow};
+  \node[font=\tiny, anchor=south] at (axis cs:8.6,2.5) {boosting, deep};
+  \node[font=\tiny, anchor=west] at (axis cs:5.6,6.5) {deep tree};
+  \node[font=\tiny, evblue, anchor=west] at (axis cs:6.2,0.9) {Pareto front};
+\end{axis}
+\end{tikzpicture}\\
+{\tiny schematic, not real results}
+}{
+\spacer[0]
+\small
+\begin{itemizeS}
+\item Illustrative example!
+\item No single best model: each point on the front is a trade-off
+\item Hollow points are dominated: another model is both simpler and more accurate
+\item Molnar et al.\ demonstrate multi-objective optimization that trades accuracy off against NF, IAS, and MEC \citeref{MOLNAR2020}
+\item AutoML view: multi-objective HPO returns the front; the user picks the trade-off
+\end{itemizeS}
+}
+\end{framev}
+
+
+\begin{framev}[align=mid]{Do Proxies Match Humans?}
+\begin{itemizeM}
+\item Model size as the only criterion of comprehensibility has clear drawbacks; e.g., monotonicity constraints can make models more acceptable to users \citeref{FREITAS2014}
+\item Lage et al.\ ran controlled user studies with \emph{decision sets} in two fictional domains, with simulation, verification, and counterfactual tasks \citeref{LAGE2019}:
+  \begin{itemizeS}
+  \item introducing new concepts (``cognitive chunks'') had the greatest effect on response time
+  \item longer explanations slowed people down less; repeated terms had little effect
+  \item the effects were consistent across tasks and domains
+  \end{itemizeS}
+\end{itemizeM}
+\pause
+\spacer[0.4]
+\begin{block}{Reading}
+Not all ``size'' is equal. A proxy needs human evidence, which brings us to user studies.
+\end{block}
+\end{framev}
+
+
+\begin{framev}[align=mid]{Summary: Measuring How Interpretable a Model Is}
+\begin{itemizeM}
+\item For interpretable models, functionally-grounded evaluation uses model-specific size proxies such as depth, number of rules, or nonzero coefficients. However, they cannot be compared across model classes.
+\item Functional decomposition gives model-agnostic measures: NF counts the features used, IAS measures what the first-order ALE model misses, and MEC counts the line segments needed to describe the main effects.
+\item Accuracy and complexity form a Pareto front, which turns model selection into a multi-objective problem.
+\item Size proxies need human validation. In user studies, new concepts cost more time than longer explanations.
+\end{itemizeM}
+\end{framev}
+
+
+\endlecture
+\end{document}
