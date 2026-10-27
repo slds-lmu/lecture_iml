@@ -1,0 +1,54 @@
+::: {.content-hidden when-format="pdf"}
+::: {.hidden}
+<!-- Math macros of the sheets: latex-math's combined.qmd (generated from its .tex
+files), read by Pandoc as raw TeX and applied to every formula, in the HTML and the
+PDF. The definitions themselves would also reach the LaTeX output, so they must stay
+in this block, which is hidden in the PDF. (combined.qmd starts and ends with a stray
+$$; its blank lines keep that from turning the definitions into math.)
+The two lines below map what sheets write in their own formulas (e.g. \bm in I2ML's
+nn.qmd, \mathds as in the slides): combined.qmd only maps its own uses, and neither
+MathJax nor Quarto's LaTeX template knows these commands. -->
+
+%%% START: additionally to latex-math, we need this
+\renewcommand{\bm}{\boldsymbol}
+\renewcommand{\mathds}{\mathbb}
+%%% END
+
+{{< include /../latex-math/combined.qmd >}}
+:::
+<div id="solution-buttons-header">
+
+<script>
+// "Show All Solutions" / "Hide All Solutions": opens or closes every solution
+// block (.sol) and everything nested in it; hints outside solutions stay as they are
+function toggleAllSolutions() {
+  const sols = document.querySelectorAll('.sol details');
+  const open = !Array.from(sols).every(d => d.open);
+  sols.forEach(d => { d.open = open; });
+  const btn = document.getElementById('toggle-solutions-btn');
+  btn.textContent = open ? 'Hide All Solutions' : 'Show All Solutions';
+  btn.classList.toggle('btn-success', open);
+  btn.classList.toggle('btn-danger', !open);
+}
+
+// The R/Python tabsets form one Quarto tabset group (group="language"):
+// selecting a tab selects that language in every tabset, and Quarto keeps the
+// choice for the next sheet. "Only R" / "Only Python" just select such a tab.
+// (theme.scss hides both buttons on sheets without these tabsets.)
+function showLanguage(lang) {
+  const tab = Array.from(document.querySelectorAll('.panel-tabset[data-group="language"] .nav-link'))
+    .find(a => a.textContent.trim() === lang);
+  if (tab) tab.click();
+}
+</script>
+
+::: {.content-visible when-profile="solution"}
+[Show All Solutions]{.btn .btn-danger .btn-sm role="button" id="toggle-solutions-btn" onclick="toggleAllSolutions()"}
+:::
+
+[[Only R]{.btn .btn-primary .btn-sm role="button" onclick="showLanguage('R')"} |]{data-lang="R"}
+[[Only Python]{.btn .btn-primary .btn-sm role="button" onclick="showLanguage('Python')"} |]{data-lang="Python"}
+[Print]{.btn .btn-secondary .btn-sm role="button" onclick="window.print()"}
+
+</div>
+:::

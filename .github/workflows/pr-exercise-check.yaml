@@ -1,0 +1,109 @@
+# Source version of this workflow lives in https://github.com/slds-lmu/lecture_service/service/.github/workflows
+# Please only update by copying from there to avoid divergences
+# Render check of the Quarto exercise sheets (lecture_service: exercises-template/):
+# - renders exercise PDF, solution HTML and solution PDF of every chapter the pull
+#   request touches (all chapters if shared files or latex-math changed)
+# - fails if a render fails or an _ex.pdf contains "Solution"
+# - uploads the rendered files as an artifact
+# The logic is in exercises/_quarto/check.sh, which also runs locally (make -C exercises check).
+# Does nothing in lectures without exercises/_lecture.yml, i.e. without the template.
+# Note: pull requests opened by other workflows with the default token (e.g. update-latex-math)
+# trigger no workflows; start this one by hand for them (Actions tab, "Run workflow").
+on:
+  # Allow manually triggering the workflow via GitHub website, gh CLI tool etc.: checks all chapters
+  workflow_dispatch:
+  # Only on pull requests where files in these folders change
+  pull_request:
+    paths:
+      - "exercises/**"
+      - "latex-math/**"
+      - ".github/workflows/pr-exercise-check.yaml"
+
+name: pr-exercise-check
+
+jobs:
+  pr-exercise-check:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      # Quarto version the sheets are rendered with (exercises/README.md, section 9)
+      QUARTO_VERSION: "1.10.19"
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          # full history: the changed files are taken from the diff against the base branch
+          fetch-depth: 0
+          # Don't show progress bar, very verbose for large repos
+          show-progress: false
+
+      # A step can't end the job early, so every later step checks this output
+      - name: Check whether the lecture uses the exercise template
+        id: gate
+        run: |
+          if [ -f exercises/_lecture.yml ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "exercises/_lecture.yml not found: this lecture doesn't use the exercise template, nothing to check."
+          fi
+
+      # TinyTeX via Quarto: Quarto installs missing LaTeX packages while rendering
+      - name: Set up Quarto and TinyTeX
+        if: steps.gate.outputs.enabled == 'true'
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: ${{ env.QUARTO_VERSION }}
+          tinytex: true
+
+      - name: Set up R
+        if: steps.gate.outputs.enabled == 'true'
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Get R library dir for caching
+        if: steps.gate.outputs.enabled == 'true'
+        id: r-cache
+        run: echo "dir=$(Rscript --quiet -e 'cat(.libPaths()[[1]])')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache R packages
+        if: steps.gate.outputs.enabled == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.r-cache.outputs.dir }}
+          key: ${{ runner.os }}-r-exercises-${{ hashFiles('exercises/*/*.qmd', 'exercises/_quarto/deps.R', 'exercises/_lecture/*.R') }}
+          restore-keys: |
+            ${{ runner.os }}-r-exercises-
+
+      # knitr, rmarkdown and the packages loaded in the sheets' R chunks (no notebooks: rendering doesn't run them)
+      - name: Install R packages used by the sheets
+        if: steps.gate.outputs.enabled == 'true'
+        run: Rscript exercises/_quarto/deps.R --install
+
+      - name: Install pdftotext
+        if: steps.gate.outputs.enabled == 'true'
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
+      - name: Render check
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            git diff --name-only "$BASE_SHA"...HEAD | bash exercises/_quarto/check.sh --changed
+          else
+            bash exercises/_quarto/check.sh
+          fi
+
+      - name: Upload rendered sheets
+        if: always() && steps.gate.outputs.enabled == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-exercises
+          path: |
+            exercises/*/*.html
+            exercises/*/*_ex.pdf
+            exercises/*/*_all.pdf
+          if-no-files-found: ignore

@@ -1,0 +1,145 @@
+/*-- scss:defaults --*/
+// Skip the theme's Google Fonts import (Lato): no font download and no request to Google.
+// The text uses the next fonts in flatly's list, i.e. the reader's system font
+// (San Francisco on Apple devices, Segoe UI on Windows, Roboto on Android, Arial otherwise).
+$web-font-path: false;
+
+$link-color: #6495ed;
+$callout-color-tip: #40e0d0;
+$callout-color-warning: #ffbd33;
+
+// Add code font size
+$code-font-size: 0.89em; // Adjust this value as needed
+
+/*-- scss:rules --*/
+code,
+pre code {
+    font-size: $code-font-size !important;
+}
+
+// For print media (when printing HTML to PDF)
+@media print {
+
+    code,
+    pre code {
+        font-size: 0.97em !important;
+    }
+}
+
+// CSS of the sheets:
+// 1. indentation of the two block types of filters.lua (.sol, .indent)
+// 2. list numbering a), b), c) instead of 1., 2., 3. or a., b., c., restarting in every exercise
+// 3. the toolbar (header.qmd) and printing from the browser
+
+/* The two block types of filters.lua: indented by one list level,
+   i.e. aligned with the text of the subtasks a), b), ... */
+.indent,
+.sol {
+    margin-left: 2em;
+}
+
+/* List numbering a), b), c) */
+section.level2,
+.level2 {
+    counter-reset: list-alpha;
+}
+
+ol[type="a"] {
+    list-style-type: none;
+}
+
+ol[type="a"]>li {
+    counter-increment: list-alpha;
+    position: relative;
+}
+
+ol[type="a"]>li::before {
+    content: counter(list-alpha, lower-alpha) ") ";
+    position: absolute;
+    left: -1.4em;
+}
+
+/* Increase body font size for callout tips */
+.callout-tip.callout-style-default .callout-body {
+    font-size: 1rem !important;
+}
+
+/* Incease body and title fond size for callout notes*/
+.callout-note.callout-style-default .callout-header,
+.callout-note.callout-style-default .callout-body,
+.callout-note.callout-style-default .callout-title {
+    font-size: 1rem !important;
+}
+
+/* Toolbar (header.qmd): stays at the top while scrolling */
+#solution-buttons-header {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+    z-index: 1000;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+/* Printing ("Print" button): only the sheet, without toolbar and sidebars */
+@media print {
+    @page {
+        margin: 2cm;
+    }
+
+    #solution-buttons-header {
+        display: none !important;
+    }
+
+    .quarto-header, #quarto-header,
+    .quarto-sidebar, #quarto-sidebar,
+    .quarto-margin-sidebar, #quarto-margin-sidebar,
+    .nav-footer, #footer {
+        display: none !important;
+    }
+
+    .page-columns {
+        display: block !important;
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+    }
+
+    .content, #quarto-content {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+
+    body {
+        font-size: 10pt;
+        color: black;
+        background: white;
+    }
+
+    .main {
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+
+    pre, blockquote, .cell-output {
+        page-break-inside: avoid;
+    }
+
+    a {
+        text-decoration: none !important;
+        color: black !important;
+    }
+}
+
+/* No "Only R" / "Only Python" on sheets without R/Python tabsets (pen-and-paper
+   sheets); every tabset of the group has both languages */
+body:not(:has(.panel-tabset[data-group="language"])) #solution-buttons-header [data-lang] {
+    display: none;
+}
