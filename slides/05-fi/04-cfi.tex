@@ -1,0 +1,265 @@
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{preamble-slides}
+\input{basic-math}
+\input{basic-ml}
+\input{ml-interpretable}
+
+% Defines macros and environments
+
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+%\bibliography{feature-importance}
+
+\begin{document}
+
+\titlemeta{
+Conditional Feature Importance (CFI)
+}{
+figure_man/feature-importance.png
+}{
+\item Extrapolation and Conditional Sampling
+\item Conditional Feature Importance (CFI)
+\item Interpretation of CFI and difference to PFI
+}
+	% Set style/preamble.Rnw as parent.
+	
+	% Load all R packages and set up knitr
+	
+	% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+	% parent file
+	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+	
+	% Defines macros and environments
+	
+% 	\input{basic-math}
+% 	\input{basic-ml}
+% 	\input{../../latex-math/ml-interpretable.tex
+
+
+	
+	% ------------------------------------------------------------------------------
+
+%TODO: Add CFI sampling: Conditional subgroup, knockoffs/CPI, others?
+%TODO: Add more on when to use conditional, when marginal?
+%TODO: Conditioning on everything is not a good idea: CFI=0 for highly correlated variables? Other examples? Relative Importance (Gunnar)?
+
+% CFI IDEA
+\begin{framev}[align=top]{CFI Motivation}
+\begin{itemize}[<+->]
+\item \textbf{PFI Idea:} Replace feature(s) $X_S$ with perturbed $\tilde X_S$ to preserve marginal distr. $\P(X_S)$ so that $\tilde X_S \indep Y$ (indep.), e.g., by random permutations
+\item \textbf{Problem:} Breaks not only association between $X_S$ and $Y$ (what we want) but also between $X_S$, $X_{-S}$ $\Rightarrow$ $\P(X_S, X_{-S}) \neq \P(\tilde X_S, X_{-S})$ (extrapolation)
+\item \textbf{CFI Idea:} Replace feature(s) $X_S$ with perturbed $\tilde X_S$ to preserve joint distr. so that $\P(X_S, X_{-S}) = \P(\tilde X_S, X_{-S})$ (no extrapolation) while still $\tilde X_S \indep Y$
+\end{itemize}
+%\\
+%\lz
+%\\
+%\lz
+\spacer[0.25]
+\visible<4>{
+\textbf{Example:} Conditional permutation scheme\\
+\spacer[0.25]
+\textbf{Black dots:} $X_2 \sim \mathcal{U}(0,1)$ and 
+$X_1 \sim \mathcal{N}(0,1)$ (if $X_2 < 0.5$) or $\mathcal{N}(4,4)$ \\(if $ X_2 \geq 0.5$)\\
+\spacer[0.25]
+\splitVTT[0.43]{
+\spacer[0]
+\image{figure_man/conditional_sampling.pdf}
+\begin{center}
+\furtherreading{MOLNAR2020}
+\end{center}
+}{
+\textbf{Left:} For $X_2<0.5$, permuting $X_1$ (crosses) preserves marginal (but not joint) distrib. \\
+$\leadsto$ Bottom: Marginal density of $X_1$\\
+\spacer[0.25]
+\textbf{Right:} Permuting $X_1$ within subgroups $X_2<0.5$ \& $X_2\geq 0.5$ reduces extrapolation\\
+$\leadsto$ Bottom: $X_1$-density cond. on groups
+}
+}
+\end{framev}
+
+
+%TODO: Changed in PFI slides? Also change here!
+% RECAP EXTRAPOLATION
+\begin{framev}[align=top]{Recall: Extrapolation in PFI}
+\textbf{Recall:}
+Let $y = x_3 + \epsilon_y$, with $\epsilon_y \sim \mathcal{N}(0, 0.1)$.
+\begin{itemizeM}
+\item $x_1 := \epsilon_1$, $x_2 := x_1 + \epsilon_2$; highly correlated ($\epsilon_1 \sim \mathcal{N}(0,1)$, $\epsilon_2 \sim \mathcal{N}(0, 0.01)$)
+\item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$; all noise terms $\epsilon_j$ are indep.
+\item Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
+\end{itemizeM}
+\image{figure_man/pfi_hexbin_extrapolation.pdf}
+Hexbin plot of $(x_1, x_2)$ before (left) and after (center) permuting $x_1$;  
+\\PFI scores (right).
+\begin{itemizeS}
+\item[$\Rightarrow$] $x_1, x_2$ cancel in $\hat{f}$ and should be irrelevant
+\item[$\Rightarrow$] But PFI evaluates model on unrealistic inputs (caused by permutation)\\
+$\leadsto$ $PFI > 0$ for $x_1, x_2$ due to extrapolation\\
+$\leadsto$ $x_1, x_2$ are misleadingly considered relevant
+\end{itemizeS}
+\end{framev}
+
+
+%  % CONDITIONAL SAMPLING PRESERVES THE JOINT
+%  \begin{frame}{Conditional Sampling preserves the Joint}
+
+%  Let $\pert{x}{S}{-S} = (\pert{x}{S}{-S}_S, x_{-S})$ be the feature vector where feature values $x_S$ were replaced with an independent sample from $\P(x_S|x_{-S})$ while all other remaining feature values $x_{-S}$ stay the same. %We partition $\pert{x}{S}{-S}$ into $(\pert{x}{S}{-S}_S, x_{-S})$ containing features indexed by $S$ and the remaining features by $-S$). 
+%  Using the definition of conditional probability:
+% %
+% \begin{align*}
+%   \P(\pert{x}{S}{-S}) = \P(\pert{x}{S}{-S}_S, x_{-S}) &= \P(\pert{x}{S}{-S}_S|x_{-S}) \P(x_{-S})\\
+%   &= \P(x_S|x_{-S}) \P(x_{-S}) =  \P(x_S, x_{-S})= \P(x)
+% \end{align*}
+% \pause
+
+% Consequence: The joint distribution is preserved in the perturbed dataset.\\
+% $\Rightarrow$ CFI only evaluates the model within the observational covariate distribution\\
+%  \lz
+%  \textbf{Note:} That does not imply $\P(x,y) = \P(\pert{x}{S}{-S}, y)$! In the perturbed data, the relationship between $x_S$ and $y$ may still be destroyed (if $x_S$ is not independent from $y | x_{-S}$).\\
+%  \end{frame}
+
+
+
+% CFI DEFINITION
+\begin{framev}[align=top]{CFI \furtherreading{STROBL2008} \furtherreading{HOOKER2021}}
+CFI for $X_S$ using test data $\D$:
+\begin{itemizeM}
+\item Measure the error {\color{blue}\textbf{with unperturbed features $x_S$}}.
+\item Measure the error \textbf{\color{red}with perturbed feature values $\pert{x}{}{}_S \sim \P(X_S|X_{-S})$}
+\item Repeat perturbing $X_S$ (e.g., $m$ times) and avg. difference of both errors:
+$$\widehat{CFI}_S = \tfrac{1}{m} \textstyle\sum\nolimits_{k = 1}^{m} \riske (\fh, {\color{red}\pert{\D}{S}{-S}_{(k)}}) - \riske (\fh, {\color{blue}\D})$$
+\end{itemizeM}
+Here, $\pert{\D}{S}{-S}$ denotes data, where $x_S$ values are conditionally resampled given $x_{-S}$.\\
+\spacer[0.25]
+\textbf{Illustrative example:} Conditional permutation when $X_{-S}$ is categorical:
+\spacer[0.5]
+\begin{scriptsize}
+\splitVTT[0.5]{
+\centering
+\textbf{Original Data}\\
+\rowcolors{2}{white}{gray!10}
+\begin{tabular}{ccc}
+\toprule
+ID & $X_{-S}$ & $X_S$ \\
+\midrule
+1 & \cellcolor{blue!10}A & \cellcolor{blue!10}3.1 \\
+2 & \cellcolor{blue!10}A & \cellcolor{blue!10}2.7 \\
+3 & \cellcolor{blue!10}A & \cellcolor{blue!10}3.4 \\
+\midrule
+4 & \cellcolor{red!10}B & \cellcolor{red!10}6.0 \\
+5 & \cellcolor{red!10}B & \cellcolor{red!10}5.4 \\
+6 & \cellcolor{red!10}B & \cellcolor{red!10}6.2 \\
+\bottomrule
+\end{tabular}
+\spacer[0.25]
+}{
+\centering
+\textbf{Permuted Conditionally on $X_{-S}$}\\
+\rowcolors{2}{white}{gray!10}
+\begin{tabular}{ccc}
+\toprule
+ID & $X_{-S}$ & $X_S$ \\
+\midrule
+1 & \cellcolor{blue!10}A & \cellcolor{blue!10}2.7 \\
+2 & \cellcolor{blue!10}A & \cellcolor{blue!10}3.1 \\
+3 & \cellcolor{blue!10}A & \cellcolor{blue!10}3.4 \\
+\midrule
+4 & \cellcolor{red!10}B & \cellcolor{red!10}6.2 \\
+5 & \cellcolor{red!10}B & \cellcolor{red!10}6.0 \\
+6 & \cellcolor{red!10}B & \cellcolor{red!10}5.4 \\
+\bottomrule
+\end{tabular}
+\spacer[0.25]
+}
+\end{scriptsize}
+\spacer[0.5]
+
+Here, $X_S$ is permuted \textit{within} each group of $X_{-S}$ to preserve $\mathbb{P}(X_S, X_{-S})$.
+%\footnote[frame]{\fullcite{Strobl2008}}
+\end{framev}
+
+
+%TODO: What is meant by "mechanistically"?
+% INTERPRETATION OF CFI
+\begin{framev}[align=top]{Implications of CFI \furtherreading{KNIGET2020}}
+\textbf{Interpretation:} Due to the conditional sampling w.r.t. all other features, CFI quantifies a feature's unique contribution to the model performance.\\
+\spacer[0.25]
+\pause
+\textbf{Entanglement with data:}
+\begin{itemizeM}
+\item If feat $x_S$ does not contrib. unique information about $y$, i.e., $x_S \indep y | x_{-S}$\\
+$\Rightarrow$ CFI $= 0$
+\item Why? Under the conditional indep.
+$\P(\pert{X}{}{}_S, X_{-S}, Y) = \P(X_S, X_{-S}, Y)$
+\\
+$\leadsto$ no prediction-relevant information is destroyed by permutation of $x_S$ conditional on $x_{-S}$
+\end{itemizeM}
+\spacer[0.25]
+\pause
+\textbf{Entanglement with model:}
+\begin{itemizeM}
+\item If the model does not use a feature $\Rightarrow$ CFI $= 0$
+\item Why? Then the prediction is not affected by any perturbation of the feat\\
+$\leadsto$ model performance does not change after conditional permutation
+\end{itemizeM}
+%\footnote[frame]{\fullcite{konig_relative_2021}}
+\end{framev}
+
+
+% IMPLICATIONS OF CFI
+\begin{framev}[align=top]{Implications of CFI}
+Can we gain insight into whether ...
+\begin{enumerate}
+\item<1-3> the feature $x_j$ is causal for the prediction?
+\begin{itemizeS}
+\item $CFI_j \neq 0$ $\Rightarrow$ model relies on $x_j$ \\(converse does not hold, see next slide)
+\end{itemizeS}
+\item<2-3> the variable $x_j$ contains prediction-relevant information?
+\begin{itemizeS}
+\item If $x_j \not \indep y$ but $x_j \indep y | x_{-j}$ (e.g., $x_j$ and $x_{-j}$ share information) \\$\Rightarrow$ $CFI_j = 0$
+\item $x_j$ is not exploited by model (regardless of its usefulness for $y$) \\$\Rightarrow$ $CFI_j = 0$
+\end{itemizeS}
+\item<3> Does the model need access to $x_j$ to achieve its prediction performance?
+\begin{itemizeS}
+\item $CFI_j \neq 0 \Rightarrow$ $x_j$ contributes unique information (meaning $x_j \not \indep y | x_{-j}$)
+\item Only uncovers the relationships that were exploited by the model
+\end{itemizeS}
+\end{enumerate}
+\end{framev}
+
+
+%TODO: Better example? 
+% RECAP EXTRAPOLATION
+\begin{framev}[align=top]{Extrapolation: Compare PFI and CFI}
+\textbf{Recall:} Let $y = x_3 + \epsilon_y$, with $\epsilon_y \sim \mathcal{N}(0, 0.1)$.
+\begin{itemizeM}
+\item $x_1 := \epsilon_1$, $x_2 := x_1 + \epsilon_2$; highly correlated ($\epsilon_1 \sim \mathcal{N}(0,1)$, $\epsilon_2 \sim \mathcal{N}(0, 0.01)$)
+\item $x_3 := \epsilon_3$, $x_4 := \epsilon_4$, with $\epsilon_3, \epsilon_4 \sim \mathcal{N}(0,1)$; all noise terms $\epsilon_j$ are indep.
+\item Fitting a linear model yields $\hat{f}(\xv) \approx 0.3 x_1 - 0.3 x_2 + x_3$
+\end{itemizeM}
+\begin{figure}
+%\hfill
+\splitVCompact{0.28}{0.65}{
+\image{figure_man/pfi_hexbin_pre.pdf}
+\spacer[0]
+}{
+\image{figure_man/cfi_pfi.pdf}
+\spacer[0]
+}
+\caption{Density plot for $x_1, x_2$ before permuting $x_1$ (left). PFI and CFI (right).}
+\end{figure}
+\begin{itemizeS}
+\item $x_1$ and $x_2$ cancel in $\fh(\xv)$ and should be irrelevant for the prediction
+\item PFI evaluates model on unrealistic obs. \\$\leadsto$ $x_1$, $x_2$ appear relevant (PFI $> 0$)
+\item CFI evaluates model on realistic obs. (due to conditional sampling) \\
+$\leadsto$ $x_1$, $x_2$ appear irrelevant (CFI $= 0$)
+\end{itemizeS}
+\end{framev}
+
+% \begin{frame}{Bibliography}
+%   \printbibliography
+% \end{frame}
+
+\endlecture
+\end{document}
