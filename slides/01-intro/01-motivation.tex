@@ -1,0 +1,170 @@
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{preamble-slides}
+\input{basic-ml}
+\input{basic-math}
+
+% \usepackage{../../style/lmu-lecture}
+
+% Defines macros and environments
+
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+
+\begin{document}
+
+% \newcommand{\titlefigure}{figure/performance_vs_interpretability}
+% \newcommand{\learninggoals}{
+% \item Why interpretability?
+% \item Developments until now?
+% \item Use cases for interpretability}
+
+
+% \lecturechapter{Introduction, Motivation, and History}
+% \lecture{Interpretable Machine Learning}
+
+\titlemeta{
+Introduction, Motivation, and History
+}{
+figure/performance_vs_interpretability
+}{
+\item Why interpretability?
+\item Developments until now?
+\item Use cases for interpretability
+}
+
+
+\begin{framev}[align=top]{Why Interpretability?}
+% 		\begin{itemize}
+% 			\item Machine learning (ML) has a huge potential to aid the decision-making process in various applications.
+% 			\pause
+% 			\smallskip
+% 			\item ML models often are intransparent black boxes, e.g., XGBoost, RBF SVM, or NNs.
+% 			\begin{itemize}
+% 				\item[$\rightarrow$] too complex to be understood by humans.
+% 			\end{itemize}
+% 			\smallskip
+% 			\item A lack in explanations diminishes trust in the model and creates barriers for adoption, especially in areas with critical decision-making consequences, e.g., medicine.
+% 			\smallskip
+% 			\item Such disciplines often rely on traditional models,\\ e.g., linear models, with less predictive performance.
+% 			\smallskip
+% 			\item Interpretable machine learning (IML) aims to bridge the gap between interpretability and predictive performance.
+% 		\end{itemize}
+% new
+%\splitVTT[0.7]{
+\begin{itemizeM}
+\item ML aids decision-making in applications through strong predictive performance
+%\pause
+%\smallskip
+\item ML models are black boxes, e.g., XGBoost, RBF SVM, or DNNs\\
+$\leadsto$ too complex to be understood by humans
+\item Some applications are ``learn to understand'', not ``learn to predict''
+%\pause
+\item<2-> When deploying ML models, lack of explanations
+\begin{enumerate}
+\item reduces trust
+\item creates barriers to adoption
+\end{enumerate}
+%\only<4->{\item[$\leadsto$] Hard to adapt in critical areas when decisions affect human life}
+\item<2->[$\leadsto$] Many disciplines with required trust rely on traditional models,\\
+e.g., linear models, despite lower predictive performance
+\end{itemizeM}
+\only<2->{\imageC[0.65]{figure/performance_vs_interpretability.pdf}}
+%}{
+%\spacer[0.25]
+%\centering
+%\image[0.72]{figure/nn_model.png}\\
+%\image{figure/nn_landscape.png}
+%}
+\end{framev}
+
+
+\begin{framev}[align=top]{Interpretability in High-stakes Decisions}
+Examples of critical areas where ML-based decisions can affect human life\\
+\spacer[0.25]
+\splitVTT[0.57]{
+\begin{itemizeM}
+\item Credit scoring and insurance applications
+% \citebutton{Society of Actuaries}{https://www.soa.org/resources/research-reports/2021/interpretable-machine-learning}
+\furtherreading{SOCIETYOFACTUARIES2021}
+\begin{itemizeS}
+\item Reasons for not granting a loan
+\item Fraud detection in insurance claims
+\end{itemizeS}
+\item<2-> Medical applications
+\begin{itemizeS}
+\item Identification of diseases
+%\item Chance of recovering
+\item Recommendations of treatments
+\end{itemizeS}
+\item<2-> \ldots
+\end{itemizeM}
+}
+{
+\spacer[0.25]
+\centering
+\includegraphics<1->[page=1,width=\textwidth,trim=0 250 0 0,clip]{figure/counterfactual.pdf}
+\only<2->{\imageC[1][MILIARD2020]{figure/medicine.png}}
+}
+\end{framev}
+
+
+\begin{framev}[align=top]{Need for interpretability}
+Need for interpretability becoming increasingly important from a legal perspective
+\begin{itemizeM}
+\item General Data Protection Regulation (GDPR) requires for some applications that models have to be explainable
+% old
+% \citebutton{Goodman \& Flaxman (2017)}{https://doi.org/10.1609/aimag.v38i3.2741}
+% new
+\furtherreading{GOODMANFLAXMAN2017}\\
+\item[$\leadsto$] \textit{EU Regulations on Algorithmic Decision-Making and a ``Right to Explanation''}
+\item \textit{Ethics guidelines for trustworthy AI}
+% old
+% \citebutton{European Commission (2019)}{https://doi.org/10.2759/346720}
+% new
+\furtherreading{EUROPEANCOMMISSION2019}
+\end{itemizeM}
+\imageC[0.76]{figure/rightstoexplain.jpg}
+% source https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm
+\end{framev}
+
+
+% \begin{frame}{Performance vs. Interpretability}
+%     \centering\includegraphics[width=0.7\textwidth]{figure/performance_vs_interpretability.png}
+%     % Quelle: https://docs.google.com/presentation/d/12ZPrTjBKEUT-7drdyUJCQGK0oHVDtYIVd2_6byE62f0/edit?usp=sharing
+%     %\centering \citebutton{Scott Fortmann-Roe (2012)}{http://scott.fortmann-roe.com/docs/BiasVariance.html}
+% \end{frame}
+
+
+\begin{framev}[align=top]{Brief History of Interpretability}
+\splitVTT[0.65]{
+\begin{itemizeM}
+\item 18th/19th century:\\Linear models (Gauss, Legendre, Quetelet)
+\item Mid-20th century:\\Emergence of sensitivity analysis
+\item Mid- to late 20th century:\\Rule-based ML, incl. decision rules and trees
+\item Early 2000s:\\Interpretation tools for ensembles:
+\begin{itemizeS}
+\item variable importance for random forests
+\item partial dependence for gradient boosting
+\end{itemizeS}
+\item Early 2010s:\\Explainability methods for deep learning
+\item Late 2010s:\\IML / XAI as a distinct research area
+\end{itemizeM}
+}{
+\spacer[0.25]
+\centering
+\image[0.7]{figure/Carl_Friedrich_Gauss_1828.jpg}\\
+% old
+% \centering \citebutton{Carl Friedrich Gauss}{https://commons.wikimedia.org/w/index.php?curid=2404149}
+% \centering \citebutton{Wikipedia}{https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss}
+% new
+\furtherreading{GAUSS1828}
+\furtherreading{WIKIPEDIAGAUSS}\\
+\spacer[0.25]
+\image{figure/Random_Forest.png}
+% https://docs.google.com/presentation/d/15HjwMHdTtZ9N0cniUPsiztRSRg1UDY3Y5M8tXsaqt2I/edit?usp=sharing
+}
+\end{framev}
+
+\endlecture
+\end{document}

@@ -1,0 +1,331 @@
+\documentclass[10pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{preamble-slides}
+\input{basic-math}
+\input{basic-ml}
+
+% Defines macros and environments
+ 
+% \author{LMU}
+%\institute{\href{https://compstat-lmu.github.io/lecture_iml/}{compstat-lmu.github.io/lecture\_iml}}
+%\bibliography{feature-importance}
+
+\begin{document}
+
+
+\titlemeta{
+Intro to Loss-based Feature Importance
+}{
+figure_man/feature-importance.png
+}{
+\item Understand motivation for feature importance
+\item Develop an intuition for possible use-cases
+\item Know characteristics of feature importance methods
+}
+% Set style/preamble.Rnw as parent.
+	
+	% Load all R packages and set up knitr
+	
+	% This file loads R packages, configures knitr options and sets preamble.Rnw as 
+	% parent file
+	% IF YOU MODIFY THIS, PLZ ALSO MODIFY setup.Rmd ACCORDINGLY...
+	
+	% Defines macros and environments
+
+	
+	% ------------------------------------------------------------------------------
+
+\begin{framei}[align=top]{Motivation}
+\item<1-3> \textbf{Feature effects} describe how a feature $x_j$ influences the prediction $\hat{y}$
+  %describe the relationship of features $x$ with the prediction $\yh$
+\begin{itemizeS}
+\item requires one plot per feature (e.g., PDPs, ALEs)
+\item purely model-based; ignores true target $y$ %does not take the true target $y$ into account
+\end{itemizeS}
+\item<2-3> \textbf{Feature importance} quantifies how much each $x_j$ contributes to prediction error%methods quantify the relevance of features w.r.t. prediction performance
+\begin{itemizeS}
+\item condenses information into one number per feature
+\item typically compares prediction errors (involves $y$) with/without feature
+\end{itemizeS}
+\item<3> \textbf{Clarification:} By \emph{feature importance}, we mean \emph{loss-based} methods that assess a feature's impact via changes in \emph{prediction error}. \\
+$\leadsto$
+Other notions exist (e.g., variance-based methods; see \furtherreading{GREENWELL2020}).
+\end{framei}
+
+
+\begin{framev}[align=top]{Example}
+Feature importance provides a condensed summary of feature relevance \\
+w.r.t. performance \\
+\spacer[0.25]
+\begin{itemizeM}
+\item Fit random forest on bike sharing data
+\item Left: Feature importance ranking by permutation feature importance (PFI)
+\item Right: Feature effects for all features
+\end{itemizeM}
+\spacer[0.25]
+\splitVTT[0.37]{
+\spacer[0]
+\imageC[0.98]{figure_man/bike_pfi}
+}{
+\spacer[0]
+\imageC{figure_man/bike_pdp+ice}
+}
+\end{framev}
+
+
+\begin{framev}[align=top]{Feature Importance - Differences \furtherreading{EWALD2024}}
+Many loss-based feature importance methods exist, which mainly differ in \\
+\spacer[0.25]
+\textbf{(1) How they ``remove'' or ``perturb'' the feature of interest (FOI) $X_j$}
+\begin{itemizeM}
+\item \textbf{Remove $X_j$ and refit:} Drop the $X_j$ and retrain model without it %(LOCO)
+\item \textbf{Perturb $X_j$:} Replace $X_j$ by $\tilde X_j$ sampled from \textit{marginal}/\textit{conditional} distrib. % (PFI/CFI)
+\item \textbf{Marginalize $X_j$:} integrate out $X_j$ via \textit{marginal} or \textit{conditional} distribution %(mSAGE/cSAGE)
+\end{itemizeM}
+\pause
+\spacer[0.25]
+\textbf{(2) How they compare model performance before and after feat. removal}
+\begin{itemizeM}
+\item \textbf{Compare ``reduced model'' without FOI vs. full model}: \\
+Measure drop in performance when FOI is ``removed'' \\
+$\leadsto$ Similar idea as backward feature elimination  % (LOCO, PFI, CFI)
+\item \textbf{Compare ``empty model'' (no features) vs. model with only FOI}: \\
+Measure gain in performance when only FOI is used \\
+$\leadsto$ Similar idea as forward feature selection %(LOCI)%\\
+\item \textbf{Compare models with/without FOI across different feature sets}: \\
+Measure average contrib. when FOI joins any feat. set (Shapley-based) %(cSAGE, mSAGE)%\\
+\end{itemizeM}
+\pause
+\spacer[0.25]
+\textit{Depending on the different removal/perturbation and comparison strategies, feat. imp. methods provide insight into different aspects of model and data.}
+\end{framev}
+
+
+\begin{framev}[align=top]{Potential Interpretation Goals}
+Feature importance methods provide condensed insights, but only into specific aspects of model and data.
+Interpretation goals often differ and typically address non-overlapping questions (except for special cases). \\
+\spacer[0.5]
+For example, one may be interested in getting insight into whether the ...
+\begin{enumerate}
+\item[(1)] feature $x_j$ is causal for the prediction?
+\item[(2)] feature $x_j$ contains prediction-relevant information about $y$?
+\item[(3)] model requires access to $x_j$ to achieve its prediction performance?
+\end{enumerate}
+\end{framev}
+
+
+\begin{framev}[align=top]{Example: Causal for the prediction (1)}
+A feature may be causal for $\yh$ (1) without containing prediction-relevant information about $y$ (2)
+\spacer[0.5]
+\splitVTT[0.49]{
+\spacer[0]
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=1, line width=0.25mm, black, fill=white}]
+		%
+\node[draw, ellipse, scale=0.7] (x7) at (0, 2) {contacts};
+\node[draw, ellipse, scale=0.7] (x0) at (0, 1) {trust};
+\node[draw, ellipse, scale=0.7] (x1) at (0, 0) {vaccinated};
+\node[draw, ellipse, scale=0.7] (x4) at (0, -1) {test};
+		%\node[draw, ellipse, scale=0.7] (x5) at (0, -2) {compliance};
+\node[draw, ellipse, scale=0.7] (y) at (-1.5,-.5) {$Y$: COVID risk};
+\node[draw, ellipse, scale=0.7] (x6) at (0, -2) {noise};
+\draw[dashed,gray] (-2.6,-2.5) -- (1,-2.5) -- (1,2.5) -- (-2.6,2.5) -- cycle;
+\node[scale=0.7] (dots) at (-0.75,-2.75) {data level};
+\draw[->] (x0) -- (x1);
+\draw[->] (x1) -- (y);
+\draw[->] (y) -- (x4);
+		%\draw[->] (x5) -- (x4);
+\draw[->] (x7) -- (y);
+		%\draw[-] (xd) -- (y);
+		
+\node[draw, ellipse, scale=0.7] (ux7) at (2, 2) {\texttt{cnt}};
+\node[draw, ellipse, scale=0.7] (ux0) at (2, 1) {\texttt{trust}};
+\node[draw, ellipse, scale=0.7, fill=orange] (ux1) at (2, 0) {\texttt{vac}};
+\node[draw, ellipse, scale=0.7, fill=orange] (ux4) at (2, -1) {\texttt{test}};
+		%\node[draw, ellipse, scale=0.7, fill=orange] (ux5) at (2,-2) {\texttt{cmpl}};
+\node[draw, ellipse, scale=0.7, fill=orange] (ux6) at (2,-2) {\texttt{noise}};
+\draw[dashed,gray] (1.25,-2.5) -- (3.3,-2.5) -- (3.3,2.5) -- (1.25,2.5) -- cycle;
+\node[scale=0.7] (dots) at (2.3,-2.75) {model level};
+\draw[->, dotted] (x1) -- (ux1);
+\draw[->, dotted] (x4) -- (ux4);
+\draw[->, dotted] (x0) -- (ux0);
+		%\draw[->, dotted] (x5) -- (ux5);
+\draw[->, dotted] (x6) -- (ux6);
+\draw[->, dotted] (x7) -- (ux7);
+		
+\node[draw, circle, scale=0.7] (yhat) at (3, -.5) {$\hat{Y}$};
+\draw[->] (ux1) -- (yhat);
+\draw[->] (ux4) -- (yhat);
+		%\draw[->] (ux5) -- (yhat);
+\draw[->] (ux6) -- (yhat);
+\end{tikzpicture}
+}
+}{
+  %\hspace{0.2cm}
+\spacer[0.25]
+\textit{Example:} overfitting due to noisy features
+\pause
+\begin{itemizeM}
+\item All features used by the model are of interest
+\item Here: Model uses feature \code{noise}, although it does not contain prediction-relevant information about $y$ (data level)
+\item[$\Rightarrow$] Overfitted models may use many noise features which are deemed relevant on model level (but not on data level)
+\end{itemizeM}
+}
+\end{framev}
+
+
+
+
+\begin{framev}[align=top]{Example: Prediction-relevant information (2)}
+A feature may contain prediction-relevant information (2) without causing the prediction (1)
+\spacer[0.5]
+\splitVTT[0.49]{
+\spacer[0]
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=1, line width=0.25mm, black, fill=white}]
+			%
+\node[draw, ellipse, scale=0.7, fill=orange] (x7) at (0, 2) {contacts};
+\node[draw, ellipse, scale=0.7, fill=orange] (x0) at (0, 1) {trust};
+\node[draw, ellipse, scale=0.7, fill=orange] (x1) at (0, 0) {vaccinated};
+\node[draw, ellipse, scale=0.7, fill=orange] (x4) at (0, -1) {test};
+			%\node[draw, ellipse, scale=0.7] (x5) at (0, -2) {compliance};
+\node[draw, ellipse, scale=0.7] (y) at (-1.5,-.5) {$Y$: COVID risk};
+\node[draw, ellipse, scale=0.7] (x6) at (0, -2) {noise};
+\draw[dashed,gray] (-2.6,-2.5) -- (1,-2.5) -- (1,2.5) -- (-2.6,2.5) -- cycle;
+\node[scale=0.7] (dots) at (-0.75,-2.75) {data level};
+\draw[->] (x0) -- (x1);
+\draw[->] (x1) -- (y);
+\draw[->] (y) -- (x4);
+			%\draw[->] (x5) -- (x4);
+\draw[->] (x7) -- (y);
+			%\draw[-] (xd) -- (y);
+\node[draw, ellipse, scale=0.7] (ux7) at (2, 2) {\texttt{cnt}};
+\node[draw, ellipse, scale=0.7] (ux0) at (2, 1) {\texttt{trust}};
+\node[draw, ellipse, scale=0.7] (ux1) at (2, 0) {\texttt{vac}};
+\node[draw, ellipse, scale=0.7] (ux4) at (2, -1) {\texttt{test}};
+			%\node[draw, ellipse, scale=0.7] (ux5) at (2,-2) {\texttt{cmpl}};
+\node[draw, ellipse, scale=0.7] (ux6) at (2,-2) {\texttt{noise}};
+\draw[dashed,gray] (1.25,-2.5) -- (3.3,-2.5) -- (3.3,2.5) -- (1.25,2.5) -- cycle;
+\node[scale=0.7] (dots) at (2.3,-2.75) {model level};
+\draw[->, dotted] (x1) -- (ux1);
+\draw[->, dotted] (x4) -- (ux4);
+\draw[->, dotted] (x0) -- (ux0);
+			%\draw[->, dotted] (x5) -- (ux5);
+\draw[->, dotted] (x6) -- (ux6);
+\draw[->, dotted] (x7) -- (ux7);
+\node[draw, circle, scale=0.7] (yhat) at (3, -.5) {$\hat{Y}$};
+\draw[->] (ux1) -- (yhat);
+\draw[->] (ux4) -- (yhat);
+			%\draw[->] (ux5) -- (yhat);
+\draw[->] (ux6) -- (yhat);
+\end{tikzpicture}
+}
+}{
+\spacer[0.25]
+  %\hspace{0.2cm}
+\textit{Example:} underfitting, model multiplicity
+  %\lz
+\pause
+\begin{itemizeM}
+\item All prediction-relevant features for $y$ are of interest
+\item Example: All features that are directly or indirectly (i.e., via another feature) connected to $y$
+\item[$\Rightarrow$] Underfitted models may ignore prediction-relevant features such as \code{contacts} here
+\end{itemizeM}
+}
+\end{framev}
+
+
+\begin{framev}[align=top]{Example: Requires Access to Feature (3)}
+A feature may contain prediction-relevant information (2), without the model requiring access to the feature for (optimal) prediction performance (3)
+\spacer[0.5]
+\splitVTT[0.49]{
+\spacer[0]
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[thick, scale=1.1, every node/.style={scale=1, line width=0.25mm, black, fill=white}]
+			%
+\node[draw, ellipse, scale=0.7, fill=orange] (x7) at (0, 2) {contacts};
+\node[draw, ellipse, scale=0.7] (x0) at (0, 1) {trust};
+\node[draw, ellipse, scale=0.7, fill=orange] (x1) at (0, 0) {vaccinated};
+\node[draw, ellipse, scale=0.7, fill=orange] (x4) at (0, -1) {test};
+			%\node[draw, ellipse, scale=0.7] (x5) at (0, -2) {compliance};
+\node[draw, ellipse, scale=0.7] (y) at (-1.5,-.5) {$Y$: COVID risk};
+\node[draw, ellipse, scale=0.7] (x6) at (0, -2) {noise};
+\draw[dashed,gray] (-2.6,-2.5) -- (1,-2.5) -- (1,2.5) -- (-2.6,2.5) -- cycle;
+\node[scale=0.7] (dots) at (-0.75,-2.75) {data level};
+\draw[->] (x0) -- (x1);
+\draw[->] (x1) -- (y);
+\draw[->] (y) -- (x4);
+			%\draw[->] (x5) -- (x4);
+\draw[->] (x7) -- (y);
+			%\draw[-] (xd) -- (y);
+\node[draw, ellipse, scale=0.7] (ux7) at (2, 2) {\texttt{cnt}};
+\node[draw, ellipse, scale=0.7] (ux0) at (2, 1) {\texttt{trust}};
+\node[draw, ellipse, scale=0.7] (ux1) at (2, 0) {\texttt{vac}};
+\node[draw, ellipse, scale=0.7] (ux4) at (2, -1) {\texttt{test}};
+			%\node[draw, ellipse, scale=0.7] (ux5) at (2,-2) {\texttt{cmpl}};
+\node[draw, ellipse, scale=0.7] (ux6) at (2,-2) {\texttt{noise}};
+\draw[dashed,gray] (1.25,-2.5) -- (3.3,-2.5) -- (3.3,2.5) -- (1.25,2.5) -- cycle;
+\node[scale=0.7] (dots) at (2.3,-2.75) {model level};
+\draw[->, dotted] (x1) -- (ux1);
+\draw[->, dotted] (x4) -- (ux4);
+\draw[->, dotted] (x0) -- (ux0);
+			%\draw[->, dotted] (x5) -- (ux5);
+\draw[->, dotted] (x6) -- (ux6);
+\draw[->, dotted] (x7) -- (ux7);
+\node[draw, circle, scale=0.7] (yhat) at (3, -.5) {$\hat{Y}$};
+\draw[->] (ux1) -- (yhat);
+\draw[->] (ux4) -- (yhat);
+			%\draw[->] (ux5) -- (yhat);
+\draw[->] (ux6) -- (yhat);
+\end{tikzpicture}
+}
+}{
+\spacer[0.25]
+  %\hspace{0.2cm}
+\textit{Example:} correlations, confounding
+\pause
+\begin{itemizeM}
+\item All unique prediction-relevant features for $y$ are of interest
+\item Example: All features that are directly connected to $y$
+\item[$\Rightarrow$] \code{trust} and \code{vaccinated} may be correlated but only \code{vaccinated} is directly connected to $y$
+\end{itemizeM}
+}
+\end{framev}
+
+
+\begin{framev}[align=top]{Potential Interpretation Goals}
+For example, one may be interested in getting insight into whether the ...
+\begin{enumerate}
+\item[(1)] feature $x_j$ is causal for the prediction?
+\begin{itemizeS}
+\item A symptom may help predict a disease ($\leadsto$ causal for $\hat{y}$) %A disease symptom may be used in a model to predict disease status \\
+	          %$\leadsto$ causal for prediction $\yh$
+\item Intervening on symptom may not affect disease ($\leadsto$ not causal for $y$)
+	          %But intervening on disease symptom does not have an effect on the disease \\
+	          %$\leadsto$ not causal for the ground truth $y$
+\end{itemizeS}
+\item[(2)] feature $x_j$ contains prediction-relevant information about $y$?
+\begin{itemizeS}
+\item $x_j$ helps predict $y$ (e.g., conditional expectation) w.r.t. performance
+	      %, as measured by the difference in expected loss
+	      %%\item e.g. when $\E[y|x_j] \neq \E[y]$ for models that minimize MSE
+	      %\item feature selection terminology: \textit{weak relevance} \furtherreading{PELLET2008}
+\item If $x_j \indep y$, then $\E[y|x_j] = \E[y]$ and $x_j$ and $y$ have 0 mutual info.\\ %and therefore cannot contain
+$\leadsto$ $x_j$ carries no prediction-relevant information
+\end{itemizeS}
+\item[(3)] model requires access to $x_j$ to achieve its prediction performance?
+\begin{itemizeS}
+\item $x_j$ helps predict $y$ w.r.t. performance, compared to using only $x_{-j}$  %, as measured by the difference in expected loss
+	      %%\item e.g. when $\E[y|x_{-j}] \neq \E[y|x_j, x_{-j}]$ for models that minimize MSE
+	      %\item feature selection terminology: \textit{strong relevance} \furtherreading{PELLET2008}
+\item If $x_j \indep y | x_{-j}$, then $\E[y|x_{-j}] = \E[y|x_j, x_{-j}]$ \\
+\spacer[0]
+$\leadsto$ $x_j$ does not contribute unique prediction-relevant information about $y$
+\item \textbf{Note:} A model may rely on features that can be replaced with others, e.g., if $\E[y \mid x_1] \neq \E[y]$ and $\E[y \mid x_1] = \E[y \mid x_1, x_2]$, a random forest may ignore $x_1$ in splitting and rely on $x_2$ instead (despite $x_1$ being informative).
+	      %\textbf{Note:} A model may rely on features that can be replaced with others, e.g., a random forest fitted on data with $\E[y|x_1] \neq \E[y]$ and $\E[y|x_1] = \E[y|x_1, x_2]$ where $x_1$ was not used as split variable may rely on $x_2$ %was not sampled as potential split variable may rely on $x_2$.
+\end{itemizeS}
+\end{enumerate}
+\end{framev}
+
+\endlecture
+\end{document}
