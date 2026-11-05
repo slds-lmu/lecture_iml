@@ -1,0 +1,247 @@
+\documentclass[10pt,compress,t,notes=noshow,xcolor=table]{beamer}
+\input{../../style/preamble}
+\usepackage{array}
+\definecolor{aleBlue}{HTML}{3066A3}
+\definecolor{aleOrange}{HTML}{B06913}
+\definecolor{aleTeal}{HTML}{207A65}
+\title{Interpretable Machine Learning}
+\begin{document}
+\titlemeta{
+Feature Effects
+}{
+ALE: Limitations and Follow-up
+}{
+figure/ale_plot.pdf
+}{
+\item Recognize three limitations of standard ALE plots
+\item Understand the ideas behind DALE and RHALE
+}
+
+
+\begin{framev}[align=top]{Beyond ALE: Three Issues to Keep in Mind}
+\textbf{Recall:} ALE averages local prediction changes, then accumulates and centers them.
+This helps handle dependent features. \furtherreading{APLEYZHU2020}
+\par
+\spacer[0.5]
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.27\textwidth} >{\raggedright\arraybackslash}p{0.40\textwidth} >{\raggedright\arraybackslash}p{0.24\textwidth}@{}}
+\toprule
+\textbf{Issue} & \textbf{Why it matters} & \textbf{Follow-up idea} \\
+\midrule
+Boundary evaluations & Artificial inputs can still be unrealistic; repeated evaluations cost time. & \textcolor{aleBlue}{\textbf{DALE:}\newline Gradients at data} \\
+Predefined bins & The binning can hide changes or produce noisy estimates. & \textcolor{aleTeal}{\textbf{RHALE:}\newline Adaptive bins} \\
+One average curve & Opposing local effects can cancel each other out. & \textcolor{aleTeal}{\textbf{RHALE:}\newline Effect heterogeneity} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\spacer[0.5]
+The follow-up work improves how local effects are \textbf{estimated and summarized}, while retaining ALE's core idea.
+\end{framev}
+
+
+\begin{framev}[align=top]{DALE: Take Local Slopes at Observed Points}
+\textbf{Issue:} Standard ALE moves observations to bin boundaries.
+With dependent features, wider bins can move these inputs further from observed data.
+\par
+\spacer[0.5]
+\splitVTT[0.5]{
+\spacer[0]
+\centering
+\textbf{Standard ALE estimation}\\
+\spacer[0.5]
+\begin{tikzpicture}[node distance=0.45cm,every node/.style={align=center},flow/.style={draw=gray!55,rounded corners,text width=4.25cm,minimum height=0.75cm,inner sep=5pt}]
+\node[flow,fill=gray!7] (data) {Observed input};
+\node[flow,fill=aleOrange!9,below=of data] (copies) {Move feature to two\\bin boundaries};
+\node[flow,fill=aleOrange!9,below=of copies] (signal) {Compare predictions};
+\draw[->,thick,gray] (data) -- (copies);
+\draw[->,thick,gray] (copies) -- (signal);
+\end{tikzpicture}
+\spacer[0]
+}{
+\spacer[0]
+\centering
+\textbf{DALE estimation}\\
+\spacer[0.5]
+\begin{tikzpicture}[node distance=0.45cm,every node/.style={align=center},flow/.style={draw=aleBlue!65,rounded corners,text width=4.25cm,minimum height=0.75cm,inner sep=5pt}]
+\node[flow,fill=gray!7] (data) {Observed input};
+\node[flow,fill=aleBlue!8,below=of data] (gradient) {Differentiate the model\\at that same input};
+\node[flow,fill=aleBlue!8,below=of gradient] (signal) {Read the local slope};
+\draw[->,thick,aleBlue] (data) -- (gradient);
+\draw[->,thick,aleBlue] (gradient) -- (signal);
+\end{tikzpicture}
+\spacer[0]
+}
+\par
+\spacer[0.5]
+\textbf{Why this helps:} No artificial evaluation points; automatic differentiation can obtain slopes for many features efficiently.
+Compute the slopes once, then reuse them for different binnings before averaging and accumulating. \furtherreading{GKOLEMIS2023DALE}\\
+\spacer[0.5]
+\textbf{Requirement:} A differentiable model with accessible gradients.
+Wide bins can still bias the approximation.
+\end{framev}
+
+
+\begin{framev}[align=top]{RHALE: Let Local Effects Guide the Bins}
+\textbf{Issue:} Wide bins can blur changes; narrow bins may contain too few observations for a stable estimate.
+\par
+\spacer[0.5]
+\splitVTT[0.5]{
+\spacer[0]
+\centering
+\textbf{Predefined bins}\\
+\spacer[0.5]
+\begin{tikzpicture}[x=0.9cm,y=0.8cm]
+\fill[aleOrange!7] (2,0) rectangle (3,2.25);
+\foreach \b in {0,1,2,3,4,5}{\draw[gray!65,dashed] (\b,0) -- (\b,2.25);}
+\draw[->] (-0.1,0) -- (5.25,0) node[right] {$x$};
+\draw[->] (0,-0.05) -- (0,2.6) node[above right] {mean local slope};
+\draw[very thick,aleBlue] plot[smooth] coordinates {(0,0.4) (1.7,0.4) (2.1,0.5) (2.35,0.85) (2.65,1.7) (2.9,2.05) (3.3,2.15) (5,2.15)};
+\node[align=center] at (2.5,-0.55) {One bin spans a sharp change};
+\end{tikzpicture}
+\spacer[0]
+}{
+\spacer[0]
+\centering
+\textbf{Adaptive bins}\\
+\spacer[0.5]
+\begin{tikzpicture}[x=0.9cm,y=0.8cm]
+\fill[aleTeal!7] (2.1,0) rectangle (2.9,2.25);
+\foreach \b in {0,2.1,2.35,2.65,2.9,5}{\draw[aleTeal!75,dashed] (\b,0) -- (\b,2.25);}
+\draw[->] (-0.1,0) -- (5.25,0) node[right] {$x$};
+\draw[->] (0,-0.05) -- (0,2.6) node[above right] {mean local slope};
+\draw[very thick,aleBlue] plot[smooth] coordinates {(0,0.4) (1.7,0.4) (2.1,0.5) (2.35,0.85) (2.65,1.7) (2.9,2.05) (3.3,2.15) (5,2.15)};
+\node[align=center] at (2.5,-0.55) {Finer bins around the change};
+\end{tikzpicture}
+\spacer[0]
+}
+\par
+\spacer[0.5]
+\textit{Schematic: same mean local slopes (blue), different bin boundaries (dashed).}
+\begin{itemizeM}
+\item \textbf{How:} RHALE uses DALE's slopes to choose wider bins where the mean slope barely changes and finer bins where it changes quickly, requiring enough observations per bin.
+\item \textbf{Why:} Mixing different mean slopes in one bin can inflate the estimated heterogeneity.
+Adaptive bins help separate this binning error from genuine differences between local effects. \furtherreading{GKOLEMIS2023RHALE}
+\end{itemizeM}
+\end{framev}
+
+\begin{framev}[align=top]{Same ALE Curve, Very Different Model Behavior}
+Both models yield a flat ALE curve (mean local slope is $0$ everywhere). Does $x$ have no effect, or do opposing effects cancel out?
+\par
+\spacer[0.35]
+\splitVTT[0.5]{
+\spacer[0]
+\centering
+\textbf{Case 1: No Local Effect}\\
+\spacer[0.25]
+\begin{tikzpicture}[
+    x=0.92cm, y=0.72cm,
+    verdict/.style={rounded corners, text width=4.1cm, minimum height=0.85cm, inner sep=3.5pt, align=center, font=\footnotesize}
+]
+% Axes (same scale as Case 2)
+\draw[->,gray!70] (0,-1.55) -- (0,1.75) node[above right,text=black,font=\footnotesize] {local slope};
+\draw[->,gray!70] (0,0) -- (4.45,0) node[right,text=black,font=\footnotesize] {$x$};
+\node[left,gray!80!black,font=\scriptsize] at (0,0) {$0$};
+\foreach \y/\l in {1.25/+2, -1.25/-2} {
+    \draw[gray!70] (-0.07,\y) -- (0.07,\y);
+    \node[left,gray!80!black,font=\scriptsize] at (0,\y) {$\l$};
+}
+
+% Bin dividers
+\foreach \b in {1.4, 2.8} {\draw[gray!30,dashed] (\b,-1.35) -- (\b,1.35);}
+
+% Mean local slope
+\draw[black, very thick] (0.1,0) -- (4.2,0);
+\node[above, font=\scriptsize] at (2.15, 0.3) {Mean local slope: $0$};
+
+% Local slopes: every one is exactly 0 (open circles on the mean line)
+\foreach \bx in {0.75, 2.1, 3.5} {
+    \foreach \dx in {-0.3, 0, 0.3} {
+        \draw[gray!70, thick, fill=white] (\bx+\dx, 0) circle (1.7pt);
+    }
+}
+
+% Verdict (identical dimensions via verdict style + \strut)
+\node[verdict, draw=gray!45, fill=gray!7] at (2.15,-2.35) {
+    \strut\textbf{Zero spread}\strut\\[-1pt]
+    \strut No local effect on predictions\strut
+};
+\end{tikzpicture}
+\spacer[0]
+}{
+\spacer[0]
+\centering
+\textbf{Case 2: Opposing Local Effects}\\
+\spacer[0.25]
+\begin{tikzpicture}[
+    x=0.92cm, y=0.72cm,
+    verdict/.style={rounded corners, text width=4.1cm, minimum height=0.85cm, inner sep=3.5pt, align=center, font=\footnotesize}
+]
+% Mean +/- 1 SD per bin
+\foreach \xa/\xb/\a in {0.1/1.4/0.62, 1.4/2.8/1.25, 2.8/4.2/0.38} {
+    \fill[aleTeal!15] (\xa,-\a) rectangle (\xb,\a);
+    \draw[aleTeal!65, densely dashed] (\xa,\a) -- (\xb,\a);
+    \draw[aleTeal!65, densely dashed] (\xa,-\a) -- (\xb,-\a);
+}
+
+% Axes (same scale as Case 1)
+\draw[->,gray!70] (0,-1.55) -- (0,1.75) node[above right,text=black,font=\footnotesize] {local slope};
+\draw[->,gray!70] (0,0) -- (4.45,0) node[right,text=black,font=\footnotesize] {$x$};
+\node[left,gray!80!black,font=\scriptsize] at (0,0) {$0$};
+\foreach \y/\l in {1.25/+2, -1.25/-2} {
+    \draw[gray!70] (-0.07,\y) -- (0.07,\y);
+    \node[left,gray!80!black,font=\scriptsize] at (0,\y) {$\l$};
+}
+
+% Bin dividers
+\foreach \b in {1.4, 2.8} {\draw[aleTeal!40,dashed] (\b,-1.35) -- (\b,1.35);}
+
+% Mean local slope
+\draw[black, very thick] (0.1,0) -- (4.2,0);
+
+% Local slopes: +a (blue) and -a (orange), equally common in each bin
+\foreach \bx/\a in {0.75/0.62, 2.1/1.25, 3.5/0.38} {
+    \foreach \dx in {-0.3, 0, 0.3} {
+        \fill[aleBlue]   (\bx+\dx,  \a) circle (1.7pt);
+        \fill[aleOrange] (\bx+\dx, -\a) circle (1.7pt);
+    }
+}
+
+\node[above, font=\scriptsize, text=aleTeal!90!black] at (2.1, 1.3) {\textbf{mean $\pm$ 1 SD}};
+
+% Verdict (identical dimensions via verdict style + \strut)
+\node[verdict, draw=aleTeal!60, fill=aleTeal!8] at (2.15,-2.35) {
+    \strut\textbf{Mean $0$, spread $>0$}\strut\\[-1pt]
+    \strut Slopes of both signs cancel\strut
+};
+\end{tikzpicture}
+\spacer[0]
+}
+\par
+\spacer[0.35]
+\textit{Toy example: on the right, slopes $+a$ and $-a$ are equally common in each bin, so mean $=0$ and SD $=a$.}\\[0.35em]
+\textbf{Takeaway:} A zero average can hide strong effects. \textbf{RHALE} reports local-slope spread next to the mean to separate cancellation from no effect. \furtherreading{GKOLEMIS2023RHALE}
+\end{framev}
+
+\begin{framev}[align=top]{Take-away}
+\textbf{Three ideas to remember; three entry points for further reading:}
+\begin{itemizeM}
+\item \textbf{DALE: Differential Accumulated Local Effects.}\\
+Use gradients at observed inputs. \furtherreading{GKOLEMIS2023DALE}
+\item \textbf{RHALE: Robust and Heterogeneity-aware ALE.}\\
+Adapt the bins and report effect heterogeneity. \furtherreading{GKOLEMIS2023RHALE}
+\item \textbf{Regional methods: explain effects within subgroups.}\\
+Look for regions with more homogeneous effects. \furtherreading{EFFECTOR2024}
+\end{itemizeM}
+\spacer[0.5]
+\textbf{In practice:} Gradient-based estimation needs a differentiable model with accessible gradients.
+Standard ALE remains useful for prediction-only black boxes, including tree ensembles.\\
+\spacer[0.5]
+\textbf{Interpretation:} These methods describe the fitted model over the data distribution; causal claims need separate justification.\\
+\spacer[0.5]
+\textbf{Try it:} The \texttt{effector} package provides implementations and examples. \furtherreading{EFFECTOR}
+\end{framev}
+
+
+\endlecture
+\end{document}
