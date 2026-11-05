@@ -109,7 +109,7 @@ Evaluation of IML
 }{
 Properties of explanations   
 }{
-%figure/performance_vs_interpretability
+plots/eva_front.png
 }{
 \item List the Co-12 properties and group them into content, presentation, and user
 \item Define fidelity formally and compute it for a simple model
@@ -131,13 +131,13 @@ Properties of explanations
  & \textbf{Property} & \textbf{Question it asks} \\
 \midrule
 \multirow{6}{*}{\textbf{Content}}
- & Correctness & Does it describe the model truthfully? (``nothing but the truth'') \\
+ & Correctness (Faithful, Fidelity) & Does it describe the model truthfully? (``nothing but the truth'') \\
  & Completeness & How much of the model does it cover? (``the whole truth'') \\
  & Consistency & Identical inputs, identical explanations? \\
  & Continuity & Similar inputs, similar explanations? \\
  & Contrastivity & Does it answer ``why this and not that?'' \\
  & Covariate complexity & Are the features and concepts it uses understandable? \\
-\midrule\pause
+\midrule \pause
 \multirow{3}{*}{\textbf{Presentation}}
  & Compactness & How large is it? \\
  & Composition & How is it structured and presented? \\
@@ -158,7 +158,7 @@ Properties of explanations
 
 
 \begin{framev}[align=mid]{Correctness and Completeness as Fidelity}
-\begin{definition}[Fidelity of a functional explanation]
+\begin{definition}[Faithfullness/Fidelity of a functional explanation]
 Let explanation $e$ assert a function $g_e: \Xspace \to \R$. Its fidelity wrt $R^2$ to $\fh$ is
 $$R^2(g_e;\fh) = 1 - \frac{\E_{\xv}\big((\fh(\xv) - g_e(\xv))^2\big)}{\var_{\xv}\big(\fh(\xv)\big)} .$$
 \end{definition}
@@ -186,7 +186,7 @@ $$\hat L(\xv) = \max_{\xv' \in B_\varepsilon(\xv)} \frac{\| e(\xv) - e(\xv')\|_2
 \end{itemizeS}
 \pause
 \spacer[0.4]
-\textbf{Consistency ( Identical inputs, identical explanations?):} the explanation method should not add its own noise
+\textbf{Consistency (Identical inputs, identical explanations?):} the explanation method should not add its own noise
 \begin{itemizeS}
 \item PDP: a random subsample of $m$ background points gives a different curve per run
 \item ALE: the number of intervals $K$ changes the curve (an estimator bias--variance trade-off)
@@ -204,14 +204,14 @@ $$\hat L(\xv) = \max_{\xv' \in B_\varepsilon(\xv)} \frac{\| e(\xv) - e(\xv')\|_2
 \begin{example}
 $p = 20$ features: 20 one-dimensional PDPs and $\binom{20}{2} = 190$ two-dimensional PDPs. Few users will read 210 plots.
 \end{example}
-\spacer[0.4]
+\spacer[0.4] \pause
 \textbf{Covariate complexity:} are the features themselves understandable?
 \begin{itemizeS}
 \item An effect of ``age'' is easy to read; an effect of ``principal component 3'' or of one dummy of a one-hot encoding is not
 \end{itemizeS}
 \spacer[0.4]
 \pause
-Compactness and completeness pull in opposite directions.
+Note: Compactness and completeness pull in opposite directions.
 \end{framev}
 
 
