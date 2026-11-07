@@ -87,37 +87,6 @@ figure/dependence_2
 % \end{itemize}
 % \end{frame}
 
-
-% \begin{frame}{Correlation and Dependence}
-% \begin{itemize}
-% \item \textbf{Correlation:} Often linear correlation (Pearson $\rho$) between pairs of features is meant
-% \item \textbf{Dependence:} More general dependence structure (e.g., non-linear relationships)
-% \item $X_j$, $X_k$ independent $\Leftrightarrow$ joint probability density function (PDF) is product of marginal PDFs:
-% %$$\text{PDF}_{X_j, X_k}(x_j, x_k) = \text{PDF}_{X_j}(x_j) \cdot \text{PDF}_{X_k}(x_k)$$
-% $$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$$
-
-
-% $\P(X_j|X_k) = \P(X_j)$ knowing $X_k$ does not tell us anything about $X_j$ and vice versa
-% \item $X_j$, $X_k$ independent $\Rightarrow$ $X_j$, $X_k$ uncorrelated \textbf{but} $X_j$, $X_k$ uncorrelated $\nRightarrow$ $X_j$, $X_k$  independent
-% %\item Auf einer slide eklären, visuell und mathematisch
-% \end{itemize}
-
-% \centering
-
-% \only<1>{
-% \textbf{Example:} $X_1$, $X_2 \sim N(0,1)$ independent ($\rho = 0$) \hspace{10pt} $X_1$, $X_2 \sim N(0,1)$ dependent ($\rho = 0.8$) \hspace{30pt}
-
-% \includegraphics[width = 0.4\textwidth]{figure/independent}
-% \includegraphics[width = 0.4\textwidth]{figure/dependent}
-% }
-
-
-% \only<2>{
-% \includegraphics[width = 0.5\textwidth]{figure/dependence_2}
-% }
-% % correlation reflects the noisiness and direction of a linear relationship (top row), but not the slope of that relationship (middle), nor many aspects of nonlinear relationships (bottom). N.B.: the figure in the center has a slope of 0 but in that case the correlation coefficient is undefined because the variance of Y is zero.
-% \end{frame}
-
 % Use of $$...$$ \rho(X_1, X_2) equation leads to content overflow at bottom of the slide, therefore \centerline + $...$
 \begin{frame}[t]{Pearson's correlation coefficient $\rho$}
 \textbf{Correlation} often refers to Pearson's correlation (captures only \textbf{linear relationship})\\
@@ -132,8 +101,6 @@ Geometric interpretation of $\rho$:
 \item Numerator is sum of rectangle's area with width $x_1^{(i)}-\bar{x}_1$ and height $x_2^{(i)}-\bar{x}_2$
 \item Areas enter numerator with positive (\textbf{+}) or negative (\textbf{-}) sign, depending on position
 \item Denominator scales the sum into the range $[-1, 1]$
-%\item $\rho = 0$ if area of all rectangles cancels out\\
-%$\leadsto$ $X_1, X_2$ uncorrelated
 \end{itemizeM}
 }\\
 \pause
@@ -144,7 +111,6 @@ $\leadsto$ $X_1$, $X_2$ positive correlated
 $\leadsto$ $X_1$, $X_2$ negative correlated
 \item $\rho = 0$ if area of rectangles cancels out$\leadsto$ $X_1$, $X_2$ linearly uncorrelated
 \end{itemizeM}
-%\textbf{But:} Pearson's $\rho$ does not measure non-linear dependencies, e.g., $\rho = 0$ but dependent:
 \end{frame}
 
 
@@ -263,7 +229,6 @@ $\sum$ & 1 & 1 \\
 $$\P(X_j, X_k) = \P(X_j) \cdot \P(X_k)$$
 \item Equivalent definition (knowing $X_k$ gives no info about $X_j$ and vice versa):
 $$\P(X_j|X_k) = \P(X_j) \text{ and } \P(X_k|X_j) = \P(X_k) \text{ (follows from cond. probability)}$$
-%$$\P(X_j|X_k) = \P(X_j) \hfill \text{(knowing $X_k$ does not tell us anything about $X_j$ and vice versa)}$$
 \item Measuring complex dependencies is difficult but different measures exist\\ Examples \\
 $\leadsto$ Spearman correlation (measures monotonic dependencies via ranks) \\
 $\leadsto$ Information-theoretical measures like mutual information \\
@@ -291,7 +256,6 @@ $\leadsto$ $MI(X_j, X_k) = 0$ if and only if the features are independent
 \item Unlike (Pearson) correlation, MI is also defined for categorical features
 %$\leadsto$ Discrete RV: joint and marginal distribution obtained from confusion matrix\\
 %$\leadsto$ Continuous RV: Density estimation required, e.g., create bins via histogram
-% \item  $MI(X_j, X_k) = 0$ if and only if $X_j$, $X_k$ independent
 \end{itemizeM}
 \end{frame}
 
@@ -303,7 +267,7 @@ $\leadsto$ $MI(X_j, X_k) = 0$ if and only if the features are independent
 %         \scriptsize
 %         %\vspace{-0.3cm}
 %         \begin{tabular}{|c|c|c|}
-%             \hline 
+%             \hline
 %             $\bold{X}_1$ & ... & $\bold{Y}$ \\
 %             \hline
 %             yes & ... & yes  \\
@@ -313,7 +277,7 @@ $\leadsto$ $MI(X_j, X_k) = 0$ if and only if the features are independent
 %             yes & ... & no  \\
 %             no & ... & no  \\
 %             \hline
-%         \end{tabular} 
+%         \end{tabular}
 %         \end{table}
 
 %     \end{column}
@@ -322,7 +286,7 @@ $\leadsto$ $MI(X_j, X_k) = 0$ if and only if the features are independent
 %     \scriptsize
 %     \begin{table}
 %     \begin{tabular}{|c|c|c|c|}
-%         \hline 
+%         \hline
 %         & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
 %         \hline
 %         $\P(Y = \text{ yes})$ & 0.5 & 0 & 0.5  \\
@@ -330,14 +294,14 @@ $\leadsto$ $MI(X_j, X_k) = 0$ if and only if the features are independent
 %         \hline
 %         $p_{X_1}$ & 0.833 & 0.167 & 1 \\
 %         \hline
-%     \end{tabular} 
+%     \end{tabular}
 %     \end{table}}
 
 %     \only<2-3>{
 %     \scriptsize
 %     \begin{table}
 %     \begin{tabular}{|c|c|c|c|}
-%         \hline 
+%         \hline
 %         & $\P(X_1 = \text{ yes})$ & $\P(X_1 = \text{ no})$ & $p_Y$ \\
 %         \hline
 %         $\P(Y = \text{ yes})$ & \cellcolor{summer}0.5 & \cellcolor{summer}0 & \cellcolor{spring}0.5  \\
@@ -345,9 +309,9 @@ $\leadsto$ $MI(X_j, X_k) = 0$ if and only if the features are independent
 %         \hline
 %         $p_{X_1}$ & \cellcolor{fall}0.833 & \cellcolor{fall}0.167 & 1 \\
 %         \hline
-%     \end{tabular} 
+%     \end{tabular}
 %     \end{table}}
-        
+
 %     \end{column}
 % \end{columns}
 
@@ -358,13 +322,13 @@ $\leadsto$ $MI(X_j, X_k) = 0$ if and only if the features are independent
 %             &= \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
 %             &\, + \textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ yes}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ yes})} \textcolor{spring}{\P(Y = \text{ no})}} \right) \\
 %             &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ yes})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ yes})}} \right) \\
-%             &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ no})}} \right) 
+%             &\, + \textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}\, log\left(\frac{\textcolor{summer}{\P(X_1 = \text{ no}, Y = \text{ no})}}{\textcolor{fall}{\P(X_1 = \text{ no})} \textcolor{spring}{\P(Y = \text{ no})}} \right)
 %         \end{align*}}
 % \only<3>{
 % \begin{align*}
-%     MI(X_1 ; Y) = & \,\textcolor{summer}{0.5}\, log\left(\frac{\textcolor{summer}{0.5}}{\textcolor{fall}{0.833} \cdot \textcolor{spring}{0.5}} \right) 
+%     MI(X_1 ; Y) = & \,\textcolor{summer}{0.5}\, log\left(\frac{\textcolor{summer}{0.5}}{\textcolor{fall}{0.833} \cdot \textcolor{spring}{0.5}} \right)
 %     + \textcolor{summer}{0.333}\, log\left(\frac{\textcolor{fall}{0.833}}{ \cdot \textcolor{spring}{0.5}} \right) \\
-%     &+ \textcolor{summer}{0}\, log\left(\frac{\textcolor{summer}{0}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) 
+%     &+ \textcolor{summer}{0}\, log\left(\frac{\textcolor{summer}{0}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right)
 %     + \textcolor{summer}{0.167}\, log\left(\frac{\textcolor{summer}{0.167}}{\textcolor{fall}{0.167} \cdot \textcolor{spring}{0.5}} \right) \\
 %     = & \,0.133 \\
 %     &\quad \\
@@ -463,7 +427,7 @@ Conditional distributions do not match their marginal distributions
 
 % Use of minipage in order to center-align "\rho" descriptors with the corresponding plots
 \begin{frame}[t]{Correlation vs. Dependence}
-%Scatterplot with multivariate distribution (contour lines) and marginal density\\ 
+%Scatterplot with multivariate distribution (contour lines) and marginal density\\
 Illustration of bivariate normal distribution with different correlations\\
 $X_1$, $X_2 \sim N(0,1)$
 \spacer[0.25]
@@ -520,9 +484,9 @@ Examples with Pearson's corr. $\rho \approx 0$ but non-linear dependencies (MI $
 % % \item Be clear about interpretation goal: Explain model or underlying relationship in data?
 % % %We need to differentiate between interpretations of a model or reality
 % % \\
-% % $\leadsto$ Latter might be distorted by modeling fallacies, 
-% % e.g., 
-% % %due to bad data quality, 
+% % $\leadsto$ Latter might be distorted by modeling fallacies,
+% % e.g.,
+% % %due to bad data quality,
 % % under- and overfitting or extrapolation
 
 % %\pause
@@ -533,7 +497,7 @@ Examples with Pearson's corr. $\rho \approx 0$ but non-linear dependencies (MI $
 % $\leadsto$ Produced explanations can be misleading (true to model, but not to data) % generating process
 % \\
 % $\leadsto$ E.g., different interpretable models produce different results
-% %$\leadsto$ Different IML models often produce different results in these situation, and not always trivial to understand which / why 
+% %$\leadsto$ Different IML models often produce different results in these situation, and not always trivial to understand which / why
 % %Even for two causally and equally relevant correlated features it is not guaranteed that their explanations will be similar
 % % \pause
 % % \item Assume two causally and equally relevant but highly correlated features \\
@@ -572,7 +536,7 @@ Examples with Pearson's corr. $\rho \approx 0$ but non-linear dependencies (MI $
 % \includegraphics[trim=0px 110px 30px 0px, clip, width=0.8\textwidth]{figure/ridge_lasso} }%}
 % %    \end{column}
 % %    \begin{column}{0.5\textwidth}
-        
+
 % \begin{itemize}
 %     \item $X_1, \dots, X_4 \sim N(0, 2)$ (uncorrelated)
 %     \item $X_5 = X_4 + \delta, \delta \sim N(0, 0.3)$ $\Rightarrow \rho(X_4, X_5) = 0.98$ (highly correlated)
@@ -602,12 +566,12 @@ Examples with Pearson's corr. $\rho \approx 0$ but non-linear dependencies (MI $
 % $\leadsto$ Predictions in such regions have high uncertainty\\ % in regions with no or few training data
 % $\leadsto$ Explanations can be biased if they rely on pred. where model extrapolated\\
 % \pause
-% %\item 
+% %\item
 % %\item Essentially, we are interested in the prediction uncertainty\\
 % %, i.e., the less the training data on a feature subspace, the higher the prediction uncertainty.
 % %$\leadsto$ Models are rarely able to quantify uncertainty of predictions %Models are rarely capable of quantifying prediction uncertainty
 % \item There is no definition of when a model extrapolates and to what degree \\
-% $\leadsto$ Severity of extrapolation depends on model %, some extrapolate more than others 
+% $\leadsto$ Severity of extrapolation depends on model %, some extrapolate more than others
 % \\
 % $\leadsto$ Density of train data may helps identify regions where extrapolation is likely \\
 % \phantom{$\leadsto$} But: Density estimation in many dimensions is often infeasible
