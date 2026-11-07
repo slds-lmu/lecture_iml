@@ -37,8 +37,6 @@ figure/lm_example
 % https://towardsdatascience.com/assumptions-of-linear-regression-fdb71ebeaa8b
 % https://www.statology.org/linear-regression-assumptions/
 % https://link.springer.com/book/10.1007/978-3-642-34333-9
-%\textbf{Model formula}
-%$$\mathbb{E}_Y(Y \vert X) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p + \epsilon = X^T\mathbf{\theta} + \epsilon$$
 \splitVTT[0.58]{
 \spacer[0]
 $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon = \xv^\top \thetav + \epsilon$$
@@ -50,11 +48,6 @@ $$y = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_p x_p + \epsilon =
 $\leadsto$ model consists of $p+1$ weights
 % \item Model equation is additive and identical across entire input space
 % \pause
-% \item Polynomial regression extends equation above by
-% \begin{itemize}
-% \item \textbf{higher order main effects} which have their own weights (e.g., quadratic: $\theta_{x_j^2} \cdot x_j^2$)
-% \item \textbf{interaction effects} (e.g., 2-way interaction: $\theta_{x_i, x_j} \cdot x_i \cdot x_j$)
-% \end{itemize}
 \end{itemizeM}
 }{
 \spacer[0]
@@ -66,8 +59,6 @@ $\leadsto$ model consists of $p+1$ weights
 \textbf{Properties and assumptions} \furtherreading{FARAWAY2002} % \furtherreading{CheckingAssumptions}
 \begin{itemizeM}
 \item<+-> \textbf{Linear} relationship between features and target
-%Predictions are \textbf{linear} combination of features $\leadsto$
-%Model equation is additive and linear w.r.t. features% and identical across entire input space
 \item<+-> $\epsilon$ and $y \vert \xv$ are \textbf{normally} distributed with \textbf{constant variance} (homoscedastic)\\
 $\leadsto$ $\epsilon \sim N(0, \sigma^2) \; \Rightarrow \; (y \vert \xv) \sim N(\xv^\top \theta, \sigma^2)$\\
 $\leadsto$ if violated, inference-based metrics (e.g., p-values) are invalid
@@ -157,7 +148,6 @@ $$|t_{\hat\theta_j}| = \left| \frac{\hat\theta_j}{SE(\hat\theta_j)} \right|$$
 \spacer[0.6]
 \begin{itemizeM}
 \item \textbf{p-value}: probability of obtaining a more extreme test statistic assuming $H_0$ is correct (here: $\theta_j = 0$, i.e., feat. $j$ not significant)\\
-%probability of obtaining a test statistic that is more extreme (values that speak against $H_0$) as the test statistic computed from the sample, assuming $H_0$ (here: $\theta_j =0)$ is correct.
 $\leadsto$ High $|t|$ $\Rightarrow$ small p-val. (speak against $H_0$)
 %\item The smaller the p-value, the less likely it is to obtain a more extreme test statistic
 \end{itemizeM}
@@ -174,11 +164,6 @@ $\leadsto$ High $|t|$ $\Rightarrow$ small p-val. (speak against $H_0$)
 \textbf{Bike data}: predict no. of rented bikes using 4 numeric, 1 cat. feat. (season)
 \\
 \spacer[0.25]
-% \begin{footnotesize}
-% $$
-% \hat y = \hat \theta_0 + \hat \theta_1 \mathds{1}_{(seas = SPRING)} + \hat \theta_2 \mathds{1}_{(seas = SUMMER)} + \hat \theta_3 \mathds{1}_{(seas = FALL)} + \hat \theta_4 temp + \hat \theta_5 hum + \hat \theta_6 windspeed + \hat \theta_7 days\_since\_2011
-% $$
-% \end{footnotesize}
 \splitVTT[0.43]{
 \spacer[0]
 \begin{align*}
@@ -246,7 +231,6 @@ days\_since\_2011 & 4.9 & 0.2 & 26.9 & 0.00 \\
 \item<+-> \textbf{Intercept}: If all feature values are 0 (and season is \code{WINTER} $\hat =$ reference cat.), the expected number of bike rentals is $\hat\theta_0 = 3229.3$
 \item<+-> \textbf{Categ.}: Rentals in \code{SPRING} are by $\hat\theta_1 = 862$ higher than in \code{WINTER}, c.p.
 \item<+-> \textbf{Numerical}: Rentals increase by $\hat\theta_4 = 120.5$ if \code{temp} increases by 1 $^\circ$C, c.p.
-%If the temperature increases by 1 order Celsius, the number of bike rentals increases by 120.5 c.p.
 \end{itemizeM}
 %\end{column}
 %\end{columns}

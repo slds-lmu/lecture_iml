@@ -22,12 +22,10 @@ figure/whitebox
 }
 
 \begin{framev}[align=top]{Motivation}
-%Achieving interpretability by using interpretable models is the most straightforward approach
 %\bigskip
 \splitVTT[0.58]{
 \spacer[0.6]
 \begin{itemizeM}
-%\item Obtaining interpretations by using interpretable models is the easiest and least error-prone approach
 \item Achieving interpretability by using interpretable models is the most straightforward approach
 \item Classes of models deemed interpretable:
 \begin{itemizeS}[small]
@@ -60,12 +58,9 @@ $\leadsto$ LM provides straightforward interpretation
 \spacer[0.6]
 \begin{itemizeM}
 \item<+-> Interpretable models are transparent by design, making many model-agnostic explanation methods unnecessary\\
-%For inherently interpretable models some additional model-agnostic interpretation methods not required \\
 $\leadsto$ Eliminates an extra source of estimation error
 \item<+-> They often have few hyperparameters and are structurally simple (e.g., linear, additive, sparse, monotonic)\\
 $\leadsto$ Easy to train, fast to tune, straightforward to explain
-% \item Interpretable models often simple \\
-% $\leadsto$ training time is fairly small
 % \item Some interpretable models estimate monotonic effects \\
 % %the monotonicity constraint \\
 % $\leadsto$ Simple to explain as larger feature values always lead to higher (or smaller) outcomes (e.g., GLMs)
@@ -130,19 +125,12 @@ $\leadsto$ If assumptions are wrong, models may perform bad
 \spacer[0.25]
 \begin{itemizeM}
 \item<3->
-%No automatic modeling of complex relationships due to limited model flexibility
 Often do not automatically model complex relationships due to limited flexibility % didn't find a way to fig the hanging word
 \\
 e.g., high-order main or interaction effects need to be specified manually in LM
 %\pause
 \item<4-> Inherently interpretable models do not address all explanation needs\\
 $\leadsto$ Complementary model-agnostic methods (e.g., counterfactuals) remain valuable for specific tasks
-% Inherently interpretable models do not provide all types of explanations
-% %% one might be interested
-% \\
-% $\leadsto$ Methods providing other types of explanations still useful  (e.g., counterfactual explanations)
-%Methods providing other types of explanations still useful  (e.g., counterfactual explanations)
-%Still requires application of model-agnostic interpretation techniques if certain types of explanations are of interest (e.g., counterfactual explanations)
 \end{itemizeM}
 \end{framev}
 
@@ -154,8 +142,6 @@ $\leadsto$ Complementary model-agnostic methods (e.g., counterfactuals) remain v
 \begin{itemizeS}
 \item Built-in interpretation\\
 $\leadsto$ fewer risks from misleading post-hoc explanations
-%\item \ldots instead of explaining uninterpretable models post-hoc
-% \item Can sometimes work out by spending enough time and energy on data pre-processing or manual feature engineering
 \item Good performance possible with effort on preprocessing and/or feature engineering
 \item But interpretability depends on meaning of created features\\
 $\leadsto$ E.g., PCA keeps models linear, but yields hard-to-interpret components
@@ -164,10 +150,6 @@ $\leadsto$ E.g., PCA keeps models linear, but yields hard-to-interpret component
 %\pause
 %\footnote[frame]{Rudin, C. Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. Nat Mach Intell 1, 206–215 (2019).}
 % {https://www.nature.com/articles/s42256-019-0048-x}
-%\item Interpretable models also have the potential for a high predictive performance, but require more knowledge and time spent on data preprocessing
-% \item<2->[$\leadsto$] Drawback: Hard to achieve for data for which end-to-end learning is crucial\\
-% $\leadsto$ e.g., hard to extract good features for image / text data\\
-% $\leadsto$ information loss can lead to bad performance
 \item<2-> Limitation: Less suited for complex data requiring end-to-end learning
 \begin{itemizeS}
 \item Applies to image, text, or sensor data where features must be learned from raw input
@@ -177,23 +159,11 @@ $\Rightarrow$ Information loss and lower performance
 %(e.g., for image / text data extraction of good features is hard $\leadsto$ information loss = bad performance)
 %(e.g., image and text data would require good feature extraction steps $\leadsto$ information loss)
 %\pause
-%\item One can assume a trade-off between interpretability and model performance which generally (but not always) holds
-%\item<3-> Often there is a trade-off between interpretability and model performance
-%(but not always)
 \end{itemizeM}
-%\smallskip
-%\only<3>{\centering\includegraphics[width=0.65\textwidth]{figure/performance_vs_interpretability.pdf}}
-% Quelle: https://docs.google.com/presentation/d/12ZPrTjBKEUT-7drdyUJCQGK0oHVDtYIVd2_6byE62f0/edit?usp=sharing
 \end{framev}
 
 
 \begin{framev}[align=top]{Recommendation}
-% \begin{itemize}
-%     \item Start with most simple model that makes sense for application at hand
-%     \item Gradually increase complexity if performance is insufficient\\
-%     $\leadsto$ will usually lower interpretability and require additional interpretation methods
-%     \item Choose the most simple, sufficient model (Occam's razor)
-% \end{itemize}
 \begin{itemizeM}
 \item Begin with the simplest model appropriate for the task
 \item Increase complexity only if necessary to meet performance requirements\\

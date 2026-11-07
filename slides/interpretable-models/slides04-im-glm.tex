@@ -47,13 +47,6 @@ $\leadsto$ Gamma distribution
 }
 \pause
 \textbf{Solution}: GLMs extend LMs by allowing other distrib.-s from exp. family\\
-%$$g(\E (y \mid \xv)) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p$$
-% \begin{align*}
-% &g(\E (y \mid \xv)) = 
-% %\theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p = 
-% \xv^\top \theta\\
-% \Leftrightarrow \; & \E (y \mid \xv) = g^{-1}(\xv^\top \theta)
-% \end{align*}
 \spacer[0.25]
 \centerline{$g(\E(y \mid \xv)) = \xv^\top \thetav \; \Leftrightarrow \; \E(y \mid \xv) = g^{-1}(\xv^\top \thetav)$}
 \spacer[0.25]
@@ -64,62 +57,19 @@ $\leadsto$ LM is special case: Gaussian distrib. for $y \mid \xv$ with $g$ as id
 \item High-order and interaction effects can be manually added as in LMs
 \item Note: Interpretation of weights depend on link function and distribution
 \end{itemizeM}
- %   \medskip
- %   Non-Gaussian outputs via Generalized Linear Models (GLMs):
-  %  \begin{itemize}
-   %     \item link function $g$ -- can be freely chosen
-    %    \item exponential family defining $\E_Y$ -- can be freely chosen
-     %   \item weighted sum $X^\top W$
-    %\end{itemize}
-    %\medskip 
-    %\pause
- %Interaction effects via feature engineering:
- %\begin{itemize}
- %    \item E.g., feature expansion: $\theta_{x_i,x_j} x_i \cdot x_j$
- %\end{itemize}
 \end{framev}
 
 
 \begin{framev}[align=top]{GLM - Logistic Regression}
-%\begin{columns}[T, totalwidth=\textwidth]
-%\begin{column}{0.45\textwidth}
 \begin{itemizeM}
 \item Logistic regression $\hat{=}$ GLM with Bernoulli distribution and logit link function:
-%\begin{align*}
-%    g(x) &= \log\left(\frac{x}{1 - x}\right)  
-%    \Rightarrow \; g^{-1}(x) &= \frac{1}{1+\exp(-x)}
-%\end{align*}
 $$
 g(x) = \log\left(\frac{x}{1 - x}\right)
 \Rightarrow \; g^{-1}(x) = \frac{1}{1 + \exp(-x)}
 $$
-%\end{column}
-%\begin{column}{0.55\textwidth}
-% \begin{columns}[c, totalwidth=\textwidth]
-% \begin{column}{0.005\linewidth}
-% \scriptsize
-% \rotatebox[origin=c]{90}{\hspace{10pt}$P(y = 1)$}
-% \end{column}
-% \begin{column}{0.995\linewidth}
-%\includegraphics[width = \textwidth]{figure/reg_class_log_6.pdf}
-% \scriptsize\centerline{$\xv^\top \theta$}
-% \end{column}
-% \end{columns}
-%\end{column}
-%\end{columns}
-% \begin{columns}[T, totalwidth=\textwidth]
-% \begin{column}{0.65\textwidth}
-% \begin{itemize}
 \item Models probabilities for binary classification by
 $$\pi(\xv) = \E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \thetav) = \frac{1}{1 + \exp(-\xv^\top \thetav)}$$
-%\item Logistic regression models $\E(y \mid \xv) = P(y = 1)$, i.e., probabilities for binary classification
-%\item Logistic regression formula:
-%$$P(y = 1) =\frac{1}{1 + \exp(-( \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \ldots + \theta_p x_p ))} $$
 \end{itemizeM}
-% \end{column}
-% \begin{column}{0.35\textwidth}
-% \end{column}
-% \end{columns}
 \centering
 \image[0.3]{figure/logreg-2vars-surface.png}
 \qquad
@@ -140,32 +90,6 @@ $$\pi(\xv) = \E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \thetav) = \frac{1}{1 +
 \end{framev}
 
 
-% \begin{frame}{Generalized Linear Models (GLMs)}
-
-% \begin{align*}
-% g\left(\mathbb{E}_Y(Y \vert X)\right) &= X^T\theta \\
-% \mathbb{E}_Y \left(Y \vert X\right) &= g^{-1}(X^T\theta)
-% \end{align*}
-% \begin{itemize}[<+->]
-% %\setlength\itemsep{1em}
-% %\item GLMs are a framework for target distributions of  exponential families (e.g., Gaussian, Binomial, Poisson, Gamma). Gaussian target distribution $+$ identity link $\hat =$ linear / polynomial model.
-% \item GLM framework assumes distribution of $Y$ is a member of exponential families, e.g.: % (e.g., Gaussian, Binomial, Poisson)
-% \begin{itemize}[<.->]
-%     \item Gaussian target distribution $+$ identity link $\hat =$ linear / polynomial model.
-%     \item Binomial target distribution $+$ logit link $log\left(\frac{\mathbb{E}_Y(Y \vert X)}{1 - \mathbb{E}_Y(Y \vert X)}\right)$ $\hat =$ logistic regression.
-% \end{itemize}
-% %\item GLMs keeps linear predictor $X^T\theta$ (explains $\mathbb{E}_Y(Y \vert X)$ through a more flexible link function $g$).
-% \item Link function $g$ describes how $X^T\theta$ relates to the expected, conditional target $\mathbb{E}_Y(Y \vert X)$.
-% \begin{itemize}[<.->]
-%     \item Interpretations as for linear / polynomial models but w.r.t. transformed target via $g$.
-%     \item Linear terms become non-linear through the link function (except for identity link)!
-% \end{itemize}
-% %\item If the target is distributed binomially, a natural link function is the logit link $log\left(\frac{\mathbb{E}_Y(Y \vert X)}{1 - \mathbb{E}_Y(Y \vert X)}\right)$ (logistic regression).
-% \item We need to specify the correct model equation, target distribution, and link function to receive a good model fit.
-% %\item %As the model equation is still known, interpretations are possible the same way as for polynomial regression models.
-% %However, even linear terms become non-linear through the link function (if the identity link is not used)!
-% \end{itemize}
-% \end{frame}
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
@@ -174,10 +98,8 @@ $$\pi(\xv) = \E(y \mid \xv) = P(y = 1) = g^{-1}(\xv^\top \thetav) = \frac{1}{1 +
 \item \textbf{Recall:} Odds is ratio of two probabilities, odds ratio is ratio of two odds
 \item Weights $\theta_j$ are interpreted linear as in LM (but w.r.t. log-odds)\\
 $\leadsto$ difficult to comprehend
-%relate to log-odds %$\leadsto$ Effects are linear as in LM (but w.r.t. log-odds)
 $$log\text{-}odds = \log\left(\frac{\pi(\xv)}{1 - \pi(\xv)}\right) = \log\left(\frac{P(y = 1)}{P(y = 0)}\right) = \theta_0 + \theta_1 x_1 + \ldots + \theta_p x_p$$
 \textbf{Interpretation}: Changing $x_j$ by one unit changes log-odds of class 1 compared to class 0 by $\theta_j$
-%\leadsto$ Effects are interpreted linear as in LM (but w.r.t. log-odds) $\leadsto$ difficult to comprehend
 \pause
 \item Odds for cls 1 vs. cls 0: %Odds can be caulculated by:
 % deliberate choice to use in line with \displaystyle given full slide
@@ -186,7 +108,6 @@ $odds = \displaystyle\frac{\pi(\xv)}{1 - \pi(\xv)}= \exp(\theta_0 + \theta_1 x_1
 $$\frac{odds_{x_j+1}}{odds} = \frac{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j(x_j + 1) + \ldots + \theta_p x_p)}{\exp(\theta_0 + \theta_1 x_1 + \ldots + \theta_j x_j + \ldots + \theta_p x_p)} = \exp(\theta_j)$$
 \textbf{Interpretation}: Changing $x_j$ by one unit changes the \textbf{odds ratio} for class 1 (compared to class 0) by the \textbf{factor} $\exp(\theta_j)$
 %\pause
-%\item Interpretation for different feature types is the same as for linear regression (however, linear interpretation only possible w.r.t. log odds $\leadsto$ difficult to comprehend)
 \end{itemizeM}
 \end{framev}
 
